@@ -1,0 +1,18 @@
+{
+  "name": "electron-scuttlebot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "?",
+  "devDependencies": {
+    "electron-prebuilt": "^0.28.2"
+  },
+  "dependencies": {
+    "scuttlebot": "^4.2.3",
+    "ssb-config": "^1.0.3"
+  }
+}
