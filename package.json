@@ -2,13 +2,25 @@
   "name": "electron-scuttlebot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app/index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "clean": "rm -rf ./dist",
+    "clean:osx": "rm -rf ./dist/osx",
+    "clean:win": "rm -rf ./dist/win",
+    "build": "npm run clean && npm run build:osx && npm run build:win",
+    "build:icon": "./scripts/make-icns.sh assets/icon1024.png assets/osx/scuttlebot.icns",
+    "build:osx": "npm run clean:osx && electron-packager ./ \"Scuttlebot\" --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/osx/scuttlebot.icns",
+    "build:win": "npm run clean:win && electron-packager ./ \"Scuttlebot\" --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/win/scuttlebot.ico",
+    "pack": "npm run pack:osx && npm run pack:win",
+    "pack:osx": "electron-builder \"dist/osx/Scuttlebot.app\" --platform=osx --out=\"dist/osx\" --config=packager.json",
+    "pack:win": "electron-builder \"dist/win/Scuttlebot-win32\" --platform=win --out=\"dist/win\" --config=packager.json"
   },
-  "author": "",
+  "author": "Paul Frazee <pfrazee@gmail.com>",
   "license": "?",
   "devDependencies": {
+    "electron-builder": "^2.0.0",
+    "electron-packager": "^4.1.3",
     "electron-prebuilt": "^0.28.2"
   },
   "dependencies": {

@@ -14,7 +14,7 @@ app.on('ready', function ready () {
 	require('scuttlebot').init(config, function (err, sbot) {
 
     // setup tray icon
-    tray = new Tray('./icon.png')
+    tray = new Tray(__dirname+'/icon.png')
     var contextMenu = Menu.buildFromTemplate([
       { label: 'Open App', click: onopen },
       { label: 'Quit', click: onquit }
