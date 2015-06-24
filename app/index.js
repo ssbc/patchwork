@@ -21,13 +21,13 @@ app.on('ready', function ready () {
     mainWindow.on('closed', function() { mainWindow = null })
 
     // setup menu
-    Menu.setApplicationMenu(Menu.buildFromTemplate([{
-      label: 'Window',
-      submenu: [
-        // { label: 'Open Web App', click: onopen },
-        { label: 'Quit', click: onquit }
-      ]
-    }]))
+    // Menu.setApplicationMenu(Menu.buildFromTemplate([{
+    //   label: 'Window',
+    //   submenu: [
+    //     // { label: 'Open Web App', click: onopen },
+    //     { label: 'Quit', click: onquit }
+    //   ]
+    // }]))
 
     // setup tray icon
     tray = new Tray(__dirname+'/icon.png')
