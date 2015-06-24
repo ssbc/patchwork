@@ -5,13 +5,13 @@
   "main": "app/index.js",
   "scripts": {
     "start": "electron .",
-    "clean": "rm -rf ./dist",
-    "clean:osx": "rm -rf ./dist/osx",
-    "clean:win": "rm -rf ./dist/win",
+    "clean": "rm -Rf ./dist",
+    "clean:osx": "rm -Rf ./dist/osx",
+    "clean:win": "rm -Rf ./dist/win",
     "build": "npm run clean && npm run build:osx && npm run build:win",
     "build:icon": "./scripts/make-icns.sh assets/icon1024.png assets/osx/scuttlebot.icns",
-    "build:osx": "npm run clean:osx && electron-packager ./ \"Scuttlebot\" --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/osx/scuttlebot.icns",
-    "build:win": "npm run clean:win && electron-packager ./ \"Scuttlebot\" --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/win/scuttlebot.ico",
+    "build:osx": "electron-packager ./ \"Scuttlebot\" --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/osx/scuttlebot.icns",
+    "build:win": "electron-packager ./ \"Scuttlebot\" --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/win/scuttlebot.ico",
     "pack": "npm run pack:osx && npm run pack:win",
     "pack:osx": "electron-builder \"dist/osx/Scuttlebot.app\" --platform=osx --out=\"dist/osx\" --config=packager.json",
     "pack:win": "electron-builder \"dist/win/Scuttlebot-win32\" --platform=win --out=\"dist/win\" --config=packager.json"
