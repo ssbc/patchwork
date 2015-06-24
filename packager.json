@@ -1,6 +1,6 @@
 {
   "osx" : {
-    "title": "Secure Scuttlebot",
+    "title": "Scuttlebot",
     "background": "assets/osx/installer.png",
     "icon": "assets/osx/scuttlebot.icns",
     "icon-size": 80,
@@ -10,7 +10,7 @@
     ]
   },
   "win" : {
-    "title" : "Secure Scuttlebot",
+    "title" : "Scuttlebot",
     "icon" : "assets/win/scuttlebot.ico"
   }
 }
