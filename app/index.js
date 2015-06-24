@@ -2,24 +2,29 @@ var app = require('app')
 var Tray = require('tray')
 var Menu = require('menu')
 var shell = require('shell')
+var BrowserWindow = require('browser-window')
 var config = require('ssb-config') 
 
 // Report crashes to our server.
 //require('crash-reporter').start();
 
 var tray
+var mainWindow
 
 app.on('ready', function ready () {
   // start sbot
 	require('scuttlebot').init(config, function (err, sbot) {
     // open the web app
-    shell.openExternal('http://localhost:8008')
+    // shell.openExternal('http://localhost:8008')
+    mainWindow = new BrowserWindow({width: 1000, height: 720})
+    mainWindow.loadUrl('http://localhost:8008')
+    mainWindow.on('closed', function() { mainWindow = null })
 
     // setup menu
     Menu.setApplicationMenu(Menu.buildFromTemplate([{
       label: 'Window',
       submenu: [
-        { label: 'Open Web App', click: onopen },
+        // { label: 'Open Web App', click: onopen },
         { label: 'Quit', click: onquit }
       ]
     }]))
@@ -27,11 +32,11 @@ app.on('ready', function ready () {
     // setup tray icon
     tray = new Tray(__dirname+'/icon.png')
     tray.setContextMenu(Menu.buildFromTemplate([
-      { label: 'Open Web App', click: onopen },
+      // { label: 'Open Web App', click: onopen },
       { label: 'Quit', click: onquit }
     ]))
     tray.setToolTip('Secure Scuttlebutt: Running on port 8008')
-    tray.on('double-clicked', onopen)
+    // tray.on('double-clicked', onopen)
 
     // menu handlers
     function onopen () {
