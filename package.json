@@ -27,7 +27,9 @@
   "dependencies": {
     "multiblob": "^1.4.3",
     "multicb": "^1.1.0",
+    "pull-stream": "^2.27.0",
     "scuttlebot": "^4.2.3",
-    "ssb-config": "^1.0.3"
+    "ssb-config": "^1.0.3",
+    "stream-to-pull-stream": "^1.6.1"
   }
 }

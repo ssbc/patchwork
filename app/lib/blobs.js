@@ -1,6 +1,9 @@
 var path = require('path')
 var multicb = require('multicb')
 var toPath = require('multiblob/util').toPath
+var createHash = require('multiblob/util').createHash
+var pull = require('pull-stream')
+var toPull = require('stream-to-pull-stream')
 var querystring = require('querystring')
 var fs = require('fs')
 
@@ -43,16 +46,21 @@ module.exports = function (blobs_dir, checkout_dir) {
       var filename = parsed.qs.name || parsed.qs.filename || parsed.hash
 
       // check if we have the blob, at the same time find an available filename
-      var done = multicb({ pluck: 1 })
+      var done = multicb()
       fs.stat(toPath(blobs_dir, parsed.hash), done())
-      findFreeCheckoutPath(filename, done())
+      findCheckoutDst(filename, parsed.hash, done())
       done(function (err, res) {
-        if (!res[0])
+        if (!res[0][1])
           return cb({ notFound: true })
+
+        // do we need to copy?
+        var dst = res[1][1]
+        var nocopy = res[1][2]
+        if (nocopy)
+          return cb(null, dst)
 
         // copy the file
         var src = toPath(blobs_dir, parsed.hash)
-        var dst = res[1]
         var read = fs.createReadStream(src)
         var write = fs.createWriteStream(dst)
         read.on('error', done)
@@ -68,7 +76,8 @@ module.exports = function (blobs_dir, checkout_dir) {
   }
 
   // helper to create a filename in checkout_dir that isnt already in use
-  function findFreeCheckoutPath (filename, cb) {
+  // - cb(err, filepath, nocopy) - if nocopy==true, no need to do the copy operation
+  function findCheckoutDst (filename, hash, cb) {
     var n = 1
     var parsed = path.parse(filename)
     next()
@@ -82,11 +91,25 @@ module.exports = function (blobs_dir, checkout_dir) {
     }
 
     function next () {
-      var filepath = gen()
-      fs.stat(filepath, function (err, stat) {
+      var dst = gen()
+      // exists?
+      fs.stat(dst, function (err, stat) {
         if (!stat)
-          return cb(null, filepath)
-        next()
+          return cb(null, dst, false)
+
+        // yes, check its hash
+        var hasher = createHash()
+        pull(
+          toPull.source(fs.createReadStream(dst)),
+          hasher,
+          pull.onEnd(function () {
+            // if the hash matches, we're set
+            if (hasher.digest == hash)
+              return cb(null, dst, true)
+            // try next
+            next()
+          })
+        )
       })
     }
   }
