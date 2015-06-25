@@ -20,7 +20,7 @@ app.on('ready', function ready () {
   // start sbot
   require('scuttlebot').init(config, function (err, sbot) {
     // register protocols
-    require('protocol').registerProtocol('ext', require('./lib/ext-protocol')(config))
+    require('protocol').registerProtocol('blob', require('./lib/blob-protocol')(config))
 
     // open the web app
     mainWindow = new BrowserWindow({width: 1000, height: 720})
@@ -30,7 +30,7 @@ app.on('ready', function ready () {
 
     function onNewWindow (e, url) {
       e.preventDefault() // hell naw
-      if (url.indexOf('ext:') === 0) {
+      if (url.indexOf('blob:') === 0) {
         // open the file
         var id = url.split(':')[1]
         shell.openItem(toPath(blobs_dir, id))
