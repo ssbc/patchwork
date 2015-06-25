@@ -1,26 +1,26 @@
 var app = require('app')
-var path = require('path')
-var Tray = require('tray')
 var Menu = require('menu')
 var shell = require('shell')
 var BrowserWindow = require('browser-window')
+var path = require('path')
 
 var config = require('ssb-config') 
-var toPath = require('multiblob/util').toPath
 
 // Report crashes to our server.
 //require('crash-reporter').start();
 
-var tray
 var mainWindow
 
 app.on('ready', function ready () {
+  // setup blobs
   var blobs_dir = path.join(config.path, 'blobs')
+  var downloads_dir = app.getPath('userDesktop')
+  var blobs = require('./lib/blobs')(blobs_dir, downloads_dir)
 
   // start sbot
   require('scuttlebot').init(config, function (err, sbot) {
     // register protocols
-    require('protocol').registerProtocol('blob', require('./lib/blob-protocol')(config))
+    require('protocol').registerProtocol('blob', blobs.protocol)
 
     // open the web app
     mainWindow = new BrowserWindow({width: 1000, height: 720})
@@ -32,8 +32,17 @@ app.on('ready', function ready () {
       e.preventDefault() // hell naw
       if (url.indexOf('blob:') === 0) {
         // open the file
-        var id = url.split(':')[1]
-        shell.openItem(toPath(blobs_dir, id))
+        blobs.checkout(url, function (err, path) {
+          if (err) {
+            if (err.badUrl)
+              alert('Error: Not a valid file reference')
+            else if (err.notFound)
+              alert('Error: This file has not yet been synced. Please try again soon.') // :TODO: show 'search' window
+            else
+              console.log(err) // :TODO: something nicer
+          } else
+            shell.openItem(path)
+        })
       } else {
         // open in the browser
         shell.openExternal(url)
@@ -48,25 +57,6 @@ app.on('ready', function ready () {
     //     { label: 'Quit', click: onquit }
     //   ]
     // }]))
-
-    // setup tray icon
-    tray = new Tray(__dirname+'/icon.png')
-    tray.setContextMenu(Menu.buildFromTemplate([
-      // { label: 'Open Web App', click: onopen },
-      { label: 'Quit', click: onquit }
-    ]))
-    tray.setToolTip('Secure Scuttlebutt: Running on port 8008')
-    // tray.on('double-clicked', onopen)
-
-    // menu handlers
-    function onopen () {
-      shell.openExternal('http://localhost:8008')
-    }
-    function onquit () {
-      tray = null
-      sbot.close()
-      process.exit()
-    }
 
   })
 });
