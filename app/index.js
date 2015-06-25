@@ -25,6 +25,7 @@ app.on('ready', function ready () {
 
     // open the web app
     mainWindow = new BrowserWindow({width: 1000, height: 720})
+    // mainWindow.openDevTools()
     mainWindow.loadUrl('file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/home.html'))
     mainWindow.webContents.on('new-window', onNewWindow)
     mainWindow.on('closed', function() { mainWindow = null })

@@ -31,4 +31,10 @@ module.exports = function (sbot, window) {
   pull(ipcPush, rpcStream, pull.drain(function (msg) {
     window.webContents.send('muxrpc-ssb', msg)
   }))
+
+  // setup helper messages
+  ipc.on('fetch-config', function(e) {
+    if (e.sender == window.webContents)
+      e.returnValue = sbot.config
+  });
 }
