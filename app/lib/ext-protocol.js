@@ -7,7 +7,6 @@ module.exports = function (config) {
   return function (request) {
     var id = request.url.split(':')[1]
     if (request.method == 'GET' && id) {
-      console.log('loading', id, toPath(dir, id))
       return new protocol.RequestFileJob(toPath(dir, id))
     }
   }
