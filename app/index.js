@@ -19,9 +19,8 @@ app.on('ready', function ready () {
     require('protocol').registerProtocol('ext', require('./lib/ext-protocol')(config))
 
     // open the web app
-    // shell.openExternal('http://localhost:8008')
     mainWindow = new BrowserWindow({width: 1000, height: 720})
-    mainWindow.loadUrl('http://localhost:8008')
+    mainWindow.loadUrl('file://' + __dirname + '/index.html')
     mainWindow.on('closed', function() { mainWindow = null })
 
     // setup menu
