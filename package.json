@@ -25,6 +25,7 @@
     "electron-prebuilt": "^0.28.2"
   },
   "dependencies": {
+    "multiblob": "^1.4.3",
     "scuttlebot": "^4.2.3",
     "ssb-config": "^1.0.3"
   }

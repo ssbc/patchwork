@@ -3,6 +3,7 @@ var Tray = require('tray')
 var Menu = require('menu')
 var shell = require('shell')
 var BrowserWindow = require('browser-window')
+
 var config = require('ssb-config') 
 
 // Report crashes to our server.
@@ -13,7 +14,10 @@ var mainWindow
 
 app.on('ready', function ready () {
   // start sbot
-	require('scuttlebot').init(config, function (err, sbot) {
+  require('scuttlebot').init(config, function (err, sbot) {
+    // register protocols
+    require('protocol').registerProtocol('ext', require('./lib/ext-protocol')(config))
+
     // open the web app
     // shell.openExternal('http://localhost:8008')
     mainWindow = new BrowserWindow({width: 1000, height: 720})
