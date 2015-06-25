@@ -5,6 +5,7 @@ var BrowserWindow = require('browser-window')
 var path = require('path')
 
 var config = require('ssb-config') 
+var setupRpc = require('./lib/muxrpc-ipc')
 
 // Report crashes to our server.
 //require('crash-reporter').start();
@@ -24,9 +25,10 @@ app.on('ready', function ready () {
 
     // open the web app
     mainWindow = new BrowserWindow({width: 1000, height: 720})
-    mainWindow.loadUrl('file://' + __dirname + '/index.html')
+    mainWindow.loadUrl('file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/home.html'))
     mainWindow.webContents.on('new-window', onNewWindow)
     mainWindow.on('closed', function() { mainWindow = null })
+    setupRpc(sbot, mainWindow)
 
     function onNewWindow (e, url) {
       e.preventDefault() // hell naw
