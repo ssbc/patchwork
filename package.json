@@ -29,7 +29,6 @@
     "multicb": "^1.1.0",
     "muxrpc": "^5.0.1",
     "pull-pushable": "^1.1.4",
-    "pull-serializer": "^0.3.2",
     "pull-stream": "^2.27.0",
     "scuttlebot": "^4.2.3",
     "ssb-config": "^1.0.3",

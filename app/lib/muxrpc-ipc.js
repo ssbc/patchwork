@@ -1,7 +1,6 @@
 var ipc        = require('ipc')
 var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
-var Serializer = require('pull-serializer')
 var pushable   = require('pull-pushable')
 var Api        = require('scuttlebot/lib/api')
 
@@ -17,9 +16,7 @@ module.exports = function (sbot, window) {
   var rpc = muxrpc(null, sbot.manifest, serialize)(api)
   rpc.authorized = { id: sbot.feed.id, role: 'master' }
   rpc.permissions({allow: null, deny: null})
-  function serialize (stream) {
-    return Serializer(stream, JSON, {split: '\n\n'})
-  }
+  function serialize (stream) { return stream }
 
   // setup rpc stream over ipc
   var rpcStream = rpc.createStream()
