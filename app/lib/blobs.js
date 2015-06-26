@@ -1,13 +1,15 @@
-var path = require('path')
-var multicb = require('multicb')
-var toPath = require('multiblob/util').toPath
-var createHash = require('multiblob/util').createHash
-var pull = require('pull-stream')
-var toPull = require('stream-to-pull-stream')
+var path        = require('path')
+var multicb     = require('multicb')
+var toPath      = require('multiblob/util').toPath
+var createHash  = require('multiblob/util').createHash
+var pull        = require('pull-stream')
+var toPull      = require('stream-to-pull-stream')
 var querystring = require('querystring')
-var fs = require('fs')
+var fs          = require('fs')
 
 module.exports = function (blobs_dir, checkout_dir) {
+  var fallback_img_path = path.join(__dirname, '../../node_modules/ssbplug-phoenix/img/default-prof-pic.png')
+
   return {
     // behavior for the blob: protocol
     protocol: function (request) {
@@ -15,7 +17,17 @@ module.exports = function (blobs_dir, checkout_dir) {
       // simple fetch
       var parsed = url_parse(request.url)
       if (request.method == 'GET' && parsed) {
-        return new protocol.RequestFileJob(toPath(blobs_dir, parsed.hash))
+        var filepath = toPath(blobs_dir, parsed.hash)
+        try {
+          // check if the file exists
+          fs.statSync(filepath) // :HACK: make async when we figure out how to make a protocol-handler support that
+          return new protocol.RequestFileJob(filepath)
+        } catch (e) {
+          // notfound
+          if (parsed.qs.fallback == 'img')
+            return new protocol.RequestFileJob(fallback_img_path)
+          return new protocol.RequestErrorJob(-6)
+        }
       }
     },
 
