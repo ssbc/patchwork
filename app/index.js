@@ -1,16 +1,12 @@
 var app = require('app')
 var Menu = require('menu')
-var shell = require('shell')
-var BrowserWindow = require('browser-window')
 var path = require('path')
 
-var config = require('ssb-config') 
-var setupRpc = require('./lib/muxrpc-ipc')
+var config = require('ssb-config')
+var windows = require('./lib/windows')
 
 // Report crashes to our server.
 //require('crash-reporter').start();
-
-var mainWindow
 
 app.on('ready', function ready () {
   // setup blobs
@@ -24,33 +20,13 @@ app.on('ready', function ready () {
     require('protocol').registerProtocol('blob', blobs.protocol)
 
     // open the web app
-    mainWindow = new BrowserWindow({width: 1000, height: 720})
-    // mainWindow.openDevTools()
-    mainWindow.loadUrl('file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/home.html'))
-    mainWindow.webContents.on('new-window', onNewWindow)
-    mainWindow.on('closed', function() { mainWindow = null })
-    setupRpc(sbot, mainWindow)
-
-    function onNewWindow (e, url) {
-      e.preventDefault() // hell naw
-      if (url.indexOf('blob:') === 0) {
-        // open the file
-        blobs.checkout(url, function (err, path) {
-          if (err) {
-            if (err.badUrl)
-              alert('Error: Not a valid file reference')
-            else if (err.notFound)
-              alert('Error: This file has not yet been synced. Please try again soon.') // :TODO: show 'search' window
-            else
-              console.log(err) // :TODO: something nicer
-          } else
-            shell.openItem(path)
-        })
-      } else {
-        // open in the browser
-        shell.openExternal(url)
-      }
-    }
+    var mainWindow = windows.open(
+      'file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/home.html'),
+      sbot,
+      blobs,
+      { width: 1000, height: 720 }
+    )
+    mainWindow.openDevTools()
 
     // setup menu
     // Menu.setApplicationMenu(Menu.buildFromTemplate([{

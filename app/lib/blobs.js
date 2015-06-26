@@ -7,24 +7,6 @@ var toPull = require('stream-to-pull-stream')
 var querystring = require('querystring')
 var fs = require('fs')
 
-// blob url parser
-var re = /^blob:([a-z0-9\+\/=]+\.blake2s)\??(.*)$/i
-var url_parse =
-module.exports.url_parse = function (str) {
-  var parts = re.exec(str)
-  if (parts)
-    return { hash: parts[1], qs: querystring.parse(parts[2]) }
-}
-
-// blob url builder
-var url_stringify =
-module.exports.url_stringify = function (hash, qs) {
-  var url = 'blob:'+hash
-  if (qs && typeof qs == 'object')
-    url += '?' + querystring.stringify(qs)
-  return url
-}
-
 module.exports = function (blobs_dir, checkout_dir) {
   return {
     // behavior for the blob: protocol
@@ -50,7 +32,7 @@ module.exports = function (blobs_dir, checkout_dir) {
       fs.stat(toPath(blobs_dir, parsed.hash), done())
       findCheckoutDst(filename, parsed.hash, done())
       done(function (err, res) {
-        if (!res[0][1])
+        if (err && err.code == 'ENOENT')
           return cb({ notFound: true })
 
         // do we need to copy?
@@ -113,4 +95,22 @@ module.exports = function (blobs_dir, checkout_dir) {
       })
     }
   }
+}
+
+// blob url parser
+var re = /^blob:([a-z0-9\+\/=]+\.blake2s)\??(.*)$/i
+var url_parse =
+module.exports.url_parse = function (str) {
+  var parts = re.exec(str)
+  if (parts)
+    return { hash: parts[1], qs: querystring.parse(parts[2]) }
+}
+
+// blob url builder
+var url_stringify =
+module.exports.url_stringify = function (hash, qs) {
+  var url = 'blob:'+hash
+  if (qs && typeof qs == 'object')
+    url += '?' + querystring.stringify(qs)
+  return url
 }

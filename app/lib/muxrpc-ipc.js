@@ -4,7 +4,7 @@ var pull       = require('pull-stream')
 var pushable   = require('pull-pushable')
 var Api        = require('scuttlebot/lib/api')
 
-module.exports = function (sbot, window) {
+module.exports = function (window, sbot, params) {
   // construct api
   var api = Api(sbot)
   for (var k in sbot.manifest) {
@@ -33,5 +33,9 @@ module.exports = function (sbot, window) {
   ipc.on('fetch-config', function(e) {
     if (e.sender == window.webContents)
       e.returnValue = sbot.config
+  });
+  ipc.on('fetch-params', function(e) {
+    if (e.sender == window.webContents)
+      e.returnValue = params
   });
 }
