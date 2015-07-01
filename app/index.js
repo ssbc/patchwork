@@ -16,7 +16,10 @@ app.on('ready', function ready () {
 
   // start sbot
   require('scuttlebot').init(config, function (err, sbot) {
-    // register protocols
+    // register sbot plugins
+    sbot.use(require('phoenix-api'))
+
+    // register electron protocols
     require('protocol').registerProtocol('blob', blobs.protocol)
 
     // open the web app
@@ -26,7 +29,7 @@ app.on('ready', function ready () {
       blobs,
       { width: 1000, height: 720 }
     )
-    mainWindow.openDevTools()
+    // mainWindow.openDevTools()
 
     // setup menu
     // Menu.setApplicationMenu(Menu.buildFromTemplate([{

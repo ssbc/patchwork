@@ -28,6 +28,7 @@
     "multiblob": "^1.4.3",
     "multicb": "^1.1.0",
     "muxrpc": "^5.0.1",
+    "phoenix-api": "~8.0.0",
     "pull-pushable": "^1.1.4",
     "pull-stream": "^2.27.0",
     "scuttlebot": "^4.2.3",

@@ -25,9 +25,10 @@ module.exports = function (window, sbot, params) {
     if (e.sender == window.webContents)
       ipcPush.push(msg)
   })
-  pull(ipcPush, rpcStream, pull.drain(function (msg) {
-    window.webContents.send('muxrpc-ssb', msg)
-  }))
+  pull(ipcPush, rpcStream, pull.drain(
+    function (msg) { window.webContents.send('muxrpc-ssb', msg) },
+    function (err) { if (err) { console.error(err) } }
+  ))
 
   // setup helper messages
   ipc.on('fetch-config', function(e) {
