@@ -31,9 +31,9 @@ module.exports = function (window, sbot, params) {
   ))
 
   // setup helper messages
-  ipc.on('fetch-config', function(e) {
+  ipc.on('fetch-manifest', function(e) {
     if (e.sender == window.webContents)
-      e.returnValue = sbot.config
+      e.returnValue = sbot.manifest
   });
   ipc.on('fetch-params', function(e) {
     if (e.sender == window.webContents)
