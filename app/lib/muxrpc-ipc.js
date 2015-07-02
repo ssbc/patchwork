@@ -22,11 +22,23 @@ module.exports = function (window, sbot, params) {
   var rpcStream = rpc.createStream()
   var ipcPush = pushable()
   ipc.on('muxrpc-ssb', function (e, msg) {
-    if (e.sender == window.webContents)
+    if (e.sender == window.webContents) {
+      if (msg.bvalue) {
+        msg.value = new Buffer(msg.bvalue, 'base64')
+        delete msg.bvalue
+      }
       ipcPush.push(msg)
+    }
   })
   pull(ipcPush, rpcStream, pull.drain(
-    function (msg) { window.webContents.send('muxrpc-ssb', msg) },
+    function (msg) { 
+      if (msg.value && Buffer.isBuffer(msg.value)) {
+        // convert buffers to base64
+        msg.bvalue = msg.value.toString('base64')
+        delete msg.value
+      }
+      window.webContents.send('muxrpc-ssb', msg)
+    },
     function (err) { if (err) { console.error(err) } }
   ))
 
