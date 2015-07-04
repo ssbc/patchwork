@@ -7,8 +7,10 @@ var toPull      = require('stream-to-pull-stream')
 var querystring = require('querystring')
 var fs          = require('fs')
 
-module.exports = function (blobs_dir, checkout_dir) {
+module.exports = function (sbot, checkout_dir) {
+  var blobs_dir = path.join(sbot.config.path, 'blobs')
   var fallback_img_path = path.join(__dirname, '../../node_modules/ssbplug-phoenix/img/default-prof-pic.png')
+  var nowaitOpts = { nowait: true }, id = function(){}
 
   return {
     // behavior for the blob: protocol
@@ -24,6 +26,7 @@ module.exports = function (blobs_dir, checkout_dir) {
           return new protocol.RequestFileJob(filepath)
         } catch (e) {
           // notfound
+          sbot.blobs.want(parsed.hash, nowaitOpts, id)
           if (parsed.qs.fallback == 'img')
             return new protocol.RequestFileJob(fallback_img_path)
           return new protocol.RequestErrorJob(-6)
