@@ -9,15 +9,13 @@ var windows = require('./lib/windows')
 //require('crash-reporter').start();
 
 app.on('ready', function ready () {
-  // setup blobs
-  var blobs_dir = path.join(config.path, 'blobs')
-  var downloads_dir = app.getPath('userDesktop')
-  var blobs = require('./lib/blobs')(blobs_dir, downloads_dir)
-
   // start sbot
   require('scuttlebot').init(config, function (err, sbot) {
     // register sbot plugins
     sbot.use(require('phoenix-api'))
+    
+    // setup blobs
+    var blobs = require('./lib/blobs')(sbot, app.getPath('userDesktop'))
 
     // register electron protocols
     require('protocol').registerProtocol('blob', blobs.protocol)
