@@ -12,35 +12,48 @@ module.exports = function (window, sbot, params) {
       api[k] = sbot[k] // copy over the plugin APIs
   }
 
-  // create rpc object
-  var rpc = muxrpc(null, sbot.manifest, serialize)(api)
-  rpc.authorized = { id: sbot.feed.id, role: 'master' }
-  rpc.permissions({allow: null, deny: null})
-  function serialize (stream) { return stream }
 
-  // setup rpc stream over ipc
-  var rpcStream = rpc.createStream()
-  var ipcPush = pushable()
-  ipc.on('muxrpc-ssb', function (e, msg) {
-    if (e.sender == window.webContents) {
-      if (msg.bvalue) {
-        msg.value = new Buffer(msg.bvalue, 'base64')
-        delete msg.bvalue
+  // add rpc APIs to window
+  window.createRpc = function () {
+    // create rpc object
+    var rpc = window.rpc = muxrpc(null, sbot.manifest, serialize)(api)
+    rpc.authorized = { id: sbot.feed.id, role: 'master' }
+    rpc.permissions({allow: null, deny: null})
+    function serialize (stream) { return stream }
+
+    // start the stream
+    window.rpcStream = rpc.createStream()
+    var ipcPush = pushable()
+    ipc.on('muxrpc-ssb', function (e, msg) {
+      if (e.sender == window.webContents) {
+        if (msg.bvalue) {
+          msg.value = new Buffer(msg.bvalue, 'base64')
+          delete msg.bvalue
+        }
+        ipcPush.push(msg)
       }
-      ipcPush.push(msg)
-    }
-  })
-  pull(ipcPush, rpcStream, pull.drain(
-    function (msg) { 
-      if (msg.value && Buffer.isBuffer(msg.value)) {
-        // convert buffers to base64
-        msg.bvalue = msg.value.toString('base64')
-        delete msg.value
-      }
-      window.webContents.send('muxrpc-ssb', msg)
-    },
-    function (err) { if (err) { console.error(err) } }
-  ))
+    })
+    pull(ipcPush, window.rpcStream, pull.drain(
+      function (msg) { 
+        if (msg.value && Buffer.isBuffer(msg.value)) {
+          // convert buffers to base64
+          msg.bvalue = msg.value.toString('base64')
+          delete msg.value
+        }
+        window.webContents.send('muxrpc-ssb', msg)
+      },
+      function (err) { if (err) { console.error(err) } }
+    ))
+  }
+  window.resetRpc = function () {
+    console.log('close rpc')
+    window.rpcStream.source(true)
+    window.rpc.close()
+    window.createRpc()
+  }
+
+  // setup default stream
+  window.createRpc()
 
   // setup helper messages
   ipc.on('fetch-manifest', function(e) {

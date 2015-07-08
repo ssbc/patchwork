@@ -14,19 +14,16 @@ app.on('ready', function ready () {
     // register sbot plugins
     sbot.use(require('phoenix-api'))
     
-    // setup blobs
+    // setup electron
     var blobs = require('./lib/blobs')(sbot, app.getPath('userDesktop'))
-
-    // register electron protocols
     require('protocol').registerProtocol('blob', blobs.protocol)
-
-    // open the web app
     var mainWindow = windows.open(
       'file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/home.html'),
       sbot,
       blobs,
       { width: 1000, height: 720 }
     )
+    require('./lib/menu')(mainWindow)
     // mainWindow.openDevTools()
 
     // setup menu
