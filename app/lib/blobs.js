@@ -113,7 +113,7 @@ module.exports = function (sbot, checkout_dir) {
 }
 
 // blob url parser
-var re = /^blob:([a-z0-9\+\/=]+\.blake2s)\??(.*)$/i
+var re = /^blob:([a-z0-9\+\/=]+\.(?:sha256|blake2s))\??(.*)$/i
 var url_parse =
 module.exports.url_parse = function (str) {
   var parts = re.exec(str)
