@@ -26,6 +26,12 @@ module.exports = function (window, sbot, params) {
     var ipcPush = pushable()
     ipc.on('muxrpc-ssb', function (e, msg) {
       if (e.sender == window.webContents) {
+        try {
+          if (typeof msg == 'string')
+            msg = JSON.parse(msg)
+        } catch (e) {
+          return
+        }
         if (msg.bvalue) {
           msg.value = new Buffer(msg.bvalue, 'base64')
           delete msg.bvalue
@@ -40,7 +46,7 @@ module.exports = function (window, sbot, params) {
           msg.bvalue = msg.value.toString('base64')
           delete msg.value
         }
-        window.webContents.send('muxrpc-ssb', msg)
+        window.webContents.send('muxrpc-ssb', JSON.stringify(msg))
       },
       function (err) { if (err) { console.error(err) } }
     ))
