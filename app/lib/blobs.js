@@ -95,7 +95,7 @@ module.exports = function (sbot, checkout_dir) {
           return cb(null, dst, false)
 
         // yes, check its hash
-        var hasher = createHash()
+        var hasher = createHash('sha256')
         pull(
           toPull.source(fs.createReadStream(dst)),
           hasher,

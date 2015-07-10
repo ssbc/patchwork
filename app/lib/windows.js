@@ -40,8 +40,9 @@ module.exports.open = function (url, sbot, blobs, opts, params) {
             )
           } else
             console.log(err) // :TODO: something nicer
-        } else
+        } else {
           shell.openItem(filepath)
+        }
       })
     } else {
       // open in the browser
