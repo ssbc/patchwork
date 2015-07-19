@@ -5,7 +5,8 @@ var pushable   = require('pull-pushable')
 var Api        = require('scuttlebot/lib/api')
 
 var clientApi = {
-  navigate: 'async'
+  navigate: 'async',
+  contextualToggleDevTools: 'async'
 }
 
 module.exports = function (window, sbot, params) {

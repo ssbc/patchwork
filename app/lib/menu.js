@@ -87,7 +87,7 @@ module.exports = function (window) {
           label: 'Toggle DevTools',
           accelerator: 'Alt+Command+I',
           click: function() { 
-            window.toggleDevTools()
+            window.rpc.contextualToggleDevTools()
           }
         },
       ]
