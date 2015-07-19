@@ -6,11 +6,25 @@ var blobslib = require('./blobs')
 
 var windows = []
 
+var secureWebPreferences = {
+  javascript: true,
+  'web-security': true,
+  images: true,
+  java: false,
+  webgl: false, // maybe allow?
+  webaudio: false, // maybe allow?
+  plugins: false,
+  'experimental-features': false,
+  'experimental-canvas-features': false,
+  'shared-worker': false
+}
+
 var open =
 module.exports.open = function (url, sbot, blobs, opts, params) {
   var win = new BrowserWindow(opts)
   win.loadUrl(url)
   setupRpc(win, sbot, params)
+  windows.push(win)
   
   win.on('closed', function() {
     var i = windows.indexOf(win)
@@ -35,13 +49,13 @@ module.exports.open = function (url, sbot, blobs, opts, params) {
               'file://' + path.join(__dirname, '../../node_modules/ssbplug-phoenix/blob-search.html'),
               sbot,
               blobs,
-              { width: 600, height: 650 },
+              { width: 600, height: 650, 'web-preferences': secureWebPreferences },
               { url: url, hash: hash }
             )
           } else
             console.log(err) // :TODO: something nicer
         } else {
-          shell.openItem(filepath)
+          shell.openItem(filepath) // open in desktop's default program
         }
       })
     } else {

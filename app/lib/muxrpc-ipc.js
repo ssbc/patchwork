@@ -4,6 +4,10 @@ var pull       = require('pull-stream')
 var pushable   = require('pull-pushable')
 var Api        = require('scuttlebot/lib/api')
 
+var clientApi = {
+  navigate: 'async'
+}
+
 module.exports = function (window, sbot, params) {
   // construct api
   var api = Api(sbot)
@@ -16,7 +20,7 @@ module.exports = function (window, sbot, params) {
   // add rpc APIs to window
   window.createRpc = function () {
     // create rpc object
-    var rpc = window.rpc = muxrpc(null, sbot.manifest, serialize)(api)
+    var rpc = window.rpc = muxrpc(clientApi, sbot.manifest, serialize)(api)
     rpc.authorized = { id: sbot.feed.id, role: 'master' }
     rpc.permissions({allow: null, deny: null})
     function serialize (stream) { return stream }

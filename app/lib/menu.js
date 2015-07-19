@@ -1,4 +1,5 @@
 var Menu = require('menu')
+var dialog = require('dialog')
 
 module.exports = function (window) {
   var template = [
@@ -16,6 +17,20 @@ module.exports = function (window) {
           label: 'Quit',
           accelerator: 'Command+Q',
           selector: 'terminate:'
+        }
+      ]
+    },
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open File...',
+          accelerator: 'Command+O',
+          click: function() { 
+            var paths = dialog.showOpenDialog(window, { properties: ['openFile'] })
+            if (paths && paths[0])
+              window.rpc.navigate(paths[0])
+          }
         }
       ]
     },

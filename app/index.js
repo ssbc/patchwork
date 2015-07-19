@@ -1,6 +1,7 @@
 var app = require('app')
 var Menu = require('menu')
 var path = require('path')
+var http = require('http')
 
 var config = require('ssb-config')
 var windows = require('./lib/windows')
@@ -14,14 +15,18 @@ app.on('ready', function ready () {
     // register sbot plugins
     sbot.use(require('phoenix-api'))
     
-    // setup electron
+    // setup blob and file serving
     var blobs = require('./lib/blobs')(sbot, app.getPath('userDesktop'))
     require('protocol').registerProtocol('blob', blobs.protocol)
+    http.createServer(blobs.server).listen(7777)
+    http.createServer(require('./lib/files').server).listen(7778)
+
+    // open main window
     var mainWindow = windows.open(
-      'file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/home.html'),
+      'file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/main.html'),
       sbot,
       blobs,
-      { width: 1000, height: 720 }
+      { width: 1030, height: 720 }
     )
     require('./lib/menu')(mainWindow)
     // mainWindow.openDevTools()
