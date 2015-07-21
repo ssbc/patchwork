@@ -18,8 +18,8 @@ app.on('ready', function ready () {
     // setup blob and file serving
     var blobs = require('./lib/blobs')(sbot, app.getPath('userDesktop'))
     require('protocol').registerProtocol('blob', blobs.protocol)
-    http.createServer(blobs.server).listen(7777)
-    http.createServer(require('./lib/files').server).listen(7778)
+    http.createServer(blobs.server({ serveFiles: false })).listen(7777)
+    http.createServer(blobs.server({ serveFiles: true })).listen(7778)
 
     // open main window
     var mainWindow = windows.open(

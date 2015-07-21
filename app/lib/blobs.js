@@ -71,42 +71,51 @@ module.exports = function (sbot, checkout_dir) {
       })
     },
 
-    server: function (req, res) {
-      // function toBuffer() {
-      //   return pull.map(function (s) { return Buffer.isBuffer(s) ? s : new Buffer(s, 'base64') })
-      // }
-
-      // local-host only
-      if (req.socket.remoteAddress != '127.0.0.1' &&
-          req.socket.remoteAddress != '::ffff:127.0.0.1' &&
-          req.socket.remoteAddress != '::1') {
-        console.log('Remote access attempted by', req.socket.remoteAddress)
-        res.writeHead(403)
-        return res.end('Remote access forbidden')
-      }
-
-      // restrict the CSP
-      res.setHeader('Content-Security-Policy', 
-        "default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; "+
-        "connect-src 'self'; "+
-        "object-src 'none'; "+
-        "frame-src 'none'; "+
-        "sandbox allow-same-origin allow-scripts"
-      )
-
-      var hash = req.url.slice(1)
-      sbot.blobs.has(hash, function(err, has) {
-        if (!has) {
-          res.writeHead(404)
-          res.end('File not found')
-          return
+    server: function (opts) {
+      opts = opts || {}
+      return function (req, res) {
+        // local-host only
+        if (req.socket.remoteAddress != '127.0.0.1' &&
+            req.socket.remoteAddress != '::ffff:127.0.0.1' &&
+            req.socket.remoteAddress != '::1') {
+          console.log('Remote access attempted by', req.socket.remoteAddress)
+          res.writeHead(403)
+          return res.end('Remote access forbidden')
         }
-        pull(
-          sbot.blobs.get(hash),
-          // toBuffer(),
-          toPull(res)
+
+        // restrict the CSP
+        res.setHeader('Content-Security-Policy', 
+          "default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; "+
+          "connect-src 'self'; "+
+          "object-src 'none'; "+
+          "frame-src 'none'; "+
+          "sandbox allow-same-origin allow-scripts"
         )
-      })
+
+        if (req.url.slice(-7) != '.sha256' && opts.serveFiles) {
+          // try to serve from local FS if the path is not a supported hash
+          return fs.createReadStream(req.url)
+            .on('error', function () {
+              res.writeHead(404)
+              res.end('File not found')
+            })
+            .pipe(res)
+        }
+
+        // serve blob
+        var hash = req.url.slice(-51) // hash ids are 51 chars long
+        sbot.blobs.has(hash, function(err, has) {
+          if (!has) {
+            res.writeHead(404)
+            res.end('File not found')
+            return
+          }
+          pull(
+            sbot.blobs.get(hash),
+            toPull(res)
+          )
+        })
+      }
     }
   }
 
