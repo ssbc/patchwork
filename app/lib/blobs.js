@@ -89,7 +89,7 @@ module.exports = function (sbot, checkout_dir) {
           "connect-src 'self'; "+
           "object-src 'none'; "+
           "frame-src 'none'; "+
-          "sandbox allow-same-origin allow-scripts"
+          "sandbox allow-scripts"
         )
 
         if (req.url.slice(-7) != '.sha256' && opts.serveFiles) {
