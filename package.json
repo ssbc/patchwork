@@ -1,6 +1,6 @@
 {
-  "name": "electron-scuttlebot",
-  "version": "1.0.0",
+  "name": "patchwork",
+  "version": "0.0.0",
   "description": "",
   "main": "app/index.js",
   "scripts": {
