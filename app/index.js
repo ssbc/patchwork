@@ -13,7 +13,7 @@ app.on('ready', function ready () {
   // start sbot
   require('scuttlebot').init(config, function (err, sbot) {
     // register sbot plugins
-    sbot.use(require('phoenix-api'))
+    sbot.use(require('ssb-patchwork-api'))
     
     // setup blob and file serving
     var blobs = require('./lib/blobs')(sbot, app.getPath('userDesktop'))
@@ -23,7 +23,7 @@ app.on('ready', function ready () {
 
     // open main window
     var mainWindow = windows.open(
-      'file://' + path.join(__dirname, '../node_modules/ssbplug-phoenix/main.html'),
+      'file://' + path.join(__dirname, '../node_modules/ssb-patchwork-ui/main.html'),
       sbot,
       blobs,
       { width: 1030, height: 720 }
