@@ -1,5 +1,5 @@
 {
-  "name": "patchwork",
+  "name": "patchwork-app",
   "version": "0.0.0",
   "description": "",
   "main": "app/index.js",
