@@ -1,5 +1,5 @@
 {
-  "name": "patchwork-app",
+  "name": "ssb-patchwork",
   "version": "0.0.0",
   "description": "",
   "main": "app/index.js",
