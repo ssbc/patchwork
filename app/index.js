@@ -1,44 +1,56 @@
-var app = require('app')
+var app  = require('app')
 var Menu = require('menu')
 var path = require('path')
 var http = require('http')
 
-var config = require('ssb-config')
-var windows = require('./lib/windows')
+var windows    = require('./lib/windows')
+var config     = require('ssb-config')
+var ssbKeys    = require('ssb-keys')
+var createSbot = require('scuttlebot')
+  .use(require('scuttlebot/plugins/master'))
+  .use(require('scuttlebot/plugins/gossip'))
+  .use(require('scuttlebot/plugins/friends'))
+  .use(require('scuttlebot/plugins/replicate'))
+  .use(require('scuttlebot/plugins/blobs'))
+  .use(require('scuttlebot/plugins/invite'))
+  .use(require('scuttlebot/plugins/block'))
+  .use(require('scuttlebot/plugins/logging'))
+  .use(require('scuttlebot/plugins/crypto'))
+  .use(require('ssb-patchwork-api'))
 
-// Report crashes to our server.
-//require('crash-reporter').start();
+config.keys = ssbKeys.loadOrCreateSync(path.join(config.path, 'secret'))
+if(config.keys.curve === 'k256')
+  throw new Error('k256 curves are no longer supported,'+
+                  'please delete' + path.join(config.path, 'secret'))
 
-app.on('ready', function ready () {
+app.on('ready', function () {
   // start sbot
-  require('scuttlebot').init(config, function (err, sbot) {
-    // register sbot plugins
-    sbot.use(require('ssb-patchwork-api'))
-    
-    // setup blob and file serving
-    var blobs = require('./lib/blobs')(sbot, app.getPath('userDesktop'))
-    require('protocol').registerProtocol('blob', blobs.protocol)
-    http.createServer(blobs.server({ serveFiles: false })).listen(7777)
-    http.createServer(blobs.server({ serveFiles: true })).listen(7778)
+  var rebuild = false
+  var sbot = createSbot(config)
 
-    // open main window
-    var mainWindow = windows.open(
-      'file://' + path.join(__dirname, '../node_modules/ssb-patchwork-ui/main.html'),
-      sbot,
-      blobs,
-      { width: 1030, height: 720 }
-    )
-    require('./lib/menu')(mainWindow)
-    // mainWindow.openDevTools()
+  // setup blob and file serving
+  var blobs = require('./lib/blobs')(sbot, { blobs_dir: path.join(config.path, 'blobs'), checkout_dir: app.getPath('userDesktop') })
+  require('protocol').registerProtocol('blob', blobs.protocol)
+  http.createServer(blobs.server({ serveFiles: false })).listen(7777)
+  http.createServer(blobs.server({ serveFiles: true })).listen(7778)
 
-    // setup menu
-    // Menu.setApplicationMenu(Menu.buildFromTemplate([{
-    //   label: 'Window',
-    //   submenu: [
-    //     // { label: 'Open Web App', click: onopen },
-    //     { label: 'Quit', click: onquit }
-    //   ]
-    // }]))
+  // open main window
+  var mainWindow = windows.open(
+    'file://' + path.join(__dirname, '../node_modules/ssb-patchwork-ui/main.html'),
+    sbot,
+    blobs,
+    { width: 1030, height: 720 }
+  )
+  require('./lib/menu')(mainWindow)
+  // mainWindow.openDevTools()
 
-  })
+  // setup menu
+  // Menu.setApplicationMenu(Menu.buildFromTemplate([{
+  //   label: 'Window',
+  //   submenu: [
+  //     // { label: 'Open Web App', click: onopen },
+  //     { label: 'Quit', click: onquit }
+  //   ]
+  // }]))
+
 });

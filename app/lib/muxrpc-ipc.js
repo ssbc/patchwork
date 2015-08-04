@@ -2,7 +2,6 @@ var ipc        = require('ipc')
 var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
 var pushable   = require('pull-pushable')
-var Api        = require('scuttlebot/lib/api')
 
 var clientApi = {
   navigate: 'async',
@@ -10,19 +9,11 @@ var clientApi = {
 }
 
 module.exports = function (window, sbot, params) {
-  // construct api
-  var api = Api(sbot)
-  for (var k in sbot.manifest) {
-    if (typeof sbot.manifest[k] == 'object')
-      api[k] = sbot[k] // copy over the plugin APIs
-  }
-
-
   // add rpc APIs to window
   window.createRpc = function () {
     // create rpc object
-    var rpc = window.rpc = muxrpc(clientApi, sbot.manifest, serialize)(api)
-    rpc.authorized = { id: sbot.feed.id, role: 'master' }
+    var rpc = window.rpc = muxrpc(clientApi, sbot.manifest(), serialize)(sbot)
+    rpc.authorized = { id: sbot.id, role: 'master' }
     rpc.permissions({allow: null, deny: null})
     function serialize (stream) { return stream }
 
@@ -69,7 +60,7 @@ module.exports = function (window, sbot, params) {
   // setup helper messages
   ipc.on('fetch-manifest', function(e) {
     if (e.sender == window.webContents)
-      e.returnValue = sbot.manifest
+      e.returnValue = sbot.manifest()
   });
   ipc.on('fetch-params', function(e) {
     if (e.sender == window.webContents)

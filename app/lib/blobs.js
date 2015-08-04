@@ -7,8 +7,7 @@ var toPull      = require('stream-to-pull-stream')
 var querystring = require('querystring')
 var fs          = require('fs')
 
-module.exports = function (sbot, checkout_dir) {
-  var blobs_dir = path.join(sbot.config.path, 'blobs')
+module.exports = function (sbot, config) {
   var fallback_img_path = path.join(__dirname, '../../node_modules/ssbplug-phoenix/img/default-prof-pic.png')
   var nowaitOpts = { nowait: true }, id = function(){}
 
@@ -19,7 +18,7 @@ module.exports = function (sbot, checkout_dir) {
       // simple fetch
       var parsed = url_parse(request.url)
       if (request.method == 'GET' && parsed) {
-        var filepath = toPath(blobs_dir, parsed.hash)
+        var filepath = toPath(config.blobs_dir, parsed.hash)
         try {
           // check if the file exists
           fs.statSync(filepath) // :HACK: make async when we figure out how to make a protocol-handler support that
@@ -44,7 +43,7 @@ module.exports = function (sbot, checkout_dir) {
 
       // check if we have the blob, at the same time find an available filename
       var done = multicb()
-      fs.stat(toPath(blobs_dir, parsed.hash), done())
+      fs.stat(toPath(config.blobs_dir, parsed.hash), done())
       findCheckoutDst(filename, parsed.hash, done())
       done(function (err, res) {
         if (err && err.code == 'ENOENT')
@@ -57,7 +56,7 @@ module.exports = function (sbot, checkout_dir) {
           return cb(null, dst)
 
         // copy the file
-        var src = toPath(blobs_dir, parsed.hash)
+        var src = toPath(config.blobs_dir, parsed.hash)
         var read = fs.createReadStream(src)
         var write = fs.createWriteStream(dst)
         read.on('error', done)
@@ -131,7 +130,7 @@ module.exports = function (sbot, checkout_dir) {
       if (n !== 1) name += ' ('+n+')'
       name += parsed.ext
       n++
-      return path.join(checkout_dir, name)
+      return path.join(config.checkout_dir, name)
     }
 
     function next () {
@@ -160,7 +159,7 @@ module.exports = function (sbot, checkout_dir) {
 }
 
 // blob url parser
-var re = /^blob:([a-z0-9\+\/=]+\.(?:sha256|blake2s))\??(.*)$/i
+var re = /^blob:&([a-z0-9\+\/=]+\.(?:sha256|blake2s))\??(.*)$/i
 var url_parse =
 module.exports.url_parse = function (str) {
   var parts = re.exec(str)
