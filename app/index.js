@@ -15,7 +15,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/invite'))
   .use(require('scuttlebot/plugins/block'))
   .use(require('scuttlebot/plugins/logging'))
-  .use(require('scuttlebot/plugins/crypto'))
+  .use(require('scuttlebot/plugins/private'))
   .use(require('ssb-patchwork-api'))
 
 config.keys = ssbKeys.loadOrCreateSync(path.join(config.path, 'secret'))
