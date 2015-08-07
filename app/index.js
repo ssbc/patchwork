@@ -30,7 +30,7 @@ app.on('ready', function () {
 
   // setup blob and file serving
   var blobs = require('./lib/blobs')(sbot, { blobs_dir: path.join(config.path, 'blobs'), checkout_dir: app.getPath('userDesktop') })
-  require('protocol').registerProtocol('blob', blobs.protocol)
+  require('protocol').registerProtocol('pwblob', blobs.protocol)
   http.createServer(blobs.server({ serveFiles: false })).listen(7777)
   http.createServer(blobs.server({ serveFiles: true })).listen(7778)
 
