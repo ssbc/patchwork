@@ -12,27 +12,6 @@ module.exports = function (sbot, config) {
   var nowaitOpts = { nowait: true }, id = function(){}
 
   return {
-    // behavior for the blob: protocol
-    protocol: function (request) {
-      var protocol = require('protocol') // have to require here, doing so before app:ready causes errors
-      // simple fetch
-      var parsed = url_parse(request.url)
-      if (request.method == 'GET' && parsed) {
-        var filepath = toPath(config.blobs_dir, parsed.hash)
-        try {
-          // check if the file exists
-          fs.statSync(filepath) // :HACK: make async when we figure out how to make a protocol-handler support that
-          return new protocol.RequestFileJob(filepath)
-        } catch (e) {
-          // notfound
-          sbot.blobs.want(parsed.hash, nowaitOpts, id)
-          if (parsed.qs.fallback == 'img')
-            return new protocol.RequestFileJob(fallback_img_path)
-          return new protocol.RequestErrorJob(-6)
-        }
-      }
-    },
-
     // copy file from blobs into given dir with nice name
     checkout: function (url, cb) {
       var parsed = url_parse(url)
@@ -102,15 +81,24 @@ module.exports = function (sbot, config) {
         }
 
         // serve blob
-        var hash = req.url.slice(-51) // hash ids are 51 chars long
-        sbot.blobs.has(hash, function(err, has) {
+        var parsed = url_parse(req.url)
+        sbot.blobs.has(parsed.hash, function(err, has) {
           if (!has) {
+            sbot.blobs.want(parsed.hash, nowaitOpts, id)
+            if (parsed.qs.fallback == 'img') {
+              return fs.createReadStream(fallback_img_path)
+                .on('error', function () {
+                  res.writeHead(404)
+                  res.end('File not found')
+                })
+                .pipe(res)
+            }
             res.writeHead(404)
             res.end('File not found')
             return
           }
           pull(
-            sbot.blobs.get(hash),
+            sbot.blobs.get(parsed.hash),
             toPull(res)
           )
         })
@@ -159,7 +147,14 @@ module.exports = function (sbot, config) {
 }
 
 // blob url parser
-var re = /^pwblob:&([a-z0-9\+\/=]+\.(?:sha256|blake2s))\??(.*)$/i
+// var re = /^pwblob:&([a-z0-9\+\/=]+\.(?:sha256|blake2s))\??(.*)$/i
+// var url_parse =
+// module.exports.url_parse = function (str) {
+//   var parts = re.exec(str)
+//   if (parts)
+//     return { hash: parts[1], qs: querystring.parse(parts[2]) }
+// }
+var re = /^(?:http:\/\/localhost:7777)?\/&([a-z0-9\+\/=]+\.(?:sha256|blake2s))\??(.*)$/i
 var url_parse =
 module.exports.url_parse = function (str) {
   var parts = re.exec(str)

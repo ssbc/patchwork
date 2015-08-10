@@ -34,7 +34,7 @@ module.exports.open = function (url, sbot, blobs, opts, params) {
   
   win.webContents.on('new-window', function (e, url) {
     e.preventDefault() // hell naw
-    if (url.indexOf('blob:') === 0) {
+    if (url.indexOf('http://localhost:7777/') === 0) {
       // open the file
       blobs.checkout(url, function (err, filepath) {
         if (err) {

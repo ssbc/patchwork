@@ -30,7 +30,7 @@
     "muxrpc": "^5.0.1",
     "pull-pushable": "^1.1.4",
     "pull-stream": "^2.27.0",
-    "scuttlebot": "^6.0.0",
+    "scuttlebot": "^6.1.5",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
     "ssb-patchwork-api": "~0.0.1",
