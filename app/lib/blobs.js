@@ -8,7 +8,8 @@ var querystring = require('querystring')
 var fs          = require('fs')
 
 module.exports = function (sbot, config) {
-  var fallback_img_path = path.join(__dirname, '../../node_modules/ssbplug-phoenix/img/default-prof-pic.png')
+  var fallback_img_path = path.join(__dirname, '../../node_modules/ssb-patchwork-ui/img/default-prof-pic.png')
+  var fallback_video_path = path.join(__dirname, '../../node_modules/ssb-patchwork-ui/img/spinner.webm')
   var nowaitOpts = { nowait: true }, id = function(){}
 
   return {
@@ -85,8 +86,10 @@ module.exports = function (sbot, config) {
         sbot.blobs.has(parsed.hash, function(err, has) {
           if (!has) {
             sbot.blobs.want(parsed.hash, nowaitOpts, id)
-            if (parsed.qs.fallback == 'img') {
-              return fs.createReadStream(fallback_img_path)
+            if (parsed.qs.fallback) {
+              var p = (parsed.qs.fallback == 'video') ? fallback_video_path : fallback_img_path
+              console.log('falling back', p)
+              return fs.createReadStream(p)
                 .on('error', function () {
                   res.writeHead(404)
                   res.end('File not found')
