@@ -2,6 +2,7 @@ var app  = require('app')
 var Menu = require('menu')
 var path = require('path')
 var http = require('http')
+var fs   = require('fs')
 
 var windows    = require('./lib/windows')
 var config     = require('ssb-config')
@@ -27,6 +28,12 @@ app.on('ready', function () {
   // start sbot
   var rebuild = false
   var sbot = createSbot(config)
+
+  // write manifest file
+  fs.writeFileSync(
+    path.join(config.path, 'manifest.json'),
+    JSON.stringify(sbot.getManifest(), null, 2)
+  )
 
   // setup blob and file serving
   var blobs = require('./lib/blobs')(sbot, { blobs_dir: path.join(config.path, 'blobs'), checkout_dir: app.getPath('userDesktop') })
