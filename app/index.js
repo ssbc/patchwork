@@ -5,7 +5,7 @@ var http = require('http')
 var fs   = require('fs')
 
 var windows    = require('./lib/windows')
-var config     = require('ssb-config')
+var config     = require('ssb-config/inject')(process.env.ssb_appname)
 var ssbKeys    = require('ssb-keys')
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
