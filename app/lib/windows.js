@@ -58,6 +58,14 @@ module.exports.open = function (url, sbot, blobs, opts, params) {
           shell.openItem(filepath) // open in desktop's default program
         }
       })
+    } else if (url.indexOf('file://') === 0) {
+      var mainWindow = open(
+        url,
+        sbot,
+        blobs,
+        { width: 1030, height: 720 }
+      )
+      require('./menu')(mainWindow)
     } else {
       // open in the browser
       shell.openExternal(url)
