@@ -6,6 +6,7 @@ var pull        = require('pull-stream')
 var toPull      = require('stream-to-pull-stream')
 var querystring = require('querystring')
 var fs          = require('fs')
+var URL         = require('url')
 
 module.exports = function (sbot, config) {
   var fallback_img_path = path.join(__dirname, '../../node_modules/ssb-patchwork-ui/img/default-prof-pic.png')
@@ -71,8 +72,14 @@ module.exports = function (sbot, config) {
           "sandbox allow-scripts"
         )
 
-        if (req.url.slice(-7) != '.sha256' && opts.serveFiles) {
-          // try to serve from local FS if the path is not a supported hash
+        // local files
+        if (req.url.charAt(1) != '&' && req.url.charAt(1) != '@') {
+          if (!opts.serveFiles) {
+            res.writeHead(404)
+            res.end('File not found')
+            return            
+          }
+
           return fs.createReadStream(req.url)
             .on('error', function () {
               res.writeHead(404)
@@ -81,32 +88,49 @@ module.exports = function (sbot, config) {
             .pipe(res)
         }
 
-        // serve blob
-        var parsed = url_parse(req.url)
-        sbot.blobs.has(parsed.hash, function(err, has) {
-          if (!has) {
-            sbot.blobs.want(parsed.hash, nowaitOpts, id)
-            if (parsed.qs.fallback) {
-              var p = (parsed.qs.fallback == 'video') ? fallback_video_path : fallback_img_path
-              console.log('falling back', p)
-              return fs.createReadStream(p)
-                .on('error', function () {
-                  res.writeHead(404)
-                  res.end('File not found')
-                })
-                .pipe(res)
+        // blobs
+        // var parsed = url_parse(req.url)
+        var parsed = URL.parse(req.url, true)
+        if (req.url.charAt(1) == '&')
+          serveblob(parsed.pathname.slice(1), parsed.query.fallback, res)
+        else {
+          sbot.patchwork.getSiteLink(parsed.pathname.slice(1), function (err, link) {
+            if (err) {
+              res.writeHead(404)
+              res.end('File not found')              
+            } else {
+              if (link.type)
+                res.setHeader('Content-Type', link.type)
+              serveblob(link.link, null, res)
             }
-            res.writeHead(404)
-            res.end('File not found')
-            return
-          }
-          pull(
-            sbot.blobs.get(parsed.hash),
-            toPull(res)
-          )
-        })
+          })
+        }
       }
     }
+  }
+
+  function serveblob (hash, fallback, res) {
+    sbot.blobs.has(hash, function(err, has) {
+      if (!has) {
+        sbot.blobs.want(hash, nowaitOpts, id)
+        if (fallback) {
+          var p = (fallback == 'video') ? fallback_video_path : fallback_img_path
+          return fs.createReadStream(p)
+            .on('error', function () {
+              res.writeHead(404)
+              res.end('File not found')
+            })
+            .pipe(res)
+        }
+        res.writeHead(404)
+        res.end('File not found')
+        return
+      }
+      pull(
+        sbot.blobs.get(hash),
+        toPull(res)
+      )
+    })
   }
 
   // helper to create a filename in checkout_dir that isnt already in use
@@ -162,14 +186,5 @@ var url_parse =
 module.exports.url_parse = function (str) {
   var parts = re.exec(str)
   if (parts)
-    return { hash: parts[1], qs: querystring.parse(parts[2]) }
-}
-
-// blob url builder
-var url_stringify =
-module.exports.url_stringify = function (hash, qs) {
-  var url = 'blob:'+hash
-  if (qs && typeof qs == 'object')
-    url += '?' + querystring.stringify(qs)
-  return url
+    return { path: parts[1], qs: querystring.parse(parts[2]) }
 }
