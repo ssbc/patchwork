@@ -1,7 +1,7 @@
 var ipc        = require('ipc')
 var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
-var pushable   = require('pull-pushable')
+var pullipc    = require('pull-ipc')
 
 var clientApi = {
   navigate: 'async',
@@ -19,33 +19,10 @@ module.exports = function (window, sbot, params) {
 
     // start the stream
     window.rpcStream = rpc.createStream()
-    var ipcPush = pushable()
-    ipc.on('muxrpc-ssb', function (e, msg) {
-      if (e.sender == window.webContents) {
-        try {
-          if (typeof msg == 'string')
-            msg = JSON.parse(msg)
-        } catch (e) {
-          return
-        }
-        if (msg.bvalue) {
-          msg.value = new Buffer(msg.bvalue, 'base64')
-          delete msg.bvalue
-        }
-        ipcPush.push(msg)
-      }
+    var ipcStream = pullipc('ssb-muxrpc', ipc, window, function (err) {
+      console.log('ipc-stream ended', err)
     })
-    pull(ipcPush, window.rpcStream, pull.drain(
-      function (msg) { 
-        if (msg.value && Buffer.isBuffer(msg.value)) {
-          // convert buffers to base64
-          msg.bvalue = msg.value.toString('base64')
-          delete msg.value
-        }
-        window.webContents.send('muxrpc-ssb', JSON.stringify(msg))
-      },
-      function (err) { if (err) { console.error(err) } }
-    ))
+    pull(ipcStream, window.rpcStream, ipcStream)
   }
   window.resetRpc = function () {
     console.log('close rpc')
