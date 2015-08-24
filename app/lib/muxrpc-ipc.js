@@ -14,7 +14,6 @@ module.exports = function (window, sbot, params) {
     // create rpc object
     var rpc = window.rpc = muxrpc(clientApi, sbot.manifest(), serialize)(sbot)
     rpc.authorized = { id: sbot.id, role: 'master' }
-    rpc.permissions({allow: null, deny: null})
     function serialize (stream) { return stream }
 
     // start the stream
@@ -26,7 +25,7 @@ module.exports = function (window, sbot, params) {
   }
   window.resetRpc = function () {
     console.log('close rpc')
-    window.rpcStream.source(true)
+    window.rpcStream.source('close')
     window.rpc.close()
     window.createRpc()
   }

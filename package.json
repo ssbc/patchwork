@@ -27,7 +27,7 @@
   "dependencies": {
     "multiblob": "^1.5.0",
     "multicb": "^1.1.0",
-    "muxrpc": "^5.0.1",
+    "muxrpc": "^6.1.1",
     "pull-ipc": "0.0.1",
     "pull-pushable": "^1.1.4",
     "pull-stream": "^2.27.0",
