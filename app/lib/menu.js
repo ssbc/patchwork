@@ -69,6 +69,16 @@ module.exports = function (window) {
           label: 'Select All',
           accelerator: 'Command+A',
           selector: 'selectAll:'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Find',
+          accelerator: 'Command+F',
+          click: function () {
+            window.rpc.triggerFind()
+          }
         }
       ]
     },
