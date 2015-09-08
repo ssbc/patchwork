@@ -1,13 +1,17 @@
 var BrowserWindow = require('browser-window')
-var path = require('path')
-var shell = require('shell')
-var setupRpc = require('./muxrpc-ipc')
+var path          = require('path')
+var shell         = require('shell')
+var ipc           = require('ipc')
+var muxrpc        = require('muxrpc')
+var pull          = require('pull-stream')
+var pullipc       = require('pull-ipc')
 
 var windows = []
-
-var secureWebPreferences = {
+var clientApi = {}
+var requiredOpts = {
   javascript: true,
   'web-security': true,
+  'node-integration': false,
   images: true,
   java: false,
   webgl: false, // maybe allow?
@@ -19,15 +23,21 @@ var secureWebPreferences = {
 }
 
 var open =
-module.exports.open = function (url, opts, params) {
-  url = url || 'file://' + path.join(__dirname, '../../node_modules/ssb-patchwork-ui/main.html'),
+module.exports.open = function (url, opts, manifest, rpcapi) {
   opts = opts || { width: 1030, height: 720 }
 
+  // copy over fixed options
+  for (var k in requiredOpts)
+    opts[k] = requiredOpts[k]
+
+  // setup the window
   var win = new BrowserWindow(opts)
   win.loadUrl(url)
-  setupRpc(win, params)
-  windows.push(win)
+  if (manifest && rpcapi)
+    setupRpc(win, manifest, rpcapi)
   
+  // manage the window's lifecycle
+  windows.push(win)
   win.on('closed', function() {
     var i = windows.indexOf(win)
     windows.splice(i, 1)
@@ -35,10 +45,52 @@ module.exports.open = function (url, opts, params) {
   })
   
   win.webContents.on('new-window', function (e, url) {
-    e.preventDefault() // hell naw
+    e.preventDefault()
     // open in the browser
     shell.openExternal(url)
   })
 
   return win
+}
+
+module.exports.openLauncher = function () {
+  return open('file://' + path.join(__dirname, '../ui/launcher.html'), 
+    { preload: path.join(__dirname, '../ui/launcher-preload.js'), width: 340, height: 200 },
+    { open: 'async' },
+    { open: function (url, cb) {
+      open(url, null)
+      cb()
+    }}
+  )
+}
+
+function setupRpc (window, manifest, rpcapi) {
+  // add rpc APIs to window
+  window.createRpc = function () {
+    // create rpc object
+    var rpc = window.rpc = muxrpc(clientApi, /*sbot.manifest()*/manifest, serialize)(/*sbot*/rpcapi)
+    function serialize (stream) { return stream }
+
+    // start the stream
+    window.rpcStream = rpc.createStream()
+    var ipcStream = pullipc('muxrpc', ipc, window, function (err) {
+      console.log('ipc-stream ended', err)
+    })
+    pull(ipcStream, window.rpcStream, ipcStream)
+  }
+  window.resetRpc = function () {
+    console.log('close rpc')
+    window.rpcStream.source('close')
+    window.rpc.close()
+    window.createRpc()
+  }
+
+  // setup default stream
+  window.createRpc()
+
+  // setup helper messages
+  ipc.on('fetch-manifest', function(e) {
+    if (e.sender == window.webContents)
+      e.returnValue = manifest
+  })
 }

@@ -11,7 +11,7 @@ app.on('ready', function () {
   http.createServer(require('./lib/blobs-http-server')()).listen(7777)
 
   // open launcher window
-  windows.open()
+  windows.openLauncher()
   require('./lib/menu')()
   // mainWindow.openDevTools()
 });

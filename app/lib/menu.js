@@ -104,7 +104,7 @@ module.exports = function () {
         {
           label: 'New Window',
           accelerator: 'CmdOrCtrl+N',
-          click: function (e, window) { windows.open() }
+          click: function (e, window) { windows.openLauncher() }
         },
         {
           label: 'Minimize',
