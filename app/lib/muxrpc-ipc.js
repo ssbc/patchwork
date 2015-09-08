@@ -9,7 +9,9 @@ var clientApi = {
   triggerFind: 'async'
 }
 
-module.exports = function (window, sbot, params) {
+module.exports = function (window, params) {
+  var sbot = require('./sbot').get()
+
   // add rpc APIs to window
   window.createRpc = function () {
     // create rpc object

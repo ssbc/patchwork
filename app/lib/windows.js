@@ -19,10 +19,13 @@ var secureWebPreferences = {
 }
 
 var open =
-module.exports.open = function (sbot, url, opts, params) {
+module.exports.open = function (url, opts, params) {
+  url = url || 'file://' + path.join(__dirname, '../../node_modules/ssb-patchwork-ui/main.html'),
+  opts = opts || { width: 1030, height: 720 }
+
   var win = new BrowserWindow(opts)
   win.loadUrl(url)
-  setupRpc(win, sbot, params)
+  setupRpc(win, params)
   windows.push(win)
   
   win.on('closed', function() {

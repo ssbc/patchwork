@@ -2,8 +2,9 @@ var pull        = require('pull-stream')
 var toPull      = require('stream-to-pull-stream')
 var URL         = require('url')
 
-module.exports = function (sbot) {
+module.exports = function () {
   var nowaitOpts = { nowait: true }, id = function(){}
+  var sbot = require('./sbot').get()
 
   return function (req, res) {
     // local-host only
