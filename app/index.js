@@ -26,7 +26,6 @@ if(config.keys.curve === 'k256')
 
 app.on('ready', function () {
   // start sbot
-  var rebuild = false
   var sbot = createSbot(config)
 
   // write manifest file
@@ -35,28 +34,15 @@ app.on('ready', function () {
     JSON.stringify(sbot.getManifest(), null, 2)
   )
 
-  // setup blob and file serving
-  var blobs = require('./lib/blobs')(sbot, { blobs_dir: path.join(config.path, 'blobs'), checkout_dir: app.getPath('userDesktop') })
-  http.createServer(blobs.server({ serveFiles: false })).listen(7777)
-  http.createServer(blobs.server({ serveFiles: true })).listen(7778)
+  // setup blob server
+  http.createServer(require('./lib/blobs-http-server')(sbot)).listen(7777)
 
-  // open main window
+  // open launcher window
   var mainWindow = windows.open(
-    'file://' + path.join(__dirname, '../node_modules/ssb-patchwork-ui/main.html'),
     sbot,
-    blobs,
+    'file://' + path.join(__dirname, '../node_modules/ssb-patchwork-ui/main.html'),
     { width: 1030, height: 720 }
   )
   require('./lib/menu')(mainWindow)
   // mainWindow.openDevTools()
-
-  // setup menu
-  // Menu.setApplicationMenu(Menu.buildFromTemplate([{
-  //   label: 'Window',
-  //   submenu: [
-  //     // { label: 'Open Web App', click: onopen },
-  //     { label: 'Quit', click: onquit }
-  //   ]
-  // }]))
-
 });
