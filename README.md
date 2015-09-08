@@ -8,6 +8,10 @@ Patchwork isn't a website: it runs on your computer and syncs over the Internet 
 
 <a href="http://ssbc.github.io/">Learn more</a>
 
+## installation
+
+follow installation instructions [here](https://github.com/ssbc/docs#install-prerequisites)
+
 ## Some development notes:
 
 ```
