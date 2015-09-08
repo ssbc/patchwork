@@ -2,7 +2,8 @@ var Menu = require('menu')
 var dialog = require('dialog')
 var windows = require('./windows')
 
-module.exports.create = function () {
+module.exports.create = function (opts) {
+  opts = opts || {}
   var template = [
     {
       label: 'Patchwork',
@@ -95,8 +96,12 @@ module.exports.create = function () {
           label: 'Toggle DevTools',
           accelerator: 'Alt+CmdOrCtrl+I',
           click: function (e, window) { window.toggleDevTools(); }
-        },
+        }
       ]
+    },
+    {
+      label: 'Application',
+      submenu: opts.appmenu
     },
     {
       label: 'Window',

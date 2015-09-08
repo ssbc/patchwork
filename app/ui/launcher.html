@@ -20,13 +20,11 @@ body {
 <script>
 function openhash (e) {
   var hash = byhash.hash.value
-  if (!hash)
-    return
-  open('http://localhost:7777/'+hash)
+  if (hash) open('http://localhost:7777/'+hash+'?bundle=1')
   return false
 }
 function openpath (e) {
-  open('file://'+byfile.path.files[0].path)
+  open('http://localhost:7778'+byfile.path.files[0].path+'?bundle=1')
   return false
 }
 function open (url) {

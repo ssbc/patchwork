@@ -27,7 +27,12 @@ module.exports = function () {
 
     // blobs
     var parsed = URL.parse(req.url, true)
-    if (req.url.charAt(1) == '&')
+    if (parsed.query.bundle) {
+      // serve app bundle
+      res.writeHead(200)
+      res.end('<html><body><script src="http://localhost:7777'+parsed.pathname+'"></script></body></html>')
+    }
+    else if (req.url.charAt(1) == '&')
       serveblob(parsed.pathname.slice(1), parsed.query.fallback)
     else {
       respond(404)
