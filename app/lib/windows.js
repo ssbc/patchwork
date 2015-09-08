@@ -1,4 +1,5 @@
 var BrowserWindow = require('browser-window')
+var Menu          = require('menu')
 var path          = require('path')
 var shell         = require('shell')
 var ipc           = require('ipc')
@@ -35,7 +36,10 @@ module.exports.open = function (url, opts, manifest, rpcapi) {
   win.loadUrl(url)
   if (manifest && rpcapi)
     setupRpc(win, manifest, rpcapi)
-  
+  win.setMenu(win.menu = require('./menu').create())
+  if (process.platform == 'darwin')
+    Menu.setApplicationMenu(win.menu)
+
   // manage the window's lifecycle
   windows.push(win)
   win.on('closed', function() {
@@ -44,6 +48,7 @@ module.exports.open = function (url, opts, manifest, rpcapi) {
     win = null
   })
   
+  // event handlers
   win.webContents.on('new-window', function (e, url) {
     e.preventDefault()
     // open in the browser
@@ -68,19 +73,19 @@ function setupRpc (window, manifest, rpcapi) {
   // add rpc APIs to window
   window.createRpc = function () {
     // create rpc object
-    var rpc = window.rpc = muxrpc(clientApi, /*sbot.manifest()*/manifest, serialize)(/*sbot*/rpcapi)
+    var rpc = window.rpc = muxrpc(clientApi, manifest, serialize)(rpcapi)
     function serialize (stream) { return stream }
 
     // start the stream
-    window.rpcStream = rpc.createStream()
-    var ipcStream = pullipc('muxrpc', ipc, window, function (err) {
+    window.rpcstream = rpc.createStream()
+    var ipcstream = pullipc('muxrpc', ipc, window, function (err) {
       console.log('ipc-stream ended', err)
     })
-    pull(ipcStream, window.rpcStream, ipcStream)
+    pull(ipcstream, window.rpcstream, ipcstream)
   }
   window.resetRpc = function () {
     console.log('close rpc')
-    window.rpcStream.source('close')
+    window.rpcstream.source('close')
     window.rpc.close()
     window.createRpc()
   }

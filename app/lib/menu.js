@@ -2,7 +2,7 @@ var Menu = require('menu')
 var dialog = require('dialog')
 var windows = require('./windows')
 
-module.exports = function () {
+module.exports.create = function () {
   var template = [
     {
       label: 'Patchwork',
@@ -131,6 +131,5 @@ module.exports = function () {
     }
   ]
 
-  menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  return Menu.buildFromTemplate(template)
 }

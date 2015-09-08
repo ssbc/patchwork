@@ -30,8 +30,13 @@ function openpath (e) {
   return false
 }
 function open (url) {
-  env.open(url)
-  window.close()
+  env.open(url, function (err) {
+    if (err) {
+      console.error(err)
+      alert(err.message)
+    } else
+      window.close()
+  })
 }
 </script>
 

@@ -3,7 +3,8 @@ var Menu = require('menu')
 var path = require('path')
 var http = require('http')
 
-var windows    = require('./lib/windows')
+var menu = require('./lib/menu')
+var windows = require('./lib/windows')
 
 app.on('ready', function () {
   // setup servers
@@ -12,6 +13,12 @@ app.on('ready', function () {
 
   // open launcher window
   windows.openLauncher()
-  require('./lib/menu')()
   // mainWindow.openDevTools()
+
+  // dynamically update main menu on osx
+  if (process.platform == 'darwin') {
+    app.on('browser-window-focus', function (e, window) {
+      Menu.setApplicationMenu(window.menu)
+    })
+  }
 });
