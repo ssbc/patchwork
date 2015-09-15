@@ -8,13 +8,47 @@ Patchwork isn't a website: it runs on your computer and syncs over the Internet 
 
 <a href="http://ssbc.github.io/">Learn more</a>
 
-## Some development notes:
+
+## Running Patchwork
+
+**Dependencies:**
+
+```
+# Linux dependencies
+apt-get install automake
+
+# OSX dependencies
+brew install automake
+```
+
+```
+npm install
+npm start
+```
+
+
+## Development & App-building : 
+
+
+**Dependencies**
+
+```
+# Linux dependencies
+add-apt-repository ppa:ubuntu-wine/ppa -y
+apt-get update
+apt-get install nsis wine
+
+# OSX dependencies
+brew install makensis wine
+```
 
 ```
 npm install -d
 npm run build
 npm run pack
 ```
+
+---
 
 Relevant docs:
 
