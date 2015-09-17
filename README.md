@@ -26,6 +26,10 @@ npm install
 npm start
 ```
 
+**Start connecting by joining a pub server**
+
+Check out the list of active servers [here](https://github.com/ssbc/scuttlebot/wiki/Pub-Servers)
+
 
 ## Development & App-building : 
 
