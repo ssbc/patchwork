@@ -1,7 +1,9 @@
 var Menu = require('menu')
 var dialog = require('dialog')
+var windows = require('./windows')
 
-module.exports = function (window) {
+module.exports.create = function (opts) {
+  opts = opts || {}
   var template = [
     {
       label: 'Patchwork',
@@ -14,24 +16,34 @@ module.exports = function (window) {
           type: 'separator'
         },
         {
-          label: 'Quit',
-          accelerator: 'Command+Q',
-          selector: 'terminate:'
-        }
-      ]
-    },
-    {
-      label: 'File',
-      submenu: [
+          label: 'Services',
+          submenu: []
+        },
         {
-          label: 'Open File...',
-          accelerator: 'Command+O',
-          click: function() { 
-            var paths = dialog.showOpenDialog(window, { properties: ['openFile'] })
-            if (paths && paths[0])
-              window.rpc.navigate(paths[0])
-          }
-        }
+          type: 'separator'
+        },
+        {
+          label: 'Hide Patchwork',
+          accelerator: 'CmdOrCtrl+H',
+          selector: 'hide:'
+        },
+        {
+          label: 'Hide Others',
+          accelerator: 'CmdOrCtrl+Shift+H',
+          selector: 'hideOtherApplications:'
+        },
+        {
+          label: 'Show All',
+          selector: 'unhideAllApplications:'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Quit',
+          accelerator: 'CmdOrCtrl+Q',
+          selector: 'terminate:'
+        },
       ]
     },
     {
@@ -39,12 +51,12 @@ module.exports = function (window) {
       submenu: [
         {
           label: 'Undo',
-          accelerator: 'Command+Z',
+          accelerator: 'CmdOrCtrl+Z',
           selector: 'undo:'
         },
         {
           label: 'Redo',
-          accelerator: 'Shift+Command+Z',
+          accelerator: 'Shift+CmdOrCtrl+Z',
           selector: 'redo:'
         },
         {
@@ -52,33 +64,23 @@ module.exports = function (window) {
         },
         {
           label: 'Cut',
-          accelerator: 'Command+X',
+          accelerator: 'CmdOrCtrl+X',
           selector: 'cut:'
         },
         {
           label: 'Copy',
-          accelerator: 'Command+C',
+          accelerator: 'CmdOrCtrl+C',
           selector: 'copy:'
         },
         {
           label: 'Paste',
-          accelerator: 'Command+V',
+          accelerator: 'CmdOrCtrl+V',
           selector: 'paste:'
         },
         {
           label: 'Select All',
-          accelerator: 'Command+A',
+          accelerator: 'CmdOrCtrl+A',
           selector: 'selectAll:'
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Find',
-          accelerator: 'Command+F',
-          click: function () {
-            window.rpc.triggerFind()
-          }
         }
       ]
     },
@@ -87,32 +89,36 @@ module.exports = function (window) {
       submenu: [
         {
           label: 'Reload',
-          accelerator: 'Command+R',
-          click: function() { 
-            window.resetRpc()
-            window.reload()
-          }
+          accelerator: 'CmdOrCtrl+R',
+          click: function (e, window) { window.reload(); }
         },
         {
           label: 'Toggle DevTools',
-          accelerator: 'Alt+Command+I',
-          click: function() { 
-            window.rpc.contextualToggleDevTools()
-          }
-        },
+          accelerator: 'Alt+CmdOrCtrl+I',
+          click: function (e, window) { window.toggleDevTools(); }
+        }
       ]
+    },
+    {
+      label: 'Application',
+      submenu: opts.appmenu
     },
     {
       label: 'Window',
       submenu: [
         {
+          label: 'New Window',
+          accelerator: 'CmdOrCtrl+N',
+          click: function (e, window) { windows.openLauncher() }
+        },
+        {
           label: 'Minimize',
-          accelerator: 'Command+M',
+          accelerator: 'CmdOrCtrl+M',
           selector: 'performMiniaturize:'
         },
         {
           label: 'Close',
-          accelerator: 'Command+W',
+          accelerator: 'CmdOrCtrl+W',
           selector: 'performClose:'
         },
         {
@@ -130,6 +136,5 @@ module.exports = function (window) {
     }
   ]
 
-  menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  return Menu.buildFromTemplate(template)
 }

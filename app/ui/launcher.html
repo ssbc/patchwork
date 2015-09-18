@@ -1,0 +1,42 @@
+<html>
+<head><title>patchwork: launch app</title></head>
+<body>
+
+<style>
+body {
+  text-align: center;
+}
+</style>
+
+<h1>launch app</h1>
+<form id="byhash" onsubmit="return openhash(event)">
+  <p>By hash: <input name="hash"> <input type="submit" value="Open"></p>
+</form>
+<p>-or-</p>
+<form id="byfile" onsubmit="return openpath(event)">
+  <p><input name="path" type="file" onchange="return openpath(event)"></p>
+</form>
+
+<script>
+function openhash (e) {
+  var hash = byhash.hash.value
+  if (hash) open('http://localhost:7777/'+hash+'?bundle=1')
+  return false
+}
+function openpath (e) {
+  open('http://localhost:7778'+byfile.path.files[0].path+'?bundle=1')
+  return false
+}
+function open (url) {
+  env.open(url, function (err) {
+    if (err) {
+      console.error(err)
+      alert(err.message)
+    } else
+      window.close()
+  })
+}
+</script>
+
+</body>
+</html>
