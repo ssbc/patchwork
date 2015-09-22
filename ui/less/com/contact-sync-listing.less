@@ -1,0 +1,39 @@
+.contact-sync-listing {
+
+  &.empty {
+    padding: 10px;
+    background: #fff;
+    font-size: 18px;
+  }
+
+  .peer {
+    margin: 10px 0;
+  }
+  .peer-title {
+    font-size: 21px;
+    padding: 5px 10px;
+    background: #fff;
+    position: relative;
+
+    &:before {
+      content: attr(data-history);
+      position: absolute;
+      bottom: 10px;
+      left: 77px;
+      font-size: 12px;
+      color: gray;
+    }
+    
+    .hexagon-60 {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+  .contact-feed-container {
+    padding: 10px;
+    &:before {
+      content: 'follows:';
+      color: #777;
+    }
+  }
+}

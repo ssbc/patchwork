@@ -1,0 +1,1 @@
+module.exports = { anonymous: { allow: [] } } // allow nothing unless master

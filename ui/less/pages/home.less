@@ -1,0 +1,52 @@
+.home-page {
+  .shortcuts {
+    display: flex;
+    margin: 5px 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 6px 0;
+    font-size: 21px;
+
+    a {
+      flex: 1;
+      color: gray;
+      padding: 0 12px;
+      text-align: center;
+      border-right: 1px solid #ccc;
+      &:last-child {
+        border: 0;
+      }
+      &.highlight {
+        color: @brand-primary;
+      }
+    }
+  }
+
+  .flagged-nsfw, .flagged-spam, .flagged-abuse {
+    display: none;
+  }
+  .show-nsfw .flagged-nsfw {
+    display: block;
+  }
+  .show-spam .flagged-spam {
+    display: block;
+  }
+  .show-abuse .flagged-abuse {
+    display: block;
+  }
+  .layout-twocol {
+    max-width: 910px;
+  }
+  .layout-rightnav {
+    flex: 0 0 290px;
+  }
+  .livemode-progress-bars {
+    max-width: 560px;
+    margin: 0 auto;
+    .progress {
+      height: 5px;
+      border-radius: 0;
+    }
+  }
+}

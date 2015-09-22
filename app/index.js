@@ -17,7 +17,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/block'))
   .use(require('scuttlebot/plugins/logging'))
   .use(require('scuttlebot/plugins/private'))
-  .use(require('ssb-patchwork-api'))
+  .use(require('../api'))
 
 config.keys = ssbKeys.loadOrCreateSync(path.join(config.path, 'secret'))
 if(config.keys.curve === 'k256')
@@ -42,7 +42,7 @@ app.on('ready', function () {
 
   // open main window
   var mainWindow = windows.open(
-    'file://' + path.join(__dirname, '../node_modules/ssb-patchwork-ui/main.html'),
+    'file://' + path.join(__dirname, '../ui/main.html'),
     sbot,
     blobs,
     { width: 1030, height: 720 }

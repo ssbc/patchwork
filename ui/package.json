@@ -1,0 +1,51 @@
+{
+  "name": "ssb-patchwork-ui",
+  "description": "patchwork's ui module",
+  "version": "0.0.20",
+  "homepage": "https://github.com/ssbc/patchwork-ui",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ssbc/patchwork-ui.git"
+  },
+  "scripts": {
+    "build": "mkdir -p css; lessc less/main.less css/main.css",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "blake2s": "~1.0.0",
+    "blob-to-buffer": "^1.2.3",
+    "eccjs": "git://github.com/dominictarr/eccjs.git#586f6d47507184a2efe84684ed0a30605cbc43a5",
+    "emoji-named-characters": "^1.0.1",
+    "hyperscript": "~1.4.6",
+    "mime-types": "^2.1.3",
+    "multiblob": "~1.5.0",
+    "multicb": "~1.1.0",
+    "muxrpc": "~5.0.1",
+    "nicedate": "~0.0.0",
+    "observable": "^2.1.3",
+    "once": "~1.3.1",
+    "phoenix-router": "~1.0.0",
+    "published-working-tree": "~0.0.0",
+    "pull-cat": "^1.1.7",
+    "pull-ipc": "0.0.1",
+    "pull-merge": "~1.0.2",
+    "pull-paramap": "^1.1.3",
+    "pull-pushable": "^1.1.4",
+    "pull-stream": "~2.24.1",
+    "pull-stream-to-stream": "~1.3.0",
+    "pull-ws-server": "~1.1.1",
+    "ssb-client": "~1.0.2",
+    "ssb-manifest": "^1.1.1",
+    "ssb-marked": "~0.5.0",
+    "ssb-msg-schemas": "~5.0.0",
+    "ssb-msgs": "~5.0.0",
+    "ssb-ref": "~2.2.0",
+    "stream-to-pull-stream": "~1.6.0",
+    "suggest-box": "~1.1.6"
+  },
+  "devDependencies": {
+    "less": "~1.7.5"
+  },
+  "author": "Paul Frazee <pfrazee@gmail.com>",
+  "license": "MIT"
+}

@@ -1,0 +1,64 @@
+.contact-listing {
+  display: flex;
+  color: #555;
+
+  .profpic {
+    margin-left: 10px;
+    height: 75px;
+  }
+  .details {
+    flex: 1;
+    margin-left: 14px;
+    padding: 10px 0;
+    p {
+      margin: 0 15px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .name {
+      font-size: 21px;
+
+      a {
+        color: #444;
+        font-weight: bold;
+      }
+    }
+  }
+  .actions {
+    padding: 24px 10px 0 0;
+  }
+  .text-danger {
+    color: #FD241F;
+  }
+
+  &:not(.compact):nth-child(odd) {
+    background: #fff;
+    .details {
+      margin-left: 60px;
+    }
+  }
+  &:not(.compact):nth-child(even) {
+    .profpic {
+      margin-left: 54px;
+    }
+  }
+  &.compact {
+    .details {
+      margin-left: 8px;
+    }
+    .profpic {
+      height: auto;
+      margin-top: 10px;
+    }
+  }
+}
+
+.peers {
+  margin: 0;
+}
+
+.address-book-page {
+  .message-feed-container {
+    padding-top: 10px;
+  }
+}

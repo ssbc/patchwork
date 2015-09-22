@@ -1,0 +1,133 @@
+.profile-page {
+  .flagged-nsfw, .flagged-spam, .flagged-abuse {
+    display: none;
+  }
+  .show-nsfw .flagged-nsfw {
+    display: block;
+  }
+  .show-spam .flagged-spam {
+    display: block;
+  }
+  .show-abuse .flagged-abuse {
+    display: block;
+  }
+}
+
+.profile-header {
+  max-width: 560px;
+  margin: 8px auto 0;
+
+  h1 {
+    font-size: 56px;
+    color: #555;
+    display: inline;
+  }
+  .btn {
+    float: right;
+    margin-top: 22px;
+  }
+}
+
+.profile-controls {  
+  width: 305px;
+
+  h2, p {
+    margin: 0;
+  }
+  .section {
+    margin-bottom: 24px;
+  }
+  li {
+    display: inline-block;
+    margin-right: 1em;
+  }
+
+  .follows-you {
+    text-align: center;
+    margin: 0 14px;
+    font-size: 18px;
+    background-color: #ddd;
+    padding: 5px 0;
+    color: #555;
+  }
+
+  .block {
+    background: #ddd;
+    padding: 2px 5px;
+    border-radius: 2px;
+    color: gray;
+    font-size: 18px;
+    text-align: center;
+    width: 275px;
+    margin: 0 0 0 15px;
+  }
+  .btns {
+    width: 275px;
+    margin: 0 0 20px 15px;
+
+    .btn-block {
+      font-size: 16px;
+      padding: 10px 0 8px;
+      .glyphicon {
+        margin-right: 8px;
+      }
+    }
+    .btns-group {
+      margin-top: 5px;
+      display: flex;
+      .btn {
+        flex: 1;
+        margin-right: 2px;
+        &:last-child {
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .relations {
+    margin: 0 0 25px 20px;
+    .user-hexagrid-60 {
+      margin: 15px 0 0;
+    }
+    .user-hexagon {
+      opacity: 1;
+    }
+  }
+  .connection-graph, .network-graph {
+    width: 275px;
+    height: 50px;
+    margin-left: 10px;
+  }
+}
+
+.profile-pics {
+  padding: 5px 0;
+  .pic {
+    position: relative;
+    display: inline-block;
+    margin: 1em 1em 1em 0;
+    img {
+      width: 275px;
+      height: 275px;
+      border-radius: 2px;
+    }
+    &:hover::before {
+      content: attr(data-overlay);
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      background: rgba(0,0,0,0.75);
+      font-weight: 100;
+      padding: 1em 2em;
+      color: #fff;
+      border-radius: 2px;
+    }
+  }
+}
+
+.profile-flags {
+  .message, .message .message-comments {
+    border-color: rgb(228, 104, 104);
+  }
+}

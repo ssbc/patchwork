@@ -1,0 +1,124 @@
+.editor-container {
+  position: relative;
+  .editor-ctrls {
+    position: absolute;
+    z-index: 500;
+    right: 10px;
+    top: 6px;
+    text-align: right;
+    
+    a {
+      display: inline-block;
+      padding: 6px 15px;
+      background: #44453D;
+      color: #A6B1BE;
+      border-radius: 2px;
+      border: 1px solid transparent;
+      box-shadow: 0 0 3px rgba(0,0,0,1);
+      margin-left: 5px;
+
+      &.highlighted {
+        border-color: #154F9B;
+        color: #2778e2;
+      }
+
+      &:hover {
+        color: #747D88;
+        text-decoration: none;
+        background: #3F4137;
+        box-shadow: 0 0 15px rgba(0,0,0,1);
+        border-color: transparent;
+        &.blue {
+          background: @blue-primary;
+          color: @blue-tertiary;
+        }
+        &.yellow {
+          background: @yellow-primary;
+          color: @yellow-secondary;
+        }
+      }
+    }
+  }
+}
+
+.editor-nav {
+  margin: 2px 0 8px;
+
+  .navlinks {
+    display: table-cell;
+    white-space: pre;
+    a {
+      position: relative;
+      display: inline-block;
+      padding: 6px 22px 0 19px;
+      font-weight: 100;
+      color: #555;
+      margin-right: 5px;
+      border: 1px solid transparent;
+
+      &:hover {
+        text-decoration: none;
+        background: #ddd;
+      }
+      &.selected {
+        border-color: #ccc;
+        background: #fff;
+
+        // hide the border under the selected item
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          background: #fff;
+        }
+      }
+    }
+  }
+  .editor-nav-body {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 0 5px;
+    p {
+      margin: 5px 0;
+    }
+    input.form-control {
+      height: 29px;
+      padding: 5px;
+    }
+    .btn-default {
+      background: #eee;
+      &:hover {
+        background: #ddd;
+      }
+    }
+    .buffer-list {
+      list-style: none;
+      padding: 0;
+      margin: 5px 0;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      overflow-y: scroll;
+      max-height: 500px;
+
+      li {
+        background: #eee;
+        padding: 5px 5px 3px;
+        display: block;
+        a {
+          color: #666;
+        }
+        &.selected {
+          background: #666;
+          background: linear-gradient(to bottom, #888 0%, #555 100%);
+          a {
+            color: #eee;
+          }
+        }
+      }
+    }
+  }
+}

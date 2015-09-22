@@ -1,0 +1,42 @@
+@import "../variables";
+
+.suggest-box {
+  position: fixed;
+  border: 1px solid #ddd;
+  z-index: 10000;
+  background: white;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li {
+      padding: 4px 8px;
+      font-size: 85%;
+      border-bottom: 1px solid #ddd;
+      &:last-child {
+        border: 0;
+      }
+      &.selected {
+        color: #fff;
+        background-color: @brand-primary;
+        border-color: darken(@brand-primary, 5%);
+      }
+      img {
+        height: 20px;
+      }
+      &.user img {
+        border-radius: 10px;
+      }
+    }
+  }
+  &.msg-recipients {
+    ul li {
+      font-size: 16px;
+      img {
+        height: 24px;
+        border-radius: 12px;
+      }
+    }
+  }
+}

@@ -1,0 +1,2 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="10" height="10" id="svg-lines"><defs><pattern id="djuto" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0,10 l 10,-10 M -2.5,2.5 l 5,-5
+M 7.5,12.5 l 5,-5" stroke-width="2" shape-rendering="auto" stroke="rgba(0,0,0,0.05)" stroke-linecap="square"></path></pattern></defs><rect width="10" height="10" style="fill: url(#djuto); stroke-width: 2px;"></rect></svg>

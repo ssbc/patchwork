@@ -1,0 +1,29 @@
+.webcam-giffer-form {
+  display: flex;
+  .webcam-giffer-form-videos {
+    position: relative;
+    flex: 0 0 300px;
+    video {
+      cursor: pointer;
+      &.recording {
+        outline: 1px solid red;
+      }
+    }
+    .countdown {
+      position: absolute;
+      font-size: 72px;
+      left: 130px;
+      top: 30px;
+      font-weight: bold;
+      color: rgb(182, 0, 0);
+    }
+  }
+  .webcam-giffer-form-ctrls {
+    flex: 1;
+    padding: 0 3px;
+    textarea {
+      height: 150px;
+      margin-bottom: 5px;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.contact-feed-container {
+  
+  .contact-feed {
+    max-width: 960px;
+    margin: 0 auto;
+
+    &:empty::before {
+      content: 'Empty';
+      font-size: 16px;
+      font-style: italic;
+      color: #777;
+      margin: 1em;
+      display: block;
+    }
+  }
+}

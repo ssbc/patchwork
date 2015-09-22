@@ -1,0 +1,17 @@
+.program-feed-container {
+  border: 1px solid #ccc;
+  background: #fff;
+
+  .program-feed {
+    width: 100%;
+
+    &:empty::before {
+      content: 'Empty';
+      font-size: 16px;
+      font-style: italic;
+      color: #777;
+      margin: 1em;
+      display: block;
+    }
+  }
+}

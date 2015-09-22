@@ -1,0 +1,45 @@
+.message-summary {
+  margin: 5px 36px;
+  
+  & > .user-img {
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      float: left;
+      margin: 4px;
+    }
+    .hovercard {
+      top: 35px;
+      right: auto;
+      left: -40px;
+    }
+    &:hover .hovercard {
+      opacity: 1;
+      top: 30px;
+    }
+  }
+
+  .message-summary-content {
+    padding: 10px 40px
+  }
+
+  .msg-link {
+    color: #666;
+    display: block;
+    padding: 12px 0;
+  }
+
+  .pretty-raw {
+    font-size: 15px;
+    td {  
+      padding: 2px 7px;
+      vertical-align: top;
+    }
+    td:first-child {
+      text-align: right;
+      min-width: 150px;
+      color: #999;
+    }
+  }
+}

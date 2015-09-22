@@ -5,10 +5,12 @@
   "main": "app/index.js",
   "scripts": {
     "start": "electron .",
+    "test": "set -e; for t in api/test/*.js; do node $t; done",
     "clean": "rm -Rf ./dist",
     "clean:osx": "rm -Rf ./dist/osx",
     "clean:win": "rm -Rf ./dist/win",
-    "build": "npm run clean && npm run build:osx && npm run build:win",
+    "build": "npm run clean && npm run build:ui && npm run build:osx && npm run build:win",
+    "build:ui": "mkdir -p ./ui/css; lessc ./ui/less/main.less ./ui/css/main.css",
     "build:icon": "./scripts/make-icns.sh assets/icon1024.png assets/osx/scuttlebot.icns",
     "build:osx": "electron-packager ./ Scuttlebot --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/osx/scuttlebot.icns",
     "build:win": "electron-packager ./ Scuttlebot --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/win/scuttlebot.ico",
@@ -22,7 +24,11 @@
   "devDependencies": {
     "electron-builder": "^2.0.0",
     "electron-packager": "^4.1.3",
-    "electron-prebuilt": "^0.28.2"
+    "electron-prebuilt": "^0.28.2",
+    "less": "~1.7.5",
+    "osenv": "~0.1.0",
+    "rimraf": "~2.2.8",
+    "tape": "~3.0.0"
   },
   "dependencies": {
     "multiblob": "^1.5.0",
@@ -34,8 +40,26 @@
     "scuttlebot": "~7.0.2",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
-    "ssb-patchwork-api": "~0.0.7",
-    "ssb-patchwork-ui": "~0.0.18",
-    "stream-to-pull-stream": "^1.6.1"
+    "stream-to-pull-stream": "^1.6.1",
+    "blob-to-buffer": "^1.2.3",
+    "emoji-named-characters": "^1.0.1",
+    "hyperscript": "~1.4.6",
+    "mime-types": "^2.1.3",
+    "nicedate": "~0.0.0",
+    "observable": "^2.1.3",
+    "once": "~1.3.1",
+    "phoenix-router": "~1.0.0",
+    "published-working-tree": "~0.0.0",
+    "pull-cat": "^1.1.7",
+    "pull-merge": "~1.0.2",
+    "pull-paramap": "^1.1.3",
+    "pull-stream-to-stream": "~1.3.0",
+    "ssb-marked": "~0.5.0",
+    "ssb-msg-schemas": "~5.0.0",
+    "ssb-msgs": "~5.0.0",
+    "ssb-ref": "~2.2.0",
+    "suggest-box": "~1.1.6",
+    "pull-level": "~1.2.0",
+    "pull-notify": "0.0.0"
   }
 }

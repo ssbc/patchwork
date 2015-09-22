@@ -1,0 +1,38 @@
+.lookup-form {
+  .modal-form;
+
+  .form-inline > p {
+    display: flex;
+    .form-control {
+      flex: 1;
+      margin-right: 10px;
+    }
+  }
+  .processing-info {
+    display: none;
+    margin: 30px 25px 60px;
+    .spinner {
+      margin: 0;
+      float: left;
+    }
+    p {
+      color: #666;
+      position: relative;
+      left: 50px;
+      top: 15px;
+    }
+  }
+  .error {
+    display: none;
+    margin: 30px;
+    font-size: 16px;
+  }
+
+  .code {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    word-break: break-all;
+  }
+}

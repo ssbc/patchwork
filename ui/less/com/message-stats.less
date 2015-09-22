@@ -1,0 +1,73 @@
+.message-stats {
+  margin-bottom: 8px;
+  span, a {
+    color: #8899a6;
+  }
+  overflow: hidden;
+
+  .glyphicon {
+    color: #ccd6dd;
+    position: relative;
+  }
+  .selected .glyphicon {
+    color: darken(#8899a6, 5%);
+  }
+  .stat {
+    display: inline-block;
+    padding: 0 28px 0 0;
+    &:last-child {
+      padding: 0;
+    }
+    .glyphicon-comment {
+      font-size: 16px;
+      top: 3px;
+    }
+    .glyphicon-triangle-top {
+      font-size: 18px;
+      top: 4px;
+    }
+    .glyphicon-triangle-bottom {
+      font-size: 18px;
+      top: 4px;
+    }
+    &:hover .glyphicon {
+      color: darken(#8899a6, 5%);
+    }
+  }
+  .vote-tally:after {
+    content: attr(data-amt);
+    padding: 0 5px;
+  }
+  .comments:after {
+    content: attr(data-amt) " comments";
+    padding: 0 5px;
+  }
+  .user-hexagrid-30 {
+    margin: 1em 0 0;
+    border: 1px solid #ccc;
+    padding: 5px 5px 0;
+    background: #fafafa;
+    .user-hexagon {
+      margin: -9px 1px -3px 0;
+    }
+  }
+  .upvoters {
+    position: relative;
+    &:after {
+      content: ' +1';
+      position: absolute;
+      right: -22px;
+      top: 5px;
+    }
+  }
+  .downvoters {
+    float: right;
+    position: relative;
+    &:after {
+      content: '-1';
+      position: absolute;
+      left: -22px;
+      top: 5px;
+    }
+  }
+}
