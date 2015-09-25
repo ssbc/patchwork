@@ -9,7 +9,7 @@ User-tracking and advertisements are actively prevented.
 
 ![Hermies the Hermit Crab](https://avatars2.githubusercontent.com/u/10190339?v=3&s=200)
 
-[Built with Secure Scuttlebutt](https://github.com/ssbc/docs)
+**[Built with Secure Scuttlebutt](https://github.com/ssbc/docs)**
 
 
 ## Running Patchwork
