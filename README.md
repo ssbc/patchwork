@@ -1,33 +1,45 @@
 # Patchwork
 
-**Patchwork is in active development. <a href="http://ssbc.github.io/">Sign up for our mailing list</a>, and we'll notify you when it's ready to use.**
+![screenshot](./screenshot.png)
 
-Patchwork is a peer-to-peer network for sharing social feeds and open-source software. It gives you freedom to meet and collaborate online without surrendering ownership of your data.
+Patchwork is a peer-to-peer application for sharing social feeds.
 
-Patchwork isn't a website: it runs on your computer and syncs over the Internet or WiFi. User-tracking and advertisements are actively prevented, and user applications are fully supported.
+Patchwork isn't a website: it runs on your computer and syncs over the Internet or WiFi.
+User-tracking and advertisements are actively prevented.
 
-<a href="http://ssbc.github.io/">Learn more</a>
+![Hermies the Hermit Crab](https://avatars2.githubusercontent.com/u/10190339?v=3&s=200)
+
+[Built with Secure Scuttlebutt](https://github.com/ssbc/docs)
 
 
 ## Running Patchwork
 
-**Dependencies:**
+Current install steps are:
 
 ```
-# Linux dependencies
-apt-get install automake
-
-# OSX dependencies
-brew install automake
+# ubuntu
+apt-get install automake libtool
+# osx
+brew install automake libtool
 ```
 
+Also, you'll need to use iojs@2.
+The easiest way to get this is [nvm](https://github.com/creationix/nvm).
+
 ```
+nvm install iojs-v2.5.0
+```
+
+Then, install the software:
+
+```
+git clone https://github.com/ssbc/patchwork.git
+cd patchwork
 npm install
 npm start
 ```
 
-**Start connecting by joining a pub server**
-
+And then join a pub server.
 Check out the list of active servers [here](https://github.com/ssbc/scuttlebot/wiki/Pub-Servers)
 
 
