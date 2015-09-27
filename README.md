@@ -7,7 +7,7 @@ Patchwork is a peer-to-peer application for sharing social feeds.
 Patchwork isn't a website: it runs on your computer and syncs over the Internet or WiFi.
 User-tracking and advertisements are actively prevented.
 
-![Hermies the Hermit Crab](https://avatars2.githubusercontent.com/u/10190339?v=3&s=200)
+[![Hermies the Hermit Crab](https://avatars2.githubusercontent.com/u/10190339?v=3&s=200)](https://github.com/ssbc/scuttlebot)
 
 **[Built with Secure Scuttlebutt](https://github.com/ssbc/docs)**
 
