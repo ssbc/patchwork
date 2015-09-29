@@ -241,17 +241,23 @@ module.exports = function (rootMsg, branchMsg, opts) {
     // stop capture
     clearInterval(recordInterval)
 
-    // show output stream
-    invideo.classList.add('hide')
-    outvideo.classList.remove('hide')
-
     // remove 'recording' border
     invideo.classList.remove('recording')
 
     // produce output
-    blob = encoder.compile()
-    console.log('Webm video encoded:', blob.size, 'bytes')
-    outvideo.src = URL.createObjectURL(blob, 'video/webm')
+    if (encoder.frames && encoder.frames.length) {
+      blob = encoder.compile()
+      console.log('Webm video encoded:', blob.size, 'bytes')
+      outvideo.src = URL.createObjectURL(blob, 'video/webm')
+
+      // show output stream
+      invideo.classList.add('hide')
+      outvideo.classList.remove('hide')
+    } else {
+      // show input stream
+      invideo.classList.remove('hide')
+      outvideo.classList.add('hide')
+    }
     enable()
   }
 
