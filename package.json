@@ -37,7 +37,7 @@
     "pull-ipc": "0.0.1",
     "pull-pushable": "^1.1.4",
     "pull-stream": "^2.27.0",
-    "scuttlebot": "~7.0.2",
+    "scuttlebot": "~7.3.0",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
     "stream-to-pull-stream": "^1.6.1",
