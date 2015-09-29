@@ -2,14 +2,16 @@
 
 ![screenshot](./screenshot.png)
 
-Patchwork is a peer-to-peer application for sharing social feeds.
+Patchwork is a decentralized sharing app.
+It was built for friends of the SSB project, to test basic functions.
+We use it as a test-bed for features, and for our own daily messaging.
 
-Patchwork isn't a website: it runs on your computer and syncs over the Internet or WiFi.
-User-tracking and advertisements are actively prevented.
+Because SSB is a research project, **you'll need to contact an SSB team member (in #scuttlebutt on Freenode) to get onto the network!**
+That's our informal barrier to entry right now, since we're not prepared for lots of users yet.
 
 [![Hermies the Hermit Crab](https://avatars2.githubusercontent.com/u/10190339?v=3&s=200)](https://github.com/ssbc/scuttlebot)
 
-**[Built with Secure Scuttlebutt](https://github.com/ssbc/docs)**
+Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're running Patchwork, you don't need to run another scuttlebot server.
 
 
 ## Running Patchwork
@@ -40,7 +42,6 @@ npm start
 ```
 
 And then join a pub server.
-Check out the list of active servers [here](https://github.com/ssbc/scuttlebot/wiki/Pub-Servers)
 
 
 ## Development & App-building : 
