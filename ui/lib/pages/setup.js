@@ -38,7 +38,8 @@ module.exports = function () {
     h('.layout-setup-right', h('.layout-setup-right-inner',
       (is_new) ?
         [
-          h('p', 'Welcome to ', h('strong', 'Secure Scuttlebutt!')),
+          h('br'),
+          h('p', 'Welcome to ', h('strong', 'Patchwork!')),
           h('p', 'Fill out your profile and then click ', h('strong', 'Save'), ' to get started.')
         ] :
         h('p', 'Update your profile and then click ', h('strong', 'Save'), ' to publish the changes.'),

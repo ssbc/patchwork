@@ -21,10 +21,10 @@ module.exports = function (opts) {
     h('p.text-muted', h('strong', 'Public nodes help you communicate across the Internet.')),
     h('p.text-muted',
       'Neckbeards can setup their own public nodes. ',
-      h('a', { href: 'https://github.com/ssbc/scuttlebot', target: '_blank' }, 'Read the server documentation here.')
+      h('a', { href: 'https://github.com/ssbc/docs#setup-up-a-pub', target: '_blank' }, 'Read the server documentation here.')
     ),
     h('p.text-muted',
-      'Don\'t have an invite to a public node? During the closed beta, you\'ll have to find a pub owner and ask for one.'
+      'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'
     )
   )
 

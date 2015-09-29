@@ -25,19 +25,6 @@ exports.helpBody = function (item) {
   }
   if (item == 'howto-find-ppl') {
     return h('div', { style: 'padding: 20px' },
-      h('p', h('strong', 'Method 1: Recommendations')),
-      h('p', 
-        'Click the ', com.icon('user'), ' icon in the homepage links to see ', h('a', { href: '#/friends' }, 'your friends page'), '. ',
-        'It recommends users who your friends follow.'
-      ),
-      h('br'),
-      h('p', h('strong', 'Method 2: Search')),
-      h('p',
-        'Try typing your friend\'s username into the location bar (top center). ',
-        'They may show up in the results.'
-      ),
-      h('br'),
-      h('p', h('strong', 'Method 3: Send ID')),
       h('p',
         'Have your friend send you their ID. ',
         'Then, put it in the location bar (top center) and press enter. ',
@@ -143,13 +130,12 @@ exports.welcome = function () {
   return h('.message',
     h('span.user-img', h('img', { src: com.profilePicUrl(false) })),
     h('.message-inner',
-      h('ul.message-header.list-inline', h('li', h('strong', 'Scuttlebot'))),
+      h('ul.message-header.list-inline', h('li', h('strong', 'Patchwork'))),
       h('.message-body',
-        h('.markdown',
-          h('h3', 'Hello! And welcome to ', h('strong', 'Patchwork.')),
+        h('.markdown', { style: 'margin-bottom: 10px' },
+          h('h3', 'Hello! And welcome to ', h('strong', 'SSB.')),
           h('p', 
-            'Patchwork is an independent network of users. ',
-            'The software is Free and Open-source, and the data is stored on your computer.'
+            'This program is an informal beta/demo for the SSB devs and our friends.'
           ),
           h('p', h('img.emoji', { src: './img/emoji/facepunch.png', height: 20, width: 20}), ' We fight for the user.')
         )
@@ -159,13 +145,13 @@ exports.welcome = function () {
       h('.message',
         h('span.user-img', h('img', { src: com.profilePicUrl(false) })),
         h('.message-inner',
-          h('ul.message-header.list-inline', h('li', h('strong', 'Scuttlebot'))),
+          h('ul.message-header.list-inline', h('li', h('strong', 'Patchwork'))),
           h('.message-body',
             h('.markdown',
-              h('h4', 'Step 1: Join a public mesh node ', h('img.emoji', { src: './img/emoji/computer.png', height: 20, width: 20})),
-              h('p', 'To reach across the Internet, you need to belong to a public mesh node, also known as a ', h('strong', 'Pub'), '. '),
+              h('h4', 'Step 1: Join the public mesh ', h('img.emoji', { src: './img/emoji/computer.png', height: 20, width: 20})),
+              h('p', 'To reach the rest of us, you need a Pub node to sync with you. '),
               h('.text-center', { style: 'padding: 7px; background: rgb(238, 238, 238); margin-bottom: 10px; border-radius: 5px;' },
-                h('a.btn.btn-3d', { href: '#', onclick: modals.invite }, com.icon('cloud'), ' Join a Public Node')
+                h('a.btn.btn-3d', { href: '#', onclick: modals.invite }, com.icon('cloud'), ' Join a Pub')
               )
             )
           )
@@ -174,11 +160,11 @@ exports.welcome = function () {
       h('.message',
         h('span.user-img', h('img', { src: com.profilePicUrl(false) })),
         h('.message-inner',
-          h('ul.message-header.list-inline', h('li', h('strong', 'Scuttlebot'))),
+          h('ul.message-header.list-inline', h('li', h('strong', 'Patchwork'))),
           h('.message-body',
-            h('.markdown',
-              h('h4', 'Step 2: Find your friends ', h('img.emoji', { src: './img/emoji/busts_in_silhouette.png', height: 20, width: 20})),
-              h('p', 'Have your friends send you their IDs so you can follow them. Paste the ID into the location bar, just like it\'s a URL.')
+            h('.markdown', { style: 'margin-bottom: 10px' },
+              h('h4', 'Step 2: Follow people ', h('img.emoji', { src: './img/emoji/busts_in_silhouette.png', height: 20, width: 20})),
+              h('p', 'Have people send you their @ IDs so you can follow them. Paste the ID into the location bar at the top, like it\'s a URL.')
             )
           )
         )
@@ -186,9 +172,9 @@ exports.welcome = function () {
       h('.message',
         h('span.user-img', h('img', { src: com.profilePicUrl(false) })),
         h('.message-inner',
-          h('ul.message-header.list-inline', h('li', h('strong', 'Scuttlebot'))),
+          h('ul.message-header.list-inline', h('li', h('strong', 'Patchwork'))),
           h('.message-body',
-            h('.markdown',
+            h('.markdown', { style: 'margin-bottom: 10px' },
               h('h4', 'Step 3: ', h('img.emoji', { src: './img/emoji/metal.png', height: 20, width: 20})),
               h('p', 'You can publish ', h('strong', 'Messages and Files'), ' using the box at the top of your feed, and ', h('strong', 'Secret Messages'), ' via friends\' profile pages.')
             )
@@ -216,7 +202,7 @@ exports.side = function () {
 
   return h('div',
     h('strong', 'Help Topics:'), h('br'),
-    help('howto-pubs', 'How do I get onto the public mesh?'),
+    h('a', { style: 'color: #555', href: '#', onclick: modals.invite }, com.icon('question-sign'), ' ',  'How do I get onto the public mesh?'), h('br'),
     help('howto-find-ppl', 'How do I find people?'),
     h('br'),
     help('howto-posts', 'How do I make a new post?'),
@@ -224,7 +210,6 @@ exports.side = function () {
     help('howto-post-files', 'How do I post a file or photo?'),
     h('br'),
     help('secret-messages', 'What are secret messages?'),
-    help('howto-secret-messages', 'How do I send a secret message?'),
-    help('howto-find-ppl', 'How do I read my messages?')
+    help('howto-secret-messages', 'How do I send a secret message?')
   )
 }

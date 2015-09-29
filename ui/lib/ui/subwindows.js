@@ -89,7 +89,7 @@ module.exports.subwindow = function (el, title, opts) {
 
   function onhelp (e) {
     e.preventDefault()
-    makeSubwindow(com.help.helpBody(opts.help), [com.icon('question-sign'), ' ', com.help.helpTitle(opts.help)])
+    makeSubwindow(com.help.helpBody(opts.help), com.help.helpTitle(opts.help), { icon: 'question-sign' })
   }
 
   // manage
