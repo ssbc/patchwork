@@ -284,7 +284,7 @@ exports.decryptThread = function (thread, cb) {
 }
 
 exports.getPubStats = function () {
-  var membersof=0, active=0
+  var membersof=0, active=0, untried=0
   app.peers.forEach(function (peer) {
     // filter out LAN peers
     if (peer.host == 'localhost' || peer.host.indexOf('192.168.') === 0)
@@ -293,9 +293,12 @@ exports.getPubStats = function () {
       membersof++
       if (peer.time && peer.time.connect && (peer.time.connect > peer.time.attempt) || peer.connected)
         active++
+      if (!peer.time || !peer.time.attempt)
+        untried++
     }
   })
-  return { membersof: membersof, active: active }
+  
+  return { membersof: membersof, active: active, untried: untried, hasSyncIssue: (!membersof || (!untried && !active)) }
 }
 
 exports.getExtLinkName = function (link) {

@@ -32,7 +32,7 @@ module.exports = function () {
         var warning
         if (stats.membersof === 0)
           warning = h('p', com.icon('warning-sign'), ' You need to join a pub if you want to communicate across the Internet!')
-        else if (stats.active === 0)
+        else if (stats.active === 0 && stats.untried === 0)
           warning = h('p', com.icon('warning-sign'), ' None of your pubs are responding! Are you connected to the Internet?')
 
         return h('.pub-status',

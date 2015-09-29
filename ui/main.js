@@ -110,7 +110,7 @@ function onGossipEvent (e) {
 
   // update observables
   app.observ.peers(app.peers)
-  app.observ.hasSyncIssue(!stats.membersof || !stats.active)
+  app.observ.hasSyncIssue(stats.hasSyncIssue)
 }
 
 function onReplicationEvent (e) {

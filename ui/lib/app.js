@@ -103,7 +103,7 @@ function fetchLatestState (cb) {
     // update observables
     app.observ.peers(app.peers)
     var stats = require('./util').getPubStats()
-    app.observ.hasSyncIssue(!stats.membersof || !stats.active)
+    app.observ.hasSyncIssue(stats.hasSyncIssue)
     for (var k in app.indexCounts)
       if (app.observ.indexCounts[k])
         app.observ.indexCounts[k](app.indexCounts[k])
