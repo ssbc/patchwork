@@ -23,7 +23,7 @@ module.exports.subwindow = function (el, title, opts) {
       h2('a', { href: '#', onclick: oncollapsetoggle }, collapseToggleIcon),
       h2('a.close', { href: '#', onclick: onclose }, com.icon('remove'))
     ),
-    h2('.subwindow-body', el)
+    h2('.subwindow-body', (typeof el == 'function' ? el(h2) : el))
   )
   document.body.appendChild(subwindow)
 
@@ -106,8 +106,7 @@ module.exports.pm = function (opts) {
 
   opts = opts || {}
   opts.onpost = onpost
-  var form = com.pmForm(opts)
-  var sw = makeSubwindow(form, 'Secret Message', { icon: 'lock', help: 'secret-messages' })
+  var sw = makeSubwindow(com.pmForm.bind(null, opts), 'Secret Message', { icon: 'lock', help: 'secret-messages' })
   try { form.querySelector('input').focus() } catch (e) {}
 
   // handlers

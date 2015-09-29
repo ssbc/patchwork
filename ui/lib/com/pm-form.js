@@ -15,7 +15,8 @@ var markdown = require('../markdown')
 var mentionslib = require('../mentions')
 var social = require('../social-graph')
 
-module.exports = function (opts) {
+module.exports = function (opts, h2) {
+  h = h2 || h
 
   var recipients = []
   var placeholder = (opts && opts.placeholder) ? opts.placeholder : ''
