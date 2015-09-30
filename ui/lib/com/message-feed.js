@@ -3,9 +3,11 @@ var h = require('hyperscript')
 var mlib = require('ssb-msgs')
 var pull = require('pull-stream')
 var multicb = require('multicb')
+var pauser = require('pause-offscreen')
 var app = require('../app')
 var com = require('../com')
 var u = require('../util')
+
 
 module.exports = function (opts) {
   opts = opts || {}
@@ -36,6 +38,10 @@ module.exports = function (opts) {
   fetchBottom(function (n) {
     if (opts.onempty && n === 0)
       opts.onempty(feedEl)
+
+    // add offscreen pausing
+    var unlistenPauser = pauser(containerEl)
+    ui.onTeardown(unlistenPauser)
   })
 
   function fetchBottom (cb) {

@@ -72,7 +72,7 @@ renderer.image  = function (href, title, text) {
   href = href.replace(/^&amp;/, '&')
   if (ssbref.isLink(href)) {
     if ((''+text).indexOf('.webm') >= 0) {
-      var out = '<video autoplay=1 loop=1 muted=1 src="http://localhost:7777/' + href + '?fallback=video" alt="' + text + '"'
+      var out = '<video loop=1 muted=1 src="http://localhost:7777/' + href + '?fallback=video" alt="' + text + '"'
       if (title) {
         out += ' title="' + title + '"'
       }
