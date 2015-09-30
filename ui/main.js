@@ -68,7 +68,6 @@ function onHover (e) {
 
 // update UI to reflect index changes
 function onIndexEvent (event) {
-  console.log('onIndexEvent', event)
   if (event.type == 'home-add')
     app.observ.newPosts(1 + app.observ.newPosts())
   if (event.type == 'index-change') {
@@ -94,8 +93,6 @@ function onBlobDownloaded (hash) {
 }
 
 function onGossipEvent (e) {
-  console.log(e)
-
   // update the peers
   var i
   for (i=0; i < app.peers.length; i++) {
@@ -114,8 +111,6 @@ function onGossipEvent (e) {
 }
 
 function onReplicationEvent (e) {
-  console.log(e)
-
   // update the peers
   var progress = { feeds: e.feeds, sync: e.sync, current: e.progress, total: e.total }
   var i
