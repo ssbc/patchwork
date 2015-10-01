@@ -25,7 +25,6 @@ module.exports = function (msg, opts) {
     h('.message-inner',
       h('ul.message-header.list-inline',
         h('li', com.user(msg.value.author)),
-        (mlib.link(msg.value.content.root)) ? h('li', h('em', h('a.text-muted', { href: '#/msg/'+mlib.link(msg.value.content.root).link }, 'replies to...'))) : '',
         !msg.plaintext ? h('li', com.icon('lock')) : '',
         h('li.pull-right', h('a', { href: '#', onclick: onflag(msg), title: 'Flag this post' }, com.icon('flag'))),
         h('li.favorite.pull-right',
@@ -33,7 +32,7 @@ module.exports = function (msg, opts) {
           h('a', { href: '#', onclick: onfavorite(msg), title: 'Favorite this post' }, com.icon('star'))
         )
       ),
-      h('.message-body', (typeof msg.value.content != 'string') ? com.messageContent(msg) : ''),
+      h('.message-body', fetchAndRenderReplyLink(msg), (typeof msg.value.content != 'string') ? com.messageContent(msg) : ''),
       h('ul.message-footer.list-inline',
         (!(opts && opts.fullview)) ?
           h('li', com.a('#/msg/'+msg.key, h('small.comment-count-digits'))) :
@@ -372,6 +371,26 @@ function renderSignals (el, msg) {
   if (mentions.length) {
     el.querySelector('.message-inner').appendChild(h('.message-mentions', mentions.map(renderMention)))
   }
+}
+
+function fetchAndRenderReplyLink (msg) {
+  var root   = mlib.link(msg.value.content.root)
+  var branch = mlib.link(msg.value.content.branch)
+  if (!root) return ''
+
+  var anchor = h('a.text-muted', { href: '#/msg/'+root.link }, 'replies to...')
+  app.ssb.get((branch && branch.link) ? branch.link : root.link, function (err, msg) {
+    if (!msg) return
+
+    var text = '@' + com.userName(msg.author)
+    if (msg.content.text && typeof msg.content.text == 'string')
+      text += ': ' + msg.content.text
+    if (text.length > 60)
+      text = text.slice(0, 57) + '...'
+
+    anchor.textContent = text
+  })
+  return h('p', { style: 'margin-bottom: 1em; background: #fafafa; padding: 5px' }, anchor)
 }
 
 function renderMention (m) {
