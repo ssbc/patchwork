@@ -10,7 +10,7 @@
     "clean:osx": "rm -Rf ./dist/osx",
     "clean:win": "rm -Rf ./dist/win",
     "build": "npm run clean && npm run build:ui && npm run build:osx && npm run build:win",
-    "build:ui": "mkdir -p ./ui/css; lessc ./ui/less/main.less ./ui/css/main.css",
+    "build:ui": "mkdir -p ./ui/css && lessc ./ui/less/main.less ./ui/css/main.css",
     "build:icon": "./scripts/make-icns.sh assets/icon1024.png assets/osx/patchwork.icns",
     "build:osx": "electron-packager ./ Patchwork --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/osx/patchwork.icns",
     "build:win": "electron-packager ./ Patchwork --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.28.3 --icon=assets/win/patchwork.ico",
