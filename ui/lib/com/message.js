@@ -5,6 +5,7 @@ var paramap  = require('pull-paramap')
 var mlib = require('ssb-msgs')
 var schemas = require('ssb-msg-schemas')
 var ssbref = require('ssb-ref')
+var pauser = require('pause-offscreen')
 var app = require('../app')
 var ui = require('../ui')
 var modals = require('../ui/modals')
@@ -102,6 +103,10 @@ module.exports = function (msg, opts) {
     // render a notice that this is live
     msg.el.appendChild(h('.well.text-muted', { style: 'margin: 5px 0 0 88px' }, com.icon('flash'), ' Replies will auto-update in realtime.'))
   }
+
+  // add offscreen pausing
+  var unlistenPauser = pauser(msgEl)
+  ui.onTeardown(unlistenPauser)
 
   return msgEl
 }
