@@ -44,7 +44,7 @@ module.exports = function () {
   ui.setPage('followers', h('.layout-onecol',
     h('.layout-main',
       h('h3', 'Following'),
-      h('div', { style: 'width: 850px; margin: 0 auto' }, com.friendsHexagrid({ size: 80, nrow: 10 })),
+      h('div', { style: 'width: 850px; margin: 0 auto' }, com.friendsHexagrid({ size: 80, nrow: 10, uneven: true })),
       h('h3', 'Activity'),
       com.messageFeed({ render: com.messageSummary, feed: app.ssb.patchwork.createFollowStream, markread: true, limit: newFollowersToShow }),
       h('h3', { style: 'margin-top: 40px' }, 'Recommendations'),
