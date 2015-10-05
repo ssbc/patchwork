@@ -4,10 +4,11 @@ var marked = require('ssb-marked')
 var ssbref = require('ssb-ref')
 var mlib   = require('ssb-msgs')
 
-var renderer = new marked.Renderer();
+var blockRenderer = new marked.Renderer()
+var inlineRenderer = new marked.Renderer()
 
 // override to only allow external links or hashes, and correctly link to ssb objects
-renderer.urltransform = function (url) {
+blockRenderer.urltransform = function (url) {
   var c = url.charAt(0)
   var hasSigil = (c == '@' || c == '&' || c == '%')
 
@@ -48,7 +49,7 @@ renderer.urltransform = function (url) {
 }
 
 // override to make http/s links external
-renderer.link = function(href, title, text) {
+blockRenderer.link = function(href, title, text) {
   href = this.urltransform(href)
   var out
   if (href !== false)
@@ -68,7 +69,7 @@ renderer.link = function(href, title, text) {
 };
 
 // override to support <video> tags (HACK)
-renderer.image  = function (href, title, text) {
+blockRenderer.image  = function (href, title, text) {
   href = href.replace(/^&amp;/, '&')
   if (ssbref.isLink(href)) {
     if ((''+text).indexOf('.webm') >= 0) {
@@ -89,6 +90,34 @@ renderer.image  = function (href, title, text) {
   return text
 }
 
+// inline renderer just spits out the text of links and images
+inlineRenderer.urltransform = function (url) { return false }
+inlineRenderer.link = function (href, title, text) { return unquote(text) }
+inlineRenderer.image  = function (href, title, text) {
+  if (text == 'webcam.webm') return '' // :HACK: webcam embed title, just dont render
+  return unquote(text)
+}
+inlineRenderer.code = function(code, lang, escaped) { return unquote(code) }
+inlineRenderer.blockquote = function(quote) { return unquote(quote) }
+inlineRenderer.html = function(html) { return false }
+inlineRenderer.heading = function(text, level, raw) { return unquote(text) }
+inlineRenderer.hr = function() { return ' --- ' }
+inlineRenderer.br = function() { return ' ' }
+inlineRenderer.list = function(body, ordered) { return unquote(body) }
+inlineRenderer.listitem = function(text) { return '- '+unquote(text) }
+inlineRenderer.paragraph = function(text) { return unquote(text)+' ' }
+inlineRenderer.table = function(header, body) { return unquote(header + ' ' + body) }
+inlineRenderer.tablerow = function(content) { return unquote(content) }
+inlineRenderer.tablecell = function(content, flags) { return unquote(content) }
+inlineRenderer.strong = function(text) { return unquote(text) }
+inlineRenderer.em = function(text) { return unquote(text) }
+inlineRenderer.codespan = function(text) { return unquote(text) }
+inlineRenderer.del = function(text) { return unquote(text) }
+inlineRenderer.mention = function(preceding, id) { return unquote((preceding||'') + id) }
+function unquote (text) {
+  return text.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, '\'')
+}
+
 marked.setOptions({
   gfm: true,
   mentions: true,
@@ -99,8 +128,8 @@ marked.setOptions({
   smartLists: true,
   smartypants: false,
   emoji: renderEmoji,
-  renderer: renderer
-});
+  renderer: blockRenderer
+})
 
 exports.block = function(text, mentionNames) {
   if (mentionNames && mentionNames.key && mentionNames.value) {
@@ -117,6 +146,10 @@ exports.block = function(text, mentionNames) {
   }
 
   return marked(''+(text||''), { mentionNames: mentionNames })
+}
+
+exports.inline = function(text) {
+  return marked(''+(text||''), { renderer: inlineRenderer })
 }
 
 var emojiRegex = /(\s|>|^)?:([A-z0-9_]+):(\s|<|$)/g;

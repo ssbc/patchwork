@@ -384,7 +384,7 @@ function fetchAndRenderReplyLink (msg) {
 
     var text = '@' + com.userName(msg.author)
     if (msg.content.text && typeof msg.content.text == 'string')
-      text += ': ' + msg.content.text
+      text += ': ' + markdown.inline(msg.content.text)
     if (text.length > 60)
       text = text.slice(0, 57) + '...'
 
