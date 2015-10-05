@@ -12,6 +12,10 @@ module.exports = function (pid) {
   // markup
 
   var feed = app.ssb.createFeedStream
+  var cursor = function (msg) {
+    if (msg)
+      return msg.value.timestamp
+  }
   if (pid) {
     feed = function (opts) {
       opts = opts || {}
@@ -23,7 +27,7 @@ module.exports = function (pid) {
   ui.setPage('feed', h('.layout-onecol',
     h('.layout-main',
       h('h3.text-center', 'Behind the Scenes ', h('small', 'Raw Data Feed')),
-      com.messageFeed({ feed: feed, render: com.messageSummary.raw, infinite: true })
+      com.messageFeed({ feed: feed, cursor: cursor, render: com.messageSummary.raw, infinite: true })
     )
   ))
 }
