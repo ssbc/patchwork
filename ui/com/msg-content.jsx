@@ -4,6 +4,7 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import ssbref from 'ssb-ref'
 import { Block as MdBlock, Inline as MdInline } from './markdown'
+import { Table as PrettyRaw } from './pretty-raw'
 
 export class Block extends React.Component {
   render() {
@@ -16,7 +17,7 @@ export class Block extends React.Component {
       }
     } catch (e) { console.warn(e) }
 
-    return null // :TODO: h('table.raw', com.prettyRaw.table(msg.value.content))
+    return <PrettyRaw key={this.props.msg.key} obj={c} />
   }
 }
 
@@ -31,6 +32,6 @@ export class Inline extends React.Component {
       }
     } catch (e) { console.warn(e) }
 
-    return null // :TODO: h('table.raw', com.prettyRaw.table(msg.value.content))
+    return <span><code>{c.type}</code> message</span>
   }
 }
