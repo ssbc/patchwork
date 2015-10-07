@@ -123,7 +123,5 @@ function fetchLatestState (cb) {
       app.observ.newPosts(0) // trigger title render, so we get the correct name
       firstFetch = false
     }
-
-    cb()
   })
 }

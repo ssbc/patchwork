@@ -8,6 +8,12 @@ export default class Layout extends React.Component {
     super(props)
     this.state = app
   }
+  componentDidMount() {
+    app.fetchLatestState()
+  }
+  componentWillReceiveProps() {
+    app.fetchLatestState()
+  }
   render() {
     return <div className="layout-rows">
       <div id="topnav"></div>
