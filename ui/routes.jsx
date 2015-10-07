@@ -1,11 +1,13 @@
-import { Router, Route, Link } from 'react-router'
+import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './layout'
 import Inbox from './views/inbox'
+import Profile from './views/profile'
 
 export default (
   <Router>
     <Route path="/" component={Layout}>
-      <Route path="*" component={Inbox} />
+      <IndexRoute component={Inbox} />
+      <Route path="profile/:userId" component={Profile} />
     </Route>
   </Router>
 )
