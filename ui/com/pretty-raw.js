@@ -44,7 +44,7 @@ export class Table extends React.Component {
     this.setState({ obj: obj })
     if (typeof obj == 'string') {
       // try to decrypt
-      app.ssb.private.unbox(obj, function (err, decrypted) {
+      app.ssb.private.unbox(obj, (err, decrypted) => {
         if (decrypted)
           this.setState({ obj: decrypted })
       })
