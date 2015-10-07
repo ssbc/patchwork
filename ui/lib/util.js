@@ -260,8 +260,9 @@ exports.getParentThread = function (mid, cb) {
 
 exports.decryptThread = function (thread, cb) {
   var done = multicb()
-  if (thread.related)
-    iterate(thread.related)
+  thread.plaintext = (typeof thread.value.content != 'string')
+  if (!thread.plaintext) decrypt(thread)
+  if (thread.related)    iterate(thread.related)
   done(cb)
 
   function iterate (msgs) {

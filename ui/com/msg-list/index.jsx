@@ -3,8 +3,9 @@ import pull from 'pull-stream'
 import React from 'react'
 import Infinite from 'react-infinite'
 import Summary from './summary'
-import MsgView from '../msg-view'
+import { Thread } from '../msg-view'
 import app from '../../lib/app'
+import u from '../../lib/util'
 
 export default class MsgList extends React.Component {
   constructor(props) {
@@ -43,6 +44,14 @@ export default class MsgList extends React.Component {
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
+        pull.paraMap(function (msg, cb) {
+          // fetch thread data
+          app.ssb.relatedMessages({ id: msg.key, count: true }, (err, thread) => {
+            if (err || !thread)
+              return console.warn(err), cb(null, msg) // shouldnt happen
+            u.decryptThread(thread, () => { cb(null, thread) })
+          })
+        }),
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)
@@ -97,7 +106,7 @@ export default class MsgList extends React.Component {
         })}
       </Infinite>
       <div className="msg-list-view">
-        {this.state.selected ? <MsgView msg={this.state.selected} /> : undefined}
+        {this.state.selected ? <Thread thread={this.state.selected} /> : undefined}
       </div>
     </div>
   }
