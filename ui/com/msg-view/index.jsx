@@ -31,6 +31,6 @@ export class Thread extends React.Component {
       added[msg.key] = true
       return (msg.value.content.type == 'post') && isaReplyTo(msg, this.props.thread)
     }))
-    return <div>{msgs.map((msg) => <MsgView msg={msg} />)}</div>
+    return <div>{msgs.map((msg) => <MsgView key={msg.key} msg={msg} />)}</div>
   }
 }
