@@ -23,7 +23,9 @@ window.app = require('./lib/app')
 // app.observ.newPosts(onNewPost)
 
 // render
-React.render(require('./routes.jsx'), document.body)
+app.fetchLatestState(function () {
+  React.render(require('./routes.jsx'), document.body)
+})
 
 // Handlers
 // ========

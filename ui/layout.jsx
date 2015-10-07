@@ -8,10 +8,6 @@ export default class Layout extends React.Component {
     super(props)
     this.state = app
   }
-  componentDidMount() {
-    // update state on first render
-    app.fetchLatestState(() => { this.setState(app) })
-  }
   componentWillReceiveProps() {
     // update state on view changes
     app.fetchLatestState(() => { this.setState(app) })
