@@ -21,6 +21,7 @@ module.exports = {
 
   // pull state from sbot, called on every view change
   fetchLatestState: fetchLatestState,
+  profilePicUrl: profilePicUrl,
 
   // current view
   view: {
@@ -75,6 +76,35 @@ module.exports = {
   }
 }
 
+function profilePicUrl (id) {
+  var url = './img/default-prof-pic.png'
+  var profile = app.users.profiles[id]
+  if (profile) {
+    var link
+
+    // lookup the image link
+    if (profile.self.image)
+      link = profile.self.image
+
+    if (link) {
+      url = 'http://localhost:7777/'+link.link
+
+      // append the 'backup img' flag, so we always have an image
+      url += '?fallback=img'
+
+      // if we know the filetype, try to construct a good filename
+      if (link.type) {
+        var ext = link.type.split('/')[1]
+        if (ext) {
+          var name = app.users.names[id] || 'profile'
+          url += '&name='+encodeURIComponent(name+'.'+ext)
+        }
+      }
+    }
+  }
+  return url
+}
+
 var firstFetch = true
 function fetchLatestState (cb) {
   var done = multicb({ pluck: 1 })
@@ -111,7 +141,7 @@ function fetchLatestState (cb) {
           id: id,
           cls: 'user',        
           title: name || id,
-          image: null,// require('./com').profilePicUrl(id), :TODO:
+          image: app.profilePicUrl(id),
           subtitle: name || id,
           value: name || id.slice(1) // if using id, dont include the @ sigil
         })
