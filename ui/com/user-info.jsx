@@ -67,7 +67,7 @@ export default class UserInfo extends React.Component {
           }
         </div>
         <div>
-          {followers1.length + followers2.length} followers ({followers1.length} mutual) {flaggers.length} flags
+          {followers1.length + followers2.length} followers {(isSelf) ? '' : '('+followers1.length+' followed by you)'} {flaggers.length} flags
         </div>
       </div>
     </div>
