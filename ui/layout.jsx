@@ -10,17 +10,17 @@ export default class Layout extends React.Component {
   }
   componentDidMount() {
     // update state on first render
-    app.fetchLatestState()
+    app.fetchLatestState(() => { this.setState(app) })
   }
   componentWillReceiveProps() {
     // update state on view changes
-    app.fetchLatestState()
+    app.fetchLatestState(() => { this.setState(app) })
   }
   render() {
     return <div className="layout-rows">
       <div id="topnav"></div>
       <div className="layout-columns">
-        <div id="leftnav"><LeftNav location={this.props.location.pathname} /></div>
+        <div id="leftnav"><LeftNav location={this.props.location.pathname} userid={this.state.user.id} names={this.state.users.names} friends={this.state.user.friends} /></div>
         <div id="mainview">{this.props.children}</div>
       </div>
     </div>

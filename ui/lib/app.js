@@ -51,7 +51,8 @@ module.exports = {
   indexCounts: {},
   user: {
     id: null,
-    profile: {}
+    profile: {},
+    friends: []
   },
   users: {
     names: {},
@@ -124,6 +125,12 @@ function fetchLatestState (cb) {
     app.peers          = data[5]
     app.user.profile   = app.users.profiles[app.user.id]
 
+    // get friend list
+    app.user.friends = []
+    for (var k in app.users.profiles)
+      if (app.user.profile.assignedTo[k] && app.user.profile.assignedTo[k].following)
+        app.user.friends.push(k)
+
     // update observables
     app.observ.peers(app.peers)
     var stats = require('./util').getPubStats()
@@ -153,5 +160,7 @@ function fetchLatestState (cb) {
       app.observ.newPosts(0) // trigger title render, so we get the correct name
       firstFetch = false
     }
+
+    cb()
   })
 }
