@@ -2,7 +2,7 @@ var ipc        = require('ipc')
 var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
 var pullipc    = require('pull-ipc')
-var ui         = require('./ui')
+var remote     = require('remote')
 
 var clientApiManifest = {
   navigate: 'async',
@@ -16,11 +16,11 @@ var clientApi = {
     cb()
   },
   contextualToggleDevTools: function (cb) {
-    ui.toggleDevTools()
+    remote.getCurrentWindow().toggleDevTools()
     cb()
   },
   triggerFind: function (cb) {
-    ui.triggerFind()
+    // ui.triggerFind() :TODO:
     cb()
   }
 }

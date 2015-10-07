@@ -1,7 +1,10 @@
 'use strict'
-var pull   = require('pull-stream')
-var ui     = require('./lib/ui')
-var modals = require('./lib/ui/modals')
+
+// install babel hooks
+require('babel/register')
+
+var pull  = require('pull-stream')
+var React = require('react')
 
 // Init
 // ====
@@ -10,19 +13,18 @@ var modals = require('./lib/ui/modals')
 window.app = require('./lib/app')
 
 // toplevel events
-window.addEventListener('hashchange', ui.refreshPage)
-window.addEventListener('contextmenu', ui.contextMenu)
-window.addEventListener('error', onError)
-document.body.addEventListener('click', onClick)
-document.body.addEventListener('mouseover', onHover)
-pull(app.ssb.patchwork.createEventStream(), pull.drain(onIndexEvent))
-pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
-pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
-pull(app.ssb.replicate.changes(), pull.drain(onReplicationEvent))
-app.observ.newPosts(onNewPost)
+// :TODO:
+// window.addEventListener('error', onError)
+// document.body.addEventListener('mouseover', onHover)
+// pull(app.ssb.patchwork.createEventStream(), pull.drain(onIndexEvent))
+// pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
+// pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
+// pull(app.ssb.replicate.changes(), pull.drain(onReplicationEvent))
+// app.observ.newPosts(onNewPost)
 
 // render
-ui.refreshPage(null, ui.pleaseWait.bind(ui, false))
+var Main = require('./views/main.jsx')
+React.render(React.createElement(Main, null), document.body)
 
 // Handlers
 // ========

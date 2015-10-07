@@ -19,14 +19,12 @@ module.exports = {
   // sbot rpc connection
   ssb: SSBClient(),
 
-  // pull state from sbot, called on every pageload
+  // pull state from sbot, called on every view change
   fetchLatestState: fetchLatestState,
 
-  // page params parsed from the url
-  page: {
-    id: 'home',
-    param: null,
-    qs: {}
+  // current view
+  view: {
+    id: 'inbox'
   },
 
   // ui data
@@ -40,10 +38,6 @@ module.exports = {
       }
     }),
     '@': []
-  },
-  homeMode: {
-    view: 'all',
-    live: true
   },
   filters: {
     nsfw: true,
@@ -117,7 +111,7 @@ function fetchLatestState (cb) {
           id: id,
           cls: 'user',        
           title: name || id,
-          image: require('./com').profilePicUrl(id),
+          image: null,// require('./com').profilePicUrl(id), :TODO:
           subtitle: name || id,
           value: name || id.slice(1) // if using id, dont include the @ sigil
         })
