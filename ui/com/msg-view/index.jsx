@@ -3,6 +3,7 @@ import React from 'react'
 import mlib from 'ssb-msgs'
 import { UserLink, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
+import { isaReplyTo } from '../../lib/msg-relation'
 
 export default class MsgView extends React.Component {
   render() {
@@ -32,9 +33,4 @@ export class Thread extends React.Component {
     }))
     return <div>{msgs.map((msg) => <MsgView msg={msg} />)}</div>
   }
-}
-
-function isaReplyTo (a, b) {
-  var c = a.value.content
-  return (c.root && mlib.link(c.root).link == b.key || c.branch && mlib.link(c.branch).link == b.key)
 }
