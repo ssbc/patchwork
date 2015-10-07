@@ -2,7 +2,6 @@
 import React from 'react'
 import MsgList from '../com/msg-list'
 import app from '../lib/app'
-import social from '../lib/social-graph'
 
 export default class Inbox extends React.Component {
   cursor (msg) {

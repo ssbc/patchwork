@@ -15,6 +15,9 @@ export default class MsgList extends React.Component {
       selected: null,
       isLoading: false
     }
+  }
+
+  componentDidMount() {
     this.loadMore()
   }
 
@@ -70,7 +73,8 @@ export default class MsgList extends React.Component {
     fetchBottomBy(amt, () => {
       this.setState({
         isLoading: false,
-        msgs: updatedMsgs
+        msgs: updatedMsgs,
+        selected: this.state.selected || updatedMsgs[0]
       })
     })
   }
