@@ -23,7 +23,7 @@ window.app = require('./lib/app')
 // app.observ.newPosts(onNewPost)
 
 // render
-var Main = require('./views/main.jsx')
+var Main = require('./layout.jsx')
 React.render(React.createElement(Main, null), document.body)
 
 // Handlers
