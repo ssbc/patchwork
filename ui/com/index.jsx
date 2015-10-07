@@ -29,3 +29,33 @@ export class NiceDate extends React.Component {
     return <span>{d}</span>
   }
 }
+
+// higher-order component, adds vertical-filling behavior (take all vertical space possible)
+export function verticalFilled (Component) {
+  const VerticalFilledCom = React.createClass({
+    getInitialState() {
+      return { height: window.innerHeight }
+    },
+    componentDidMount() {
+      this.calcHeight()
+      this.resizeListener = this.calcHeight
+      window.addEventListener('resize', this.resizeListener)
+    },
+    componentWillUnmount() {
+      window.removeEventListener('resize', this.resizeListener)
+    },
+    calcHeight() {
+      var height = window.innerHeight
+      if (this.refs && this.refs.el) {
+        console.log(React.findDOMNode(this.refs.el))
+        var rect = React.findDOMNode(this.refs.el).getClientRects()[0]
+        height = window.innerHeight - rect.top
+      }
+      this.setState({ height: height })
+    },
+    render() {
+      return <Component ref="el" {...this.props} {...this.state} />
+    }
+  })
+  return VerticalFilledCom;
+}

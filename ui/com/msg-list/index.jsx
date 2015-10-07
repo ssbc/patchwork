@@ -4,8 +4,11 @@ import React from 'react'
 import Infinite from 'react-infinite'
 import Summary from './summary'
 import { Thread } from '../msg-view'
+import { verticalFilled } from '../'
 import app from '../../lib/app'
 import u from '../../lib/util'
+
+var ThreadVertical = verticalFilled(Thread)
 
 export default class MsgList extends React.Component {
   constructor(props) {
@@ -14,18 +17,34 @@ export default class MsgList extends React.Component {
     this.state = {
       msgs: [],
       selected: null,
-      isLoading: false
+      isLoading: false,
+      containerHeight: window.innerHeight
     }
   }
 
   componentDidMount() {
     this.loadMore()
+    this.calcContainerHeight()
+    this.resizeListener = this.calcContainerHeight.bind(this)
+    window.addEventListener('resize', this.resizeListener)
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeListener)
   }
 
   loadingElement() {
     return <div className="msg-list-item summary">
       Loading...
     </div>
+  }
+
+  calcContainerHeight() {
+    var height = window.innerHeight
+    if (this.refs && this.refs.container) {
+      var rect = this.refs.container.getDOMNode().getClientRects()[0]
+      height = window.innerHeight - rect.top
+    }
+    this.setState({ containerHeight: height })
   }
 
   loadMore(amt) {
@@ -93,10 +112,10 @@ export default class MsgList extends React.Component {
   }
 
   render() {
-    return <div className="msg-list">
+    return <div ref="container" className="msg-list">
       <Infinite className="msg-list-items"
         elementHeight={60}
-        containerHeight={450}
+        containerHeight={this.state.containerHeight}
         infiniteLoadBeginBottomOffset={200}
         onInfiniteLoad={this.loadMore.bind(this)}
         loadingSpinnerDelegate={this.loadingElement()}
@@ -106,7 +125,7 @@ export default class MsgList extends React.Component {
         })}
       </Infinite>
       <div className="msg-list-view">
-        {this.state.selected ? <Thread thread={this.state.selected} /> : undefined}
+        {this.state.selected ? <ThreadVertical thread={this.state.selected} /> : undefined}
       </div>
     </div>
   }

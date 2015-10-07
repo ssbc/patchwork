@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import { verticalFilled } from '../com'
 import u from '../lib/util'
 
 class NavLink extends React.Component {
@@ -12,12 +13,12 @@ class NavLink extends React.Component {
   }
 }
 
-export default class LeftNav extends React.Component {
+class LeftNav extends React.Component {
   nameOf(id) {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
-    return <div>
+    return <div style={{height: this.props.height}}>
       <NavLink to="/" location={this.props.location}>Forum</NavLink>
       <NavLink to="/inbox" location={this.props.location}>Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
@@ -32,3 +33,4 @@ export default class LeftNav extends React.Component {
     </div>
   }
 }
+export default verticalFilled(LeftNav)

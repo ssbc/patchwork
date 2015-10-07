@@ -5,9 +5,9 @@ import { UserLink, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 
-export default class MsgView extends React.Component {
+export class MsgView extends React.Component {
   render() {
-    return <div className="msg-view">
+    return <div className="msg-view" style={{height: this.props.height}}>
       <div className="header">
         <div><UserLink id={this.props.msg.value.author} /></div>
         <div><NiceDate ts={this.props.msg.value.timestamp} /></div>
@@ -31,6 +31,6 @@ export class Thread extends React.Component {
       added[msg.key] = true
       return (msg.value.content.type == 'post') && isaReplyTo(msg, this.props.thread)
     }))
-    return <div>{msgs.map((msg) => <MsgView key={msg.key} msg={msg} />)}</div>
+    return <div style={{height: this.props.height}}>{msgs.map((msg) => <MsgView key={msg.key} msg={msg} />)}</div>
   }
 }
