@@ -34,9 +34,10 @@ export default class MsgList extends React.Component {
     let updatedMsgs = this.state.msgs
 
     let fetchBottomBy = (amt, cb) => {
+      amt = amt || 30
       var lastmsg
       pull(
-        source({ reverse: true, limit: amt||30, lt: cursor(this.botcursor) }),
+        source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
         pull.collect((err, msgs) => {
@@ -57,7 +58,7 @@ export default class MsgList extends React.Component {
           // fetch more if needed
           var remaining = amt - msgs.length
           if (remaining > 0)
-            return fetchBottomBy(remaining)
+            return fetchBottomBy(remaining, cb)
 
           // we're done
           cb()

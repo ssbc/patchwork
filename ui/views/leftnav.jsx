@@ -13,10 +13,11 @@ class NavLink extends React.Component {
 export default class LeftNav extends React.Component {
   render() {
     return <div>
-      <NavLink to="/">Feed</NavLink>
+      <NavLink to="/">Forum</NavLink>
       <NavLink to="/inbox">Inbox</NavLink>
       <NavLink to="/starred">Starred</NavLink>
       <NavLink to="/friends">Friends</NavLink>
+      <NavLink to="/feed">Data-Feed</NavLink>
       <NavLink to="/sync">Sync</NavLink>
     </div>
   }

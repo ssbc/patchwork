@@ -1,4 +1,4 @@
-var app = require('./app')
+import app from './app'
 
 var follows =
 exports.follows = function (a, b) {

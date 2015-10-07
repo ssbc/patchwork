@@ -2,15 +2,14 @@
 import React from 'react'
 import MsgList from '../com/msg-list'
 import app from '../lib/app'
-import social from '../lib/social-graph'
 
-export default class Inbox extends React.Component {
+export default class Starred extends React.Component {
   cursor (msg) {
     if (msg)
       return [msg.value.timestamp, msg.value.author]
   }
 
   render() {
-    return <div className="inbox"><MsgList source={app.ssb.patchwork.createInboxStream} cursor={this.cursor} /></div>
+    return <div className="starred"><MsgList source={app.ssb.patchwork.createMyvoteStream} filter={this.filter} /></div>
   }
 }
