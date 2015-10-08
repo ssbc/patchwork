@@ -18,6 +18,7 @@ export default class MsgList extends React.Component {
       msgs: [],
       selected: null,
       isLoading: false,
+      isAtEnd: false,
       containerHeight: window.innerHeight
     }
   }
@@ -48,7 +49,7 @@ export default class MsgList extends React.Component {
   }
 
   loadMore(amt) {
-    if (this.state.isLoading)
+    if (this.state.isLoading || this.state.isAtEnd)
       return
 
     let numFetched = 0
@@ -83,7 +84,7 @@ export default class MsgList extends React.Component {
 
           // nothing new? stop
           if (!lastmsg || (this.botcursor && this.botcursor.key == lastmsg.key))
-            return cb()
+            return cb(true)
           this.botcursor = lastmsg
 
           // fetch more if needed
@@ -92,15 +93,16 @@ export default class MsgList extends React.Component {
             return fetchBottomBy(remaining, cb)
 
           // we're done
-          cb()
+          cb(false)
         })
       )
     }
 
     this.setState({ isLoading: true })
-    fetchBottomBy(amt, () => {
+    fetchBottomBy(amt, (isAtEnd) => {
       this.setState({
         isLoading: false,
+        isAtEnd: isAtEnd,
         msgs: updatedMsgs,
         selected: this.state.selected || updatedMsgs[0]
       })
