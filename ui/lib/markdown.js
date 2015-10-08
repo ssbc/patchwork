@@ -36,11 +36,11 @@ blockRenderer.urltransform = function (url) {
 
   if (islink) {
     if (ssbref.isFeedId(url))
-      return '#/profile/'+url
+      return '#/profile/'+encodeURIComponent(url)
     else if (ssbref.isMsgId(url))
-      return '#/msg/'+url
+      return '#/msg/'+encodeURIComponent(url)
     else if (ssbref.isBlobId(url))
-      return '#/webview/'+url
+      return '#/webview/'+encodeURIComponent(url)
   }
   else if (url.indexOf('http') !== 0) {
     return false;
@@ -79,7 +79,7 @@ blockRenderer.image  = function (href, title, text) {
       }
       out += '></video>'
     } else {
-      var out = '<a href="#/webview/' + href + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
+      var out = '<a href="#/webview/' + encodeURIComponent(href) + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
       if (title) {
         out += ' title="' + title + '"'
       }

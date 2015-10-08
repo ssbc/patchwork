@@ -6,6 +6,7 @@ import Starred from './views/starred'
 import Data from './views/data'
 import Profile from './views/profile'
 import Msg from './views/msg'
+import WebView from './views/webview'
 
 export default (
   <Router>
@@ -16,6 +17,7 @@ export default (
       <Route path="data" component={Data} />
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
+      <Route path="webview/:id" component={WebView} />
     </Route>
   </Router>
 )
