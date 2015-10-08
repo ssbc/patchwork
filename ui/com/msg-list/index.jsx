@@ -42,7 +42,7 @@ export default class MsgList extends React.Component {
       pull(
         this.liveStream,
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.paraMap(this.decryptMsg.bind(this)),
+        pull.paraMap(this.decryptMsg.bind(this), 100),
         pull.drain((msg) => {
           // remove any noticeable duplicates...
           // check if the message is already in the first 100 and remove it if so
@@ -53,8 +53,11 @@ export default class MsgList extends React.Component {
             }
           }
           // add to start of msgs
+          var selected = this.state.selected
+          if (selected.key === msg.key)
+            selected = msg // update selected, in case we replaced the current msg
           this.state.msgs.unshift(msg)
-          this.setState({ msgs: this.state.msgs })
+          this.setState({ msgs: this.state.msgs, selected: selected })
         })
       )
     }
@@ -64,7 +67,7 @@ export default class MsgList extends React.Component {
     window.removeEventListener('resize', this.resizeListener)
     // abort livestream
     if (this.liveStream)
-      this.liveStream(true, function(){})
+      this.liveStream(true, ()=>{})
   }
 
   loadingElement() {
@@ -111,7 +114,7 @@ export default class MsgList extends React.Component {
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.paraMap(this.decryptMsg.bind(this)),
+        pull.paraMap(this.decryptMsg.bind(this), 100),
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)

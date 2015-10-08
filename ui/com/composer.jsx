@@ -40,7 +40,8 @@ export default class Composer extends React.Component {
     // thread info
     this.threadRoot = null
     this.threadBranch = null
-    this.threadRecps = null
+    this.threadRecpIds = null
+    this.threadRecpLinks = null
     if (this.props.thread) {
       // root and branch links
       this.threadRoot = this.props.thread.key
@@ -48,7 +49,8 @@ export default class Composer extends React.Component {
 
       // extract encryption recipients from thread
       if (Array.isArray(this.props.thread.value.content.recps)) {
-        this.threadRecps = mlib.links(this.props.thread.value.content.recps)
+        this.threadRecpLinks = mlib.links(this.props.thread.value.content.recps)
+        this.threadRecpIds = this.threadRecpLinks
           .map(function (recp) { return recp.link })
           .filter(Boolean)
       }
@@ -135,25 +137,25 @@ export default class Composer extends React.Component {
       }
 
       // post
-      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, this.threadRecps)
-      console.log(post)
-      return
+      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, this.threadRecpLinks)
+      // console.log(post)
+      // return
 
-      // :TODO: actually publish
+      // // :TODO: actually publish
 
-      if (recps)
-        app.ssb.private.publish(post, recps, published)
-      else
-        app.ssb.publish(post, published)
 
-      function published (err, msg) {
+      let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
-          this.setState({ value: '' })
+          this.setState({ text: '' })
           app.ssb.patchwork.markRead(msg.key)
         }
       }
+      if (this.threadRecpIds)
+        app.ssb.private.publish(post, this.threadRecpIds, published)
+      else
+        app.ssb.publish(post, published)
     })
   }
 
