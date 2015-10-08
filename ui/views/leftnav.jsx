@@ -22,7 +22,6 @@ class LeftNav extends React.Component {
       <NavLink to="/" location={this.props.location}>Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
       <NavLink to="/data" location={this.props.location}>Database</NavLink>
-      <NavLink to="/sync" location={this.props.location}>Sync</NavLink>
       <br/>
       <div>Friends</div>
       <NavLink to={'/profile/'+encodeURIComponent(this.props.userid)} location={this.props.location}>{this.nameOf(this.props.userid)}</NavLink>

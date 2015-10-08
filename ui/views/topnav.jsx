@@ -6,7 +6,8 @@ export default class TopNav extends React.Component {
 
   render() {
     return <div id="topnav">
-      <Link to="/composer">Compose</Link>
+      <Link to="/composer">Compose</Link>{' '}
+      <Link to="/sync">Sync</Link>
     </div>
   }
 }
