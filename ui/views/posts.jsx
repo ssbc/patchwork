@@ -2,7 +2,7 @@
 import React from 'react'
 import MsgList from '../com/msg-list'
 
-export default class Forum extends React.Component {
+export default class Posts extends React.Component {
   filter(msg) {
     // toplevel, public posts only
     var c = msg.value.content
@@ -16,6 +16,6 @@ export default class Forum extends React.Component {
   }
 
   render() {
-    return <div className="forum"><MsgList filter={this.filter} /></div>
+    return <div className="posts"><MsgList filter={this.filter} /></div>
   }
 }

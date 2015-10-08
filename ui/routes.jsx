@@ -1,18 +1,18 @@
 import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './layout'
-import Forum from './views/forum'
+import Posts from './views/posts'
 import Inbox from './views/inbox'
 import Starred from './views/starred'
-import Feed from './views/feed'
+import Data from './views/data'
 import Profile from './views/profile'
 
 export default (
   <Router>
     <Route path="/" component={Layout}>
-      <IndexRoute component={Forum} />
+      <IndexRoute component={Posts} />
       <Route path="inbox" component={Inbox} />
       <Route path="starred" component={Starred} />
-      <Route path="feed" component={Feed} />
+      <Route path="data" component={Data} />
       <Route path="profile/*" component={Profile} />
     </Route>
   </Router>

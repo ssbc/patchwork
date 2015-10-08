@@ -19,10 +19,10 @@ class LeftNav extends React.Component {
   }
   render() {
     return <div style={{height: this.props.height}}>
-      <NavLink to="/" location={this.props.location}>Forum</NavLink>
+      <NavLink to="/" location={this.props.location}>Public</NavLink>
       <NavLink to="/inbox" location={this.props.location}>Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
-      <NavLink to="/feed" location={this.props.location}>Data-Feed</NavLink>
+      <NavLink to="/data" location={this.props.location}>All Data</NavLink>
       <NavLink to="/sync" location={this.props.location}>Sync</NavLink>
       <br/>
       <div>Friends</div>
