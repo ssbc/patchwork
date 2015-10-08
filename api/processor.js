@@ -267,13 +267,6 @@ module.exports = function (sbot, db, state, emit) {
           value.content = sbot.private.unbox(value.content)
           if (!value.content)
             return state.pdec()
-
-          // put all decrypted messages in the inbox index
-          var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-          attachIsRead(row)
-          row.author = msg.value.author // inbox index is filtered on read by the friends graph
-          if (follows(sbot.id, msg.value.author))
-            emit('index-change', { index: 'inbox' })
         }
 
         // collect keys of user's messages
