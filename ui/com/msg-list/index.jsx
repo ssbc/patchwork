@@ -57,7 +57,7 @@ export default class MsgList extends React.Component {
     let updatedMsgs = this.state.msgs
 
     let fetchBottomBy = (amt, cb) => {
-      amt = amt || 30
+      amt = amt || 50
       var lastmsg
       pull(
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
@@ -116,7 +116,7 @@ export default class MsgList extends React.Component {
       <Infinite className="msg-list-items"
         elementHeight={60}
         containerHeight={this.state.containerHeight}
-        infiniteLoadBeginBottomOffset={200}
+        infiniteLoadBeginBottomOffset={1200}
         onInfiniteLoad={this.loadMore.bind(this)}
         loadingSpinnerDelegate={this.loadingElement()}
         isInfiniteLoading={this.state.isLoading} >
