@@ -44,6 +44,15 @@ export default class MsgList extends React.Component {
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
         pull.paraMap(this.decryptMsg.bind(this)),
         pull.drain((msg) => {
+          // remove any noticeable duplicates...
+          // check if the message is already in the first 100 and remove it if so
+          for (var i=0; i < this.state.msgs.length && i < 100; i++) {
+            if (this.state.msgs[i].key === msg.key) {
+              this.state.msgs.splice(i, 1)
+              i--
+            }
+          }
+          // add to start of msgs
           this.state.msgs.unshift(msg)
           this.setState({ msgs: this.state.msgs })
         })
@@ -94,6 +103,7 @@ export default class MsgList extends React.Component {
     let cursor = this.props.cursor || ((msg) => { if (msg) { return msg.value.timestamp } })
     let updatedMsgs = this.state.msgs
 
+    // helper to fetch a batch of messages
     let fetchBottomBy = (amt, cb) => {
       amt = amt || 50
       var lastmsg
@@ -128,6 +138,7 @@ export default class MsgList extends React.Component {
       )
     }
 
+    // fetch amount requested
     this.setState({ isLoading: true })
     fetchBottomBy(amt, (isAtEnd) => {
       this.setState({
