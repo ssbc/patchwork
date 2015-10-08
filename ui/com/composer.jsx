@@ -65,7 +65,46 @@ export default class Composer extends React.Component {
   }
 
   onAttach() {
-    alert('todo')
+    this.refs.files.getDOMNode().click() // trigger file-selector
+  }
+
+  // called by the files selector when files are chosen
+  onFilesAdded() {
+
+    var filesInput = this.refs.files.getDOMNode()
+    var handled=0, total = filesInput.files.length
+    this.setState({ isAddingFiles: true })
+
+    let add = (f) => {
+      // limit to 5mb
+      if (f.size > 5 * (1024*1024)) {
+        var inMB = Math.round(f.size / (1024*1024) * 100) / 100
+        modals.error('Error Attaching File', f.name + ' is larger than the 5 megabyte limit (' + inMB + ' MB)')
+        this.setState({ isAddingFiles: false })
+        return false
+      }
+      // hash file
+      app.ssb.patchwork.addFileToBlobs(f.path, (err, res) => {
+        if (err) {
+          modals.error('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
+        } else {
+          var str = ''
+          if (!(/(^|\s)$/.test(this.state.text.value)))
+            str += ' ' // add some space if not on a newline
+          str += '['+(f.name||'untitled')+']('+res.hash+')'
+          this.setState({ text: this.state.text + str })
+        }
+        if (++handled >= total)
+          this.setState({ isAddingFiles: false })
+      })
+      return true
+    }
+
+    // hash the files
+    for (var i=0; i < total; i++) {
+      if (!add(filesInput.files[i]))
+        return false
+    }
   }
 
   onTogglePreview() {
@@ -100,6 +139,8 @@ export default class Composer extends React.Component {
       console.log(post)
       return
 
+      // :TODO: actually publish
+
       if (recps)
         app.ssb.private.publish(post, recps, published)
       else
@@ -119,6 +160,7 @@ export default class Composer extends React.Component {
   render() {
     let isPublic = this.props.thread ? isThreadPublic(this.props.thread) : this.state.isPublic
     return <div>
+      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <ComposerAudience isPublic={isPublic} isReadOnly={!!this.props.thread} {...this.audienceHandlers} />
       <ComposerRecps isPublic={isPublic} isReadOnly={!!this.props.thread} />
       <div>
@@ -127,7 +169,7 @@ export default class Composer extends React.Component {
           <textarea value={this.state.text} onChange={this.onChangeText.bind(this)} /> }
       </div>
       <div>
-        <div><a onClick={this.onAttach.bind(this)}>Add an attachment</a></div>
+        <div>{this.state.isAddingFiles ? <em>Adding...</em> : <a onClick={this.onAttach.bind(this)}>Add an attachment</a>}</div>
         <div><a onClick={this.onTogglePreview.bind(this)}>{this.state.isPreviewing ? 'Edit' : 'Preview'}</a></div>
         <div>{(!this.canSend() || this.state.isSending) ? <em>Send</em> : <a onClick={this.onSend.bind(this)}>Send</a>}</div>
       </div>
