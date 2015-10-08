@@ -29,27 +29,6 @@ module.exports = function (sbot, db, state, emit) {
       }
     },
 
-    site: function (msg) {
-      var site = getSite(msg.value.author)
-
-      // additions
-      mlib.links(msg.value.content.includes, 'blob').forEach(function (link) {
-        if (!link.path)
-          return
-        site[link.path] = link
-      })
-
-      // removals
-      var excludes = msg.value.content.excludes
-      if (excludes) {
-        ;(Array.isArray(excludes) ? excludes : [excludes]).forEach(function (item) {
-          if (!item.path)
-            return
-          delete site[item.path]
-        })
-      }
-    },
-
     contact: function (msg) {
       // update profiles
       mlib.links(msg.value.content.contact, 'feed').forEach(function (link) {
@@ -127,13 +106,6 @@ module.exports = function (sbot, db, state, emit) {
       }
     }
     return profile
-  }
-
-  function getSite (pid) {
-    var site = state.sites[pid]
-    if (!site)
-      state.sites[pid] = site = {}
-    return site
   }
 
   function updateSelfContact (author, msg) {

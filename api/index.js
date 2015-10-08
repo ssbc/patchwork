@@ -34,7 +34,6 @@ exports.init = function (sbot, opts) {
 
     // views
     profiles: {},
-    sites: {},
     names: {}, // ids -> names
     ids: {}, // names -> ids
     actionItems: {}
@@ -98,12 +97,6 @@ exports.init = function (sbot, opts) {
 
   api.createEventStream = function () {
     return notify.listen()
-  }
-
-  api.getPaths = function (cb) {
-    cb(null, {
-      site: pathlib.join(opts.path, 'publish')
-    })
   }
 
   api.getMyProfile = function (cb) {
@@ -350,39 +343,6 @@ exports.init = function (sbot, opts) {
     }
 
     return eventPush
-  }
-
-  api.getSite = function (id, cb) {
-    awaitSync(function () { cb(null, state.sites[id]) })
-  }
-
-  var sitePathRegex = /(@.*\.ed25519)(.*)/
-  api.getSiteLink = function (url, cb) {
-    awaitSync(function () {
-      // parse url
-      var parts = sitePathRegex.exec(url)
-      if (!parts) {
-        var err = new Error('Not found')
-        err.notFound = true
-        return cb(err)
-      }
-
-      var pid = parts[1]
-      var path = parts[2]
-      if (path.charAt(0) == '/')
-        path = path.slice(1) // skip the preceding slash
-      if (!path)
-        path = 'index.html' // default asset
-
-      // lookup the link
-      var link = (state.sites[pid]) ? state.sites[pid][path] : null
-      if (!link) {
-        var err = new Error('Not found')
-        err.notFound = true
-        return cb(err)
-      }
-      cb(null, link)
-    })
   }
 
   api.getProfile = function (id, cb) {
