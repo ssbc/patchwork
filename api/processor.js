@@ -9,55 +9,23 @@ module.exports = function (sbot, db, state, emit) {
       var author = msg.value.author
       var by_me = (author === sbot.id)
       var c = msg.value.content
-      
-      // home index
-      if (c.recps)
-        return // skip targeted messages
 
-      state.home.sortedUpsert(msg.value.timestamp, msg.key)
       if (mlib.link(c.root, 'msg')) {
-        // a reply, put its *parent* in the home index
+        // a reply, put its *parent* in the inbox index
         state.pinc()
         u.getRootMsg(sbot, msg, function (err, rootmsg) {
-          if (rootmsg && typeof rootmsg.value.content != 'string') // dont put encrypted msgs in homestream
-            state.home.sortedUpsert(rootmsg.value.timestamp, rootmsg.key)
+          if (rootmsg && typeof rootmsg.value.content != 'string') { // dont put undecryptable msgs in the inbox
+            var row = state.inbox.sortedUpsert(rootmsg.value.timestamp, rootmsg.key)
+            attachIsRead(row)
+            emit('index-change', { index: 'inbox' })
+          }
           state.pdec()            
         })
-      }
-
-      if (!by_me) {
-        // emit home-add if by a followed user and in the last hour
-        if (follows(sbot.id, author) && ((Date.now() - msg.value.timestamp) < 1000*60*60))
-          emit('home-add')
-      }
-
-      // inbox index
-      if (!by_me) {
-        var inboxed = false
-        mlib.links(c.root, 'msg').forEach(function (link) {
-          if (inboxed) return
-          // a reply to my messages?
-          if (state.mymsgs.indexOf(link.link) >= 0) {
-            var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-            attachIsRead(row)
-            row.author = msg.value.author // inbox index is filtered on read by the friends graph
-            if (follows(sbot.id, row.author))
-              emit('index-change', { index: 'inbox' })
-            inboxed = true
-          }
-        })
-        mlib.links(c.mentions, 'feed').forEach(function (link) {
-          if (inboxed) return
-          // mentions me?
-          if (link.link == sbot.id) {
-            var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-            attachIsRead(row)
-            row.author = msg.value.author // inbox index is filtered on read by the friends graph
-            if (follows(sbot.id, row.author))
-              emit('index-change', { index: 'inbox' })
-            inboxed = true
-          }
-        })
+      } else {
+        // a top post, put it in the inbox index
+        var row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)
+        attachIsRead(row)
+        emit('index-change', { index: 'inbox' })
       }
     },
 
@@ -304,8 +272,8 @@ module.exports = function (sbot, db, state, emit) {
     key = key || indexRow.key
     state.pinc()
     db.isread.get(key, function (err, v) {
-      state.pdec()
       indexRow.isread = !!v
+      state.pdec()
     })
   }
 

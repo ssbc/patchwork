@@ -4,7 +4,99 @@ var ssbkeys = require('ssb-keys')
 var pull    = require('pull-stream')
 var u       = require('./util')
 
-tape('inbox index includes encrypted messages from followeds', function (t) {
+tape('inbox index includes all posts', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob'] }, // Note, does not follow charlie
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) {
+      if (err) throw err
+
+      var done = multicb()
+      users.bob.add({ type: 'post', text: 'hello from bob' }, done())
+      users.charlie.add({ type: 'post', text: 'hello from charlie', root: msg.key, branch: msg.key }, done())
+      done(function (err) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 2)
+          t.end()
+          sbot.close()
+        }))
+      })
+    })
+  })
+})
+
+tape('inbox index updates the root message for replies', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob'] }, // Note, does not follow charlie
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) {
+      if (err) throw err
+
+      var done = multicb()
+      users.bob.add({ type: 'post', text: 'hello from bob', root: msg.key, branch: msg.key }, done())
+      done(function (err) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 1)
+          t.equal(msgs[0].value.author, users.alice.id)
+          t.end()
+          sbot.close()
+        }))
+      })
+    })
+  })
+})
+
+tape('inbox index includes non-posts with post replies on them', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob'] }, // Note, does not follow charlie
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'nonpost', text: 'hello from alice' }, function (err, msg) {
+      if (err) throw err
+
+      pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
+        if (err) throw err
+        t.equal(msgs.length, 0)
+
+        var done = multicb()
+        users.charlie.add({ type: 'post', text: 'hello from charlie', root: msg.key, branch: msg.key }, done())
+        done(function (err) {
+          if (err) throw err
+
+          pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
+            if (err) throw err
+            t.equal(msgs.length, 1)
+            t.equal(msgs[0].value.author, users.alice.id)
+            t.end()
+            sbot.close()
+          }))
+        })
+      }))
+    })
+  })
+})
+
+tape('inbox index includes encrypted messages', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
     alice: { follows: ['bob'] }, // Note, does not follow charlie
@@ -21,64 +113,9 @@ tape('inbox index includes encrypted messages from followeds', function (t) {
 
       pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
         if (err) throw err
-        t.equal(msgs.length, 1)
-        t.equal(msgs[0].value.author, users.bob.id)
-        t.end()
-        sbot.close()
-      }))
-    })
-  })
-})
-
-tape('inbox index includes replies to the users posts from followeds', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
-    bob: {},
-    charlie: {}
-  }, function (err, users) {
-    if (err) throw err
-
-    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) {
-      if (err) throw err
-
-      var done = multicb()
-      users.bob.add({ type: 'post', text: 'hello from bob', root: msg.key, branch: msg.key }, done())
-      users.charlie.add({ type: 'post', text: 'hello from charlie', root: msg.key, branch: msg.key }, done())
-      done(function (err) {
-        if (err) throw err
-
-        pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
-          if (err) throw err
-          t.equal(msgs.length, 1)
-          t.equal(msgs[0].value.author, users.bob.id)
-          t.end()
-          sbot.close()
-        }))
-      })
-    })
-  })
-})
-
-tape('inbox index includes mentions of the user from followeds', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
-    bob: {},
-    charlie: {}
-  }, function (err, users) {
-    if (err) throw err
-
-    var done = multicb()
-    users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.alice.id] }, done())
-    users.charlie.add({ type: 'post', text: 'hello from charlie', mentions: [users.alice.id] }, done())
-    done(function (err) {
-      if (err) throw err
-
-      pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs) {
-        if (err) throw err
-        t.equal(msgs.length, 1)
-        t.equal(msgs[0].value.author, users.bob.id)
+        t.equal(msgs.length, 2)
+        t.equal(msgs[0].value.author, users.charlie.id)
+        t.equal(msgs[1].value.author, users.bob.id)
         t.end()
         sbot.close()
       }))
@@ -89,7 +126,7 @@ tape('inbox index includes mentions of the user from followeds', function (t) {
 tape('inbox index counts correctly track read/unread', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
+    alice: { follows: ['bob'] },
     bob: {},
     charlie: {}
   }, function (err, users) {
@@ -97,7 +134,6 @@ tape('inbox index counts correctly track read/unread', function (t) {
 
     var done = multicb()
     users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.alice.id] }, done())
-    users.charlie.add({ type: 'post', text: 'hello from charlie', mentions: [users.alice.id] }, done())
     done(function (err, msgs) {
       if (err) throw err
       var inboxedMsg = msgs[0][1]
@@ -293,17 +329,14 @@ tape('follow index counts correctly track read/unread', function (t) {
     if (err) throw err
     var followMsg = msgs[1][1]
 
-    console.log('getting indexes 1')
     sbot.patchwork.getIndexCounts(function (err, counts) {
       if (err) throw err
       t.equal(counts.follows, 2)
       t.equal(counts.followsUnread, 2)
 
-      console.log('marking read')
       sbot.patchwork.markRead(followMsg.key, function (err) {
         if (err) throw err
 
-        console.log('getting indexes 2')
         sbot.patchwork.getIndexCounts(function (err, counts) {
           if (err) throw err
           t.equal(counts.follows, 2)
@@ -322,66 +355,6 @@ tape('follow index counts correctly track read/unread', function (t) {
             })
           })
         })
-      })
-    })
-  })
-})
-
-tape('home index includes all posts', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
-    bob: {},
-    charlie: {}
-  }, function (err, users) {
-    if (err) throw err
-
-    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) {
-      if (err) throw err
-
-      var done = multicb()
-      users.bob.add({ type: 'post', text: 'hello from bob' }, done())
-      users.charlie.add({ type: 'post', text: 'hello from charlie', root: msg.key, branch: msg.key }, done())
-      done(function (err) {
-        if (err) throw err
-
-        pull(sbot.patchwork.createHomeStream(), pull.collect(function (err, msgs) {
-          if (err) throw err
-          t.equal(msgs.length, 3)
-          t.end()
-          sbot.close()
-        }))
-      })
-    })
-  })
-})
-
-tape('home index includes non-posts with post replies on them', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
-    bob: {},
-    charlie: {}
-  }, function (err, users) {
-    if (err) throw err
-
-    users.alice.add({ type: 'nonpost', text: 'hello from alice' }, function (err, msg) {
-      if (err) throw err
-
-      var done = multicb()
-      users.bob.add({ type: 'nonpost', text: 'hello from bob' }, done())
-      users.charlie.add({ type: 'post', text: 'hello from charlie', root: msg.key, branch: msg.key }, done())
-      done(function (err) {
-        if (err) throw err
-
-        pull(sbot.patchwork.createHomeStream(), pull.collect(function (err, msgs) {
-          if (err) throw err
-          t.equal(msgs.length, 2)
-          t.equal(msgs[0].value.author, users.charlie.id)
-          t.equal(msgs[1].value.author, users.alice.id)
-          t.end()
-          sbot.close()
-        }))
       })
     })
   })

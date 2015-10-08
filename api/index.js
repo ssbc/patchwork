@@ -27,7 +27,6 @@ exports.init = function (sbot, opts) {
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
-    home: u.index(), // also has `.isread`
     inbox: u.index(), // also has `.isread` and `.author`
     votes: u.index(), // also has `.isread`, `.vote`, and `.votemsg`
     myvotes: u.index(), // also has  `.vote`
@@ -113,29 +112,20 @@ exports.init = function (sbot, opts) {
     })
   }
 
-  function isInboxFriend (row) {
-    if (row.author == sbot.id) return true
-    var p = state.profiles[sbot.id]
-    if (!p) return false
-    return p.assignedTo[row.author] && p.assignedTo[row.author].following
-  }
-
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       cb(null, {
-        inbox: state.inbox.rows.filter(isInboxFriend).length,
-        inboxUnread: state.inbox.filter(function (row) { return isInboxFriend(row) && row.author != sbot.id && !row.isread }).length,
+        inbox: state.inbox.rows.length,
+        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         votes: state.votes.filter(function (row) { return row.vote > 0 }).length,
         votesUnread: state.votes.filter(function (row) { return row.vote > 0 && !row.isread }).length,
         follows: state.follows.filter(function (row) { return row.following }).length,
-        followsUnread: state.follows.filter(function (row) { return row.following && !row.isread }).length,
-        home: state.home.rows.length
+        followsUnread: state.follows.filter(function (row) { return row.following && !row.isread }).length
       })
     })
   }
 
   api.createInboxStream = indexStreamFn(state.inbox, function (row) { 
-    if (!isInboxFriend(row)) return false
     return row.key
   })
   api.createVoteStream = indexStreamFn(state.votes, function (row) { 
@@ -147,7 +137,6 @@ exports.init = function (sbot, opts) {
     return row.key
   })
   api.createFollowStream = indexStreamFn(state.follows)
-  api.createHomeStream = indexStreamFn(state.home)
 
   function indexMarkRead (indexname, key, keyname) {
     if (Array.isArray(key)) {
