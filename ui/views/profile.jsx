@@ -5,7 +5,7 @@ import UserInfo from '../com/user-info'
 
 export default class Profile extends React.Component {
   render() {
-    var id = this.props.location.pathname.slice('/profile/'.length)
+    var id = decodeURIComponent(this.props.params.id)
 
     let feed = (opts) => {
       opts = opts || {}

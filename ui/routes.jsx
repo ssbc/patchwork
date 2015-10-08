@@ -13,7 +13,7 @@ export default (
       <Route path="inbox" component={Inbox} />
       <Route path="starred" component={Starred} />
       <Route path="data" component={Data} />
-      <Route path="profile/*" component={Profile} />
+      <Route path="profile/:id" component={Profile} />
     </Route>
   </Router>
 )

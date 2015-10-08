@@ -1,22 +1,21 @@
 'use babel'
 import React from 'react'
 import ssbref from 'ssb-ref'
+import { UserLink, MsgLink, BlobLink } from './index'
 import app from '../lib/app'
 
 class TableRow extends React.Component {
   render() {
-    // :TODO: link rendering
-    // if (ssbref.isLink(obj[k])) {
-    //   var ref = obj[k]
-    //   if (ssbref.isMsgId(ref))
-    //     els.push(<TableRow path={path+k} value={ref} />) // :TODO: link row(k, com.a('#/msg/'+ref, ref)))
-    //   else if (ssbref.isBlobId(ref))
-    //     els.push(<TableRow path={path+k} value={ref} />) // :TODO: link row(k, com.a('#/webview/'+ref, obj.name || ref)))
-    //   else
-    //     els.push(<TableRow path={path+k} value={ref} />) // :TODO: link row(k, com.user(ref)))
-    // }
     var value = this.props.value
-    if (typeof value == 'boolean')
+    if (ssbref.isLink(value)) {
+      if (ssbref.isMsg(value))
+        value = <MsgLink id={value} name={this.props.name} />
+      else if (ssbref.isBlob(value))
+        value = <BlobLink id={value} name={this.props.name} />
+      else
+        value = <UserLink id={value} />
+    }
+    else if (typeof value == 'boolean')
       value = (value) ? 'true' : 'false'
     return <tr><td>{this.props.path}</td><td>{value}</td></tr>
   }
@@ -29,7 +28,7 @@ function tableElements(path, obj) {
     if (obj[k] && typeof obj[k] == 'object')
       els = els.concat(tableElements(path+k, obj[k]))
     else
-      els.push(<TableRow key={path+k} path={path+k} value={obj[k]} />)
+      els.push(<TableRow key={path+k} path={path+k} value={obj[k]} name={obj.name} />)
   }
   return els
 }

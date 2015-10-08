@@ -8,7 +8,19 @@ import u from '../lib/util'
 export class UserLink extends React.Component {
   render() {
     var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
-    return <Link to={'/profile/'+this.props.id} className="user-link">{name}</Link>
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link">{name}</Link>
+  }
+}
+
+export class MsgLink extends React.Component {
+  render() {
+    return <Link to={'/msg/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</Link>
+  }
+}
+
+export class BlobLink extends React.Component {
+  render() {
+    return <Link to={'/webview/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</Link>
   }
 }
 

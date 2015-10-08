@@ -26,9 +26,9 @@ class LeftNav extends React.Component {
       <NavLink to="/sync" location={this.props.location}>Sync</NavLink>
       <br/>
       <div>Friends</div>
-      <NavLink to={'/profile/'+this.props.userid} location={this.props.location}>{this.nameOf(this.props.userid)}</NavLink>
+      <NavLink to={'/profile/'+encodeURIComponent(this.props.userid)} location={this.props.location}>{this.nameOf(this.props.userid)}</NavLink>
       {this.props.friends.map((id) => {
-        return <NavLink key={id} to={'/profile/'+id} location={this.props.location}>{this.nameOf(id)}</NavLink>
+        return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
       })}
     </div>
   }
