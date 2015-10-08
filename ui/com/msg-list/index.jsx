@@ -42,7 +42,7 @@ export default class MsgList extends React.Component {
       pull(
         this.liveStream,
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.paraMap(this.decryptMsg.bind(this), 100),
+        pull.asyncMap(this.decryptMsg.bind(this)),
         pull.drain((msg) => {
           // remove any noticeable duplicates...
           // check if the message is already in the first 100 and remove it if so
@@ -114,7 +114,7 @@ export default class MsgList extends React.Component {
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.paraMap(this.decryptMsg.bind(this), 100),
+        pull.asyncMap(this.decryptMsg.bind(this)),
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)

@@ -9,18 +9,13 @@ module.exports = function (sbot, db, state, emit) {
       var author = msg.value.author
       var by_me = (author === sbot.id)
       var c = msg.value.content
+      var root = mlib.link(c.root, 'msg')
 
-      if (mlib.link(c.root, 'msg')) {
-        // a reply, put its *parent* in the inbox index
-        state.pinc()
-        u.getRootMsg(sbot, msg, function (err, rootmsg) {
-          if (rootmsg && typeof rootmsg.value.content != 'string') { // dont put undecryptable msgs in the inbox
-            var row = state.inbox.sortedUpsert(msg.value.timestamp, rootmsg.key)
-            attachIsRead(row)
-            emit('index-change', { index: 'inbox' })
-          }
-          state.pdec()            
-        })
+      if (root) {
+        // a reply, update its root in the inbox index
+        var row = state.inbox.sortedUpsert(msg.value.timestamp, root.link)
+        attachIsRead(row)
+        emit('index-change', { index: 'inbox' })
       } else {
         // a top post, put it in the inbox index
         var row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)

@@ -136,14 +136,8 @@ export default class Composer extends React.Component {
         return
       }
 
-      // post
+      // publish
       var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, this.threadRecpLinks)
-      // console.log(post)
-      // return
-
-      // // :TODO: actually publish
-
-
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')

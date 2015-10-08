@@ -52,7 +52,7 @@ export class Thread extends React.Component {
         // listen for all new messages
         (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
         // decrypt (as needed)
-        pull.paraMap((msg, cb) => { u.decryptThread(msg, () => { cb(null, msg) }) }, 100),
+        pull.asyncMap((msg, cb) => { u.decryptThread(msg, () => { cb(null, msg) }) }),
         // read...
         pull.drain((msg) => {
           var c = msg.value.content
