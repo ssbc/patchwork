@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import app from './lib/app'
+import TopNav from './views/topnav'
 import LeftNav from './views/leftnav'
 
 export default class Layout extends React.Component {
@@ -14,9 +15,9 @@ export default class Layout extends React.Component {
   }
   render() {
     return <div className="layout-rows">
-      <div id="topnav"></div>
+      <TopNav />
       <div className="layout-columns">
-        <div id="leftnav"><LeftNav location={this.props.location.pathname} userid={this.state.user.id} names={this.state.users.names} friends={this.state.user.friends} /></div>
+        <LeftNav location={this.props.location.pathname} userid={this.state.user.id} names={this.state.users.names} friends={this.state.user.friends} />
         <div id="mainview">{this.props.children}</div>
       </div>
     </div>

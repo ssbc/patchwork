@@ -18,7 +18,7 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
-    return <div style={{height: this.props.height}}>
+    return <div id="leftnav" style={{height: this.props.height}}>
       <NavLink to="/" location={this.props.location}>Public</NavLink>
       <NavLink to="/inbox" location={this.props.location}>Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
