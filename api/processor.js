@@ -15,7 +15,7 @@ module.exports = function (sbot, db, state, emit) {
         state.pinc()
         u.getRootMsg(sbot, msg, function (err, rootmsg) {
           if (rootmsg && typeof rootmsg.value.content != 'string') { // dont put undecryptable msgs in the inbox
-            var row = state.inbox.sortedUpsert(rootmsg.value.timestamp, rootmsg.key)
+            var row = state.inbox.sortedUpsert(msg.value.timestamp, rootmsg.key)
             attachIsRead(row)
             emit('index-change', { index: 'inbox' })
           }
