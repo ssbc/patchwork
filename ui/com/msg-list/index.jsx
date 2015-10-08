@@ -21,16 +21,41 @@ export default class MsgList extends React.Component {
       isAtEnd: false,
       containerHeight: window.innerHeight
     }
+    this.liveStream = null
   }
 
   componentDidMount() {
+    // load first messages
     this.loadMore()
+
+    // setup autoresizing
     this.calcContainerHeight()
     this.resizeListener = this.calcContainerHeight.bind(this)
     window.addEventListener('resize', this.resizeListener)
+
+    // setup livestream
+    if (this.props.live) {
+      let source = this.props.source || app.ssb.createFeedStream
+      let opts = (typeof this.props.live == 'object') ? this.props.live : {}
+      opts.live = true
+      this.liveStream = source(opts)
+      pull(
+        this.liveStream,
+        (this.props.filter) ? pull.filter(this.props.filter) : undefined,
+        pull.paraMap(this.decryptMsg.bind(this)),
+        pull.drain((msg) => {
+          this.state.msgs.unshift(msg)
+          this.setState({ msgs: this.state.msgs })
+        })
+      )
+    }
   }
   componentWillUnmount() {
+    // stop autoresizing
     window.removeEventListener('resize', this.resizeListener)
+    // abort livestream
+    if (this.liveStream)
+      this.liveStream(true, function(){})
   }
 
   loadingElement() {
@@ -46,6 +71,18 @@ export default class MsgList extends React.Component {
       height = window.innerHeight - rect.top
     }
     this.setState({ containerHeight: height })
+  }
+
+  decryptMsg(msg, cb) {
+    // fetch thread data and decrypt
+    if (this.props.threads) {
+      app.ssb.relatedMessages({ id: msg.key, count: true }, (err, thread) => {
+        if (err || !thread)
+          return console.warn(err), cb(null, msg) // shouldnt happen
+        u.decryptThread(thread, () => { cb(null, thread) })
+      })
+    } else
+      u.decryptThread(msg, () => { cb(null, msg) })
   }
 
   loadMore(amt) {
@@ -64,17 +101,7 @@ export default class MsgList extends React.Component {
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.paraMap((msg, cb) => {
-          // fetch thread data and decrypt
-          if (this.props.threads) {
-            app.ssb.relatedMessages({ id: msg.key, count: true }, (err, thread) => {
-              if (err || !thread)
-                return console.warn(err), cb(null, msg) // shouldnt happen
-              u.decryptThread(thread, () => { cb(null, thread) })
-            })
-          } else
-            u.decryptThread(msg, () => { cb(null, msg) })
-        }),
+        pull.paraMap(this.decryptMsg.bind(this)),
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)
