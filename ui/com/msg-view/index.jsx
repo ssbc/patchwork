@@ -4,6 +4,7 @@ import mlib from 'ssb-msgs'
 import { UserLink, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
+import Composer from '../composer'
 
 export class MsgView extends React.Component {
   render() {
@@ -31,6 +32,9 @@ export class Thread extends React.Component {
       added[msg.key] = true
       return (msg.value.content.type == 'post') && isaReplyTo(msg, this.props.thread)
     }))
-    return <div style={{height: this.props.height}}>{msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}</div>
+    return <div style={{height: this.props.height}}>
+      {msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}
+      <Composer key={this.props.thread.key} thread={this.props.thread} />
+    </div>
   }
 }

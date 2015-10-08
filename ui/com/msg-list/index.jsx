@@ -130,7 +130,7 @@ export default class MsgList extends React.Component {
         })}
       </Infinite>
       <div className="msg-list-view">
-        {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} /> : undefined}
+        {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} /> : ''}
       </div>
     </div>
   }
