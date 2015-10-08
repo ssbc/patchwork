@@ -64,13 +64,16 @@ export default class MsgList extends React.Component {
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.paraMap(function (msg, cb) {
-          // fetch thread data
-          app.ssb.relatedMessages({ id: msg.key, count: true }, (err, thread) => {
-            if (err || !thread)
-              return console.warn(err), cb(null, msg) // shouldnt happen
-            u.decryptThread(thread, () => { cb(null, thread) })
-          })
+        pull.paraMap((msg, cb) => {
+          // fetch thread data and decrypt
+          if (this.props.threads) {
+            app.ssb.relatedMessages({ id: msg.key, count: true }, (err, thread) => {
+              if (err || !thread)
+                return console.warn(err), cb(null, msg) // shouldnt happen
+              u.decryptThread(thread, () => { cb(null, thread) })
+            })
+          } else
+            u.decryptThread(msg, () => { cb(null, msg) })
         }),
         pull.collect((err, msgs) => {
           if (err)
@@ -123,11 +126,11 @@ export default class MsgList extends React.Component {
         loadingSpinnerDelegate={this.loadingElement()}
         isInfiniteLoading={this.state.isLoading} >
         {this.state.msgs.map((m, i) => {
-          return <Summary key={i} msg={m} onSelect={this.onSelectMsg.bind(this)} selected={this.state.selected === m} />
+          return <Summary key={i} msg={m} onSelect={this.onSelectMsg.bind(this)} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
         })}
       </Infinite>
       <div className="msg-list-view">
-        {this.state.selected ? <ThreadVertical thread={this.state.selected} /> : undefined}
+        {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} /> : undefined}
       </div>
     </div>
   }

@@ -18,7 +18,7 @@ export default class Summary extends React.Component {
         <div><UserLink id={this.props.msg.value.author} /> {replies}</div>
         <div><NiceDate ts={this.props.msg.value.timestamp} /></div>
       </div>
-      <div className="body"><Content msg={this.props.msg} /></div>
+      <div className="body"><Content msg={this.props.msg} forceRaw={this.props.forceRaw} /></div>
     </div>
   }
 }

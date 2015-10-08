@@ -13,7 +13,7 @@ export class MsgView extends React.Component {
         <div><NiceDate ts={this.props.msg.value.timestamp} /></div>
       </div>
       <div className="body">
-        <Content msg={this.props.msg} />
+        <Content msg={this.props.msg} forceRaw={this.props.forceRaw} />
       </div>
     </div>
   }
@@ -31,6 +31,6 @@ export class Thread extends React.Component {
       added[msg.key] = true
       return (msg.value.content.type == 'post') && isaReplyTo(msg, this.props.thread)
     }))
-    return <div style={{height: this.props.height}}>{msgs.map((msg) => <MsgView key={msg.key} msg={msg} />)}</div>
+    return <div style={{height: this.props.height}}>{msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}</div>
   }
 }

@@ -24,7 +24,7 @@ export default class Profile extends React.Component {
     }
     return <div className="profile" key={id}>
       <UserInfo id={id} />
-      <MsgList source={feed} cursor={cursor} filter={filter} />
+      <MsgList threads source={feed} cursor={cursor} filter={filter} />
     </div>
   }
 }

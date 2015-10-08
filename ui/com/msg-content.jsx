@@ -10,6 +10,9 @@ export class Block extends React.Component {
   render() {
     var c = this.props.msg.value.content
 
+    if (this.props.forceRaw)
+      return <PrettyRaw key={this.props.msg.key} obj={c} />
+
     try {
       switch (c.type) {
         case 'post':
@@ -24,6 +27,9 @@ export class Block extends React.Component {
 export class Inline extends React.Component {
   render() {
     var c = this.props.msg.value.content
+
+    if (this.props.forceRaw)
+      return <span><code>{c.type}</code> message</span>
 
     try {
       switch (c.type) {

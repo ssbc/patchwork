@@ -10,6 +10,6 @@ export default class Starred extends React.Component {
   }
 
   render() {
-    return <div className="starred"><MsgList source={app.ssb.patchwork.createMyvoteStream} filter={this.filter} /></div>
+    return <div className="starred"><MsgList threads source={app.ssb.patchwork.createMyvoteStream} filter={this.filter} /></div>
   }
 }
