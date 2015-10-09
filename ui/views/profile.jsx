@@ -15,15 +15,23 @@ export default class Profile extends React.Component {
 
     this.handlers = {
       onToggleFollow: () => {
-        console.log('toggle')
         if (this.state.isSelf) return
         let msg = (this.state.isFollowing) ? schemas.unfollow(this.pid) : schemas.follow(this.pid)
-      console.log('msg', msg)
         app.ssb.publish(msg, (err) => {
           if (err)
             return console.error(err) // :TODO: inform user
 
-          console.log('refreshing')
+          // update state and trigger render
+          app.fetchLatestState(this.refreshState.bind(this))
+        })
+      },
+      onRename: (name) => {
+        if (name === this.state.name)
+          return
+        app.ssb.publish(schemas.name(this.pid, name), (err) => {
+          if (err) 
+            return console.error(err) // :TODO: inform user
+
           // update state and trigger render
           app.fetchLatestState(this.refreshState.bind(this))
         })
@@ -71,7 +79,6 @@ export default class Profile extends React.Component {
       if (msg.value.author == this.pid && c.type == 'post' && !(c.root || c.branch))
         return true
     }
-    console.log(this.pid)
     return <div className="profile" key={this.pid}>
       <UserInfo pid={this.pid} {...this.state} {...this.handlers} />
       <MsgList threads live={{ gt: Date.now() }} source={feed} cursor={cursor} filter={filter} />
