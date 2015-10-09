@@ -274,7 +274,7 @@ exports.getPostThread = function (mid, cb) {
   })
 }
 
-exports.iterateThreadAsync = function (thread, fn, maxDepth, cb) {
+exports.iterateThreadAsync = function (thread, maxDepth, fn, cb) {
   var done = multicb()
   fn(thread, done()) // run on toplevel
   if (thread.related)
@@ -295,7 +295,7 @@ exports.iterateThreadAsync = function (thread, fn, maxDepth, cb) {
 
 exports.attachThreadIsread = function (thread, maxdepth, cb) {
   thread.hasUnread = false
-  exports.iterateThreadAsync(thread, function (msg, cb2) {
+  exports.iterateThreadAsync(thread, maxdepth, function (msg, cb2) {
     if ('isRead' in msg)
       return cb2() // already handled
     if (msg.value.content.type != 'post')
@@ -307,11 +307,29 @@ exports.attachThreadIsread = function (thread, maxdepth, cb) {
       thread.hasUnread = thread.hasUnread || !isRead
       cb2()
     })
-  }, maxdepth, cb)
+  }, cb)
+}
+
+exports.markThreadRead = function (thread, cb) {
+  // iterate only 1 level deep, dont need to recurse
+  exports.iterateThreadAsync(thread, 1, function (msg, cb2) {
+    if (msg.isRead)
+      return cb2() // already isread
+    if (msg.value.content.type != 'post')
+      return cb2() // not a post
+
+    app.ssb.patchwork.markRead(msg.key, function (err, isRead) {
+      msg.isRead = true
+      cb2()
+    })
+  }, function () {
+    thread.hasUnread = false
+    cb()
+  })
 }
 
 exports.decryptThread = function (thread, cb) {
-  exports.iterateThreadAsync(thread, function (msg, cb2) {
+  exports.iterateThreadAsync(thread, undefined, function (msg, cb2) {
     if ('plaintext' in msg)
       return cb2() // already handled
 
@@ -325,7 +343,18 @@ exports.decryptThread = function (thread, cb) {
         msg.value.content = decrypted
       cb2()
     })
-  }, undefined, cb)
+  }, cb)
+}
+
+exports.getLastThreadPost = function (thread) {
+  var msg = thread
+  if (!thread.related)
+    return msg
+  thread.related.forEach(function (r) {
+    if (r.value.content.type === 'post')
+      msg = r
+  })
+  return msg
 }
 
 exports.getPubStats = function () {

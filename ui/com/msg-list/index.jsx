@@ -22,6 +22,43 @@ export default class MsgList extends React.Component {
       containerHeight: window.innerHeight
     }
     this.liveStream = null
+
+    // handlers
+    this.handlers = {
+      onSelect: (msg) => {
+        // update UI
+        this.setState({ selected: msg })
+
+        // mark read in DB
+        if (!msg.hasUnread)
+          return
+        u.markThreadRead(msg, (err) => {
+          if (err)
+            return console.error(err)
+
+          // update UI again
+          this.setState({ selected: msg, msgs: this.state.msgs })
+        })
+      },
+      onMarkSelectedUnread: () => {
+        // get the last post in the thread, abort if already unread
+        let selected = this.state.selected
+        if (!selected || selected.hasUnread) return
+        let lastPost = u.getLastThreadPost(selected)
+        if (!lastPost || !lastPost.isRead) return
+
+        // mark unread in db
+        app.ssb.patchwork.markUnread(lastPost.key, (err) => {
+          if (err)
+            return console.error('Failed to mark unread', err) // :TODO: tell user about the error
+
+          // re-render
+          lastPost.isRead = false
+          selected.hasUnread = true
+          this.setState(this.state)
+        })
+      }
+    }
   }
 
   componentDidMount() {
@@ -146,14 +183,9 @@ export default class MsgList extends React.Component {
       this.setState({
         isLoading: false,
         isAtEnd: isAtEnd,
-        msgs: updatedMsgs,
-        selected: this.state.selected || updatedMsgs[0]
+        msgs: updatedMsgs
       })
     })
-  }
-
-  onSelectMsg(msg) {
-    this.setState({ selected: msg })
   }
 
   render() {
@@ -171,11 +203,11 @@ export default class MsgList extends React.Component {
         loadingSpinnerDelegate={this.loadingElement()}
         isInfiniteLoading={this.state.isLoading} >
         {this.state.msgs.map((m, i) => {
-          return <Summary key={i} msg={m} onSelect={this.onSelectMsg.bind(this)} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
+          return <Summary key={i} msg={m} {...this.handlers} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
         })}
       </Infinite>
       <div className="msg-list-view">
-        {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} /> : ''}
+        {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : ''}
       </div>
     </div>
   }

@@ -4,6 +4,7 @@ import { Block as MdBlock } from './markdown'
 //import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
+import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
 import social from '../lib/social-graph'
@@ -45,7 +46,7 @@ export default class Composer extends React.Component {
     if (this.props.thread) {
       // root and branch links
       this.threadRoot = this.props.thread.key
-      this.threadBranch = getLastThreadPost(this.props.thread).key
+      this.threadBranch = u.getLastThreadPost(this.props.thread).key
 
       // extract encryption recipients from thread
       if (Array.isArray(this.props.thread.value.content.recps)) {
@@ -179,15 +180,4 @@ function isThreadPublic (thread) {
   if ('plaintext' in thread)
     return thread.plaintext
   return (typeof thread.value.content !== 'string')
-}
-
-function getLastThreadPost (thread) {
-  var msg = thread
-  if (!thread.related)
-    return msg
-  thread.related.forEach(function (r) {
-    if (r.value.content.type === 'post')
-      msg = r
-  })
-  return msg
 }

@@ -33,7 +33,9 @@ export class Thread extends React.Component {
     }
     this.liveStream = null
   }
-  flattenThread(thread) {
+
+  // helper to do setup on thread-change
+  constructState(thread) {
     // collapse thread into a flat message-list
     var added = {}
     this.setState({
@@ -46,7 +48,7 @@ export class Thread extends React.Component {
     })
   }
   componentDidMount() {
-    this.flattenThread(this.props.thread)
+    this.constructState(this.props.thread)
     // listen for new replies
     if (this.props.live) {
       pull(
@@ -70,15 +72,17 @@ export class Thread extends React.Component {
     }
   }
   componentWillReceiveProps(newProps) {
-    this.flattenThread(newProps.thread)
+    this.constructState(newProps.thread)
   }
   componentWillUnmount() {
     // abort the livestream
     if (this.liveStream)
       this.liveStream(true, ()=>{})
   }
+
   render() {
     return <div style={{height: this.props.height}}>
+      <div><a onClick={this.props.onMarkSelectedUnread}>Mark Unread</a></div>
       {this.state.msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}
       <Composer key={this.props.thread.key} thread={this.props.thread} />
     </div>
