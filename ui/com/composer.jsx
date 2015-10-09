@@ -144,6 +144,8 @@ export default class Composer extends React.Component {
         else {
           this.setState({ text: '' })
           app.ssb.patchwork.markRead(msg.key)
+          if (this.props.onSend)
+            this.props.onSend(msg)
         }
       }
       if (this.threadRecpIds)
