@@ -357,9 +357,9 @@ exports.getLastThreadPost = function (thread) {
   return msg
 }
 
-exports.getPubStats = function () {
+exports.getPubStats = function (peers) {
   var membersof=0, active=0, untried=0
-  app.peers.forEach(function (peer) {
+  ;(peers||app.peers).forEach(function (peer) {
     // filter out LAN peers
     if (peer.host == 'localhost' || peer.host.indexOf('192.168.') === 0)
       return
