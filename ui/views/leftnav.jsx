@@ -18,16 +18,27 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
+    let renderProfLink = (id) => <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
+
+    // nonfriend followings
     let following = ''
     if (this.props.following.length) {
       following = <div>
         <br/>
         <div>Following</div>
-        {this.props.following.map((id) => {
-          return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
-        })}
+        {this.props.following.map(renderProfLink)}
       </div>
     }
+    // nonfriend followers
+    let followers = ''
+    if (this.props.followers.length) {
+      followers = <div>
+        <br/>
+        <div>Followers</div>
+        {this.props.followers.map(renderProfLink)}
+      </div>
+    }
+
     return <div id="leftnav" style={{height: this.props.height}}>
       <NavLink to="/" location={this.props.location}>Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
@@ -35,10 +46,9 @@ class LeftNav extends React.Component {
       <br/>
       <div>Friends</div>
       <NavLink to={'/profile/'+encodeURIComponent(this.props.userid)} location={this.props.location}>{this.nameOf(this.props.userid)}</NavLink>
-      {this.props.friends.map((id) => {
-        return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
-      })}
+      {this.props.friends.map(renderProfLink)}
       {following}
+      {followers}
     </div>
   }
 }
