@@ -12,10 +12,10 @@ export default class Msg extends React.Component {
     this.state = { thread: null, notFound: false }
   }
   componentDidMount() {
-    app.ssb.relatedMessages({ id: this.props.params.id, count: true }, (err, thread) => {
+    u.getPostThread(this.props.params.id, (err, thread) => {
       if (err || !thread)
         return console.warn(err), this.setState({ notFound: true })
-      u.decryptThread(thread, () => { this.setState({ thread: thread }) })
+      this.setState({ thread: thread })
     })
   }
   render() {

@@ -258,30 +258,74 @@ exports.getParentThread = function (mid, cb) {
   }
 }
 
-exports.decryptThread = function (thread, cb) {
+exports.getPostThread = function (mid, cb) {
+  // get thread
+  app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
+    if (err) return cb(err)
+    // decrypt as needed
+    exports.decryptThread(thread, function (err) {
+      if (err) return cb(err)
+      // fetch isread state for posts (only 1 level deep, dont need to recurse)
+      exports.attachThreadIsread(thread, 1, function (err) {
+        if (err) return cb(err)
+        cb(null, thread)
+      })
+    })
+  })
+}
+
+exports.iterateThreadAsync = function (thread, fn, maxDepth, cb) {
   var done = multicb()
-  thread.plaintext = (typeof thread.value.content != 'string')
-  if (!thread.plaintext) decrypt(thread)
-  if (thread.related)    iterate(thread.related)
+  fn(thread, done()) // run on toplevel
+  if (thread.related)
+    iterate(thread.related, 1)
   done(cb)
 
-  function iterate (msgs) {
+  function iterate (msgs, n) {
+    if (!isNaN(maxDepth) && n > maxDepth)
+      return
+    // run through related
     msgs.forEach(function (msg) {
-      msg.plaintext = (typeof msg.value.content != 'string')
-      if (!msg.plaintext)
-        decrypt(msg)
+      fn(msg, done()) // run on item
       if (msg.related)
-        iterate(msg.related)
+        iterate(msg.related, n+1)
     })
   }
-  function decrypt (msg) {
-    var cb2 = done()
+}
+
+exports.attachThreadIsread = function (thread, maxdepth, cb) {
+  thread.hasUnread = false
+  exports.iterateThreadAsync(thread, function (msg, cb2) {
+    if ('isRead' in msg)
+      return cb2() // already handled
+    if (msg.value.content.type != 'post')
+      return cb2() // not a post
+
+    msg.isRead = false
+    app.ssb.patchwork.isRead(msg.key, function (err, isRead) {
+      msg.isRead = isRead
+      thread.hasUnread = thread.hasUnread || !isRead
+      cb2()
+    })
+  }, maxdepth, cb)
+}
+
+exports.decryptThread = function (thread, cb) {
+  exports.iterateThreadAsync(thread, function (msg, cb2) {
+    if ('plaintext' in msg)
+      return cb2() // already handled
+
+    msg.plaintext = (typeof thread.value.content != 'string')
+    if (msg.plaintext)
+      return cb2() // not encrypted
+
+    // decrypt
     app.ssb.private.unbox(msg.value.content, function (err, decrypted) {
       if (decrypted)
         msg.value.content = decrypted
       cb2()
     })
-  }
+  }, undefined, cb)
 }
 
 exports.getPubStats = function () {

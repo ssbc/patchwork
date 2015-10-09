@@ -17,6 +17,7 @@ export class MsgView extends React.Component {
       </div>
       <div className="body">
         {this.props.forceRaw ? <div>{this.props.msg.key}</div> : ''}
+        <div>{this.props.msg.isRead ? '' : 'unread'}</div>
         <Content msg={this.props.msg} forceRaw={this.props.forceRaw} />
       </div>
     </div>

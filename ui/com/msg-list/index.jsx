@@ -34,33 +34,8 @@ export default class MsgList extends React.Component {
     window.addEventListener('resize', this.resizeListener)
 
     // setup livestream
-    if (this.props.live) {
-      let source = this.props.source || app.ssb.createFeedStream
-      let opts = (typeof this.props.live == 'object') ? this.props.live : {}
-      opts.live = true
-      this.liveStream = source(opts)
-      pull(
-        this.liveStream,
-        (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.asyncMap(this.decryptMsg.bind(this)),
-        pull.drain((msg) => {
-          // remove any noticeable duplicates...
-          // check if the message is already in the first 100 and remove it if so
-          for (var i=0; i < this.state.msgs.length && i < 100; i++) {
-            if (this.state.msgs[i].key === msg.key) {
-              this.state.msgs.splice(i, 1)
-              i--
-            }
-          }
-          // add to start of msgs
-          var selected = this.state.selected
-          if (selected.key === msg.key)
-            selected = msg // update selected, in case we replaced the current msg
-          this.state.msgs.unshift(msg)
-          this.setState({ msgs: this.state.msgs, selected: selected })
-        })
-      )
-    }
+    if (this.props.live)
+      this.setupLivestream()
   }
   componentWillUnmount() {
     // stop autoresizing
@@ -76,6 +51,34 @@ export default class MsgList extends React.Component {
     </div>
   }
 
+  setupLivestream() {
+    let source = this.props.source || app.ssb.createFeedStream
+    let opts = (typeof this.props.live == 'object') ? this.props.live : {}
+    opts.live = true
+    this.liveStream = source(opts)
+    pull(
+      this.liveStream,
+      (this.props.filter) ? pull.filter(this.props.filter) : undefined,
+      pull.asyncMap(this.processMsg.bind(this)),
+      pull.drain((msg) => {
+        // remove any noticeable duplicates...
+        // check if the message is already in the first 100 and remove it if so
+        for (var i=0; i < this.state.msgs.length && i < 100; i++) {
+          if (this.state.msgs[i].key === msg.key) {
+            this.state.msgs.splice(i, 1)
+            i--
+          }
+        }
+        // add to start of msgs
+        var selected = this.state.selected
+        if (selected.key === msg.key)
+          selected = msg // update selected, in case we replaced the current msg
+        this.state.msgs.unshift(msg)
+        this.setState({ msgs: this.state.msgs, selected: selected })
+      })
+    )
+  }
+
   calcContainerHeight() {
     var height = window.innerHeight
     if (this.refs && this.refs.container) {
@@ -85,14 +88,10 @@ export default class MsgList extends React.Component {
     this.setState({ containerHeight: height })
   }
 
-  decryptMsg(msg, cb) {
+  processMsg(msg, cb) {
     // fetch thread data and decrypt
     if (this.props.threads) {
-      app.ssb.relatedMessages({ id: msg.key, count: true }, (err, thread) => {
-        if (err || !thread)
-          return console.warn(err), cb(null, msg) // shouldnt happen
-        u.decryptThread(thread, () => { cb(null, thread) })
-      })
+      u.getPostThread(msg.key, cb)
     } else
       u.decryptThread(msg, () => { cb(null, msg) })
   }
@@ -114,7 +113,7 @@ export default class MsgList extends React.Component {
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        pull.asyncMap(this.decryptMsg.bind(this)),
+        pull.asyncMap(this.processMsg.bind(this)),
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)
