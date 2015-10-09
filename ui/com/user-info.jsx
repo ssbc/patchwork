@@ -7,24 +7,11 @@ import social from '../lib/social-graph'
 
 export default class UserInfo extends React.Component {
   render() {
-    var pid         = this.props.id
-    var profile     = app.users.profiles[pid]
-    var name        = app.users.names[pid] || u.shortString(pid, 6)
-    var isSelf      = (pid == app.user.id)
-    var isFollowing = social.follows(app.user.id, pid)
-    var followsYou  = social.follows(pid, app.user.id)
-    var hasFlagged  = social.flags(app.user.id, pid)
-    var hasBlocked  = social.blocks(app.user.id, pid)
-    var followers1  = social.followedFollowers(app.user.id, pid, true)
-    var followers2  = social.unfollowedFollowers(app.user.id, pid)
-    var followeds   = social.followeds(pid)
-    var flaggers    = social.followedFlaggers(app.user.id, pid, true)
-
     // name conflict controls
     var nameConflictDlg
     var nameConflicts = []
     for (var id in app.users.names) {
-      if (id != pid && app.users.names[id] == app.users.names[pid])
+      if (id != this.props.pid && app.users.names[id] == app.users.names[this.props.pid])
         nameConflicts.push(id)
     }
     if (nameConflicts.length) {
@@ -38,7 +25,7 @@ export default class UserInfo extends React.Component {
 
     // flag controls
     var flagMsgs
-    if (flaggers.length) {
+    if (this.props.flaggers.length) {
       // :TODO:
       // flagMsgs = h('.profile-flags.message-feed')
       // flaggers.forEach(function (id) {
@@ -53,21 +40,23 @@ export default class UserInfo extends React.Component {
     }
 
     return  <div className="user-info">
-      <div><img src={app.profilePicUrl(pid)} /></div>
+      <div><img src={app.profilePicUrl(this.props.pid)} /></div>
       <div>
         <div>
-          <h1>{name}</h1>
-          {(isSelf) ?
+          <h1>{this.props.name}</h1>
+          {(this.props.isSelf) ?
             <Link to="/setup">Edit Profile</Link> :
             <span>
-              {(hasBlocked) ? 'BLOCKED' : <a onclick={this.props.onToggleFollow}>{(isFollowing) ? ' Unfollow' : ' Follow'}</a>}{' '}
-              <a onclick={this.props.onRename}>Rename</a>{' '}
-              <a onclick={this.props.onToggleFlag}>{(!!hasFlagged) ? 'Unflag' : 'Flag'}</a>
+              {(this.props.hasBlocked) ? 'BLOCKED' : <a onClick={this.props.onToggleFollow}>{(this.props.isFollowing) ? ' Unfollow' : ' Follow'}</a>}{' '}
+              <a onClick={this.props.onRename}>Rename</a>{' '}
+              <a onClick={this.props.onToggleFlag}>{(!!this.props.hasFlagged) ? 'Unflag' : 'Flag'}</a>
             </span>
           }
         </div>
         <div>
-          {followers1.length + followers2.length} followers {(isSelf) ? '' : '('+followers1.length+' followed by you)'} {flaggers.length} flags
+          {this.props.followers1.length + this.props.followers2.length} followers
+          {(this.props.isSelf) ? '' : ' ('+this.props.followers1.length+' followed by you)'}
+          {' '+this.props.flaggers.length} flags
         </div>
       </div>
     </div>
