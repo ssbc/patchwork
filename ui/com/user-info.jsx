@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import { RenameModalBtn } from './modals'
+import { RenameModalBtn, FlagUserModalBtn } from './modals'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
@@ -50,7 +50,9 @@ export default class UserInfo extends React.Component {
             <span>
               {(this.props.hasBlocked) ? 'BLOCKED' : <a onClick={this.props.onToggleFollow}>{(this.props.isFollowing) ? ' Unfollow' : ' Follow'}</a>}{' '}
               <RenameModalBtn name={this.props.name} onSubmit={this.props.onRename} />{' '}
-              <a onClick={this.props.onToggleFlag}>{(!!this.props.hasFlagged) ? 'Unflag' : 'Flag'}</a>
+              { (!this.props.hasFlagged) ?
+                <FlagUserModalBtn name={this.props.name} onSubmit={this.props.onFlag} /> :
+                <a onClick={this.props.onUnflag}>Unflag</a> }
             </span>
           }
         </div>
