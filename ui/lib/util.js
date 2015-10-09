@@ -265,8 +265,21 @@ exports.getPostThread = function (mid, cb) {
     // decrypt as needed
     exports.decryptThread(thread, function (err) {
       if (err) return cb(err)
+      var done = multicb()
       // fetch isread state for posts (only 1 level deep, dont need to recurse)
-      exports.attachThreadIsread(thread, 1, function (err) {
+      exports.attachThreadIsread(thread, 1, done())
+      // look for user mention (same story on recursion)
+      thread.mentionsUser = false
+      exports.iterateThreadAsync(thread, 1, function (msg, cb2) {
+        var c = msg.value.content
+        if (c.type !== 'post' || !c.mentions) return cb2()
+        mlib.links(c.mentions, 'feed').forEach(function (l) {
+          if (l.link === app.user.id)
+            thread.mentionsUser = true
+        })
+        cb2()
+      }, done())
+      done(function (err) {
         if (err) return cb(err)
         cb(null, thread)
       })
