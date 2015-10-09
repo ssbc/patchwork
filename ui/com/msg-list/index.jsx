@@ -63,7 +63,7 @@ export default class MsgList extends React.Component {
 
   componentDidMount() {
     // load first messages
-    this.loadMore()
+    this.loadMore(15)
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -199,7 +199,7 @@ export default class MsgList extends React.Component {
         elementHeight={60}
         containerHeight={this.state.containerHeight}
         infiniteLoadBeginBottomOffset={1200}
-        onInfiniteLoad={this.loadMore.bind(this)}
+        onInfiniteLoad={this.loadMore.bind(this, 15)}
         loadingSpinnerDelegate={this.loadingElement()}
         isInfiniteLoading={this.state.isLoading} >
         {this.state.msgs.map((m, i) => {
