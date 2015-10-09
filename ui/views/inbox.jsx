@@ -10,6 +10,8 @@ export default class Inbox extends React.Component {
   }
 
   render() {
-    return <div className="inbox"><MsgList threads live={{ gt: [Date.now(), null] }} source={app.ssb.patchwork.createInboxStream} cursor={this.cursor} /></div>
+    return <div className="inbox">
+      <MsgList threads live={{ gt: [Date.now(), null] }} emptyMsg="Your inbox is empty" source={app.ssb.patchwork.createInboxStream} cursor={this.cursor} />
+    </div>
   }
 }

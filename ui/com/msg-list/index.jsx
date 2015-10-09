@@ -157,6 +157,11 @@ export default class MsgList extends React.Component {
   }
 
   render() {
+    let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
+    if (isEmpty) {
+      let emptyMsg = this.props.emptyMsg || 'No new messages'
+      return <div ref="container" className="msg-list"><div className="msg-list-items"><em>{emptyMsg}</em></div></div>
+    }
     return <div ref="container" className="msg-list">
       <Infinite className="msg-list-items"
         elementHeight={60}
