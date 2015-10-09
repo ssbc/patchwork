@@ -59,6 +59,7 @@ module.exports = extend(new Emitter(), {
 })
 
 function addIssue (isUrgent, title, err, extraIssueInfo) {
+  console.error(title, err, extraIssueInfo)
   var message = err.message || err.toString()
   var stack   = err.stack || ''
   var issueDesc = message + '\n\n' + stack + '\n\n' + (extraIssueInfo||'')

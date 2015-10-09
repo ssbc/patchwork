@@ -50,7 +50,7 @@ export default class MsgList extends React.Component {
         // mark unread in db
         app.ssb.patchwork.markUnread(lastPost.key, (err) => {
           if (err)
-            return console.error('Failed to mark unread', err) // :TODO: tell user about the error
+            return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkSelectedUnread of MsgList')
 
           // re-render
           lastPost.isRead = false

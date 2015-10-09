@@ -72,7 +72,7 @@ class Sync extends React.Component {
   componentDidMount() {
     // fetch peers list
     app.ssb.gossip.peers((err, peers) => {
-      if (err) return console.error(err) // :TODO: inform user
+      if (err) return app.minorIssue('Failed to fetch peers list', err, 'This happened while loading the sync page')
       peers = peers || []
       this.setState({
         peers: peers,
@@ -124,7 +124,7 @@ class Sync extends React.Component {
   onAddNode(addr) {
     app.ssb.gossip.connect(addr, function (err) {
       if (err)
-        console.error(err) // :TODO: inform user
+        app.issue('Failed to connect to '+addr, err)
     })
   }
 

@@ -129,11 +129,10 @@ export default class Composer extends React.Component {
     mentionslib.extract(text, (err, mentions) => {
       if (err) {
         this.setState({ isSending: false })
-        // :TODO:
-        // if (err.conflict)
-        //   modals.error('Error While Publishing', 'You follow multiple people with the name "'+err.name+'." Resolve this before publishing.')
-        // else
-        //   modals.error('Error While Publishing', err, 'This error occured while trying to extract the mentions from a new post.')
+        if (err.conflict)
+          app.issue('Error While Publishing', 'You follow multiple people with the name "'+err.name+'." Resolve this before publishing.')
+        else
+          app.issue('Error While Publishing', err, 'This error occured while trying to extract the mentions from a new post.')
         return
       }
 
