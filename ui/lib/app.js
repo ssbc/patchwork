@@ -36,6 +36,9 @@ module.exports = extend(new Emitter(), {
     }),
     '@': []
   },
+  issues: [],
+  issue: addIssue.bind(null, true), // helper to add an issue
+  minorIssue: addIssue.bind(null, false), // helper to add an issue that shouldnt trigger a modal
 
   // application state, fetched every refresh
   actionItems: {},
@@ -54,6 +57,22 @@ module.exports = extend(new Emitter(), {
   },
   peers: [],
 })
+
+function addIssue (isUrgent, title, err, extraIssueInfo) {
+  var message = err.message || err.toString()
+  var stack   = err.stack || ''
+  var issueDesc = message + '\n\n' + stack + '\n\n' + (extraIssueInfo||'')
+
+  app.issues.unshift({
+    isRead: false,
+    isUrgent: isUrgent,
+    title: title,
+    message: message,
+    stack: stack,
+    issueUrl: 'https://github.com/ssbc/patchwork/issues/new?body='+encodeURIComponent(issueDesc)
+  })
+  app.emit('update:issues')
+}
 
 function fetchLatestState (cb) {
   var done = multicb({ pluck: 1 })
