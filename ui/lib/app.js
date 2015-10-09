@@ -52,7 +52,9 @@ module.exports = {
   user: {
     id: null,
     profile: {},
-    friends: []
+    followeds: [], // people the user follows
+    friends: [], // people the user follows, who follow the user back
+    nonfriendFolloweds: [] // people the user follows, who dont follow the user back
   },
   users: {
     names: {},
@@ -126,10 +128,10 @@ function fetchLatestState (cb) {
     app.user.profile   = app.users.profiles[app.user.id]
 
     // get friend list
-    app.user.friends = []
-    for (var k in app.users.profiles)
-      if (app.user.profile.assignedTo[k] && app.user.profile.assignedTo[k].following)
-        app.user.friends.push(k)
+    var social = require('./social-graph')
+    app.user.followeds = social.followeds(app.user.id)
+    app.user.friends = app.user.followeds.filter(function (other) { return other !== app.user.id && social.follows(other, app.user.id) })
+    app.user.nonfriendFolloweds = app.user.followeds.filter(function (other) { return other !== app.user.id && !social.follows(other, app.user.id) })
 
     // update observables
     app.observ.peers(app.peers)

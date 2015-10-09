@@ -18,6 +18,16 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
+    let following = ''
+    if (this.props.following.length) {
+      following = <div>
+        <br/>
+        <div>Following</div>
+        {this.props.following.map((id) => {
+          return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
+        })}
+      </div>
+    }
     return <div id="leftnav" style={{height: this.props.height}}>
       <NavLink to="/" location={this.props.location}>Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
@@ -28,6 +38,7 @@ class LeftNav extends React.Component {
       {this.props.friends.map((id) => {
         return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
       })}
+      {following}
     </div>
   }
 }

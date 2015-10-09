@@ -17,7 +17,7 @@ export default class Layout extends React.Component {
     return <div className="layout-rows">
       <TopNav />
       <div className="layout-columns">
-        <LeftNav location={this.props.location.pathname} userid={this.state.user.id} names={this.state.users.names} friends={this.state.user.friends} />
+        <LeftNav location={this.props.location.pathname} userid={this.state.user.id} names={this.state.users.names} friends={this.state.user.friends} following={this.state.user.nonfriendFolloweds} />
         <div id="mainview">{this.props.children}</div>
       </div>
     </div>
