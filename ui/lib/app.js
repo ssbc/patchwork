@@ -8,25 +8,21 @@ or which has  been  loaded  from  scuttlebot during page
 refresh because  its  commonly  needed during rendering.
 */
 
-var o         = require('observable')
+
 var multicb   = require('multicb')
 var SSBClient = require('./muxrpc-ipc')
 var emojis    = require('emoji-named-characters')
+var Emitter   = require('events')
+var extend    = require('xtend/mutable')
 
 // master state object
 var app =
-module.exports = {
+module.exports = extend(new Emitter(), {
   // sbot rpc connection
   ssb: SSBClient(),
 
   // pull state from sbot, called on every view change
   fetchLatestState: fetchLatestState,
-  profilePicUrl: profilePicUrl,
-
-  // current view
-  view: {
-    id: 'inbox'
-  },
 
   // ui data
   suggestOptions: { 
@@ -39,11 +35,6 @@ module.exports = {
       }
     }),
     '@': []
-  },
-  filters: {
-    nsfw: true,
-    spam: true,
-    abuse: true
   },
 
   // application state, fetched every refresh
@@ -62,54 +53,8 @@ module.exports = {
     profiles: {}
   },
   peers: [],
+})
 
-  // global observables, updated by persistent events
-  observ: {
-    sideview: o(true),
-    peers: o([]),
-    hasSyncIssue: o(false),
-    newPosts: o(0),
-    indexCounts: {
-      inbox: o(0),
-      votes: o(0),
-      follows: o(0),
-      inboxUnread: o(0),
-      votesUnread: o(0),
-      followsUnread: o(0)
-    }
-  }
-}
-
-function profilePicUrl (id) {
-  var url = './img/default-prof-pic.png'
-  var profile = app.users.profiles[id]
-  if (profile) {
-    var link
-
-    // lookup the image link
-    if (profile.self.image)
-      link = profile.self.image
-
-    if (link) {
-      url = 'http://localhost:7777/'+link.link
-
-      // append the 'backup img' flag, so we always have an image
-      url += '?fallback=img'
-
-      // if we know the filetype, try to construct a good filename
-      if (link.type) {
-        var ext = link.type.split('/')[1]
-        if (ext) {
-          var name = app.users.names[id] || 'profile'
-          url += '&name='+encodeURIComponent(name+'.'+ext)
-        }
-      }
-    }
-  }
-  return url
-}
-
-var firstFetch = true
 function fetchLatestState (cb) {
   var done = multicb({ pluck: 1 })
   app.ssb.whoami(done())
@@ -135,14 +80,6 @@ function fetchLatestState (cb) {
     app.user.nonfriendFolloweds = app.user.followeds.filter(function (other) { return other !== app.user.id && !social.follows(other, app.user.id) })
     app.user.nonfriendFollowers = social.unfollowedFollowers(app.user.id, app.user.id)
 
-    // update observables
-    app.observ.peers(app.peers)
-    var stats = require('./util').getPubStats()
-    app.observ.hasSyncIssue(stats.hasSyncIssue)
-    for (var k in app.indexCounts)
-      if (app.observ.indexCounts[k])
-        app.observ.indexCounts[k](app.indexCounts[k])
-
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
     for (var id in app.users.profiles) {
@@ -152,19 +89,14 @@ function fetchLatestState (cb) {
           id: id,
           cls: 'user',        
           title: name || id,
-          image: app.profilePicUrl(id),
+          image: require('./util').profilePicUrl(id),
           subtitle: name || id,
           value: name || id.slice(1) // if using id, dont include the @ sigil
         })
       }
     }
 
-    // do some first-load things
-    if (firstFetch) {
-      app.observ.newPosts(0) // trigger title render, so we get the correct name
-      firstFetch = false
-    }
-
-    cb()
+    app.emit('update:all')
+    cb && cb()
   })
 }

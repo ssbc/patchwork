@@ -7,11 +7,14 @@ import LeftNav from './views/leftnav'
 export default class Layout extends React.Component {
   constructor(props) {
     super(props)
-    this.state = app
+    this.state = { user: app.user, users: app.users }
+
+    // listen for app change-events that should update our state
+    app.on('update:all', () => { this.setState({ user: app.user, users: app.users }) })
   }
   componentWillReceiveProps() {
     // update state on view changes
-    app.fetchLatestState(() => { this.setState(app) })
+    app.fetchLatestState()
   }
   render() {
     return <div className="layout-rows">

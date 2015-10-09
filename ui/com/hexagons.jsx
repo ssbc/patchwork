@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import app from '../lib/app'
+import u from '../lib/util'
 
 export default class Hexagon extends React.Component {
   render() {
@@ -16,7 +17,7 @@ export default class Hexagon extends React.Component {
 
 export class UserHexagon extends React.Component {
   render() {
-    return <Link className="user-hexagon" to={'/profile/'+this.props.id}><Hexagon url={app.profilePicUrl(this.props.id)} size={this.props.size} /></Link>
+    return <Link className="user-hexagon" to={'/profile/'+this.props.id}><Hexagon url={u.profilePicUrl(this.props.id)} size={this.props.size} /></Link>
   }
 }
 

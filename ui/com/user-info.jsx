@@ -41,7 +41,7 @@ export default class UserInfo extends React.Component {
     }
 
     return  <div className="user-info">
-      <div><img src={app.profilePicUrl(this.props.pid)} /></div>
+      <div><img src={u.profilePicUrl(this.props.pid)} /></div>
       <div>
         <div>
           <h1>{this.props.name}</h1>
