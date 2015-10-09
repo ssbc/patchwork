@@ -108,7 +108,7 @@ export default class MsgList extends React.Component {
         }
         // add to start of msgs
         var selected = this.state.selected
-        if (selected.key === msg.key)
+        if (selected && selected.key === msg.key)
           selected = msg // update selected, in case we replaced the current msg
         this.state.msgs.unshift(msg)
         this.setState({ msgs: this.state.msgs, selected: selected })

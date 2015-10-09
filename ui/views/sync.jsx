@@ -6,7 +6,7 @@ import u from '../lib/util'
 import social from '../lib/social-graph'
 import { UserLink, verticalFilled } from '../com/index'
 import { UserHexagon } from '../com/hexagons'
-import { PromptModalBtn } from '../com/modals'
+import { PromptModalBtn, InviteModalBtn } from '../com/modals'
 
 class Peer extends React.Component {
   onSync() {
@@ -119,7 +119,7 @@ class Sync extends React.Component {
       this.setState({ peers: peers })
   }
   onUseInvite() {
-    // :TODO:
+    this.props.history.pushState(null, '/')
   }
   onAddNode(addr) {
     app.ssb.gossip.connect(addr, function (err) {
@@ -141,7 +141,7 @@ class Sync extends React.Component {
       <div>
         <h1>{'You\'re followed by ' + stats.membersof} public node{stats.membersof==1?'':'s'} <small>{stats.active} connected</small></h1>
         {warning}
-        <p><a onClick={this.onUseInvite.bind(this)}>Join a Pub</a></p>
+        <p><InviteModalBtn onUseInvite={this.onUseInvite.bind(this)} /></p>
       </div>
       <p>
         Mesh Network{' '}

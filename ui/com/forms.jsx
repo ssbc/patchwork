@@ -63,3 +63,41 @@ export class FlagUserForm extends React.Component {
     </div>
   }
 }
+
+export class InviteForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      code: this.props.code
+    }
+    this.on = {
+      change: (e) => {
+        this.setState({ code: e.target.value })
+      },
+      submit: (e) => {
+        e.preventDefault()
+        this.props.onSubmit(this.state.code)
+      }
+    }
+  }
+  render() {
+    let msg=''
+    if (this.props.info)
+      msg = <p>{this.props.info}</p>
+    else if (this.props.error)
+      msg = <p>{this.props.error}</p>
+
+    return <div>
+      <h3>Join a Public Node</h3>
+      <form onSubmit={this.on.submit}>
+        <input type="text" value={this.state.code} onChange={this.on.change} placeholder="Enter the invite code here" />
+        <button disabled={this.props.isDisabled}>Use Code</button>
+      </form>
+      {msg}
+      <hr/>
+      <p><strong>Public nodes help you communicate across the Internet.</strong></p>
+      <p>Neckbeards can setup their own public nodes. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the server documentation here.</a></p>
+      <p>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</p>
+    </div>
+  }
+}
