@@ -43,7 +43,7 @@ export default class Issues extends React.Component {
     app.on('update:issues', this.updateState)
   }
   componentWillUnmount() {
-    app.removeEventListener('update:issues', this.updateState)
+    app.removeListener('update:issues', this.updateState)
   }
 
   onDismiss(issue) {

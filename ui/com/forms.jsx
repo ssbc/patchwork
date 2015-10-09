@@ -1,5 +1,59 @@
 'use babel'
 import React from 'react'
+import app from '../lib/app'
+
+export class SetupForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = this.validate(app.users.names[app.user.id]||'')
+  }
+
+  onChangeName(e) {
+    this.setState(this.validate(e.target.value))
+  }
+
+  validate (name) {
+    let badNameCharsRegex = /[^A-z0-9\._-]/
+    if (!name.trim()) {
+      return { error: false, isValid: false, name: name }
+    } else if (badNameCharsRegex.test(name)) {
+      return {
+        name: name,
+        error: 'We\'re sorry, your name can only include A-z 0-9 . _ - and cannot have spaces.',
+        isValid: false
+      }
+    } else if (name.slice(-1) == '.') {
+      return {
+        name: name,
+        error: 'We\'re sorry, your name cannot end with a period.',
+        isValid: false
+      }
+    } else {
+      return {
+        name: name,
+        error: false,
+        isValid: true
+      }
+    }
+  }
+
+  onSubmit(e) {
+    e.preventDefault()
+    this.props.onSubmit(this.state.name)
+  }
+
+  render() {
+    var isNew = !app.users.names[app.user.id]
+
+    return <div>
+      <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
+      <form onSubmit={this.onSubmit.bind(this)}>
+        <p><label>Your nickname: <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} /></label></p>
+        <p><button disabled={!this.state.isValid}>Save</button> {this.state.error}</p>
+      </form>
+    </div>
+  }
+}
 
 export class RenameForm extends React.Component {
   constructor(props) {

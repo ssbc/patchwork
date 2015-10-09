@@ -55,7 +55,7 @@ module.exports = extend(new Emitter(), {
     names: {},
     profiles: {}
   },
-  peers: [],
+  peers: []
 })
 
 function addIssue (isUrgent, title, err, extraIssueInfo) {

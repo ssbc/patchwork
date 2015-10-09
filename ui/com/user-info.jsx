@@ -46,7 +46,7 @@ export default class UserInfo extends React.Component {
         <div>
           <h1>{this.props.name}</h1>
           {(this.props.isSelf) ?
-            <Link to="/setup">Edit Profile</Link> :
+            <a onClick={()=>{app.emit('modal:setup', true)}}>Edit Profile</a> :
             <span>
               {(this.props.hasBlocked) ? 'BLOCKED' : <a onClick={this.props.onToggleFollow}>{(this.props.isFollowing) ? ' Unfollow' : ' Follow'}</a>}{' '}
               <RenameModalBtn name={this.props.name} onSubmit={this.props.onRename} />{' '}

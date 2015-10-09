@@ -2,8 +2,67 @@
 import React from 'react'
 import xtend from 'xtend'
 import ref from 'ssb-ref'
+import schemas from 'ssb-msg-schemas'
+import Modal from 'react-modal'
+import app from '../lib/app'
 import { ModalBtn } from './index'
-import { RenameForm, FlagUserForm, InviteForm } from './forms'
+import { SetupForm, RenameForm, FlagUserForm, InviteForm } from './forms'
+
+export class SetupModal extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  onSubmit(name) {
+    if (!name.trim())
+      return
+    if (name === app.users.names[app.user.id])
+      return this.onClose()
+    // publish
+    app.ssb.publish(schemas.about(app.user.id, name), function (err) {
+      if (err) app.issue('Error While Publishing', err, 'Setup modal publishing new about msg')
+      else app.fetchLatestState()
+    })
+  }
+
+  onClose() {
+    if (this.props.cantClose)
+      return
+    app.emit('modal:setup', false)
+  }
+
+  render() {
+    let modalStyle = {
+      overlay : {
+        position          : 'fixed',
+        top               : 0,
+        left              : 0,
+        right             : 0,
+        bottom            : 0,
+        backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+        zIndex            : 1000
+      },
+      content : {
+        position                   : 'absolute',
+        top                        : '40px',
+        left                       : '40px',
+        right                      : '40px',
+        bottom                     : '40px',
+        border                     : '1px solid #ccc',
+        background                 : '#fff',
+        overflow                   : 'auto',
+        WebkitOverflowScrolling    : 'touch',
+        borderRadius               : '4px',
+        outline                    : 'none',
+        padding                    : '20px'
+      }
+    }
+    return <Modal isOpen={this.props.isOpen} onRequestClose={this.onClose.bind(this)} style={modalStyle}>
+      <SetupForm onSubmit={this.onSubmit.bind(this)} />
+    </Modal>
+  }
+
+}
 
 export class PromptModalBtn extends ModalBtn {
   constructor(props) {

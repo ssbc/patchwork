@@ -3,21 +3,33 @@ import React from 'react'
 import app from './lib/app'
 import TopNav from './views/topnav'
 import LeftNav from './views/leftnav'
+import { SetupModal } from './com/modals'
 
 export default class Layout extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { user: app.user, users: app.users }
+    this.state = this.buildState()
 
     // listen for app change-events that should update our state
-    app.on('update:all', () => { this.setState({ user: app.user, users: app.users }) })
+    app.on('update:all', () => { this.setState(this.buildState()) })
+    app.on('modal:setup', (isOpen) => this.setState({ setupIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
     // update state on view changes
     app.fetchLatestState()
   }
+  buildState() {
+    let needsSetup = !app.users.names[app.user.id]
+    return {
+      user: app.user,
+      users: app.users,
+      setupIsOpen: needsSetup,
+      setupCantClose: needsSetup
+    }
+  }
   render() {
     return <div className="layout-rows">
+      <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <TopNav />
       <div className="layout-columns">
         <LeftNav

@@ -15,10 +15,9 @@ export default class Profile extends React.Component {
     this.pid = decodeURIComponent(this.props.params.id)
     this.state = this.getState()
 
-    // helper to refresh state and render after making changes
-    let reload = () => {
-      app.fetchLatestState(this.refreshState.bind(this))
-    }
+    // helpers to refresh state and render after making changes
+    this.refreshState = () => this.setState(this.getState())
+    let reload = () => { app.fetchLatestState(this.refreshState) }
 
     this.handlers = {
       onToggleFollow: () => {
@@ -84,6 +83,12 @@ export default class Profile extends React.Component {
     this.pid = decodeURIComponent(newProps.params.id)
     this.refreshState()
   }
+  componentDidMount() {
+    app.on('update:all', this.refreshState)
+  }
+  componentWillUnmount() {
+    app.removeListener('update:all', this.refreshState)    
+  }
 
   getState() {
     return {
@@ -99,9 +104,6 @@ export default class Profile extends React.Component {
       followeds:   social.followeds(this.pid),
       flaggers:    social.followedFlaggers(app.user.id, this.pid, true)
     }
-  }
-  refreshState() {
-    this.setState(this.getState())
   }
 
   render() {
