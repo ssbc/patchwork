@@ -1,16 +1,44 @@
 .msg-list-item.summary {
   height: 60px;
+  padding: 10px;
   overflow: hidden;
+  background: @white2;
+  border-bottom: 1px solid @light-gray3;
 
   .header {
     display: flex;
+    margin-bottom: 5px;
 
-    & > div:first-child {
+    .header-left {
       flex: 1;
     }
+    .header-right {
+      color: @gray1;
+      font-weight: 300;
+    }
+  }
+  .body {
+    max-height: 32px;
+    overflow: hidden;
+    color: @dark-gray3;
+    font-weight: 300;
+    font-family: Helvetica;
+    font-size: 90%;
   }
 
   &.selected {
-    background: #eee;
+    background: @blue1;
+    color: @white2;
+    font-weight: 200;
+
+    a, .body {
+      color: @white2;
+    }
+    .header-right {
+      color: @light-blue3;
+    }
+    bold {
+      font-weight: 300;
+    }
   }
 }

@@ -16,11 +16,11 @@ export default class Summary extends React.Component {
     replies = (replies === 0) ? '' : '('+replies+')'
     return <div className={'msg-list-item summary'+(this.props.selected ? ' selected' : '')} onClick={this.onClick.bind(this)}>
       <div className="header">
-        <div>
+        <div className="header-left">
           <UserLink id={msg.value.author} />{' '}
           {replies} {msg.hasUnread ? 'unread' : ''} {msg.plaintext ? 'P' : 'S'} {msg.mentionsUser ? 'M' : ''}
         </div>
-        <div><NiceDate ts={msg.value.timestamp} /></div>
+        <div className="header-right"><NiceDate ts={msg.value.timestamp} /></div>
       </div>
       <div className="body"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
     </div>
