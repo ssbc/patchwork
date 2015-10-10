@@ -93,14 +93,11 @@ blockRenderer.image  = function (href, title, text) {
 // inline renderer just spits out the text of links and images
 inlineRenderer.urltransform = function (url) { return false }
 inlineRenderer.link = function (href, title, text) { return unquote(text) }
-inlineRenderer.image  = function (href, title, text) {
-  if (text == 'webcam.webm') return '' // :HACK: webcam embed title, just dont render
-  return unquote(text)
-}
+inlineRenderer.image  = function (href, title, text) { return unquote(text) }
 inlineRenderer.code = function(code, lang, escaped) { return unquote(code) }
 inlineRenderer.blockquote = function(quote) { return unquote(quote) }
 inlineRenderer.html = function(html) { return false }
-inlineRenderer.heading = function(text, level, raw) { return unquote(text) }
+inlineRenderer.heading = function(text, level, raw) { return '<strong>'+unquote(text)+'</strong> ' }
 inlineRenderer.hr = function() { return ' --- ' }
 inlineRenderer.br = function() { return ' ' }
 inlineRenderer.list = function(body, ordered) { return unquote(body) }
@@ -109,7 +106,7 @@ inlineRenderer.paragraph = function(text) { return unquote(text)+' ' }
 inlineRenderer.table = function(header, body) { return unquote(header + ' ' + body) }
 inlineRenderer.tablerow = function(content) { return unquote(content) }
 inlineRenderer.tablecell = function(content, flags) { return unquote(content) }
-inlineRenderer.strong = function(text) { return unquote(text) }
+inlineRenderer.strong = function(text) { return '<strong>'+unquote(text)+'</strong>' }
 inlineRenderer.em = function(text) { return unquote(text) }
 inlineRenderer.codespan = function(text) { return unquote(text) }
 inlineRenderer.del = function(text) { return unquote(text) }
