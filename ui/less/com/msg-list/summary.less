@@ -16,6 +16,9 @@
     .header-right {
       font-weight: 300;
     }
+    a {
+      color: @dark-gray2;
+    }
     i {
       color: @light-gray1;
     }
@@ -31,14 +34,12 @@
 
   &.unread {
     background: @white3;
-    .header {
-      .header-left, .header-right {
-        font-weight: bold;
-        color: @dark-gray2;
-      }
-      i {
-        color: @dark-gray3;
-      }
+    .header-left, .header-right {
+      font-weight: bold;
+      color: @dark-gray2;
+    }
+    i {
+      color: @dark-gray3;
     }
     .body {
       font-weight: 500;
