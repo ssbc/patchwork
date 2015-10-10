@@ -3,6 +3,27 @@
   border-right: 1px solid @light-gray3;
 }
 
-.leftnav-item.selected {
-  font-weight: bold;
+.leftnav-item {
+  margin: 10px;
+  a {
+    color: @dark-gray4;
+  }
+  i {
+    margin-right: 5px;
+    &.fa-database {
+      font-size: 13px;
+      margin-left: 2px;
+    }
+  }
+  &.label {
+    font-size: 13px;
+    font-weight: bold;
+    color: @gray1;
+    margin-top: 20px;
+  }
+  &.selected {
+    a {
+      color: @dark-blue2;
+    }
+  }
 }

@@ -18,14 +18,13 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
-    let renderProfLink = (id) => <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>{this.nameOf(id)}</NavLink>
+    let renderProfLink = (id) => <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}><i className="fa fa-user"/> {this.nameOf(id)}</NavLink>
 
     // nonfriend followings
     let following = ''
     if (this.props.following.length) {
       following = <div>
-        <br/>
-        <div>Following</div>
+        <div className="leftnav-item label">Following</div>
         {this.props.following.map(renderProfLink)}
       </div>
     }
@@ -33,19 +32,17 @@ class LeftNav extends React.Component {
     let followers = ''
     if (this.props.followers.length) {
       followers = <div>
-        <br/>
-        <div>Followers</div>
+        <div className="leftnav-item label">Followers</div>
         {this.props.followers.map(renderProfLink)}
       </div>
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
-      <NavLink to="/" location={this.props.location}>Inbox</NavLink>
-      <NavLink to="/starred" location={this.props.location}>Starred</NavLink>
-      <NavLink to="/data" location={this.props.location}>Database</NavLink>
-      <br/>
-      <div>Friends</div>
-      <NavLink to={'/profile/'+encodeURIComponent(this.props.userid)} location={this.props.location}>{this.nameOf(this.props.userid)}</NavLink>
+      <NavLink to="/" location={this.props.location}><i className="fa fa-inbox" /> Inbox</NavLink>
+      <NavLink to="/starred" location={this.props.location}><i className="fa fa-star-o" /> Starred</NavLink>
+      <NavLink to="/data" location={this.props.location}><i className="fa fa-database" /> Database</NavLink>
+      <div className="leftnav-item label">Friends</div>
+      {renderProfLink(this.props.userid)}
       {this.props.friends.map(renderProfLink)}
       {following}
       {followers}
