@@ -1,12 +1,52 @@
 
-// font rules
-
+// Basic typography
 body {
   font-family: @interface-font;
 }
-code, pre {
-  font-family: @code-font;
-}
 p, ul, ol {
   font-family: @content-font;
+}
+
+// Inline code
+code {
+  font-family: @code-font;
+  padding: 2px 4px;
+  font-size: 90%;
+  color: @dark-gray2;
+  background-color: @white1;
+  border-radius: 2px;
+}
+
+// Blocks of code
+pre {
+  font-family: @code-font;
+  display: block;
+  padding: 2px 6px;
+  font-size: 90%;
+  word-break: break-all;
+  word-wrap: break-word;
+  color: @dark-gray2;
+  background-color: @white1;
+  border: 1px solid @light-gray2;
+  border-radius: 3px;
+
+  // Account for some code outputs that place code tags in pre tags
+  code {
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    white-space: pre-wrap;
+    background-color: transparent;
+    border-radius: 0;
+  }
+}
+
+// Blockquotes
+blockquote {
+  border-left: 8px solid @light-gray2;
+  margin-left: 0;
+  padding-left: 1em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  color: @dark-gray2;
 }
