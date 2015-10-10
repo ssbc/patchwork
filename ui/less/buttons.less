@@ -1,0 +1,14 @@
+.btn {
+  display: inline-block;
+  background: linear-gradient(to bottom, @white3, @light-gray4);
+  border: 1px solid @light-gray2;
+  color: @dark-gray2;
+  padding: 4px 9px;
+
+  &:hover {
+    background: linear-gradient(to bottom, darken(@white3, 2%), darken(@light-gray4, 3%));
+  }
+  &:active {
+    background: linear-gradient(to top, darken(@white3, 2%), darken(@light-gray4, 3%));  
+  }
+}
