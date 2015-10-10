@@ -9,12 +9,15 @@
     display: flex;
     margin-bottom: 5px;
 
+    color: @gray1;
     .header-left {
       flex: 1;
     }
     .header-right {
-      color: @gray1;
       font-weight: 300;
+    }
+    i {
+      color: @light-gray1;
     }
   }
   .body {
@@ -32,6 +35,9 @@
       .header-left, .header-right {
         font-weight: bold;
         color: @dark-gray2;
+      }
+      i {
+        color: @dark-gray3;
       }
     }
     .body {

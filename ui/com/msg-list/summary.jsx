@@ -13,12 +13,12 @@ export default class Summary extends React.Component {
   render() {
     let msg = this.props.msg
     var replies = countReplies(msg)
-    replies = (replies === 0) ? '' : '('+replies+')'
+    replies = (replies === 0) ? '' : ''+replies
     return <div className={'msg-list-item summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
       <div className="header">
         <div className="header-left">
           <UserLink id={msg.value.author} />{' '}
-          {replies} {msg.plaintext ? 'P' : 'S'} {msg.mentionsUser ? 'M' : ''}
+          {replies} {msg.plaintext ? <i className="fa fa-group"/> : <i className="fa fa-lock"/>} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
         </div>
         <div className="header-right"><NiceDate ts={msg.value.timestamp} /></div>
       </div>
