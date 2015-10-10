@@ -1,13 +1,15 @@
 'use babel'
 import React from 'react'
 import { Block as MdBlock } from './markdown'
-//import suggestBox from 'suggest-box'
+import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
 import social from '../lib/social-graph'
+
+const RECP_LIMIT = 7
 
 class ComposerAudience extends React.Component {
   render() {
@@ -20,29 +22,90 @@ class ComposerAudience extends React.Component {
   }
 }
 
+class ComposerRecp extends React.Component {
+  render() {
+    return <span className="recp">
+      {u.getName(this.props.id)}
+      {this.props.isReadOnly ? '' : <a onClick={() => this.props.onRemove(this.props.id)}>x</a>}
+    </span>
+  }
+}
+
 class ComposerRecps extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { inputText: '' }
+  }
+
+  componentDidMount() {
+    this.setupSuggest()
+  }
+  componentDidUpdate() {
+    this.setupSuggest()
+  }
+  setupSuggest() {
+    // setup the suggest-box
+    let input = this.refs && this.refs.input && this.refs.input.getDOMNode()
+    if (!input || input.isSetup)
+      return
+    input.isSetup = true
+    let suggestOptions = app.suggestOptions['@'].filter((o) => o.id !== app.user.id)
+    suggestBox(input, { any: suggestOptions }, { cls: 'msg-recipients' })
+    input.addEventListener('suggestselect', this.onSuggestSelect.bind(this))
+  }
+
+  onChange(e) {
+    this.setState({ inputText: e.target.value })
+  }
+
+  onSuggestSelect(e) {
+    this.props.onAdd(e.detail.id)
+    this.setState({ inputText: '' })
+  }
+
   render() {
     if (this.props.isPublic)
       return <div/>
-    return <div><input type="text" /></div>
+    let isAtLimit = (this.props.recps.length >= RECP_LIMIT)
+    let warnings = this.props.recps.filter((id) => (id !== app.user.id) && !social.follows(id, app.user.id))
+    return <div>
+      <div>
+        To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
+        { isAtLimit ? <span>At encryption recipient limit (7 + you)</span> : '' }
+        { (!isAtLimit && !this.props.isReadOnly) ?
+          <input ref="input" type="text" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
+          '' }
+      </div>
+      { warnings.length ?
+        <div>{warnings.map(id => <div key={id}>Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :
+        '' }
+    </div>
+  }
+}
+
+class ComposerTextarea extends React.Component {
+  componentDidMount() {
+    // setup the suggest-box
+    let textarea = this.refs && this.refs.textarea && this.refs.textarea.getDOMNode()
+    if (!textarea || textarea.isSetup)
+      return
+    textarea.isSetup = true
+    suggestBox(textarea, app.suggestOptions)
+    textarea.addEventListener('suggestselect', this.props.onChange)
+  }
+  render() {
+    return <textarea ref="textarea" {...this.props} />
   }
 }
 
 export default class Composer extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      isPublic: true,
-      isPreviewing: false,
-      isSending: false,
-      text: ''
-    }
 
     // thread info
+    let recps = []
     this.threadRoot = null
     this.threadBranch = null
-    this.threadRecpIds = null
-    this.threadRecpLinks = null
     if (this.props.thread) {
       // root and branch links
       this.threadRoot = this.props.thread.key
@@ -50,13 +113,22 @@ export default class Composer extends React.Component {
 
       // extract encryption recipients from thread
       if (Array.isArray(this.props.thread.value.content.recps)) {
-        this.threadRecpLinks = mlib.links(this.props.thread.value.content.recps)
-        this.threadRecpIds = this.threadRecpLinks
+        recps = mlib.links(this.props.thread.value.content.recps)
           .map(function (recp) { return recp.link })
           .filter(Boolean)
       }
     }
 
+    // setup state (pulling from thread)
+    this.state = {
+      isPublic: this.props.thread ? isThreadPublic(this.props.thread) : true,
+      isPreviewing: false,
+      isSending: false,
+      recps: recps,
+      text: ''
+    }
+
+    // convenient event helpers
     this.audienceHandlers = {
       onSetPublic: ()  => { this.setState({ isPublic: true  }) },
       onSetPrivate: () => { this.setState({ isPublic: false }) }
@@ -110,6 +182,30 @@ export default class Composer extends React.Component {
     }
   }
 
+  onAddRecp(id) {
+    let recps = this.state.recps
+
+    // enforce limit
+    if (recps.length >= RECP_LIMIT)
+      return
+
+    // remove if already exists (we'll push to end of list so user sees its there)
+    var i = recps.indexOf(id)
+    if (i !== -1)
+      recps.splice(i, 1)
+    recps.push(id)
+    this.setState({ recps: recps })
+  }
+
+  onRemoveRecp(id) {
+    let recps = this.state.recps
+    var i = recps.indexOf(id)
+    if (i !== -1) {
+      recps.splice(i, 1)
+      this.setState({ recps: recps })
+    }
+  }
+
   onTogglePreview() {
     this.setState({ isPreviewing: !this.state.isPreviewing })
   }
@@ -136,8 +232,24 @@ export default class Composer extends React.Component {
         return
       }
 
+      let recps = null, recpLinks = null
+      if (!this.state.isPublic) {
+        // setup recipients
+        recps = this.state.recps
+
+        // make sure the user is in the recipients
+        if (recps.indexOf(app.user.id) === -1)
+          recps.push(app.user.id)
+
+        // setup links
+        recpLinks = recps.map((id) => {
+          let name = u.getName(id)
+          return (name) ? { link: id, name: name } : id
+        })
+      }
+
       // publish
-      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, this.threadRecpLinks)
+      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
@@ -148,23 +260,22 @@ export default class Composer extends React.Component {
             this.props.onSend(msg)
         }
       }
-      if (this.threadRecpIds)
-        app.ssb.private.publish(post, this.threadRecpIds, published)
+      if (recps)
+        app.ssb.private.publish(post, recps, published)
       else
         app.ssb.publish(post, published)
     })
   }
 
   render() {
-    let isPublic = this.props.thread ? isThreadPublic(this.props.thread) : this.state.isPublic
     return <div>
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <ComposerAudience isPublic={isPublic} isReadOnly={!!this.props.thread} {...this.audienceHandlers} />
-      <ComposerRecps isPublic={isPublic} isReadOnly={!!this.props.thread} />
+      <ComposerAudience isPublic={this.state.isPublic} isReadOnly={!!this.props.thread} {...this.audienceHandlers} />
+      <ComposerRecps isPublic={this.state.isPublic} isReadOnly={!!this.props.thread} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div>
         { this.state.isPreviewing ?
           <MdBlock md={this.state.text} /> :
-          <textarea value={this.state.text} onChange={this.onChangeText.bind(this)} /> }
+          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} /> }
       </div>
       <div>
         <div>{this.state.isAddingFiles ? <em>Adding...</em> : <a onClick={this.onAttach.bind(this)}>Add an attachment</a>}</div>

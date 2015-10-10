@@ -206,6 +206,10 @@ exports.calcMessageStats = function (thread, opts) {
   return stats
 }
 
+exports.getName = function (id) {
+  return app.users.names[id] || exports.shortString(id, 6)
+}
+
 exports.getOtherNames = function (profile) {
   // todo - replace with ranked names
   var name = app.users.names[profile.id] || profile.id
