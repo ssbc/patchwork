@@ -14,11 +14,11 @@ export default class Summary extends React.Component {
     let msg = this.props.msg
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+replies+')'
-    return <div className={'msg-list-item summary'+(this.props.selected ? ' selected' : '')} onClick={this.onClick.bind(this)}>
+    return <div className={'msg-list-item summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
       <div className="header">
         <div className="header-left">
           <UserLink id={msg.value.author} />{' '}
-          {replies} {msg.hasUnread ? 'unread' : ''} {msg.plaintext ? 'P' : 'S'} {msg.mentionsUser ? 'M' : ''}
+          {replies} {msg.plaintext ? 'P' : 'S'} {msg.mentionsUser ? 'M' : ''}
         </div>
         <div className="header-right"><NiceDate ts={msg.value.timestamp} /></div>
       </div>

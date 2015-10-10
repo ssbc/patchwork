@@ -26,6 +26,19 @@
     font-size: 90%;
   }
 
+  &.unread {
+    background: @white3;
+    .header {
+      .header-left, .header-right {
+        font-weight: bold;
+        color: @dark-gray2;
+      }
+    }
+    .body {
+      font-weight: 500;
+    }
+  }
+
   &.selected {
     background: @blue1;
     color: @white2;
