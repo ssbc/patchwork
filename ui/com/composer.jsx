@@ -14,11 +14,11 @@ const RECP_LIMIT = 7
 class ComposerAudience extends React.Component {
   render() {
     if (this.props.isReadOnly)
-      return <div><strong>{this.props.isPublic ? 'Public' : 'Private' }</strong></div>
+      return <div className="composer-audience">{this.props.isPublic ? <strong><i className="fa fa-group" /> Public</strong> : <strong><i className="fa fa-lock" /> Private</strong> }</div>
     
-    let pubBtn = ( this.props.isPublic) ? <strong>Public</strong> : <a onClick={this.props.onSetPublic}>Public</a>
-    let priBtn = (!this.props.isPublic) ? <strong>Private</strong> : <a onClick={this.props.onSetPrivate}>Private</a>
-    return <div>{pubBtn} or {priBtn}</div>
+    let pubBtn = ( this.props.isPublic) ? <strong><i className="fa fa-group" /> Public</strong> : <a onClick={this.props.onSetPublic}><i className="fa fa-group" /> Public</a>
+    let priBtn = (!this.props.isPublic) ? <strong><i className="fa fa-lock" /> Private</strong> : <a onClick={this.props.onSetPrivate}><i className="fa fa-lock" /> Private</a>
+    return <div className="composer-audience">{pubBtn} or {priBtn}</div>
   }
 }
 
@@ -26,7 +26,7 @@ class ComposerRecp extends React.Component {
   render() {
     return <span className="recp">
       {u.getName(this.props.id)}
-      {this.props.isReadOnly ? '' : <a onClick={() => this.props.onRemove(this.props.id)}>x</a>}
+      {this.props.isReadOnly ? '' : <a onClick={() => this.props.onRemove(this.props.id)}><i className="fa fa-remove"/></a>}
     </span>
   }
 }
@@ -68,16 +68,16 @@ class ComposerRecps extends React.Component {
       return <div/>
     let isAtLimit = (this.props.recps.length >= RECP_LIMIT)
     let warnings = this.props.recps.filter((id) => (id !== app.user.id) && !social.follows(id, app.user.id))
-    return <div>
+    return <div className="composer-recps">
       <div>
         To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
-        { isAtLimit ? <span>At encryption recipient limit (7 + you)</span> : '' }
         { (!isAtLimit && !this.props.isReadOnly) ?
-          <input ref="input" type="text" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
+          <input ref="input" type="text" placeholder="Add a recipient..." value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
           '' }
       </div>
+      { isAtLimit ? <div className="warning">Recipient limit reached</div> : '' }
       { warnings.length ?
-        <div>{warnings.map(id => <div key={id}>Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :
+        <div>{warnings.map(id => <div key={id} className="warning">Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :
         '' }
     </div>
   }
@@ -268,19 +268,23 @@ export default class Composer extends React.Component {
   }
 
   render() {
-    return <div>
+    let msgType = this.state.isPublic ? 'public' : 'private'
+    return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <ComposerAudience isPublic={this.state.isPublic} isReadOnly={!!this.props.thread} {...this.audienceHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={!!this.props.thread} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
-      <div>
+      <div className="composer-content">
         { this.state.isPreviewing ?
           <MdBlock md={this.state.text} /> :
-          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} /> }
+          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.props.thread ? `Write a ${msgType} message...` : `Write a ${msgType} reply...`} /> }
       </div>
-      <div>
+      <div className="composer-ctrls">
         <div>{this.state.isAddingFiles ? <em>Adding...</em> : <a onClick={this.onAttach.bind(this)}>Add an attachment</a>}</div>
-        <div><a onClick={this.onTogglePreview.bind(this)}>{this.state.isPreviewing ? 'Edit' : 'Preview'}</a></div>
-        <div>{(!this.canSend() || this.state.isSending) ? <em>Send</em> : <a onClick={this.onSend.bind(this)}>Send</a>}</div>
+        <div>
+        { this.state.isPreviewing
+          ? <span><a onClick={this.onTogglePreview.bind(this)}>Keep Editing</a> or {(!this.canSend() || this.state.isSending) ? <em>Send {msgType} message</em> : <a onClick={this.onSend.bind(this)}>Send {msgType} message</a>}</span> 
+          : <a onClick={this.onTogglePreview.bind(this)}>Preview</a> }
+        </div>
       </div>
     </div>
   }

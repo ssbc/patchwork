@@ -7,6 +7,6 @@ export default class Data extends React.Component {
     this.props.history.pushState(null, '/')
   }
   render() {
-    return <div className="composer"><Composer onSend={this.onSend.bind(this)} /></div>
+    return <div id="composer"><Composer onSend={this.onSend.bind(this)} /></div>
   }
 }
