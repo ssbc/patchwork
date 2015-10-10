@@ -3,8 +3,16 @@
   background: @white3;
 
   .header {
+    border-top: 1px solid darken(@white2, 5%);
     background: @white2;
     padding: 10px 15px;
+    display: flex;
+    & > div:first-child {
+      flex: 1;
+    }
+    a {
+      color: @dark-gray2;
+    }
   }
   .body {
     padding: 0 10px;
