@@ -52,6 +52,7 @@ export default class Issues extends React.Component {
   }
 
   render() {
+    var selected = (this.props.to === this.props.location)
     let modalStyle = {
       overlay : {
         position          : 'fixed',
@@ -79,11 +80,11 @@ export default class Issues extends React.Component {
     }
     let open  = () => this.setState({ isOpen: true  })
     let close = () => this.setState({ isOpen: false })
-    return <span>
-      {this.state.numIssues ? <a className="btn" onClick={open}><i className="fa fa-exclamation-triangle" /> {this.state.numUnread}</a> : ''}
+    return <div className="leftnav-item">
+      {this.state.numIssues ? <a onClick={open}><i className="fa fa-exclamation-triangle" /> Issues ({this.state.numUnread})</a> : ''}
       <Modal isOpen={this.state.isOpen} onRequestClose={close} style={modalStyle}>
         {this.state.issues.map((issue, i) => <Issue key={'issue'+i} issue={issue} onDismiss={this.onDismiss.bind(this)} />)}
       </Modal>
-    </span>
+    </div>
   }
 }

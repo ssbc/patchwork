@@ -2,6 +2,7 @@
 import pull from 'pull-stream'
 import React from 'react'
 import Infinite from 'react-infinite'
+import { Link } from 'react-router'
 import Summary from './summary'
 import { Thread } from '../msg-view'
 import { verticalFilled } from '../'
@@ -194,18 +195,27 @@ export default class MsgList extends React.Component {
       let emptyMsg = this.props.emptyMsg || 'No new messages'
       return <div ref="container" className="msg-list"><div className="msg-list-items"><em>{emptyMsg}</em></div></div>
     }
-    return <div ref="container" className="msg-list">
-      <Infinite className="msg-list-items"
-        elementHeight={60}
-        containerHeight={this.state.containerHeight}
-        infiniteLoadBeginBottomOffset={1200}
-        onInfiniteLoad={this.loadMore.bind(this, 15)}
-        loadingSpinnerDelegate={this.loadingElement()}
-        isInfiniteLoading={this.state.isLoading} >
-        {this.state.msgs.map((m, i) => {
-          return <Summary key={i} msg={m} {...this.handlers} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
-        })}
-      </Infinite>
+    return <div className="msg-list">
+      <div className="msg-list-items">
+        <div className="msg-list-ctrls">
+          <div className="compose"><Link className="btn" to="/composer"><i className="fa fa-edit" /></Link></div>
+          <div className="search">
+            <input type="text" placeholder="Search" />
+          </div>
+        </div>
+        <Infinite
+          ref="container"
+          elementHeight={60}
+          containerHeight={this.state.containerHeight}
+          infiniteLoadBeginBottomOffset={1200}
+          onInfiniteLoad={this.loadMore.bind(this, 15)}
+          loadingSpinnerDelegate={this.loadingElement()}
+          isInfiniteLoading={this.state.isLoading} >
+          {this.state.msgs.map((m, i) => {
+            return <Summary key={i} msg={m} {...this.handlers} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
+          })}
+        </Infinite>
+      </div>
       <div className="msg-list-view">
         {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : ''}
       </div>

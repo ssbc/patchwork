@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { verticalFilled } from '../com'
+import Issues from '../com/issues'
 import u from '../lib/util'
 
 class NavLink extends React.Component {
@@ -42,6 +43,7 @@ class LeftNav extends React.Component {
       <NavLink to="/starred" location={this.props.location}><i className="fa fa-star-o" /> Starred</NavLink>
       <NavLink to="/data" location={this.props.location}><i className="fa fa-database" /> Database</NavLink>
       <NavLink to="/sync" location={this.props.location}><i className="fa fa-cloud-download" /> Sync</NavLink>
+      <Issues />
       <div className="leftnav-item label">Friends</div>
       {renderProfLink(this.props.userid)}
       {this.props.friends.map(renderProfLink)}

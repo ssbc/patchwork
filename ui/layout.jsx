@@ -30,7 +30,6 @@ export default class Layout extends React.Component {
   render() {
     return <div className="layout-rows">
       <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
-      <TopNav />
       <div className="layout-columns">
         <LeftNav
           location={this.props.location.pathname}
