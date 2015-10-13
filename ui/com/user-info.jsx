@@ -41,26 +41,35 @@ export default class UserInfo extends React.Component {
     }
 
     return  <div className="user-info">
-      <div><img src={u.profilePicUrl(this.props.pid)} /></div>
       <div>
+        <img src={u.profilePicUrl(this.props.pid)} />
         <div>
-          <h1>{this.props.name}</h1>
           {(this.props.isSelf) ?
-            <a onClick={()=>{app.emit('modal:setup', true)}}>Edit Profile</a> :
-            <span>
-              {(this.props.hasBlocked) ? 'BLOCKED' : <a onClick={this.props.onToggleFollow}>{(this.props.isFollowing) ? ' Unfollow' : ' Follow'}</a>}{' '}
-              <RenameModalBtn name={this.props.name} onSubmit={this.props.onRename} />{' '}
+            <a className="btn" onClick={()=>{app.emit('modal:setup', true)}}><i className="fa fa-wrench" /> Edit Profile</a> :
+            <span className="btn-group">
+              { (this.props.hasBlocked) ?
+                'BLOCKED' :
+                <a className="btn"
+                  onClick={this.props.onToggleFollow}>
+                  {(this.props.isFollowing) ?
+                    <span><i className="fa fa-user-times" /> Unfollow</span> :
+                    <span><i className="fa fa-user-plus" /> Follow</span> }
+                </a> }
+              <RenameModalBtn name={this.props.name} onSubmit={this.props.onRename} className="btn" />
               { (!this.props.hasFlagged) ?
-                <FlagUserModalBtn name={this.props.name} onSubmit={this.props.onFlag} /> :
-                <a onClick={this.props.onUnflag}>Unflag</a> }
+                <FlagUserModalBtn name={this.props.name} onSubmit={this.props.onFlag} className="btn" /> :
+                <a className="btn" onClick={this.props.onUnflag}>Unflag</a> }
             </span>
           }
         </div>
-        <div>
-          {this.props.followers1.length + this.props.followers2.length} followers
-          {(this.props.isSelf) ? '' : ' ('+this.props.followers1.length+' followed by you)'}
-          {' '+this.props.flaggers.length} flags
-        </div>
+      </div>
+      <div>
+        <h1>{this.props.name}</h1>
+        <table>
+          <tr><td>{this.props.followers1.length + this.props.followers2.length}</td><td>followers</td></tr>
+          {(this.props.isSelf) ? '' : <tr className="muted"><td>{this.props.followers1.length}</td><td>followed by you</td></tr>}
+          <tr><td>{this.props.flaggers.length}</td><td>flags</td></tr>
+        </table>
       </div>
     </div>
   }

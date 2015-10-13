@@ -92,7 +92,7 @@ export class PromptModalBtn extends ModalBtn {
 export class RenameModalBtn extends ModalBtn {
   constructor(props) {
     super(props)
-    this.label = 'Rename'
+    this.label = <span><i className="fa fa-pencil" /> Rename</span>
   }
   onSubmit(name) {
     this.on.close()
@@ -106,7 +106,7 @@ export class RenameModalBtn extends ModalBtn {
 export class FlagUserModalBtn extends ModalBtn {
   constructor(props) {
     super(props)
-    this.label = 'Flag'
+    this.label = <span><i className="fa fa-flag" /> Flag</span>
   }
   onSubmit(flag, reason) {
     this.on.close()

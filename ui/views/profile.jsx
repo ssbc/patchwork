@@ -122,9 +122,11 @@ export default class Profile extends React.Component {
       if (msg.value.author == this.pid && c.type == 'post' && !(c.root || c.branch))
         return true
     }
-    return <div className="profile" key={this.pid}>
-      <UserInfo pid={this.pid} {...this.state} {...this.handlers} />
-      <MsgList threads live={{ gt: Date.now() }} source={feed} cursor={cursor} filter={filter} />
+    let defaultView = () => {
+      return <UserInfo pid={this.pid} {...this.state} {...this.handlers} />
+    }
+    return <div id="profile" key={this.pid}>
+      <MsgList threads live={{ gt: Date.now() }} source={feed} cursor={cursor} filter={filter} defaultView={defaultView} />
     </div>
   }
 }

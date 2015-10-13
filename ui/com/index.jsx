@@ -62,10 +62,10 @@ export class ModalBtn extends React.Component {
       }
     }, this.props.modalStyle)
     let children = this.renderModal ? this.renderModal() : this.props.children
-    return <span>
-      <a onClick={this.on.open}>{this.label || this.props.label}</a>
+    return <a onClick={this.on.open} className={this.props.className}>
+      {this.label || this.props.label}
       <Modal isOpen={this.state.isOpen} onRequestClose={this.on.close} style={modalStyle}>{children}</Modal>
-    </span>
+    </a>
   }
 }
 

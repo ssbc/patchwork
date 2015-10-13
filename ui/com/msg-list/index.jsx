@@ -223,7 +223,9 @@ export default class MsgList extends React.Component {
           <Composer onSend={this.onSend.bind(this)} /> :
           this.state.selected ? 
             <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
-            '' }
+            this.props.defaultView ? 
+              this.props.defaultView() :
+              '' }
       </div>
     </div>
   }
