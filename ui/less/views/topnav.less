@@ -7,18 +7,12 @@
   & > div {
     padding: 5px;
   }
-  .compose {
-    flex: 0 0 140px;
-    .btn {
-      display: block;
-      text-align: center;
-    }
+  .compose .btn {
+    padding-right: 7px;
   }
   .search {
-    flex: 1;
     input {
       display: block;
-      width: 100%;
       height: 26px;
       box-shadow: inset 1px 1px 2px rgba(0,0,0,0.05);
       border: 1px solid @light-gray2;
@@ -26,6 +20,9 @@
       padding: 0 8px;
       &:focus, &:active {
         outline: 0;
+      }
+      &::-webkit-input-placeholder {
+        font-weight: 100;
       }
     }
   }

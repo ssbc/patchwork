@@ -41,6 +41,7 @@ class LeftNav extends React.Component {
       <NavLink to="/" location={this.props.location}><i className="fa fa-inbox" /> Inbox</NavLink>
       <NavLink to="/starred" location={this.props.location}><i className="fa fa-star-o" /> Starred</NavLink>
       <NavLink to="/data" location={this.props.location}><i className="fa fa-database" /> Database</NavLink>
+      <NavLink to="/sync" location={this.props.location}><i className="fa fa-cloud-download" /> Sync</NavLink>
       <div className="leftnav-item label">Friends</div>
       {renderProfLink(this.props.userid)}
       {this.props.friends.map(renderProfLink)}

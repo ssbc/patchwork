@@ -1,14 +1,17 @@
 .btn {
   display: inline-block;
-  background: linear-gradient(to bottom, @white3, @light-gray4);
-  border: 1px solid @light-gray2;
-  color: @dark-gray2;
-  padding: 4px 9px;
+  background: linear-gradient(to bottom, #ffffff 3%, #fafafa 35%, #f5f5f5 90%, #fff 98%);
+  border: 1px solid #cccccc;
+  color: #666;
+  padding: 3px 9px 4px 9px;
+  border-radius: 5px;
+  box-shadow: inset 0px -1px 1px rgba(0,0,0,0.5);
 
   &:hover {
     background: linear-gradient(to bottom, darken(@white3, 2%), darken(@light-gray4, 3%));
   }
   &:active {
-    background: linear-gradient(to top, darken(@white3, 2%), darken(@light-gray4, 3%));  
+    background: linear-gradient(to top, darken(@white3, 6%), darken(@light-gray4, 7%));
+    box-shadow: none;
   }
 }
