@@ -195,10 +195,6 @@ export default class MsgList extends React.Component {
 
   render() {
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
-    if (isEmpty) {
-      let emptyMsg = this.props.emptyMsg || 'No new messages'
-      return <div ref="container" className="msg-list"><div className="msg-list-items"><em>{emptyMsg}</em></div></div>
-    }
     return <div className="msg-list">
       <div className="msg-list-items">
         <div className="msg-list-ctrls">
@@ -207,18 +203,20 @@ export default class MsgList extends React.Component {
             <input type="text" placeholder="Search" />
           </div>
         </div>
-        <Infinite
-          ref="container"
-          elementHeight={60}
-          containerHeight={this.state.containerHeight}
-          infiniteLoadBeginBottomOffset={1200}
-          onInfiniteLoad={this.loadMore.bind(this, 15)}
-          loadingSpinnerDelegate={this.loadingElement()}
-          isInfiniteLoading={this.state.isLoading} >
-          {this.state.msgs.map((m, i) => {
-            return <Summary key={i} msg={m} {...this.handlers} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
-          })}
-        </Infinite>
+        { isEmpty ?
+          <em ref="container">{this.props.emptyMsg || 'No new messages'}</em> :
+          <Infinite
+            ref="container"
+            elementHeight={60}
+            containerHeight={this.state.containerHeight}
+            infiniteLoadBeginBottomOffset={1200}
+            onInfiniteLoad={this.loadMore.bind(this, 15)}
+            loadingSpinnerDelegate={this.loadingElement()}
+            isInfiniteLoading={this.state.isLoading} >
+            {this.state.msgs.map((m, i) => {
+              return <Summary key={i} msg={m} {...this.handlers} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
+            })}
+          </Infinite> }
       </div>
       <div className="msg-list-view">
         { this.state.selected === 'composer' ?
