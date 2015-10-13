@@ -1,7 +1,6 @@
 'use babel'
 import React from 'react'
 import app from './lib/app'
-import TopNav from './views/topnav'
 import LeftNav from './views/leftnav'
 import { SetupModal } from './com/modals'
 
