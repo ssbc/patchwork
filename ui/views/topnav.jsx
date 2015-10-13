@@ -7,9 +7,12 @@ export default class TopNav extends React.Component {
 
   render() {
     return <div id="topnav">
-      <Link to="/composer">Compose</Link>{' '}
-      <Issues />{' '}
-      <Link to="/sync">Sync</Link>
+      <div className="compose"><Link className="btn" to="/composer">Compose</Link></div>
+      <div className="search">
+        <input type="text" placeholder="Search..." />
+      </div>
+      <div><Issues /></div>
+      <div><Link className="btn" to="/sync">Sync</Link></div>
     </div>
   }
 }
