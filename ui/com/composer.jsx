@@ -13,8 +13,13 @@ const RECP_LIMIT = 7
 
 class ComposerAudience extends React.Component {
   render() {
-    if (this.props.isReadOnly)
-      return <div className="composer-audience">{this.props.isPublic ? <strong><i className="fa fa-group" /> Public</strong> : <strong><i className="fa fa-lock" /> Private</strong> }</div>
+    if (this.props.isReadOnly) {
+      return <div className="composer-audience">
+        { this.props.isPublic ? 
+          <strong><i className="fa fa-reply" /> <i className="fa fa-group" /> Public</strong> : 
+          <strong><i className="fa fa-reply" /> <i className="fa fa-lock" /> Private</strong> }
+      </div>
+    }
     
     let pubBtn = ( this.props.isPublic) ? <strong><i className="fa fa-group" /> Public</strong> : <a onClick={this.props.onSetPublic}><i className="fa fa-group" /> Public</a>
     let priBtn = (!this.props.isPublic) ? <strong><i className="fa fa-lock" /> Private</strong> : <a onClick={this.props.onSetPrivate}><i className="fa fa-lock" /> Private</a>
@@ -124,6 +129,7 @@ export default class Composer extends React.Component {
       isPublic: this.props.thread ? isThreadPublic(this.props.thread) : true,
       isPreviewing: false,
       isSending: false,
+      isReply: !!this.props.thread,
       recps: recps,
       text: ''
     }
@@ -271,12 +277,12 @@ export default class Composer extends React.Component {
     let msgType = this.state.isPublic ? 'public' : 'private'
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <ComposerAudience isPublic={this.state.isPublic} isReadOnly={!!this.props.thread} {...this.audienceHandlers} />
-      <ComposerRecps isPublic={this.state.isPublic} isReadOnly={!!this.props.thread} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
+      <ComposerAudience isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.audienceHandlers} />
+      <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
         { this.state.isPreviewing ?
           <MdBlock md={this.state.text} /> :
-          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.props.thread ? `Write a ${msgType} message...` : `Write a ${msgType} reply...`} /> }
+          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a ${msgType} message...` : `Write a ${msgType} reply...`} /> }
       </div>
       <div className="composer-ctrls">
         <div>{this.state.isAddingFiles ? <em>Adding...</em> : <a onClick={this.onAttach.bind(this)}>Add an attachment</a>}</div>
