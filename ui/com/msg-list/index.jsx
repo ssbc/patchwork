@@ -2,8 +2,8 @@
 import pull from 'pull-stream'
 import React from 'react'
 import Infinite from 'react-infinite'
-import { Link } from 'react-router'
 import Summary from './summary'
+import Composer from '../composer'
 import { Thread } from '../msg-view'
 import { verticalFilled } from '../'
 import app from '../../lib/app'
@@ -134,6 +134,10 @@ export default class MsgList extends React.Component {
       u.decryptThread(msg, () => { cb(null, msg) })
   }
 
+  onSend(msg) {
+    this.setState({ selected: msg })
+  }
+
   loadMore(amt) {
     if (this.state.isLoading || this.state.isAtEnd)
       return
@@ -198,7 +202,7 @@ export default class MsgList extends React.Component {
     return <div className="msg-list">
       <div className="msg-list-items">
         <div className="msg-list-ctrls">
-          <div className="compose"><Link className="btn" to="/composer"><i className="fa fa-edit" /></Link></div>
+          <div className="compose"><a className="btn" onClick={()=>this.setState({ selected: 'composer' })}><i className="fa fa-edit" /></a></div>
           <div className="search">
             <input type="text" placeholder="Search" />
           </div>
@@ -217,7 +221,11 @@ export default class MsgList extends React.Component {
         </Infinite>
       </div>
       <div className="msg-list-view">
-        {this.state.selected ? <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : ''}
+        { this.state.selected === 'composer' ?
+          <Composer onSend={this.onSend.bind(this)} /> :
+          this.state.selected ? 
+            <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
+            '' }
       </div>
     </div>
   }

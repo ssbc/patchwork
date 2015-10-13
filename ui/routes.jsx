@@ -6,7 +6,6 @@ import Data from './views/data'
 import Profile from './views/profile'
 import Msg from './views/msg'
 import WebView from './views/webview'
-import Composer from './views/composer'
 import Sync from './views/sync'
 
 export default (
@@ -18,7 +17,6 @@ export default (
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
       <Route path="webview/:id" component={WebView} />
-      <Route path="composer" component={Composer} />
       <Route path="sync" component={Sync} />
     </Route>
   </Router>
