@@ -4,6 +4,7 @@ import Inbox from './views/inbox'
 import Starred from './views/starred'
 import Data from './views/data'
 import Notifications from './views/notifications'
+import People from './views/people'
 import Profile from './views/profile'
 import Msg from './views/msg'
 import WebView from './views/webview'
@@ -16,6 +17,7 @@ export default (
       <Route path="starred" component={Starred} />
       <Route path="data" component={Data} />
       <Route path="notifications" component={Notifications} />
+      <Route path="people" component={People} />
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
       <Route path="webview/:id" component={WebView} />
