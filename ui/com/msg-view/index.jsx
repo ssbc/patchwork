@@ -82,7 +82,7 @@ export class Thread extends React.Component {
 
   render() {
     return <div className="msg-view-thread" style={{height: this.props.height}}>
-      <div className="toolbar"><a onClick={this.props.onMarkSelectedUnread}>Mark Unread</a></div>
+      <div className="toolbar"><a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a></div>
       {this.state.msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}
       <Composer key={this.props.thread.key} thread={this.props.thread} />
     </div>

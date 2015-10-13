@@ -1,17 +1,19 @@
 .msg-view {
-  margin-bottom: 6px;
+  margin: 6px;
   background: @white3;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.1);
 
   .header {
-    border-top: 1px solid darken(@white2, 5%);
-    background: @white2;
-    padding: 10px 15px;
+    margin: 8px 10px;
     display: flex;
+    color: #555;
     & > div:first-child {
       flex: 1;
     }
     a {
-      color: @dark-gray2;
+      color: #555;
     }
   }
   .body {
@@ -22,8 +24,10 @@
 }
 .msg-view-thread {
   .toolbar {
-    padding: 10px;
-    font-size: 18px;
-    font-weight: bold;
+    margin: 6px;
+    .btn {
+      // lighter buttons in the toolbar
+      background: linear-gradient(to bottom, #ffffff 3%, #fafafa 35%, #fafafa 90%, #ffffff 98%);
+    }
   }
 }
