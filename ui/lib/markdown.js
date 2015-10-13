@@ -124,7 +124,7 @@ marked.setOptions({
   sanitize: true,
   smartLists: true,
   smartypants: false,
-  emoji: renderEmoji,
+  emoji: renderEmoji(16),
   renderer: blockRenderer
 })
 
@@ -146,22 +146,24 @@ exports.block = function(text, mentionNames) {
 }
 
 exports.inline = function(text) {
-  return marked(''+(text||''), { renderer: inlineRenderer })
+  return marked(''+(text||''), { renderer: inlineRenderer, emoji: renderEmoji(12) })
 }
 
 var emojiRegex = /(\s|>|^)?:([A-z0-9_]+):(\s|<|$)/g;
 exports.emojis = function (str) {
   return str.replace(emojiRegex, function(full, $1, $2, $3) {
-    return ($1||'') + renderEmoji($2) + ($3||'')
+    return ($1||'') + renderEmoji(16)($2) + ($3||'')
   })
 }
 
-function renderEmoji (emoji) {
-  return emoji in emojiNamedCharacters ?
-      '<img src="./img/emoji/' + encodeURI(emoji) + '.png"'
-      + ' alt=":' + escape(emoji) + ':"'
-      + ' title=":' + escape(emoji) + ':"'
-      + ' class="emoji" align="absmiddle" height="20" width="20">'
-    : ':' + emoji + ':'
+function renderEmoji (size) {
+  size = size||20
+  return function (emoji) {
+    return emoji in emojiNamedCharacters ?
+        '<img src="./img/emoji/' + encodeURI(emoji) + '.png"'
+        + ' alt=":' + escape(emoji) + ':"'
+        + ' title=":' + escape(emoji) + ':"'
+        + ' class="emoji" align="absmiddle" height="'+size+'" width="'+size+'">'
+      : ':' + emoji + ':'
+    }
 }
-
