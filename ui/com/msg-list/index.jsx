@@ -27,6 +27,10 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: (msg) => {
+        // deselect toggle
+        if (this.state.selected === msg)
+          return this.setState({ selected: false })
+
         // update UI
         this.setState({ selected: msg })
 
