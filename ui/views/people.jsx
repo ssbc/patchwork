@@ -1,11 +1,9 @@
 'use babel'
 import React from 'react'
+import UserList from '../com/user-list'
 
 export default class People extends React.Component {
-  onSend() {
-    this.props.history.pushState(null, '/')
-  }
   render() {
-    return <div id="people">todo</div>
+    return <div id="people"><UserList /></div>
   }
 }
