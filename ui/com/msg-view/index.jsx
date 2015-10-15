@@ -10,14 +10,19 @@ import u from '../../lib/util'
 
 export class MsgView extends React.Component {
   render() {
+    let msg = this.props.msg
     return <div className="msg-view" style={{height: this.props.height}}>
       <div className="header">
-        <div><UserLink id={this.props.msg.value.author} /></div>
-        <div><NiceDate ts={this.props.msg.value.timestamp} /></div>
+        <div>
+          <a title="Star" onClick={()=>alert('todo')}><i className="fa fa-star-o"/></a>{' '}
+          <UserLink id={msg.value.author} />{' '}
+          <span style={{color: '#aaa'}}>{msg.plaintext ? 'public' : 'private'}</span>
+        </div>
+        <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
       <div className="body">
-        {this.props.forceRaw ? <div>{this.props.msg.key}</div> : ''}
-        <Content msg={this.props.msg} forceRaw={this.props.forceRaw} />
+        {this.props.forceRaw ? <div>{msg.key}</div> : ''}
+        <Content msg={msg} forceRaw={this.props.forceRaw} />
       </div>
     </div>
   }
@@ -81,7 +86,16 @@ export class Thread extends React.Component {
 
   render() {
     return <div className="msg-view-thread" style={{height: this.props.height}}>
-      <div className="toolbar"><a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a></div>
+      <div className="toolbar flex">
+        <div className="flex-fill">
+          <a className="btn" onClick={this.props.onDeselect} title="Close">Close</a>{' '}
+          <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a>{' '}
+          <a className="btn" onClick={()=>alert('todo')} title="Bookmark"><i className="fa fa-bookmark-o" /></a>
+        </div>
+        <div>
+          <a className="btn" onClick={()=>alert('todo')} title="View Raw Data"><i className="fa fa-code" /></a>
+        </div>
+      </div>
       {this.state.msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}
       <Composer key={this.props.thread.key} thread={this.props.thread} />
     </div>

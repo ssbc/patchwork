@@ -1,7 +1,7 @@
 import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './layout'
 import Inbox from './views/inbox'
-import Starred from './views/starred'
+import Bookmarks from './views/bookmarks'
 import Data from './views/data'
 import Notifications from './views/notifications'
 import People from './views/people'
@@ -14,7 +14,7 @@ export default (
   <Router>
     <Route path="/" component={Layout}>
       <IndexRoute component={Inbox} />
-      <Route path="starred" component={Starred} />
+      <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
       <Route path="notifications" component={Notifications} />
       <Route path="people" component={People} />

@@ -45,6 +45,7 @@ export default class MsgList extends React.Component {
           this.setState({ selected: msg, msgs: this.state.msgs })
         })
       },
+      onDeselect: () => { this.setState({ selected: false }) },
       onMarkSelectedUnread: () => {
         // get the last post in the thread, abort if already unread
         let selected = this.state.selected

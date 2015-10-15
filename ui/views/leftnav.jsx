@@ -40,7 +40,7 @@ class LeftNav extends React.Component {
 
     return <div id="leftnav" style={{height: this.props.height}}>
       <NavLink to="/" location={this.props.location}><i className="fa fa-inbox" /> Inbox</NavLink>
-      <NavLink to="/starred" location={this.props.location}><i className="fa fa-star-o" /> Starred</NavLink>
+      <NavLink to="/bookmarks" location={this.props.location}><i className="fa fa-bookmark-o" /> Bookmarks</NavLink>
       <NavLink to="/notifications" location={this.props.location}><i className="fa fa-bell-o" /> Notifications</NavLink>
       <NavLink to="/people" location={this.props.location}><i className="fa fa-child" /> People</NavLink>
       <div className="leftnav-item label">System</div>
