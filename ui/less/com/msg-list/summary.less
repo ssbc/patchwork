@@ -1,5 +1,5 @@
 .msg-list-item.summary {
-  height: 60px;
+  height: 64px;
   padding: 10px;
   overflow: hidden;
   background: @white2;
@@ -24,12 +24,22 @@
     }
   }
   .body {
-    max-height: 32px;
+    max-height: 36px;
     overflow: hidden;
     color: @dark-gray3;
     font-weight: 300;
     font-family: Helvetica;
     font-size: 90%;
+    line-height: 1.4;
+
+    .body-line {
+      white-space: pre;
+      overflow: hidden;
+      &:last-child {
+        color: gray;
+        font-weight: 100;
+      }
+    }
   }
 
   &.unread {
@@ -54,7 +64,7 @@
     .header, i, a, .body {
       color: @white2;
     }
-    .header-right {
+    .header-right, .body-line:last-child {
       color: @light-blue3;
     }
     bold {
