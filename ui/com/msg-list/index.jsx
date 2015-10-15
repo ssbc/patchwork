@@ -201,7 +201,7 @@ export default class MsgList extends React.Component {
 
   render() {
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
-    return <div className="msg-list">
+    return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
         <div className="msg-list-ctrls">
           <div className="compose"><a className="btn" onClick={()=>this.setState({ selected: 'composer' })}><i className="fa fa-edit" /></a></div>
