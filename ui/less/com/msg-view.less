@@ -28,13 +28,15 @@
 }
 .msg-view-collapsed {
   display: flex;
-  margin: 6px;
+  margin: 6px 12px 6px 6px;
   height: 26px;
-  border-top: 1px solid #ddd;
-  color: #555;
   cursor: pointer;
   .msg-view-collapsed-col {
     padding: 5px;
+    color: #555;
+    a {
+      color: #555;
+    }
   }
   .msg-view-collapsed-col:nth-child(2) {
     flex: 1;
@@ -46,6 +48,10 @@
     font-size: 90%;
     line-height: 1.7;
   }
+}
+.toolbar + .msg-view-collapsed,
+.msg-view-collapsed + .msg-view-collapsed {
+  border-top: 1px solid #ddd;  
 }
 .msg-view-thread {
   .toolbar {

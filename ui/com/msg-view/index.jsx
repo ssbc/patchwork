@@ -25,7 +25,10 @@ export class MsgView extends React.Component {
       return <div className="msg-view-collapsed" onClick={this.onClick.bind(this)}>
         <div className="msg-view-collapsed-col">{u.getName(msg.value.author)}</div>
         <div className="msg-view-collapsed-col"><InlineContent msg={msg} forceRaw={this.props.forceRaw} /></div>
-        <div className="msg-view-collapsed-col"><NiceDate ts={msg.value.timestamp} /></div>
+        <div className="msg-view-collapsed-col">
+          <NiceDate ts={msg.value.timestamp} />{' '}
+          <a title="Star" onClick={()=>alert('todo')}><i className="fa fa-star-o"/></a>
+        </div>
       </div>
     }
     return <div className="msg-view" style={{height: this.props.height}}>
