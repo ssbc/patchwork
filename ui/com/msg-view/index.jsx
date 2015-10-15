@@ -2,27 +2,46 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import { UserLink, NiceDate } from '../index'
-import { Block as Content } from '../msg-content'
+import { Block as BlockContent, Inline as InlineContent } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 import Composer from '../composer'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
 export class MsgView extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { collapsed: false }
+  }
+  componentDidMount() {
+    this.setState({ collapsed: this.props.msg.isRead && !this.props.isLast })
+  }
+  onClick() {
+    this.setState({ collapsed: false })
+  }
   render() {
     let msg = this.props.msg
+    if (this.state.collapsed) {
+      return <div className="msg-view-collapsed" onClick={this.onClick.bind(this)}>
+        <div className="msg-view-collapsed-col">{u.getName(msg.value.author)}</div>
+        <div className="msg-view-collapsed-col"><InlineContent msg={msg} forceRaw={this.props.forceRaw} /></div>
+        <div className="msg-view-collapsed-col"><NiceDate ts={msg.value.timestamp} /></div>
+      </div>
+    }
     return <div className="msg-view" style={{height: this.props.height}}>
       <div className="header">
         <div>
-          <a title="Star" onClick={()=>alert('todo')}><i className="fa fa-star-o"/></a>{' '}
           <UserLink id={msg.value.author} />{' '}
           <span style={{color: '#aaa'}}>{msg.plaintext ? 'public' : 'private'}</span>
         </div>
-        <div><NiceDate ts={msg.value.timestamp} /></div>
+        <div>
+          <NiceDate ts={msg.value.timestamp} />{' '}
+          <a title="Star" onClick={()=>alert('todo')}><i className="fa fa-star-o"/></a>
+        </div>
       </div>
       <div className="body">
         {this.props.forceRaw ? <div>{msg.key}</div> : ''}
-        <Content msg={msg} forceRaw={this.props.forceRaw} />
+        <BlockContent msg={msg} forceRaw={this.props.forceRaw} />
       </div>
     </div>
   }
@@ -96,7 +115,7 @@ export class Thread extends React.Component {
           <a className="btn" onClick={()=>alert('todo')} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>
-      {this.state.msgs.map((msg) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} />)}
+      {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
       <Composer key={this.props.thread.key} thread={this.props.thread} />
     </div>
   }
