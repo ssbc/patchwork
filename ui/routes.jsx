@@ -3,7 +3,6 @@ import Layout from './layout'
 import Inbox from './views/inbox'
 import Bookmarks from './views/bookmarks'
 import Data from './views/data'
-import Notifications from './views/notifications'
 import People from './views/people'
 import Profile from './views/profile'
 import Msg from './views/msg'
@@ -16,7 +15,6 @@ export default (
       <IndexRoute component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
-      <Route path="notifications" component={Notifications} />
       <Route path="people" component={People} />
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />

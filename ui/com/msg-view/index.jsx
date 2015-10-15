@@ -67,7 +67,7 @@ export class Thread extends React.Component {
     var added = {}
     this.setState({
       thread: thread,
-      isReplying: false,
+      isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false,
       msgs: [thread].concat((thread.related||[]).filter(msg => {
         if (added[msg.key]) return false // messages can be in the thread multiple times if there are >1 links
         added[msg.key] = true
