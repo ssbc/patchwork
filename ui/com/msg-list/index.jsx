@@ -61,6 +61,7 @@ export default class MsgList extends React.Component {
           // re-render
           lastPost.isRead = false
           selected.hasUnread = true
+          this.state.selected = false
           this.setState(this.state)
         })
       }
