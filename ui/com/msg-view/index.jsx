@@ -55,6 +55,7 @@ export class Thread extends React.Component {
     super(props)
     this.state = {
       thread: null,
+      isReplying: false,
       msgs: []
     }
     this.liveStream = null
@@ -66,6 +67,7 @@ export class Thread extends React.Component {
     var added = {}
     this.setState({
       thread: thread,
+      isReplying: false,
       msgs: [thread].concat((thread.related||[]).filter(msg => {
         if (added[msg.key]) return false // messages can be in the thread multiple times if there are >1 links
         added[msg.key] = true
@@ -112,14 +114,17 @@ export class Thread extends React.Component {
         <div className="flex-fill">
           <a className="btn" onClick={this.props.onDeselect} title="Close">Close</a>{' '}
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a>{' '}
-          <a className="btn" onClick={()=>alert('todo')} title="Bookmark"><i className="fa fa-bookmark-o" /></a>
+          <a className="btn" onClick={()=>alert('todo')} title="Bookmark"><i className="fa fa-bookmark-o" /></a>{' '}
+          {!this.state.isReplying ? <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a> : ''}
         </div>
         <div>
           <a className="btn" onClick={()=>alert('todo')} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>
       {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
-      <Composer key={this.props.thread.key} thread={this.props.thread} />
+      {this.state.isReplying ?
+        <Composer key={this.props.thread.key} thread={this.props.thread} /> :
+        <div className="toolbar"><a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a></div>}
     </div>
   }
 }
