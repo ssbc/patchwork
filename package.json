@@ -65,7 +65,6 @@
     "suggest-box": "~1.1.6"
   },
   "bin": {
-    "patchwork": "./bin.sh",
-    "sbot": "./node_modules/scuttlebot/sbot.js"
+    "patchwork": "./bin.js"
   }
 }
