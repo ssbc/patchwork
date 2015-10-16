@@ -1,9 +1,24 @@
 .msg-list-item.summary {
+  display: flex;
   height: 64px;
   padding: 10px;
   overflow: hidden;
   background: @white2;
   border-bottom: 1px solid @light-gray3;
+
+  .ctrls {
+    flex: 0 0 24px;
+    padding: 2px 0 0 3px;
+    .fa-bookmark-o {
+      color: gray;
+    }
+    .fa-bookmark {
+      color: #EFBD32;
+    }
+  }
+  .content {
+    flex: 1;
+  }
 
   .header {
     display: flex;
@@ -59,7 +74,7 @@
     font-weight: 200;
 
     .header, i, a, .body {
-      color: @white2;
+      color: @white2 !important;
     }
     .header-right, .body-line:last-child {
       color: @light-blue3;

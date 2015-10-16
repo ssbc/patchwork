@@ -16,18 +16,27 @@ export default class Summary extends React.Component {
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+replies+')'
     return <div className={'msg-list-item summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
-      <div className="header">
-        <div className="header-left">
-          <UserLink id={msg.value.author} />{' '}
-          {replies} {msg.plaintext ? '' : <i className="fa fa-lock"/>} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
-        </div>
-        <div className="header-right"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>
+      <div className="ctrls">
+        <a onClick={(e)=>{e.stopPropagation(); this.props.onToggleBookmark(msg)}}>
+          { msg.isBookmarked ?
+            <i className="fa fa-bookmark" /> :
+            <i className="fa fa-bookmark-o" /> }
+        </a>
       </div>
-      <div className="body">
-        <div className="body-line"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
-        { lastMsg && lastMsg !== msg ?
-          <div className="body-line"><Content msg={lastMsg} /></div> :
-          '' }
+      <div className="content">
+        <div className="header">
+          <div className="header-left">
+            <UserLink id={msg.value.author} />{' '}
+            {replies} {msg.plaintext ? '' : <i className="fa fa-lock"/>} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
+          </div>
+          <div className="header-right"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>
+        </div>
+        <div className="body">
+          <div className="body-line"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
+          { lastMsg && lastMsg !== msg ?
+            <div className="body-line"><Content msg={lastMsg} /></div> :
+            '' }
+        </div>
       </div>
     </div>
   }
