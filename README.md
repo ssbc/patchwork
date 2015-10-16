@@ -17,7 +17,7 @@ Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're 
 ## Install
 
 ``` bash
-npm install patchwork -g
+npm install ssb-patchwork -g
 ```
 
 ## Run
