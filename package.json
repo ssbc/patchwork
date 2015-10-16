@@ -1,6 +1,6 @@
 {
   "name": "ssb-patchwork",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "safe secure sharing",
   "main": "app/index.js",
   "scripts": {
