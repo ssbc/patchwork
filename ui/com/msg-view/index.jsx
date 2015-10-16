@@ -115,7 +115,7 @@ export class Thread extends React.Component {
           <a className="btn" onClick={this.props.onDeselect} title="Close">Close</a>{' '}
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a>{' '}
           <a className="btn" onClick={()=>alert('todo')} title="Bookmark"><i className="fa fa-bookmark-o" /></a>{' '}
-          {!this.state.isReplying ? <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a> : ''}
+          <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a>
         </div>
         <div>
           <a className="btn" onClick={()=>alert('todo')} title="View Raw Data"><i className="fa fa-code" /></a>
@@ -124,7 +124,7 @@ export class Thread extends React.Component {
       {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
       {this.state.isReplying ?
         <Composer key={this.props.thread.key} thread={this.props.thread} /> :
-        <div className="toolbar"><a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a></div>}
+        '' }
     </div>
   }
 }
