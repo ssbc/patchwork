@@ -127,7 +127,7 @@ export class Thread extends React.Component {
       </div>
       {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
       {this.state.isReplying ?
-        <Composer key={this.props.thread.key} thread={this.props.thread} /> :
+        <Composer key={this.props.thread.key} thread={this.props.thread} onSend={()=>this.setState({ isReplying: false })} /> :
         '' }
     </div>
   }
