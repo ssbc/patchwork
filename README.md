@@ -14,40 +14,26 @@ That's our informal barrier to entry right now, since we're not prepared for lot
 Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're running Patchwork, you don't need to run another scuttlebot server.
 
 
-## Running Patchwork
+## Install
 
-Current install steps are:
-
-```
-# ubuntu
-apt-get install automake libtool
-# osx
-brew install automake libtool
+``` bash
+npm install patchwork -g
 ```
 
-Also, you'll need to use iojs@2.
-The easiest way to get this is [nvm](https://github.com/creationix/nvm).
+## Run
 
-```
-nvm install iojs-v2.5.0
-```
-
-Then, install the software:
-
-```
-git clone https://github.com/ssbc/patchwork.git
-cd patchwork
-npm install
-npm start
+``` bash
+patchwork
 ```
 
-And then join a pub server.
+If it's your first time running patchwork,
+follow the on screen instructions to start a new identity
+and join a pub server.
 
 
-## Development & App-building : 
+## Development & App-building :
 
-
-**Dependencies**
+to build for windows:
 
 ```
 # Linux dependencies
