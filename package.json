@@ -66,6 +66,6 @@
   },
   "bin": {
     "patchwork": "./bin.sh",
-    "sbot": "./node_module/scuttlebot/sbot.js"
+    "sbot": "./node_modules/scuttlebot/sbot.js"
   }
 }
