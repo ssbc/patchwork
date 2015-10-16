@@ -6,12 +6,12 @@ import app from '../lib/app'
 export default class Bookmarks extends React.Component {
   cursor (msg) {
     if (msg)
-      return [msg.value.timestamp, msg.value.author]
+      return [msg.ts, false]
   }
 
   render() {
-    return <div className="starred">
-      <MsgList threads emptyMsg="You have not starred any messages" source={app.ssb.patchwork.createMyvoteStream} filter={this.filter} />
+    return <div id="bookmarks">
+      <MsgList threads emptyMsg="You have not bookmarked any messages" source={app.ssb.patchwork.createBookmarkStream} cursor={this.cursor} />
     </div>
   }
 }

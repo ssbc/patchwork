@@ -170,6 +170,55 @@ tape('inbox index counts correctly track read/unread', function (t) {
   })
 })
 
+tape('bookmark index includes only bookmarked posts', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob', 'charlie'] },
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    var done = multicb({ pluck: 1, spread: true })
+    users.alice.add({ type: 'post', text: 'hello from alice' }, done())
+    users.bob.add({ type: 'post', text: 'hello from bob' }, done())
+    users.charlie.add({ type: 'post', text: 'hello from charlie' }, done())
+    done(function (err, msg1, msg2, msg3) {
+      if (err) throw err
+
+      var done = multicb()
+      sbot.patchwork.bookmark(msg1.key, done())
+      sbot.patchwork.toggleBookmark(msg3.key, done())
+      done(function (err) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createBookmarkStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 2)
+          t.equal(msgs[0].key, msg3.key)
+          t.equal(msgs[1].key, msg1.key)
+
+          var done = multicb()
+          sbot.patchwork.unbookmark(msg1.key, done())
+          sbot.patchwork.toggleBookmark(msg2.key, done())
+          sbot.patchwork.toggleBookmark(msg3.key, done())
+          done(function (err) {
+            if (err) throw err
+
+            pull(sbot.patchwork.createBookmarkStream(), pull.collect(function (err, msgs) {
+              if (err) throw err
+              t.equal(msgs.length, 1)
+              t.equal(msgs[0].key, msg2.key)
+              t.end()
+              sbot.close()
+            }))
+          })
+        }))
+      })
+    })
+  })
+})
+
 tape('vote index includes upvotes on the users posts', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {

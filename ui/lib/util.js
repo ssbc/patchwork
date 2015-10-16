@@ -301,6 +301,8 @@ exports.getPostThread = function (mid, cb) {
       var done = multicb()
       // fetch isread state for posts (only 1 level deep, dont need to recurse)
       exports.attachThreadIsread(thread, 1, done())
+      // fetch bookmark state
+      exports.attachThreadIsbookmarked(thread, done())
       // look for user mention (same story on recursion)
       thread.mentionsUser = false
       exports.iterateThreadAsync(thread, 1, function (msg, cb2) {
@@ -354,6 +356,14 @@ exports.attachThreadIsread = function (thread, maxdepth, cb) {
       cb2()
     })
   }, cb)
+}
+
+exports.attachThreadIsbookmarked = function (thread, cb) {
+  thread.isBookmarked = false
+  app.ssb.patchwork.isBookmarked(thread.key, function (err, isBookmarked) {
+    thread.isBookmarked = isBookmarked
+    cb()
+  })
 }
 
 exports.markThreadRead = function (thread, cb) {

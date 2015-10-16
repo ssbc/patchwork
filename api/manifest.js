@@ -3,6 +3,7 @@ module.exports = {
 
   getIndexCounts: 'async',
   createInboxStream: 'source',
+  createBookmarkStream: 'source',
   createVoteStream: 'source',
   createMyvoteStream: 'source',
   createFollowStream: 'source',
@@ -12,10 +13,10 @@ module.exports = {
   toggleRead: 'async',
   isRead: 'async',
 
-  subscribe: 'async',
-  unsubscribe: 'async',
-  toggleSubscribed: 'async',
-  isSubscribed: 'async',
+  bookmark: 'async',
+  unbookmark: 'async',
+  toggleBookmark: 'async',
+  isBookmarked: 'async',
 
   addFileToBlobs: 'async',
   saveBlobToFile: 'async',

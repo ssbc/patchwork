@@ -40,6 +40,12 @@ module.exports.index = function () {
     }
   }
 
+  index.remove = function (key, keyname) {
+    var i = index.indexOf(key, keyname)
+    if (i !== -1)
+      index.rows.splice(i, 1)
+  }
+
   index.indexOf = function (key, keyname) {
     keyname = keyname || 'key'
     for (var i=0; i < index.rows.length; i++) {

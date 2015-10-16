@@ -22,12 +22,13 @@ exports.init = function (sbot, opts) {
   var phoenixdb = sbot.sublevel('patchwork')
   var db = {
     isread: phoenixdb.sublevel('isread'),
-    subscribed: phoenixdb.sublevel('subscribed')
+    bookmarked: phoenixdb.sublevel('bookmarked')
   }
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
     inbox: u.index(), // also has `.isread` and `.author`
+    bookmarks: u.index(), // also has `.isread`
     votes: u.index(), // also has `.isread`, `.vote`, and `.votemsg`
     myvotes: u.index(), // also has  `.vote`
     follows: u.index(), // also has `.isread` and `.following`
@@ -38,9 +39,6 @@ exports.init = function (sbot, opts) {
     ids: {}, // names -> ids
     actionItems: {}
   }
-
-  var processor = require('./processor')(sbot, db, state, emit)
-  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onPrehistorySync }), pull.drain(processor))
 
   // track sync state
   // - processor does async processing for each message that comes in
@@ -61,6 +59,29 @@ exports.init = function (sbot, opts) {
       syncCbs.length = 0
     }
   }
+
+  // process bookmarks
+  state.pinc()
+  pull(
+    pl.read(db.bookmarked, { keys: true, values: false }),
+    pull.asyncMap(function (key, cb) {
+      sbot.get(key, function (err, value) {
+        if (value) cb(null, { key: key, value: value })
+        else cb()
+      })
+    }),
+    pull.drain(
+      function (msg) {
+        if (msg)
+          state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+      },
+      function () { state.pdec() }
+    )
+  )
+
+  // setup sbot log processor
+  var processor = require('./processor')(sbot, db, state, emit)
+  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onPrehistorySync }), pull.drain(processor))
 
   var isPreHistorySynced = false // track so we dont emit events for old messages
   // grab for history sync
@@ -119,6 +140,9 @@ exports.init = function (sbot, opts) {
   }
 
   api.createInboxStream = indexStreamFn(state.inbox, function (row) { 
+    return row.key
+  })
+  api.createBookmarkStream = indexStreamFn(state.bookmarks, function (row) { 
     return row.key
   })
   api.createVoteStream = indexStreamFn(state.votes, function (row) { 
@@ -213,27 +237,35 @@ exports.init = function (sbot, opts) {
     }
   }
  
-  api.subscribe = function (key, cb) {
-    db.subscribed.put(key, 1, cb)
+  api.bookmark = function (key, cb) {
+    sbot.get(key, function (err, value) {
+      if (err) return cb(err)
+      state.bookmarks.sortedUpsert(value.timestamp, key)
+      db.bookmarked.put(key, 1, cb)
+    })
   }
-  api.unsubscribe = function (key, cb) {
-    db.subscribed.del(key, cb) 
+  api.unbookmark = function (key, cb) {
+    sbot.get(key, function (err, value) {
+      if (err) return cb(err)
+      state.bookmarks.remove(key)
+      db.bookmarked.del(key, cb) 
+    })
   }
-  api.toggleSubscribed = function (key, cb) {
-    api.isSubscribed(key, function (err, v) {
+  api.toggleBookmark = function (key, cb) {
+    api.isBookmarked(key, function (err, v) {
       if (!v) {
-        api.subscribe(key, function (err) {
+        api.bookmark(key, function (err) {
           cb(err, true)
         })
       } else {
-        api.unsubscribe(key, function (err) {
+        api.unbookmark(key, function (err) {
           cb(err, false)
         })
       }
     })
   }
-  api.isSubscribed = function (key, cb) {
-    db.subscribed.get(key, function (err, v) {
+  api.isBookmarked = function (key, cb) {
+    db.bookmarked.get(key, function (err, v) {
       cb && cb(null, !!v)
     })
   }

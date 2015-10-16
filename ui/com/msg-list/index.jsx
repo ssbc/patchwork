@@ -64,6 +64,21 @@ export default class MsgList extends React.Component {
           this.state.selected = false
           this.setState(this.state)
         })
+      },
+      onToggleSelectedBookmark: () => {
+        let selected = this.state.selected
+        if (!selected) return
+
+        // toggle in the DB
+        app.ssb.patchwork.toggleBookmark(selected.key, (err, isBookmarked) => {
+          if (err)
+            return app.issue('Failed to toggle bookmark', err, 'Happened in onToggleSelectedBookmark of MsgList')
+
+          // re-render
+          selected.isBookmarked = isBookmarked
+          this.setState(this.state)
+        })
+
       }
     }
   }

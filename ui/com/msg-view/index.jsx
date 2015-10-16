@@ -114,7 +114,11 @@ export class Thread extends React.Component {
         <div className="flex-fill">
           <a className="btn" onClick={this.props.onDeselect} title="Close">Close</a>{' '}
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a>{' '}
-          <a className="btn" onClick={()=>alert('todo')} title="Bookmark"><i className="fa fa-bookmark-o" /></a>{' '}
+          <a className={'btn'+(this.props.thread.isBookmarked?' highlighted':'')} onClick={this.props.onToggleSelectedBookmark} title="Bookmark">
+            { this.props.thread.isBookmarked ?
+              <i className="fa fa-bookmark" /> :
+              <i className="fa fa-bookmark-o" /> }
+          </a>{' '}
           <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a>
         </div>
         <div>
