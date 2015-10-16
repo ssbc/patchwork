@@ -29,9 +29,7 @@ exports.init = function (sbot, opts) {
     mymsgs: [],
     inbox: u.index(), // also has `.isread` and `.author`
     bookmarks: u.index(), // also has `.isread`
-    votes: u.index(), // also has `.isread`, `.vote`, and `.votemsg`
-    myvotes: u.index(), // also has  `.vote`
-    follows: u.index(), // also has `.isread` and `.following`
+    notifications: u.index(),
 
     // views
     profiles: {},
@@ -60,7 +58,7 @@ exports.init = function (sbot, opts) {
     }
   }
 
-  // process bookmarks
+  // load bookmarks into an index
   state.pinc()
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
@@ -130,11 +128,7 @@ exports.init = function (sbot, opts) {
     awaitSync(function () {
       cb(null, {
         inbox: state.inbox.rows.length,
-        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
-        votes: state.votes.filter(function (row) { return row.vote > 0 }).length,
-        votesUnread: state.votes.filter(function (row) { return row.vote > 0 && !row.isread }).length,
-        follows: state.follows.filter(function (row) { return row.following }).length,
-        followsUnread: state.follows.filter(function (row) { return row.following && !row.isread }).length
+        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
       })
     })
   }
@@ -145,15 +139,9 @@ exports.init = function (sbot, opts) {
   api.createBookmarkStream = indexStreamFn(state.bookmarks, function (row) { 
     return row.key
   })
-  api.createVoteStream = indexStreamFn(state.votes, function (row) { 
-    if (row.vote <= 0) return false
-    return row.votemsg
-  })
-  api.createMyvoteStream = indexStreamFn(state.myvotes, function (row) { 
-    if (row.vote <= 0) return false
+  api.createNotificationsStream = indexStreamFn(state.notifications, function (row) { 
     return row.key
   })
-  api.createFollowStream = indexStreamFn(state.follows)
 
   function indexMarkRead (indexname, key, keyname) {
     if (Array.isArray(key)) {
@@ -193,8 +181,7 @@ exports.init = function (sbot, opts) {
 
   api.markRead = function (key, cb) {
     indexMarkRead('inbox', key)
-    indexMarkRead('votes', key, 'votemsg')
-    indexMarkRead('follows', key)
+    indexMarkRead('bookmarks', key)
     if (Array.isArray(key))
       db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
     else
@@ -202,8 +189,7 @@ exports.init = function (sbot, opts) {
   }
   api.markUnread = function (key, cb) {
     indexMarkUnread('inbox', key)
-    indexMarkUnread('votes', key, 'votemsg')
-    indexMarkUnread('follows', key)
+    indexMarkUnread('bookmarks', key)
     if (Array.isArray(key))
       db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
     else

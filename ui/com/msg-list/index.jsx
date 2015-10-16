@@ -3,11 +3,15 @@ import pull from 'pull-stream'
 import React from 'react'
 import Infinite from 'react-infinite'
 import Summary from './summary'
+import Notifications from '../notifications'
 import Composer from '../composer'
 import { Thread } from '../msg-view'
 import { verticalFilled } from '../'
 import app from '../../lib/app'
 import u from '../../lib/util'
+
+// used when live msgs come in, how many msgs, from the top, should we check for deduplication?
+const DEDUPLICATE_LIMIT = 100
 
 var ThreadVertical = verticalFilled(Thread)
 
@@ -35,11 +39,13 @@ export default class MsgList extends React.Component {
         this.setState({ selected: msg })
 
         // mark read in DB
+        console.log(msg.hasUnread, 'mark unread')
         if (!msg.hasUnread)
           return
         u.markThreadRead(msg, (err) => {
           if (err)
-            return console.error(err)
+            return app.minorIssue('Failed to mark thread as read', err)
+          console.log(err, 'done')
 
           // update UI again
           this.setState({ selected: msg, msgs: this.state.msgs })
@@ -119,10 +125,10 @@ export default class MsgList extends React.Component {
       this.liveStream,
       (this.props.filter) ? pull.filter(this.props.filter) : undefined,
       pull.asyncMap(this.processMsg.bind(this)),
-      pull.drain((msg) => {
+      pull.drain(msg => {
         // remove any noticeable duplicates...
-        // check if the message is already in the first 100 and remove it if so
-        for (var i=0; i < this.state.msgs.length && i < 100; i++) {
+        // check if the message is already in the first N and remove it if so
+        for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
           if (this.state.msgs[i].key === msg.key) {
             this.state.msgs.splice(i, 1)
             i--
@@ -246,7 +252,7 @@ export default class MsgList extends React.Component {
             <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
             this.props.defaultView ? 
               this.props.defaultView() :
-              '' }
+              <Notifications onSelect={this.handlers.onSelect} /> }
       </div>
     </div>
   }

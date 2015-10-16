@@ -4,9 +4,7 @@ module.exports = {
   getIndexCounts: 'async',
   createInboxStream: 'source',
   createBookmarkStream: 'source',
-  createVoteStream: 'source',
-  createMyvoteStream: 'source',
-  createFollowStream: 'source',
+  createNotificationsStream: 'source',
 
   markRead: 'async',
   markUnread: 'async',

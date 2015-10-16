@@ -24,12 +24,16 @@ module.exports = function (sbot, db, state, emit) {
       }
     },
 
-    contact: function (msg) {
-      // update profiles
+    contact: function (msg) {      
       mlib.links(msg.value.content.contact, 'feed').forEach(function (link) {
+        // update profiles
         var toself = link.link === msg.value.author
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
+
+        // notifications index
+        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content))
+          state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
       })
     },
 
@@ -43,15 +47,10 @@ module.exports = function (sbot, db, state, emit) {
     },
 
     vote: function (msg) {
-      // update tallies
+      // notifications index
       var link = mlib.link(msg.value.content.vote, 'msg')
-
-      if (link) {
-        if (msg.value.author == sbot.id)
-          updateMyVote(msg, link)
-        else if (state.mymsgs.indexOf(link.link) >= 0) // vote on my msg?
-          updateVoteOnMymsg(msg, link)
-      }
+      if (link && state.mymsgs.indexOf(link.link) >= 0) // vote on my msg?
+        state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
     },
 
     flag: function (msg) {
@@ -145,14 +144,6 @@ module.exports = function (sbot, db, state, emit) {
       // if from the user, update names (in case un/following changes conflict status)
       if (source.id == sbot.id)
         rebuildNamesFor(target)
-
-      // follows index
-      if (target.id == sbot.id) {
-        // use the follower's id as the key to this index, so we only have 1 entry per other user max
-        var row = state.follows.sortedUpsert(msg.value.timestamp, msg.key)
-        row.following = c.following
-        attachIsRead(row, msg.key)
-      }
     }
 
     // blocking: bool
@@ -216,23 +207,6 @@ module.exports = function (sbot, db, state, emit) {
         }
       }
     }
-  }
-
-  function updateMyVote (msg, l) {
-    // myvotes index
-    var row = state.myvotes.sortedUpsert(msg.value.timestamp, l.link)
-    row.vote = l.value
-  }
-
-  function updateVoteOnMymsg (msg, l) {
-    // votes index
-    // construct a composite key which will be the same for all votes by this user on the given target
-    var votekey = l.link + '::' + msg.value.author // lonnng fucking key
-    var row = state.votes.sortedUpsert(msg.value.timestamp, votekey)
-    row.vote = l.value
-    row.votemsg = msg.key
-    if (row.vote > 0) attachIsRead(row, msg.key)
-    else              row.isread = true // we dont care about non-upvotes
   }
 
   function attachIsRead (indexRow, key) {

@@ -219,10 +219,10 @@ tape('bookmark index includes only bookmarked posts', function (t) {
   })
 })
 
-tape('vote index includes upvotes on the users posts', function (t) {
+tape('notifications index includes votes on the users posts', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
+    alice: {},
     bob: {},
     charlie: {}
   }, function (err, users) {
@@ -233,11 +233,11 @@ tape('vote index includes upvotes on the users posts', function (t) {
 
       var done = multicb()
       users.bob.add({ type: 'vote', vote: { link: msg.key, value: 1 } }, done())
-      users.charlie.add({ type: 'vote', vote: { link: msg.key, value: 1 } }, done())
+      users.charlie.add({ type: 'vote', vote: { link: msg.key, value: -1 } }, done())
       done(function (err) {
         if (err) throw err
 
-        pull(sbot.patchwork.createVoteStream(), pull.collect(function (err, msgs) {
+        pull(sbot.patchwork.createNotificationsStream(), pull.collect(function (err, msgs) {
           if (err) throw err
           t.equal(msgs.length, 2)
           t.end()
@@ -248,164 +248,39 @@ tape('vote index includes upvotes on the users posts', function (t) {
   })
 })
 
-tape('vote index does not include downvotes, and removes unvotes', function (t) {
+tape('notifications index includes follows, unfollows, blocks, and unblocks', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
+    alice: {},
     bob: {},
     charlie: {}
   }, function (err, users) {
     if (err) throw err
 
-    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) {
+    var done = multicb()
+    users.bob.add({ type: 'contact', contact: users.alice.id, following: true }, done())
+    users.charlie.add({ type: 'contact', contact: users.alice.id, blocking: true }, done())
+    done(function (err) {
       if (err) throw err
 
-      var done = multicb()
-      users.bob.add({ type: 'vote', vote: { link: msg.key, value: -1 } }, done())
-      users.charlie.add({ type: 'vote', vote: { link: msg.key, value: 1 } }, done())
-      users.charlie.add({ type: 'vote', vote: { link: msg.key, value: 0 } }, done())
-      done(function (err) {
+      pull(sbot.patchwork.createNotificationsStream(), pull.collect(function (err, msgs) {
         if (err) throw err
+        t.equal(msgs.length, 2)
 
-        pull(sbot.patchwork.createVoteStream(), pull.collect(function (err, msgs) {
+        var done = multicb()
+        users.bob.add({ type: 'contact', contact: users.alice.id, following: false }, done())
+        users.charlie.add({ type: 'contact', contact: users.alice.id, blocking: false }, done())
+        done(function (err) {
           if (err) throw err
-          t.equal(msgs.length, 0)
-          t.end()
-          sbot.close()
-        }))
-      })
-    })
-  })
-})
 
-tape('vote index counts correctly track read/unread', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: { follows: ['bob'] }, // Note, does not follow charlie
-    bob: {},
-    charlie: {}
-  }, function (err, users) {
-    if (err) throw err
-
-    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) {
-      if (err) throw err
-
-      var done = multicb()
-      users.bob.add({ type: 'vote', vote: { link: msg.key, value: 1 } }, done())
-      users.charlie.add({ type: 'vote', vote: { link: msg.key, value: 1 } }, done())
-      done(function (err, msgs) {
-        if (err) throw err
-        var voteMsg = msgs[0][1]
-
-        sbot.patchwork.getIndexCounts(function (err, counts) {
-          if (err) throw err
-          t.equal(counts.votes, 2)
-          t.equal(counts.votesUnread, 2)
-
-          sbot.patchwork.markRead(voteMsg.key, function (err) {
+          pull(sbot.patchwork.createNotificationsStream(), pull.collect(function (err, msgs) {
             if (err) throw err
-
-            sbot.patchwork.getIndexCounts(function (err, counts) {
-              if (err) throw err
-              t.equal(counts.votes, 2)
-              t.equal(counts.votesUnread, 1)
-
-              sbot.patchwork.markUnread(voteMsg.key, function (err) {
-                if (err) throw err
-
-                sbot.patchwork.getIndexCounts(function (err, counts) {
-                  if (err) throw err
-                  t.equal(counts.votes, 2)
-                  t.equal(counts.votesUnread, 2)
-                  t.end()
-                  sbot.close()
-                })
-              })
-            })
-          })
+            t.equal(msgs.length, 4)
+            t.end()
+            sbot.close()
+          }))
         })
-      })
-    })
-  })
-})
-
-tape('follow index includes all new followers', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: {},
-    bob: { follows: ['alice'] },
-    charlie: { follows: ['alice'] }
-  }, function (err, users) {
-    if (err) throw err
-
-    pull(sbot.patchwork.createFollowStream(), pull.collect(function (err, msgs) {
-      if (err) throw err
-      t.equal(msgs.length, 2)
-      t.end()
-      sbot.close()
-    }))
-  })
-})
-
-tape('follow index includes unfollows', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: {},
-    bob: { follows: ['alice'] },
-    charlie: { follows: ['alice'] }
-  }, function (err, users) {
-    if (err) throw err
-
-    users.charlie.add({ type: 'contact', contact: users.alice.id, following: false }, function (err) {
-      if (err) throw err
-      pull(sbot.patchwork.createFollowStream(), pull.collect(function (err, msgs) {
-        if (err) throw err
-        t.equal(msgs.length, 3)
-        t.end()
-        sbot.close()
       }))
     })
   })
 })
-
-tape('follow index counts correctly track read/unread', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: {},
-    bob: { follows: ['alice'] },
-    charlie: { follows: ['alice'] }
-  }, function (err, users, msgs) {
-    if (err) throw err
-    var followMsg = msgs[1][1]
-
-    sbot.patchwork.getIndexCounts(function (err, counts) {
-      if (err) throw err
-      t.equal(counts.follows, 2)
-      t.equal(counts.followsUnread, 2)
-
-      sbot.patchwork.markRead(followMsg.key, function (err) {
-        if (err) throw err
-
-        sbot.patchwork.getIndexCounts(function (err, counts) {
-          if (err) throw err
-          t.equal(counts.follows, 2)
-          t.equal(counts.followsUnread, 1)
-
-          sbot.patchwork.markUnread(followMsg.key, function (err) {
-            if (err) throw err
-
-            sbot.patchwork.getIndexCounts(function (err, counts) {
-              if (err) throw err
-              t.equal(counts.follows, 2)
-              t.equal(counts.followsUnread, 2)
-
-              t.end()
-              sbot.close()
-            })
-          })
-        })
-      })
-    })
-  })
-})
-
