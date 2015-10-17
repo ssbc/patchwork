@@ -63,15 +63,20 @@ exports.init = function (sbot, opts) {
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
     pull.asyncMap(function (key, cb) {
-      sbot.get(key, function (err, value) {
-        if (value) cb(null, { key: key, value: value })
-        else cb()
-      })
+      var obj = { key: key, value: null, isread: false }
+      db.isread.get(key, function (err, isread) { obj.isread = isread; done() })
+      sbot.get(key, function (err, value) { obj.value = value; done() })
+      var n=0;
+      function done() {
+        if (++n == 2) cb(null, obj)
+      }
     }),
     pull.drain(
       function (msg) {
-        if (msg)
-          state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+        if (msg.value) {
+          var row = state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+          row.isread = msg.isread
+        }
       },
       function () { state.pdec() }
     )
@@ -129,7 +134,9 @@ exports.init = function (sbot, opts) {
     awaitSync(function () {
       cb(null, {
         inbox: state.inbox.rows.length,
-        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
+        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
+        bookmarks: state.bookmarks.rows.length,
+        bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length
       })
     })
   }
