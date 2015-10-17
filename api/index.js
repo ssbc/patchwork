@@ -104,6 +104,7 @@ exports.init = function (sbot, opts) {
     e.type = type
     if (e.type == 'index-change') {
       api.getIndexCounts(function (err, counts) {
+        e.counts = counts
         e.total = counts[e.index]
         e.unread = counts[e.index+'Unread']
         notify(e)

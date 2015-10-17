@@ -15,6 +15,9 @@ var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')
 
+// event streams
+var patchworkEventStream = null
+
 // master state object
 var app =
 module.exports = extend(new Emitter(), {
@@ -75,7 +78,18 @@ function addIssue (isUrgent, title, err, extraIssueInfo) {
   app.emit('update:issues')
 }
 
+function onPatchworkEvent (e) {
+  if (e.type == 'index-change') {
+    for (var k in e.counts)
+      app.indexCounts[k] = e.counts[k]
+    app.emit('update:indexCounts')
+  }
+}
+
 function fetchLatestState (cb) {
+  if (!patchworkEventStream)
+    pull((patchworkEventStream = app.ssb.patchwork.createEventStream()), pull.drain(onPatchworkEvent.bind(this)))
+
   var done = multicb({ pluck: 1 })
   app.ssb.whoami(done())
   app.ssb.patchwork.getNamesById(done())

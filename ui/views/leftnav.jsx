@@ -8,13 +8,32 @@ import u from '../lib/util'
 class NavLink extends React.Component {
   render() {
     var selected = (this.props.to === this.props.location)
+    let content = this.props.children
+    if (!content)
+      content = <span><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</span>
     return <div className={'leftnav-item '+(selected?'selected':'')}>
-      <Link to={this.props.to}>{this.props.children}</Link>
+      <Link to={this.props.to}>{content}</Link>
     </div>
   }
 }
 
 class LeftNav extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { indexCounts: app.indexCounts||{} }
+    this.onIndexCountsUpdate = () => {
+      this.setState({ indexCounts: app.indexCounts })
+    }
+  }
+  componentDidMount() {
+    // setup event stream
+    app.on('update:indexCounts', this.onIndexCountsUpdate)
+  }
+  componentWillUnmount() {
+    // abort streams
+    app.removeListener('update:indexCounts', this.onIndexCountsUpdate)
+  }
+
   nameOf(id) {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
@@ -39,7 +58,7 @@ class LeftNav extends React.Component {
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
-      <NavLink to="/" location={this.props.location}><i className="fa fa-inbox" /> Inbox</NavLink>
+      <NavLink to="/" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location}><i className="fa fa-bookmark-o" /> Bookmarks</NavLink>
       <NavLink to="/people" location={this.props.location}><i className="fa fa-child" /> People</NavLink>
       <div className="leftnav-item label">System</div>

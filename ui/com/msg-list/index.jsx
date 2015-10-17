@@ -54,16 +54,14 @@ export default class MsgList extends React.Component {
         // get the last post in the thread, abort if already unread
         let selected = this.state.selected
         if (!selected || selected.hasUnread) return
-        let lastPost = u.getLastThreadPost(selected)
-        if (!lastPost || !lastPost.isRead) return
 
         // mark unread in db
-        app.ssb.patchwork.markUnread(lastPost.key, (err) => {
+        app.ssb.patchwork.markUnread(selected.key, (err) => {
           if (err)
             return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkSelectedUnread of MsgList')
 
           // re-render
-          lastPost.isRead = false
+          selected.isRead = false
           selected.hasUnread = true
           this.state.selected = false
           this.setState(this.state)
