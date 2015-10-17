@@ -2,7 +2,7 @@
 import pull from 'pull-stream'
 import React from 'react'
 import UserInfo from './user-info'
-import { verticalFilled, UserLink } from './index'
+import { verticalFilled, VerticalFilledContainer, UserLink } from './index'
 import app from '../lib/app'
 import social from '../lib/social-graph'
 import u from '../lib/util'
@@ -111,7 +111,7 @@ export default class UserList extends React.Component {
         { this.state.selected === 'add' ?
           'todo' :
           this.state.selected ? 
-            <UserInfo pid={this.state.selected.id} /> :
+            <VerticalFilledContainer><UserInfo pid={this.state.selected.id} /></VerticalFilledContainer> :
             '' }
       </div>
     </div>

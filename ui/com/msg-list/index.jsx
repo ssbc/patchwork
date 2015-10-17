@@ -39,13 +39,11 @@ export default class MsgList extends React.Component {
         this.setState({ selected: msg })
 
         // mark read in DB
-        console.log(msg.hasUnread, 'mark unread')
         if (!msg.hasUnread)
           return
         u.markThreadRead(msg, (err) => {
           if (err)
             return app.minorIssue('Failed to mark thread as read', err)
-          console.log(err, 'done')
 
           // update UI again
           this.setState({ selected: msg, msgs: this.state.msgs })

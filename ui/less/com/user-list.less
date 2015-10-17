@@ -20,6 +20,62 @@
 }
 
 .user-list-item.summary {
-  .msg-list-item.summary;
   height: 48px;
+  padding: 10px;
+  overflow: hidden;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+
+  .header {
+    display: flex;
+    margin-bottom: 5px;
+
+    color: @gray1;
+    .header-left {
+      flex: 1;
+    }
+    .header-right {
+      font-weight: 300;
+    }
+    a {
+      color: @dark-gray2;
+    }
+  }
+  .body {
+    max-height: 36px;
+    overflow: hidden;
+    color: @dark-gray3;
+    font-weight: 300;
+    font-family: Helvetica;
+    font-size: 90%;
+    line-height: 1.4;
+
+    .body-line {
+      white-space: pre;
+      overflow: hidden;
+      &:last-child {
+        color: gray;
+        font-weight: 100;
+      }
+    }
+  }
+  &.selected {
+    background: @blue1;
+    color: @white2;
+    font-weight: 200;
+
+    .header, i, a, .body {
+      color: @white2 !important;
+    }
+    .header-right, .body-line:last-child {
+      color: @light-blue3;
+    }
+    bold {
+      font-weight: 300;
+    }
+    code {
+      color: @white2;
+      background: rgba(255,255,255,0.25);
+    }
+  }
 }
