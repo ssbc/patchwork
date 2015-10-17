@@ -1,6 +1,8 @@
 'use babel'
 import pull from 'pull-stream'
 import React from 'react'
+import schemas from 'ssb-msg-schemas'
+import mlib from 'ssb-msgs'
 import Infinite from 'react-infinite'
 import Summary from './summary'
 import Notifications from '../notifications'
@@ -82,6 +84,29 @@ export default class MsgList extends React.Component {
         let selected = this.state.selected
         if (!selected) return
         this.handlers.onToggleBookmark(selected)
+      },
+      onToggleStar: (msg) => {
+        // get current state
+        msg.votes = msg.votes || {}
+        let oldVote = msg.votes[app.user.id]
+        let newVote = (oldVote === 1) ? 0 : 1
+
+        // publish new message
+        var voteMsg = schemas.vote(msg.key, newVote)
+        let done = (err) => {
+          if (err)
+            return app.issue('Failed to publish vote', err, 'Happened in onToggleStar of MsgList')
+
+          // re-render
+          msg.votes[app.user.id] = newVote
+          this.setState(this.state)
+        }
+        if (msg.plaintext)
+          app.ssb.publish(voteMsg, done)
+        else {
+          let recps = mlib.links(msg.value.content.recps).map(l => l.link)
+          app.ssb.private.publish(voteMsg, recps, done)
+        }
       }
     }
   }

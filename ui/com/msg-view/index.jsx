@@ -8,6 +8,23 @@ import Composer from '../composer'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
+function getUpvotes (msg) {
+  if (!msg.votes) return []
+  return Object.keys(msg.votes).filter(k => (msg.votes[k] === 1))
+}
+
+export class MsgViewStar extends React.Component {
+  onClick(e) {
+    e.stopPropagation()
+    this.props.onClick()
+  }
+  render() {
+    return <a title={this.props.isUpvoted?'Unstar':'Star'} onClick={this.onClick.bind(this)}>
+      <i className={'fa '+(this.props.isUpvoted?'fa-star':'fa-star-o')} /> {this.props.num}
+    </a>
+  }
+}
+
 export class MsgView extends React.Component {
   constructor(props) {
     super(props)
@@ -22,13 +39,15 @@ export class MsgView extends React.Component {
   render() {
     let msg = this.props.msg
     let recps = mlib.links(msg.value.content.recps).map(recp => u.getName(recp.link))
+    let upvoters = getUpvotes(this.props.msg)
+    let isUpvoted = upvoters.indexOf(app.user.id) !== -1
     if (this.state.collapsed) {
       return <div className="msg-view-collapsed" onClick={this.onClick.bind(this)}>
         <div className="msg-view-collapsed-col">{u.getName(msg.value.author)}</div>
         <div className="msg-view-collapsed-col"><InlineContent msg={msg} forceRaw={this.props.forceRaw} /></div>
         <div className="msg-view-collapsed-col">
           <NiceDate ts={msg.value.timestamp} />{' '}
-          <a title="Star" onClick={()=>alert('todo')}><i className="fa fa-star-o"/></a>
+          <MsgViewStar num={upvoters.length} isUpvoted={isUpvoted} onClick={this.props.onToggleStar} />
         </div>
       </div>
     }
@@ -44,7 +63,7 @@ export class MsgView extends React.Component {
         </div>
         <div>
           <NiceDate ts={msg.value.timestamp} />{' '}
-          <a title="Star" onClick={()=>alert('todo')}><i className="fa fa-star-o"/></a>
+          <MsgViewStar num={upvoters.length} isUpvoted={isUpvoted} onClick={this.props.onToggleStar} />
         </div>
       </div>
       <div className="body">
@@ -119,6 +138,7 @@ export class Thread extends React.Component {
   }
 
   render() {
+    let forceRaw = this.state.forceRaw||this.props.forceRaw
     return <div className="msg-view-thread" style={{height: this.props.height}}>
       <div className="toolbar flex">
         <div className="flex-fill">
@@ -138,7 +158,10 @@ export class Thread extends React.Component {
           <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>
-      {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.state.forceRaw||this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
+      {this.state.msgs.map((msg, i) => {
+        let isLast = (i === this.state.msgs.length-1)
+        return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} isLast={isLast} onToggleStar={()=>this.props.onToggleStar(msg)} />
+      })}
       {this.state.isReplying ?
         <Composer key={this.props.thread.key} thread={this.props.thread} onSend={()=>this.setState({ isReplying: false })} /> :
         '' }

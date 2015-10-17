@@ -314,6 +314,8 @@ exports.getPostThread = function (mid, cb) {
         })
         cb2()
       }, done())
+      // compile votes
+      exports.compileThreadVotes(thread)
       done(function (err) {
         if (err) return cb(err)
         cb(null, thread)
@@ -364,6 +366,24 @@ exports.attachThreadIsbookmarked = function (thread, cb) {
     thread.isBookmarked = isBookmarked
     cb()
   })
+}
+
+exports.compileThreadVotes = function (thread) {
+  compileMsgVotes(thread)
+  if (thread.related)
+    thread.related.forEach(compileMsgVotes)
+
+  function compileMsgVotes (msg) {
+    if (!msg.related || !msg.related.length)
+      return
+
+    msg.votes = {}
+    msg.related.forEach(function (r) {
+      var c = r.value.content
+      if (c.type === 'vote' && c.vote && 'value' in c.vote)
+        msg.votes[r.value.author] = c.vote.value
+    })
+  }
 }
 
 exports.markThreadRead = function (thread, cb) {
