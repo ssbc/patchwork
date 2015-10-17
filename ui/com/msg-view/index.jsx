@@ -61,6 +61,7 @@ export class Thread extends React.Component {
     this.state = {
       thread: null,
       isReplying: false,
+      forceRaw: false,
       msgs: []
     }
     this.liveStream = null
@@ -113,6 +114,10 @@ export class Thread extends React.Component {
       this.liveStream(true, ()=>{})
   }
 
+  toggleRaw() {
+    this.setState({ forceRaw: !this.state.forceRaw })
+  }
+
   render() {
     return <div className="msg-view-thread" style={{height: this.props.height}}>
       <div className="toolbar flex">
@@ -130,10 +135,10 @@ export class Thread extends React.Component {
             <span style={{color: 'gray', marginLeft: '5px'}}><i className="fa fa-lock"/> private thread</span>}
         </div>
         <div>
-          <a className="btn" onClick={()=>alert('todo')} title="View Raw Data"><i className="fa fa-code" /></a>
+          <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>
-      {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
+      {this.state.msgs.map((msg, i) => <MsgView key={msg.key} msg={msg} forceRaw={this.state.forceRaw||this.props.forceRaw} isLast={i === this.state.msgs.length-1} />)}
       {this.state.isReplying ?
         <Composer key={this.props.thread.key} thread={this.props.thread} onSend={()=>this.setState({ isReplying: false })} /> :
         '' }
