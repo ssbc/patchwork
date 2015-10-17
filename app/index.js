@@ -24,6 +24,19 @@ if(config.keys.curve === 'k256')
   throw new Error('k256 curves are no longer supported,'+
                   'please delete' + path.join(config.path, 'secret'))
 
+var mainWindow = null
+var isQuitting = false
+
+app.on('window-all-closed', function() {
+  if (process.platform != 'darwin') app.quit()
+})
+
+app.on('before-quit', function() { isQuitting = true })
+
+app.on('activate-with-no-open-windows', function() {
+  mainWindow.show()
+})
+
 app.on('ready', function () {
   // start sbot
   var rebuild = false
@@ -41,13 +54,22 @@ app.on('ready', function () {
   http.createServer(blobs.server({ serveFiles: true })).listen(7778)
 
   // open main window
-  var mainWindow = windows.open(
+  mainWindow = windows.open(
     'file://' + path.join(__dirname, '../ui/main.html'),
     sbot,
     blobs,
     { width: 1030, height: 720 }
   )
   require('./lib/menu')(mainWindow)
+
+  mainWindow.on('close', function (evt) {
+    if (isQuitting) return true
+
+    mainWindow.hide()
+    evt.preventDefault()
+  })
+
+  mainWindow.on('closed', function () { mainWindow = null })
   // mainWindow.openDevTools()
 
   // setup menu
