@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { RenameModalBtn, FlagUserModalBtn } from './modals'
+import { UserLink } from './index'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
@@ -164,8 +165,19 @@ export default class UserInfo extends React.Component {
         <h1>{this.state.name}</h1>
         <table>
           <tr><td>{this.state.followers1.length + this.state.followers2.length}</td><td>followers</td></tr>
-          {(this.state.isSelf) ? '' : <tr className="muted"><td>{this.state.followers1.length}</td><td>followed by you</td></tr>}
           <tr><td>{this.state.flaggers.length}</td><td>flags</td></tr>
+        </table>
+        <table>
+          <tr>
+            <td>
+              {this.state.followers1.length > 0 ? <h3>followers</h3> : ''}
+              {this.state.followers1.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
+            </td>
+            <td>
+              {this.state.followeds.length > 0 ? <h3>following</h3> : ''}
+              {this.state.followeds.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
+            </td>
+          </tr>
         </table>
       </div>
     </div>

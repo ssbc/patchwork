@@ -3,6 +3,7 @@ import React from 'react'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import MsgList from '../com/msg-list'
+import { VerticalFilledContainer } from '../com/index'
 import UserInfo from '../com/user-info'
 import app from '../lib/app'
 import social from '../lib/social-graph'
@@ -36,7 +37,7 @@ export default class Profile extends React.Component {
         return true
     }
     let defaultView = () => {
-      return <UserInfo key={this.state.pid} pid={this.state.pid} />
+      return <VerticalFilledContainer><UserInfo key={this.state.pid} pid={this.state.pid} /></VerticalFilledContainer>
     }
     return <div id="profile" key={this.state.pid}>
       <MsgList threads live={{ gt: Date.now() }} source={feed} cursor={cursor} filter={filter} defaultView={defaultView} />

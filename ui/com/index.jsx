@@ -115,3 +115,9 @@ export function verticalFilled (Component) {
   })
   return VerticalFilledCom;
 }
+class _VerticalFilledContainer extends React.Component {
+  render() {
+    return <div style={{height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
+  }
+}
+export var VerticalFilledContainer = verticalFilled(_VerticalFilledContainer)
