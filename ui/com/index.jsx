@@ -26,6 +26,18 @@ export class BlobLink extends React.Component {
   }
 }
 
+export class UserLinks extends React.Component {
+  render() {
+    let n = this.props.ids.length
+    return <span>
+      {this.props.ids.map((id, i) => {
+        let isLast = (i === n-1)
+        return <span key={id} ><UserLink id={id} />{isLast ? '' : ', '}</span>
+      })}
+    </span>
+  }
+}
+
 export class ModalBtn extends React.Component {
   constructor(props) {
     super(props)

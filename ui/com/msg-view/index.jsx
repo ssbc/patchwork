@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
-import { UserLink, NiceDate } from '../index'
+import { UserLink, UserLinks, NiceDate } from '../index'
 import { Block as BlockContent, Inline as InlineContent } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 import Composer from '../composer'
@@ -70,6 +70,7 @@ export class MsgView extends React.Component {
         {this.props.forceRaw ? <div>{msg.key}</div> : ''}
         <BlockContent msg={msg} forceRaw={this.props.forceRaw} />
       </div>
+      { upvoters.length ? <div className="upvoters"><i className="fa fa-star"/> by <UserLinks ids={upvoters}/></div> : ''}
     </div>
   }
 }
