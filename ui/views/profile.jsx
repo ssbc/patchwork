@@ -1,14 +1,9 @@
 'use babel'
 import React from 'react'
-import schemas from 'ssb-msg-schemas'
-import multicb from 'multicb'
 import MsgList from '../com/msg-list'
 import { VerticalFilledContainer } from '../com/index'
 import UserInfo from '../com/user-info'
 import app from '../lib/app'
-import social from '../lib/social-graph'
-import mentionslib from '../lib/mentions'
-import u from '../lib/util'
 
 export default class Profile extends React.Component {
   constructor(props) {
