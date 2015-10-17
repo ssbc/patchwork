@@ -3,6 +3,10 @@
   "version": "1.1.1",
   "description": "safe secure sharing",
   "main": "app/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssbc/patchwork.git"
+  },
   "scripts": {
     "start": "electron .",
     "test": "set -e; for t in api/test/*.js; do node $t; done",
