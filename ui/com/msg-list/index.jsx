@@ -180,8 +180,8 @@ export default class MsgList extends React.Component {
       pull(
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
-        (this.props.filter) ? pull.filter(this.props.filter) : undefined,
         pull.asyncMap(this.processMsg.bind(this)),
+        (this.props.filter) ? pull.filter(this.props.filter) : undefined,
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)
