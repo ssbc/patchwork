@@ -4,63 +4,41 @@ import pull from 'pull-stream'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
-import { UserLink, verticalFilled } from '../com/index'
-import { UserHexagon } from '../com/hexagons'
+import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
 import { PromptModalBtn, InviteModalBtn } from '../com/modals'
 
 class Peer extends React.Component {
-  onSync() {
-    app.ssb.gossip.connect({ host: this.props.peer.host, port: this.props.peer.port, key: this.props.peer.key }, ()=>{})
-  }
-
   render() {
     let peer = this.props.peer
 
-    // sort out the last time of connection
-    let lastConnect = ''
-    if (peer.time) {
-      if (peer.time.connect > peer.time.attempt)
-        lastConnect = <p>Synced {new Date(peer.time.connect).toLocaleString()}</p>
-      else if (peer.time.attempt) {
-        lastConnect = <p>Attempted (but failed) to connect at {new Date(peer.time.attempt).toLocaleString()}</p>
-      }
-    }
-
-    // sort out progress
-    let progress = 0, progressLabel = ''
+    // status: connection progress or last-connect info
+    let status = ''
     if (peer.connected) {
       if (!peer.progress)
-        progressLabel = 'Connecting...'
-      else if (peer.progress.sync || peer.progress.total === 0) {
-        progress = 1
-        progressLabel = 'Live-streaming'
-      }
-      else {
-        progress = (peer.progress.current / peer.progress.total)
-        progressLabel = 'Syncing...'
+        status = <div className="light">Syncing</div>
+      else if (peer.progress.sync || peer.progress.total === 0)
+        status = <div className="light">Syncing</div>
+      else
+        status = <div className="light"><progress value={peer.progress.current / peer.progress.total} /></div>
+    } else if (peer.time) {
+      if (peer.time.connect > peer.time.attempt)
+        status = <div className="light">Synced at <NiceDate ts={peer.time.connect} /></div>
+      else if (peer.time.attempt) {
+        status = <div className="light">Connect failed at <NiceDate ts={peer.time.attempt} /></div>
       }
     }
 
-    return <div className={'peer '+((peer.connected)?'.connected':'')}>
-      <UserHexagon id={peer.key} />
-      <h3>
-        <UserLink id={peer.key} />
-        {' '}
-        { (peer.connected) ?
-          <em>Syncing</em> :
-          <a onClick={this.onSync.bind(this)}>Sync</a> }
-        {' '}
-        { social.follows(peer.key, app.user.id) ? <small>Follows You</small> : '' }
-        <br/>
-        <small>{peer.host}:{peer.port}:{peer.key}</small>
-      </h3>
-      <p><progress value={progress} />{progressLabel}</p>
-      {lastConnect}
+    return <div className={'peer flex '+((peer.connected)?'.connected':'')}>
+      <div className="flex-fill">
+        <div><UserLink id={peer.key} /> { social.follows(peer.key, app.user.id) ? <span className="light">Follows You</span> : '' }</div>
+        <div><small>{peer.host}:{peer.port}:{peer.key}</small></div>
+      </div>
+      {status}
     </div>
   }
 }
 
-class Sync extends React.Component {
+export default class Sync extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -130,25 +108,22 @@ class Sync extends React.Component {
 
   render() {
     let stats = this.state.stats
-
+    let addNodeLabel = (<span><i className="fa fa-plus"/> Add Address</span>)
     let warning = ''
     if (stats.membersof === 0)
-      warning = <p>You need to join a pub if you want to communicate across the Internet!</p>
+      warning = <div className="warning"><i className="fa fa-exclamation-circle" /> You need to join a pub to communicate across the Internet.</div>
     else if (stats.active === 0 && stats.untried === 0)
-      warning = <p>None of your pubs are responding! Are you connected to the Internet?</p>
+      warning = <div className="warning"><i className="fa fa-exclamation-circle" /> None of your pubs are responding. Are you connected to the Internet?</div>
 
-    return <div style={{height: this.props.height, overflow: 'auto'}}>
-      <div>
-        <h1>{'You\'re followed by ' + stats.membersof} public node{stats.membersof==1?'':'s'} <small>{stats.active} connected</small></h1>
+    return <VerticalFilledContainer id="sync">
+      <div className="header">
+        <div>
+          <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
+          <PromptModalBtn className="btn" onSubmit={this.onAddNode.bind(this)} submitLabel="Connect" btnLabel={addNodeLabel} placeholder="host:port@key"><p>Nodes full address:</p></PromptModalBtn>
+        </div>
         {warning}
-        <p><InviteModalBtn onUseInvite={this.onUseInvite.bind(this)} /></p>
       </div>
-      <p>
-        Mesh Network{' '}
-        <PromptModalBtn onSubmit={this.onAddNode.bind(this)} submitLabel="Connect" btnLabel="Add Node..." placeholder="host:port@key"><p>Nodes full address:</p></PromptModalBtn>
-      </p>
       {this.state.peers.map((peer, i) => <Peer key={'peer'+i} peer={peer} />)}
-    </div>
+    </VerticalFilledContainer>
   }
 }
-export default verticalFilled(Sync)

@@ -120,7 +120,7 @@ export class FlagUserModalBtn extends ModalBtn {
 export class InviteModalBtn extends ModalBtn {
   constructor(props) {
     super(props)
-    this.label = this.props.btnModal||'Join a Pub'
+    this.label = this.props.btnModal||(<span><i className="fa fa-cloud"/> Join a Pub</span>)
     this.state = xtend(this.state, { info: false, error: false, isProcessing: false })
   }
   onSubmit(code) {
