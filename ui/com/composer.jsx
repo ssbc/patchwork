@@ -131,6 +131,7 @@ export default class Composer extends React.Component {
       isPreviewing: false,
       isSending: false,
       isReply: !!this.props.thread,
+      hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
       recps: recps,
       text: ''
     }
@@ -155,7 +156,7 @@ export default class Composer extends React.Component {
 
     var filesInput = this.refs.files.getDOMNode()
     var handled=0, total = filesInput.files.length
-    this.setState({ isAddingFiles: true })
+    this.setState({ isAddingFiles: true, hasAddedFiles: true })
 
     let add = (f) => {
       // limit to 5mb
@@ -286,7 +287,13 @@ export default class Composer extends React.Component {
           <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a ${msgType} message...` : `Write a ${msgType} reply...`} /> }
       </div>
       <div className="composer-ctrls">
-        <div>{this.state.isAddingFiles ? <em>Adding...</em> : <a onClick={this.onAttach.bind(this)}>Add an attachment</a>}</div>
+        <div>
+          { !this.state.isPublic ?
+            (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work in private messages</em> : '') :
+            (this.state.isAddingFiles ?
+              <em>Adding...</em> :
+              <a onClick={this.onAttach.bind(this)}>Add an attachment</a>) }
+        </div>
         <div>
         { this.state.isPreviewing
           ? <span><a onClick={this.onTogglePreview.bind(this)}>Keep Editing</a> or {(!this.canSend() || this.state.isSending) ? <em>Send {msgType} message</em> : <a onClick={this.onSend.bind(this)}>Send {msgType} message</a>}</span> 
