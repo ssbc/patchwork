@@ -21,6 +21,7 @@ export class MsgView extends React.Component {
   }
   render() {
     let msg = this.props.msg
+    let recps = mlib.links(msg.value.content.recps).map(recp => u.getName(recp.link))
     if (this.state.collapsed) {
       return <div className="msg-view-collapsed" onClick={this.onClick.bind(this)}>
         <div className="msg-view-collapsed-col">{u.getName(msg.value.author)}</div>
@@ -35,7 +36,11 @@ export class MsgView extends React.Component {
       <div className="header">
         <div>
           <UserLink id={msg.value.author} />{' '}
-          <span style={{color: '#aaa'}}>{msg.plaintext ? 'public' : 'private'}</span>
+          { msg.plaintext ?
+            <span style={{color: '#aaa'}}>public</span> :
+            (recps && recps.length) ?
+              <span style={{color: '#aaa'}}>to {recps.join(', ')}</span> :
+              <span style={{color: '#aaa'}}><i className="fa fa-lock" /></span>}
         </div>
         <div>
           <NiceDate ts={msg.value.timestamp} />{' '}
@@ -119,7 +124,10 @@ export class Thread extends React.Component {
               <i className="fa fa-bookmark" /> :
               <i className="fa fa-bookmark-o" /> }
           </a>{' '}
-          <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a>
+          <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a>{' '}
+          {this.props.thread.plaintext ? 
+            <span style={{color: 'gray', marginLeft: '5px'}}>public thread</span> :
+            <span style={{color: 'gray', marginLeft: '5px'}}><i className="fa fa-lock"/> private thread</span>}
         </div>
         <div>
           <a className="btn" onClick={()=>alert('todo')} title="View Raw Data"><i className="fa fa-code" /></a>
