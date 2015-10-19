@@ -306,6 +306,52 @@ tape('bookmark index includes only bookmarked posts', function (t) {
   })
 })
 
+tape('bookmark index orders by most recent reply', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    var done = multicb({ pluck: 1, spread: true })
+    users.alice.add({ type: 'post', text: 'hello from alice' }, done())
+    users.bob.add({ type: 'post', text: 'hello from bob' }, done())
+    done(function (err, msg1, msg2) {
+      if (err) throw err
+
+      var done = multicb()
+      sbot.patchwork.bookmark(msg1.key, done())
+      sbot.patchwork.bookmark(msg2.key, done())
+      done(function (err) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createBookmarkStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 2)
+          t.equal(msgs[0].key, msg2.key)
+          t.equal(msgs[1].key, msg1.key)
+
+          users.alice.add({ type: 'post', text: 'reply from alice', root: msg1.key, branch: msg1.key }, function (err) {
+            if (err) throw err
+
+            pull(sbot.patchwork.createBookmarkStream(), pull.collect(function (err, msgs) {
+              if (err) throw err
+              t.equal(msgs.length, 2)
+              // note, they are now swapped:
+              t.equal(msgs[0].key, msg1.key)
+              t.equal(msgs[1].key, msg2.key)
+              t.end()
+              sbot.close()
+            }))
+          })
+        }))
+      })
+    })
+  })
+})
+
 tape('notifications index includes votes on the users posts', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {

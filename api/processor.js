@@ -11,14 +11,23 @@ module.exports = function (sbot, db, state, emit) {
       var c = msg.value.content
 
       if (mlib.link(c.root, 'msg')) {
-        // a reply, update its root in the inbox index
+        // a reply, get its root
         state.pinc()
         u.getRootMsg(sbot, msg, function (err, rootMsg) {
           if (!rootMsg)
             return
+
+          // update the inbox index
           var row = state.inbox.sortedUpsert(msg.value.timestamp, rootMsg.key)
           updateRootIsRead(row, msg.key)
           emit('index-change', { index: 'inbox' })
+
+          // in the bookmarks index? update that too
+          row = state.bookmarks.find(rootMsg.key)
+          if (row) {
+            state.bookmarks.sortedUpsert(msg.value.timestamp, rootMsg.key)
+            emit('index-change', { index: 'bookmarks' })
+          }
           state.pdec()
         })
       } else {
