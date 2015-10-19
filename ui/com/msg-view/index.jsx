@@ -140,8 +140,8 @@ export class Thread extends React.Component {
 
   onSend(msg) {
     this.setState({ isReplying: false })
-    if (this.props.onSend)
-      this.props.onSend(msg)
+    if (this.props.onNewReply)
+      this.props.onNewReply(msg)
   }
 
   render() {
