@@ -233,7 +233,7 @@ export default class MsgList extends React.Component {
 
     // fetch amount requested
     this.setState({ isLoading: true })
-    fetchBottomBy(amt, (isAtEnd) => {
+    fetchBottomBy(amt, isAtEnd => {
       this.setState({
         isLoading: false,
         isAtEnd: isAtEnd,
@@ -258,7 +258,7 @@ export default class MsgList extends React.Component {
             ref="container"
             elementHeight={60}
             containerHeight={this.state.containerHeight}
-            infiniteLoadBeginBottomOffset={1200}
+            infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
             onInfiniteLoad={this.loadMore.bind(this, 15)}
             loadingSpinnerDelegate={this.loadingElement()}
             isInfiniteLoading={this.state.isLoading} >
