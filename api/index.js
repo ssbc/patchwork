@@ -27,8 +27,8 @@ exports.init = function (sbot, opts) {
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
-    inbox: u.index(), // also has `.isread` and `.author`
-    bookmarks: u.index(), // also has `.isread`
+    inbox: u.index(),
+    bookmarks: u.index(),
     notifications: u.index(),
 
     // views

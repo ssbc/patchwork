@@ -123,17 +123,17 @@ tape('inbox index includes encrypted messages', function (t) {
   })
 })
 
-tape('inbox index counts correctly track read/unread', function (t) {
+tape('inbox index counts tracks read/unread', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
-    alice: { follows: ['bob'] },
+    alice: {},
     bob: {},
     charlie: {}
   }, function (err, users) {
     if (err) throw err
 
     var done = multicb()
-    users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.alice.id] }, done())
+    users.bob.add({ type: 'post', text: 'hello from bob' }, done())
     done(function (err, msgs) {
       if (err) throw err
       var inboxedMsg = msgs[0][1]
@@ -168,6 +168,93 @@ tape('inbox index counts correctly track read/unread', function (t) {
       })
     })
   })
+})
+
+tape('inbox index counts track read/unread of replies on the root', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob'] },
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    addRoot()
+
+    function addRoot () {
+      // check that the root msgs' read/unread state is properly tracked
+      users.bob.add({ type: 'post', text: 'hello from bob' }, function (err, root) {
+        if (err) throw err
+
+        sbot.patchwork.getIndexCounts(function (err, counts) {
+          if (err) throw err
+          t.equal(counts.inbox, 1)
+          t.equal(counts.inboxUnread, 1)
+
+          sbot.patchwork.markRead(root.key, function (err) {
+            if (err) throw err
+
+            sbot.patchwork.getIndexCounts(function (err, counts) {
+              if (err) throw err
+              t.equal(counts.inbox, 1)
+              t.equal(counts.inboxUnread, 0)
+
+              addFirstReply(root)
+            })
+          })
+        })
+      })
+    }
+    function addFirstReply (root) {
+      // check that the first reply's read/unread state is properply merged with root
+      users.charlie.add({ type: 'post', text: 'hello from charlie', root: root.key, branch: root.key }, function (err, reply1) {
+        if (err) throw err
+
+        sbot.patchwork.getIndexCounts(function (err, counts) {
+          if (err) throw err
+          t.equal(counts.inbox, 1)
+          t.equal(counts.inboxUnread, 1)
+
+          sbot.patchwork.markRead([root.key, reply1.key], function (err) {
+            if (err) throw err
+
+            sbot.patchwork.getIndexCounts(function (err, counts) {
+              if (err) throw err
+              t.equal(counts.inbox, 1)
+              t.equal(counts.inboxUnread, 0)
+
+              addSecondReply(root, reply1)
+            })
+          })
+        })
+      })
+    }
+    function addSecondReply (root, reply1) {
+      // check that the second reply's read/unread state is properply merged with root
+      users.charlie.add({ type: 'post', text: 'hello from charlie', root: root.key, branch: reply1.key }, function (err, reply2) {
+        if (err) throw err
+
+        sbot.patchwork.getIndexCounts(function (err, counts) {
+          if (err) throw err
+          t.equal(counts.inbox, 1)
+          t.equal(counts.inboxUnread, 1)
+
+          sbot.patchwork.markRead([root.key, reply2.key], function (err) {
+            if (err) throw err
+
+            sbot.patchwork.getIndexCounts(function (err, counts) {
+              if (err) throw err
+              t.equal(counts.inbox, 1)
+              t.equal(counts.inboxUnread, 0)
+
+              t.end()
+              sbot.close()
+            })
+          })
+        })
+      })
+    }
+  })      
 })
 
 tape('bookmark index includes only bookmarked posts', function (t) {

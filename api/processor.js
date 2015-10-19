@@ -9,12 +9,18 @@ module.exports = function (sbot, db, state, emit) {
       var author = msg.value.author
       var by_me = (author === sbot.id)
       var c = msg.value.content
-      var root = mlib.link(c.root, 'msg')
 
-      if (root) {
+      if (mlib.link(c.root, 'msg')) {
         // a reply, update its root in the inbox index
-        var row = state.inbox.sortedUpsert(msg.value.timestamp, root.link)
-        emit('index-change', { index: 'inbox' })
+        state.pinc()
+        u.getRootMsg(sbot, msg, function (err, rootMsg) {
+          if (!rootMsg)
+            return
+          var row = state.inbox.sortedUpsert(msg.value.timestamp, rootMsg.key)
+          updateRootIsRead(row, msg.key)
+          emit('index-change', { index: 'inbox' })
+          state.pdec()
+        })
       } else {
         // a top post, put it in the inbox index
         var row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)
@@ -58,9 +64,7 @@ module.exports = function (sbot, db, state, emit) {
       if (sbot.id != msg.value.author && link && state.mymsgs.indexOf(link.link) >= 0) {
         var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
         attachIsRead(row)
-        row.author = msg.value.author // inbox index is filtered on read by the friends graph
-        if (follows(sbot.id, msg.value.author))
-          emit('index-change', { index: 'inbox' })
+        emit('index-change', { index: 'inbox' })
       }
 
       // user flags
@@ -214,6 +218,21 @@ module.exports = function (sbot, db, state, emit) {
     db.isread.get(key, function (err, v) {
       indexRow.isread = !!v
       state.pdec()
+    })
+  }
+
+  // grab reply isRead state, and mark the root unread if the reply is unread
+  function updateRootIsRead (indexRow, key) {
+    state.pinc()
+    db.isread.get(key, function (err, v) {
+      if (v)
+        return state.pdec() // reply is read, nothing to do here
+
+      // reply isnt read, update the root
+      db.isread.put(indexRow.key, false, function () {
+        indexRow.isread = false
+        state.pdec()
+      })
     })
   }
 
