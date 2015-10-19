@@ -138,6 +138,12 @@ export class Thread extends React.Component {
     this.setState({ forceRaw: !this.state.forceRaw })
   }
 
+  onSend(msg) {
+    this.setState({ isReplying: false })
+    if (this.props.onSend)
+      this.props.onSend(msg)
+  }
+
   render() {
     let forceRaw = this.state.forceRaw||this.props.forceRaw
     return <div className="msg-view-thread" style={{height: this.props.height}}>
@@ -164,7 +170,7 @@ export class Thread extends React.Component {
         return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} isLast={isLast} onToggleStar={()=>this.props.onToggleStar(msg)} />
       })}
       {this.state.isReplying ?
-        <Composer key={this.props.thread.key} thread={this.props.thread} onSend={()=>this.setState({ isReplying: false })} /> :
+        <Composer key={this.props.thread.key} thread={this.props.thread} onSend={this.onSend.bind(this)} /> :
         '' }
     </div>
   }

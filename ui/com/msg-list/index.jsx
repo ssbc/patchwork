@@ -107,6 +107,24 @@ export default class MsgList extends React.Component {
           let recps = mlib.links(msg.value.content.recps).map(l => l.link)
           app.ssb.private.publish(voteMsg, recps, done)
         }
+      },
+      onSend: (msg) => {
+        if (this.props.refreshOnReply) {
+          // reload selected. 
+          // this is used when the live-stream wont update the thread for us, such as in the profile-view
+          u.getParentPostThread(msg.key, (err, thread) => {
+            if (err)
+              return app.issue('Failed to fetch thread', err, 'This occurred after a reply, in a MsgList with refreshOnReply on')
+            for (var i=0; i < this.state.msgs.length; i++) {
+              if (this.state.msgs[i].key === thread.key) {
+                this.state.msgs.splice(i, 1, thread)
+                break
+              }
+            }
+            this.setState({ selected: thread, msgs: this.state.msgs })
+          })
+        } else
+          this.setState({ selected: msg })
       }
     }
   }
@@ -153,7 +171,7 @@ export default class MsgList extends React.Component {
         for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
           if (this.state.msgs[i].key === msg.key) {
             this.state.msgs.splice(i, 1)
-            i--
+            break
           }
         }
         // add to start of msgs
@@ -181,10 +199,6 @@ export default class MsgList extends React.Component {
       u.getPostThread(msg.key, cb)
     } else
       u.decryptThread(msg, () => { cb(null, msg) })
-  }
-
-  onSend(msg) {
-    this.setState({ selected: msg })
   }
 
   loadMore(amt) {
@@ -270,7 +284,7 @@ export default class MsgList extends React.Component {
       </div>
       <div className="msg-list-view">
         { this.state.selected === 'composer' ?
-          <Composer onSend={this.onSend.bind(this)} /> :
+          <Composer onSend={this.handlers.onSend.bind(this)} /> :
           this.state.selected ? 
             <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
             this.props.defaultView ? 

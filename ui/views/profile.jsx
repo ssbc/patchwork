@@ -34,8 +34,11 @@ export default class Profile extends React.Component {
     let defaultView = () => {
       return <VerticalFilledContainer><UserInfo key={this.state.pid} pid={this.state.pid} /></VerticalFilledContainer>
     }
+    // MsgList must have refreshOnReply
+    // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
+    // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
     return <div id="profile" key={this.state.pid}>
-      <MsgList threads live={{ gt: Date.now() }} source={feed} cursor={cursor} filter={filter} defaultView={defaultView} />
+      <MsgList threads source={feed} cursor={cursor} filter={filter} defaultView={defaultView} refreshOnReply />
     </div>
   }
 }
