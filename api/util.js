@@ -6,9 +6,9 @@ module.exports.index = function () {
   index.rows = []
 
   index.sortedInsert = function (ts, key) {
-    var row = { ts: ts, key: key }
+    var row = (typeof ts == 'object') ? ts : { ts: ts, key: key }
     for (var i=0; i < index.rows.length; i++) {
-      if (index.rows[i].ts < ts) {
+      if (index.rows[i].ts < row.ts) {
         index.rows.splice(i, 0, row)
         index.emit('add', row)
         return row
@@ -24,14 +24,14 @@ module.exports.index = function () {
     if (i !== -1) {
       // readd to index at new TS
       if (index.rows[i].ts < ts) {
-        var oldrow = index.rows[i]
+        var row = index.rows[i]
+        // remove from old position
         index.rows.splice(i, 1)
-        var newrow = index.sortedInsert(ts, key)
-        for (var k in oldrow) {
-          if (k != 'ts')
-            newrow[k] = oldrow[k]
-        }
-        return newrow
+        // update values
+        row.ts = ts
+        // reinsert
+        index.sortedInsert(row)
+        return row
       } else
         return index.rows[i]
     } else {
