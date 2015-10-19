@@ -2,8 +2,18 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import { MsgLink, UserLink } from '../com/index'
+import u from '../lib/util'
+import app from '../lib/app'
 
 class Notification extends React.Component {
+  onSelect() {
+    // get root msg
+    u.getParentPostThread(this.props.msg.voteMsg.key, (err, thread) => {
+      if (err)
+        return app.issue('Failed to load thread', err, 'This occurred when a notification link was clicked')
+      this.props.onSelect(thread)
+    })
+  }
   render() {
     let msg = this.props.msg
     let c = msg.value.content
@@ -11,8 +21,8 @@ class Notification extends React.Component {
       case 'vote':
         let key = mlib.link(c.vote).link
         let text = (this.props.msg.voteMsg && this.props.msg.voteMsg.value.content && this.props.msg.voteMsg.value.content.text || 'your message')
-        if (c.vote.value > 0) return <span><i className="fa fa-star" /> <UserLink id={msg.value.author} /> starred <a onClick={()=>this.props.onSelect(this.props.msg.voteMsg)}>{text}</a></span>
-        if (c.vote.value === 0) return <span><i className="fa fa-star-o" /> <UserLink id={msg.value.author} /> unstarred <a onClick={()=>this.props.onSelect(this.props.msg.voteMsg)}>{text}</a></span>
+        if (c.vote.value > 0) return <span><i className="fa fa-star" /> <UserLink id={msg.value.author} /> starred <a onClick={this.onSelect.bind(this)}>{text}</a></span>
+        if (c.vote.value === 0) return <span><i className="fa fa-star-o" /> <UserLink id={msg.value.author} /> unstarred <a onClick={this.onSelect.bind(this)}>{text}</a></span>
         break
       case 'contact':
         let pid = mlib.link(c.contact).link

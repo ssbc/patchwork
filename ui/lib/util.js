@@ -259,7 +259,7 @@ exports.profilePicUrl = function (id) {
   return url
 }
 
-exports.getParentThread = function (mid, cb) {
+exports.getParentPostThread = function (mid, cb) {
   up()
   function up () {
     app.ssb.get(mid, function (err, msg) {
@@ -270,24 +270,36 @@ exports.getParentThread = function (mid, cb) {
       if (!msg)
         return finish()
 
-      // root link? go straight to that
-      if (mlib.link(msg.content.root, 'msg')) {
-        mid = mlib.link(msg.content.root).link
-        return finish()
-      }
+      // decrypt as needed
+      msg.plaintext = (typeof msg.content != 'string')
+      if (msg.plaintext) return next()
+      app.ssb.private.unbox(msg.content, function (err, decrypted) {
+        if (decrypted)
+          msg.content = decrypted
+        next()
+      })
+      function next () {
 
-      // branch link? ascend
-      if (mlib.link(msg.content.branch, 'msg')) {
-        mid = mlib.link(msg.content.branch).link
-        return up()
-      }
+        // root link? go straight to that
+        if (mlib.link(msg.content.root, 'msg')) {
+          mid = mlib.link(msg.content.root).link
+          return finish()
+        }
 
-      // topmost, finish
-      finish()
+        // branch link? ascend
+        if (mlib.link(msg.content.branch, 'msg')) {
+          mid = mlib.link(msg.content.branch).link
+          return up()
+        }
+
+        // topmost, finish
+        finish()
+
+      }
     })
   }
   function finish () {
-    app.ssb.relatedMessages({ id: mid, count: true, parent: true }, cb)
+    exports.getPostThread(mid, cb)
   }
 }
 

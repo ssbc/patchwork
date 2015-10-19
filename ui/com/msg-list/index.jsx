@@ -243,6 +243,7 @@ export default class MsgList extends React.Component {
   }
 
   render() {
+    let selectedKey = this.state.selected && this.state.selected.key
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
@@ -263,7 +264,7 @@ export default class MsgList extends React.Component {
             loadingSpinnerDelegate={this.loadingElement()}
             isInfiniteLoading={this.state.isLoading} >
             {this.state.msgs.map((m, i) => {
-              return <Summary key={i} msg={m} {...this.handlers} selected={this.state.selected === m} forceRaw={this.props.forceRaw} />
+              return <Summary key={i} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
             })}
           </Infinite> }
       </div>
