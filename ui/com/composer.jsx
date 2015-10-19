@@ -263,7 +263,8 @@ export default class Composer extends React.Component {
         if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
           this.setState({ text: '' })
-          app.ssb.patchwork.markRead(msg.key)
+          // mark read (include the thread root because the api will automatically mark the root unread on new reply)
+          app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key)
           if (this.props.onSend)
             this.props.onSend(msg)
         }
