@@ -21,17 +21,19 @@ class LeftNav extends React.Component {
   constructor(props) {
     super(props)
     this.state = { indexCounts: app.indexCounts||{} }
-    this.onIndexCountsUpdate = () => {
+    this.refreshState = () => {
       this.setState({ indexCounts: app.indexCounts })
     }
   }
   componentDidMount() {
     // setup event stream
-    app.on('update:indexCounts', this.onIndexCountsUpdate)
+    app.on('update:all', this.refreshState)
+    app.on('update:indexCounts', this.refreshState)
   }
   componentWillUnmount() {
     // abort streams
-    app.removeListener('update:indexCounts', this.onIndexCountsUpdate)
+    app.removeListener('update:all', this.refreshState)
+    app.removeListener('update:indexCounts', this.refreshState)
   }
 
   nameOf(id) {

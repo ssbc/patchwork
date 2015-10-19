@@ -14,7 +14,6 @@ module.exports = function (sbot, db, state, emit) {
       if (root) {
         // a reply, update its root in the inbox index
         var row = state.inbox.sortedUpsert(msg.value.timestamp, root.link)
-        attachIsRead(row)
         emit('index-change', { index: 'inbox' })
       } else {
         // a top post, put it in the inbox index
