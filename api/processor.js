@@ -18,16 +18,18 @@ module.exports = function (sbot, db, state, emit) {
             return
 
           // update the inbox index
-          var row = state.inbox.sortedUpsert(msg.value.timestamp, rootMsg.key)
-          updateRootIsRead(row, msg.key)
+          var inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, rootMsg.key)
           emit('index-change', { index: 'inbox' })
 
           // in the bookmarks index? update that too
-          row = state.bookmarks.find(rootMsg.key)
-          if (row) {
+          var bookmarkRow = state.bookmarks.find(rootMsg.key)
+          if (bookmarkRow) {
             state.bookmarks.sortedUpsert(msg.value.timestamp, rootMsg.key)
             emit('index-change', { index: 'bookmarks' })
           }
+
+          // update isread on both index rows
+          updateRootIsRead(inboxRow, msg.key, bookmarkRow)
           state.pdec()
         })
       } else {
@@ -231,7 +233,8 @@ module.exports = function (sbot, db, state, emit) {
   }
 
   // grab reply isRead state, and mark the root unread if the reply is unread
-  function updateRootIsRead (indexRow, key) {
+  // - otherRow is a hack to piggyback updating another index's row-record without duplicating work
+  function updateRootIsRead (indexRow, key, otherRow) {
     state.pinc()
     db.isread.get(key, function (err, v) {
       if (v)
@@ -240,6 +243,8 @@ module.exports = function (sbot, db, state, emit) {
       // reply isnt read, update the root
       db.isread.put(indexRow.key, false, function () {
         indexRow.isread = false
+        if (otherRow)
+          otherRow.isread = false
         state.pdec()
       })
     })
