@@ -183,6 +183,7 @@ export default class UserInfo extends React.Component {
           </tr>
         </table>
       </div>
+      <div>ID: {this.props.pid}</div>
     </div>
   }
 }
