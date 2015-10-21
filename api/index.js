@@ -84,17 +84,17 @@ exports.init = function (sbot, opts) {
 
   // setup sbot log processor
   var processor = require('./processor')(sbot, db, state, emit)
-  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onPrehistorySync }), pull.drain(processor))
+  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onHistorySync }), pull.drain(processor))
 
-  var isPreHistorySynced = false // track so we dont emit events for old messages
+  var isHistorySynced = false // track so we dont emit events for old messages
   // grab for history sync
   state.pinc()
-  function onPrehistorySync () {
+  function onHistorySync () {
     console.log('Log history read...')
     // when all current items finish, consider prehistory synced (and start emitting)
     awaitSync(function () { 
       console.log('Indexes generated')
-      isPreHistorySynced = true
+      isHistorySynced = true
     })
     // release
     state.pdec()
@@ -103,7 +103,7 @@ exports.init = function (sbot, opts) {
   // events stream
   var notify = Notify()
   function emit (type, data) {
-    if (!isPreHistorySynced)
+    if (!isHistorySynced)
       return
     var e = data || {}
     e.type = type
