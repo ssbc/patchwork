@@ -9,28 +9,25 @@ module.exports = function (sbot, db, state, emit) {
       var author = msg.value.author
       var by_me = (author === sbot.id)
       var c = msg.value.content
+      var root = mlib.link(c.root, 'msg')
 
-      if (mlib.link(c.root, 'msg')) {
-        // a reply, get its root
-        state.pinc()
-        u.getRootMsg(sbot, msg, function (err, rootMsg) {
-          if (!rootMsg)
-            return
+      if (root) {
+        // a reply, update the inbox index
+        var inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, root.link)
+        emit('index-change', { index: 'inbox' })
 
-          // update the inbox index
-          var inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, rootMsg.key)
-          emit('index-change', { index: 'inbox' })
+        // in the bookmarks index? update that too
+        var bookmarkRow = state.bookmarks.find(root.link)
+        if (bookmarkRow) {
+          state.bookmarks.sortedUpsert(msg.value.timestamp, root.link)
+          emit('index-change', { index: 'bookmarks' })
+        }
 
-          // in the bookmarks index? update that too
-          var bookmarkRow = state.bookmarks.find(rootMsg.key)
-          if (bookmarkRow) {
-            state.bookmarks.sortedUpsert(msg.value.timestamp, rootMsg.key)
-            emit('index-change', { index: 'bookmarks' })
-          }
-
-          // update isread on both index rows
-          updateRootIsRead(inboxRow, msg.key, bookmarkRow)
-          state.pdec()
+        // update isread on both index rows
+        attachChildIsRead(inboxRow, msg.key, function (err, isRead) {
+          // update the bookmarkRow as well
+          if (bookmarkRow)
+            bookmarkRow.isread = isRead
         })
       } else {
         // a top post, put it in the inbox index
@@ -232,22 +229,38 @@ module.exports = function (sbot, db, state, emit) {
     })
   }
 
-  // grab reply isRead state, and mark the root unread if the reply is unread
-  // - otherRow is a hack to piggyback updating another index's row-record without duplicating work
-  function updateRootIsRead (indexRow, key, otherRow) {
+  // look up the child and root isread state, combine them with the current row's isread state
+  function attachChildIsRead (indexRow, childKey, cb) {
     state.pinc()
-    db.isread.get(key, function (err, v) {
-      if (v)
-        return state.pdec() // reply is read, nothing to do here
+    var rootIsRead, childIsRead
 
-      // reply isnt read, update the root
-      db.isread.put(indexRow.key, false, function () {
-        indexRow.isread = false
-        if (otherRow)
-          otherRow.isread = false
-        state.pdec()
-      })
+    // get child isread
+    db.isread.get(childKey, function (err, v) {
+      childIsRead = !!v
+      next()
     })
+
+    // lookup the root isread from DB if not already on the row
+    if (typeof indexRow.isread == 'boolean') {
+      rootIsRead = indexRow.isread
+    } else {
+      db.isread.get(indexRow.key, function (err, v) {
+        rootIsRead = !!v
+        next()
+      })      
+    }
+
+    function next () {
+      // wait for both
+      if (typeof rootIsRead != 'boolean' || typeof childIsRead != 'boolean')
+        return
+
+      // combine child and root isread state
+      indexRow.isread = rootIsRead && childIsRead
+      
+      cb && cb(null, indexRow.isread)
+      state.pdec() // call this last, after all async work is done
+    }
   }
 
   function follows (a, b) {
