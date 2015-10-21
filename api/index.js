@@ -188,20 +188,24 @@ exports.init = function (sbot, opts) {
   }
 
   api.markRead = function (key, cb) {
-    indexMarkRead('inbox', key)
-    indexMarkRead('bookmarks', key)
-    if (Array.isArray(key))
-      db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
-    else
-      db.isread.put(key, 1, cb)
+    awaitSync(function () {
+      indexMarkRead('inbox', key)
+      indexMarkRead('bookmarks', key)
+      if (Array.isArray(key))
+        db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
+      else
+        db.isread.put(key, 1, cb)
+    })
   }
   api.markUnread = function (key, cb) {
-    indexMarkUnread('inbox', key)
-    indexMarkUnread('bookmarks', key)
-    if (Array.isArray(key))
-      db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
-    else
-      db.isread.del(key, cb) 
+    awaitSync(function () {
+      indexMarkUnread('inbox', key)
+      indexMarkUnread('bookmarks', key)
+      if (Array.isArray(key))
+        db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
+      else
+        db.isread.del(key, cb) 
+    })
   }
   api.toggleRead = function (key, cb) {
     api.isRead(key, function (err, v) {
