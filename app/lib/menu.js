@@ -14,6 +14,23 @@ module.exports = function (window) {
           type: 'separator'
         },
         {
+          label: 'Hide Patchwork',
+          accelerator: 'Command+H',
+          selector: 'hide:'
+        },
+        {
+          label: 'Hide Others',
+          accelerator: 'Option+Command+H',
+          selector: 'hideOtherApplications:'
+        },
+        {
+          label: 'Show All',
+          selector: 'unhideAllApplications:'
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Quit',
           accelerator: 'Command+Q',
           selector: 'terminate:'
@@ -109,11 +126,6 @@ module.exports = function (window) {
           label: 'Minimize',
           accelerator: 'Command+M',
           selector: 'performMiniaturize:'
-        },
-        {
-          label: 'Close',
-          accelerator: 'Command+W',
-          selector: 'performClose:'
         },
         {
           type: 'separator'
