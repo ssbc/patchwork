@@ -399,10 +399,18 @@ exports.compileThreadVotes = function (thread) {
 }
 
 exports.markThreadRead = function (thread, cb) {
+  // is any message in the thread unread?
+  if (!thread.hasUnread)
+    return cb() // no need
   // iterate only 1 level deep, dont need to recurse
   exports.iterateThreadAsync(thread, 1, function (msg, cb2) {
-    if (msg.isRead)
-      return cb2() // already isread
+    if (msg == thread) {
+      // always mark the root read, to update the API's isread index
+    } else {
+      // is this message already read?
+      if (msg.isRead)
+        return cb2() // skip
+    }
     if (msg.value.content.type != 'post')
       return cb2() // not a post
 

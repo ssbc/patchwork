@@ -32,23 +32,37 @@ export default class MsgList extends React.Component {
 
     // handlers
     this.handlers = {
-      onSelect: (msg) => {
+      // - msg: message object to select
+      // - isFreshMsg: bool, was the message loaded in somewhere other than the msg list?
+      //   - if true, will splice it into the list
+      onSelect: (thread, isFreshMsg) => {
         // deselect toggle
-        if (this.state.selected === msg)
+        if (this.state.selected === thread)
           return this.setState({ selected: false })
 
+        // splice the thread into the list, if it's new
+        // that way, operations on the selected message will be reflected in the list
+        if (isFreshMsg) {
+          for (var i=0; i < this.state.msgs.length; i++) {
+            if (this.state.msgs[i].key === thread.key) {
+              this.state.msgs.splice(i, 1, thread)
+              break
+            }
+          }
+        }
+
         // update UI
-        this.setState({ selected: msg })
+        this.setState({ selected: thread, msgs: this.state.msgs })
 
         // mark read in DB
-        if (!msg.hasUnread)
+        if (!thread.hasUnread)
           return
-        u.markThreadRead(msg, (err) => {
+        u.markThreadRead(thread, (err) => {
           if (err)
             return app.minorIssue('Failed to mark thread as read', err)
 
           // update UI again
-          this.setState({ selected: msg, msgs: this.state.msgs })
+          this.setState({ selected: thread, msgs: this.state.msgs })
         })
       },
       onDeselect: () => { this.setState({ selected: false }) },

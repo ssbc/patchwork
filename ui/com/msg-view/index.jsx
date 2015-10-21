@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
-import { UserLink, UserLinks, NiceDate } from '../index'
+import { MsgLink, UserLink, UserLinks, NiceDate } from '../index'
 import { Block as BlockContent, Inline as InlineContent } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 import Composer from '../composer'
@@ -90,13 +90,13 @@ export class Thread extends React.Component {
   // helper to do setup on thread-change
   constructState(thread) {
     // collapse thread into a flat message-list
-    var added = {}
+    var added = new Set()
     this.setState({
       thread: thread,
       isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false,
       msgs: [thread].concat((thread.related||[]).filter(msg => {
-        if (added[msg.key]) return false // messages can be in the thread multiple times if there are >1 links
-        added[msg.key] = true
+        if (added.has(msg.key)) return false // messages can be in the thread multiple times if there are >1 links
+        added.add(msg.key)
         return (msg.value.content.type == 'post') && isaReplyTo(msg, thread)
       }))
     })
@@ -144,33 +144,42 @@ export class Thread extends React.Component {
       this.props.onNewReply(msg)
   }
 
+  onSelectRoot() {
+    let thread = this.props.thread
+    let threadRoot = mlib.link(thread.value.content.root, 'msg')
+    u.getPostThread(threadRoot.link, (err, thread) => this.props.onSelect(thread, true))
+  }
+
   render() {
+    let thread = this.props.thread
+    let threadRoot = mlib.link(thread.value.content.root, 'msg')
     let forceRaw = this.state.forceRaw||this.props.forceRaw
     return <div className="msg-view-thread" style={{height: this.props.height}}>
       <div className="toolbar flex">
         <div className="flex-fill">
           <a className="btn" onClick={this.props.onDeselect} title="Close">Close</a>{' '}
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a>{' '}
-          <a className={'btn'+(this.props.thread.isBookmarked?' highlighted gold':'')} onClick={this.props.onToggleSelectedBookmark} title="Bookmark">
-            { this.props.thread.isBookmarked ?
+          <a className={'btn'+(thread.isBookmarked?' highlighted gold':'')} onClick={this.props.onToggleSelectedBookmark} title="Bookmark">
+            { thread.isBookmarked ?
               <i className="fa fa-bookmark" /> :
               <i className="fa fa-bookmark-o" /> }
           </a>{' '}
           <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a>{' '}
-          {this.props.thread.plaintext ? 
+          { thread.plaintext ? 
             <span style={{color: 'gray', marginLeft: '5px'}}>public thread</span> :
-            <span style={{color: 'gray', marginLeft: '5px'}}><i className="fa fa-lock"/> private thread</span>}
+            <span style={{color: 'gray', marginLeft: '5px'}}><i className="fa fa-lock"/> private thread</span> }
         </div>
         <div>
           <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>
-      {this.state.msgs.map((msg, i) => {
+      { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
+      { this.state.msgs.map((msg, i) => {
         let isLast = (i === this.state.msgs.length-1)
         return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} isLast={isLast} onToggleStar={()=>this.props.onToggleStar(msg)} />
-      })}
-      {this.state.isReplying ?
-        <Composer key={this.props.thread.key} thread={this.props.thread} onSend={this.onSend.bind(this)} /> :
+      }) }
+      { this.state.isReplying ?
+        <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
         '' }
     </div>
   }

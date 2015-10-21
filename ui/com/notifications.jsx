@@ -11,7 +11,7 @@ class Notification extends React.Component {
     u.getParentPostThread(this.props.msg.voteMsg.key, (err, thread) => {
       if (err)
         return app.issue('Failed to load thread', err, 'This occurred when a notification link was clicked')
-      this.props.onSelect(thread)
+      this.props.onSelect(thread, true)
     })
   }
   render() {
