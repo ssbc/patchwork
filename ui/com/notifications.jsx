@@ -81,6 +81,7 @@ export default class Notifications extends React.Component {
   render() {
     return <div className="notifications" style={{height: this.props.height}}>
       <div><small><i className="fa fa-bell" /> Notifications</small></div>
+      { !this.state.msgs.length ? <div><em>No new notifications</em></div> : '' }
       { this.state.msgs.map((msg, i) => {
         return <div key={i}><Notification msg={msg} onSelect={this.props.onSelect} /></div>
       }) }
