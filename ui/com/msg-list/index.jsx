@@ -8,7 +8,7 @@ import Summary from './summary'
 import Notifications from '../notifications'
 import Composer from '../composer'
 import { Thread } from '../msg-view'
-import { verticalFilled } from '../'
+import { VerticalFilledContainer, verticalFilled } from '../'
 import { isaReplyTo } from '../../lib/msg-relation'
 import app from '../../lib/app'
 import u from '../../lib/util'
@@ -325,11 +325,13 @@ export default class MsgList extends React.Component {
           </div>
         </div>
         { isEmpty ?
-          <em ref="container">
-            { this.state.searchQuery ?
-              'No results found' :
-              (this.props.emptyMsg || 'No new messages') }
-          </em> :
+          <VerticalFilledContainer ref="container" className="empty">
+            <em>
+              { this.state.searchQuery ?
+                'No results found' :
+                (this.props.emptyMsg || 'No new messages') }
+            </em>
+          </VerticalFilledContainer> :
           <Infinite
             ref="container"
             elementHeight={60}
