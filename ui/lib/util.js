@@ -336,6 +336,23 @@ exports.getPostThread = function (mid, cb) {
   })
 }
 
+exports.iterateThread = function (thread, maxDepth, fn) {
+  fn(thread)
+  if (thread.related)
+    iterate(thread.related, 1)
+
+  function iterate (msgs, n) {
+    if (!isNaN(maxDepth) && n > maxDepth)
+      return
+    // run through related
+    msgs.forEach(function (msg) {
+      fn(msg) // run on item
+      if (msg.related)
+        iterate(msg.related, n+1)
+    })
+  }
+}
+
 exports.iterateThreadAsync = function (thread, maxDepth, fn, cb) {
   var done = multicb()
   fn(thread, done()) // run on toplevel

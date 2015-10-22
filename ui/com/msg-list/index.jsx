@@ -9,6 +9,7 @@ import Notifications from '../notifications'
 import Composer from '../composer'
 import { Thread } from '../msg-view'
 import { verticalFilled } from '../'
+import { isaReplyTo } from '../../lib/msg-relation'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
@@ -26,6 +27,7 @@ export default class MsgList extends React.Component {
       selected: null,
       isLoading: false,
       isAtEnd: false,
+      searchQuery: false,
       containerHeight: window.innerHeight
     }
     this.liveStream = null
@@ -141,6 +143,22 @@ export default class MsgList extends React.Component {
           }
           this.setState({ selected: thread, msgs: this.state.msgs })
         })
+      },
+      onSearchKeydown: (e) => {
+        // enter pressed?
+        if (e.keyCode !== 13)
+          return
+
+        // set the query and reload messages
+        let query = this.refs.searchInput.getDOMNode().value
+        if (query.trim())
+          query = new RegExp(query.trim(), 'i')
+        else
+          query = false
+        this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
+          this.botcursor = null
+          this.loadMore(15)
+        })
       }
     }
   }
@@ -181,6 +199,7 @@ export default class MsgList extends React.Component {
       this.liveStream,
       (this.props.filter) ? pull.filter(this.props.filter) : undefined,
       pull.asyncMap(this.processMsg.bind(this)),
+      (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
         // remove any noticeable duplicates...
         // check if the message is already in the first N and remove it if so
@@ -217,6 +236,27 @@ export default class MsgList extends React.Component {
       u.decryptThread(msg, () => { cb(null, msg) })
   }
 
+  searchQueryFilter(thread) {
+    // iterate the thread and its posts, looking for matches
+    let query = this.state.searchQuery
+    if (checkMatch(thread))
+      return true
+    if (!thread.related)
+      return false
+    for (var i=0; i < thread.related.length; i++) {
+      if (checkMatch(thread.related[i]))
+        return true
+    }
+    return false
+
+    function checkMatch (msg) {
+      if (msg.value.content.type !== 'post' || (msg !== thread && !isaReplyTo(msg, thread)))
+        return false
+      // console.log('check match', query.test(''+msg.value.content.text), msg.value.content.text)
+      return query.test(''+msg.value.content.text)
+    }
+  }
+
   loadMore(amt) {
     if (this.state.isLoading || this.state.isAtEnd)
       return
@@ -235,6 +275,7 @@ export default class MsgList extends React.Component {
         pull.through(msg => { lastmsg = msg }), // track last message processed
         pull.asyncMap(this.processMsg.bind(this)),
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
+        (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)
@@ -280,11 +321,15 @@ export default class MsgList extends React.Component {
         <div className="msg-list-ctrls">
           <div className="compose"><a className="btn" onClick={()=>this.setState({ selected: 'composer' })}><i className="fa fa-edit" /></a></div>
           <div className="search">
-            <input type="text" placeholder="Search" />
+            <input ref="searchInput" type="text" placeholder="Search" onKeyDown={this.handlers.onSearchKeydown} />
           </div>
         </div>
         { isEmpty ?
-          <em ref="container">{this.props.emptyMsg || 'No new messages'}</em> :
+          <em ref="container">
+            { this.state.searchQuery ?
+              'No results found' :
+              (this.props.emptyMsg || 'No new messages') }
+          </em> :
           <Infinite
             ref="container"
             elementHeight={60}
