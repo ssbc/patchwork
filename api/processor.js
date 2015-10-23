@@ -10,30 +10,44 @@ module.exports = function (sbot, db, state, emit) {
       var by_me = (author === sbot.id)
       var c = msg.value.content
       var root = mlib.link(c.root, 'msg')
+      var recps = mlib.links(c.recps)
+      var mentions = mlib.links(c.mentions)
 
+      // newsfeed index: add public posts
+      if (!root && recps.length === 0) {
+        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'newsfeed' })
+      }
+
+      // bookmarks index: update for replies
+      var bookmarkRow
       if (root) {
-        // a reply, update the inbox index
-        var inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, root.link)
-        emit('index-change', { index: 'inbox' })
-
-        // in the bookmarks index? update that too
-        var bookmarkRow = state.bookmarks.find(root.link)
+        bookmarkRow = state.bookmarks.find(root.link)
         if (bookmarkRow) {
           state.bookmarks.sortedUpsert(msg.value.timestamp, root.link)
           emit('index-change', { index: 'bookmarks' })
+          attachChildIsRead(bookmarkRow, msg.key)
         }
+      }
 
-        // update isread on both index rows
-        attachChildIsRead(inboxRow, msg.key, function (err, isRead) {
-          // update the bookmarkRow as well
-          if (bookmarkRow)
-            bookmarkRow.isread = isRead
-        })
-      } else {
-        // a top post, put it in the inbox index
-        var row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)
-        attachIsRead(row)
-        emit('index-change', { index: 'inbox' })
+      // inbox index: update for replies
+      var inboxRow
+      if (root) {
+        inboxRow = state.inbox.find(root.link)
+        if (inboxRow) {
+          state.inbox.sortedUpsert(msg.value.timestamp, root.link)
+          emit('index-change', { index: 'inbox' })
+          attachChildIsRead(inboxRow, msg.key)
+        }
+      }
+
+      // inbox index: add msgs addressed to, or which mention, the user
+      if (!inboxRow) { // dont bother if already updated inbox for this msg
+        if (findLink(recps, sbot.id) || findLink(mentions, sbot.id)) {
+          inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, root ? root.link : msg.key)
+          emit('index-change', { index: 'inbox' })
+          attachChildIsRead(inboxRow, msg.key)          
+        }
       }
     },
 
@@ -44,9 +58,13 @@ module.exports = function (sbot, db, state, emit) {
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
 
-        // notifications index
-        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content))
+        // newsfeed & notifications indexes: add follows or blocks
+        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
+          state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+          emit('index-change', { index: 'newsfeed' })
           state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+          emit('index-change', { index: 'notifications' })
+        }
       })
     },
 
@@ -60,10 +78,14 @@ module.exports = function (sbot, db, state, emit) {
     },
 
     vote: function (msg) {
-      // notifications index
+      // newsfeed & notifications index: add votes on your messages
       var link = mlib.link(msg.value.content.vote, 'msg')
-      if (link && state.mymsgs.indexOf(link.link) >= 0) // vote on my msg?
+      if (link && state.mymsgs.indexOf(link.link) >= 0) {
+        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'newsfeed' })
         state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'notifications' })
+      }
     },
 
     flag: function (msg) {
@@ -266,6 +288,13 @@ module.exports = function (sbot, db, state, emit) {
   function follows (a, b) {
     var aT = getProfile(a).assignedTo[b]
     return (a != b && aT && aT.following)
+  }
+
+  function findLink (links, id) {
+    for (var i=0; i < (links ? links.length : 0); i++) {
+      if (links[i].link === id)
+        return links[i]
+    }
   }
 
   // exported api

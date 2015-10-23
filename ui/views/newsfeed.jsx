@@ -17,7 +17,7 @@ export default class NewsFeed extends React.Component {
         threads 
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your feed is empty"
-        source={app.ssb.patchwork.createInboxStream}
+        source={app.ssb.patchwork.createNewsfeedStream}
         cursor={this.cursor} />
     </div>
   }

@@ -27,6 +27,7 @@ exports.init = function (sbot, opts) {
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
+    newsfeed: u.index(),
     inbox: u.index(),
     bookmarks: u.index(),
     notifications: u.index(),
@@ -141,6 +142,9 @@ exports.init = function (sbot, opts) {
     })
   }
 
+  api.createNewsfeedStream = indexStreamFn(state.newsfeed, function (row) { 
+    return row.key
+  })
   api.createInboxStream = indexStreamFn(state.inbox, function (row) { 
     return row.key
   })

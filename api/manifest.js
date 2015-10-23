@@ -2,6 +2,7 @@ module.exports = {
   createEventStream: 'source',
 
   getIndexCounts: 'async',
+  createNewsfeedStream: 'source',
   createInboxStream: 'source',
   createBookmarkStream: 'source',
   createNotificationsStream: 'source',
