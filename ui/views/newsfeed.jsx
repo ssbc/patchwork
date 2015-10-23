@@ -5,7 +5,7 @@ import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
 import app from '../lib/app'
 
-export default class Feed extends React.Component {
+export default class NewsFeed extends React.Component {
   cursor (msg) {
     if (msg)
       return [msg.value.timestamp, msg.value.author]

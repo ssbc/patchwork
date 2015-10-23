@@ -1,7 +1,7 @@
 'use babel'
 import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './layout'
-import Feed from './views/feed'
+import NewsFeed from './views/newsfeed'
 import Inbox from './views/inbox'
 import Bookmarks from './views/bookmarks'
 import Data from './views/data'
@@ -14,7 +14,7 @@ import Sync from './views/sync'
 export default (
   <Router>
     <Route path="/" component={Layout}>
-      <IndexRoute component={Feed} />
+      <IndexRoute component={NewsFeed} />
       <Route path="inbox" component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
