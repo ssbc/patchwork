@@ -12,7 +12,7 @@ var clientApiManifest = {
 
 var clientApi = {
   navigate: function (path, cb) {
-    window.location.hash = '#/webview/'+path
+    window.location.hash = '#'+path
     cb()
   },
   contextualToggleDevTools: function (cb) {

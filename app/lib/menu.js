@@ -21,20 +21,6 @@ module.exports = function (window) {
       ]
     },
     {
-      label: 'File',
-      submenu: [
-        {
-          label: 'Open File...',
-          accelerator: 'Command+O',
-          click: function() { 
-            var paths = dialog.showOpenDialog(window, { properties: ['openFile'] })
-            if (paths && paths[0])
-              window.rpc.navigate(paths[0])
-          }
-        }
-      ]
-    },
-    {
       label: 'Edit',
       submenu: [
         {
@@ -101,6 +87,21 @@ module.exports = function (window) {
             // window.rpc.contextualToggleDevTools()
           }
         },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Data Log',
+          click: function () {
+            window.rpc.navigate('/data')
+          }
+        },
+        {
+          label: 'Network Status',
+          click: function () {
+            window.rpc.navigate('/sync')
+          }
+        }
       ]
     },
     {
@@ -124,10 +125,6 @@ module.exports = function (window) {
           selector: 'arrangeInFront:'
         }
       ]
-    },
-    {
-      label: 'Help',
-      submenu: []
     }
   ]
 

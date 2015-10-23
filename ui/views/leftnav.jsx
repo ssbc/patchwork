@@ -40,7 +40,11 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
-    let renderProfLink = (id) => <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}><i className="fa fa-user"/> {this.nameOf(id)}</NavLink>
+    let renderProfLink = (id, name) => {
+      return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>
+        <i className="fa fa-user"/> {typeof name == 'string' ? name : this.nameOf(id)}
+      </NavLink>
+    }
 
     // nonfriend followings
     let following = ''
@@ -62,13 +66,10 @@ class LeftNav extends React.Component {
     return <div id="leftnav" style={{height: this.props.height}}>
       <NavLink to="/" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Bookmarks" count={this.state.indexCounts.bookmarksUnread} />
+      {renderProfLink(this.props.userid, 'Your Profile')}
       <NavLink to="/people" location={this.props.location}><i className="fa fa-child" /> People</NavLink>
-      <div className="leftnav-item label">System</div>
-      <NavLink to="/data" location={this.props.location}><i className="fa fa-database" /> Database</NavLink>
-      <NavLink to="/sync" location={this.props.location}><i className="fa fa-cloud-download" /> Sync</NavLink>
       <Issues />
       <div className="leftnav-item label">Friends</div>
-      {renderProfLink(this.props.userid)}
       {this.props.friends.map(renderProfLink)}
       {following}
       {followers}

@@ -1,3 +1,4 @@
+'use babel'
 import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './layout'
 import Inbox from './views/inbox'
