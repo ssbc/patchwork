@@ -40,39 +40,21 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
-    let renderProfLink = (id, name) => {
+    let renderProfLink = (id, name, icon) => {
       return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>
-        <i className="fa fa-user"/> {typeof name == 'string' ? name : this.nameOf(id)}
+        <i className={'fa fa-'+icon} /> {typeof name == 'string' ? name : this.nameOf(id)}
       </NavLink>
     }
 
-    // nonfriend followings
-    let following = ''
-    if (this.props.following.length) {
-      following = <div>
-        <div className="leftnav-item label">Following</div>
-        {this.props.following.map(renderProfLink)}
-      </div>
-    }
-    // nonfriend followers
-    let followers = ''
-    if (this.props.followers.length) {
-      followers = <div>
-        <div className="leftnav-item label">Followers</div>
-        {this.props.followers.map(renderProfLink)}
-      </div>
-    }
-
     return <div id="leftnav" style={{height: this.props.height}}>
-      <NavLink to="/" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
+      <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
+      <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Bookmarks" count={this.state.indexCounts.bookmarksUnread} />
-      {renderProfLink(this.props.userid, 'Your Profile')}
-      <NavLink to="/people" location={this.props.location}><i className="fa fa-child" /> People</NavLink>
+
+      <div className="leftnav-item label">People</div>
+      {renderProfLink(this.props.userid, 'Your Profile', 'user')}
+      <NavLink to="/people" location={this.props.location} icon="users" label="Contacts" />
       <Issues />
-      <div className="leftnav-item label">Friends</div>
-      {this.props.friends.map(renderProfLink)}
-      {following}
-      {followers}
     </div>
   }
 }
