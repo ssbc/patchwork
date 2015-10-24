@@ -190,14 +190,16 @@ export class Thread extends React.Component {
           <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>
-      { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
-      { this.state.msgs.map((msg, i) => {
-        let forceOpen = (i === 0)
-        return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
-      }) }
-      { this.state.isReplying ?
-        <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
-        '' }
+      <div className="items">
+        { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
+        { this.state.msgs.map((msg, i) => {
+          let forceOpen = (i === 0)
+          return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
+        }) }
+        { this.state.isReplying ?
+          <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
+          '' }
+       </div>
     </div>
   }
 }
