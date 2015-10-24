@@ -1,19 +1,43 @@
 .msg-list-item.oneline {
   display: flex;
+  height: 24px;
+  padding: 6px 0 4px;
+  overflow: hidden;
+  background: @white2;
+  border-bottom: 1px solid #ddd;
+  color: #555;
 
-  & > div {
-    border: 1px solid #ccc;
-  }
-  & > div:nth-child(1) {
+  .bookmark {
     flex: 0 0 30px;
+    padding: 2px 0 0 0;
+    text-align: center;
+    .fa-bookmark-o {
+      color: gray;
+    }
+    .fa-bookmark {
+      color: #EFBD32;
+    }
   }
-  & > div:nth-child(2) {
+  .authors {
+    flex: 0 0 170px;
+    a {
+      color: #555;
+    }
+  }
+  .content {
     flex: 1;
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  & > div:nth-child(3) {
-    flex: 5;
+  .date {
+    flex: 0 0 100px;  
+    text-align: right;
   }
-  & > div:nth-child(4) {
-    flex: 0 0 100px;
+
+  &.unread {
+    background: #fff;
+    font-weight: bold;
+    color: #333;
   }
 }

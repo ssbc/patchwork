@@ -158,7 +158,7 @@ export default class MsgList extends React.Component {
           query = false
         this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
           this.botcursor = null
-          this.loadMore(15)
+          this.loadMore(30)
         })
       }
     }
@@ -166,7 +166,7 @@ export default class MsgList extends React.Component {
 
   componentDidMount() {
     // load first messages
-    this.loadMore(15)
+    this.loadMore(30)
 
     // setup autoresizing
     this.calcContainerHeight()
