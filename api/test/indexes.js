@@ -34,6 +34,45 @@ tape('newsfeed index includes all public posts', function (t) {
   })
 })
 
+tape('newsfeed index updates the root message for replies', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg1) {
+      if (err) throw err
+
+      users.bob.add({ type: 'post', text: 'hello from bob' }, function (err, msg2) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 2)
+          t.equal(msgs[0].key, msg2.key)
+          t.equal(msgs[1].key, msg1.key)
+
+          users.charlie.add({ type: 'post', text: 'reply from charlie', root: msg1.key, branch: msg1.key }, function (err) {
+            if (err) throw err
+
+            pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
+              if (err) throw err
+              t.equal(msgs.length, 2)
+              t.equal(msgs[0].key, msg1.key) // order of msgs was reversed
+              t.equal(msgs[1].key, msg2.key)
+              t.end()
+              sbot.close()
+            }))
+          })
+        }))
+      })
+    })
+  })
+})
+
 tape('newsfeed index includes encrypted messages', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {

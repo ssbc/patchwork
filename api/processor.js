@@ -19,6 +19,16 @@ module.exports = function (sbot, db, state, emit) {
         emit('index-change', { index: 'newsfeed' })
       }
 
+      // newsfeed index: update for replies
+      var newsfeedRow
+      if (root) {
+        newsfeedRow = state.newsfeed.find(root.link)
+        if (newsfeedRow) {
+          state.newsfeed.sortedUpsert(msg.value.timestamp, root.link)
+          emit('index-change', { index: 'newsfeed' })
+        }
+      }
+
       // bookmarks index: update for replies
       var bookmarkRow
       if (root) {

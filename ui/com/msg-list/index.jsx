@@ -340,7 +340,7 @@ export default class MsgList extends React.Component {
             elementHeight={this.props.listItemHeight||60}
             containerHeight={this.state.containerHeight}
             infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
-            onInfiniteLoad={this.loadMore.bind(this, 15)}
+            onInfiniteLoad={this.loadMore.bind(this, 30)}
             loadingSpinnerDelegate={this.loadingElement()}
             isInfiniteLoading={this.state.isLoading} >
             {this.state.msgs.map((m, i) => {
@@ -355,7 +355,7 @@ export default class MsgList extends React.Component {
             <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
             this.props.defaultView ? 
               this.props.defaultView() :
-              <Notifications onSelect={this.handlers.onSelect} /> }
+              '' }
       </div>
     </div>
   }
