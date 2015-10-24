@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
-import { UserLink, NiceDate } from '../index'
+import mlib from 'ssb-msgs'
+import { UserLink, UserLinks, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import u from '../../lib/util'
@@ -12,6 +13,7 @@ export default class Oneline extends React.Component {
 
   render() {
     let msg = this.props.msg
+    let recps = mlib.links(msg.value.content.recps, 'feed')
     let lastMsg = !this.props.forceRaw ? u.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+(replies+1)+')'
@@ -24,7 +26,7 @@ export default class Oneline extends React.Component {
         </a>
       </div>
       <div className="authors">
-        <UserLink id={msg.value.author} /> {replies}
+        { recps.length ? <UserLinks ids={recps.map(link => link.link)} /> : <UserLink id={msg.value.author} /> } {replies}
       </div>
       <div className="type">
         { msg.plaintext ? '' : <i className="fa fa-lock" title="Secret Message" /> }
