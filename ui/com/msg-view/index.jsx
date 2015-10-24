@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
-import { MsgLink, UserLink, UserLinks, NiceDate } from '../index'
+import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as BlockContent, Inline as InlineContent } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 import Composer from '../composer'
@@ -13,14 +13,15 @@ function getUpvotes (msg) {
   return Object.keys(msg.votes).filter(k => (msg.votes[k] === 1))
 }
 
-export class MsgViewStar extends React.Component {
+class DigBtn extends React.Component {
   onClick(e) {
     e.stopPropagation()
     this.props.onClick()
   }
   render() {
-    return <a title={this.props.isUpvoted?'Unstar':'Star'} onClick={this.onClick.bind(this)}>
-      <i className={'fa '+(this.props.isUpvoted?'fa-star':'fa-star-o')} /> {this.props.num}
+    let label = this.props.isUpvoted ? 'Dug it' : 'Dig it'
+    return <a className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
+      <i className="fa fa-hand-peace-o" /> {label}
     </a>
   }
 }
@@ -33,45 +34,61 @@ export class MsgView extends React.Component {
   componentDidMount() {
     this.setState({ collapsed: this.props.msg.isRead && !this.props.forceOpen })
   }
-  onClick() {
-    this.setState({ collapsed: false })
+  onToggleCollapsed() {
+    this.setState({ collapsed: !this.state.collapsed })
   }
-  render() {
+
+  renderCollapsed() {
+    let msg = this.props.msg
+    let upvoters = getUpvotes(this.props.msg)
+    let isUpvoted = upvoters.indexOf(app.user.id) !== -1
+    return <div className="msg-view-collapsed" onClick={this.onToggleCollapsed.bind(this)}>
+      <div className="avatar"><UserPic id={msg.value.author} /></div>
+      <div className="content">
+        <div className="col">{u.getName(msg.value.author)}</div>
+        <div className="col"><InlineContent msg={msg} forceRaw={this.props.forceRaw} /></div>
+      </div>
+    </div>
+  }
+
+  renderExpanded() {
     let msg = this.props.msg
     let recps = mlib.links(msg.value.content.recps).map(recp => u.getName(recp.link))
     let upvoters = getUpvotes(this.props.msg)
     let isUpvoted = upvoters.indexOf(app.user.id) !== -1
-    if (this.state.collapsed) {
-      return <div className="msg-view-collapsed" onClick={this.onClick.bind(this)}>
-        <div className="msg-view-collapsed-col">{u.getName(msg.value.author)}</div>
-        <div className="msg-view-collapsed-col"><InlineContent msg={msg} forceRaw={this.props.forceRaw} /></div>
-        <div className="msg-view-collapsed-col">
-          <NiceDate ts={msg.value.timestamp} />{' '}
-          <MsgViewStar num={upvoters.length} isUpvoted={isUpvoted} onClick={this.props.onToggleStar} />
-        </div>
-      </div>
-    }
     return <div className="msg-view" style={{height: this.props.height}}>
-      <div className="header">
-        <div>
-          <UserLink id={msg.value.author} />{' '}
-          { msg.plaintext ?
-            <span style={{color: '#aaa'}}>public</span> :
-            (recps && recps.length) ?
-              <span style={{color: '#aaa'}}>to {recps.join(', ')}</span> :
-              <span style={{color: '#aaa'}}><i className="fa fa-lock" /></span>}
+      <div className="avatar"><UserPic id={msg.value.author} /></div>
+      <div className="content">
+        <div className="header" onClick={this.onToggleCollapsed.bind(this)}>
+          <div>
+            <UserLink id={msg.value.author} />{' '}
+            { msg.plaintext ?
+              <span style={{color: '#aaa'}}>public</span> :
+              (recps && recps.length) ?
+                <span style={{color: '#aaa'}}>to {recps.join(', ')}</span> :
+                <span style={{color: '#aaa'}}><i className="fa fa-lock" /></span>}
+          </div>
+          <div><NiceDate ts={msg.value.timestamp} /></div>
         </div>
-        <div>
-          <NiceDate ts={msg.value.timestamp} />{' '}
-          <MsgViewStar num={upvoters.length} isUpvoted={isUpvoted} onClick={this.props.onToggleStar} />
+        <div className="body">
+          {this.props.forceRaw ? <div>{msg.key}</div> : ''}
+          <BlockContent msg={msg} forceRaw={this.props.forceRaw} />
+        </div>
+        <div className="signallers">
+          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
+          <a className="flag"><i className="fa fa-flag" /></a>
+        </div>
+        <div className="signals">
+          { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
         </div>
       </div>
-      <div className="body">
-        {this.props.forceRaw ? <div>{msg.key}</div> : ''}
-        <BlockContent msg={msg} forceRaw={this.props.forceRaw} />
-      </div>
-      { upvoters.length ? <div className="upvoters"><i className="fa fa-star"/> by <UserLinks ids={upvoters}/></div> : ''}
     </div>
+  }
+
+  render() {
+    if (this.state.collapsed)
+      return this.renderCollapsed()
+    return this.renderExpanded()
   }
 }
 
@@ -175,7 +192,7 @@ export class Thread extends React.Component {
       </div>
       { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
       { this.state.msgs.map((msg, i) => {
-        let forceOpen = (i === 0 || i === this.state.msgs.length-1)
+        let forceOpen = (i === 0)
         return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
       }) }
       { this.state.isReplying ?

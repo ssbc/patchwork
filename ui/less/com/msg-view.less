@@ -1,13 +1,28 @@
 .msg-view {
-  margin: 6px;
-  background: #fff;
-  border: 1px solid #fff;
-  box-shadow: 0px 1px 2px rgba(0,0,0,0.1);
+  display: flex;
+  width: 700px;
+  margin: 10px;
+
+  .avatar {
+    flex: 0 0 68px;
+    padding: 2px 0 0 3px;
+    img {
+      width: 60px;
+      margin: 2px;
+      border-radius: 3px;
+    }
+  }
+  .content {
+    flex: 1;
+    background: #fff;
+    box-shadow: 0px 1px 2px rgba(0,0,0,0.1);
+  }
 
   .header {
     margin: 8px 10px;
     display: flex;
     color: #555;
+    cursor: pointer;
     & > div:first-child {
       flex: 1;
     }
@@ -24,10 +39,36 @@
       margin: 16px 0;
     }
   }
-  .upvoters {
-    margin: 10px;
-    padding: 10px;
-    background: #fafafa;
+  .signallers {
+    padding: 10px;    
+    a {
+      color: #555;
+      font-weight: 300;
+      font-size: 15px;
+    }
+    a.vote {
+      &.selected {
+        color: #1F751F;
+      }
+      &:hover {
+        color: green;
+      }
+    }
+    a.flag {
+      float: right;
+      &.selected, &:hover {
+        color: #BB1111;
+      }
+    }
+  }
+  .signals {
+    background-color: #fafafa;
+    padding: 5px 10px;
+    color: #808080;
+    font-family: "Source Sans Pro";
+    font-weight: 300;
+    font-size: 14px;
+    border-top: 1px solid #eee;
     a {
       color: #555;
     }
@@ -35,23 +76,34 @@
 }
 .msg-view-collapsed {
   display: flex;
-  margin: 6px;
-  height: 26px;
-  padding-bottom: 4px;
-  padding-right: 6px;
-  padding-left: 4px;
-  background: #fff;
-  border: 1px solid #ddd;
+  width: 700px;
+  margin: 3px 10px;
   cursor: pointer;
 
-  .msg-view-collapsed-col {
-    padding: 5px;
+  .avatar {
+    flex: 0 0 65px;
+    padding: 2px 6px 0 0px;
+    text-align: right;
+    img {
+      width: 26px;
+      margin: 3px 0 0;
+      border-radius: 3px;
+    }
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+  }
+
+  .col {
+    padding: 7px 3px 5px;
     color: #555;
     a {
       color: #555;
     }
   }
-  .msg-view-collapsed-col:nth-child(2) {
+  .col:nth-child(2) {
     flex: 1;
     white-space: pre;
     overflow: hidden;
@@ -60,6 +112,9 @@
     font-family: @content-font;
     font-size: 90%;
     line-height: 1.7;
+  }
+  .col:nth-child(3) {
+    color: #555;
   }
 }
 .msg-view-thread {
