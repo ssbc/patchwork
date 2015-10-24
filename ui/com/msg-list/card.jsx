@@ -48,7 +48,7 @@ export default class Summary extends React.Component {
     this.state = { isOversized: false, subject: null }
   }
 
-  onClick() {
+  onSelect() {
     this.props.onSelect(this.props.msg)
   }
 
@@ -90,9 +90,10 @@ export default class Summary extends React.Component {
     let isUpvoted = upvoters.indexOf(app.user.id) !== -1
     let replies = countReplies(msg)
     let unreadReplies = countReplies(msg, m => !m.isRead)
-    return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')} onClick={this.onClick.bind(this)}>
+    return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')}>
       <div className="ctrls">
         <UserPic id={msg.value.author} />
+        <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div>
         <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} />
       </div>
       <div className="content">
@@ -105,6 +106,7 @@ export default class Summary extends React.Component {
         </div>
         <div className="body" ref="body">
           <Content msg={msg} forceRaw={this.props.forceRaw} />
+          { this.state.isOversized ? <div className="read-more" onClick={this.onSelect.bind(this)}><a>Read more</a></div> : ''}
         </div>
         <div className="signallers">
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
@@ -112,8 +114,11 @@ export default class Summary extends React.Component {
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
-          { replies ? (replies === 1 ? '1 reply ' : (replies + ' replies ')) : '' }
-          { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
+          { replies ?
+            <a onClick={this.onSelect.bind(this)}>
+              {replies === 1 ? '1 reply ' : (replies + ' replies ')}
+              { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
+            </a> : '' }
         </div>
       </div>
     </div>

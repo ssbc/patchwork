@@ -59,7 +59,6 @@
     max-height: 500px;
   }
   .signallers {
-    position: relative;
     padding: 10px;    
     a {
       color: #555;
@@ -94,17 +93,20 @@
     }
   }
 
+  .read-more {
+    display: none;
+  }
   &.oversized {
     .body {
+      position: relative;
       height: 400px;
       overflow: hidden;
     }
-    .signallers:before {
-      content: 'Read more';
+    .read-more {
       display: block;
       background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 10%, #ffffff 70%);
       position: absolute;
-      top: -100px;
+      bottom: 0;
       width: 504px;
       padding-top: 70px;
       color: blue;
