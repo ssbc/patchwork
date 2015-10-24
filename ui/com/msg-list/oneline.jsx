@@ -23,7 +23,12 @@ export default class Oneline extends React.Component {
             <i className="fa fa-bookmark-o" /> }
         </a>
       </div>
-      <div className="authors"><UserLink id={msg.value.author} /> {replies}</div>
+      <div className="authors">
+        <UserLink id={msg.value.author} /> {replies}
+      </div>
+      <div className="type">
+        { msg.plaintext ? '' : <i className="fa fa-lock" title="Secret Message" /> }
+      </div>
       <div className="content">
         <Content msg={msg} forceRaw={this.props.forceRaw} />
       </div>
