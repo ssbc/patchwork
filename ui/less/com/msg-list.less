@@ -1,5 +1,6 @@
 @import "msg-list/oneline.less";
 @import "msg-list/summary.less";
+@import "msg-list/card.less";
 
 .msg-list {
   display: flex;
@@ -7,7 +8,7 @@
 
 .msg-list-items {
   flex: 1;
-  border-right: 1px solid @light-gray3;
+  background: #F5F5F5;
 
   .empty {
     padding: 10px;
@@ -45,11 +46,14 @@
 }
 .msg-list-view {
   overflow: auto;
-  flex: 1;
+  flex: 0 0 200px;
   background: #F5F5F5;
 }
 
 .msg-list.msg-is-selected {
+  .msg-list-items {
+    flex: 0;
+  }
   .msg-list-view {
     flex: 1;
   }

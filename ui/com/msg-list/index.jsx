@@ -3,7 +3,8 @@ import pull from 'pull-stream'
 import React from 'react'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
-import Infinite from 'react-infinite'
+import ReactInfinite from 'react-infinite'
+import SimpleInfinite from '../simple-infinite'
 import Summary from './summary'
 import Notifications from '../notifications'
 import Composer from '../composer'
@@ -314,6 +315,8 @@ export default class MsgList extends React.Component {
   }
 
   render() {
+    let Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
+    let ListItem = this.props.ListItem || Summary
     let selectedKey = this.state.selected && this.state.selected.key
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
@@ -334,14 +337,14 @@ export default class MsgList extends React.Component {
           </VerticalFilledContainer> :
           <Infinite
             ref="container"
-            elementHeight={60}
+            elementHeight={this.props.listItemHeight||60}
             containerHeight={this.state.containerHeight}
             infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
             onInfiniteLoad={this.loadMore.bind(this, 15)}
             loadingSpinnerDelegate={this.loadingElement()}
             isInfiniteLoading={this.state.isLoading} >
             {this.state.msgs.map((m, i) => {
-              return <Summary key={i} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
+              return <ListItem key={i} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
             })}
           </Infinite> }
       </div>

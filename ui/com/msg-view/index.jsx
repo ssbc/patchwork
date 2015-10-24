@@ -31,7 +31,7 @@ export class MsgView extends React.Component {
     this.state = { collapsed: false }
   }
   componentDidMount() {
-    this.setState({ collapsed: this.props.msg.isRead && !this.props.isLast })
+    this.setState({ collapsed: this.props.msg.isRead && !this.props.forceOpen })
   }
   onClick() {
     this.setState({ collapsed: false })
@@ -175,8 +175,8 @@ export class Thread extends React.Component {
       </div>
       { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
       { this.state.msgs.map((msg, i) => {
-        let isLast = (i === this.state.msgs.length-1)
-        return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} isLast={isLast} onToggleStar={()=>this.props.onToggleStar(msg)} />
+        let forceOpen = (i === 0 || i === this.state.msgs.length-1)
+        return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
       }) }
       { this.state.isReplying ?
         <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :

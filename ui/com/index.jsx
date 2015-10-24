@@ -10,7 +10,7 @@ import u from '../lib/util'
 export class UserLink extends React.Component {
   render() {
     var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
-    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link">{name}</Link>
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link" title={name}>{name}</Link>
   }
 }
 
@@ -35,6 +35,15 @@ export class UserLinks extends React.Component {
         return <span key={id} ><UserLink id={id} />{isLast ? '' : ', '}</span>
       })}
     </span>
+  }
+}
+
+export class UserPic extends React.Component {
+  render() {
+    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic" title={name}>
+      <img src={u.profilePicUrl(this.props.id)} />
+    </Link>
   }
 }
 

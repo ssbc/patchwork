@@ -14,7 +14,8 @@ export default class Inbox extends React.Component {
   render() {
     return <div id="inbox">
       <MsgList
-        threads 
+        threads
+        listItemHeight={60}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty"
         source={app.ssb.patchwork.createInboxStream}
