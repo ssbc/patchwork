@@ -5,21 +5,36 @@ import { Block as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import u from '../../lib/util'
 
+const MAX_CONTENT_HEIGHT = 400 // px
+
 function getUpvotes (msg) {
   if (!msg.votes) return []
   return Object.keys(msg.votes).filter(k => (msg.votes[k] === 1))
 }
 
 export default class Summary extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { isOversized: false }
+  }
+
   onClick() {
     this.props.onSelect(this.props.msg)
+  }
+
+  componentDidMount() {
+    let el = this.refs.body.getDOMNode()
+    if (!el) return
+    if (el.getClientRects()[0].height > MAX_CONTENT_HEIGHT) {
+      this.setState({ isOversized: true })
+    }
   }
 
   render() {
     let msg = this.props.msg
     let upvoters = getUpvotes(this.props.msg)
     var replies = countReplies(msg)
-    return <div className={'msg-list-item card'} onClick={this.onClick.bind(this)}>
+    return <div className={'msg-list-item card' + (this.state.isOversized?' oversized':'')} onClick={this.onClick.bind(this)}>
       <div className="ctrls">
         <UserPic id={msg.value.author} />
         <div><i className="fa fa-bookmark-o" /> Save</div>
@@ -32,7 +47,7 @@ export default class Summary extends React.Component {
           </div>
           <div className="header-right"><NiceDate ts={msg.value.timestamp} /></div>
         </div>
-        <div className="body">
+        <div className="body" ref="body">
           <Content msg={msg} forceRaw={this.props.forceRaw} />
         </div>
         <div className="signallers">
