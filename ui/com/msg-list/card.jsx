@@ -59,7 +59,8 @@ export default class Summary extends React.Component {
   renderPost() {
     let msg = this.props.msg
     let upvoters = getUpvotes(this.props.msg)
-    var replies = countReplies(msg)
+    let replies = countReplies(msg)
+    let unreadReplies = countReplies(msg, m => !m.isRead)
     return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')} onClick={this.onClick.bind(this)}>
       <div className="ctrls">
         <UserPic id={msg.value.author} />
@@ -82,7 +83,8 @@ export default class Summary extends React.Component {
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
-          { replies ? (replies + ' replies') : '' }
+          { replies ? (replies === 1 ? '1 reply ' : (replies + ' replies ')) : '' }
+          { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
         </div>
       </div>
     </div>
