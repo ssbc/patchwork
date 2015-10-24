@@ -14,7 +14,22 @@ function getUpvotes (msg) {
   return Object.keys(msg.votes).filter(k => (msg.votes[k] === 1))
 }
 
-export class DigBtn extends React.Component {
+class SaveBtn extends React.Component {
+  onClick(e) {
+    e.stopPropagation()
+    this.props.onClick()
+  }
+  render() {
+    let b = this.props.isBookmarked
+    return <div>
+      <a className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)}>
+        <i className={'fa fa-bookmark'+(b?'':'-o')} /> Save{b?'d':''}
+      </a>
+    </div>
+  }
+}
+
+class DigBtn extends React.Component {
   onClick(e) {
     e.stopPropagation()
     this.props.onClick()
@@ -78,7 +93,7 @@ export default class Summary extends React.Component {
     return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')} onClick={this.onClick.bind(this)}>
       <div className="ctrls">
         <UserPic id={msg.value.author} />
-        <div><i className="fa fa-bookmark-o" /> Save</div>
+        <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} />
       </div>
       <div className="content">
         <div className="header">
