@@ -57,14 +57,19 @@
       color: #555;
       font-weight: 300;
       font-size: 15px;
+    }
+    a.vote {
+      &.selected {
+        color: #1F751F;
+      }
       &:hover {
         color: green;
       }
-      &:last-child {
-        float: right;
-        &:hover {
-          color: #BB1111;
-        }
+    }
+    a.flag {
+      float: right;
+      &.selected, &:hover {
+        color: #BB1111;
       }
     }
   }

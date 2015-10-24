@@ -14,6 +14,19 @@ function getUpvotes (msg) {
   return Object.keys(msg.votes).filter(k => (msg.votes[k] === 1))
 }
 
+export class DigBtn extends React.Component {
+  onClick(e) {
+    e.stopPropagation()
+    this.props.onClick()
+  }
+  render() {
+    let label = this.props.isUpvoted ? 'Dug it' : 'Dig it'
+    return <a className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
+      <i className="fa fa-hand-peace-o" /> {label}
+    </a>
+  }
+}
+
 export default class Summary extends React.Component {
   constructor(props) {
     super(props)
@@ -59,6 +72,7 @@ export default class Summary extends React.Component {
   renderPost() {
     let msg = this.props.msg
     let upvoters = getUpvotes(this.props.msg)
+    let isUpvoted = upvoters.indexOf(app.user.id) !== -1
     let replies = countReplies(msg)
     let unreadReplies = countReplies(msg, m => !m.isRead)
     return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')} onClick={this.onClick.bind(this)}>
@@ -78,8 +92,8 @@ export default class Summary extends React.Component {
           <Content msg={msg} forceRaw={this.props.forceRaw} />
         </div>
         <div className="signallers">
-          <a><i className="fa fa-hand-peace-o" /> Dig it</a>
-          <a><i className="fa fa-flag" /></a>
+          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
+          <a className="flag"><i className="fa fa-flag" /></a>
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
