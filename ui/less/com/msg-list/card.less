@@ -1,4 +1,4 @@
-.msg-list-item.card {
+.msg-list-item.card-post {
   display: flex;
   padding: 10px;
   width: 600px;
@@ -6,17 +6,8 @@
   overflow: hidden;
 
   .ctrls {
-    flex: 0 0 24px;
-    padding: 2px 0 0 3px;
-    .fa-bookmark-o {
-      color: gray;
-    }
-    .fa-bookmark {
-      color: #EFBD32;
-    }
-  }
-  .ctrls {
     flex: 0 0 74px;
+    padding: 2px 0 0 3px;
     img {
       width: 60px;
       margin: 2px;
@@ -105,6 +96,35 @@
       padding-top: 70px;
       color: blue;
       cursor: pointer;
+    }
+  }
+}
+
+.msg-list-item.card-action {
+  display: flex;
+  padding: 10px;
+  width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  .ctrls {
+    flex: 0 0 105px;
+    padding: 2px 5px 0 3px;
+    text-align: right;
+    img {
+      width: 30px;
+      border-radius: 3px;
+    }
+  }
+  .content {
+    flex: 1;
+    padding: 7px;
+    .user-link {
+      color: #000;
+    }
+    div:last-child {
+      font-weight: 300;
+      font-size: 12px;    
     }
   }
 }

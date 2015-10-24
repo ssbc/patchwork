@@ -9,6 +9,13 @@ export class Block extends React.Component {
 }
 export class Inline extends React.Component {
   render() {
-    return <span className="markdown markdown-inline" dangerouslySetInnerHTML={{__html: markdown.inline(this.props.md)}} />
+    return <span className="markdown markdown-inline" dangerouslySetInnerHTML={{__html: limit(markdown.inline(this.props.md), this.props.limit)}} />
   }
+}
+
+function limit (str, n) {
+  if (!n) return str
+  if (str && str.length > n)
+    return str.slice(0, n-3) + '...'
+  return str
 }

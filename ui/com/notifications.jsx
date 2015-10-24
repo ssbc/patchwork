@@ -2,13 +2,17 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import { MsgLink, UserLink } from '../com/index'
+import { Inline as MdInline } from './markdown'
 import u from '../lib/util'
 import app from '../lib/app'
 
-class Notification extends React.Component {
+const INLINE_LENGTH_LIMIT = 100
+
+export class Notification extends React.Component {
   onSelect() {
     // get root msg
-    u.getParentPostThread(this.props.msg.voteMsg.key, (err, thread) => {
+    var subject = this.props.subject || this.props.msg.voteMsg
+    u.getParentPostThread(subject.key, (err, thread) => {
       if (err)
         return app.issue('Failed to load thread', err, 'This occurred when a notification link was clicked')
       this.props.onSelect(thread, true)
@@ -20,9 +24,10 @@ class Notification extends React.Component {
     switch (c.type) {
       case 'vote':
         let key = mlib.link(c.vote).link
-        let text = (this.props.msg.voteMsg && this.props.msg.voteMsg.value.content && this.props.msg.voteMsg.value.content.text || 'your message')
-        if (c.vote.value > 0) return <span><i className="fa fa-star" /> <UserLink id={msg.value.author} /> starred <a onClick={this.onSelect.bind(this)}>{text}</a></span>
-        if (c.vote.value === 0) return <span><i className="fa fa-star-o" /> <UserLink id={msg.value.author} /> unstarred <a onClick={this.onSelect.bind(this)}>{text}</a></span>
+        let subject = this.props.subject || this.props.msg.voteMsg
+        let text = (subject && subject.value.content && subject.value.content.text || 'your message')
+        if (c.vote.value > 0) return <span><i className="fa fa-hand-peace-o" /> <UserLink id={msg.value.author} /> dug <a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text}/></a></span>
+        if (c.vote.value === 0) return <span><i className="fa fa-hand-peace-o" /> <UserLink id={msg.value.author} /> undug <a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text}/></a></span>
         break
       case 'contact':
         let pid = mlib.link(c.contact).link

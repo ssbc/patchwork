@@ -446,7 +446,7 @@ exports.decryptThread = function (thread, cb) {
     if ('plaintext' in msg)
       return cb2() // already handled
 
-    msg.plaintext = (typeof thread.value.content != 'string')
+    msg.plaintext = (typeof msg.value.content != 'string')
     if (msg.plaintext)
       return cb2() // not encrypted
 
