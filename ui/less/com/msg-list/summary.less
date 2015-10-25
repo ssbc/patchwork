@@ -1,10 +1,7 @@
 .msg-list-item.summary {
   display: flex;
-  height: 64px;
   padding: 10px;
   overflow: hidden;
-  background: @white2;
-  border-bottom: 1px solid @light-gray3;
 
   .ctrls {
     flex: 0 0 24px;
@@ -47,6 +44,7 @@
     .body-line {
       white-space: pre;
       overflow: hidden;
+      text-overflow: ellipsis;
       &:last-child {
         color: gray;
         font-weight: 100;

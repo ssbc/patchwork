@@ -1,27 +1,25 @@
 .btn {
+  .elevation-btn;
   display: inline-block;
-  background: linear-gradient(to bottom, #ffffff 3%, #fafafa 35%, #f5f5f5 90%, #fff 98%);
-  border: 1px solid #cccccc;
+  background: #fdfdfd;
   color: #666;
   padding: 3px 9px 4px 9px;
-  border-radius: 5px;
-  box-shadow: inset 0px -1px 1px rgba(0,0,0,0.2);
+  border-radius: 2px;
+  transition: box-shadow 0.2s, background 0.2s;
 
   &:hover {
-    background: linear-gradient(to bottom, darken(@white3, 2%), darken(@light-gray4, 3%));
+    .elevation-btn-raised;
+    background: #fff;
+    text-decoration: none;
   }
   &:active {
-    background: linear-gradient(to top, darken(@white3, 6%), darken(@light-gray4, 7%));
-    box-shadow: none;
+    background: #4880F1;
   }
   &.highlighted {
     color: #fff;
-    background: linear-gradient(to bottom, #6A99F5, #4880F1);//linear-gradient(to bottom, #447BE8, #2F66D4);
-    border-color: #295EC7;
-    border-width: 1px;
-    &.gold {
-      background: linear-gradient(to bottom, #F5D16A, #F1C548);
-      border-color: #C7B929;
+    background: #4880F1;//linear-gradient(to bottom, #6A99F5, #4880F1);
+    &:hover {
+      background: #5E90F5;
     }
   }
 }

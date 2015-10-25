@@ -145,22 +145,23 @@ export default class MsgList extends React.Component {
           this.setState({ selected: thread, msgs: this.state.msgs })
         })
       },
-      onSearchKeydown: (e) => {
-        // enter pressed?
-        if (e.keyCode !== 13)
-          return
+      // :TODO: restore search
+      // onSearchKeydown: (e) => {
+      //   // enter pressed?
+      //   if (e.keyCode !== 13)
+      //     return
 
-        // set the query and reload messages
-        let query = this.refs.searchInput.getDOMNode().value
-        if (query.trim())
-          query = new RegExp(query.trim(), 'i')
-        else
-          query = false
-        this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
-          this.botcursor = null
-          this.loadMore(30)
-        })
-      }
+      //   // set the query and reload messages
+      //   let query = this.refs.searchInput.getDOMNode().value
+      //   if (query.trim())
+      //     query = new RegExp(query.trim(), 'i')
+      //   else
+      //     query = false
+      //   this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
+      //     this.botcursor = null
+      //     this.loadMore(30)
+      //   })
+      // }
     }
   }
 
@@ -200,7 +201,8 @@ export default class MsgList extends React.Component {
       this.liveStream,
       (this.props.filter) ? pull.filter(this.props.filter) : undefined,
       pull.asyncMap(this.processMsg.bind(this)),
-      (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
+      // :TODO: restore search
+      // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
         // remove any noticeable duplicates...
         // check if the message is already in the first N and remove it if so
@@ -276,7 +278,8 @@ export default class MsgList extends React.Component {
         pull.through(msg => { lastmsg = msg }), // track last message processed
         pull.asyncMap(this.processMsg.bind(this)),
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
+        // :TODO: restore search
+        // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
         pull.collect((err, msgs) => {
           if (err)
             console.warn('Error while fetching messages', err)
@@ -321,12 +324,6 @@ export default class MsgList extends React.Component {
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
-        <div className="msg-list-ctrls">
-          <div className="compose"><a className="btn" onClick={()=>this.setState({ selected: 'composer' })}><i className="fa fa-edit" /></a></div>
-          <div className="search">
-            <input ref="searchInput" type="text" placeholder="Search" onKeyDown={this.handlers.onSearchKeydown} />
-          </div>
-        </div>
         { isEmpty ?
           <VerticalFilledContainer ref="container" className="empty">
             <em>
