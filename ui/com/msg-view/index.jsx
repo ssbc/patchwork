@@ -174,19 +174,19 @@ export class Thread extends React.Component {
     return <div className="msg-view-thread" style={{height: this.props.height}}>
       <div className="toolbar flex">
         <div className="flex-fill">
-          <a className="btn" onClick={this.props.onDeselect} title="Close">Close</a>{' '}
-          <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /></a>{' '}
-          <a className={'btn'+(thread.isBookmarked?' highlighted':'')} onClick={this.props.onToggleSelectedBookmark} title="Bookmark">
+          <a className="btn" onClick={this.props.onDeselect} title="Close"><i className="fa fa-close" /> Close</a>
+          <div className="divider" />
+          <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+          <div className="divider" />
+          <a className={'btn'+(thread.isBookmarked?' highlighted':'')} onClick={this.props.onToggleSelectedBookmark} title="Save">
             { thread.isBookmarked ?
-              <i className="fa fa-bookmark" /> :
-              <i className="fa fa-bookmark-o" /> }
-          </a>{' '}
-          <a className="btn" onClick={()=>this.setState({ isReplying: true })}><i className="fa fa-reply"/> Reply</a>{' '}
-          { thread.plaintext ? 
-            <span style={{color: 'gray', marginLeft: '5px'}}>public thread</span> :
-            <span style={{color: 'gray', marginLeft: '5px'}}><i className="fa fa-lock"/> private thread</span> }
+              <span><i className="fa fa-bookmark" /> Saved</span> :
+              <span><i className="fa fa-bookmark-o" /> Save</span> }
+          </a>
+          <div className="divider" />
         </div>
         <div>
+          <div className="divider" />
           <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
       </div>

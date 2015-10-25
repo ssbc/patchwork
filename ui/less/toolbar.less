@@ -1,5 +1,30 @@
 .toolbar {
   background: #fafafa;
-  border-bottom: 1px solid #ccc;
-  border-left: 1px solid #ccc;
+  margin-bottom: 5px;
+  .elevation-toolbar;
+
+  .btn {
+    padding: 10px 15px;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    &:hover {
+      .elevation-btn-raised;
+      background: #fff;
+    }
+    &.highlighted {
+      background: #4880F1;//linear-gradient(to bottom, #6A99F5, #4880F1);
+      &:hover {
+        background: #5E90F5;
+      }
+    }
+  }
+  .divider {
+    display: inline-block;
+    width: 1px;
+    background: #ddd;
+    margin: 0;
+    height: 40px;
+    position: absolute;
+  }
 }
