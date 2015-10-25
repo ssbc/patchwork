@@ -9,6 +9,7 @@ import Summary from './summary'
 import Notifications from '../notifications'
 import Composer from '../composer'
 import { Thread } from '../msg-view'
+import Tabs from '../tabs'
 import { VerticalFilledContainer, verticalFilled } from '../'
 import { isaReplyTo } from '../../lib/msg-relation'
 import app from '../../lib/app'
@@ -29,6 +30,7 @@ export default class MsgList extends React.Component {
       isLoading: false,
       isAtEnd: false,
       searchQuery: false,
+      activeFilter: props.filters ? props.filters[0] : null,
       containerHeight: window.innerHeight
     }
     this.liveStream = null
@@ -145,6 +147,9 @@ export default class MsgList extends React.Component {
           this.setState({ selected: thread, msgs: this.state.msgs })
         })
       },
+      onSelectFilter: (filter) => {
+        this.setState({ activeFilter: filter }, () => this.reload())
+      }
       // :TODO: restore search
       // onSearchKeydown: (e) => {
       //   // enter pressed?
@@ -192,6 +197,13 @@ export default class MsgList extends React.Component {
     </div>
   }
 
+  reload() {
+    this.setState({ msgs: [], isAtEnd: false }, () => {
+      this.botcursor = null
+      this.loadMore(30)
+    })
+  }
+
   setupLivestream() {
     let source = this.props.source || app.ssb.createFeedStream
     let opts = (typeof this.props.live == 'object') ? this.props.live : {}
@@ -201,6 +213,7 @@ export default class MsgList extends React.Component {
       this.liveStream,
       (this.props.filter) ? pull.filter(this.props.filter) : undefined,
       pull.asyncMap(this.processMsg.bind(this)),
+      (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined,
       // :TODO: restore search
       // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
@@ -280,6 +293,7 @@ export default class MsgList extends React.Component {
         pull.through(msg => { lastmsg = msg }), // track last message processed
         pull.asyncMap(this.processMsg.bind(this)),
         (this.props.filter) ? pull.filter(this.props.filter) : undefined,
+        (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined,
         // :TODO: restore search
         // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
         pull.collect((err, msgs) => {
@@ -326,6 +340,9 @@ export default class MsgList extends React.Component {
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
+        <div className="msg-list-ctrls toolbar">
+          { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
+        </div>
         { isEmpty ?
           <VerticalFilledContainer ref="container" className="empty">
             <em>

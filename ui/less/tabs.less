@@ -1,0 +1,16 @@
+.tabs a {
+  display: inline-block;
+  padding: 8px 20px;
+  color: gray;
+  transition: background 0.1s;
+
+  &:hover,
+  &.selected {
+    text-decoration: none;
+    border-bottom: 3px solid gray;
+    color: #555;
+  }
+  &:active {
+    background: #fff;
+  }
+}
