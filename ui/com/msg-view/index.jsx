@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
-import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
+import { MsgLink, UserLink, UserLinks, UserPic, NiceDate, VerticalFilledContainer } from '../index'
 import { Block as BlockContent, Inline as InlineContent } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 import Composer from '../composer'
@@ -191,15 +191,17 @@ export class Thread extends React.Component {
         </div>
       </div>
       <div className="items">
-        { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
-        { this.state.msgs.map((msg, i) => {
-          let forceOpen = (i === 0)
-          return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
-        }) }
-        { this.state.isReplying ?
-          <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
-          '' }
-       </div>
+        <VerticalFilledContainer>
+          { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
+          { this.state.msgs.map((msg, i) => {
+            let forceOpen = (i === 0)
+            return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
+          }) }
+          { this.state.isReplying ?
+            <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
+            '' }
+        </VerticalFilledContainer>
+      </div>
     </div>
   }
 }

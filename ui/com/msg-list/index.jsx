@@ -18,8 +18,6 @@ import u from '../../lib/util'
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
 
-var ThreadVertical = verticalFilled(Thread)
-
 export default class MsgList extends React.Component {
   constructor(props) {
     super(props)
@@ -368,7 +366,7 @@ export default class MsgList extends React.Component {
         { this.state.selected === 'composer' ?
           <Composer onSend={this.handlers.onNewPost.bind(this)} /> :
           this.state.selected ? 
-            <ThreadVertical thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
+            <Thread thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
             this.props.defaultView ? 
               this.props.defaultView() :
               '' }
