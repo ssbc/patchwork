@@ -226,6 +226,8 @@ export default class MsgList extends React.Component {
     var height = window.innerHeight
     if (this.refs && this.refs.container) {
       var rect = this.refs.container.getDOMNode().getClientRects()[0]
+      if (!rect)
+        return
       height = window.innerHeight - rect.top
     }
     this.setState({ containerHeight: height })

@@ -126,6 +126,8 @@ export function verticalFilled (Component) {
       var height = window.innerHeight
       if (this.refs && this.refs.el) {
         var rect = React.findDOMNode(this.refs.el).getClientRects()[0]
+        if (!rect)
+          return
         height = window.innerHeight - rect.top
       }
       this.setState({ height: height })
