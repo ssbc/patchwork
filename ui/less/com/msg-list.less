@@ -9,6 +9,7 @@
 .msg-list-items {
   flex: 1;
   background: #eee;
+  padding-right: 150px;
 
   .empty {
     padding: 10px;
@@ -46,15 +47,18 @@
 }
 .msg-list-view {
   overflow: auto;
-  flex: 0 0 200px;
+  flex: 0;
+  display: none;
   background: #eee;
 }
 
 .msg-list.msg-is-selected {
   .msg-list-items {
     flex: 0;
+    display: none;
   }
   .msg-list-view {
     flex: 1;
+    display: block;
   }
 }
