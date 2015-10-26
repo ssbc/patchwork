@@ -349,6 +349,7 @@ export default class MsgList extends React.Component {
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
           <div className="msg-list-ctrls toolbar">
+            <a className="btn"><i className="fa fa-search" /></a>
             { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
           </div>
           { isEmpty ?

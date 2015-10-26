@@ -47,13 +47,14 @@ class LeftNav extends React.Component {
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
+      <div className="leftnav-item label">Messages</div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Saved" count={this.state.indexCounts.bookmarksUnread} />
 
       <div className="leftnav-item label">People</div>
       {renderProfLink(this.props.userid, 'Your Profile', 'user')}
-      <NavLink to="/people" location={this.props.location} icon="users" label="Contacts" />
+      <NavLink to="/people" location={this.props.location} icon="at" label="Contacts" />
       <Issues />
     </div>
   }
