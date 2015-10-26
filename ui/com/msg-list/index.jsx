@@ -338,29 +338,31 @@ export default class MsgList extends React.Component {
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
-        <div className="msg-list-ctrls toolbar">
-          { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
-        </div>
-        { isEmpty ?
-          <VerticalFilledContainer ref="container" className="empty">
+        <Infinite
+          ref="container"
+          elementHeight={this.props.listItemHeight||60}
+          containerHeight={this.state.containerHeight}
+          infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
+          onInfiniteLoad={this.loadMore.bind(this, 30)}
+          loadingSpinnerDelegate={this.loadingElement()}
+          isInfiniteLoading={this.state.isLoading} >
+          <div className="msg-list-ctrls toolbar">
+            { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
+          </div>
+          { isEmpty ?
             <em>
               { this.state.searchQuery ?
                 'No results found' :
                 (this.props.emptyMsg || 'No new messages') }
             </em>
-          </VerticalFilledContainer> :
-          <Infinite
-            ref="container"
-            elementHeight={this.props.listItemHeight||60}
-            containerHeight={this.state.containerHeight}
-            infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
-            onInfiniteLoad={this.loadMore.bind(this, 30)}
-            loadingSpinnerDelegate={this.loadingElement()}
-            isInfiniteLoading={this.state.isLoading} >
-            {this.state.msgs.map((m, i) => {
-              return <ListItem key={i} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
-            })}
-          </Infinite> }
+            :
+            <div>
+              { this.state.msgs.map((m, i) => {
+                return <ListItem key={i} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
+              }) }
+            </div>
+          }
+        </Infinite>
       </div>
       <div className="msg-list-view">
         { this.state.selected === 'composer' ?

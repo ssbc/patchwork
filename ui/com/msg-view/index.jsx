@@ -56,7 +56,7 @@ export class MsgView extends React.Component {
     let recps = mlib.links(msg.value.content.recps).map(recp => u.getName(recp.link))
     let upvoters = getUpvotes(this.props.msg)
     let isUpvoted = upvoters.indexOf(app.user.id) !== -1
-    return <div className="msg-view" style={{height: this.props.height}}>
+    return <div className="msg-view">
       <div className="avatar"><UserPic id={msg.value.author} /></div>
       <div className="content">
         <div className="header" onClick={this.onToggleCollapsed.bind(this)}>
@@ -171,27 +171,27 @@ export class Thread extends React.Component {
     let thread = this.props.thread
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
     let forceRaw = this.state.forceRaw||this.props.forceRaw
-    return <div className="msg-view-thread" style={{height: this.props.height}}>
-      <div className="toolbar flex">
-        <div className="flex-fill">
-          <a className="btn" onClick={this.props.onDeselect} title="Close"><i className="fa fa-close" /> Close</a>
-          <div className="divider" />
-          <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
-          <div className="divider" />
-          <a className={'btn'+(thread.isBookmarked?' highlighted':'')} onClick={this.props.onToggleSelectedBookmark} title="Save">
-            { thread.isBookmarked ?
-              <span><i className="fa fa-bookmark" /> Saved</span> :
-              <span><i className="fa fa-bookmark-o" /> Save</span> }
-          </a>
-          <div className="divider" />
+    return <div className="msg-view-thread">
+      <VerticalFilledContainer>
+        <div className="toolbar flex">
+          <div className="flex-fill">
+            <a className="btn" onClick={this.props.onDeselect} title="Close"><i className="fa fa-close" /> Close</a>
+            <div className="divider" />
+            <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+            <div className="divider" />
+            <a className={'btn'+(thread.isBookmarked?' highlighted':'')} onClick={this.props.onToggleSelectedBookmark} title="Save">
+              { thread.isBookmarked ?
+                <span><i className="fa fa-bookmark" /> Saved</span> :
+                <span><i className="fa fa-bookmark-o" /> Save</span> }
+            </a>
+            <div className="divider" />
+          </div>
+          <div>
+            <div className="divider" />
+            <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
+          </div>
         </div>
-        <div>
-          <div className="divider" />
-          <a className={'btn '+(this.state.forceRaw?'highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
-        </div>
-      </div>
-      <div className="items">
-        <VerticalFilledContainer>
+        <div className="items">
           { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
@@ -200,8 +200,8 @@ export class Thread extends React.Component {
           { this.state.isReplying ?
             <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
             '' }
-        </VerticalFilledContainer>
-      </div>
+        </div>
+      </VerticalFilledContainer>
     </div>
   }
 }
