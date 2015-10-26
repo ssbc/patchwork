@@ -140,10 +140,28 @@ export default class UserInfo extends React.Component {
       //   }
       // })
     }
+    // <div>ID: {this.props.pid}</div>
+    /* 
+        <table>
+          <tr>
+            <td>
+              {this.state.followers1.length > 0 ? <h3>followers</h3> : ''}
+              {this.state.followers1.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
+            </td>
+            <td>
+              {this.state.followeds.length > 0 ? <h3>following</h3> : ''}
+              {this.state.followeds.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
+            </td>
+          </tr>
+        </table>*/
 
     return <div className="user-info">
-      <div>
+      <div className="avatar">
         <img src={u.profilePicUrl(this.props.pid)} />
+      </div>
+      <div className="facts">
+        <h1>{this.state.name}</h1>
+        <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
             <a className="btn" onClick={()=>{app.emit('modal:setup', true)}}><i className="fa fa-wrench" /> Edit Profile</a> :
@@ -163,27 +181,11 @@ export default class UserInfo extends React.Component {
             </span>
           }
         </div>
-      </div>
-      <div>
-        <h1>{this.state.name}</h1>
         <table>
           <tr><td>{this.state.followers1.length + this.state.followers2.length}</td><td>followers</td></tr>
           <tr><td>{this.state.flaggers.length}</td><td>flags</td></tr>
         </table>
-        <table>
-          <tr>
-            <td>
-              {this.state.followers1.length > 0 ? <h3>followers</h3> : ''}
-              {this.state.followers1.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
-            </td>
-            <td>
-              {this.state.followeds.length > 0 ? <h3>following</h3> : ''}
-              {this.state.followeds.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
-            </td>
-          </tr>
-        </table>
       </div>
-      <div>ID: {this.props.pid}</div>
     </div>
   }
 }

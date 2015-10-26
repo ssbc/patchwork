@@ -348,6 +348,7 @@ export default class MsgList extends React.Component {
           onInfiniteLoad={this.loadMore.bind(this, 30)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
+          { this.props.hero ? this.props.hero() : '' }
           <div className="msg-list-ctrls toolbar">
             <a className="btn"><i className="fa fa-search" /></a>
             { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
@@ -372,9 +373,7 @@ export default class MsgList extends React.Component {
           <ThreadComposer onCancel={this.handlers.onDeselect} onSend={this.handlers.onNewPost.bind(this)} /> :
           this.state.selected ? 
             <Thread thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
-            this.props.defaultView ? 
-              this.props.defaultView() :
-              '' }
+            '' }
       </div>
     </div>
   }
