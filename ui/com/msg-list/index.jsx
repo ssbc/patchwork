@@ -10,6 +10,7 @@ import Notifications from '../notifications'
 import Composer from '../composer'
 import { Thread } from '../msg-view'
 import Tabs from '../tabs'
+import FAB from '../fab'
 import { VerticalFilledContainer, verticalFilled } from '../'
 import { isaReplyTo } from '../../lib/msg-relation'
 import app from '../../lib/app'
@@ -337,6 +338,7 @@ export default class MsgList extends React.Component {
     let selectedKey = this.state.selected && this.state.selected.key
     let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
+      <FAB label="Compose" icon="pencil" onClick={()=>this.setState({ selected: 'composer' })} />
       <div className="msg-list-items">
         <Infinite
           ref="container"
@@ -366,12 +368,25 @@ export default class MsgList extends React.Component {
       </div>
       <div className="msg-list-view">
         { this.state.selected === 'composer' ?
-          <Composer onSend={this.handlers.onNewPost.bind(this)} /> :
+          <ThreadComposer onCancel={this.handlers.onDeselect} onSend={this.handlers.onNewPost.bind(this)} /> :
           this.state.selected ? 
             <Thread thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
             this.props.defaultView ? 
               this.props.defaultView() :
               '' }
+      </div>
+    </div>
+  }
+}
+
+class ThreadComposer extends React.Component {
+  render() {
+    return <div className="msg-view-thread">
+      <div className="toolbar">
+        <a className="btn" onClick={this.props.onCancel} title="Close"><i className="fa fa-close" /> Discard Draft</a>
+      </div>
+      <div className="items">
+        <Composer onSend={this.props.onSend} />
       </div>
     </div>
   }

@@ -1,7 +1,10 @@
 // inspired by https://www.google.com/design/spec/what-is-material/elevation-shadows.html#elevation-shadows-shadows
 
-.elevation(@height) {
+.elevation(@height) when (@height < 6) {
   box-shadow: 0px @height (@height * 2) rgba(0, 0, 0, 0.1);
+}
+.elevation(@height) when (@height >= 6) {
+  box-shadow: 0px @height (@height * 2) rgba(0, 0, 0, 0.2);
 }
 .generate-elevations(@n, @i: 1) when (@i =< @n) {
   .elevation-@{i} {

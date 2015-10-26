@@ -1,0 +1,44 @@
+.fab {
+  position: fixed;
+  top: 10px;
+  right: 75px;
+
+  a.primary {
+    .elevation-fab;
+    display: inline-block;
+    font-size: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    background: #4DA1FF;
+    text-align: center;
+    color: #fff;
+    transition: 0.2s box-shadow, 0.2s background, 0.2s color;
+
+    i {
+      position: relative;
+      top: 13px;
+    }
+
+    &:before {
+      content: attr(data-label);
+      opacity: 0;
+      position: absolute;
+      right: 70px;
+      top: 20px;
+      font-size: 15px;
+      color: #0079FF;
+      transition: 0.2s opacity;
+      pointer-events: none;
+    }
+
+    &:hover {
+      .elevation-fab-raised;
+      background: #0079FF;
+      &:before {
+        display: block;
+        opacity: 1;
+      }
+    }
+  }
+}
