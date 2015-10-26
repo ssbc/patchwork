@@ -97,7 +97,6 @@ export class Thread extends React.Component {
     super(props)
     this.state = {
       thread: null,
-      isReplying: false,
       forceRaw: false,
       msgs: []
     }
@@ -156,7 +155,6 @@ export class Thread extends React.Component {
   }
 
   onSend(msg) {
-    this.setState({ isReplying: false })
     if (this.props.onNewReply)
       this.props.onNewReply(msg)
   }
@@ -197,9 +195,7 @@ export class Thread extends React.Component {
             let forceOpen = (i === 0)
             return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
           }) }
-          { this.state.isReplying ?
-            <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /> :
-            '' }
+          <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} />
         </div>
       </VerticalFilledContainer>
     </div>

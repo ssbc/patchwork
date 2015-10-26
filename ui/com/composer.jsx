@@ -285,7 +285,7 @@ export default class Composer extends React.Component {
       <div className="composer-content">
         { this.state.isPreviewing ?
           <MdBlock md={this.state.text} /> :
-          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a ${msgType} message...` : `Write a ${msgType} reply...`} /> }
+          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} /> }
       </div>
       <div className="composer-ctrls">
         <div>
