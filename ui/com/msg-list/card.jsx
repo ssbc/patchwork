@@ -79,7 +79,7 @@ export default class Summary extends React.Component {
   }
 
   render() {
-    if (this.props.msg.value.content.type == 'post')
+    if (this.props.msg.value.content.type == 'post' || this.props.forceRaw)
       return this.renderPost()
     return this.renderAction()
   }
