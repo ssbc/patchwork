@@ -8,7 +8,7 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const FILTERS = [
-  { label: 'Friends', fn: msg => social.follows(app.user.id, msg.value.author) },
+  { label: 'Friends', fn: msg => msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author) },
   { label: 'Friends + Network', fn: msg => true }
 ]
 
