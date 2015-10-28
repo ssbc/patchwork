@@ -1,5 +1,12 @@
 .user-list {
   .msg-list;
+  .search input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 0;
+    margin: 10px 0;
+  }
 }
 
 .user-list-items {
@@ -9,10 +16,21 @@
     margin-bottom: 0;
     padding: 0 8px 8px;
   }
+  hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+  }
 }
 
 .user-list-view {
-  .msg-list-view;
+  flex: 1;
+  background: #eee;
+  .user-profile {
+    margin: 0 10px;
+  }
+  .msg-list-item.card-post {
+    padding: 0;
+  }
 }
 
 .user-list-item.summary {
@@ -20,7 +38,7 @@
   padding: 10px;
   overflow: hidden;
   background: #fff;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 1px;
 
   .header {
     display: flex;

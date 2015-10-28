@@ -1,7 +1,7 @@
 'use babel'
 import pull from 'pull-stream'
 import React from 'react'
-import UserInfo from './user-info'
+import UserProfile from './user-profile'
 import { verticalFilled, VerticalFilledContainer, UserLink } from './index'
 import app from '../lib/app'
 import social from '../lib/social-graph'
@@ -30,29 +30,31 @@ class UserListItem extends React.Component {
 }
 
 class UserListItems extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { searchText: '', searchQuery: false }
+  }
+
+  onSearchChange(e) {
+    const v = e.target.value
+    this.setState({ searchText: v, searchQuery: (v) ? new RegExp(v, 'i') : false })
+  }
+
   render() {
-    let isEmpty = (this.props.users.length === 0)
-    let renderUser = (user, i) => <UserListItem key={i} user={user} selected={user === this.props.selected} onSelect={this.props.onSelect} />
-    let isRecommended = user => !user.followed && user.nfollowers > 0 && user.nflaggers === 0
-    let isFollowed = user => user.followed
-    let isOther = user => !isRecommended(user) && !isFollowed(user)
+    let renderUser = (user, i) => <UserListItem key={i} user={user} selected={user.id === this.props.selected} onSelect={this.props.onSelect} />
+    let isSearchMatch = user => (this.state.searchQuery) ? this.state.searchQuery.test(u.getName(user.id)) : true
+    let isSelf = user => (user.id === app.user.id)
+    let isFollowed = user => (!isSelf(user) && user.followed)
+    let isOther = user => (!isSelf(user) && !isFollowed(user))
     return <div className="user-list-items" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="user-list-ctrls">
-        <div className="add"><a className="btn" onClick={()=>this.props.onSelect('add')}><i className="fa fa-plus" /></a></div>
         <div className="search">
-          <input type="text" placeholder="Search" />
+          <input type="text" placeholder="Search" value={this.state.searchText} onChange={this.onSearchChange.bind(this)} />
         </div>
       </div>
-      { isEmpty ?
-        <em ref="container">{this.props.emptyMsg || 'No known users'}</em> :
-        <div>
-          <h3>Recommended People</h3>
-          {this.props.users.filter(isRecommended).map(renderUser)}
-          <h3>Followed</h3>
-          {this.props.users.filter(isFollowed).map(renderUser)}
-          <h3>Others</h3>
-          {this.props.users.filter(isOther).map(renderUser)}          
-        </div> }
+      {this.props.users.filter(isSelf).filter(isSearchMatch).map(renderUser)}
+      {this.props.users.filter(isFollowed).filter(isSearchMatch).map(renderUser)}
+      {this.props.users.filter(isOther).filter(isSearchMatch).map(renderUser)} 
     </div>
   }
 }
@@ -62,19 +64,13 @@ export default class UserList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      users: [],
-      selected: null
+      users: []
     }
 
     // handlers
     this.handlers = {
       onSelect: (user) => {
-        // deselect toggle
-        if (this.state.selected === user)
-          return this.setState({ selected: false })
-
-        // update UI
-        this.setState({ selected: user })
+        window.location = '#/profile/'+encodeURIComponent(user.id)
       }
     }
   }
@@ -83,7 +79,6 @@ export default class UserList extends React.Component {
     // load feed data
     pull(
       app.ssb.latest(),
-      pull.filter((user) => user.id !== app.user.id),
       pull.map((user) => {
         user.name = u.getName(user.id)
         user.nfollowers = social.followedFollowers(app.user.id, user.id).length
@@ -105,13 +100,14 @@ export default class UserList extends React.Component {
   }
 
   render() {
+    const selected = this.props.selected||app.user.id
     return <div className="user-list">
-      <UserListItems users={this.state.users} emptyMsg={this.props.emptyMsg} selected={this.state.selected} onSelect={this.handlers.onSelect} />
+      <UserListItems users={this.state.users} emptyMsg={this.props.emptyMsg} selected={selected} onSelect={this.handlers.onSelect} />
       <div className="user-list-view">
-        { this.state.selected === 'add' ?
+        { this.props.selected === 'add' ?
           'todo' :
-          this.state.selected ? 
-            <VerticalFilledContainer><UserInfo pid={this.state.selected.id} /></VerticalFilledContainer> :
+          this.props.selected ? 
+            <UserProfile pid={selected} /> :
             '' }
       </div>
     </div>

@@ -54,7 +54,7 @@ class LeftNav extends React.Component {
 
       <div className="leftnav-item label">People</div>
       {renderProfLink(this.props.userid, 'Your Profile', 'user')}
-      <NavLink to="/people" location={this.props.location} icon="at" label="Contacts" />
+      <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
       <Issues />
     </div>
   }
