@@ -5,12 +5,12 @@ import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import mentionslib from '../lib/mentions'
 import { RenameModalBtn, FlagUserModalBtn } from './modals'
-import { UserLink } from './index'
+import { UserLink, UserPic } from './index'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
 
-export default class UserInfo extends React.Component {
+export class UserInfoHeader extends React.Component {
   constructor(props) {
     super(props)
     this.state = this.computeState()
@@ -140,20 +140,6 @@ export default class UserInfo extends React.Component {
       //   }
       // })
     }
-    // <div>ID: {this.props.pid}</div>
-    /* 
-        <table>
-          <tr>
-            <td>
-              {this.state.followers1.length > 0 ? <h3>followers</h3> : ''}
-              {this.state.followers1.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
-            </td>
-            <td>
-              {this.state.followeds.length > 0 ? <h3>following</h3> : ''}
-              {this.state.followeds.map((id, i) => <div key={'follower'+i}><UserLink id={id} /></div>)}
-            </td>
-          </tr>
-        </table>*/
 
     return <div className="user-info">
       <div className="avatar">
@@ -185,6 +171,32 @@ export default class UserInfo extends React.Component {
           <tr><td>{this.state.followers1.length + this.state.followers2.length}</td><td>followers</td></tr>
           <tr><td>{this.state.flaggers.length}</td><td>flags</td></tr>
         </table>
+      </div>
+    </div>
+  }
+}
+
+export class UserInfoFollowers extends React.Component {
+  render() {
+    const pid = this.props.pid
+    const followers = social.followedFollowers(app.user.id, pid, true)
+    return <div className="user-info-card">
+      <h3>followers</h3>
+      <div>
+        {followers.map((id, i) => <div key={'follower'+i} className="user-plaque"><UserPic id={id} /> <UserLink id={id} /></div>)}
+      </div>
+    </div>
+  }
+}
+
+export class UserInfoFolloweds extends React.Component {
+  render() {
+    const pid = this.props.pid
+    const followeds = social.followeds(pid)
+    return <div className="user-info-card">
+      <h3>following</h3>
+      <div>
+        {followeds.map((id, i) => <div key={'followed'+i} className="user-plaque"><UserPic id={id} /> <UserLink id={id} /></div>)}
       </div>
     </div>
   }

@@ -350,7 +350,7 @@ export default class MsgList extends React.Component {
           isInfiniteLoading={this.state.isLoading} >
           { this.props.hero ? this.props.hero() : '' }
           <div className="msg-list-ctrls toolbar">
-            <a className="btn"><i className="fa fa-search" /></a>
+            { this.props.toolbar ? this.props.toolbar() : '' }
             { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
           </div>
           { isEmpty ?
