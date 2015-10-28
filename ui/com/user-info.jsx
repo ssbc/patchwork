@@ -5,7 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import mentionslib from '../lib/mentions'
 import { RenameModalBtn, FlagUserModalBtn } from './modals'
-import { UserLink, UserPic } from './index'
+import { UserLink, UserPic, UserBtn } from './index'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
@@ -183,7 +183,7 @@ export class UserInfoFollowers extends React.Component {
     return <div className="user-info-card">
       <h3>followers</h3>
       <div>
-        {followers.map((id, i) => <div key={'follower'+i} className="user-plaque"><UserPic id={id} /> <UserLink id={id} /></div>)}
+        {followers.map((id, i) => <UserBtn key={'follower'+i} id={id} />)}
       </div>
     </div>
   }
@@ -196,7 +196,7 @@ export class UserInfoFolloweds extends React.Component {
     return <div className="user-info-card">
       <h3>following</h3>
       <div>
-        {followeds.map((id, i) => <div key={'followed'+i} className="user-plaque"><UserPic id={id} /> <UserLink id={id} /></div>)}
+        {followeds.map((id, i) => <UserBtn key={'followed'+i} id={id} />)}
       </div>
     </div>
   }

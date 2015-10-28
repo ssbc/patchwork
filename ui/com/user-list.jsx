@@ -17,6 +17,7 @@ class UserListItem extends React.Component {
       <div className="header">
         <div className="header-left"><UserLink id={user.id} /></div>
         <div className="header-right">
+          { user.isUser                    ? <small>You</small> : '' }
           { user.followed && user.follows  ? <small>Friends</small> : '' }
           { user.followed && !user.follows ? <small>Following</small> : '' }
           { !user.followed && user.follows ? <small>Follows you</small> : '' }
@@ -81,6 +82,7 @@ export default class UserList extends React.Component {
       app.ssb.latest(),
       pull.map((user) => {
         user.name = u.getName(user.id)
+        user.isUser = user.id === app.user.id
         user.nfollowers = social.followedFollowers(app.user.id, user.id).length
         user.nflaggers = social.followedFlaggers(app.user.id, user.id, true).length
         user.followed = social.follows(app.user.id, user.id)

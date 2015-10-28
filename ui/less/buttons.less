@@ -34,3 +34,29 @@
     border-bottom-right-radius: 2px;
   }
 }
+
+.user-btn {
+  .elevation-btn;
+  color: #333;
+  display: inline-block;
+  margin: 5px;
+  padding-right: 10px;
+  background: #fdfdfd;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  transition: box-shadow 0.2s, background 0.2s, color 0.2s;
+  
+  img {
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    margin-right: 4px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+  }
+  &:hover {
+    background: #fff;
+    .elevation-btn-raised;
+    text-decoration: none;
+  }
+}

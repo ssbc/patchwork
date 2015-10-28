@@ -47,6 +47,15 @@ export class UserPic extends React.Component {
   }
 }
 
+export class UserBtn extends React.Component {
+  render() {
+    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-btn" title={name}>
+      <img src={u.profilePicUrl(this.props.id)} /> {name}
+    </Link>
+  }
+}
+
 export class ModalBtn extends React.Component {
   constructor(props) {
     super(props)

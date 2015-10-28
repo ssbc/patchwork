@@ -50,11 +50,9 @@ export default class UserProfile extends React.Component {
       return <VerticalFilledContainer className="user-profile" key={this.props.pid}>
         {hero()}
         <div className="toolbar">{toolbar()}</div>
-        <div className="user-profile-about flex">
-          <div className="flex-fill" />
+        <div className="user-profile-about">
           <UserInfoFollowers pid={this.props.pid} />
           <UserInfoFolloweds pid={this.props.pid} />
-          <div className="flex-fill" />
         </div>
       </VerticalFilledContainer>
     }
