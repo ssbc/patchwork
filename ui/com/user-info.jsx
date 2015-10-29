@@ -176,10 +176,17 @@ export class UserInfoHeader extends React.Component {
   }
 }
 
+function sortFollowedFirst (a, b) {
+  // rank followed followers first
+  const aFollowed = (app.user.id === a || social.follows(app.user.id, a)) ? 1 : 0
+  const bFollowed = (app.user.id === b || social.follows(app.user.id, b)) ? 1 : 0
+  return bFollowed - aFollowed  
+}
+
 export class UserInfoFollowers extends React.Component {
   render() {
     const pid = this.props.pid
-    const followers = social.followedFollowers(app.user.id, pid, true)
+    const followers = social.followers(pid).sort(sortFollowedFirst)
     return <div className="user-info-card">
       <h3>followers</h3>
       <div>
@@ -192,7 +199,7 @@ export class UserInfoFollowers extends React.Component {
 export class UserInfoFolloweds extends React.Component {
   render() {
     const pid = this.props.pid
-    const followeds = social.followeds(pid)
+    const followeds = social.followeds(pid).sort(sortFollowedFirst)
     return <div className="user-info-card">
       <h3>following</h3>
       <div>

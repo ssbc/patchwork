@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import Modal from 'react-modal'
 import xtend from 'xtend'
 import app from '../lib/app'
+import social from '../lib/social-graph'
 import u from '../lib/util'
 
 export class UserLink extends React.Component {
@@ -49,9 +50,12 @@ export class UserPic extends React.Component {
 
 export class UserBtn extends React.Component {
   render() {
-    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    const followedIcon = (app.user.id === this.props.id || social.follows(app.user.id, this.props.id))
+      ? <i className="fa fa-check-circle" />
+      : <i className="fa fa-circle-thin" />
     return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-btn" title={name}>
-      <img src={u.profilePicUrl(this.props.id)} /> {name}
+      <img src={u.profilePicUrl(this.props.id)} /> {name} {followedIcon}
     </Link>
   }
 }
