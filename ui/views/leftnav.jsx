@@ -53,7 +53,6 @@ class LeftNav extends React.Component {
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Saved" count={this.state.indexCounts.bookmarksUnread} />
 
       <div className="leftnav-item label">People</div>
-      {renderProfLink(this.props.userid, 'Your Profile', 'user')}
       <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
       <Issues />
     </div>

@@ -24,7 +24,7 @@ class UserListItem extends React.Component {
         </div>
       </div>
       <div className="body">
-        Followed by {user.nfollowers} {user.nfollowers==1?'person':'people'} you follow
+        {user.nfollowers} {user.nfollowers==1?'follower':'followers'}
       </div>
     </div>
   }
@@ -83,8 +83,7 @@ export default class UserList extends React.Component {
       pull.map((user) => {
         user.name = u.getName(user.id)
         user.isUser = user.id === app.user.id
-        user.nfollowers = social.followedFollowers(app.user.id, user.id).length
-        user.nflaggers = social.followedFlaggers(app.user.id, user.id, true).length
+        user.nfollowers = social.followers(user.id).length
         user.followed = social.follows(app.user.id, user.id)
         user.follows = social.follows(user.id, app.user.id)
         return user
@@ -106,11 +105,7 @@ export default class UserList extends React.Component {
     return <div className="user-list">
       <UserListItems users={this.state.users} emptyMsg={this.props.emptyMsg} selected={selected} onSelect={this.handlers.onSelect} />
       <div className="user-list-view">
-        { this.props.selected === 'add' ?
-          'todo' :
-          this.props.selected ? 
-            <UserProfile pid={selected} /> :
-            '' }
+        <UserProfile pid={selected} />
       </div>
     </div>
   }
