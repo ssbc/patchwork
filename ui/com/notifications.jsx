@@ -27,7 +27,8 @@ export class Notification extends React.Component {
         let subject = this.props.subject || this.props.msg.voteMsg
         let text = (subject && subject.value.content && subject.value.content.text || 'your message')
         if (c.vote.value > 0) return <span><i className="fa fa-hand-peace-o" /> <UserLink id={msg.value.author} /> dug <a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text}/></a></span>
-        if (c.vote.value === 0) return <span><i className="fa fa-hand-peace-o" /> <UserLink id={msg.value.author} /> undug <a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text}/></a></span>
+        if (c.vote.value === 0) return <span><i className="fa fa-times" /> <UserLink id={msg.value.author} /> removed their vote for <a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text}/></a></span>
+        if (c.vote.value < 0) return <span><i className="fa fa-flag" /> <UserLink id={msg.value.author} /> flagged <a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text}/></a> {c.vote.reason ? ('as '+c.vote.reason) : ''}</span>
         break
       case 'contact':
         let pid = mlib.link(c.contact).link

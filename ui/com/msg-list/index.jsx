@@ -127,7 +127,28 @@ export default class MsgList extends React.Component {
         }
       },
       onFlag: (msg, reason) => {
-        console.log(msg, reason)
+        if (!reason)
+          throw new Error('reason is required')
+
+        // publish new message
+        const voteMsg = (reason === 'unflag') // special case
+          ? schemas.vote(msg.key, 0)
+          : schemas.vote(msg.key, -1, reason)
+        let done = (err) => {
+          if (err)
+            return app.issue('Failed to publish flag', err, 'Happened in onFlag of MsgList')
+
+          // re-render
+          msg.votes = msg.votes || {}
+          msg.votes[app.user.id] = -1
+          this.setState(this.state)
+        }
+        if (msg.plaintext)
+          app.ssb.publish(voteMsg, done)
+        else {
+          let recps = mlib.links(msg.value.content.recps).map(l => l.link)
+          app.ssb.private.publish(voteMsg, recps, done)
+        }
       },
       onNewPost: (msg) => {
         this.setState({ selected: msg })

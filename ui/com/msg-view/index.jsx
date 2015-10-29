@@ -13,6 +13,9 @@ const FLAG_DROPDOWN = [
   { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
   { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> },
 ]
+const UNFLAG_DROPDOWN = [
+  { value: 'unflag',  label: <span><i className="fa fa-times" /> Unflag</span> }
+]
 
 function getUpvotes (msg) {
   if (!msg.votes) return []
@@ -61,7 +64,8 @@ export class MsgView extends React.Component {
     let msg = this.props.msg
     let recps = mlib.links(msg.value.content.recps).map(recp => u.getName(recp.link))
     let upvoters = getUpvotes(this.props.msg)
-    let isUpvoted = upvoters.indexOf(app.user.id) !== -1
+    let isUpvoted = msg.votes[app.user.id] > 0
+    let isDownvoted = msg.votes[app.user.id] < 0
     return <div className="msg-view">
       <div className="avatar"><UserPic id={msg.value.author} /></div>
       <div className="content">
@@ -82,7 +86,7 @@ export class MsgView extends React.Component {
         </div>
         <div className="signallers">
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
-          <DropdownBtn className="flag" items={FLAG_DROPDOWN} right onSelect={(reason)=>this.props.onFlag(msg, reason)}><i className="fa fa-flag" /></DropdownBtn>
+          <DropdownBtn className="flag" items={isDownvoted ? UNFLAG_DROPDOWN : FLAG_DROPDOWN} right onSelect={(reason)=>this.props.onFlag(msg, reason)}><i className="fa fa-flag" /></DropdownBtn>
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
@@ -92,6 +96,8 @@ export class MsgView extends React.Component {
   }
 
   render() {
+    if (this.props.msg.value.content.type !== 'post')
+      return this.renderCollapsed()
     if (this.state.collapsed)
       return this.renderCollapsed()
     return this.renderExpanded()
@@ -119,7 +125,9 @@ export class Thread extends React.Component {
       msgs: [thread].concat((thread.related||[]).filter(msg => {
         if (added.has(msg.key)) return false // messages can be in the thread multiple times if there are >1 links
         added.add(msg.key)
-        return (msg.value.content.type == 'post') && isaReplyTo(msg, thread)
+        return true
+        /*added.add(msg.key)
+        return (msg.value.content.type == 'post') && isaReplyTo(msg, thread)*/
       }))
     })
   }
@@ -191,7 +199,7 @@ export class Thread extends React.Component {
           { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
-            return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} onFlag={()=>this.props.onFlag(msg)} />
+            return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} onFlag={(msg, reason)=>this.props.onFlag(msg, reason)} />
           }) }
           <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} />
         </div>

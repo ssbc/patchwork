@@ -3,20 +3,28 @@ import React from 'react'
 import mlib from 'ssb-msgs'
 import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
+import { Inline as MdInline } from '../markdown'
 import { Notification } from '../notifications'
 import { countReplies } from '../../lib/msg-relation'
 import DropdownBtn from '../dropdown'
 import u from '../../lib/util'
+import app from '../../lib/app'
+import social from '../../lib/social-graph'
 
+const INLINE_LENGTH_LIMIT = 100
 const MAX_CONTENT_HEIGHT = 400 // px
 const FLAG_DROPDOWN = [
   { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
   { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> },
 ]
 
-function getUpvotes (msg) {
+function getVotes (msg, filter) {
   if (!msg.votes) return []
-  return Object.keys(msg.votes).filter(k => (msg.votes[k] === 1))
+  return Object.keys(msg.votes).filter(filter)
+}
+
+function userIsTrusted (userId) {
+  return userId === app.user.id || social.follows(app.user.id, userId)
 }
 
 class SaveBtn extends React.Component {
@@ -47,7 +55,7 @@ class DigBtn extends React.Component {
   }
 }
 
-export default class Summary extends React.Component {
+export default class Card extends React.Component {
   constructor(props) {
     super(props)
     this.state = { isOversized: false, subject: null }
@@ -84,15 +92,30 @@ export default class Summary extends React.Component {
   }
 
   render() {
-    if (this.props.msg.value.content.type == 'post' || this.props.forceRaw)
-      return this.renderPost()
-    return this.renderAction()
+    const msg = this.props.msg
+    const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
+    const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
+    const isUpvoted = upvoters.indexOf(app.user.id) !== -1
+    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length)
+      return this.renderMuted(msg)
+    if (msg.value.content.type == 'post' || this.props.forceRaw) {
+      return this.renderPost(msg, upvoters, downvoters, isUpvoted)
+    }
+    return this.renderAction(msg)
   }
 
-  renderPost() {
-    const msg = this.props.msg
-    const upvoters = getUpvotes(this.props.msg)
-    const isUpvoted = upvoters.indexOf(app.user.id) !== -1
+  renderMuted(msg) {
+    const text = msg.value.content.text
+    return <div className={'msg-list-item card-muted'}>
+      <div className="ctrls"><UserPic id={msg.value.author} /></div>
+      <div className="content">
+        <div><a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
+        <div><NiceDate ts={msg.value.timestamp} /></div>
+      </div>
+    </div>
+  }
+
+  renderPost(msg, upvoters, downvoters, isUpvoted) {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
     return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')}>
@@ -119,6 +142,7 @@ export default class Summary extends React.Component {
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
+          { downvoters.length ? <div className="downvoters"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { replies ?
             <a onClick={this.onSelect.bind(this)}>
               {replies === 1 ? '1 reply ' : (replies + ' replies ')}
@@ -129,8 +153,7 @@ export default class Summary extends React.Component {
     </div>
   }
 
-  renderAction() {
-    let msg = this.props.msg
+  renderAction(msg) {
     return <div className={'msg-list-item card-action'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">

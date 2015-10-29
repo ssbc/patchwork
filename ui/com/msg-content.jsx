@@ -37,6 +37,10 @@ export class Inline extends React.Component {
         case 'post':
           if (c.text) return <MdInline md={c.text} />
           break
+        case 'vote':
+          if (c.vote.value > 0) return <span><i className="fa fa-hand-peace-o" /> dug this</span>
+          if (c.vote.value === 0) return <span><i className="fa fa-times" /> removed their vote for this</span>
+          if (c.vote.value < 0) return <span><i className="fa fa-flag" /> flagged this {c.vote.reason ? ('as '+c.vote.reason) : ''}</span>
       }
     } catch (e) { console.warn(e) }
 
