@@ -19,7 +19,7 @@ export default class NewsFeed extends React.Component {
   }
 
   render() {
-    return <div id="feed">
+    return <div id="newsfeed">
       <MsgList
         threads
         ListItem={Card}
