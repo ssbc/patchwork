@@ -126,6 +126,9 @@ export default class MsgList extends React.Component {
           app.ssb.private.publish(voteMsg, recps, done)
         }
       },
+      onFlag: (msg, reason) => {
+        console.log(msg, reason)
+      },
       onNewPost: (msg) => {
         this.setState({ selected: msg })
       },

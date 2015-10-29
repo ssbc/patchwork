@@ -5,9 +5,14 @@ import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Notification } from '../notifications'
 import { countReplies } from '../../lib/msg-relation'
+import DropdownBtn from '../dropdown'
 import u from '../../lib/util'
 
 const MAX_CONTENT_HEIGHT = 400 // px
+const FLAG_DROPDOWN = [
+  { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
+  { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> },
+]
 
 function getUpvotes (msg) {
   if (!msg.votes) return []
@@ -85,11 +90,11 @@ export default class Summary extends React.Component {
   }
 
   renderPost() {
-    let msg = this.props.msg
-    let upvoters = getUpvotes(this.props.msg)
-    let isUpvoted = upvoters.indexOf(app.user.id) !== -1
-    let replies = countReplies(msg)
-    let unreadReplies = countReplies(msg, m => !m.isRead)
+    const msg = this.props.msg
+    const upvoters = getUpvotes(this.props.msg)
+    const isUpvoted = upvoters.indexOf(app.user.id) !== -1
+    const replies = countReplies(msg)
+    const unreadReplies = countReplies(msg, m => !m.isRead)
     return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')}>
       <div className="ctrls">
         <UserPic id={msg.value.author} />
@@ -110,7 +115,7 @@ export default class Summary extends React.Component {
         </div>
         <div className="signallers">
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
-          <a className="flag"><i className="fa fa-flag" /></a>
+          <DropdownBtn className="flag" items={FLAG_DROPDOWN} right onSelect={(reason)=>this.props.onFlag(msg, reason)}><i className="fa fa-flag" /></DropdownBtn>
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}

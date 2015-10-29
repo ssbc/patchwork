@@ -1,0 +1,30 @@
+.dropdown {
+  position: relative;
+  ul {
+    .elevation-menu;
+    position: absolute;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 5px 0;
+    margin: 0;
+    min-width: 80px;
+    li {
+      list-style: none;
+      padding: 5px 20px 5px 10px;
+      margin: 0;
+      color: #555;
+      cursor: pointer;
+      white-space: pre;
+      &:hover {
+        background: @blue1;
+        color: #fff;
+      }
+    }
+  }
+  &.closed ul {
+    display: none;
+  }
+  &.right ul {
+    right: 0;
+  }
+}
