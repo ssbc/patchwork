@@ -5,8 +5,14 @@ import { MsgLink, UserLink, UserLinks, UserPic, NiceDate, VerticalFilledContaine
 import { Block as BlockContent, Inline as InlineContent } from '../msg-content'
 import { isaReplyTo } from '../../lib/msg-relation'
 import Composer from '../composer'
+import DropdownBtn from '../dropdown'
 import app from '../../lib/app'
 import u from '../../lib/util'
+
+const FLAG_DROPDOWN = [
+  { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
+  { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> },
+]
 
 function getUpvotes (msg) {
   if (!msg.votes) return []
@@ -76,7 +82,7 @@ export class MsgView extends React.Component {
         </div>
         <div className="signallers">
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
-          <a className="flag"><i className="fa fa-flag" /></a>
+          <DropdownBtn className="flag" items={FLAG_DROPDOWN} right onSelect={(reason)=>this.props.onFlag(msg, reason)}><i className="fa fa-flag" /></DropdownBtn>
         </div>
         <div className="signals">
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
@@ -185,7 +191,7 @@ export class Thread extends React.Component {
           { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
-            return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} />
+            return <MsgView key={msg.key} msg={msg} forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} onFlag={()=>this.props.onFlag(msg)} />
           }) }
           <Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} />
         </div>
