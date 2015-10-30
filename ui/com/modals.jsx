@@ -5,8 +5,52 @@ import ref from 'ssb-ref'
 import schemas from 'ssb-msg-schemas'
 import Modal from 'react-modal'
 import app from '../lib/app'
-import { ModalBtn } from './index'
 import { SetupForm, RenameForm, InviteForm } from './forms'
+
+const MODAL_STYLES = {
+  overlay : {
+    position          : 'fixed',
+    top               : 0,
+    left              : 0,
+    right             : 0,
+    bottom            : 0,
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+    zIndex            : 1000
+  },
+  content : {
+    position                   : 'absolute',
+    top                        : '40px',
+    left                       : '40px',
+    right                      : '40px',
+    bottom                     : '40px',
+    boxShadow                  : '0px 24px 48px rgba(0, 0, 0, 0.2)',
+    borderRadius               : '0',
+    border                     : '0',
+    background                 : '#fff',
+    overflow                   : 'auto',
+    WebkitOverflowScrolling    : 'touch',
+    outline                    : 'none',
+    padding                    : '20px'
+  }
+}
+
+export class ModalBtn extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { isOpen: false }
+    this.on = {
+      open: () => { this.setState({ isOpen: true }) },
+      close: () => { this.setState({ isOpen: false }) }
+    }
+  }
+  render() {
+    let children = this.renderModal ? this.renderModal() : this.props.children
+    return <a onClick={this.on.open} className={this.props.className}>
+      {this.label || this.props.label}
+      <Modal isOpen={this.state.isOpen} onRequestClose={this.on.close} style={MODAL_STYLES}>{children}</Modal>
+    </a>
+  }
+}
 
 export class SetupModal extends React.Component {
   constructor(props) {
@@ -32,32 +76,7 @@ export class SetupModal extends React.Component {
   }
 
   render() {
-    let modalStyle = {
-      overlay : {
-        position          : 'fixed',
-        top               : 0,
-        left              : 0,
-        right             : 0,
-        bottom            : 0,
-        backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-        zIndex            : 1000
-      },
-      content : {
-        position                   : 'absolute',
-        top                        : '40px',
-        left                       : '40px',
-        right                      : '40px',
-        bottom                     : '40px',
-        border                     : '1px solid #ccc',
-        background                 : '#fff',
-        overflow                   : 'auto',
-        WebkitOverflowScrolling    : 'touch',
-        borderRadius               : '4px',
-        outline                    : 'none',
-        padding                    : '20px'
-      }
-    }
-    return <Modal isOpen={this.props.isOpen} onRequestClose={this.onClose.bind(this)} style={modalStyle}>
+    return <Modal isOpen={this.props.isOpen} onRequestClose={this.onClose.bind(this)} style={MODAL_STYLES}>
       <SetupForm onSubmit={this.onSubmit.bind(this)} />
     </Modal>
   }

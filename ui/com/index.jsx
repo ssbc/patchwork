@@ -60,49 +60,6 @@ export class UserBtn extends React.Component {
   }
 }
 
-export class ModalBtn extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { isOpen: false }
-    this.on = {
-      open: () => { this.setState({ isOpen: true }) },
-      close: () => { this.setState({ isOpen: false }) }
-    }
-  }
-  render() {
-    let modalStyle = xtend({
-      overlay : {
-        position          : 'fixed',
-        top               : 0,
-        left              : 0,
-        right             : 0,
-        bottom            : 0,
-        backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-        zIndex            : 1000
-      },
-      content : {
-        position                   : 'absolute',
-        top                        : '40px',
-        left                       : '40px',
-        right                      : '40px',
-        bottom                     : '40px',
-        border                     : '1px solid #ccc',
-        background                 : '#fff',
-        overflow                   : 'auto',
-        WebkitOverflowScrolling    : 'touch',
-        borderRadius               : '4px',
-        outline                    : 'none',
-        padding                    : '20px'
-      }
-    }, this.props.modalStyle)
-    let children = this.renderModal ? this.renderModal() : this.props.children
-    return <a onClick={this.on.open} className={this.props.className}>
-      {this.label || this.props.label}
-      <Modal isOpen={this.state.isOpen} onRequestClose={this.on.close} style={modalStyle}>{children}</Modal>
-    </a>
-  }
-}
-
 const startOfDay = moment().startOf('day')
 const lastWeek = moment().subtract(1, 'weeks')
 const lastYear = moment().subtract(1, 'years')
