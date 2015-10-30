@@ -45,13 +45,17 @@ export class SetupForm extends React.Component {
   render() {
     var isNew = !app.users.names[app.user.id]
 
-    return <div>
-      <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
-      <form onSubmit={this.onSubmit.bind(this)}>
-        <p><label>Your nickname: <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} /></label></p>
-        <p><button disabled={!this.state.isValid}>Save</button> {this.state.error}</p>
-      </form>
-    </div>
+    return <form onSubmit={this.onSubmit.bind(this)}>
+      <div className="toolbar">
+        {isNew ? '' : <button className="btn cancel" tabIndex="-1"><i className="fa fa-times" /> Discard</button>}
+        <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button> {this.state.error}
+      </div>
+      <fieldset>
+        <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
+        <div><label><span>nickname</span><input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} /></label></div>
+        <div><label><span>picture</span><input type="text" /></label></div>
+      </fieldset>
+    </form>
   }
 }
 
@@ -74,10 +78,10 @@ export class RenameForm extends React.Component {
   render() {
     return <div>
       <h2>Rename {this.props.name}</h2>
-      <p><small>You can rename anybody! Other people can see the name you choose, but it will only affect you.</small></p>
+      <div><small>You can rename anybody! Other people can see the name you choose, but it will only affect you.</small></div>
       <form onSubmit={this.on.submit}>
         <input type="text" value={this.state.name} onChange={this.on.change} />
-        <button>Save</button>
+        <button className="btn">Save</button>
       </form>
     </div>
   }
@@ -102,21 +106,21 @@ export class InviteForm extends React.Component {
   render() {
     let msg=''
     if (this.props.info)
-      msg = <p>{this.props.info}</p>
+      msg = <div>{this.props.info}</div>
     else if (this.props.error)
-      msg = <p>{this.props.error}</p>
+      msg = <div>{this.props.error}</div>
 
     return <div>
       <h3>Join a Public Node</h3>
       <form onSubmit={this.on.submit}>
         <input type="text" value={this.state.code} onChange={this.on.change} placeholder="Enter the invite code here" />
-        <button disabled={this.props.isDisabled}>Use Code</button>
+        <button className="btn" disabled={this.props.isDisabled}>Use Code</button>
       </form>
       {msg}
       <hr/>
-      <p><strong>Public nodes help you communicate across the Internet.</strong></p>
-      <p>Neckbeards can setup their own public nodes. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the server documentation here.</a></p>
-      <p>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</p>
+      <div><strong>Public nodes help you communicate across the Internet.</strong></div>
+      <div>Neckbeards can setup their own public nodes. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the server documentation here.</a></div>
+      <div>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
     </div>
   }
 }

@@ -1,0 +1,77 @@
+.ReactModal__Content form {
+  padding: 20px 0;
+  font-size: 110%;
+  font-weight: 100;
+
+  .toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #eee;
+    margin: 0;
+    box-shadow: none;
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 0;
+      font-size: 175%;
+      font-weight: 100;
+      &:focus {
+        outline: 0;
+      }
+      &:disabled {
+        color: #aaa !important;
+        background: #eee !important;
+        box-shadow: none !important;
+      }
+
+      &.ok {
+        float: right;
+        &:hover, &:focus {
+          background: @blue1;
+          color: #fff;
+        }
+      }
+      &.cancel {  
+        font-size: 150%;
+        padding: 13px 20px 12px;
+        &:hover, &:focus {
+          background: red;
+          color: #fff;
+        }
+      }
+    }
+  }
+  h1 {
+    font-size: 250%;
+    font-weight: 100;
+    margin-left: 80px;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    width: 450px;
+    margin: 0 auto;
+    & > div {
+      margin-bottom: 10px;
+    }
+  }
+  label span {
+    font-size: 90%;
+    width: 80px;
+    display: inline-block;
+    text-align: right;
+  }
+  input {
+    font-size: 125%;
+    margin: 0 2px;
+    padding: 2px 6px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+    &:focus {
+      outline: 0;
+      background: #fafafa;
+    }
+  }
+}
