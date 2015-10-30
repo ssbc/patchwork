@@ -4,20 +4,50 @@ import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import mentionslib from '../lib/mentions'
-import { RenameModalBtn, FlagUserModalBtn } from './modals'
+import { RenameModalBtn } from './modals'
 import { UserLink, UserPic, UserBtn } from './index'
+import DropdownBtn from './dropdown'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
 
-export class UserInfoHeader extends React.Component {
+const FLAG_DROPDOWN = [
+  { value: 'spam',  label: <span><i className="fa fa-flag" /> Spammer</span> },
+  { value: 'abuse', label: <span><i className="fa fa-flag" /> Abusive</span> },
+  { value: false,   label: <span><i className="fa fa-flag" /> Personal reasons</span> }
+]
+
+// helper to refresh state any time the main application state updates
+// - this should be replaced -- the entire `app` construct is a bit much
+class AutoRefreshingComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = this.computeState()
+  }
+  componentDidMount() {
+    this.refreshState()
+    app.on('update:all', this.refreshState.bind(this)) // re-render on app state updates
+  }
+  componentWillReceiveProps(newProps) {
+    this.refreshState(newProps)
+  }
+  componentWillUnmount() {
+    app.removeListener('update:all', this.refreshState.bind(this))    
+  }
+  computeState(props) {
+    // should be overwritten by sublcass
+  }
+  refreshState(props) {
+    this.setState(this.computeState(props))
+  }
+}
 
-    // helpers to refresh state and render after making changes
-    this.refreshState = (pid) => this.setState(this.computeState(pid))
-    let reload = () => { app.fetchLatestState(this.refreshState) }
+export class UserInfoHeader extends AutoRefreshingComponent {
+  constructor(props) {
+    super(props)
+
+    // helper to refresh state and render after making changes
+    const reload = () => { app.fetchLatestState(this.refreshState.bind(this)) }
 
     // event handlers
     this.on = {
@@ -39,60 +69,37 @@ export class UserInfoHeader extends React.Component {
           reload()
         })
       },
-      flag: (flag, reason) => {
-        // prep text
-        mentionslib.extract(reason, (err, mentions) => {
-          if (err) {
-            if (err.conflict)
-              app.issue('Error While Publishing', 'You follow multiple people with the name "'+err.name+'." Go to the homepage to resolve this before publishing.')
-            else
-              app.issue('Error While Publishing', err, 'This error occurred while trying to extract the mentions from the text of a flag post.')
-            return
-          }
-
-          // publish flag and contact msgs
-          var done = multicb({ pluck: 1, spread: true })
-          app.ssb.publish(schemas.block(this.props.pid), done())
-          app.ssb.publish(schemas.flag(this.props.pid, flag||'other'), done())
-          done((err, blockMsg, flagMsg) => {
-            if (err) return app.issue('Failed to publish flag msgs', err, 'Profile view onFlag')
-
-            // publish a post with the reason
-            if (reason.trim()) {
-              app.ssb.publish(schemas.post(reason, flagMsg.key, flagMsg.key, (mentions.length) ? mentions : null), function (err) {
-                if (err) return app.issue('Failed to publish flag reason msg', err, 'Profile view onFlag')
-                reload()
-              })
-            } else
-              reload()
-          })
+      flag: (reason) => {
+        // publish vote and contact messages
+        const voteMsg = schemas.vote(this.props.pid, -1, reason)
+        const contactMsg = schemas.block(this.props.pid)
+        let done = multicb()
+        app.ssb.publish(voteMsg, done())
+        app.ssb.publish(contactMsg, done())
+        done(err => {
+          if (err)
+            return app.issue('Failed to publish flag', err, 'Happened in on.flag of UserInfo')
+          reload()
         })
       },
-      unflag: () => {
-        var done = multicb()
-        app.ssb.publish(schemas.unblock(this.props.pid), done())
-        app.ssb.publish(schemas.unflag(this.props.pid), done())
-        done((err) => {
-          if (err) return app.issue('Failed to publish unflag msgs', err, 'Profile view onUnflag')
+      unflag: (reason) => {
+        // publish vote and contact messages
+        const voteMsg = schemas.vote(this.props.pid, 0)
+        const contactMsg = schemas.unblock(this.props.pid)
+        let done = multicb()
+        app.ssb.publish(voteMsg, done())
+        app.ssb.publish(contactMsg, done())
+        done(err => {
+          if (err)
+            return app.issue('Failed to publish update', err, 'Happened in on.unflag of UserInfo')
           reload()
         })
       }
     }
   }
-  componentDidMount() {
-    this.refreshState() // trigger render update
-    app.on('update:all', this.refreshState) // re-render on app state updates
-  }
 
-  componentWillReceiveProps(newProps) {
-    this.refreshState(newProps.pid) // trigger render update
-  }
-  componentWillUnmount() {
-    app.removeListener('update:all', this.refreshState)    
-  }
-
-  computeState(pid) {
-    pid = pid || this.props.pid
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
     return {
       profile:     app.users.profiles[pid],
       name:        app.users.names[pid] || u.shortString(pid, 6),
@@ -125,22 +132,8 @@ export class UserInfoHeader extends React.Component {
       // )
     }
 
-    // flag controls
-    var flagMsgs
-    if (this.state.flaggers.length) {
-      // :TODO:
-      // flagMsgs = h('.profile-flags.message-feed')
-      // flaggers.forEach(function (id) {
-      //   var flag = social.flags(id, pid)
-      //   if (flag.reason && flag.key) {
-      //     app.ssb.get(flag.key, function (err, flagMsg) {
-      //       if (err) console.error(err)
-      //       if (flagMsg) flagMsgs.appendChild(com.message({ key: flag.key, value: flagMsg }))
-      //     })
-      //   }
-      // })
-    }
-
+    const nfollowers = this.state.followers1.length + this.state.followers2.length
+    const nflaggers = this.state.flaggers.length
     return <div className="user-info">
       <div className="avatar">
         <img src={u.profilePicUrl(this.props.pid)} />
@@ -153,7 +146,7 @@ export class UserInfoHeader extends React.Component {
             <a className="btn" onClick={()=>{app.emit('modal:setup', true)}}><i className="fa fa-wrench" /> Edit Profile</a> :
             <span className="btn-group">
               { (this.state.hasBlocked) ?
-                'BLOCKED' :
+                <span className="btn disabled">Blocked</span> :
                 <a className="btn"
                   onClick={this.on.toggleFollow}>
                   {(this.state.isFollowing) ?
@@ -161,15 +154,15 @@ export class UserInfoHeader extends React.Component {
                     <span><i className="fa fa-user-plus" /> Follow</span> }
                 </a> }
               <RenameModalBtn name={this.state.name} onSubmit={this.on.rename} className="btn" />
-              { (!this.state.hasFlagged) ?
-                <FlagUserModalBtn name={this.state.name} onSubmit={this.on.flag} className="btn" /> :
-                <a className="btn" onClick={this.on.unflag}>Unflag</a> }
+              { (this.state.hasBlocked) ?
+                <a className="btn" onClick={this.on.unflag}><i className="fa fa-times" /> Unflag</a> :
+                <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.on.flag}><i className="fa fa-flag" /> Flag</DropdownBtn>  }
             </span>
           }
         </div>
         <table>
-          <tr><td>{this.state.followers1.length + this.state.followers2.length}</td><td>followers</td></tr>
-          <tr><td>{this.state.flaggers.length}</td><td>flags</td></tr>
+          <tr><td>{nfollowers}</td><td>follower{nfollowers===1?'':'s'}</td></tr>
+          <tr><td>{nflaggers}</td><td>flag{nflaggers===1?'':'s'}</td></tr>
         </table>
       </div>
     </div>
@@ -183,28 +176,71 @@ function sortFollowedFirst (a, b) {
   return bFollowed - aFollowed  
 }
 
-export class UserInfoFollowers extends React.Component {
+export class UserInfoFollowers extends AutoRefreshingComponent {
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
+    return { followers: social.followers(pid).sort(sortFollowedFirst) }
+  }
   render() {
-    const pid = this.props.pid
-    const followers = social.followers(pid).sort(sortFollowedFirst)
     return <div className="user-info-card">
       <h3>followers</h3>
-      <div>
-        {followers.map((id, i) => <UserBtn key={'follower'+i} id={id} />)}
+      <div className="content">
+        {this.state.followers.map((id, i) => <UserBtn key={'follower'+i} id={id} />)}
       </div>
     </div>
   }
 }
 
-export class UserInfoFolloweds extends React.Component {
+export class UserInfoFolloweds extends AutoRefreshingComponent {
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
+    return { followeds: social.followeds(pid).sort(sortFollowedFirst) }
+  }
   render() {
-    const pid = this.props.pid
-    const followeds = social.followeds(pid).sort(sortFollowedFirst)
     return <div className="user-info-card">
       <h3>following</h3>
-      <div>
-        {followeds.map((id, i) => <UserBtn key={'followed'+i} id={id} />)}
+      <div className="content">
+        {this.state.followeds.map((id, i) => <UserBtn key={'followed'+i} id={id} />)}
       </div>
+    </div>
+  }
+}
+
+
+export class UserInfoFlags extends AutoRefreshingComponent {
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
+    return { flaggers: social.followedFlaggers(app.user.id, pid, true) }
+  }
+  render() {
+    const pid = this.props.pid
+    const flaggers = this.state.flaggers
+    if (flaggers.length === 0)
+      return <span />
+
+    // split flags up into groups
+    let flagsGroupedByReason = {}
+    flaggers.forEach(userId => {
+      try {
+        const flagMsg = app.users.profiles[pid].assignedBy[userId].flagged
+        const r = flagMsg.reason||'other'
+        flagsGroupedByReason[r] = flagsGroupedByReason[r] || []
+        flagsGroupedByReason[r].push(userId)
+      } catch (e) {}
+    })
+    return <div className="user-info-card">
+      { Object.keys(flagsGroupedByReason).map(reason => {
+        let reasonLabel
+        if      (reason === 'spam')  reasonLabel = 'spamming'
+        else if (reason === 'abuse') reasonLabel = 'abusive behavior'
+        else                         reasonLabel = 'personal reasons'
+        return <div key={'flag-'+reason}>
+          <h3>flagged for {reasonLabel} by</h3>
+          <div className="content">
+            {flagsGroupedByReason[reason].map((id, i) => <UserBtn key={'flag'+i} id={id} />)}
+          </div>
+        </div>
+      }) }
     </div>
   }
 }

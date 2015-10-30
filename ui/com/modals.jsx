@@ -6,7 +6,7 @@ import schemas from 'ssb-msg-schemas'
 import Modal from 'react-modal'
 import app from '../lib/app'
 import { ModalBtn } from './index'
-import { SetupForm, RenameForm, FlagUserForm, InviteForm } from './forms'
+import { SetupForm, RenameForm, InviteForm } from './forms'
 
 export class SetupModal extends React.Component {
   constructor(props) {
@@ -100,20 +100,6 @@ export class RenameModalBtn extends ModalBtn {
   }
   renderModal() {
     return <RenameForm name={this.props.name} onSubmit={this.onSubmit.bind(this)} />
-  }
-}
-
-export class FlagUserModalBtn extends ModalBtn {
-  constructor(props) {
-    super(props)
-    this.label = <span><i className="fa fa-flag" /> Flag</span>
-  }
-  onSubmit(flag, reason) {
-    this.on.close()
-    this.props.onSubmit(flag, reason)
-  }
-  renderModal() {
-    return <FlagUserForm name={this.props.name} onSubmit={this.onSubmit.bind(this)} />
   }
 }
 

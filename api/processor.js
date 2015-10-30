@@ -89,37 +89,35 @@ module.exports = function (sbot, db, state, emit) {
 
     vote: function (msg) {
       // newsfeed & notifications index: add votes on your messages
-      var link = mlib.link(msg.value.content.vote, 'msg')
-      if (link && state.mymsgs.indexOf(link.link) >= 0) {
+      var msgLink = mlib.link(msg.value.content.vote, 'msg')
+      if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
         state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
         emit('index-change', { index: 'newsfeed' })
         state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
         emit('index-change', { index: 'notifications' })
       }
-    },
-
-    flag: function (msg) {
-      // inbox index
-      var link = mlib.link(msg.value.content.flag, 'msg')
-      if (sbot.id != msg.value.author && link && state.mymsgs.indexOf(link.link) >= 0) {
-        var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-        attachIsRead(row)
-        emit('index-change', { index: 'inbox' })
-      }
 
       // user flags
-      var link = mlib.link(msg.value.content.flag, 'feed')
-      if (link) {
+      var userLink = mlib.link(msg.value.content.vote, 'feed')
+      if (userLink) {
         var source = getProfile(msg.value.author)
-        var target = getProfile(link.link)
+        var target = getProfile(userLink.link)
+        source.assignedTo[target.id] = source.assignedTo[target.id] || {}
+        target.assignedBy[source.id] = target.assignedBy[source.id] || {}
 
-        var flag = link.reason ? { key: msg.key, reason: link.reason } : false
-        source.assignedTo[target.id].flagged = flag
-        target.assignedBy[source.id].flagged = flag
-
-        // track if by local user
-        if (source.id === sbot.id)
-          target.flagged = flag
+        if (userLink.value < 0) {
+          // a flag
+          source.assignedTo[target.id].flagged = userLink
+          target.assignedBy[source.id].flagged = userLink
+          if (source.id === sbot.id)
+            target.flagged = userLink
+        } else {
+          // not a flag
+          source.assignedTo[target.id].flagged = false
+          target.assignedBy[source.id].flagged = false
+          if (source.id === sbot.id)
+            target.flagged = false
+        }
       }
     }
   }

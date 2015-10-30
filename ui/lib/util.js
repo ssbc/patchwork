@@ -403,10 +403,10 @@ exports.compileThreadVotes = function (thread) {
     thread.related.forEach(compileMsgVotes)
 
   function compileMsgVotes (msg) {
+    msg.votes = {}
     if (!msg.related || !msg.related.length)
       return
 
-    msg.votes = {}
     msg.related.forEach(function (r) {
       var c = r.value.content
       if (c.type === 'vote' && c.vote && 'value' in c.vote)

@@ -5,7 +5,7 @@ import Card from './msg-list/card'
 import Oneline from './msg-list/oneline'
 import Tabs from './tabs'
 import { VerticalFilledContainer } from './index'
-import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers } from './user-info'
+import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } from './user-info'
 import app from '../lib/app'
 
 const VIEWS = [
@@ -32,9 +32,8 @@ export default class UserProfile extends React.Component {
   render() {
     // HACK
     // there's too much built into the MsgList component, but I dont have time to refactor
-    // until MsgList can be decomposed, we stuff custom behaviors into it
-    // how:
-    // - render 1 way for about, a wholly different way for msg lists
+    // until MsgList can be decomposed:
+    // - render 1 way for about, and a different way for msg lists
     // - use the hero and toolbar attributes to maintain consistency (really shouldnt be part of MsgList)
     // - also, abuse the key attr on MsgList to get a rerender on view change
     const currentView = this.state.currentView
@@ -51,6 +50,7 @@ export default class UserProfile extends React.Component {
         {hero()}
         <div className="toolbar">{toolbar()}</div>
         <div className="user-profile-about">
+          <UserInfoFlags pid={this.props.pid} />
           <UserInfoFollowers pid={this.props.pid} />
           <UserInfoFolloweds pid={this.props.pid} />
         </div>
