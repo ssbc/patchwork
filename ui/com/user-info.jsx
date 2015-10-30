@@ -23,22 +23,19 @@ class AutoRefreshingComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = this.computeState()
+    this.refreshState = props => this.setState(this.computeState(props))
   }
   componentDidMount() {
-    this.refreshState()
-    app.on('update:all', this.refreshState.bind(this)) // re-render on app state updates
+    app.on('update:all', this.refreshState) // re-render on app state updates
   }
   componentWillReceiveProps(newProps) {
     this.refreshState(newProps)
   }
   componentWillUnmount() {
-    app.removeListener('update:all', this.refreshState.bind(this))    
+    app.removeListener('update:all', this.refreshState)    
   }
   computeState(props) {
     // should be overwritten by sublcass
-  }
-  refreshState(props) {
-    this.setState(this.computeState(props))
   }
 }
 
