@@ -77,7 +77,8 @@ export class SetupModal extends React.Component {
       }
     }
     if (values.image) {
-      const selfImg = app.users.profiles[app.user.id].self.image
+      const profile = app.users.profiles[app.user.id]
+      const selfImg = profile && profile.self.image
       if (!selfImg || values.image.link !== selfImg.link) {
         m++
         app.ssb.publish(schemas.image(app.user.id, values.image), function (err) {
