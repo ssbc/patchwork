@@ -143,8 +143,8 @@ export default class ImageInput extends React.Component {
     return <div className="image-input">
       <div><label><span>{this.props.label}</span><input ref="fileInput" type="file" accept="image/*" onChange={this.onFileChosen.bind(this)} /></label></div>
       { this.state.hasImg ? 
-        <div>
-          <div className="image-input-ctrls">
+        <div className="image-input-ctrls">
+          <div>
             { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
             <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} />
           </div>
