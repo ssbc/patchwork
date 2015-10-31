@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import ImageInput from './image-input'
 import app from '../lib/app'
 
 export class SetupForm extends React.Component {
@@ -39,21 +40,48 @@ export class SetupForm extends React.Component {
 
   onSubmit(e) {
     e.preventDefault()
-    this.props.onSubmit(this.state.name)
+    const canvas = this.refs.imageInputContainer.getDOMNode().querySelector('canvas')
+    if (canvas) {
+      ImageInput.uploadCanvasToBlobstore(canvas, (err, hasher) => {
+        const imageLink = {
+          link: '&'+hasher.digest,
+          size: hasher.size,
+          type: 'image/png',
+          width: 512,
+          height: 512
+        }
+        this.props.onSubmit({ name: this.state.name, image: imageLink })
+      })
+    } else {
+      this.props.onSubmit({ name: this.state.name })      
+    }
+  }
+
+  onCancel(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    this.props.onRequestClose()
+  }
+
+  getCurrentImg() {
+    const profile = app.users.profiles[app.user.id]
+    if (profile && profile.self.image)
+      return 'http://localhost:7777/' + profile.self.image.link
   }
 
   render() {
-    var isNew = !app.users.names[app.user.id]
+    const isNew = !app.users.names[app.user.id]
+    const currentImg = this.getCurrentImg()
 
     return <form onSubmit={this.onSubmit.bind(this)}>
       <div className="toolbar">
-        {isNew ? '' : <button className="btn cancel" tabIndex="-1"><i className="fa fa-times" /> Discard</button>}
+        {isNew ? '' : <button className="btn cancel" tabIndex="-1" onClick={this.onCancel.bind(this)}><i className="fa fa-times" /> Discard</button>}
         <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button> {this.state.error}
       </div>
       <fieldset>
         <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
         <div><label><span>nickname</span><input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} /></label></div>
-        <div><label><span>picture</span><input type="text" /></label></div>
+        <div ref="imageInputContainer"><ImageInput label="picture" current={currentImg} /></div>
       </fieldset>
     </form>
   }

@@ -1,5 +1,6 @@
 .ReactModal__Content form {
-  padding: 20px 0;
+  height: 100%;
+  overflow: auto;
   font-size: 110%;
   font-weight: 100;
 
@@ -51,7 +52,7 @@
   fieldset {
     border: 0;
     padding: 0;
-    width: 450px;
+    width: 514px; // 512px for image + 2px for image's border
     margin: 0 auto;
     & > div {
       margin-bottom: 10px;
@@ -72,6 +73,23 @@
     &:focus {
       outline: 0;
       background: #fafafa;
+    }
+    &[type="file"] {
+      width: 195px;
+    }
+    &[type="range"] {
+      width: 512px;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  .image-input {
+    padding-bottom: 50px;
+    .image-input-ctrls {
+      margin: 10px 0;
+    }
+    canvas {
+      border: 1px solid #eee;
     }
   }
 }

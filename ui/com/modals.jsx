@@ -57,16 +57,38 @@ export class SetupModal extends React.Component {
     super(props)
   }
 
-  onSubmit(name) {
-    if (!name.trim())
-      return
-    if (name === app.users.names[app.user.id])
-      return this.onClose()
-    // publish
-    app.ssb.publish(schemas.about(app.user.id, name), function (err) {
-      if (err) app.issue('Error While Publishing', err, 'Setup modal publishing new about msg')
-      else app.fetchLatestState()
-    })
+  onSubmit(values) {
+    let n = 0, m = 0
+    const done = () => {
+      if (++n >= m) {
+        app.fetchLatestState()
+        this.onClose()
+      }
+    }
+
+    if (values.name) {
+      if (values.name !== app.users.names[app.user.id]) {
+        m++
+        app.ssb.publish(schemas.name(app.user.id, values.name), function (err) {
+          if (err)
+            app.issue('Error While Publishing', err, 'Setup modal publishing new about msg')
+          done()
+        })
+      }
+    }
+    if (values.image) {
+      const selfImg = app.users.profiles[app.user.id].self.image
+      if (!selfImg || values.image.link !== selfImg.link) {
+        m++
+        app.ssb.publish(schemas.image(app.user.id, values.image), function (err) {
+          if (err)
+            app.issue('Error While Publishing', err, 'Setup modal publishing new about msg')
+          done()
+        })
+      }
+    }
+    if (m === 0)
+      done()
   }
 
   onClose() {
@@ -77,7 +99,7 @@ export class SetupModal extends React.Component {
 
   render() {
     return <Modal isOpen={this.props.isOpen} onRequestClose={this.onClose.bind(this)} style={MODAL_STYLES}>
-      <SetupForm onSubmit={this.onSubmit.bind(this)} />
+      <SetupForm onSubmit={this.onSubmit.bind(this)} onRequestClose={this.onClose.bind(this)} />
     </Modal>
   }
 
