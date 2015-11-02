@@ -58,24 +58,42 @@
       margin-bottom: 10px;
     }
   }
-  label span {
-    font-size: 90%;
-    width: 80px;
-    display: inline-block;
-    text-align: right;
+  label {
+    span {
+      display: inline-block;
+      width: 70px;
+      margin-right: 10px;
+      text-align: right;
+    }
+    .btn { 
+      border: 1px solid #ccc;
+      color: #333;
+    }
+    p {
+      margin-left: 80px;
+      color: red;
+    }
   }
   input {
     font-size: 125%;
-    margin: 0 2px;
-    padding: 2px 6px;
-    border: 0;
-    border-bottom: 1px solid #ccc;
     &:focus {
       outline: 0;
       background: #fafafa;
     }
+    &[type="text"] {
+      transition: background 0.2s, box-shadow 0.2s;
+      padding: 2px 6px;
+      border: 1px solid #aaa;
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
+      border-radius: 2px;
+      background: #fafafa;
+      &:focus {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background: #fff;
+      }
+    }
     &[type="file"] {
-      width: 195px;
+      display: none;
     }
     &[type="range"] {
       width: 512px;

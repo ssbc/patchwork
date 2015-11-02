@@ -59,6 +59,14 @@ export default class ImageInput extends React.Component {
     }
   }
 
+  onClickFile(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    const fileInput = this.refs.fileInput.getDOMNode()
+    if (fileInput)
+      fileInput.click()
+  }
+
   onFileChosen(e) {
     this.setState({ editorMsg: 'loading...', hasImg: true })
 
@@ -141,10 +149,16 @@ export default class ImageInput extends React.Component {
 
   render() {
     return <div className="image-input">
-      <div><label><span>{this.props.label}</span><input ref="fileInput" type="file" accept="image/*" onChange={this.onFileChosen.bind(this)} /></label></div>
+      <div>
+        <label>
+          <span>{this.props.label}</span>
+          <input ref="fileInput" type="file" accept="image/*" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
+          <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
+        </label>
+      </div>
       { this.state.hasImg ? 
         <div className="image-input-ctrls">
-          <div>
+          <div style={{color: 'gray'}}>
             { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
             <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} />
           </div>

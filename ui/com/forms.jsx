@@ -76,11 +76,17 @@ export class SetupForm extends React.Component {
     return <form onSubmit={this.onSubmit.bind(this)}>
       <div className="toolbar">
         {isNew ? '' : <button className="btn cancel" tabIndex="-1" onClick={this.onCancel.bind(this)}><i className="fa fa-times" /> Discard</button>}
-        <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button> {this.state.error}
+        <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button>
       </div>
       <fieldset>
         <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
-        <div><label><span>nickname</span><input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} /></label></div>
+        <div>
+          <label>
+            <span>nickname</span>
+            <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} />
+            { this.state.error ? <p className="error">{this.state.error}</p> : '' }
+          </label>
+        </div>
         <div ref="imageInputContainer"><ImageInput label="picture" current={currentImg} /></div>
       </fieldset>
     </form>
