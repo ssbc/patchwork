@@ -5,9 +5,9 @@ import Card from '../com/msg-list/card'
 
 const FILTERS = [
   { label: 'All', fn: msg => true },
-  { label: 'Digs', fn: msg => true }, // TODO
-  { label: 'Follows', fn: msg => true }, // TODO
-  { label: 'Mentions', fn: msg => msg.mentionsUser }
+  { label: <span><i className="fa fa-hand-peace-o"/> Likes</span>, fn: msg => true }, // TODO
+  { label:<span><i className="fa fa-user-plus"/> Follows</span>, fn: msg => true }, // TODO
+  { label: <span><i className="fa fa-at"/> Mentions</span>, fn: msg => msg.mentionsUser }
 ]
 
 export default class Notifications extends React.Component {
