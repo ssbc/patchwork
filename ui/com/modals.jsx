@@ -4,6 +4,7 @@ import xtend from 'xtend'
 import ref from 'ssb-ref'
 import schemas from 'ssb-msg-schemas'
 import Modal from 'react-modal'
+import Composer from './composer'
 import app from '../lib/app'
 import { SetupForm, RenameForm, InviteForm } from './forms'
 
@@ -46,7 +47,7 @@ export class ModalBtn extends React.Component {
     }
   }
   render() {
-    let children = this.renderModal ? this.renderModal() : this.props.children
+    const children = this.renderModal ? this.renderModal() : this.props.children
     return <a onClick={this.on.open} className={this.props.className}>
       {this.label || this.props.label}
       <Modal isOpen={this.state.isOpen} onRequestClose={this.on.close} style={MODAL_STYLES}>{children}</Modal>
@@ -108,7 +109,15 @@ export class SetupModal extends React.Component {
       <SetupForm onSubmit={this.onSubmit.bind(this)} onRequestClose={this.onClose.bind(this)} />
     </Modal>
   }
+}
 
+export class FABComposerModal extends ModalBtn {
+  render() {
+    return <div className="fab">
+      <a className="primary" onClick={this.on.open} data-label={this.props.label||'Compose'}><i className={'fa fa-'+(this.props.icon||'pencil')} /></a>
+      <Modal isOpen={this.state.isOpen} onRequestClose={this.on.close} style={MODAL_STYLES}><Composer onSend={this.on.close} /></Modal>
+    </div>
+  }
 }
 
 export class PromptModalBtn extends ModalBtn {

@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import { ModalBtn } from './modals'
 
 export default class FAB extends React.Component {
   render() {

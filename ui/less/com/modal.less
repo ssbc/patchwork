@@ -1,46 +1,53 @@
-.ReactModal__Content form {
-  height: 100%;
-  overflow: auto;
-  font-size: 110%;
-  font-weight: 100;
+.ReactModal__Content {
+  form {
+    height: 100%;
+    overflow: auto;
+    font-size: 110%;
+    font-weight: 100;
 
-  .toolbar {
-    background: #eee;
-    margin: 0;
-    box-shadow: none;
-    
-    .btn {
-      padding: 10px 20px;
-      border-radius: 0;
-      font-size: 175%;
-      font-weight: 100;
-      &:focus {
-        outline: 0;
-      }
-      &:disabled {
-        color: #aaa !important;
-        background: #eee !important;
-        box-shadow: none !important;
-      }
-
-      &.ok {
-        float: right;
-        &:hover, &:focus {
-          background: @blue1;
-          color: #fff;
+    .toolbar {
+      background: #eee;
+      margin: 0;
+      box-shadow: none;
+      
+      .btn {
+        padding: 10px 20px;
+        border-radius: 0;
+        font-size: 175%;
+        font-weight: 100;
+        &:focus {
+          outline: 0;
         }
-      }
-      &.cancel {  
-        font-size: 150%;
-        padding: 13px 20px 12px;
-        &:hover, &:focus {
-          background: red;
-          color: #fff;
+        &:disabled {
+          color: #aaa !important;
+          background: #eee !important;
+          box-shadow: none !important;
+        }
+
+        &.ok {
+          float: right;
+          &:hover, &:focus {
+            background: @blue1;
+            color: #fff;
+          }
+        }
+        &.cancel {  
+          font-size: 150%;
+          padding: 13px 20px 12px;
+          &:hover, &:focus {
+            background: red;
+            color: #fff;
+          }
         }
       }
     }
+    fieldset {
+      padding: 0 20px 20px;
+    }
   }
-  fieldset {
-    padding: 0 20px 20px;
+  .composer {
+    width: 528px;
+    box-shadow: none;
+    margin: 0;
   }
 }

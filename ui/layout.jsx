@@ -2,7 +2,7 @@
 import React from 'react'
 import app from './lib/app'
 import LeftNav from './views/leftnav'
-import { SetupModal } from './com/modals'
+import { SetupModal, FABComposerModal } from './com/modals'
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -28,6 +28,7 @@ export default class Layout extends React.Component {
   render() {
     return <div className="layout-rows">
       <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <FABComposerModal />
       <div className="layout-columns">
         <LeftNav
           location={this.props.location.pathname}

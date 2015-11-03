@@ -11,7 +11,6 @@ import Notifications from '../notifications'
 import Composer from '../composer'
 import { Thread } from '../msg-view'
 import Tabs from '../tabs'
-import FAB from '../fab'
 import { VerticalFilledContainer, verticalFilled } from '../'
 import { isaReplyTo } from '../../lib/msg-relation'
 import app from '../../lib/app'
@@ -364,7 +363,6 @@ export default class MsgList extends React.Component {
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
-      <FAB label="Compose" icon="pencil" onClick={()=>this.setState({ selected: 'composer' })} />
       <div className="msg-list-items">
         <Infinite
           ref="container"
@@ -396,11 +394,9 @@ export default class MsgList extends React.Component {
         </Infinite>
       </div>
       <div className="msg-list-view">
-        { this.state.selected === 'composer' ?
-          <ThreadComposer onCancel={this.handlers.onDeselect} onSend={this.handlers.onNewPost.bind(this)} /> :
-          this.state.selected ? 
-            <Thread thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
-            '' }
+        { this.state.selected ? 
+          <Thread thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
+          '' }
       </div>
     </div>
   }
