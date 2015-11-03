@@ -26,7 +26,7 @@ export default class Inbox extends React.Component {
         ListItem={Oneline}
         filters={FILTERS}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Your inbox is empty"
+        emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}
         cursor={this.cursor} />
     </div>

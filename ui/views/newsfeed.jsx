@@ -26,7 +26,7 @@ export default class NewsFeed extends React.Component {
         ListItem={Card}
         filters={FILTERS}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Your feed is empty"
+        emptyMsg="Your newsfeed is empty."
         source={app.ssb.patchwork.createNewsfeedStream}
         cursor={this.cursor} />
     </div>

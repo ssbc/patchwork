@@ -23,7 +23,7 @@ export default class Bookmarks extends React.Component {
         threads
         ListItem={Oneline}
         filters={FILTERS}
-        emptyMsg="You have not bookmarked any messages"
+        emptyMsg="You have not bookmarked any messages."
         source={app.ssb.patchwork.createBookmarkStream}
         cursor={this.cursor} />
     </div>

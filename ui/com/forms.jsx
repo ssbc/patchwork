@@ -155,7 +155,7 @@ export class InviteForm extends React.Component {
           </div>
           {helpText}
           <div><strong>Pubs let you connect globally.</strong></div>
-          <div>{'Don\'t have an invite? You\'ll have to find an operator and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
+          <div>{'Don\'t have an invite? You\'ll have to find a pub operator and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
           <div>Neckbeards can setup their own pubs. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the setup documentation here.</a></div>
         </fieldset>
       </form>

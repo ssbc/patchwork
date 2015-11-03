@@ -379,9 +379,11 @@ export default class MsgList extends React.Component {
             { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
           </div>
           { isEmpty ?
-            (this.state.searchQuery ?
-              <em>No results found</em> :
-              (this.props.emptyMsg || <em>No new messages</em>))
+            <div className="empty-msg">
+              { this.state.searchQuery ?
+                'No results found.' :
+                (this.props.emptyMsg || 'No new messages.') }
+            </div>
             :
             <div>
               { this.state.msgs.map((m, i) => {
