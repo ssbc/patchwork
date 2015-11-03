@@ -4,10 +4,21 @@
   background: #ffffff;
 
   .composer-audience {
-    padding: 10px;
+    background: #eee;
+    box-shadow: inset 0 -2px 4px rgba(0,0,0,0.05);
+    strong, a {
+      padding: 10px 16px;
+      display: inline-block;
+    }
+    strong {
+      background: #fff;
+    }
   }
   .composer-recps {
-    padding: 0 10px 10px;
+    padding: 10px;
+    border: 1px solid #eee;
+    margin: 5px;
+    font-weight: 300;
     input {
       border: 0;
       margin-left: 5px;
@@ -38,11 +49,13 @@
 
     textarea {
       display: block;
-      width: 96%;// should be 100% but it overflows, cant figure out how to fix
+      width: 496px;
       resize: none;
-      border: 0;
+      border: 1px solid #eee;
       min-height: 140px;
       padding: 10px;
+      margin: 5px;
+
       &:active, &:focus {
         outline: 0;
       }
@@ -57,6 +70,7 @@
   .composer-ctrls {
     background: #eee;
     font-weight: 300;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
     
     .btn {
       padding: 10px 20px;

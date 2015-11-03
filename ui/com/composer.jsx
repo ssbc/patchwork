@@ -1,6 +1,5 @@
 'use babel'
 import React from 'react'
-import { Block as MdBlock } from './markdown'
 import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
@@ -23,7 +22,7 @@ class ComposerAudience extends React.Component {
     
     let pubBtn = ( this.props.isPublic) ? <strong><i className="fa fa-group" /> Public</strong> : <a onClick={this.props.onSetPublic}><i className="fa fa-group" /> Public</a>
     let priBtn = (!this.props.isPublic) ? <strong><i className="fa fa-lock" /> Private</strong> : <a onClick={this.props.onSetPrivate}><i className="fa fa-lock" /> Private</a>
-    return <div className="composer-audience">{pubBtn} or {priBtn}</div>
+    return <div className="composer-audience">{pubBtn}{priBtn}</div>
   }
 }
 
@@ -50,12 +49,11 @@ class ComposerRecps extends React.Component {
   }
   setupSuggest() {
     // setup the suggest-box
-    let input = this.refs && this.refs.input
+    const input = this.refs && this.refs.input
     if (!input || input.isSetup)
       return
     input.isSetup = true
-    let suggestOptions = app.suggestOptions['@'].filter((o) => o.id !== app.user.id)
-    suggestBox(input, { any: suggestOptions }, { cls: 'msg-recipients' })
+    suggestBox(input, { any: app.suggestOptions['@'] }, { cls: 'msg-recipients' })
     input.addEventListener('suggestselect', this.onSuggestSelect.bind(this))
   }
 
@@ -128,7 +126,6 @@ export default class Composer extends React.Component {
     // setup state (pulling from thread)
     this.state = {
       isPublic: this.props.thread ? isThreadPublic(this.props.thread) : true,
-      isPreviewing: false,
       isSending: false,
       isReply: !!this.props.thread,
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
@@ -214,10 +211,6 @@ export default class Composer extends React.Component {
     }
   }
 
-  onTogglePreview() {
-    this.setState({ isPreviewing: !this.state.isPreviewing })
-  }
-
   canSend() {
     return !!this.state.text.trim()
   }
@@ -283,9 +276,7 @@ export default class Composer extends React.Component {
       <ComposerAudience isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.audienceHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        { this.state.isPreviewing ?
-          <MdBlock md={this.state.text} /> :
-          <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} /> }
+        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} />
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
@@ -294,11 +285,6 @@ export default class Composer extends React.Component {
             (this.state.isAddingFiles ?
               <em>Adding...</em> :
               <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
-        </div>
-        <div>
-        { this.state.isPreviewing
-          ? <a className="btn" onClick={this.onTogglePreview.bind(this)}><i className="fa fa-pencil" /> Keep Editing</a>
-          : <a className="btn" onClick={this.onTogglePreview.bind(this)}><i className="fa fa-television" /> Preview</a> }
         </div>
         <div>
           { (!this.canSend() || this.state.isSending) ?
