@@ -154,9 +154,9 @@ export class InviteForm extends React.Component {
             <div><button className="btn highlighted" disabled={this.props.isDisabled}>Use Code</button></div>
           </div>
           {helpText}
-          <div><strong>Pubs help you communicate across the Internet.</strong></div>
+          <div><strong>Pubs let you connect globally.</strong></div>
+          <div>{'Don\'t have an invite? You\'ll have to find an operator and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
           <div>Neckbeards can setup their own pubs. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the setup documentation here.</a></div>
-          <div>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
         </fieldset>
       </form>
     </div>

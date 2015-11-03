@@ -16,7 +16,7 @@ export default class WelcomeHelp extends React.Component {
         <h2>Step 1: Join the public mesh</h2>
         <p>To reach the rest of us, you need a Pub node to sync with you.</p>
         <div className="card-well">
-          <InviteModalBtn className="btn"><i className="fa fa-cloud" /> Join a Pub</InviteModalBtn>
+          <InviteModalBtn className="btn" />
         </div>
       </div>
       <div className="card centered">

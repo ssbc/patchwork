@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import { verticalFilled } from '../com'
 import Issues from '../com/issues'
+import { InviteModalBtn } from '../com/modals'
 import u from '../lib/util'
 
 class NavLink extends React.Component {
@@ -52,8 +53,9 @@ class LeftNav extends React.Component {
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Saved" count={this.state.indexCounts.bookmarksUnread} />
 
-      <div className="leftnav-item label">People</div>
+      <div className="leftnav-item label">Network</div>
       <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
+      <div className="leftnav-item"><InviteModalBtn /></div>
       <Issues />
     </div>
   }
