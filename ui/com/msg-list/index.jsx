@@ -181,7 +181,7 @@ export default class MsgList extends React.Component {
       //     return
 
       //   // set the query and reload messages
-      //   let query = this.refs.searchInput.getDOMNode().value
+      //   let query = this.refs.searchInput.value
       //   if (query.trim())
       //     query = new RegExp(query.trim(), 'i')
       //   else

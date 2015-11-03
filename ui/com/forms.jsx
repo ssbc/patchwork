@@ -74,12 +74,8 @@ export class SetupForm extends React.Component {
     const isNew = !app.users.names[app.user.id]
     const currentImg = this.getCurrentImg()
 
-    return <form onSubmit={this.onSubmit.bind(this)}>
-      <div className="toolbar">
-        {isNew ? '' : <button className="btn cancel" tabIndex="-1" onClick={this.onCancel.bind(this)}><i className="fa fa-times" /> Discard</button>}
-        <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button>
-      </div>
-      <fieldset>
+    return <form className="stacked" onSubmit={this.onSubmit.bind(this)}>
+      <fieldset style={{width: '600px'}}>
         <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
         <div>
           <label>
@@ -90,6 +86,10 @@ export class SetupForm extends React.Component {
         </div>
         <div ref="imageInputContainer"><ImageInput label="picture" current={currentImg} /></div>
       </fieldset>
+      <div className="toolbar">
+        {isNew ? '' : <button className="btn cancel" tabIndex="-1" onClick={this.onCancel.bind(this)}><i className="fa fa-times" /> Discard</button>}
+        <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button>
+      </div>
     </form>
   }
 }
@@ -147,15 +147,15 @@ export class InviteForm extends React.Component {
     return <div>
       <form className="fullwidth" onSubmit={this.on.submit}>
         <fieldset>
-          <h1>Join a Public Node</h1>
+          <h1>Join a Pub!</h1>
           <input type="text" value={this.state.code} onChange={this.on.change} placeholder="Enter the invite code here" />
           <div className="flex">
             <div className="flex-fill">{msg}</div>
             <div><button className="btn highlighted" disabled={this.props.isDisabled}>Use Code</button></div>
           </div>
           {helpText}
-          <div><strong>Public nodes help you communicate across the Internet.</strong></div>
-          <div>Neckbeards can setup their own public nodes. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the server documentation here.</a></div>
+          <div><strong>Pubs help you communicate across the Internet.</strong></div>
+          <div>Neckbeards can setup their own pubs. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the setup documentation here.</a></div>
           <div>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
         </fieldset>
       </form>

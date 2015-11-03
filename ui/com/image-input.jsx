@@ -62,7 +62,7 @@ export default class ImageInput extends React.Component {
   onClickFile(e) {
     e.preventDefault()
     e.stopPropagation()
-    const fileInput = this.refs.fileInput.getDOMNode()
+    const fileInput = this.refs.fileInput
     if (fileInput)
       fileInput.click()
   }
@@ -127,7 +127,7 @@ export default class ImageInput extends React.Component {
   }
 
   onResize (e) {
-    const scaleSlider = this.refs.scaleSlider.getDOMNode()
+    const scaleSlider = this.refs.scaleSlider
     const scaleSliderValue = scaleSlider.value
     this.setState({
       scaleSliderValue: scaleSliderValue,
@@ -139,7 +139,7 @@ export default class ImageInput extends React.Component {
   drawCanvas () {
     if (!this.state.img)
       return
-    const canvas = this.refs.canvas.getDOMNode()
+    const canvas = this.refs.canvas
     const ctx = canvas.getContext('2d')
     ctx.globalCompositeOperation = 'source-over'
     ctx.fillStyle = '#fff'

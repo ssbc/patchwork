@@ -20,9 +20,11 @@ const MODAL_STYLES = {
   content : {
     position                   : 'absolute',
     top                        : '40px',
-    left                       : '40px',
-    right                      : '40px',
-    bottom                     : '40px',
+    bottom                     : 'auto',
+    left                       : '50%',
+    right                      : 'auto',
+    maxHeight                  : '90%',
+    transform                  : 'translateX(-50%)',
     boxShadow                  : '0px 24px 48px rgba(0, 0, 0, 0.2)',
     borderRadius               : '0',
     border                     : '0',
@@ -30,7 +32,7 @@ const MODAL_STYLES = {
     overflow                   : 'auto',
     WebkitOverflowScrolling    : 'touch',
     outline                    : 'none',
-    padding                    : '20px'
+    padding                    : '0'
   }
 }
 

@@ -66,9 +66,8 @@ export default class Issues extends React.Component {
       content : {
         position                   : 'absolute',
         top                        : '40px',
-        left                       : '40px',
-        right                      : '40px',
-        bottom                     : '40px',
+        left                       : '50%',
+        transform                  : 'translateX(-50%)',
         border                     : '1px solid #ccc',
         background                 : '#fff',
         overflow                   : 'auto',
