@@ -5,6 +5,6 @@ import Card from '../com/msg-list/card'
 
 export default class Data extends React.Component {
   render() {
-    return <div className="data"><MsgList forceRaw ListItem={Card} live={{ gt: Date.now() }} /></div>
+    return <div id="data"><MsgList forceRaw ListItem={Card} live={{ gt: Date.now() }} /></div>
   }
 }
