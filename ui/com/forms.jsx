@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import ImageInput from './image-input'
+import { InviteErrorExplanation, InviteErrorHelp } from './help/forms'
 import app from '../lib/app'
 
 export class SetupForm extends React.Component {
@@ -40,7 +41,7 @@ export class SetupForm extends React.Component {
 
   onSubmit(e) {
     e.preventDefault()
-    const canvas = this.refs.imageInputContainer.getDOMNode().querySelector('canvas')
+    const canvas = this.refs.imageInputContainer.querySelector('canvas')
     if (canvas) {
       ImageInput.uploadCanvasToBlobstore(canvas, (err, hasher) => {
         const imageLink = {
@@ -133,28 +134,31 @@ export class InviteForm extends React.Component {
       },
       submit: (e) => {
         e.preventDefault()
-        this.props.onSubmit(this.state.code)
+        if (this.state.code)
+          this.props.onSubmit(this.state.code)
       }
     }
   }
   render() {
-    let msg=''
-    if (this.props.info)
-      msg = <div>{this.props.info}</div>
-    else if (this.props.error)
-      msg = <div>{this.props.error}</div>
-
+    const msg = (this.props.error) ?
+      <InviteErrorExplanation error={this.props.error} /> :
+      (this.props.info || '')
+    const helpText = (this.props.error) ? <InviteErrorHelp error={this.props.error} /> : ''
     return <div>
-      <h3>Join a Public Node</h3>
-      <form onSubmit={this.on.submit}>
-        <input type="text" value={this.state.code} onChange={this.on.change} placeholder="Enter the invite code here" />
-        <button className="btn" disabled={this.props.isDisabled}>Use Code</button>
+      <form className="fullwidth" onSubmit={this.on.submit}>
+        <fieldset>
+          <h1>Join a Public Node</h1>
+          <input type="text" value={this.state.code} onChange={this.on.change} placeholder="Enter the invite code here" />
+          <div className="flex">
+            <div className="flex-fill">{msg}</div>
+            <div><button className="btn highlighted" disabled={this.props.isDisabled}>Use Code</button></div>
+          </div>
+          {helpText}
+          <div><strong>Public nodes help you communicate across the Internet.</strong></div>
+          <div>Neckbeards can setup their own public nodes. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the server documentation here.</a></div>
+          <div>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
+        </fieldset>
       </form>
-      {msg}
-      <hr/>
-      <div><strong>Public nodes help you communicate across the Internet.</strong></div>
-      <div>Neckbeards can setup their own public nodes. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the server documentation here.</a></div>
-      <div>{'Don\'t have an invite to a public node? You\'ll have to find a pub owner and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
     </div>
   }
 }

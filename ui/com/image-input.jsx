@@ -44,7 +44,7 @@ export default class ImageInput extends React.Component {
     img.onload = () => {
       let imgdim = { width: img.width, height: img.height }
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
-      this.refs.scaleSlider.getDOMNode().value = 0
+      this.refs.scaleSlider.value = 0
 
       this.setState({
         img: img,
@@ -73,7 +73,7 @@ export default class ImageInput extends React.Component {
     // give the html renderer a turn before loading the image
     // if the image is large, it'll block for a sec, and we want to render "loading..." first
     setTimeout(() => {
-      const file = this.refs.fileInput.getDOMNode().files[0]
+      const file = this.refs.fileInput.files[0]
       if (!file)
         return
       const ni = NativeImage.createFromPath(file.path)
@@ -82,7 +82,7 @@ export default class ImageInput extends React.Component {
 
       let imgdim = ni.getSize()
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
-      this.refs.scaleSlider.getDOMNode().value = 0
+      this.refs.scaleSlider.value = 0
 
       this.setState({
         img: img,

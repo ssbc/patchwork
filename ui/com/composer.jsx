@@ -50,7 +50,7 @@ class ComposerRecps extends React.Component {
   }
   setupSuggest() {
     // setup the suggest-box
-    let input = this.refs && this.refs.input && this.refs.input.getDOMNode()
+    let input = this.refs && this.refs.input
     if (!input || input.isSetup)
       return
     input.isSetup = true
@@ -91,7 +91,7 @@ class ComposerRecps extends React.Component {
 class ComposerTextarea extends React.Component {
   componentDidMount() {
     // setup the suggest-box
-    let textarea = this.refs && this.refs.textarea && this.refs.textarea.getDOMNode()
+    let textarea = this.refs && this.refs.textarea
     if (!textarea || textarea.isSetup)
       return
     textarea.isSetup = true
@@ -148,13 +148,13 @@ export default class Composer extends React.Component {
   }
 
   onAttach() {
-    this.refs.files.getDOMNode().click() // trigger file-selector
+    this.refs.files.click() // trigger file-selector
   }
 
   // called by the files selector when files are chosen
   onFilesAdded() {
 
-    var filesInput = this.refs.files.getDOMNode()
+    var filesInput = this.refs.files
     var handled=0, total = filesInput.files.length
     this.setState({ isAddingFiles: true, hasAddedFiles: true })
 

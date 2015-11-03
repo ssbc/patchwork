@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import moment from 'moment'
 import { Link } from 'react-router'
 import Modal from 'react-modal'
@@ -95,7 +96,7 @@ export function verticalFilled (Component) {
     calcHeight() {
       var height = window.innerHeight
       if (this.refs && this.refs.el) {
-        var rect = React.findDOMNode(this.refs.el).getClientRects()[0]
+        var rect = ReactDOM.findDOMNode(this.refs.el).getClientRects()[0]
         if (!rect)
           return
         height = window.innerHeight - rect.top

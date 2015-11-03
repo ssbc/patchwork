@@ -14,7 +14,7 @@ class SimpleInfinite extends React.Component {
       if (!this.props.infiniteLoadBeginBottomOffset)
         return
 
-      let el = this.refs.container.getDOMNode()
+      let el = this.refs.container
       if (el.offsetHeight + el.scrollTop + this.props.infiniteLoadBeginBottomOffset >= el.scrollHeight) {
         // hit bottom
         this.props.onInfiniteLoad()

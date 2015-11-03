@@ -49,6 +49,7 @@ module.exports = extend(new Emitter(), {
   user: {
     id: null,
     profile: {},
+    needsSetup: false, // does the setup flow need to occur?
     followeds: [], // people the user follows
     friends: [], // people the user follows, who follow the user back
     nonfriendFolloweds: [], // people the user follows, who dont follow the user back
@@ -99,13 +100,14 @@ function fetchLatestState (cb) {
   app.ssb.gossip.peers(done())
   done(function (err, data) {
     if (err) throw err.message
-    app.user.id        = data[0].id
-    app.users.names    = data[1]
-    app.users.profiles = data[2]
-    app.actionItems    = data[3]
-    app.indexCounts    = data[4]
-    app.peers          = data[5]
-    app.user.profile   = app.users.profiles[app.user.id]
+    app.user.id         = data[0].id
+    app.users.names     = data[1]
+    app.users.profiles  = data[2]
+    app.actionItems     = data[3]
+    app.indexCounts     = data[4]
+    app.peers           = data[5]
+    app.user.profile    = app.users.profiles[app.user.id]
+    app.user.needsSetup = !app.users.names[app.user.id]
 
     // get friend list
     var social = require('./social-graph')

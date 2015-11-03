@@ -3,8 +3,8 @@
 // install babel hooks
 require('babel/register')
 
-var pull  = require('pull-stream')
-var React = require('react')
+var pull     = require('pull-stream')
+var ReactDOM = require('react-dom')
 
 // Init
 // ====
@@ -17,7 +17,7 @@ window.app = require('./lib/app')
 
 // render
 app.fetchLatestState(function () {
-  React.render(require('./routes.jsx'), document.body)
+  ReactDOM.render(require('./routes.jsx'), document.body.querySelector('div'))
 })
 
 // Handlers

@@ -4,6 +4,7 @@ import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-list/card'
+import WelcomeHelp from '../com/help/welcome'
 import app from '../lib/app'
 import social from '../lib/social-graph'
 

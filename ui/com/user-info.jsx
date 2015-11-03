@@ -158,8 +158,10 @@ export class UserInfoHeader extends AutoRefreshingComponent {
           }
         </div>
         <table>
-          <tr><td>{nfollowers}</td><td>follower{nfollowers===1?'':'s'}</td></tr>
-          <tr><td>{nflaggers}</td><td>flag{nflaggers===1?'':'s'}</td></tr>
+          <tbody>
+            <tr><td>{nfollowers}</td><td>follower{nfollowers===1?'':'s'}</td></tr>
+            <tr><td>{nflaggers}</td><td>flag{nflaggers===1?'':'s'}</td></tr>
+          </tbody>
         </table>
       </div>
     </div>

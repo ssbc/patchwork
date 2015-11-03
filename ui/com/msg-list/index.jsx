@@ -1,6 +1,7 @@
 'use babel'
 import pull from 'pull-stream'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import ReactInfinite from 'react-infinite'
@@ -261,7 +262,7 @@ export default class MsgList extends React.Component {
   calcContainerHeight() {
     var height = window.innerHeight
     if (this.refs && this.refs.container) {
-      var rect = this.refs.container.getDOMNode().getClientRects()[0]
+      var rect = ReactDOM.findDOMNode(this.refs.container).getClientRects()[0]
       if (!rect)
         return
       height = window.innerHeight - rect.top
@@ -378,11 +379,9 @@ export default class MsgList extends React.Component {
             { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
           </div>
           { isEmpty ?
-            <em>
-              { this.state.searchQuery ?
-                'No results found' :
-                (this.props.emptyMsg || 'No new messages') }
-            </em>
+            (this.state.searchQuery ?
+              <em>No results found</em> :
+              (this.props.emptyMsg || <em>No new messages</em>))
             :
             <div>
               { this.state.msgs.map((m, i) => {

@@ -51,7 +51,7 @@ export class Table extends React.Component {
   }
   render() {
     if (!this.state.obj || typeof this.state.obj == 'string')
-      return <table className="pretty-raw"><tr><td>Encrypted Message</td></tr></table>
-    return <table className="pretty-raw">{tableElements(false, this.state.obj)}</table>
+      return <table className="pretty-raw"><tbody><tr><td>Encrypted Message</td></tr></tbody></table>
+    return <table className="pretty-raw"><tbody>{tableElements(false, this.state.obj)}</tbody></table>
   }
 }

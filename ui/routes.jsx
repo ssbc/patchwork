@@ -1,4 +1,5 @@
 'use babel'
+import React from 'react'
 import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './layout'
 import NewsFeed from './views/newsfeed'
@@ -9,6 +10,7 @@ import Profile from './views/profile'
 import Msg from './views/msg'
 import WebView from './views/webview'
 import Sync from './views/sync'
+import Help from './views/help'
 
 export default (
   <Router>
@@ -22,6 +24,7 @@ export default (
       <Route path="msg/:id" component={Msg} />
       <Route path="webview/:id" component={WebView} />
       <Route path="sync" component={Sync} />
+      <Route path="help/:section" component={Help} />
     </Route>
   </Router>
 )

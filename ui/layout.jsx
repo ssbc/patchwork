@@ -18,12 +18,11 @@ export default class Layout extends React.Component {
     app.fetchLatestState()
   }
   buildState() {
-    let needsSetup = !app.users.names[app.user.id]
     return {
       user: app.user,
       users: app.users,
-      setupIsOpen: needsSetup,
-      setupCantClose: needsSetup
+      setupIsOpen: app.user.needsSetup,
+      setupCantClose: app.user.needsSetup
     }
   }
   render() {

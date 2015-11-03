@@ -27,7 +27,7 @@ export default class WebView extends React.Component {
     this.setupWebviewEl()
   }
   setupWebviewEl() {
-    var webviewEl = (this.refs && this.refs.wv && this.refs.wv.getDOMNode())
+    var webviewEl = this.refs && this.refs.wv
     if (!webviewEl)
       return
 
