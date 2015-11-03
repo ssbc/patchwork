@@ -21,7 +21,7 @@ export default class Bookmarks extends React.Component {
   helpCards() {
     return <div className="cards-flow">
       <HelpCards.Bookmarks />
-      <HelpCards.Contacts />
+      <HelpCards.FindingUsers />
       <HelpCards.Pubs />
     </div>
   }

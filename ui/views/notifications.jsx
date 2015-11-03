@@ -20,7 +20,7 @@ export default class Notifications extends React.Component {
   helpCards() {
     return <div className="cards-flow">
       <HelpCards.Notifications />
-      <HelpCards.Contacts />
+      <HelpCards.FindingUsers />
       <HelpCards.Pubs />
     </div>
   }

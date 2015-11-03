@@ -4,8 +4,17 @@
     width: 100%;
     box-sizing: border-box;
     padding: 8px 10px;
-    border: 0;
     margin: 10px 0;
+    transition: background 0.2s, box-shadow 0.2s;
+    border: 1px solid #ccc;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
+    border-radius: 2px;
+    background: #fafafa;
+    &:focus {
+      outline: 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: #fff;
+    }
   }
 }
 
@@ -19,6 +28,10 @@
   hr {
     border: 0;
     border-top: 1px solid #ccc;
+  }
+  .card {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 

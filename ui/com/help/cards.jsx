@@ -39,6 +39,15 @@ export class Bookmarks extends React.Component {
   }
 }
 
+export class ContactsTips extends React.Component {
+  render() {
+    return <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>
+      <p><small>{"Can't find somebody? Try joining their pub, or getting on the same WiFi as them."}</small></p>
+      <p><small>{"If you have a friend's ID, put it in the search box above."}</small></p>
+    </div>
+  }
+}
+
 export class Pubs extends React.Component {
   render() {
     return <div className="card">
@@ -51,13 +60,13 @@ export class Pubs extends React.Component {
   }
 }
 
-export class Contacts extends React.Component {
+export class FindingUsers extends React.Component {
   render() {
     return <div className="card">
       <h2>Looking for Someone?</h2>
       <p>Find other users in the <Link to="/profile">Contacts</Link> page.</p>
       <div className="card-well" style={{textAlign: 'left', padding: '1px 14px'}}>
-        <p>If you're having trouble finding a friend, you can:</p>
+        <p>{"If you're having trouble finding a friend, you can:"}</p>
         <ol>
           <li>Join their Pub, or</li>
           <li>Get on the same WiFi as them.</li>

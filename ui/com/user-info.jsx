@@ -184,6 +184,7 @@ export class UserInfoFollowers extends AutoRefreshingComponent {
     return <div className="user-info-card">
       <h3>followers</h3>
       <div className="content">
+        {this.state.followers.length ? '' : <em>No followers found.</em>}
         {this.state.followers.map((id, i) => <UserBtn key={'follower'+i} id={id} />)}
       </div>
     </div>
@@ -199,6 +200,7 @@ export class UserInfoFolloweds extends AutoRefreshingComponent {
     return <div className="user-info-card">
       <h3>following</h3>
       <div className="content">
+        {this.state.followeds.length ? '' : <em>No follows published.</em>}
         {this.state.followeds.map((id, i) => <UserBtn key={'followed'+i} id={id} />)}
       </div>
     </div>
