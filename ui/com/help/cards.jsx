@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { InviteModalBtn } from '../modals'
+import app from '../../lib/app'
 
 export class NewsFeed extends React.Component {
   render() {
@@ -50,6 +51,8 @@ export class ContactsTips extends React.Component {
 
 export class Pubs extends React.Component {
   render() {
+    if (!app.isWifiMode)
+      return <span/>
     return <div className="card">
       <h2>{"You're in WiFi mode."}</h2>
       <p>To reach the global network, you need to join a Pub.</p>

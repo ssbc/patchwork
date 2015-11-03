@@ -59,7 +59,8 @@ module.exports = extend(new Emitter(), {
     names: {},
     profiles: {}
   },
-  peers: []
+  peers: [],
+  isWifiMode: true
 })
 
 function addIssue (isUrgent, title, err, extraIssueInfo) {
