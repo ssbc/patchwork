@@ -4,6 +4,7 @@ import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-list/card'
+import * as HelpCards from '../com/help/cards'
 import WelcomeHelp from '../com/help/welcome'
 import app from '../lib/app'
 import social from '../lib/social-graph'
@@ -19,6 +20,14 @@ export default class NewsFeed extends React.Component {
       return [msg.value.timestamp, msg.value.author]
   }
 
+  helpCards() {
+    return <div className="cards-flow">
+      <HelpCards.NewsFeed />
+      <HelpCards.Contacts />
+      <HelpCards.Pubs />
+    </div>
+  }
+
   render() {
     return <div id="newsfeed">
       <MsgList
@@ -27,6 +36,7 @@ export default class NewsFeed extends React.Component {
         filters={FILTERS}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your newsfeed is empty."
+        append={this.helpCards.bind(this)}
         source={app.ssb.patchwork.createNewsfeedStream}
         cursor={this.cursor} />
     </div>

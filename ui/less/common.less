@@ -7,6 +7,20 @@ body {
 p, ul, ol {
   font-family: @content-font;
 }
+ol {
+  list-style-type: none;
+  padding: 0 0 0 1em;
+  line-height: 1.4;
+  li {
+    counter-increment: step-counter;
+    &::before {
+      content: counter(step-counter) + '.';
+      margin-right: 5px;
+      font-size: 80%;
+      font-weight: bold;
+    }
+  }
+}
 a {
   color: #006EFF;
   text-decoration: none;

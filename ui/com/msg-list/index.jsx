@@ -358,10 +358,11 @@ export default class MsgList extends React.Component {
   }
 
   render() {
-    let Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
-    let ListItem = this.props.ListItem || Summary
-    let selectedKey = this.state.selected && this.state.selected.key
-    let isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
+    const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
+    const ListItem = this.props.ListItem || Summary
+    const selectedKey = this.state.selected && this.state.selected.key
+    const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
+    const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <FAB label="Compose" icon="pencil" onClick={()=>this.setState({ selected: 'composer' })} />
       <div className="msg-list-items">
@@ -391,6 +392,7 @@ export default class MsgList extends React.Component {
               }) }
             </div>
           }
+          {append}
         </Infinite>
       </div>
       <div className="msg-list-view">

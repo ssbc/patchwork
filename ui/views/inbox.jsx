@@ -4,6 +4,7 @@ import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-list/oneline'
+import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 
 const FILTERS = [
@@ -19,6 +20,14 @@ export default class Inbox extends React.Component {
       return [msg.value.timestamp, msg.value.author]
   }
 
+  helpCards() {
+    return <div className="cards-flow">
+      <HelpCards.Inbox />
+      <HelpCards.Contacts />
+      <HelpCards.Pubs />
+    </div>
+  }
+
   render() {
     return <div id="inbox">
       <MsgList
@@ -27,6 +36,7 @@ export default class Inbox extends React.Component {
         filters={FILTERS}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
+        append={this.helpCards.bind(this)}
         source={app.ssb.patchwork.createInboxStream}
         cursor={this.cursor} />
     </div>

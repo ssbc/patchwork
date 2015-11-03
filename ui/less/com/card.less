@@ -19,13 +19,28 @@
   .card-well {
     padding: 7px;
     background: rgb(238, 238, 238);
+    color: #555;
     margin-bottom: 10px;
     border-radius: 5px;
     text-align: center;
     .btn {
+      display: block;
       background: #fff;
       padding: 10px 20px;
       font-weight: bold;
+    }
+  }
+}
+.cards-flow {
+  display: flex;
+  .card {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 0;
+    margin-bottom: 0;
+    align-self: flex-start;
+    &:last-child {
+      margin-right: 0;
     }
   }
 }

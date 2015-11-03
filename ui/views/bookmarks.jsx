@@ -2,6 +2,7 @@
 import React from 'react'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-list/oneline'
+import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 
 const FILTERS = [
@@ -17,6 +18,14 @@ export default class Bookmarks extends React.Component {
       return [msg.ts, false]
   }
 
+  helpCards() {
+    return <div className="cards-flow">
+      <HelpCards.Bookmarks />
+      <HelpCards.Contacts />
+      <HelpCards.Pubs />
+    </div>
+  }
+
   render() {
     return <div id="bookmarks">
       <MsgList
@@ -24,6 +33,7 @@ export default class Bookmarks extends React.Component {
         ListItem={Oneline}
         filters={FILTERS}
         emptyMsg="You have not bookmarked any messages."
+        append={this.helpCards.bind(this)}
         source={app.ssb.patchwork.createBookmarkStream}
         cursor={this.cursor} />
     </div>

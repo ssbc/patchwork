@@ -3,10 +3,6 @@ import React from 'react'
 import { InviteModalBtn } from '../modals'
 
 export default class WelcomeHelp extends React.Component {
-  onClickJoinPub() {
-    //TODO
-  }
-
   render() {
     return <div className="card-grid" style={{padding: '10px 0'}}>
       <div className="card centered" style={{textAlign: 'center'}}>
@@ -14,7 +10,7 @@ export default class WelcomeHelp extends React.Component {
       </div>
       <div className="card centered">
         <h2>Step 1: Join the public mesh</h2>
-        <p>To reach the rest of us, you need a Pub node to sync with you.</p>
+        <p>To reach the global network, you need a Pub to sync with you.</p>
         <div className="card-well">
           <InviteModalBtn className="btn" />
         </div>

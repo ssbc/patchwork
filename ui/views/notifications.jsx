@@ -2,6 +2,7 @@
 import React from 'react'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-list/card'
+import * as HelpCards from '../com/help/cards'
 
 const FILTERS = [
   { label: 'All', fn: msg => true },
@@ -16,11 +17,20 @@ export default class Notifications extends React.Component {
       return [msg.ts, false]
   }
 
+  helpCards() {
+    return <div className="cards-flow">
+      <HelpCards.Notifications />
+      <HelpCards.Contacts />
+      <HelpCards.Pubs />
+    </div>
+  }
+
   render() {
     return <div id="notifications">
       <MsgList
         ListItem={Card}
         emptyMsg="No new notifications."
+        append={this.helpCards.bind(this)}
         filters={FILTERS}
         source={app.ssb.patchwork.createNotificationsStream}
         cursor={this.cursor} 
