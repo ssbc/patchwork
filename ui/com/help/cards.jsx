@@ -67,14 +67,7 @@ export class FindingUsers extends React.Component {
   render() {
     return <div className="card">
       <h2>Looking for Someone?</h2>
-      <p>Find other users in the <Link to="/profile">Contacts</Link> page.</p>
-      <div className="card-well" style={{textAlign: 'left', padding: '1px 14px'}}>
-        <p>{"If you're having trouble finding a friend, you can:"}</p>
-        <ol>
-          <li>Join their Pub, or</li>
-          <li>Get on the same WiFi as them.</li>
-        </ol>
-      </div>
+      <p>Find other users in the <Link to="/profile">Contacts</Link> view.</p>
     </div>
   }
 }

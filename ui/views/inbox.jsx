@@ -23,8 +23,8 @@ export default class Inbox extends React.Component {
   helpCards() {
     return <div className="cards-flow">
       <HelpCards.Inbox />
-      <HelpCards.FindingUsers />
       <HelpCards.Pubs />
+      <HelpCards.FindingUsers />
     </div>
   }
 

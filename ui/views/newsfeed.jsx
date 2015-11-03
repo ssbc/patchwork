@@ -23,8 +23,8 @@ export default class NewsFeed extends React.Component {
   helpCards() {
     return <div className="cards-flow">
       <HelpCards.NewsFeed />
-      <HelpCards.FindingUsers />
       <HelpCards.Pubs />
+      <HelpCards.FindingUsers />
     </div>
   }
 
