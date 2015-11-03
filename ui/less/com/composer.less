@@ -30,6 +30,12 @@
     }
   }
   .composer-content {
+    font-family: @content-font;
+    font-weight: 300;
+    color: #555555;
+    font-size: 90%;
+    line-height: 1.4;
+
     textarea {
       display: block;
       width: 96%;// should be 100% but it overflows, cant figure out how to fix
@@ -49,11 +55,18 @@
     }
   }
   .composer-ctrls {
-    padding: 10px;
-    display: flex;
-
-    & > div:first-child {
-      flex: 1;
+    background: #eee;
+    font-weight: 300;
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 0;
+      &.disabled {
+        cursor: default;
+        color: #aaa !important;
+        background: none !important;
+        box-shadow: none !important;
+      }
     }
   }
   .warning {

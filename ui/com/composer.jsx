@@ -287,18 +287,23 @@ export default class Composer extends React.Component {
           <MdBlock md={this.state.text} /> :
           <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} /> }
       </div>
-      <div className="composer-ctrls">
-        <div>
+      <div className="composer-ctrls flex">
+        <div className="flex-fill">
           { !this.state.isPublic ?
-            (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work in private messages</em> : '') :
+            (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work yet in private messages. Sorry!</em> : '') :
             (this.state.isAddingFiles ?
               <em>Adding...</em> :
-              <a onClick={this.onAttach.bind(this)}>Add an attachment</a>) }
+              <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
         </div>
         <div>
         { this.state.isPreviewing
-          ? <span><a onClick={this.onTogglePreview.bind(this)}>Keep Editing</a> or {(!this.canSend() || this.state.isSending) ? <em>Send {msgType} message</em> : <a onClick={this.onSend.bind(this)}>Send {msgType} message</a>}</span> 
-          : <a onClick={this.onTogglePreview.bind(this)}>Preview</a> }
+          ? <a className="btn" onClick={this.onTogglePreview.bind(this)}><i className="fa fa-pencil" /> Keep Editing</a>
+          : <a className="btn" onClick={this.onTogglePreview.bind(this)}><i className="fa fa-television" /> Preview</a> }
+        </div>
+        <div>
+          { (!this.canSend() || this.state.isSending) ?
+            <a className="btn disabled">Send</a> :
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.state.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
         </div>
       </div>
     </div>
