@@ -129,7 +129,7 @@ tape('inbox index doesnt include public threads', function (t) {
   })
 })
 
-tape('inbox index includes messages which include local user as a recipient or mentioned', function (t) {
+tape('inbox index includes messages which include local user as a recipient', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
     alice: {},
@@ -141,12 +141,12 @@ tape('inbox index includes messages which include local user as a recipient or m
     var done = multicb()
     users.alice.add({ type: 'post', text: 'hello from alice' }, done()) // not included
     users.alice.add({ type: 'post', text: 'hello from alice', recps: [users.alice.id, users.bob.id] }, done()) // included
-    users.alice.add({ type: 'post', text: 'hello from alice', mentions: [users.alice.id, users.bob.id] }, done()) // included
+    users.alice.add({ type: 'post', text: 'hello from alice', mentions: [users.alice.id, users.bob.id] }, done()) // not included
     users.alice.add({ type: 'post', text: 'hello from alice', recps: [users.bob.id] }, done()) // not included
     users.alice.add({ type: 'post', text: 'hello from alice', mentions: [users.bob.id] }, done()) // not included
     users.bob.add({ type: 'post', text: 'hello from bob' }, done()) // not included
     users.bob.add({ type: 'post', text: 'hello from bob', recps: [users.alice.id, users.bob.id] }, done()) // included
-    users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.alice.id, users.bob.id] }, done()) // included
+    users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.alice.id, users.bob.id] }, done()) // not included
     users.bob.add({ type: 'post', text: 'hello from bob', recps: [users.bob.id] }, done()) // not included
     users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.bob.id] }, done()) // not included
     done(function (err) {
@@ -154,7 +154,7 @@ tape('inbox index includes messages which include local user as a recipient or m
 
       pull(sbot.patchwork.createInboxStream(), pull.collect(function (err, msgs1) {
         if (err) throw err
-        t.equal(msgs1.length, 4)
+        t.equal(msgs1.length, 2)
         t.end()      
         sbot.close()
       }))
@@ -485,6 +485,40 @@ tape('notifications index includes follows, unfollows, blocks, and unblocks', fu
             sbot.close()
           }))
         })
+      }))
+    })
+  })
+})
+
+
+tape('notifications index includes messages which mention the local user', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    var done = multicb()
+    users.alice.add({ type: 'post', text: 'hello from alice' }, done()) // not included
+    users.alice.add({ type: 'post', text: 'hello from alice', recps: [users.alice.id, users.bob.id] }, done()) // not included
+    users.alice.add({ type: 'post', text: 'hello from alice', mentions: [users.alice.id, users.bob.id] }, done()) // included
+    users.alice.add({ type: 'post', text: 'hello from alice', recps: [users.bob.id] }, done()) // not included
+    users.alice.add({ type: 'post', text: 'hello from alice', mentions: [users.bob.id] }, done()) // not included
+    users.bob.add({ type: 'post', text: 'hello from bob' }, done()) // not included
+    users.bob.add({ type: 'post', text: 'hello from bob', recps: [users.alice.id, users.bob.id] }, done()) // not included
+    users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.alice.id, users.bob.id] }, done()) // included
+    users.bob.add({ type: 'post', text: 'hello from bob', recps: [users.bob.id] }, done()) // not included
+    users.bob.add({ type: 'post', text: 'hello from bob', mentions: [users.bob.id] }, done()) // not included
+    done(function (err) {
+      if (err) throw err
+
+      pull(sbot.patchwork.createNotificationsStream(), pull.collect(function (err, msgs1) {
+        if (err) throw err
+        t.equal(msgs1.length, 2)
+        t.end()      
+        sbot.close()
       }))
     })
   })

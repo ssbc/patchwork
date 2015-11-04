@@ -51,13 +51,20 @@ module.exports = function (sbot, db, state, emit) {
         }
       }
 
-      // inbox index: add msgs addressed to, or which mention, the user
+      // inbox index: add msgs addressed to the user
       if (!inboxRow) { // dont bother if already updated inbox for this msg
-        if (findLink(recps, sbot.id) || findLink(mentions, sbot.id)) {
+        if (findLink(recps, sbot.id)) {
           inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, root ? root.link : msg.key)
           emit('index-change', { index: 'inbox' })
           attachChildIsRead(inboxRow, msg.key)          
         }
+      }
+
+      // notifications index: add msgs that mention the user
+      if (findLink(mentions, sbot.id)) {
+        var notificationsRow = state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'notifications' })
+        attachIsRead(notificationsRow)   
       }
     },
 
