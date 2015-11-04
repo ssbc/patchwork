@@ -386,7 +386,7 @@ export default class MsgList extends React.Component {
             :
             <div>
               { this.state.msgs.map((m, i) => {
-                return <ListItem key={i} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
+                return <ListItem key={m.key} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
               }) }
             </div>
           }
