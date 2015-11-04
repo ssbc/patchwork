@@ -1,0 +1,33 @@
+.msg-list-item.notification {
+  display: flex;
+  max-width: 600px;
+  margin: 20px auto;
+  overflow: hidden;
+  padding-right: 150px;
+
+  .ctrls {
+    flex: 0 0 105px;
+    padding: 2px 5px 0 3px;
+    text-align: right;
+    img {
+      width: 30px;
+      border-radius: 3px;
+    }
+  }
+  .content {
+    flex: 1;
+    padding: 7px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 30px;
+    .user-link {
+      color: #000;
+    }
+    .subject {
+      display: block;
+    }
+    div:last-child {
+      font-weight: 300;
+      font-size: 12px;    
+    }
+  }
+}

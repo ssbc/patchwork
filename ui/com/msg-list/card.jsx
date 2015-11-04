@@ -4,7 +4,6 @@ import mlib from 'ssb-msgs'
 import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
-import { Notification } from '../notifications'
 import { countReplies } from '../../lib/msg-relation'
 import DropdownBtn from '../dropdown'
 import u from '../../lib/util'
@@ -98,10 +97,7 @@ export default class Card extends React.Component {
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
     if (msg.value.content.type == 'post' && downvoters.length > upvoters.length)
       return this.renderMuted(msg)
-    if (msg.value.content.type == 'post' || this.props.forceRaw) {
-      return this.renderPost(msg, upvoters, downvoters, isUpvoted)
-    }
-    return this.renderAction(msg)
+    return this.renderPost(msg, upvoters, downvoters, isUpvoted)
   }
 
   renderMuted(msg) {
@@ -149,16 +145,6 @@ export default class Card extends React.Component {
               { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
             </a> : '' }
         </div>
-      </div>
-    </div>
-  }
-
-  renderAction(msg) {
-    return <div className={'msg-list-item card-action'}>
-      <div className="ctrls"><UserPic id={msg.value.author} /></div>
-      <div className="content">
-        <div><Notification msg={msg} subject={this.state.subject} onSelect={this.props.onSelect} /></div>
-        <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
     </div>
   }

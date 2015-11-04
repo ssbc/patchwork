@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import MsgList from '../com/msg-list'
-import Card from '../com/msg-list/card'
+import Notification from '../com/msg-list/notification'
 import * as HelpCards from '../com/help/cards'
 
 const FILTERS = [
@@ -28,7 +28,7 @@ export default class Notifications extends React.Component {
   render() {
     return <div id="notifications">
       <MsgList
-        ListItem={Card}
+        ListItem={Notification}
         emptyMsg="No new notifications."
         append={this.helpCards.bind(this)}
         filters={FILTERS}
