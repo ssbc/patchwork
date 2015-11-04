@@ -46,6 +46,7 @@ And then join a pub server.
 
 ## Development & App-building : 
 
+**[Testing Check-list](./TESTING.md)**, run through this before publishing any new versions.
 
 **Dependencies**
 
