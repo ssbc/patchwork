@@ -43,11 +43,19 @@ export default class Sync extends React.Component {
     super(props)
     this.state = {
       peers: [],
-      stats: {}
+      stats: {},
+      isWifiMode: app.isWifiMode
+    }
+    this.onAppUpdate = () => {
+      this.setState({ isWifiMode: app.isWifiMode })
     }
   }
 
   componentDidMount() {
+    // setup app listeners
+    app.on('update:all', this.onAppUpdate)
+    app.on('update:isWifiMode', this.onAppUpdate)
+
     // fetch peers list
     app.ssb.gossip.peers((err, peers) => {
       if (err) return app.minorIssue('Failed to fetch peers list', err, 'This happened while loading the sync page')
@@ -63,7 +71,9 @@ export default class Sync extends React.Component {
     pull((this.replicateChangeStream = app.ssb.replicate.changes()), pull.drain(this.onReplicationEvent.bind(this)))
   }
   componentWillUnmount() {
-    // abort streams
+    // abort streams and listeners
+    app.removeListener('update:all', this.onAppUpdate)
+    app.removeListener('update:isWifiMode', this.onAppUpdate)
     this.gossipChangeStream(true, ()=>{})
     this.replicateChangeStream(true, ()=>{})
   }
@@ -99,29 +109,33 @@ export default class Sync extends React.Component {
   onUseInvite() {
     this.props.history.pushState(null, '/')
   }
-  onAddNode(addr) {
+  
+  // TODO needed?
+  /*onAddNode(addr) {
     app.ssb.gossip.connect(addr, function (err) {
       if (err)
         app.issue('Failed to connect to '+addr, err)
     })
-  }
+  }*/
 
   render() {
-    let stats = this.state.stats
-    let addNodeLabel = (<span><i className="fa fa-plus"/> Add Address</span>)
-    let warning = ''
-    if (stats.membersof === 0)
-      warning = <div className="warning"><i className="fa fa-exclamation-circle" /> You need to join a pub to communicate across the Internet.</div>
-    else if (stats.active === 0 && stats.untried === 0)
-      warning = <div className="warning"><i className="fa fa-exclamation-circle" /> None of your pubs are responding. Are you connected to the Internet?</div>
-
+    const stats = this.state.stats
+    
     return <VerticalFilledContainer id="sync">
       <div className="header">
-        <div>
+        { this.state.isWifiMode ?
+          <div>
+            <h1><i className="fa fa-wifi" /> WiFi Mode</h1>
+            <h3>{"You're not connected to any Pubs, but you can still connect to peers on your Local Area Network."}</h3>
+          </div> :
+          <div>
+            <h1><i className="fa fa-globe" /> Global Mode</h1>
+            <h3>{"You're successfully uploading to "+stats.membersofActive+" pubs, and downloading updates from "+(Math.max(stats.connected-stats.membersofActive,0))+" others."}</h3>
+          </div>
+        }
+        <div className="toolbar">
           <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
-          <PromptModalBtn className="btn" onSubmit={this.onAddNode.bind(this)} submitLabel="Connect" btnLabel={addNodeLabel} placeholder="host:port@key"><p>Nodes full address:</p></PromptModalBtn>
         </div>
-        {warning}
       </div>
       {this.state.peers.map((peer, i) => <Peer key={'peer'+i} peer={peer} />)}
     </VerticalFilledContainer>

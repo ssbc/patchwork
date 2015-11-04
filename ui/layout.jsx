@@ -11,6 +11,7 @@ export default class Layout extends React.Component {
 
     // listen for app change-events that should update our state
     app.on('update:all', () => { this.setState(this.buildState()) })
+    app.on('update:isWifiMode', () => { this.setState(this.buildState()) })
     app.on('modal:setup', (isOpen) => this.setState({ setupIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
@@ -19,6 +20,7 @@ export default class Layout extends React.Component {
   }
   buildState() {
     return {
+      isWifiMode: app.isWifiMode,
       user: app.user,
       users: app.users,
       setupIsOpen: app.user.needsSetup,
@@ -32,6 +34,7 @@ export default class Layout extends React.Component {
       <div className="layout-columns">
         <LeftNav
           location={this.props.location.pathname}
+          isWifiMode={this.state.isWifiMode}
           userid={this.state.user.id}
           names={this.state.users.names}
           friends={this.state.user.friends}

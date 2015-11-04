@@ -8,6 +8,8 @@ or which has  been  loaded  from  scuttlebot during page
 refresh because  its  commonly  needed during rendering.
 */
 
+// constants
+var POLL_PEER_INTERVAL = 5e3 // every 5 seconds
 
 var multicb   = require('multicb')
 var SSBClient = require('./muxrpc-ipc')
@@ -15,8 +17,9 @@ var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')
 
-// event streams
+// event streams and listeners
 var patchworkEventStream = null
+var isWatchingNetwork = false
 
 // master state object
 var app =
@@ -60,7 +63,7 @@ module.exports = extend(new Emitter(), {
     profiles: {}
   },
   peers: [],
-  isWifiMode: true
+  isWifiMode: false
 })
 
 function addIssue (isUrgent, title, err, extraIssueInfo) {
@@ -88,9 +91,21 @@ function onPatchworkEvent (e) {
   }
 }
 
+function pollPeers () {
+  app.ssb.gossip.peers(function (err, peers) {
+    var isWifiMode = require('./util').getPubStats(peers).hasSyncIssue
+    if (isWifiMode !== app.isWifiMode) {
+      app.isWifiMode = isWifiMode
+      app.emit('update:isWifiMode')
+    }
+  })
+}
+
 function fetchLatestState (cb) {
   if (!patchworkEventStream)
     pull((patchworkEventStream = app.ssb.patchwork.createEventStream()), pull.drain(onPatchworkEvent.bind(this)))
+  if (!isWatchingNetwork)
+    setInterval(pollPeers, POLL_PEER_INTERVAL)
 
   var done = multicb({ pluck: 1 })
   app.ssb.whoami(done())
@@ -107,6 +122,7 @@ function fetchLatestState (cb) {
     app.actionItems     = data[3]
     app.indexCounts     = data[4]
     app.peers           = data[5]
+    app.isWifiMode      = require('./util').getPubStats(app.peers).hasSyncIssue
     app.user.profile    = app.users.profiles[app.user.id]
     app.user.needsSetup = !app.users.names[app.user.id]
 

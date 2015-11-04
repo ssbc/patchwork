@@ -41,6 +41,7 @@ class LeftNav extends React.Component {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
   render() {
+    const isWifiMode = this.props.isWifiMode
     let renderProfLink = (id, name, icon) => {
       return <NavLink key={id} to={'/profile/'+encodeURIComponent(id)} location={this.props.location}>
         <i className={'fa fa-'+icon} /> {typeof name == 'string' ? name : this.nameOf(id)}
@@ -56,7 +57,7 @@ class LeftNav extends React.Component {
 
       <div className="leftnav-item label">Network</div>
       <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
-      <div className="leftnav-item"><InviteModalBtn /></div>
+      <NavLink to="/sync" location={this.props.location} icon={isWifiMode?'wifi':'globe'} label={isWifiMode?'WiFi Mode':'Global Mode'} />
       <Issues />
     </div>
   }

@@ -471,21 +471,30 @@ exports.getLastThreadPost = function (thread) {
 }
 
 exports.getPubStats = function (peers) {
-  var membersof=0, active=0, untried=0
+  var membersof=0, membersofActive=0, membersofUntried=0, connected=0
   ;(peers||app.peers).forEach(function (peer) {
     // filter out LAN peers
     if (peer.host == 'localhost' || peer.host.indexOf('192.168.') === 0)
       return
+    var connectSuccess = (peer.time && peer.time.connect && (peer.time.connect > peer.time.attempt) || peer.connected)
+    if (connectSuccess)
+      connected++
     if (social.follows(peer.key, app.user.id)) {
       membersof++
-      if (peer.time && peer.time.connect && (peer.time.connect > peer.time.attempt) || peer.connected)
-        active++
+      if (connectSuccess)
+        membersofActive++
       if (!peer.time || !peer.time.attempt)
-        untried++
+        membersofUntried++
     }
   })
   
-  return { membersof: membersof, active: active, untried: untried, hasSyncIssue: (!membersof || (!untried && !active)) }
+  return {
+    membersof: membersof,
+    membersofActive: membersofActive,
+    membersofUntried: membersofUntried,
+    connected: connected,
+    hasSyncIssue: (!membersof || (!membersofUntried && !membersofActive))
+  }
 }
 
 exports.getExtLinkName = function (link) {
