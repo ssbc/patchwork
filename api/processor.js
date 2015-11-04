@@ -68,10 +68,8 @@ module.exports = function (sbot, db, state, emit) {
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
 
-        // newsfeed & notifications indexes: add follows or blocks
+        // notifications indexes: add follows or blocks
         if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
-          emit('index-change', { index: 'newsfeed' })
           state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
           emit('index-change', { index: 'notifications' })
         }
@@ -88,11 +86,9 @@ module.exports = function (sbot, db, state, emit) {
     },
 
     vote: function (msg) {
-      // newsfeed & notifications index: add votes on your messages
+      // notifications index: add votes on your messages
       var msgLink = mlib.link(msg.value.content.vote, 'msg')
       if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
-        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
-        emit('index-change', { index: 'newsfeed' })
         state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
         emit('index-change', { index: 'notifications' })
       }

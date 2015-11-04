@@ -100,45 +100,6 @@ tape('newsfeed index includes encrypted messages', function (t) {
   })
 })
 
-tape('newsfeed index includes follows and votes on local user', function (t) {
-  var sbot = u.newserver()
-  u.makeusers(sbot, {
-    alice: { follows: ['bob', 'charlie'] }, // neither follow is included
-    bob: { follows: ['alice'] }, // included
-    charlie: { follows: ['alice'] } // included
-  }, function (err, users) {
-    if (err) throw err
-
-    pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
-        if (err) throw err
-        t.equal(msgs.length, 2) // 2 follows
-
-      var done = multicb({ pluck: 1, spread: true })
-      users.alice.add({ type: 'post', text: 'hello from alice' }, done()) // included
-      users.bob.add({ type: 'post', text: 'hello from bob' }, done()) // included
-      done(function (err, alicePost, bobPost) {
-        if (err) throw err
-
-        var done = multicb({ pluck: 1, spread: true })
-        users.bob.add({ type: 'vote', vote: { link: alicePost.key, value: 1 } }, done()) // included
-        users.charlie.add({ type: 'vote', vote: { link: alicePost.key, value: -1 } }, done()) // included
-        users.bob.add({ type: 'vote', vote: { link: bobPost.key, value: 1 } }, done()) // not included
-        users.charlie.add({ type: 'vote', vote: { link: bobPost.key, value: -1 } }, done()) // not included
-        done(function (err) {
-          if (err) throw err
-
-          pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
-            if (err) throw err
-            t.equal(msgs.length, 6)
-            t.end()
-            sbot.close()
-          }))
-        })
-      })
-    }))
-  })
-})
-
 tape('inbox index doesnt include public threads', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
