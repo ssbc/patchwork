@@ -6,9 +6,9 @@ import * as HelpCards from '../com/help/cards'
 
 const FILTERS = [
   { label: 'All', fn: msg => true },
-  { label: <span><i className="fa fa-hand-peace-o"/> Likes</span>, fn: msg => true }, // TODO
-  { label:<span><i className="fa fa-user-plus"/> Follows</span>, fn: msg => true }, // TODO
-  { label: <span><i className="fa fa-at"/> Mentions</span>, fn: msg => msg.mentionsUser }
+  { label: <span><i className="fa fa-hand-peace-o"/> Likes</span>, fn: msg => msg.value.content.type === 'vote' },
+  { label: <span><i className="fa fa-user-plus"/> Follows</span>, fn: msg => msg.value.content.type === 'contact' },
+  { label: <span><i className="fa fa-at"/> Mentions</span>, fn: msg => msg.value.content.type === 'post' }
 ]
 
 export default class Notifications extends React.Component {
