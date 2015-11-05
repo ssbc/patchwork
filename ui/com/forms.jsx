@@ -97,26 +97,55 @@ export class SetupForm extends React.Component {
 export class RenameForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      name: this.props.name
-    }
-    this.on = {
-      change: (e) => {
-        this.setState({ name: e.target.value })
-      },
-      submit: (e) => {
-        e.preventDefault()
-        this.props.onSubmit(this.state.name)
+    this.state = { name: this.props.name }
+  }
+
+  onChange(e) {
+    this.setState(this.validate(e.target.value))
+  }
+
+  validate (name) {
+    let badNameCharsRegex = /[^A-z0-9\._-]/
+    if (!name.trim()) {
+      return { error: false, isValid: false, name: name }
+    } else if (badNameCharsRegex.test(name)) {
+      return {
+        name: name,
+        error: 'We\'re sorry, names can only include A-z 0-9 . _ - and cannot have spaces.',
+        isValid: false
+      }
+    } else if (name.slice(-1) == '.') {
+      return {
+        name: name,
+        error: 'We\'re sorry, names cannot end with a period.',
+        isValid: false
+      }
+    } else {
+      return {
+        name: name,
+        error: false,
+        isValid: true
       }
     }
   }
+
+  onSubmit(e) {
+    e.preventDefault()
+    this.props.onSubmit(this.state.name)
+  }
+
   render() {
     return <div>
-      <h2>Rename {this.props.name}</h2>
-      <div><small>You can rename anybody! Other people can see the name you choose, but it will only affect you.</small></div>
-      <form onSubmit={this.on.submit}>
-        <input type="text" value={this.state.name} onChange={this.on.change} />
-        <button className="btn">Save</button>
+      <form className="fullwidth" onSubmit={this.onSubmit.bind(this)}>
+        <fieldset>
+          <h1>Rename {this.props.name}</h1>
+          <div><small>You can rename anybody! Other people can see the name you choose, but it will only affect you.</small></div>
+          <label><span/><input type="text" value={this.state.name} onChange={this.onChange.bind(this)} /></label>
+          <div className="flex">
+            <div className="flex-fill">{this.state.error}</div>
+            <div><button className="btn" disabled={!this.state.isValid}>Save</button></div>
+          </div>
+        </fieldset>
       </form>
     </div>
   }
