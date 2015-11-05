@@ -7,6 +7,23 @@ import social from '../lib/social-graph'
 import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
 import { PromptModalBtn, InviteModalBtn } from '../com/modals'
 
+function peerId (peer) {
+  return peer.host+':'+peer.port+':'+peer.key
+}
+
+function peerSorter (a, b) {
+  // prioritize peers that follow the user
+  const bBoost = (social.follows(b.key, app.user.id)) ? 1000 : 0
+  const aBoost = (social.follows(a.key, app.user.id)) ? 1000 : 0
+  // then sort by # of announcers
+  return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
+}
+
+// helper to put an s at the end of words if they're plural only
+function s (n) {
+  return n === 1 ? '' : 's'
+}
+
 class Peer extends React.Component {
   render() {
     let peer = this.props.peer
@@ -28,10 +45,11 @@ class Peer extends React.Component {
       }
     }
 
-    return <div className={'peer flex '+((peer.connected)?'.connected':'')}>
+    const isMember = social.follows(peer.key, app.user.id)
+    return <div className={'peer flex'+((peer.connected)?' connected':'')+(isMember?' ismember':'')}>
       <div className="flex-fill">
-        <div><UserLink id={peer.key} /> { social.follows(peer.key, app.user.id) ? <span className="light">Follows You</span> : '' }</div>
-        <div><small>{peer.host}:{peer.port}:{peer.key}</small></div>
+        <div><UserLink id={peer.key} /> { isMember ? <span className="light">Joined</span> : '' }</div>
+        <div><small>{peerId(peer)}</small></div>
       </div>
       {status}
     </div>
@@ -60,6 +78,7 @@ export default class Sync extends React.Component {
     app.ssb.gossip.peers((err, peers) => {
       if (err) return app.minorIssue('Failed to fetch peers list', err, 'This happened while loading the sync page')
       peers = peers || []
+      peers.sort(peerSorter)
       this.setState({
         peers: peers,
         stats: u.getPubStats(peers)
@@ -87,8 +106,10 @@ export default class Sync extends React.Component {
         break
       }
     }
-    if (i == peers.length)
+    if (i == peers.length) {
       peers.push(e.peer)
+      peers.sort(peerSorter)
+    }
     this.setState({ peers: peers, stats: u.getPubStats(peers) })
   }
   onReplicationEvent(e) {
@@ -120,24 +141,30 @@ export default class Sync extends React.Component {
 
   render() {
     const stats = this.state.stats
+    const downloading = Math.max(stats.connected-stats.membersofActive, 0)
     
     return <VerticalFilledContainer id="sync">
       <div className="header">
         { this.state.isWifiMode ?
           <div>
             <h1><i className="fa fa-wifi" /> WiFi Mode</h1>
-            <h3>{"You're not connected to any Pubs, but you can still connect to peers on your Local Area Network."}</h3>
-          </div> :
+            <h3>
+              { stats.connected > 0 ?
+                ("You're not uploading to any pubs, but you are downloading. You can send updates to peers on your Local Area Network.") :
+                "You're not connected to any pubs, but you can still connect to peers on your Local Area Network." }
+            </h3>
+          </div>
+          :
           <div>
             <h1><i className="fa fa-globe" /> Global Mode</h1>
-            <h3>{"You're successfully uploading to "+stats.membersofActive+" pubs, and downloading updates from "+(Math.max(stats.connected-stats.membersofActive,0))+" others."}</h3>
+            <h3>{"You're successfully uploading to "+stats.membersofActive+" pub"+s(stats.membersofActive)+", and downloading from "+downloading+" other"+s(downloading)+"."}</h3>
           </div>
         }
         <div className="toolbar">
           <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
         </div>
       </div>
-      {this.state.peers.map((peer, i) => <Peer key={'peer'+i} peer={peer} />)}
+      {this.state.peers.map((peer, i) => <Peer key={peerId(peer)} peer={peer} />)}
     </VerticalFilledContainer>
   }
 }
