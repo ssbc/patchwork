@@ -13,7 +13,7 @@ var ReactDOM = require('react-dom')
 window.app = require('./lib/app')
 
 // toplevel events
-// window.addEventListener('error', onError)
+window.addEventListener('error', onError)
 
 // render
 app.fetchLatestState(function () {

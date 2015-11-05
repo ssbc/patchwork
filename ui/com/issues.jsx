@@ -5,15 +5,18 @@ import app from '../lib/app'
 
 class Issue extends React.Component {
   render() {
-    let issue = this.props.issue
-    return <div>
-      <p><strong>{issue.title}</strong> {!issue.isRead ? 'new issue' : ''}</p>
-      <p>{issue.message}</p>
-      <p>
-        <a onClick={() => this.props.onDismiss(issue)}>Dismiss</a>{' '}
-        <a href={issue.issueUrl} target="_blank">File an Issue</a>
-      </p>
+    const issue = this.props.issue
+    return <div className={'issue'+(issue.isRead ? ' dismissed' : '')}>
+      <h1>{issue.title} <small>{issue.isRead ? 'dismissed' : ''}</small></h1>
+      <div>{issue.message}</div>
       {issue.stack ? <pre><code>{issue.stack}</code></pre> : ''}
+      <div className="toolbar flex">
+        { issue.isRead ?
+          '' :
+          <a className="btn" onClick={() => this.props.onDismiss(issue)}><i className="fa fa-times" /> Dismiss</a> }
+        <div className="flex-fill" />
+        <a className="btn" href={issue.issueUrl} target="_blank"><i className="fa fa-exclamation-circle" /> File an Issue</a>
+      </div>
     </div>
   }
 }
@@ -52,8 +55,8 @@ export default class Issues extends React.Component {
   }
 
   render() {
-    var selected = (this.props.to === this.props.location)
-    let modalStyle = {
+    const selected = (this.props.to === this.props.location)
+    const modalStyle = {
       overlay : {
         position          : 'fixed',
         top               : 0,
@@ -66,15 +69,19 @@ export default class Issues extends React.Component {
       content : {
         position                   : 'absolute',
         top                        : '40px',
+        bottom                     : 'auto',
         left                       : '50%',
+        right                      : 'auto',
+        maxHeight                  : '90%',
         transform                  : 'translateX(-50%)',
-        border                     : '1px solid #ccc',
+        boxShadow                  : '0px 24px 48px rgba(0, 0, 0, 0.2)',
+        borderRadius               : '0',
+        border                     : '0',
         background                 : '#fff',
         overflow                   : 'auto',
         WebkitOverflowScrolling    : 'touch',
-        borderRadius               : '4px',
         outline                    : 'none',
-        padding                    : '20px'
+        padding                    : '0'
       }
     }
     let open  = () => this.setState({ isOpen: true  })
