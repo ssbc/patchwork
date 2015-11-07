@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
+import clipboard from 'clipboard'
 import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
@@ -66,8 +67,10 @@ export default class Card extends React.Component {
     this.state = {
       isOversized: false,
       isExpanded: false,
-      subject: null
+      subject: null,
+      wasLinkCopied: null // used by the link-copy behavior to give confirmation
     }
+    this.timeout = false // used by link-copy behavior to clear confirmation
   }
 
   onSelect() {
@@ -76,6 +79,22 @@ export default class Card extends React.Component {
 
   onExpand() {
     this.setState({ isExpanded: true })
+  }
+
+  onSelectDropdown(choice) {
+    if (choice === 'copy-link')
+      this.copyLink()
+  }
+
+  copyLink() {
+    clipboard.writeText(this.props.msg.key)
+    this.setState({ wasLinkCopied: true })
+    if (this.timeout)
+      clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      this.setState({ wasLinkCopied: false })
+      this.timeout = null
+    }, 3e3)
   }
 
   componentDidMount() {
@@ -102,6 +121,11 @@ export default class Card extends React.Component {
     if (rect && rect.height > MAX_CONTENT_HEIGHT) {
       this.setState({ isOversized: true })
     }
+  }
+
+  componentWillUnmount() {
+    if (this.timeout)
+      clearTimeout(this.timeout)
   }
 
   render() {
@@ -140,7 +164,8 @@ export default class Card extends React.Component {
             {msg.plaintext ? '' : <i className="fa fa-lock"/>} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
           </div>
           <div className="header-right">
-            <DropdownBtn items={HAMBURGER_DROPDOWN} right onSelect={(value)=>alert(value)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
+            { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
+            <DropdownBtn items={HAMBURGER_DROPDOWN} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
             <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} />
           </div>
         </div>
