@@ -63,11 +63,19 @@ class DigBtn extends React.Component {
 export default class Card extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { isOversized: false, subject: null }
+    this.state = {
+      isOversized: false,
+      isExpanded: false,
+      subject: null
+    }
   }
 
   onSelect() {
     this.props.onSelect(this.props.msg)
+  }
+
+  onExpand() {
+    this.setState({ isExpanded: true })
   }
 
   componentDidMount() {
@@ -120,7 +128,7 @@ export default class Card extends React.Component {
   renderPost(msg, upvoters, downvoters, isUpvoted) {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
-    return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'')}>
+    return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'') + (this.state.isExpanded?' expanded':'')}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
         <div><NiceDate ts={msg.value.timestamp} /></div>
@@ -138,7 +146,7 @@ export default class Card extends React.Component {
         </div>
         <div className="body" ref="body">
           <Content msg={msg} forceRaw={this.props.forceRaw} />
-          { this.state.isOversized ? <div className="read-more" onClick={this.onSelect.bind(this)}><a>Read more</a></div> : ''}
+          { this.state.isOversized ? <div className="read-more" onClick={this.onExpand.bind(this)}><a>Read more</a></div> : ''}
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?

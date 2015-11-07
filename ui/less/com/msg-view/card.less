@@ -106,6 +106,16 @@
       cursor: pointer;
     }
   }
+
+  &.expanded {
+    .body {
+      height: auto;
+      max-height: none;
+    }
+    .read-more {
+      display: none;
+    }
+  }
 }
 
 .msg-view.card-muted {
