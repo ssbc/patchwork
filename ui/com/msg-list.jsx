@@ -5,15 +5,15 @@ import ReactDOM from 'react-dom'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import ReactInfinite from 'react-infinite'
-import SimpleInfinite from '../simple-infinite'
-import Summary from './summary'
-import Composer from '../composer'
-import { Thread } from '../msg-view'
-import Tabs from '../tabs'
-import { VerticalFilledContainer, verticalFilled } from '../'
-import { isaReplyTo } from '../../lib/msg-relation'
-import app from '../../lib/app'
-import u from '../../lib/util'
+import SimpleInfinite from './simple-infinite'
+import Summary from './msg-view/summary'
+import Composer from './composer'
+import Thread from './msg-thread'
+import Tabs from './tabs'
+import { VerticalFilledContainer, verticalFilled } from './index'
+import { isaReplyTo } from '../lib/msg-relation'
+import app from '../lib/app'
+import u from '../lib/util'
 
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
@@ -214,7 +214,7 @@ export default class MsgList extends React.Component {
   }
 
   loadingElement() {
-    return <div className="msg-list-item summary">
+    return <div className="msg-view summary">
       Loading...
     </div>
   }

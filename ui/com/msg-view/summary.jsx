@@ -15,7 +15,7 @@ export default class Summary extends React.Component {
     let lastMsg = !this.props.forceRaw ? u.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+replies+')'
-    return <div className={'msg-list-item summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
+    return <div className={'msg-view summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
       <div className="ctrls">
         <a onClick={(e)=>{e.stopPropagation(); this.props.onToggleBookmark(msg)}}>
           { msg.isBookmarked ?

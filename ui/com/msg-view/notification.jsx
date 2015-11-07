@@ -49,7 +49,7 @@ export default class Notification extends React.Component {
     const content = this.renderContent()
     if (!content)
       return <span/>
-    return <div className="msg-list-item notification">
+    return <div className="msg-view notification">
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
         <div>{content}</div>

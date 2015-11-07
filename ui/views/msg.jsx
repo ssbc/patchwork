@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import { Thread } from '../com/msg-view'
+import Thread from '../com/msg-thread'
 import { verticalFilled } from '../com'
 import u from '../lib/util'
 

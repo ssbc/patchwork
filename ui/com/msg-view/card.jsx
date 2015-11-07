@@ -108,7 +108,7 @@ export default class Card extends React.Component {
 
   renderMuted(msg) {
     const text = msg.value.content.text
-    return <div className={'msg-list-item card-muted'}>
+    return <div className={'msg-view card-muted'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
         <div><a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
@@ -120,7 +120,7 @@ export default class Card extends React.Component {
   renderPost(msg, upvoters, downvoters, isUpvoted) {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
-    return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')}>
+    return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'')}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
         <div><NiceDate ts={msg.value.timestamp} /></div>
@@ -141,7 +141,7 @@ export default class Card extends React.Component {
           { this.state.isOversized ? <div className="read-more" onClick={this.onSelect.bind(this)}><a>Read more</a></div> : ''}
         </div>
         <div className="ctrls">
-          { replies ?
+          { replies && !this.props.noReplies ?
             <div>
               <a onClick={this.onSelect.bind(this)}>
                 {replies === 1 ? '1 reply ' : (replies + ' replies ')}
@@ -152,7 +152,7 @@ export default class Card extends React.Component {
           { downvoters.length ? <div className="downvoters"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           <div className="flex-fill" />
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
-          <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div>
+          { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
       </div>
     </div>
