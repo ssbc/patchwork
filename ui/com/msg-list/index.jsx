@@ -233,9 +233,10 @@ export default class MsgList extends React.Component {
     this.liveStream = source(opts)
     pull(
       this.liveStream,
-      (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-      pull.asyncMap(this.processMsg.bind(this)),
-      (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined,
+      pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
+      (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
+      pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
+      (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
       // :TODO: restore search
       // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
@@ -269,11 +270,11 @@ export default class MsgList extends React.Component {
   }
 
   processMsg(msg, cb) {
-    // fetch thread data and decrypt
+    // fetch thread data
     if (this.props.threads) {
       u.getPostThread(msg.key, cb)
     } else
-      u.decryptThread(msg, () => { cb(null, msg) })
+      cb(null, msg) // noop
   }
 
   searchQueryFilter(thread) {
@@ -313,9 +314,10 @@ export default class MsgList extends React.Component {
       pull(
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
         pull.through(msg => { lastmsg = msg }), // track last message processed
-        pull.asyncMap(this.processMsg.bind(this)),
-        (this.props.filter) ? pull.filter(this.props.filter) : undefined,
-        (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined,
+        pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
+        (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
+        pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
+        (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
         // :TODO: restore search
         // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
         pull.collect((err, msgs) => {
