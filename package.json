@@ -65,7 +65,7 @@
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
     "ssb-marked": "~0.5.0",
-    "ssb-msg-schemas": "~5.0.0",
+    "ssb-msg-schemas": "~6.0.0",
     "ssb-msgs": "~5.1.0",
     "ssb-ref": "~2.2.0",
     "stream-to-pull-stream": "^1.6.1",
