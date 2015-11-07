@@ -97,11 +97,6 @@ export default class MsgList extends React.Component {
           this.setState(this.state)
         })
       },
-      onToggleSelectedBookmark: () => {
-        let selected = this.state.selected
-        if (!selected) return
-        this.handlers.onToggleBookmark(selected)
-      },
       onToggleStar: (msg) => {
         // get current state
         msg.votes = msg.votes || {}

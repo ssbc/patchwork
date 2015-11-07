@@ -90,11 +90,6 @@ export default class Thread extends React.Component {
         <div className="toolbar flex">
           <a className="btn" onClick={this.props.onDeselect} title="Close"><i className="fa fa-close" /> Close</a>
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
-          <a className={'btn'+(thread.isBookmarked?' highlighted':'')} onClick={this.props.onToggleSelectedBookmark} title="Save">
-            { thread.isBookmarked ?
-              <span><i className="fa fa-bookmark" /> Saved</span> :
-              <span><i className="fa fa-bookmark-o" /> Save</span> }
-          </a>
           <a className={'btn'+(this.state.forceRaw?' highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
         <div className="items">
