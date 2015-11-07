@@ -12,10 +12,15 @@ import social from '../../lib/social-graph'
 
 const INLINE_LENGTH_LIMIT = 100
 const MAX_CONTENT_HEIGHT = 400 // px
-const FLAG_DROPDOWN = [
-  { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
-  { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> },
+const HAMBURGER_DROPDOWN = [
+  { value: 'copy-link', label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+  { value: 'flag',      label: <span><i className="fa fa-flag" /> Flag</span> }
 ]
+
+/*, submenu: [
+    { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
+    { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> }
+  ] }*/
 
 function getVotes (msg, filter) {
   if (!msg.votes) return []
@@ -32,12 +37,13 @@ class SaveBtn extends React.Component {
     this.props.onClick()
   }
   render() {
-    let b = this.props.isBookmarked
-    return <div>
-      <a className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)}>
-        <i className={'fa fa-bookmark'+(b?'':'-o')} /> Save{b?'d':''}
+    const b = this.props.isBookmarked
+    const title = 'Save'+(b?'d':'')
+    return <span>
+      <a className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+        <i className={'fa fa-bookmark'+(b?'':'-o')} />
       </a>
-    </div>
+    </span>
   }
 }
 
@@ -115,10 +121,9 @@ export default class Card extends React.Component {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
     return <div className={'msg-list-item card-post' + (this.state.isOversized?' oversized':'')}>
-      <div className="ctrls">
+      <div className="left-meta">
         <UserPic id={msg.value.author} />
-        <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div>
-        <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} />
+        <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
       <div className="content">
         <div className="header">
@@ -126,24 +131,28 @@ export default class Card extends React.Component {
             <UserLink id={msg.value.author} />{' '}
             {msg.plaintext ? '' : <i className="fa fa-lock"/>} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
           </div>
-          <div className="header-right"><NiceDate ts={msg.value.timestamp} /></div>
+          <div className="header-right">
+            <DropdownBtn items={HAMBURGER_DROPDOWN} right onSelect={(value)=>alert(value)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
+            <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} />
+          </div>
         </div>
         <div className="body" ref="body">
           <Content msg={msg} forceRaw={this.props.forceRaw} />
           { this.state.isOversized ? <div className="read-more" onClick={this.onSelect.bind(this)}><a>Read more</a></div> : ''}
         </div>
-        <div className="signallers">
-          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} />
-          <DropdownBtn className="flag" items={FLAG_DROPDOWN} right onSelect={(reason)=>this.props.onFlag(msg, reason)}><i className="fa fa-flag" /></DropdownBtn>
-        </div>
-        <div className="signals">
+        <div className="ctrls">
+          { replies ?
+            <div>
+              <a onClick={this.onSelect.bind(this)}>
+                {replies === 1 ? '1 reply ' : (replies + ' replies ')}
+                { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
+              </a>
+            </div> : '' }
           { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
           { downvoters.length ? <div className="downvoters"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
-          { replies ?
-            <a onClick={this.onSelect.bind(this)}>
-              {replies === 1 ? '1 reply ' : (replies + ' replies ')}
-              { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
-            </a> : '' }
+          <div className="flex-fill" />
+          <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
+          <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div>
         </div>
       </div>
     </div>
