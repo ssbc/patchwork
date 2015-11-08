@@ -30,6 +30,7 @@ export default class Bookmarks extends React.Component {
     return <div id="bookmarks">
       <MsgList
         threads
+        refreshOnReply
         ListItem={Oneline}
         filters={FILTERS}
         emptyMsg="You have not bookmarked any messages."
