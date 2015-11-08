@@ -176,7 +176,7 @@ export default class Card extends React.Component {
     return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'') + (this.state.isExpanded?' expanded':'')}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
-        <div><NiceDate ts={msg.value.timestamp} /></div>
+        <div><a onClick={this.onSelect.bind(this)}><NiceDate ts={msg.value.timestamp} /></a></div>
       </div>
       <div className="content">
         <div className="header">
