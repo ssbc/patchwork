@@ -242,8 +242,16 @@ exports.init = function (sbot, opts) {
   api.bookmark = function (key, cb) {
     sbot.get(key, function (err, value) {
       if (err) return cb(err)
-      state.bookmarks.sortedUpsert(value.timestamp, key)
-      db.bookmarked.put(key, 1, cb)
+      var done = multicb({ pluck: 1, spread: true })
+      db.bookmarked.put(key, 1, done()) // update bookmarks index
+      u.getThreadHasUnread(sbot, key, done()) // get the target thread's read/unread state
+      done(function (err, putRes, hasUnread) {
+        // insert into the bookmarks index
+        var bookmarksRow = state.bookmarks.sortedUpsert(value.timestamp, key)
+        bookmarksRow.isread = !hasUnread // set isread state
+        emit('index-change', { index: 'bookmarks' })
+        cb(err, putRes)
+      })
     })
   }
   api.unbookmark = function (key, cb) {
