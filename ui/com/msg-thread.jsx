@@ -96,7 +96,15 @@ export default class Thread extends React.Component {
           { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
-            return <Card key={msg.key} msg={msg} noReplies forceRaw={forceRaw} forceOpen={forceOpen} onToggleStar={()=>this.props.onToggleStar(msg)} onFlag={(msg, reason)=>this.props.onFlag(msg, reason)} />
+            return <Card
+              key={msg.key}
+              msg={msg}
+              noReplies
+              forceRaw={forceRaw}
+              forceOpen={forceOpen}
+              onToggleStar={()=>this.props.onToggleStar(msg)}
+              onFlag={(msg, reason)=>this.props.onFlag(msg, reason)}
+              onToggleBookmark={()=>this.props.onToggleBookmark(msg)} />
           }) }
           <div className="composer-container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
         </div>
