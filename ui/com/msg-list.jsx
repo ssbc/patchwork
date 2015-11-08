@@ -134,7 +134,7 @@ export default class MsgList extends React.Component {
 
           // re-render
           msg.votes = msg.votes || {}
-          msg.votes[app.user.id] = -1
+          msg.votes[app.user.id] = (reason === 'unflag') ? 0 : -1
           this.setState(this.state)
         }
         if (msg.plaintext)

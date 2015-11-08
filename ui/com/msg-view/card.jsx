@@ -15,15 +15,6 @@ import social from '../../lib/social-graph'
 
 const INLINE_LENGTH_LIMIT = 100
 const MAX_CONTENT_HEIGHT = 400 // px
-const HAMBURGER_DROPDOWN = [
-  { value: 'copy-link', label: <span><i className="fa fa-external-link" /> Copy Link</span> },
-  { value: 'flag',      label: <span><i className="fa fa-flag" /> Flag</span> }
-]
-
-/*, submenu: [
-    { value: 'spam',  label: <span><i className="fa fa-flag" /> Spam</span> },
-    { value: 'abuse', label: <span><i className="fa fa-flag" /> Abuse</span> }
-  ] }*/
 
 function getVotes (msg, filter) {
   if (!msg.votes) return []
@@ -98,6 +89,8 @@ export default class Card extends React.Component {
       this.copyLink()
     else if (choice === 'flag')
       this.setState({ isFlagModalOpen: true })
+    else if (choice === 'unflag')
+      this.props.onFlag(this.props.msg, 'unflag')
   }
 
   copyLink() {
@@ -147,9 +140,10 @@ export default class Card extends React.Component {
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
+    const isDownvoted = downvoters.indexOf(app.user.id) !== -1
     if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
       return this.renderMuted(msg)
-    return this.renderPost(msg, upvoters, downvoters, isUpvoted)
+    return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
 
   renderMuted(msg) {
@@ -163,9 +157,17 @@ export default class Card extends React.Component {
     </div>
   }
 
-  renderPost(msg, upvoters, downvoters, isUpvoted) {
+  renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
+
+    const dropdownOpts = [
+      { value: 'copy-link', label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+      (isDownvoted) ? 
+        { value: 'unflag',  label: <span><i className="fa fa-times" /> Unflag</span> } :
+        { value: 'flag',    label: <span><i className="fa fa-flag" /> Flag</span> }
+    ]
+
     return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'') + (this.state.isExpanded?' expanded':'')}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
@@ -179,7 +181,7 @@ export default class Card extends React.Component {
           </div>
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
-            <DropdownBtn items={HAMBURGER_DROPDOWN} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
+            <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
             <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} />
           </div>
         </div>
