@@ -77,10 +77,12 @@ export default class ImageInput extends React.Component {
       if (!file)
         return
       const ni = NativeImage.createFromPath(file.path)
-      let img = document.createElement('img')
-      img.src = ni.toDataUrl()
+      const dataUrl = ni.toDataUrl()
+      if (dataUrl === 'data:image/png;base64,')
+        return this.setState({ editorMsg: 'Failed to load image. Must be a valid PNG or JPEG.' })
 
-      let imgdim = ni.getSize()
+      const img = document.createElement('img')
+      const imgdim = ni.getSize()
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
       this.refs.scaleSlider.value = 0
 
@@ -152,7 +154,7 @@ export default class ImageInput extends React.Component {
       <div>
         <label>
           <span>{this.props.label}</span>
-          <input ref="fileInput" type="file" accept="image/*" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
+          <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
           <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
         </label>
       </div>
