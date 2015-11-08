@@ -15,8 +15,12 @@ import { isaReplyTo } from '../lib/msg-relation'
 import app from '../lib/app'
 import u from '../lib/util'
 
+// how many messages to fetch in a batch?
+const BATCH_LOAD_AMT = 30
+
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
+
 
 export default class MsgList extends React.Component {
   constructor(props) {
@@ -189,7 +193,7 @@ export default class MsgList extends React.Component {
 
   componentDidMount() {
     // load first messages
-    this.loadMore(30)
+    this.loadMore(BATCH_LOAD_AMT)
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -217,7 +221,7 @@ export default class MsgList extends React.Component {
   reload() {
     this.setState({ msgs: [], isAtEnd: false }, () => {
       this.botcursor = null
-      this.loadMore(30)
+      this.loadMore(BATCH_LOAD_AMT)
     })
   }
 
@@ -303,7 +307,7 @@ export default class MsgList extends React.Component {
 
     // helper to fetch a batch of messages
     let fetchBottomBy = (amt, cb) => {
-      amt = amt || 50
+      amt = amt || BATCH_LOAD_AMT
       var lastmsg
       pull(
         source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
