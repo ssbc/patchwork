@@ -141,6 +141,11 @@
     padding: 7px;
     a {
       color: gray;
+      overflow : hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
     div:last-child {
       font-weight: 300;

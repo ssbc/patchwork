@@ -105,7 +105,7 @@ export default class Card extends React.Component {
     return <div className={'msg-list-item card-muted'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
-        <div><a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
+        <div><a onClick={this.onSelect.bind(this)}><MdInline md={text} /></a> <small>flagged</small></div>
         <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
     </div>
