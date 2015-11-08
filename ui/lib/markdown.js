@@ -68,23 +68,14 @@ blockRenderer.link = function(href, title, text) {
   return out;
 };
 
-// override to support <video> tags (HACK)
 blockRenderer.image  = function (href, title, text) {
   href = href.replace(/^&amp;/, '&')
   if (ssbref.isLink(href)) {
-    if ((''+text).indexOf('.webm') >= 0) {
-      var out = '<video loop=1 muted=1 src="http://localhost:7777/' + href + '?fallback=video" alt="' + text + '"'
-      if (title) {
-        out += ' title="' + title + '"'
-      }
-      out += '></video>'
-    } else {
-      var out = '<a href="#/webview/' + encodeURIComponent(href) + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
-      if (title) {
-        out += ' title="' + title + '"'
-      }
-      out += '></a>'
+    var out = '<a href="#/webview/' + encodeURIComponent(href) + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
+    if (title) {
+      out += ' title="' + title + '"'
     }
+    out += '></a>'
     return out
   }
   return text
