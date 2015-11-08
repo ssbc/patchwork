@@ -60,6 +60,7 @@ export default class Card extends React.Component {
     this.state = {
       isOversized: false,
       isExpanded: false,
+      isViewingRaw: false,
       subject: null,
       wasLinkCopied: null, // used by the link-copy behavior to give confirmation
       isFlagModalOpen: false
@@ -91,6 +92,8 @@ export default class Card extends React.Component {
       this.setState({ isFlagModalOpen: true })
     else if (choice === 'unflag')
       this.props.onFlag(this.props.msg, 'unflag')
+    else if (choice === 'toggle-raw')
+      this.setState({ isViewingRaw: !this.state.isViewingRaw })
   }
 
   copyLink() {
@@ -160,12 +163,14 @@ export default class Card extends React.Component {
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
+    const isViewingRaw = this.state.isViewingRaw
 
     const dropdownOpts = [
-      { value: 'copy-link', label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+      { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ? 
-        { value: 'unflag',  label: <span><i className="fa fa-times" /> Unflag</span> } :
-        { value: 'flag',    label: <span><i className="fa fa-flag" /> Flag</span> }
+        { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
+        { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
 
     return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'') + (this.state.isExpanded?' expanded':'')}>
@@ -186,7 +191,7 @@ export default class Card extends React.Component {
           </div>
         </div>
         <div className="body" ref="body">
-          <Content msg={msg} forceRaw={this.props.forceRaw} />
+          <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
           { this.state.isOversized ? <div className="read-more" onClick={this.onExpand.bind(this)}><a>Read more</a></div> : ''}
         </div>
         <div className="ctrls">
