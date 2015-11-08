@@ -170,6 +170,8 @@ export default class MsgList extends React.Component {
         })
       },
       onSelectFilter: (filter) => {
+        if (this.state.isLoading)
+          return
         this.setState({ activeFilter: filter }, () => this.reload())
       }
       // :TODO: restore search
