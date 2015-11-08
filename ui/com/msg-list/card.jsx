@@ -22,10 +22,6 @@ function getVotes (msg, filter) {
   return Object.keys(msg.votes).filter(filter)
 }
 
-function userIsTrusted (userId) {
-  return userId === app.user.id || social.follows(app.user.id, userId)
-}
-
 class SaveBtn extends React.Component {
   onClick(e) {
     e.stopPropagation()
@@ -93,7 +89,7 @@ export default class Card extends React.Component {
   render() {
     const msg = this.props.msg
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
-    const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
+    const downvoters = getVotes(this.props.msg, userId => msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
     if (msg.value.content.type == 'post' && downvoters.length > upvoters.length)
       return this.renderMuted(msg)
@@ -105,7 +101,7 @@ export default class Card extends React.Component {
     return <div className={'msg-list-item card-muted'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
-        <div><a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
+        <div><a onClick={this.onSelect.bind(this)}><MdInline md={text} /></a> <small>flagged</small></div>
         <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
     </div>

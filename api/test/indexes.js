@@ -378,6 +378,55 @@ tape('bookmark index includes only bookmarked posts', function (t) {
   })
 })
 
+tape('bookmark index works for encrypted messages', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob', 'charlie'] },
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    var done = multicb({ pluck: 1, spread: true })
+    users.alice.add(ssbkeys.box({ type: 'post', text: 'hello from alice' }, [users.alice.keys, users.bob.keys, users.charlie.keys]), done())
+    users.bob.add(ssbkeys.box({ type: 'post', text: 'hello from bob' }, [users.alice.keys, users.bob.keys]), done())
+    users.charlie.add(ssbkeys.box({ type: 'post', text: 'hello from charlie' }, [users.alice.keys, users.charlie.keys]), done())
+    done(function (err, msg1, msg2, msg3) {
+      if (err) throw err
+
+      var done = multicb()
+      sbot.patchwork.bookmark(msg1.key, done())
+      sbot.patchwork.toggleBookmark(msg3.key, done())
+      done(function (err) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createBookmarkStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 2)
+          t.equal(msgs[0].key, msg3.key)
+          t.equal(msgs[1].key, msg1.key)
+
+          var done = multicb()
+          sbot.patchwork.unbookmark(msg1.key, done())
+          sbot.patchwork.toggleBookmark(msg2.key, done())
+          sbot.patchwork.toggleBookmark(msg3.key, done())
+          done(function (err) {
+            if (err) throw err
+
+            pull(sbot.patchwork.createBookmarkStream(), pull.collect(function (err, msgs) {
+              if (err) throw err
+              t.equal(msgs.length, 1)
+              t.equal(msgs[0].key, msg2.key)
+              t.end()
+              sbot.close()
+            }))
+          })
+        }))
+      })
+    })
+  })
+})
+
 tape('bookmark index orders by most recent reply', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
@@ -419,6 +468,130 @@ tape('bookmark index orders by most recent reply', function (t) {
             }))
           })
         }))
+      })
+    })
+  })
+})
+
+tape('bookmark index tracks read/unread', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob', 'charlie'] },
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, root) {
+      if (err) throw err
+
+      sbot.patchwork.bookmark(root.key, function (err) {
+        if (err) throw err
+
+        sbot.patchwork.getIndexCounts(function (err, counts) {
+          if (err) throw err
+          t.equal(counts.bookmarks, 1)
+          t.equal(counts.bookmarksUnread, 1)
+
+          sbot.patchwork.markRead(root.key, function (err) {
+            if (err) throw err
+
+            sbot.patchwork.getIndexCounts(function (err, counts) {
+              if (err) throw err
+              t.equal(counts.bookmarks, 1)
+              t.equal(counts.bookmarksUnread, 0)
+
+              addFirstReply(root)
+            })
+          })
+        })
+      })
+    })
+    function addFirstReply (root) {
+      // check that the first reply's read/unread state is properply merged with root
+      users.alice.add({ type: 'post', text: 'hello from alice', root: root.key, branch: root.key }, function (err, reply1) {
+        if (err) throw err
+
+        sbot.patchwork.getIndexCounts(function (err, counts) {
+          if (err) throw err
+          t.equal(counts.bookmarks, 1)
+          t.equal(counts.bookmarksUnread, 1)
+
+          sbot.patchwork.markRead([root.key, reply1.key], function (err) {
+            if (err) throw err
+
+            sbot.patchwork.getIndexCounts(function (err, counts) {
+              if (err) throw err
+              t.equal(counts.bookmarks, 1)
+              t.equal(counts.bookmarksUnread, 0)
+
+              addSecondReply(root, reply1)
+            })
+          })
+        })
+      })
+    }
+    function addSecondReply (root, reply1) {
+      // check that the second reply's read/unread state is properply merged with root
+      users.bob.add({ type: 'post', text: 'hello again from bob', root: root.key, branch: reply1.key }, function (err, reply2) {
+        if (err) throw err
+
+        sbot.patchwork.getIndexCounts(function (err, counts) {
+          if (err) throw err
+          t.equal(counts.bookmarks, 1)
+          t.equal(counts.bookmarksUnread, 1)
+
+          sbot.patchwork.markRead([root.key, reply2.key], function (err) {
+            if (err) throw err
+
+            sbot.patchwork.getIndexCounts(function (err, counts) {
+              if (err) throw err
+              t.equal(counts.bookmarks, 1)
+              t.equal(counts.bookmarksUnread, 0)
+
+              t.end()
+              sbot.close()
+            })
+          })
+        })
+      })
+    }
+  })
+})
+
+tape('bookmark index correctly tracks read/unread on add', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: { follows: ['bob', 'charlie'] },
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    var done = multicb({ pluck: 1, spread: true })
+    users.alice.add({ type: 'post', text: 'hello from alice' }, done())
+    users.bob.add({ type: 'post', text: 'hello from bob' }, done())
+    done(function (err, msg1, msg2) {
+      if (err) throw err
+
+      sbot.patchwork.markRead(msg1.key, function (err) {
+        if (err) throw err
+
+        var done = multicb()
+        sbot.patchwork.bookmark(msg1.key, done())
+        sbot.patchwork.bookmark(msg2.key, done())
+        done(function (err) {
+          if (err) throw err
+
+          sbot.patchwork.getIndexCounts(function (err, counts) {
+            if (err) throw err
+            t.equal(counts.bookmarks, 2)
+            t.equal(counts.bookmarksUnread, 1)
+
+            t.end()
+            sbot.close()
+          })
+        })
       })
     })
   })

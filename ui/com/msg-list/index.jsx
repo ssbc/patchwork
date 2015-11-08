@@ -170,6 +170,8 @@ export default class MsgList extends React.Component {
         })
       },
       onSelectFilter: (filter) => {
+        if (this.state.isLoading)
+          return
         this.setState({ activeFilter: filter }, () => this.reload())
       }
       // :TODO: restore search
@@ -195,6 +197,15 @@ export default class MsgList extends React.Component {
   componentDidMount() {
     // load first messages
     this.loadMore(30)
+
+    // load initial message
+    if (this.props.selectOnLoad) {
+      u.getPostThread(this.props.selectOnLoad, (err, thread) => {
+        if (err)
+          return app.issue('Failed to Load Message', err, 'This happened in msg-list selectOnLoad')
+        this.handlers.onSelect(thread, true)
+      })
+    }
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -297,7 +308,7 @@ export default class MsgList extends React.Component {
     }
   }
 
-  loadMore(amt) {
+  loadMore(amt, done) {
     if (this.state.isLoading || this.state.isAtEnd)
       return
 
@@ -351,7 +362,7 @@ export default class MsgList extends React.Component {
         isLoading: false,
         isAtEnd: isAtEnd,
         msgs: updatedMsgs
-      })
+      }, done)
     })
   }
 

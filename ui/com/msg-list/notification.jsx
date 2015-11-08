@@ -76,7 +76,7 @@ export default class Notification extends React.Component {
     const text = (c.text || 'this message')
     return <span>
       <i className="fa fa-at" /> <UserLink id={msg.value.author} /> mentioned you in <a className="subject" onClick={this.onSelect.bind(this)}>
-        <MdInline limit={INLINE_LENGTH_LIMIT} md={text}/>
+        <MdInline md={text}/>
       </a>
     </span>
   }
@@ -93,7 +93,7 @@ export default class Notification extends React.Component {
     const reason = (c.vote.reason) ? ('as '+c.vote.reason) : ''
     return <span>
       <i className={icon} /> <UserLink id={msg.value.author} /> {desc} <a className="subject" onClick={this.onSelect.bind(this)}>
-        <MdInline limit={INLINE_LENGTH_LIMIT} md={text}/>
+        <MdInline md={text}/>
       </a> {reason}
     </span> 
   }
