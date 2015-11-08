@@ -5,6 +5,8 @@ import clipboard from 'clipboard'
 import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
+import { ModalContainer } from '../modals'
+import { FlagMsgForm } from '../forms'
 import { countReplies } from '../../lib/msg-relation'
 import DropdownBtn from '../dropdown'
 import u from '../../lib/util'
@@ -68,7 +70,8 @@ export default class Card extends React.Component {
       isOversized: false,
       isExpanded: false,
       subject: null,
-      wasLinkCopied: null // used by the link-copy behavior to give confirmation
+      wasLinkCopied: null, // used by the link-copy behavior to give confirmation
+      isFlagModalOpen: false
     }
     this.timeout = false // used by link-copy behavior to clear confirmation
   }
@@ -81,9 +84,20 @@ export default class Card extends React.Component {
     this.setState({ isExpanded: true })
   }
 
+  onSubmitFlag(reason) {
+    this.props.onFlag(this.props.msg, reason)
+    this.setState({ isFlagModalOpen: false })
+  }
+
+  onCloseFlagModal() {
+    this.setState({ isFlagModalOpen: false })
+  }
+
   onSelectDropdown(choice) {
     if (choice === 'copy-link')
       this.copyLink()
+    else if (choice === 'flag')
+      this.setState({ isFlagModalOpen: true })
   }
 
   copyLink() {
@@ -133,7 +147,7 @@ export default class Card extends React.Component {
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
-    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length)
+    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
       return this.renderMuted(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted)
   }
@@ -143,7 +157,7 @@ export default class Card extends React.Component {
     return <div className={'msg-view card-muted'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
-        <div><a onClick={this.onSelect.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
+        <div><a onClick={this.onExpand.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
         <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
     </div>
@@ -188,6 +202,9 @@ export default class Card extends React.Component {
           { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
       </div>
+      <ModalContainer isOpen={this.state.isFlagModalOpen} onRequestClose={this.onCloseFlagModal.bind(this)}>
+        <FlagMsgForm msg={msg} onSubmit={this.onSubmitFlag.bind(this)} />
+      </ModalContainer>
     </div>
   }
 }
