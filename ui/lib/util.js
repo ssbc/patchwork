@@ -1,4 +1,5 @@
 var pull = require('pull-stream')
+var ip = require('ip')
 var mlib = require('ssb-msgs')
 var mime = require('mime-types')
 var multicb = require('multicb')
@@ -474,7 +475,7 @@ exports.getPubStats = function (peers) {
   var membersof=0, membersofActive=0, membersofUntried=0, connected=0
   ;(peers||app.peers).forEach(function (peer) {
     // filter out LAN peers
-    if (peer.host == 'localhost' || peer.host.indexOf('192.168.') === 0)
+    if (peer.host == 'localhost' || ip.isPrivate(peer.host))
       return
     var connectSuccess = (peer.time && peer.time.connect && (peer.time.connect > peer.time.attempt) || peer.connected)
     if (connectSuccess)
