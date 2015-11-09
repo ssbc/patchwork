@@ -30,12 +30,13 @@ export default class NewsFeed extends React.Component {
 
   render() {
     const mid = this.props.params.id || false
+    console.log(mid)
     return <div id="newsfeed">
       <MsgList
         threads
         ListItem={Card}
         filters={FILTERS}
-        selectOnLoad={mid}
+        selected={mid}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your newsfeed is empty."
         append={this.helpCards.bind(this)}

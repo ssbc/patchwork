@@ -198,11 +198,11 @@ export default class MsgList extends React.Component {
     // load first messages
     this.loadMore(30)
 
-    // load initial message
-    if (this.props.selectOnLoad) {
-      u.getPostThread(this.props.selectOnLoad, (err, thread) => {
+    // load selected message
+    if (this.props.selected) {
+      u.getPostThread(this.props.selected, (err, thread) => {
         if (err)
-          return app.issue('Failed to Load Message', err, 'This happened in msg-list selectOnLoad')
+          return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
         this.handlers.onSelect(thread, true)
       })
     }
@@ -215,6 +215,16 @@ export default class MsgList extends React.Component {
     // setup livestream
     if (this.props.live)
       this.setupLivestream()
+  }
+  componentWillReceiveProps(newProps) {
+    // load selected message
+    if (newProps.selected) {
+      u.getPostThread(newProps.selected, (err, thread) => {
+        if (err)
+          return app.issue('Failed to Load Message', err, 'This happened in msg-list componentWillReceiveProps')
+        this.handlers.onSelect(thread, true)
+      })
+    }
   }
   componentWillUnmount() {
     // stop autoresizing
