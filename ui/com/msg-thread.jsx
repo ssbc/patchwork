@@ -13,7 +13,6 @@ export default class Thread extends React.Component {
     super(props)
     this.state = {
       thread: null,
-      forceRaw: false,
       msgs: []
     }
     this.liveStream = null
@@ -66,10 +65,6 @@ export default class Thread extends React.Component {
       this.liveStream(true, ()=>{})
   }
 
-  toggleRaw() {
-    this.setState({ forceRaw: !this.state.forceRaw })
-  }
-
   onSend(msg) {
     if (this.props.onNewReply)
       this.props.onNewReply(msg)
@@ -84,13 +79,11 @@ export default class Thread extends React.Component {
   render() {
     let thread = this.props.thread
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
-    let forceRaw = this.state.forceRaw||this.props.forceRaw
     return <div className="msg-thread">
       <VerticalFilledContainer>
         <div className="toolbar flex">
           <a className="btn" onClick={this.props.onDeselect} title="Close"><i className="fa fa-close" /> Close</a>
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
-          <a className={'btn'+(this.state.forceRaw?' highlighted':'')} onClick={this.toggleRaw.bind(this)} title="View Raw Data"><i className="fa fa-code" /></a>
         </div>
         <div className="items">
           { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
@@ -100,7 +93,7 @@ export default class Thread extends React.Component {
               key={msg.key}
               msg={msg}
               noReplies
-              forceRaw={forceRaw}
+              forceRaw={this.props.forceRaw}
               forceOpen={forceOpen}
               onToggleStar={()=>this.props.onToggleStar(msg)}
               onFlag={(msg, reason)=>this.props.onFlag(msg, reason)}
