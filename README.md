@@ -44,9 +44,10 @@ npm start
 And then join a pub server.
 
 
-## Development & App-building : 
+## Development & building : 
 
-**[Testing Check-list](./TESTING.md)**, run through this before publishing any new versions.
+**[Project Structure Doc](./docs/PROJECT-STRUCTURE.md)**.
+**[Testing Check-list](./docs/TESTING.md)**, run through this before publishing any new versions.
 
 **Dependencies**
 
