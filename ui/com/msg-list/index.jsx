@@ -299,62 +299,50 @@ export default class MsgList extends React.Component {
   }
 
   loadMore(amt) {
+    amt = amt || 50
     if (this.state.isLoading || this.state.isAtEnd)
       return
 
-    let numFetched = 0
+    var lastmsg
     let source = this.props.source || app.ssb.createFeedStream
     let cursor = this.props.cursor || ((msg) => { if (msg) { return msg.value.timestamp } })
     let updatedMsgs = this.state.msgs
 
-    // helper to fetch a batch of messages
-    let fetchBottomBy = (amt, cb) => {
-      amt = amt || 50
-      var lastmsg
-      pull(
-        source({ reverse: true, limit: amt, lt: cursor(this.botcursor) }),
-        pull.through(msg => { lastmsg = msg }), // track last message processed
-        pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
-        (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
-        pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
-        (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
-        // :TODO: restore search
-        // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
-        pull.collect((err, msgs) => {
-          if (err)
-            console.warn('Error while fetching messages', err)
-
-          // add to messages
-          if (msgs.length) {
-            numFetched += msgs.length
-            updatedMsgs = updatedMsgs.concat(msgs)
-          }
-
-          // nothing new? stop
-          if (!lastmsg || (this.botcursor && this.botcursor.key == lastmsg.key))
-            return cb(true)
-          this.botcursor = lastmsg
-
-          // fetch more if needed
-          var remaining = amt - msgs.length
-          if (remaining > 0)
-            return fetchBottomBy(remaining, cb)
-
-          // we're done
-          cb(false)
-        })
-      )
-    }
-
-    // fetch amount requested
+    let nfetched = 0
+    let startTime = Date.now()
     this.setState({ isLoading: true })
-    fetchBottomBy(amt, isAtEnd => {
-      this.setState({
-        isLoading: false,
-        isAtEnd: isAtEnd,
-        msgs: updatedMsgs
+    pull(
+      source({ reverse: true, lt: cursor(this.botcursor) }),
+      pull.through(msg => { lastmsg = msg; nfetched++ }), // track last message processed
+      pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
+      (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
+      pull.take(amt), // apply limit
+      pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
+      (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
+      // :TODO: restore search
+      // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
+      pull.collect((err, msgs) => {
+        if (err)
+          console.warn('Error while fetching messages', err)
+        console.log('fetched', nfetched, 'kept', msgs.length, (Date.now() - startTime) + 'ms')
+
+        // add to messages
+        if (msgs.length)
+          updatedMsgs = updatedMsgs.concat(msgs)
+
+        // did we reach the end?
+        var isAtEnd = false
+        if (!lastmsg || (this.botcursor && this.botcursor.key == lastmsg.key))
+          isAtEnd = true
+        this.botcursor = lastmsg
+
+        this.setState({
+          isLoading: false,
+          isAtEnd: isAtEnd,
+          msgs: updatedMsgs
+        })
       })
-    })
+    )
   }
 
   render() {
