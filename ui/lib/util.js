@@ -359,7 +359,7 @@ exports.iterateThreadAsync = function (thread, maxDepth, fn, cb) {
   fn(thread, done()) // run on toplevel
   if (thread.related)
     iterate(thread.related, 1)
-  done(cb)
+  done(err => cb(err, thread))
 
   function iterate (msgs, n) {
     if (!isNaN(maxDepth) && n > maxDepth)
