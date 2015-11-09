@@ -93,7 +93,6 @@ class ComposerTextarea extends React.Component {
     if (!textarea || textarea.isSetup)
       return
     textarea.isSetup = true
-    textarea.focus()
     suggestBox(textarea, app.suggestOptions)
     textarea.addEventListener('suggestselect', this.props.onChange)
   }
