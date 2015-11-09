@@ -4,6 +4,25 @@ import ImageInput from './image-input'
 import { InviteErrorExplanation, InviteErrorHelp } from './help/forms'
 import app from '../lib/app'
 
+class RadioSet extends React.Component {
+  render () {
+    return <div className={this.props.className}>
+      { this.props.options.map((option, i) => {
+        return (
+          <label key={'option'+i}>
+            <input type="radio"
+              name={this.props.group} 
+              value={option.value} 
+              defaultChecked={option.checked}
+              onChange={()=>this.props.onChange(option.value)} />
+            {option.label}
+          </label>
+        )
+      }) }
+    </div>
+  }
+}
+
 export class SetupForm extends React.Component {
   constructor(props) {
     super(props)
@@ -186,6 +205,38 @@ export class InviteForm extends React.Component {
           <div><strong>Pubs let you connect globally.</strong></div>
           <div>{'Don\'t have an invite? You\'ll have to find a pub operator and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
           <div>Neckbeards can setup their own pubs. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the setup documentation here.</a></div>
+        </fieldset>
+      </form>
+    </div>
+  }
+}
+
+export class FlagMsgForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { reason: 'spam' }
+  }
+
+  onChange(reason) {
+    this.setState({ reason: reason })
+  }
+
+  onSubmit(e) {
+    e.preventDefault()
+    this.props.onSubmit(this.state.reason)
+  }
+
+  render() {
+    return <div>
+      <form className="inline" onSubmit={this.onSubmit.bind(this)}>
+        <fieldset>
+          <h1><i className="fa fa-flag" /> Flag this Message</h1>
+          <div><small>{"Flagging hides unwanted/negative content. What's your reason for flagging this message?"}</small></div>
+          <RadioSet group="reason" options={[{ label: 'Spam', value: 'spam', checked: true }, { label: 'Abusive', value: 'abuse' }]} onChange={this.onChange.bind(this)} />
+          <div className="flex">
+            <div className="flex-fill" />
+            <div><button className="btn">Flag</button></div>
+          </div>
         </fieldset>
       </form>
     </div>

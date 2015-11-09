@@ -37,6 +37,14 @@ const MODAL_STYLES = {
   }
 }
 
+export class ModalContainer extends React.Component {
+  render() {
+    if (!this.props.isOpen)
+      return <span/>
+    return <Modal isOpen onRequestClose={this.props.onRequestClose} style={MODAL_STYLES}>{this.props.children}</Modal>
+  }
+}
+
 export class ModalBtn extends React.Component {
   constructor(props) {
     super(props)

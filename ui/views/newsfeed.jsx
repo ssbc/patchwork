@@ -3,7 +3,7 @@ import React from 'react'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
-import Card from '../com/msg-list/card'
+import Card from '../com/msg-view/card'
 import * as HelpCards from '../com/help/cards'
 import WelcomeHelp from '../com/help/welcome'
 import app from '../lib/app'
@@ -30,7 +30,6 @@ export default class NewsFeed extends React.Component {
 
   render() {
     const mid = this.props.params.id || false
-    console.log(mid)
     return <div id="newsfeed">
       <MsgList
         threads

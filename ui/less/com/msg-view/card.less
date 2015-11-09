@@ -1,14 +1,14 @@
-.msg-list-item.card-post {
+.msg-view.card-post {
   display: flex;
   max-width: 600px;
-  margin: 10px auto;
+  margin: 20px auto;
   padding-right: 130px;
 
   &:first-child {
     margin-top: 30px;
   }
 
-  .ctrls {
+  .left-meta {
     flex: 0 0 74px;
     padding: 2px 0 0 3px;
     img {
@@ -19,13 +19,11 @@
     div {
       text-align: right;
       padding-right: 12px;
+      font-weight: 300;
+      font-size: 14px;
+      white-space: pre;
       a {
         color: #555;
-        &.selected {
-          i {
-            color: #EFBD32;
-          }
-        }
       }
     }
   }
@@ -44,8 +42,11 @@
       flex: 1;
     }
     .header-right {
-      font-weight: 300;
-      font-size: 12px;
+      white-space: pre;
+      padding-right: 5px;
+      a.save {
+        padding-right: 10px;
+      }
     }
     a {
       color: @dark-gray2;
@@ -56,17 +57,28 @@
     overflow: hidden;
     color: @dark-gray3;
     font-weight: 300;
-    font-family: Helvetica;
+    font-family: @content-font;
     font-size: 90%;
     line-height: 1.4;
     max-height: 500px;
   }
-  .signallers {
-    padding: 10px;    
+  .ctrls {
+    display: flex;
+    background-color: #fafafa;
+    padding: 5px 0;
+    color: #808080;
+    font-weight: 300;
+    font-size: 15px;
+    border-top: 1px solid #eee;
+    & > div {
+      padding: 0 10px;
+    }
+    .upvoters, .downvoters {
+      font-size: 80%;
+      padding-top: 2px;
+    }
     a {
       color: #555;
-      font-weight: 300;
-      font-size: 15px;
     }
     a.vote {
       &.selected {
@@ -77,22 +89,9 @@
       }
     }
     a.flag {
-      float: right;
       &.selected, &:hover {
         color: #BB1111;
       }
-    }
-  }
-  .signals {
-    background-color: #fafafa;
-    padding: 5px 10px;
-    color: #808080;
-    font-family: "Source Sans Pro";
-    font-weight: 300;
-    font-size: 14px;
-    border-top: 1px solid #eee;
-    a {
-      color: #555;
     }
   }
 
@@ -116,9 +115,19 @@
       cursor: pointer;
     }
   }
+
+  &.expanded {
+    .body {
+      height: auto;
+      max-height: none;
+    }
+    .read-more {
+      display: none;
+    }
+  }
 }
 
-.msg-list-item.card-muted {
+.msg-view.card-muted {
   display: flex;
   max-width: 600px;
   margin: 20px auto;

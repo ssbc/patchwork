@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import MsgList from '../com/msg-list'
-import Notification from '../com/msg-list/notification'
+import Notification from '../com/msg-view/notification'
 import * as HelpCards from '../com/help/cards'
 
 const FILTERS = [

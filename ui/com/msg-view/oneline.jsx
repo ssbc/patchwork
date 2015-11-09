@@ -17,7 +17,7 @@ export default class Oneline extends React.Component {
     let lastMsg = !this.props.forceRaw ? u.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+(replies+1)+')'
-    return <div className={'msg-list-item oneline'+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
+    return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
       <div className="bookmark">
         <a onClick={(e)=>{e.stopPropagation(); this.props.onToggleBookmark(msg)}}>
           { msg.isBookmarked ?

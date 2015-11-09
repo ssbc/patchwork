@@ -3,7 +3,7 @@ import React from 'react'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
-import Oneline from '../com/msg-list/oneline'
+import Oneline from '../com/msg-view/oneline'
 import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 
