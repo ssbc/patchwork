@@ -225,10 +225,14 @@ Follow this procedure before every version bump.
   - Bad inputs
    1. Click the Join a Pub btn in the left nav.
    2. Use each of the following bad codes, ensuring a human-readable error message on each failure:
-    - foo
-    - 176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519
-    - 176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yohSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
-    - 176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUcN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yoh6rMSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
+
+```
+foo
+176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519
+176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yohSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
+176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUcN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yoh6rMSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
+```
+
   - Using an invite
    1. Click the Join a Pub btn in the left nav.
    2. Enter the test-pub's invite.
