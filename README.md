@@ -47,6 +47,6 @@ npm start
 ## Development : 
 
 - [Building Patchwork](./docs/BUILDING.md)
+- [Creating a Testing Environment, and Running Tests](./docs/TESTING.md)
 - [Patchwork Project Structure](./docs/PROJECT-STRUCTURE.md)
-- [Patchwork Testing Check-list](./docs/TESTING.md)
 - [SSB Docs Repo](https://github.com/ssbc/docs)
