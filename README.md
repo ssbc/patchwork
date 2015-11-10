@@ -20,57 +20,33 @@ Current install steps are:
 
 ```
 # ubuntu
-apt-get install automake libtool
+$ apt-get install automake libtool
 # osx
-brew install automake libtool
+$ brew install automake libtool
 ```
 
-Also, you'll need to use iojs@2.
+Also, you'll need to use node@4.
 The easiest way to get this is [nvm](https://github.com/creationix/nvm).
 
 ```
-nvm install iojs-v2.5.0
+$ node -v
+4.2.1
 ```
 
-Then, install the software:
+Then, install and build the software:
 
 ```
 git clone https://github.com/ssbc/patchwork.git
 cd patchwork
 npm install
+npm run build:ui
 npm start
 ```
 
-And then join a pub server.
 
+## Development : 
 
-## Development & building : 
-
-**[Project Structure Doc](./docs/PROJECT-STRUCTURE.md)**.
-**[Testing Check-list](./docs/TESTING.md)**, run through this before publishing any new versions.
-
-**Dependencies**
-
-```
-# Linux dependencies
-add-apt-repository ppa:ubuntu-wine/ppa -y
-apt-get update
-apt-get install nsis wine
-
-# OSX dependencies
-brew install makensis wine
-```
-
-```
-npm install -d
-npm run build
-npm run pack
-```
-
----
-
-Relevant docs:
-
- - https://github.com/maxogden/electron-packager
- - https://github.com/loopline-systems/electron-builder
- - https://github.com/atom/electron/tree/master/docs
+- [Building Patchwork](./docs/BUILDING.md)
+- [Patchwork Project Structure](./docs/PROJECT-STRUCTURE.md)
+- [Patchwork Testing Check-list](./docs/TESTING.md)
+- [SSB Docs Repo](https://github.com/ssbc/docs)
