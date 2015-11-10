@@ -16,7 +16,14 @@ to reset
 rm -Rf ~/.test
 ```
 
-## Checklist
+## API tests
+
+```
+cd api
+npm test
+```
+
+## UI Checklist
 
 This checklist should be run, in full, in the order given.
 
