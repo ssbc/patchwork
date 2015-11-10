@@ -1,7 +1,6 @@
 # Contributing
 
 We trust our community to do good work!
-We'll add tighter guidelines as we need them.
 
 ## Docs
 
