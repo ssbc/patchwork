@@ -1,20 +1,53 @@
-# Test Checklist
+# Testing
 
-Follow this procedure before every version bump.
+## Test Environment
 
-## Dev Environment
+### Configuring a Dummy Database
 
-to start
+To create a safe environment for dummy data, start Patchwork with a custom `ssb_appname` environment variable.
+The default value is `ssb`, which causes all data to be stored in `~/.ssb`.
+You can use arbitrary values (but be careful not to collide with other dot-directories in your home!).
+
+For example:
 
 ```
 ssb_appname=test npm start
 ```
 
-to reset
+Will use `~/.test`.
+When you want to nuke the DB (to start fresh, or when you're done), simply delete the directory:
 
 ```
 rm -Rf ~/.test
 ```
+
+### Dummy Accounts
+
+Your active account is decided by the `~/$DATA-DIRECTORY/secret` file.
+In default configuration, it's located in `~/.ssb/secret`.
+In the example above, it is `~/.test/secret`.
+
+If Patchwork doesn't find a `secret` file, it generates a new one, thereby creating a new account.
+A simple way to switch accounts, therefore, is to stop Patchwork and:
+
+```
+mv ~/.test/secret ~/.test/$NAME-secret
+```
+
+For example, if your account is named "bob":
+
+```
+mv ~/.test/secret ~/.test/bob-secret
+```
+
+Then restart Patchwork, creating your new account.
+When you want to restore bob to the main account, you close Patchwork and repeat the steps:
+
+```
+mv ~/.test/secret ~/.test/alice-secret
+cp ~/.test/bob-secret ~/.test/secret
+```
+
 
 ## API tests
 
@@ -23,9 +56,9 @@ cd api
 npm test
 ```
 
-## UI Checklist
+## UI Tests Checklist
 
-This checklist should be run, in full, in the order given.
+Follow this procedure before every version bump.
 
 ### Setup modal
 
