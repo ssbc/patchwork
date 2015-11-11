@@ -196,6 +196,9 @@ module.exports = function (rootMsg, branchMsg, opts) {
   navigator.webkitGetUserMedia({ video: videoOpts, audio: false }, function (stream) {
     invideo.src = window.URL.createObjectURL(stream)
     invideo.onloadedmetadata = function () { invideo.play() }
+    invideo.onerror = function (e) {
+      modals.error('Failed to Access Webcam Video', ':(')
+    }
     ui.onTeardown(function () {
       stream.stop()
     })
