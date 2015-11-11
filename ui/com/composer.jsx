@@ -333,9 +333,15 @@ export default class Composer extends React.Component {
         this.setState({ isSending: false })
         if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
+          // remove draft and reset form
           this.setState({ text: '' })
+          if (this.state.currentDraft)
+            this.onDeleteDraft(this.state.currentDraft)
+
           // mark read (include the thread root because the api will automatically mark the root unread on new reply)
           app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key)
+
+          // call handler
           if (this.props.onSend)
             this.props.onSend(msg)
         }
