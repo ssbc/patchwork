@@ -102,8 +102,15 @@ class ComposerTextarea extends React.Component {
     textarea.style.height = 0
     textarea.style.height = textarea.scrollHeight + 'px'
   }
+  onKeyDown(e) {
+    if (e.keyCode == 13 && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault()
+      e.stopPropagation()
+      this.props.onSubmit()
+    }
+  }
   render() {
-    return <textarea ref="textarea" {...this.props} onKeyUp={this.onKeyUp.bind(this)} />
+    return <textarea ref="textarea" {...this.props} onKeyUp={this.onKeyUp.bind(this)} onKeyDown={this.onKeyDown.bind(this)} />
   }
 }
 
@@ -281,7 +288,7 @@ export default class Composer extends React.Component {
       <ComposerAudience isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.audienceHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} />
+        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} />
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
