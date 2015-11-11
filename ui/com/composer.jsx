@@ -96,8 +96,14 @@ class ComposerTextarea extends React.Component {
     suggestBox(textarea, app.suggestOptions)
     textarea.addEventListener('suggestselect', this.props.onChange)
   }
+  onKeyUp() {
+    const textarea = this.refs.textarea
+    textarea.style.overflow = 'hidden'
+    textarea.style.height = 0
+    textarea.style.height = textarea.scrollHeight + 'px'
+  }
   render() {
-    return <textarea ref="textarea" {...this.props} />
+    return <textarea ref="textarea" {...this.props} onKeyUp={this.onKeyUp.bind(this)} />
   }
 }
 
