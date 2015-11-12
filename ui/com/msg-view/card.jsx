@@ -72,8 +72,8 @@ export default class Card extends React.Component {
     this.props.onSelect(this.props.msg)
   }
 
-  onExpand() {
-    this.setState({ isExpanded: true })
+  onToggleExpand() {
+    this.setState({ isExpanded: !this.state.isExpanded })
   }
 
   onSubmitFlag(reason) {
@@ -110,7 +110,7 @@ export default class Card extends React.Component {
   componentDidMount() {
     // load subject msg, if needed
     let msg = this.props.msg
-    if (msg.value.content.type === 'vote') {
+    if (msg.value && msg.value.content.type === 'vote') {
       let vote = mlib.link(msg.value.content.vote, 'msg')
       if (vote) {
         app.ssb.get(vote.link, (err, subject) => {
@@ -140,6 +140,8 @@ export default class Card extends React.Component {
 
   render() {
     const msg = this.props.msg
+    if (msg.isNotFound)
+      return this.renderNotFound(msg)
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
@@ -149,12 +151,29 @@ export default class Card extends React.Component {
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
 
+  renderNotFound(msg) {
+    const expanded = this.state.isExpanded
+    return <div key={msg.key} className={'msg-view card-missing-post'+(expanded?' expanded':'')}>
+      <div>
+        <a onClick={this.onToggleExpand.bind(this)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+          <i className="fa fa-warning" /> Missing Post
+        </a>
+        { expanded ?
+          <span
+            ><br/><br/>
+            {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reply to it.'}
+          </span> :
+          ' This post could not be loaded.' }
+      </div>
+    </div>
+  }
+
   renderMuted(msg) {
     const text = msg.value.content.text
     return <div className={'msg-view card-muted'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
-        <div><a onClick={this.onExpand.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
+        <div><a onClick={this.onToggleExpand.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
         <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
     </div>
@@ -192,7 +211,7 @@ export default class Card extends React.Component {
         </div>
         <div className="body" ref="body">
           <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
-          { this.state.isOversized ? <div className="read-more" onClick={this.onExpand.bind(this)}><a>Read more</a></div> : ''}
+          { this.state.isOversized ? <div className="read-more" onClick={this.onToggleExpand.bind(this)}><a>Read more</a></div> : ''}
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?
