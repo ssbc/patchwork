@@ -161,7 +161,7 @@ export default class Card extends React.Component {
         { expanded ?
           <span
             ><br/><br/>
-            {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reply to it.'}
+            {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reference it.'}
           </span> :
           ' This post could not be loaded.' }
       </div>
