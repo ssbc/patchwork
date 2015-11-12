@@ -20,6 +20,7 @@ export default class Thread extends React.Component {
 
   // helper to do setup on thread-change
   constructState(thread) {
+    
     // collapse thread into a flat message-list
     let msgIds = new Set([thread.key])
     let msgs = [thread]
@@ -29,21 +30,25 @@ export default class Thread extends React.Component {
         return // messages can be in the thread multiple times if there are >1 links
       msgIds.add(msg.key)
 
-      // // reply posts only
-      if (msg.value.content.type == 'post' && isaReplyTo(msg, thread)) {
-        // check if the parent is missing
-        const branch = mlib.link(msg.value.content.branch, 'msg')
-        if (branch && !msgIds.has(branch.link))
-          msgs.push({ key: branch.link, isNotFound: true })
-
-        // add to the list
+      // reply posts only
+      if (msg.value.content.type == 'post' && isaReplyTo(msg, thread))
         msgs.push(msg)
+    })
+
+    // check for missing parents
+    let numAdded=0
+    msgs.slice().forEach(function (msg, i) { // slice() - iterate a duplicate so that splices dont alter our iteration
+      const branch = mlib.link(msg.value.content.branch, 'msg')
+      if (branch && !msgIds.has(branch.link)) {
+        msgs.splice(i+numAdded, 0, { key: branch.link, isNotFound: true }) // insert right above this post
+        msgIds.add(branch.link)
+        numAdded++ // track how many added, to know what offset inserts should be added at
       }
     })
+
     this.setState({
       thread: thread,
       isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false,
-      msgIds: msgIds,
       msgs: msgs
     })
   }
