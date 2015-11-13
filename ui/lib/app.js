@@ -31,7 +31,7 @@ module.exports = extend(new Emitter(), {
   fetchLatestState: fetchLatestState,
 
   // ui data
-  isComposerOpen: true,
+  isComposerOpen: false,
   suggestOptions: { 
     ':': Object.keys(emojis).map(function (emoji) {
       return {

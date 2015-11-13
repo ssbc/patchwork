@@ -81,12 +81,14 @@ export default class Thread extends React.Component {
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
     return <div className="msg-thread">
       <VerticalFilledContainer>
-        <div className="toolbar flex">
-          <a className="btn" onClick={this.props.onDeselect} title="Back"><i className="fa fa-caret-left" /> Back</a>
-          <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
-        </div>
         <div className="items">
-          { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
+          <div className="container" style={{height: '40px'}}>
+            <div className="toolbar flex">
+              <a className="btn" onClick={this.props.onDeselect} title="Back"><i className="fa fa-caret-left" /> Back</a>
+              <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+            </div>
+            { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
+          </div>
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
             return <Card
@@ -99,7 +101,7 @@ export default class Thread extends React.Component {
               onFlag={(msg, reason)=>this.props.onFlag(msg, reason)}
               onToggleBookmark={()=>this.props.onToggleBookmark(msg)} />
           }) }
-          <div className="composer-container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
+          <div className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
         </div>
       </VerticalFilledContainer>
     </div>
