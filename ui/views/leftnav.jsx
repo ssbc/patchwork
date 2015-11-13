@@ -57,9 +57,8 @@ class LeftNav extends React.Component {
 
     return <div id="leftnav" style={{height: this.props.height}}>
       <div className="leftnav-page-ctrls">
-        <a className="btn" onClick={this.onClickForward}><i className="fa fa-chevron-right" /></a>
         <a className="btn" onClick={()=>alert('todo')}><i className="fa fa-search" /></a>
-        <a className="btn" onClick={this.onClickBack}><i className="fa fa-chevron-left" /></a>
+        <a className="btn" onClick={this.onClickBack}><i className="fa fa-chevron-circle-left" /></a>
       </div>
       <div className="leftnav-item label">Messages</div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
