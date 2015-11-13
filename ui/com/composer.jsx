@@ -75,7 +75,7 @@ class ComposerRecps extends React.Component {
       <div>
         To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
         { (!isAtLimit && !this.props.isReadOnly) ?
-          <input ref="input" type="text" placeholder="Add a recipient..." value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
+          <input ref="input" type="text" placeholder="Add a recipient" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
           '' }
       </div>
       { isAtLimit ? <div className="warning">Recipient limit reached</div> : '' }
@@ -275,7 +275,7 @@ export default class Composer extends React.Component {
       <ComposerAudience isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.audienceHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message...` : `Write a reply...`} />
+        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
