@@ -17,7 +17,6 @@
 
 .msg-list-items {
   flex: 1;
-  background: #eee;
 
   .empty {
     padding: 10px;
@@ -34,7 +33,20 @@
   overflow: auto;
   flex: 0;
   display: none;
-  background: #eee;
+  position: relative;
+
+  // content mask for blue titlebar
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    background: #4CA2FF;
+    z-index: 1000;
+  }
 }
 
 .msg-list.msg-is-selected {
