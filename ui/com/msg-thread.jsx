@@ -82,7 +82,7 @@ export default class Thread extends React.Component {
     return <div className="msg-thread">
       <VerticalFilledContainer>
         <div className="toolbar flex">
-          <a className="btn" onClick={this.props.onDeselect} title="Close"><i className="fa fa-close" /> Close</a>
+          <a className="btn" onClick={this.props.onDeselect} title="Back"><i className="fa fa-caret-left" /> Back</a>
           <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
         </div>
         <div className="items">
