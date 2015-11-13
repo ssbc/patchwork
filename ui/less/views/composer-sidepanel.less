@@ -1,0 +1,25 @@
+#rightpane {
+  .elevation-dialog;
+  background: #f5f5f5;
+  position: relative;
+  z-index: 2000; // double the z-index of floating toolbars
+  overflow: hidden;
+  width: 0;
+//  transition: width 0.15s;
+//  transition-timing-function: cubic-bezier(0.47, 0, 0.75, 0.72);
+
+  &.open {
+    width: 523px;
+    padding: 10px;
+  }
+
+  .inner {
+    // dont resize based on parent size
+    width: 523px;
+  }
+
+  .composer {
+    box-shadow: none;
+    margin: 0;
+  }
+}

@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 20px;
   right: 25px;
-  z-index: 1000;
+  z-index: 3000; // triple the floating toolbars
 
   a.primary {
     .elevation-fab;
@@ -14,11 +14,17 @@
     background: #4DA1FF;
     text-align: center;
     color: #fff;
-    transition: 0.2s box-shadow, 0.2s background, 0.2s color;
+    transition: 0.2s box-shadow, 0.2s background, 0.2s color, 0.2s border-radius, 0.2s width;
 
-    i {
+    .inner {
       position: relative;
       top: 13px;
+
+      .fa-caret-right {
+        // adjustment to make icon line up with text
+        position: relative;
+        top: 2px;
+      }
     }
 
     &:before {
@@ -36,10 +42,56 @@
     &:hover {
       .elevation-fab-raised;
       background: #0079FF;
+      text-decoration: none;
       &:before {
         display: block;
         opacity: 1;
       }
+    }
+  }
+
+  &.expanded a {
+    .elevation-card;
+    padding: 0 20px;
+    width: 450px;
+    border-radius: 0;
+  }
+  &.red a {
+    background: #C30909;
+    &:hover {
+      background: red;
+    }
+    &:before {
+      color: maroon;
+    }
+  }
+  &.orange a {
+    background: #FFC44D;
+    &:hover {
+      background: #FFAA00;    
+    }
+    &:before {
+      color: #FFAA00;
+    }
+  }
+  &.gray a {
+    background: #ccc;
+    color: gray;
+    &:hover {
+      background: #bbb;    
+    }
+    &:before {
+      color: gray;
+    }
+  }
+  &.white a {
+    background: #fdfdfd;
+    color: gray;
+    &:hover {
+      background: #fff;    
+    }
+    &:before {
+      color: gray;
     }
   }
 }
