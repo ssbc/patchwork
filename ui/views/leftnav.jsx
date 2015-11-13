@@ -37,6 +37,13 @@ class LeftNav extends React.Component {
     app.removeListener('update:indexCounts', this.refreshState)
   }
 
+  onClickBack() {
+    window.history.back()
+  }
+  onClickForward() {
+    window.history.forward()
+  }
+
   nameOf(id) {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
@@ -49,6 +56,11 @@ class LeftNav extends React.Component {
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
+      <div className="leftnav-page-ctrls">
+        <a className="btn" onClick={this.onClickForward}><i className="fa fa-chevron-right" /></a>
+        <a className="btn" onClick={()=>alert('todo')}><i className="fa fa-search" /></a>
+        <a className="btn" onClick={this.onClickBack}><i className="fa fa-chevron-left" /></a>
+      </div>
       <div className="leftnav-item label">Messages</div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/notifications" location={this.props.location} icon="rss" label="Updates" count={this.state.indexCounts.notificationsUnread} />
