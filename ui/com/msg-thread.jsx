@@ -20,16 +20,36 @@ export default class Thread extends React.Component {
 
   // helper to do setup on thread-change
   constructState(thread) {
+    
     // collapse thread into a flat message-list
-    var added = new Set()
+    let msgIds = new Set([thread.key])
+    let msgs = [thread]
+    ;(thread.related||[]).forEach(msg => {
+      // filter out duplicates
+      if (msgIds.has(msg.key))
+        return // messages can be in the thread multiple times if there are >1 links
+      msgIds.add(msg.key)
+
+      // reply posts only
+      if (msg.value.content.type == 'post' && isaReplyTo(msg, thread))
+        msgs.push(msg)
+    })
+
+    // check for missing parents
+    let numAdded=0
+    msgs.slice().forEach(function (msg, i) { // slice() - iterate a duplicate so that splices dont alter our iteration
+      const branch = mlib.link(msg.value.content.branch, 'msg')
+      if (branch && !msgIds.has(branch.link)) {
+        msgs.splice(i+numAdded, 0, { key: branch.link, isNotFound: true }) // insert right above this post
+        msgIds.add(branch.link)
+        numAdded++ // track how many added, to know what offset inserts should be added at
+      }
+    })
+
     this.setState({
       thread: thread,
       isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false,
-      msgs: [thread].concat((thread.related||[]).filter(msg => {
-        if (added.has(msg.key)) return false // messages can be in the thread multiple times if there are >1 links
-        added.add(msg.key)
-        return (msg.value.content.type == 'post') && isaReplyTo(msg, thread)
-      }))
+      msgs: msgs
     })
   }
   componentDidMount() {
@@ -88,13 +108,13 @@ export default class Thread extends React.Component {
         <div className="items">
           { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
           { this.state.msgs.map((msg, i) => {
-            let forceOpen = (i === 0)
+            const isFirst = (i === 0)
             return <Card
               key={msg.key}
               msg={msg}
               noReplies
               forceRaw={this.props.forceRaw}
-              forceOpen={forceOpen}
+              forceOpen={isFirst}
               onToggleStar={()=>this.props.onToggleStar(msg)}
               onFlag={(msg, reason)=>this.props.onFlag(msg, reason)}
               onToggleBookmark={()=>this.props.onToggleBookmark(msg)} />
