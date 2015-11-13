@@ -28,6 +28,7 @@ export default class Notifications extends React.Component {
   render() {
     return <div id="notifications">
       <MsgList
+        floatingToolbar
         ListItem={Notification}
         emptyMsg="No new notifications."
         append={this.helpCards.bind(this)}

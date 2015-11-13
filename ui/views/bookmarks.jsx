@@ -8,8 +8,7 @@ import app from '../lib/app'
 const FILTERS = [
   { label: 'All', fn: msg => true },
   { label: 'Unread', fn: msg => msg.hasUnread },
-  { label: 'Private Messages', fn: msg => !msg.plaintext },
-  { label: 'Mentions', fn: msg => msg.mentionsUser }
+  { label: 'Private', fn: msg => !msg.plaintext }
 ]
 
 export default class Bookmarks extends React.Component {
@@ -30,6 +29,7 @@ export default class Bookmarks extends React.Component {
     return <div id="bookmarks">
       <MsgList
         threads
+        floatingToolbar
         live={{ gt: [Date.now(), null] }}
         ListItem={Oneline}
         filters={FILTERS}

@@ -379,9 +379,9 @@ export default class MsgList extends React.Component {
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
           { this.props.hero ? this.props.hero() : '' }
-          <div className="msg-list-ctrls toolbar">
+          <div className={'msg-list-ctrls toolbar'+(this.props.floatingToolbar?' floating':'')}>
             { this.props.toolbar ? this.props.toolbar() : '' }
-            { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
+            { this.props.filters ? <Tabs vertical options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
           </div>
           { isEmpty ?
             <div className="empty-msg">
