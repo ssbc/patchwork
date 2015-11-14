@@ -9,13 +9,13 @@ import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } f
 import app from '../lib/app'
 
 const VIEWS = [
-  { label: 'About' },
   { label: 'Posts' },
-  { label: 'Private Messages' }
+  { label: 'Private Messages' },
+  { label: 'About' }
 ]
-const VIEW_ABOUT = VIEWS[0]
-const VIEW_POSTS = VIEWS[1]
-const VIEW_PMS   = VIEWS[2]
+const VIEW_POSTS = VIEWS[0]
+const VIEW_PMS   = VIEWS[1]
+const VIEW_ABOUT = VIEWS[2]
 
 export default class UserProfile extends React.Component {
   constructor(props) {
