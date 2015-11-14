@@ -40,9 +40,6 @@ class LeftNav extends React.Component {
   onClickBack() {
     window.history.back()
   }
-  onClickForward() {
-    window.history.forward()
-  }
 
   nameOf(id) {
     return this.props.names[id] || u.shortString(id||'', 6)
@@ -57,8 +54,8 @@ class LeftNav extends React.Component {
 
     return <div id="leftnav" style={{height: this.props.height}}>
       <div className="leftnav-page-ctrls">
-        <a className="btn" onClick={()=>alert('todo')}><i className="fa fa-search" /></a>
-        <a className="btn" onClick={this.onClickBack}><i className="fa fa-chevron-circle-left" /></a>
+        <a className="home" href="#/"><i className="fa fa-home" /></a>
+        <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
       </div>
       <div className="leftnav-item label">Messages</div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
