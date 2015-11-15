@@ -165,10 +165,6 @@ export default class Thread extends React.Component {
       this.props.onNewReply(msg)
   }
 
-  onBack() {
-    window.history.back()
-  }
-
   openMsg(id) {
     window.location.hash = '#/msg/'+encodeURIComponent(id)
   }
@@ -184,17 +180,14 @@ export default class Thread extends React.Component {
       return <span/>
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
     return <div className="msg-thread">
+      <div className="toolbar flex">
+        { threadRoot ?
+          <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
+          : '' }
+        <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+      </div>
       <VerticalFilledContainer>
         <div className="items">
-          <div className="container" style={{height: '40px'}}>
-            <div className="toolbar flex">
-              <a className="btn" onClick={this.onBack} title="Back"><i className="fa fa-caret-left" /> Back</a>
-              { threadRoot ?
-                <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
-                : '' }
-              <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
-            </div>
-          </div>
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
             return <Card

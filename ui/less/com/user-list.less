@@ -2,23 +2,22 @@
   .msg-list;
   display: flex;
   .search input {
+    .elevation-toolbar;
     width: 100%;
     box-sizing: border-box;
-    padding: 8px 10px;
-    margin: 10px 0;
-    transition: background 0.2s, box-shadow 0.2s;
+    padding: 10px;
+    margin-bottom: 1px;
+    transition: background 0.2s;
     border: 0;
-    border-radius: 2px;
-    background: #fff;
+    background: #fdfdfd;
     &:focus {
       outline: 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: #fff;
     }
   }
 }
 
 .user-list-items {
-  padding-top: 5px;
   flex: 0 0 220px;
   h3 {
     border-bottom: 1px solid #ddd;

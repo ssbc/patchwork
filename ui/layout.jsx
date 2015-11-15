@@ -36,20 +36,10 @@ export default class Layout extends React.Component {
     app.isComposerOpen = !app.isComposerOpen
     app.emit('update:isComposerOpen', app.isComposerOpen)
   }
-
-  onClickBack() {
-    window.history.back()
-  }
   
   render() {
     const composing = this.state.isComposerOpen
     return <div className="layout-rows">
-      <div id="blue-title-bar">
-        <div className="page-ctrls">
-          <input className="search" placeholder="Search" />
-          <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
-        </div>
-      </div>
       <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       { composing ?
         <FAB className="expanded" icon="caret-right" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
