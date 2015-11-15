@@ -11,7 +11,29 @@
     margin: 6px;
   }
   .items {
+    position: relative;
     padding: 23px 0 100px;
+
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 120px;
+      width: 2px;
+      transform: translate(0, -100px);
+      background: #ddd;
+      z-index: 0;
+    }
+    .msg-view {
+      position: relative;
+      z-index: 10;
+    }
+    .container {
+      position: relative;
+      z-index: 1000;
+    }
   }
   .container {
     max-width: 600px;
