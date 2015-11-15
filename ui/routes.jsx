@@ -7,6 +7,7 @@ import Notifications from './views/notifications'
 import Inbox from './views/inbox'
 import Bookmarks from './views/bookmarks'
 import Data from './views/data'
+import Msg from './views/msg'
 import Profile from './views/profile'
 import WebView from './views/webview'
 import Sync from './views/sync'
@@ -16,7 +17,7 @@ export default (
   <Router>
     <Route path="/" component={Layout}>
       <IndexRoute component={NewsFeed} />
-      <Route path="msg/:id" component={NewsFeed} />
+      <Route path="msg/:id" component={Msg} />
       <Route path="notifications" component={Notifications} />
       <Route path="inbox" component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />

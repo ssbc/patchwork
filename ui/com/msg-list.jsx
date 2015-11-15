@@ -7,8 +7,6 @@ import mlib from 'ssb-msgs'
 import ReactInfinite from 'react-infinite'
 import SimpleInfinite from './simple-infinite'
 import Summary from './msg-view/summary'
-import Composer from './composer'
-import Thread from './msg-thread'
 import Tabs from './tabs'
 import { VerticalFilledContainer, verticalFilled } from './index'
 import { isaReplyTo } from '../lib/msg-relation'
@@ -39,40 +37,10 @@ export default class MsgList extends React.Component {
 
     // handlers
     this.handlers = {
-      // - msg: message object to select
-      // - isFreshMsg: bool, was the message loaded in somewhere other than the msg list?
-      //   - if true, will splice it into the list
-      onSelect: (thread, isFreshMsg) => {
-        // deselect toggle
-        if (this.state.selected === thread)
-          return this.setState({ selected: false })
-
-        // splice the thread into the list, if it's new
-        // that way, operations on the selected message will be reflected in the list
-        if (isFreshMsg) {
-          for (var i=0; i < this.state.msgs.length; i++) {
-            if (this.state.msgs[i].key === thread.key) {
-              this.state.msgs.splice(i, 1, thread)
-              break
-            }
-          }
-        }
-
-        // update UI
-        this.setState({ selected: thread, msgs: this.state.msgs })
-
-        // mark read in DB
-        if (!thread.hasUnread)
-          return
-        u.markThreadRead(thread, (err) => {
-          if (err)
-            return app.minorIssue('Failed to mark thread as read', err)
-
-          // update UI again
-          this.setState({ selected: thread, msgs: this.state.msgs })
-        })
+      onSelect: msg => {
+        window.location.hash = '#/msg/' + encodeURIComponent(msg.key)
       },
-      onDeselect: () => { this.setState({ selected: false }) },
+      onDeselect: () => { /*todo*/ this.setState({ selected: false }) },
       onMarkSelectedUnread: () => {
         // get the last post in the thread, abort if already unread
         let selected = this.state.selected
@@ -197,15 +165,6 @@ export default class MsgList extends React.Component {
     // load first messages
     this.loadMore(BATCH_LOAD_AMT)
 
-    // load selected message
-    if (this.props.selected) {
-      u.getPostThread(this.props.selected, (err, thread) => {
-        if (err)
-          return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
-        this.handlers.onSelect(thread, true)
-      })
-    }
-
     // setup autoresizing
     this.calcContainerHeight()
     this.resizeListener = this.calcContainerHeight.bind(this)
@@ -214,16 +173,6 @@ export default class MsgList extends React.Component {
     // setup livestream
     if (this.props.live)
       this.setupLivestream()
-  }
-  componentWillReceiveProps(newProps) {
-    // load selected message
-    if (newProps.selected) {
-      u.getPostThread(newProps.selected, (err, thread) => {
-        if (err)
-          return app.issue('Failed to Load Message', err, 'This happened in msg-list componentWillReceiveProps')
-        this.handlers.onSelect(thread, true)
-      })
-    }
   }
   componentWillUnmount() {
     // stop autoresizing
@@ -244,6 +193,44 @@ export default class MsgList extends React.Component {
       this.botcursor = null
       this.loadMore(BATCH_LOAD_AMT)
     })
+  }
+
+  // helper to change the actively-viewed message
+  // - msg: message object to select
+  // - isFreshMsg: bool, was the message loaded in somewhere other than the msg list?
+  //   - if true, will splice it into the list
+  selectThread(thread, isFreshMsg) {
+    // deselect toggle
+    if (this.state.selected === thread)
+      return this.setState({ selected: false })
+
+    // splice the thread into the list, if it's new
+    // that way, operations on the selected message will be reflected in the list
+    if (isFreshMsg) {
+      for (var i=0; i < this.state.msgs.length; i++) {
+        if (this.state.msgs[i].key === thread.key) {
+          this.state.msgs.splice(i, 1, thread)
+          break
+        }
+      }
+    }
+
+    // update UI
+    this.setState({ selected: thread, msgs: this.state.msgs })
+
+    // mark read in DB
+    if (!thread.hasUnread)
+      return
+    u.markThreadRead(thread, (err) => {
+      if (err)
+        return app.minorIssue('Failed to mark thread as read', err)
+
+      // update UI again
+      this.setState({ selected: thread, msgs: this.state.msgs })
+    })
+  }
+  deselectThread() {
+    this.setState({ selected: false })
   }
 
   setupLivestream() {
@@ -398,24 +385,6 @@ export default class MsgList extends React.Component {
           }
           {append}
         </Infinite>
-      </div>
-      <div className="msg-list-view">
-        { this.state.selected ? 
-          <Thread thread={this.state.selected} forceRaw={this.props.forceRaw} {...this.handlers} /> : 
-          '' }
-      </div>
-    </div>
-  }
-}
-
-class ThreadComposer extends React.Component {
-  render() {
-    return <div className="msg-view-thread">
-      <div className="toolbar">
-        <a className="btn" onClick={this.props.onCancel} title="Close"><i className="fa fa-close" /> Discard Draft</a>
-      </div>
-      <div className="items">
-        <Composer onSend={this.props.onSend} />
       </div>
     </div>
   }

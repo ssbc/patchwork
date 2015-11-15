@@ -70,6 +70,10 @@ export default class Thread extends React.Component {
       this.props.onNewReply(msg)
   }
 
+  onBack() {
+    window.history.back()
+  }
+
   onSelectRoot() {
     let thread = this.props.thread
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
@@ -84,7 +88,7 @@ export default class Thread extends React.Component {
         <div className="items">
           <div className="container" style={{height: '40px'}}>
             <div className="toolbar flex">
-              <a className="btn" onClick={this.props.onDeselect} title="Back"><i className="fa fa-caret-left" /> Back</a>
+              <a className="btn" onClick={this.onBack} title="Back"><i className="fa fa-caret-left" /> Back</a>
               <a className="btn" onClick={this.props.onMarkSelectedUnread} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
             </div>
             { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
