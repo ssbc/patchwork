@@ -40,24 +40,6 @@ export default class MsgList extends React.Component {
       onSelect: msg => {
         window.location.hash = '#/msg/' + encodeURIComponent(msg.key)
       },
-      onDeselect: () => { /*todo*/ this.setState({ selected: false }) },
-      onMarkSelectedUnread: () => {
-        // get the last post in the thread, abort if already unread
-        let selected = this.state.selected
-        if (!selected || selected.hasUnread) return
-
-        // mark unread in db
-        app.ssb.patchwork.markUnread(selected.key, (err) => {
-          if (err)
-            return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkSelectedUnread of MsgList')
-
-          // re-render
-          selected.isRead = false
-          selected.hasUnread = true
-          this.state.selected = false
-          this.setState(this.state)
-        })
-      },
       onToggleBookmark: (msg) => {
         // toggle in the DB
         app.ssb.patchwork.toggleBookmark(msg.key, (err, isBookmarked) => {
@@ -115,26 +97,6 @@ export default class MsgList extends React.Component {
           let recps = mlib.links(msg.value.content.recps).map(l => l.link)
           app.ssb.private.publish(voteMsg, recps, done)
         }
-      },
-      onNewPost: (msg) => {
-        this.setState({ selected: msg })
-      },
-      onNewReply: (msg) => {
-        if (!this.props.refreshOnReply)
-          return
-        // reload selected. 
-        // this is used when the live-stream wont update the thread for us, such as in the profile-view
-        u.getParentPostThread(msg.key, (err, thread) => {
-          if (err)
-            return app.issue('Failed to fetch thread', err, 'This occurred after a reply, in a MsgList with refreshOnReply on')
-          for (var i=0; i < this.state.msgs.length; i++) {
-            if (this.state.msgs[i].key === thread.key) {
-              this.state.msgs.splice(i, 1, thread)
-              break
-            }
-          }
-          this.setState({ selected: thread, msgs: this.state.msgs })
-        })
       },
       onSelectFilter: (filter) => {
         if (this.state.isLoading)
@@ -217,17 +179,6 @@ export default class MsgList extends React.Component {
 
     // update UI
     this.setState({ selected: thread, msgs: this.state.msgs })
-
-    // mark read in DB
-    if (!thread.hasUnread)
-      return
-    u.markThreadRead(thread, (err) => {
-      if (err)
-        return app.minorIssue('Failed to mark thread as read', err)
-
-      // update UI again
-      this.setState({ selected: thread, msgs: this.state.msgs })
-    })
   }
   deselectThread() {
     this.setState({ selected: false })
