@@ -2,7 +2,6 @@
 
 html, body {
   height: 100%;
-  background: url(../img/bg.png) top left repeat-x #eee;
 }
 .layout-rows {
   display: flex;
@@ -20,4 +19,40 @@ html, body {
 }
 #mainview {
   flex: 1;
+}
+#blue-title-bar {
+  height: 55px;
+  background: #4CA2FF;
+
+  .page-ctrls {
+    display: flex;
+    a {
+      font-size: 42px;
+      color: #FDFDFD;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      transition: 0.2s text-shadow;
+      margin-left: 15px;
+
+      &.back {
+        margin-top: 7px;
+        font-size: 31px;
+      }
+
+      &:hover {
+        color: #fff;
+        text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+    input {
+      border: 0;
+      padding: 6px 10px;
+      margin: 11px 12px 10px 18px;
+      flex: 1;
+      font-weight: 100;
+      border-radius: 2px;
+      &:active, &:focus {
+        outline: 0;
+      }
+    }
+  }
 }

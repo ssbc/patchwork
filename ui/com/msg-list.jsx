@@ -102,24 +102,23 @@ export default class MsgList extends React.Component {
         if (this.state.isLoading)
           return
         this.setState({ activeFilter: filter }, () => this.reload())
-      }
-      // :TODO: restore search
-      // onSearchKeydown: (e) => {
-      //   // enter pressed?
-      //   if (e.keyCode !== 13)
-      //     return
+      },
+      onSearchKeydown: (e) => {
+        // enter pressed?
+        if (e.keyCode !== 13)
+          return
 
-      //   // set the query and reload messages
-      //   let query = this.refs.searchInput.value
-      //   if (query.trim())
-      //     query = new RegExp(query.trim(), 'i')
-      //   else
-      //     query = false
-      //   this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
-      //     this.botcursor = null
-      //     this.loadMore(30)
-      //   })
-      // }
+        // set the query and reload messages
+        let query = this.refs.searchInput.value
+        if (query.trim())
+          query = new RegExp(query.trim(), 'i')
+        else
+          query = false
+        this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
+          this.botcursor = null
+          this.loadMore(30)
+        })
+      }
     }
   }
 

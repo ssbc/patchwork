@@ -2,30 +2,25 @@
   .toolbar {
     margin: 0 0 0 77px;
     position: fixed;
-    box-shadow: none;
     z-index: 1000;
-    width: 523px;
-    border-bottom: 1px solid #ccc;
   }
   .items {
     position: relative;
-    padding: 23px 0 100px;
+    padding: 17px 0 100px;
 
-    &:before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 120px;
-      width: 2px;
-      transform: translate(0, -100px);
-      background: #ddd;
-      z-index: 0;
-    }
     .msg-view {
       position: relative;
-      z-index: 10;
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 91px;
+        width: 2px;
+        background: #d5d5d5;
+        z-index: 0;
+        bottom: -21px;
+        height: 20px;
+      }
     }
     .container {
       position: relative;
