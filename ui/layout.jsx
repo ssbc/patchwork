@@ -46,9 +46,8 @@ export default class Layout extends React.Component {
     return <div className="layout-rows">
       <div id="blue-title-bar">
         <div className="page-ctrls">
-          <a className="home" href="#/"><i className="fa fa-home" /></a>
-          <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
           <input className="search" placeholder="Search" />
+          <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
         </div>
       </div>
       <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
