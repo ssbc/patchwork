@@ -169,10 +169,13 @@ export default class Thread extends React.Component {
     window.history.back()
   }
 
+  openMsg(id) {
+    window.location.hash = '#/msg/'+encodeURIComponent(id)
+  }
   onSelectRoot() {
     let thread = this.state.thread
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
-    window.location.hash = '#/msg/'+encodeURIComponent(threadRoot.link)
+    this.openMsg(threadRoot.link)
   }
 
   render() {
@@ -186,9 +189,11 @@ export default class Thread extends React.Component {
           <div className="container" style={{height: '40px'}}>
             <div className="toolbar flex">
               <a className="btn" onClick={this.onBack} title="Back"><i className="fa fa-caret-left" /> Back</a>
+              { threadRoot ?
+                <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
+                : '' }
               <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
             </div>
-            { threadRoot ? <div className="rootlink"><a onClick={this.onSelectRoot.bind(this)}>Replies to ↰</a></div> : '' }
           </div>
           { this.state.msgs.map((msg, i) => {
             let forceOpen = (i === 0)
@@ -198,6 +203,7 @@ export default class Thread extends React.Component {
               noReplies
               forceRaw={this.props.forceRaw}
               forceOpen={forceOpen}
+              onSelect={()=>this.openMsg(msg.key)}
               onToggleStar={()=>this.onToggleStar(msg)}
               onFlag={(msg, reason)=>this.onFlag(msg, reason)}
               onToggleBookmark={()=>this.onToggleBookmark(msg)} />
