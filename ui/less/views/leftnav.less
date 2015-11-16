@@ -1,8 +1,10 @@
+#leftnav {
+//  background: #3D94F3;
+  background: linear-gradient(#3D94F3, #3D94F3 70%, #1B6ECA 100%);
+}
 .leftnav-item {
-  margin: 10px;
-  a {
-    color: @dark-gray4;
-  }
+  display: block;
+  padding: 10px;
   i {
     margin-right: 5px;
     width: 16px;
@@ -14,12 +16,15 @@
   &.label {
     font-size: 13px;
     font-weight: bold;
-    color: @gray1;
-    margin-top: 20px;
+    color: #ADD3FD;
   }
-  &.selected {
-    a {
-      color: #006EFF;
-    }
+}
+
+a.leftnav-item {
+  color: #C4DEFB;
+  &:hover, &.selected {
+    background: rgba(255,255,255,0.2);    
+    color: #fff;
+    text-decoration: none;
   }
 }

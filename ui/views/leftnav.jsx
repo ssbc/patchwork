@@ -12,9 +12,7 @@ class NavLink extends React.Component {
     let content = this.props.children
     if (!content)
       content = <span><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</span>
-    return <div className={'leftnav-item '+(selected?'selected':'')}>
-      <Link to={this.props.to}>{content}</Link>
-    </div>
+    return <Link className={'leftnav-item '+(selected?'selected':'')} to={this.props.to}>{content}</Link>
   }
 }
 
@@ -58,7 +56,6 @@ class LeftNav extends React.Component {
           <input className="search" placeholder="Search" />
           <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
       </div>
-      <div className="leftnav-item label">Messages</div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/notifications" location={this.props.location} icon="rss" label="Updates" count={this.state.indexCounts.notificationsUnread} />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
