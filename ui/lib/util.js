@@ -305,34 +305,50 @@ exports.getParentPostThread = function (mid, cb) {
 }
 
 exports.getPostThread = function (mid, cb) {
-  // get thread
+  // get message and full tree of backlinks
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
     if (err) return cb(err)
-    // decrypt as needed
-    exports.decryptThread(thread, function (err) {
-      if (err) return cb(err)
-      var done = multicb()
-      // fetch isread state for posts (only 1 level deep, dont need to recurse)
-      exports.attachThreadIsread(thread, 1, done())
-      // fetch bookmark state
-      exports.attachThreadIsbookmarked(thread, 1, done())
-      // look for user mention (same story on recursion)
-      thread.mentionsUser = false
-      exports.iterateThreadAsync(thread, 1, function (msg, cb2) {
-        var c = msg.value.content
-        if (c.type !== 'post' || !c.mentions) return cb2()
-        mlib.links(c.mentions, 'feed').forEach(function (l) {
-          if (l.link === app.user.id)
-            thread.mentionsUser = true
-        })
-        cb2()
-      }, done())
-      // compile votes
-      exports.compileThreadVotes(thread)
-      done(function (err) {
-        if (err) return cb(err)
-        cb(null, thread)
+    exports.fetchThreadData(thread, cb)
+  })
+}
+
+exports.getPostSummary = function (mid, cb) {
+  // get message and immediate backlinks
+  var done = multicb({ pluck: 1, spread: true })
+  app.ssb.get(mid, done())
+  pull(app.ssb.links({ dest: mid, keys: true, values: true }), pull.collect(done()))
+  done((err, value, related) => {
+    if (err) return cb(err)
+    var thread = { key: mid, value: value, related: related }
+    exports.fetchThreadData(thread, cb)
+  })
+}
+
+exports.fetchThreadData = function (thread, cb) {
+  // decrypt as needed
+  exports.decryptThread(thread, function (err) {
+    if (err) return cb(err)
+    var done = multicb()
+    // fetch isread state for posts (only 1 level deep, dont need to recurse)
+    exports.attachThreadIsread(thread, 1, done())
+    // fetch bookmark state
+    exports.attachThreadIsbookmarked(thread, 1, done())
+    // look for user mention (same story on recursion)
+    thread.mentionsUser = false
+    exports.iterateThreadAsync(thread, 1, function (msg, cb2) {
+      var c = msg.value.content
+      if (c.type !== 'post' || !c.mentions) return cb2()
+      mlib.links(c.mentions, 'feed').forEach(function (l) {
+        if (l.link === app.user.id)
+          thread.mentionsUser = true
       })
+      cb2()
+    }, done())
+    // compile votes
+    exports.compileThreadVotes(thread)
+    done(function (err) {
+      if (err) return cb(err)
+      cb(null, thread)
     })
   })
 }

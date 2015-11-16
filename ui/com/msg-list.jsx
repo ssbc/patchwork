@@ -229,7 +229,7 @@ export default class MsgList extends React.Component {
   processMsg(msg, cb) {
     // fetch thread data
     if (this.props.threads) {
-      u.getPostThread(msg.key, cb)
+      u.getPostSummary(msg.key, cb)
     } else
       cb(null, msg) // noop
   }
@@ -265,20 +265,22 @@ export default class MsgList extends React.Component {
     let cursor = this.props.cursor || ((msg) => { if (msg) { return msg.value.timestamp } })
     let updatedMsgs = this.state.msgs
 
+    var start = Date.now()
     this.setState({ isLoading: true })
     pull(
       source({ reverse: true, lt: cursor(this.botcursor) }),
       pull.through(msg => { lastmsg = msg }), // track last message processed
-      pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
+      pull.paraMap((msg, cb) => u.decryptThread(msg, cb), amt), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
-      pull.take(amt), // apply limit
-      pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
+      pull.paraMap(this.processMsg.bind(this), amt), // fetch the thread
       (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
+      pull.take(amt), // apply limit
       // :TODO: restore search
       // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.collect((err, msgs) => {
         if (err)
           console.warn('Error while fetching messages', err)
+        console.log(Date.now() - start)
 
         // add to messages
         if (msgs.length)
