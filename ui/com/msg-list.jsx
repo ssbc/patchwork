@@ -14,7 +14,7 @@ import app from '../lib/app'
 import u from '../lib/util'
 
 // how many messages to fetch in a batch?
-const BATCH_LOAD_AMT = 30
+const DEFAULT_BATCH_LOAD_AMT = 30
 
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
@@ -124,7 +124,7 @@ export default class MsgList extends React.Component {
 
   componentDidMount() {
     // load first messages
-    this.loadMore(BATCH_LOAD_AMT)
+    this.loadMore(DEFAULT_BATCH_LOAD_AMT)
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -152,7 +152,7 @@ export default class MsgList extends React.Component {
   reload() {
     this.setState({ msgs: [], isAtEnd: false }, () => {
       this.botcursor = null
-      this.loadMore(BATCH_LOAD_AMT)
+      this.loadMore(DEFAULT_BATCH_LOAD_AMT)
     })
   }
 
@@ -270,33 +270,27 @@ export default class MsgList extends React.Component {
     pull(
       source({ reverse: true, lt: cursor(this.botcursor) }),
       pull.through(msg => { lastmsg = msg }), // track last message processed
-      pull.paraMap((msg, cb) => u.decryptThread(msg, cb), amt), // decrypt the message
+      pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
-      pull.paraMap(this.processMsg.bind(this), amt), // fetch the thread
+      pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
       (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
       pull.take(amt), // apply limit
       // :TODO: restore search
       // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
-      pull.collect((err, msgs) => {
+      pull.drain(msg => {
+        // add to messages
+        updatedMsgs.push(msg)
+        this.setState({ msgs: updatedMsgs })
+      }, err => {
         if (err)
           console.warn('Error while fetching messages', err)
-        console.log(Date.now() - start)
-
-        // add to messages
-        if (msgs.length)
-          updatedMsgs = updatedMsgs.concat(msgs)
 
         // did we reach the end?
         var isAtEnd = false
         if (!lastmsg || (this.botcursor && this.botcursor.key == lastmsg.key))
           isAtEnd = true
         this.botcursor = lastmsg
-
-        this.setState({
-          isLoading: false,
-          isAtEnd: isAtEnd,
-          msgs: updatedMsgs
-        }, done)
+        this.setState({ isLoading: false, isAtEnd: isAtEnd }, done)
       })
     )
   }
