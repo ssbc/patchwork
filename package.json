@@ -44,6 +44,7 @@
     "nicedate": "~0.0.0",
     "observable": "^2.1.3",
     "once": "~1.3.1",
+    "patchwork-threads": "^1.0.0",
     "pause-offscreen": "^1.0.0",
     "phoenix-router": "~1.0.0",
     "published-working-tree": "~0.0.0",

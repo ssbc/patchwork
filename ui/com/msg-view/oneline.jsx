@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import { UserLink, UserLinks, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
@@ -14,7 +15,7 @@ export default class Oneline extends React.Component {
   render() {
     let msg = this.props.msg
     let recps = mlib.links(msg.value.content.recps, 'feed')
-    let lastMsg = !this.props.forceRaw ? u.getLastThreadPost(msg) : false
+    let lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+(replies+1)+')'
     return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>

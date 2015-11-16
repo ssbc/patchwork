@@ -3,6 +3,7 @@ import React from 'react'
 import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
@@ -112,7 +113,7 @@ export default class Composer extends React.Component {
     if (this.props.thread) {
       // root and branch links
       this.threadRoot = this.props.thread.key
-      this.threadBranch = u.getLastThreadPost(this.props.thread).key
+      this.threadBranch = threadlib.getLastThreadPost(this.props.thread).key
 
       // extract encryption recipients from thread
       if (Array.isArray(this.props.thread.value.content.recps)) {

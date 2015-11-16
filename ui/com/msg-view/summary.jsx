@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import threadlib from 'patchwork-threads'
 import { UserLink, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
@@ -12,7 +13,7 @@ export default class Summary extends React.Component {
 
   render() {
     let msg = this.props.msg
-    let lastMsg = !this.props.forceRaw ? u.getLastThreadPost(msg) : false
+    let lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+replies+')'
     return <div className={'msg-view summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>

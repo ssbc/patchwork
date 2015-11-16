@@ -4,6 +4,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
 import SimpleInfinite from './simple-infinite'
 import Summary from './msg-view/summary'
@@ -190,7 +191,7 @@ export default class MsgList extends React.Component {
     this.liveStream = source(opts)
     pull(
       this.liveStream,
-      pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
+      pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
       (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
@@ -229,7 +230,7 @@ export default class MsgList extends React.Component {
   processMsg(msg, cb) {
     // fetch thread data
     if (this.props.threads) {
-      u.getPostSummary(msg.key, cb)
+      threadlib.getPostSummary(app.ssb, msg.key, cb)
     } else
       cb(null, msg) // noop
   }
@@ -270,7 +271,7 @@ export default class MsgList extends React.Component {
     pull(
       source({ reverse: true, lt: cursor(this.botcursor) }),
       pull.through(msg => { lastmsg = msg }), // track last message processed
-      pull.asyncMap((msg, cb) => u.decryptThread(msg, cb)), // decrypt the message
+      pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
       (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter

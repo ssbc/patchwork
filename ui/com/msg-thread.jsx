@@ -2,6 +2,7 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
+import threadlib from 'patchwork-threads'
 import { VerticalFilledContainer } from './index'
 import Card from './msg-view/card'
 import { isaReplyTo } from '../lib/msg-relation'
@@ -22,14 +23,14 @@ export default class Thread extends React.Component {
   // helper to do setup on thread-change
   constructState(id) {
     // load thread
-    u.getPostThread(id, (err, thread) => {
+    threadlib.getPostThread(app.ssb, id, (err, thread) => {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
       this.setState({ thread: thread })
 
       // mark read
       if (thread.hasUnread) {
-        u.markThreadRead(thread, (err) => {
+        threadlib.markThreadRead(app.ssb, thread, (err) => {
           if (err)
             return app.minorIssue('Failed to mark thread as read', err)
           this.setState({ thread: thread })
@@ -57,7 +58,7 @@ export default class Thread extends React.Component {
           // listen for all new messages
           (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
           pull.filter(obj => !obj.sync), // filter out the sync obj
-          pull.asyncMap(u.decryptThread),
+          pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
           pull.drain((msg) => {
             var c = msg.value.content
             var root = mlib.link(c.root, 'msg')
