@@ -53,8 +53,7 @@ class LeftNav extends React.Component {
     return <div id="leftnav" style={{height: this.props.height}}>
 
       <div className="titlebar">
-          <input className="search" placeholder="Search" />
-          <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
+        <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
       </div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/notifications" location={this.props.location} icon="rss" label="Updates" count={this.state.indexCounts.notificationsUnread} />
