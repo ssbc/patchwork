@@ -222,9 +222,9 @@ export default class Card extends React.Component {
                 { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
               </a>
             </div> : '' }
-          { upvoters.length ? <div className="upvoters"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
-          { downvoters.length ? <div className="downvoters"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
-          <div className="flex-fill" />
+          { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
+          { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
+          { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
           { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
