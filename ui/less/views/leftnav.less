@@ -1,8 +1,9 @@
+#leftnav {
+  background: #39414D;
+}
 .leftnav-item {
-  margin: 10px;
-  a {
-    color: @dark-gray4;
-  }
+  display: block;
+  padding: 10px;
   i {
     margin-right: 5px;
     width: 16px;
@@ -14,12 +15,16 @@
   &.label {
     font-size: 13px;
     font-weight: bold;
-    color: @gray1;
-    margin-top: 20px;
+    color: #DAE5F3;
   }
-  &.selected {
-    a {
-      color: #006EFF;
-    }
+}
+
+a.leftnav-item {
+  color: #CDD9E2;
+  font-weight: 100;
+  &:hover, &.selected {
+    color: #E9F1F7;
+    background: rgba(255,255,255,0.1);
+    text-decoration: none;
   }
 }

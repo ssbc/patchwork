@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import clipboard from 'clipboard'
 import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
@@ -117,7 +118,7 @@ export default class Card extends React.Component {
           if (!subject)
             return
           subject = { key: vote.link, value: subject }
-          u.decryptThread(subject, () => {
+          threadlib.decryptThread(app.ssb, subject, () => {
             this.setState({ subject: subject })
           })
         })

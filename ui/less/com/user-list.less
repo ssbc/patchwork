@@ -1,18 +1,17 @@
 .user-list {
   .msg-list;
+  display: flex;
   .search input {
+    .elevation-toolbar;
     width: 100%;
     box-sizing: border-box;
-    padding: 8px 10px;
-    margin: 10px 0;
-    transition: background 0.2s, box-shadow 0.2s;
-    border: 1px solid #ccc;
-    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
-    border-radius: 2px;
-    background: #fafafa;
+    padding: 10px;
+    margin-bottom: 1px;
+    transition: background 0.2s;
+    border: 0;
+    background: #fdfdfd;
     &:focus {
       outline: 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       background: #fff;
     }
   }
@@ -34,10 +33,12 @@
     margin-right: 0;
   }
 }
+.contracted .user-list-items {
+  display: none;
+}
 
 .user-list-view {
   flex: 1;
-  background: #eee;
   .msg-list-item.card-post {
     padding: 0;
   }
@@ -83,14 +84,14 @@
     }
   }
   &.selected {
-    background: @blue1;
+    background: #4CA2FF;
     color: @white2;
 
     .header, i, a, .body {
       color: @white2 !important;
     }
     .header-right, .body-line:last-child {
-      color: @light-blue3;
+      color: #9DCCFF;
     }
     .body {
       font-weight: 200;

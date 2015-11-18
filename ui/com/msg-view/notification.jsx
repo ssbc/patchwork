@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import { MsgLink, UserLink, UserPic, NiceDate } from '../index'
 import { Inline as MdInline } from '../markdown'
 import u from '../../lib/util'
@@ -28,7 +29,7 @@ export default class Notification extends React.Component {
     app.ssb.get(vote.link, (err, subjectMsg) => {
       if (subjectMsg) {
         subjectMsg = { key: vote.link, value: subjectMsg }
-        u.decryptThread(subjectMsg, () => this.setState({ subjectMsg: subjectMsg }))
+        threadlib.decryptThread(app.ssb, subjectMsg, () => this.setState({ subjectMsg: subjectMsg }))
       } else
         this.setState({ subjectMsg: null })
     })
@@ -37,7 +38,7 @@ export default class Notification extends React.Component {
   onSelect() {
     // get root msg
     var subject = this.state.subjectMsg || this.props.msg
-    u.getParentPostThread(subject.key, (err, thread) => {
+    threadlib.getParentPostThread(app.ssb, subject.key, (err, thread) => {
       if (err)
         return app.issue('Failed to load thread', err, 'This occurred when a notification link was clicked')
       this.props.onSelect(thread, true)

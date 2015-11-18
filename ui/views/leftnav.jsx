@@ -12,9 +12,7 @@ class NavLink extends React.Component {
     let content = this.props.children
     if (!content)
       content = <span><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</span>
-    return <div className={'leftnav-item '+(selected?'selected':'')}>
-      <Link to={this.props.to}>{content}</Link>
-    </div>
+    return <Link className={'leftnav-item '+(selected?'selected':'')} to={this.props.to}>{content}</Link>
   }
 }
 
@@ -37,6 +35,10 @@ class LeftNav extends React.Component {
     app.removeListener('update:indexCounts', this.refreshState)
   }
 
+  onClickBack() {
+    window.history.back()
+  }
+
   nameOf(id) {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
@@ -49,7 +51,10 @@ class LeftNav extends React.Component {
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
-      <div className="leftnav-item label">Messages</div>
+
+      <div className="titlebar">
+        <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
+      </div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/notifications" location={this.props.location} icon="rss" label="Updates" count={this.state.indexCounts.notificationsUnread} />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />

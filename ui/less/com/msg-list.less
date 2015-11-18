@@ -1,5 +1,4 @@
 .msg-list {
-  display: flex;
   .empty-msg {
     padding: 20px 20px;
     color: gray;
@@ -7,28 +6,23 @@
   }
 }
 
-.msg-list-items {
-  flex: 1;
-  background: #eee;
+.msg-list-ctrls.floating {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  width: 100%;
+}
 
+.msg-list-items {
+  padding-top: 40px;
   .empty {
     padding: 10px;
   }
-}
-.msg-list-view {
-  overflow: auto;
-  flex: 0;
-  display: none;
-  background: #eee;
-}
+  .msg-view.card-post {
+    margin: 40px auto;
 
-.msg-list.msg-is-selected {
-  .msg-list-items {
-    flex: 0;
-    display: none;
-  }
-  .msg-list-view {
-    flex: 1;
-    display: block;
+    &:first-child {
+      margin-top: 30px;
+    }
   }
 }

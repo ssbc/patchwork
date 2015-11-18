@@ -51,7 +51,7 @@ class UserListItems extends React.Component {
     return <div className="user-list-items" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="user-list-ctrls">
         <div className="search">
-          <input type="text" placeholder="Search" value={this.state.searchText} onChange={this.onSearchChange.bind(this)} />
+          <input type="text" placeholder="Filter" value={this.state.searchText} onChange={this.onSearchChange.bind(this)} />
         </div>
       </div>
       {this.props.users.filter(isSelf).filter(isSearchMatch).map(renderUser)}

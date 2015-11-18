@@ -9,6 +9,7 @@ var Notify      = require('pull-notify')
 var toPull      = require('stream-to-pull-stream')
 var ref         = require('ssb-ref')
 var pathlib     = require('path')
+var threadlib   = require('patchwork-threads')
 var u           = require('./util')
 
 exports.name        = 'patchwork'
@@ -415,11 +416,12 @@ exports.init = function (sbot, opts) {
   function indexStreamFn (index, getkey) {
     return function (opts) {
       // emulate the `ssb.createFeedStream` interface
-      var lt    = o(opts, 'lt')
-      var lte   = o(opts, 'lte')
-      var gt    = o(opts, 'gt')
-      var gte   = o(opts, 'gte')
-      var limit = o(opts, 'limit')
+      var lt      = o(opts, 'lt')
+      var lte     = o(opts, 'lte')
+      var gt      = o(opts, 'gt')
+      var gte     = o(opts, 'gte')
+      var limit   = o(opts, 'limit')
+      var threads = o(opts, 'threads')
 
       // lt, lte, gt, gte should look like:
       // [msg.value.timestamp, msg.value.author]
@@ -439,16 +441,24 @@ exports.init = function (sbot, opts) {
 
       // helper to fetch rows
       function fetch (row, cb) {
-        sbot.get(row.key, function (err, value) {
-          // if (err) {
-            // suppress this error
-            // the message isnt in the local cache (yet)
-            // but it got into the index, likely due to a link
-            // instead of an error, we'll put a null there to indicate the gap
-          // }
-          row.value = value
-          cb(null, row)
-        })
+        if (threads) {
+          threadlib.getPostSummary(sbot, row.key, function (err, thread) {
+            for (var k in thread)
+              row[k] = thread[k]
+            cb(null, row)
+          })
+        } else {
+          sbot.get(row.key, function (err, value) {
+            // if (err) {
+              // suppress this error
+              // the message isnt in the local cache (yet)
+              // but it got into the index, likely due to a link
+              // instead of an error, we'll put a null there to indicate the gap
+            // }
+            row.value = value
+            cb(null, row)
+          })
+        }
       }
 
       // readstream

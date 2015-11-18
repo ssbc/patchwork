@@ -1,22 +1,40 @@
 .msg-thread {
-  &>.toolbar {
-    margin: 0 40px 0 0;
+  .toolbar {
+    position: fixed;
+    width: 100%;
+    z-index: 100;
   }
-  & > div {
-    padding-right: 40px;
+  .items {
+    position: relative;
+    padding: 40px 0 100px;
+
+    .msg-view {
+      position: relative;
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 91px;
+        width: 2px;
+        background: #d5d5d5;
+        z-index: 0;
+        bottom: -21px;
+        height: 20px;
+      }
+    }
+    .container {
+      position: relative;
+      z-index: 1000;
+    }
   }
-  .rootlink {
-    margin: 6px;
-  }
-  .composer-container {
-    padding-right: 120px;
+  .container {
+    max-width: 600px;
+    margin: 0px auto;
   }
   .composer {
-    width: 529px;
-    margin: 10px auto;
+    max-width: 523px;
+    margin: 0 0 0 77px;
     padding-top: 1px; // make background take full space
-    position: relative;
-    left: 36px;
     box-shadow: none;
     .composer-audience {
       display: none;
