@@ -31,6 +31,7 @@
     "tape": "~3.0.0"
   },
   "dependencies": {
+    "autosize": "^3.0.14",
     "babel": "^5.8.23",
     "blob-to-buffer": "^1.2.3",
     "emoji-named-characters": "^1.0.1",

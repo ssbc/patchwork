@@ -4,6 +4,7 @@ import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
+import autosize from 'autosize'
 import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
@@ -94,14 +95,9 @@ class ComposerTextarea extends React.Component {
     if (!textarea || textarea.isSetup)
       return
     textarea.isSetup = true
+    autosize(textarea)
     suggestBox(textarea, app.suggestOptions)
     textarea.addEventListener('suggestselect', this.props.onChange)
-  }
-  onKeyUp() {
-    const textarea = this.refs.textarea
-    textarea.style.overflow = 'hidden'
-    textarea.style.height = 0
-    textarea.style.height = textarea.scrollHeight + 'px'
   }
   onKeyDown(e) {
     if (e.keyCode == 13 && (e.metaKey || e.ctrlKey)) {
@@ -111,7 +107,7 @@ class ComposerTextarea extends React.Component {
     }
   }
   render() {
-    return <textarea ref="textarea" {...this.props} onKeyUp={this.onKeyUp.bind(this)} onKeyDown={this.onKeyDown.bind(this)} />
+    return <textarea ref="textarea" {...this.props} onKeyDown={this.onKeyDown.bind(this)} />
   }
 }
 
