@@ -53,7 +53,7 @@
       width: 100%;
       resize: none;
       border: 0;
-      min-height: 140px;
+      min-height: 50px;
       padding: 10px;
       margin: 0;
 
@@ -81,6 +81,49 @@
         color: #aaa !important;
         background: none !important;
         box-shadow: none !important;
+      }
+    }
+  }
+  .composer-drafts {
+    background: #f5f5f5;
+    position: relative;
+
+    &:before {
+      content: 'drafts';
+      position: absolute;
+      top: -12px;
+      right: 50%;
+      color: gray;
+    }
+    & > div {
+      display: flex;   
+      height: 40px;
+      color: gray;
+      font-weight: 300;
+      border-top: 1px solid #ddd;
+      div {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: pre;
+        &:first-child {
+          margin: 10px;
+          flex: 1;
+        }
+        &:last-child {
+          padding: 10px 16px;
+          &.delete:hover {
+            background: red;
+            color: white;
+          }
+        }
+      }
+      &:hover {
+        cursor: pointer;
+        background: #fafafa;
+      }
+      &.selected {
+        color: #555;
+        background: #fefefe;
       }
     }
   }

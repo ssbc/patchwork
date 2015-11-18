@@ -97,14 +97,52 @@ class ComposerTextarea extends React.Component {
     suggestBox(textarea, app.suggestOptions)
     textarea.addEventListener('suggestselect', this.props.onChange)
   }
+  onKeyUp() {
+    const textarea = this.refs.textarea
+    textarea.style.overflow = 'hidden'
+    textarea.style.height = 0
+    textarea.style.height = textarea.scrollHeight + 'px'
+  }
+  onKeyDown(e) {
+    if (e.keyCode == 13 && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault()
+      e.stopPropagation()
+      this.props.onSubmit()
+    }
+  }
   render() {
-    return <textarea ref="textarea" {...this.props} />
+    return <textarea ref="textarea" {...this.props} onKeyUp={this.onKeyUp.bind(this)} onKeyDown={this.onKeyDown.bind(this)} />
+  }
+}
+
+class ComposerDrafts extends React.Component {
+  render() {
+    if (!this.props.drafts.length)
+      return <span/>
+    return <div className="composer-drafts">
+      { this.props.drafts.map((draft, i) => {
+        const current = draft === this.props.currentDraft
+        return <div key={'draft'+i} className={current?'selected':''}>
+          <div onClick={()=>this.props.onOpenDraft(draft)}>{draft.text}</div>
+          { current ?
+            <div><i className="fa fa-pencil" /></div> :
+            <div className="delete" onClick={()=>this.props.onDeleteDraft(draft)}><i className="fa fa-times" /></div> }
+        </div>
+      }) }
+    </div>
   }
 }
 
 export default class Composer extends React.Component {
   constructor(props) {
     super(props)
+
+    // load drafts, if not writing a reply
+    var drafts
+    if (!this.props.thread) {
+      try { drafts = JSON.parse(localStorage.drafts) }
+      catch (e) {}
+    }
 
     // thread info
     let recps = []
@@ -130,18 +168,21 @@ export default class Composer extends React.Component {
       isReply: !!this.props.thread,
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
       recps: recps,
+      currentDraft: null, // only used if !isReply
+      drafts: drafts || [], // only used if !isReply
       text: ''
     }
 
     // convenient event helpers
     this.audienceHandlers = {
-      onSetPublic: ()  => { this.setState({ isPublic: true  }) },
-      onSetPrivate: () => { this.setState({ isPublic: false }) }
+      onSetPublic: ()  => { this.setState({ isPublic: true  }); this.updateDraft({ isPublic: true  }) },
+      onSetPrivate: () => { this.setState({ isPublic: false }); this.updateDraft({ isPublic: false }) }
     }
   }
 
   onChangeText(e) {
     this.setState({ text: e.target.value })
+    this.updateDraft({ text: e.target.value })
   }
 
   onAttach() {
@@ -200,6 +241,7 @@ export default class Composer extends React.Component {
       recps.splice(i, 1)
     recps.push(id)
     this.setState({ recps: recps })
+    this.updateDraft({ recps: recps })
   }
 
   onRemoveRecp(id) {
@@ -208,7 +250,44 @@ export default class Composer extends React.Component {
     if (i !== -1) {
       recps.splice(i, 1)
       this.setState({ recps: recps })
+      this.updateDraft({ recps: recps })
     }
+  }
+
+  onOpenDraft(draft) {
+    this.setState({ currentDraft: draft, text: draft.text, recps: draft.recps, isPublic: draft.isPublic })
+  }
+
+  onDeleteDraft(draft) {
+    // remove draft
+    const drafts = this.state.drafts.filter(d => d !== draft)
+    this.setState({ drafts: drafts })
+    // save
+    localStorage.drafts = JSON.stringify(drafts)
+  }
+
+  updateDraft(values) {
+    // dont use drafts in replies (atm)
+    if (this.state.isReply)
+      return
+
+    // get/create draft
+    let draft = this.state.currentDraft
+    if (!draft) {
+      draft = { text: this.state.text, recps: this.state.recps, isPublic: this.state.isPublic }
+      this.state.drafts.unshift(draft)
+      this.setState({
+        currentDraft: this.state.currentDraft || draft,
+        drafts: this.state.drafts
+      })
+    }
+
+    // update values
+    for (var k in values)
+      draft[k] = values[k]
+
+    // save
+    localStorage.drafts = JSON.stringify(this.state.drafts)
   }
 
   canSend() {
@@ -255,9 +334,15 @@ export default class Composer extends React.Component {
         this.setState({ isSending: false })
         if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
+          // remove draft and reset form
           this.setState({ text: '' })
+          if (this.state.currentDraft)
+            this.onDeleteDraft(this.state.currentDraft)
+
           // mark read (include the thread root because the api will automatically mark the root unread on new reply)
           app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key)
+
+          // call handler
           if (this.props.onSend)
             this.props.onSend(msg)
         }
@@ -276,7 +361,7 @@ export default class Composer extends React.Component {
       <ComposerAudience isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.audienceHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
+        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
@@ -292,6 +377,11 @@ export default class Composer extends React.Component {
             <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.state.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
         </div>
       </div>
+      <ComposerDrafts
+        currentDraft={this.state.currentDraft}
+        drafts={this.state.drafts}
+        onOpenDraft={this.onOpenDraft.bind(this)}
+        onDeleteDraft={this.onDeleteDraft.bind(this)} />
     </div>
   }
 }
