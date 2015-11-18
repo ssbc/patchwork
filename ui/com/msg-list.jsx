@@ -188,6 +188,7 @@ export default class MsgList extends React.Component {
   setupLivestream() {
     let source = this.props.source || app.ssb.createFeedStream
     let opts = (typeof this.props.live == 'object') ? this.props.live : {}
+    opts.threads = true
     opts.live = true
     this.liveStream = source(opts)
     pull(
