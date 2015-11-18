@@ -196,9 +196,7 @@ export default class Thread extends React.Component {
 
   render() {
     let thread = this.state.thread
-    if (!thread)
-      return <span/>
-    let threadRoot = mlib.link(thread.value.content.root, 'msg')
+    let threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     return <div className="msg-thread">
       <div className="toolbar flex">
         { threadRoot ?
@@ -221,7 +219,7 @@ export default class Thread extends React.Component {
               onFlag={(msg, reason)=>this.onFlag(msg, reason)}
               onToggleBookmark={()=>this.onToggleBookmark(msg)} />
           }) }
-          <div className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
+          { thread ? <div className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div> : '' }
         </div>
       </VerticalFilledContainer>
     </div>
