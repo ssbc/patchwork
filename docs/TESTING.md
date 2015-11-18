@@ -1,24 +1,64 @@
-# Test Checklist
+# Testing
 
-Follow this procedure before every version bump.
+## Test Environment
 
-## Dev Environment
+### Configuring a Dummy Database
 
-to start
+To create a safe environment for dummy data, start Patchwork with a custom `ssb_appname` environment variable.
+The default value is `ssb`, which causes all data to be stored in `~/.ssb`.
+You can use arbitrary values (but be careful not to collide with other dot-directories in your home!).
+
+For example:
 
 ```
 ssb_appname=test npm start
 ```
 
-to reset
+Will use `~/.test`.
+When you want to nuke the DB (to start fresh, or when you're done), simply delete the directory:
 
 ```
 rm -Rf ~/.test
 ```
 
-## Checklist
+### Dummy Accounts
 
-This checklist should be run, in full, in the order given.
+Your active account is decided by the `~/$DATA-DIRECTORY/secret` file.
+In default configuration, it's located in `~/.ssb/secret`.
+In the example above, it is `~/.test/secret`.
+
+If Patchwork doesn't find a `secret` file, it generates a new one, thereby creating a new account.
+A simple way to switch accounts, therefore, is to stop Patchwork and:
+
+```
+mv ~/.test/secret ~/.test/$NAME-secret
+```
+
+For example, if your account is named "bob":
+
+```
+mv ~/.test/secret ~/.test/bob-secret
+```
+
+Then restart Patchwork, creating your new account.
+When you want to restore bob to the main account, you close Patchwork and repeat the steps:
+
+```
+mv ~/.test/secret ~/.test/alice-secret
+cp ~/.test/bob-secret ~/.test/secret
+```
+
+
+## API tests
+
+```
+cd api
+npm test
+```
+
+## UI Tests Checklist
+
+Follow this procedure before every version bump.
 
 ### Setup modal
 
@@ -185,10 +225,14 @@ This checklist should be run, in full, in the order given.
   - Bad inputs
    1. Click the Join a Pub btn in the left nav.
    2. Use each of the following bad codes, ensuring a human-readable error message on each failure:
-    - foo
-    - 176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519
-    - 176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yohSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
-    - 176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUcN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yoh6rMSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
+
+```
+foo
+176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519
+176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUfN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yohSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
+176.58.117.63:8008:@J+0DGLgRn8H5tVLCcRUcN7NfUcTGEZKqML3krEOJjDY=.ed25519~ehmZ6O8yoh6rMSGwISC8iMJjPTlp/Q0EODWi+EYNA+w=
+```
+
   - Using an invite
    1. Click the Join a Pub btn in the left nav.
    2. Enter the test-pub's invite.
