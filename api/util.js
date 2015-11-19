@@ -75,6 +75,16 @@ module.exports.index = function () {
 
   index.filter = index.rows.filter.bind(index.rows)
 
+  // helper to count # of messages that are new
+  index.countUntouched = function () {
+    // iterate until we find a ts older than lastAccessed, then return that #
+    for (var i=0; i < index.rows.length; i++) {
+      if (index.rows[i].ts < index.lastAccessed)
+        return i
+    }
+    return 0
+  }
+
   return index
 }
 
