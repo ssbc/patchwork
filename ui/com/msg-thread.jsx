@@ -75,12 +75,29 @@ export default class Thread extends React.Component {
 
       // check for missing parents
       let numAdded=0
-      msgs.slice().forEach(function (msg, i) { // slice() - iterate a duplicate so that splices dont alter our iteration
+      msgs.slice().forEach((msg, i) => { // slice() - iterate a duplicate so that splices dont alter our iteration
         const branch = mlib.link(msg.value.content.branch, 'msg')
         if (branch && !msgIds.has(branch.link)) {
-          msgs.splice(i+numAdded, 0, { key: branch.link, isNotFound: true }) // insert right above this post
-          msgIds.add(branch.link)
-          numAdded++ // track how many added, to know what offset inserts should be added at
+          if (i === 0) {
+            // topmost post
+            // user may have navigated to a reply - try to load the parent, display a link if found and a warning if not
+            app.ssb.get(branch.link, (err, parentValue) => {
+              // async - use this.state.msgs
+              if (parentValue) {
+                this.state.msgs.unshift({ key: branch.link, isLink: true, value: parentValue })
+                this.setState({ msgs: this.state.msgs })
+              } else {
+                this.state.msgs.unshift({ key: branch.link, isNotFound: true })
+                this.setState({ msgs: this.state.msgs })
+              }
+            })
+          } else {
+            // one of the replies
+            // if the parent isnt somewhere in the thread, then we dont have it
+            msgs.splice(i+numAdded, 0, { key: branch.link, isNotFound: true }) // insert right above this post
+            msgIds.add(branch.link)
+            numAdded++ // track how many added, to know what offset inserts should be added at
+          }
         }
       })
 
@@ -224,7 +241,7 @@ export default class Thread extends React.Component {
       <div className="toolbar floating flex">
         <div className="centered">
           { threadRoot ?
-            <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
+            <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
             : '' }
           { !threadRoot && thread ?
             <SaveBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />

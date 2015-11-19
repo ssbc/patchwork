@@ -3,7 +3,7 @@ import React from 'react'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import clipboard from 'clipboard'
-import { UserLink, UserLinks, UserPic, NiceDate } from '../index'
+import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
 import { ModalContainer } from '../modals'
@@ -143,6 +143,8 @@ export default class Card extends React.Component {
     const msg = this.props.msg
     if (msg.isNotFound)
       return this.renderNotFound(msg)
+    if (msg.isLink)
+      return this.renderLink(msg)
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
@@ -166,6 +168,13 @@ export default class Card extends React.Component {
           </span> :
           ' This post could not be loaded.' }
       </div>
+    </div>
+  }
+
+  renderLink(msg) {
+    const name = u.shortString(msg.value.content.text || msg.key, 100)
+    return <div key={msg.key} className="msg-view card-missing-post">
+      <div><i className="fa fa-angle-up" /> <MsgLink id={msg.key} name={name} /></div>
     </div>
   }
 
