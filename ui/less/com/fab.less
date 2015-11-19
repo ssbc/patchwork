@@ -55,9 +55,17 @@
     bottom: 0;
     a {
       .elevation-card;
-      padding: 0 20px;
-      width: 483px;
+      padding: 10px 20px;
+      width: 50px;
+      height: 23px;
       border-radius: 0;
+      text-align: right;
+      font-weight: 100;
+      font-size: 18px;
+      border-top: 1px solid #ddd;
+      .inner {
+        top: 0;
+      }
     }
   }
   &.red a {
@@ -79,10 +87,10 @@
     }
   }
   &.gray a {
-    background: #ccc;
-    color: gray;
+    background: #F5F5F5;
+    color: #444;
     &:hover {
-      background: #bbb;    
+      background: #fff;    
     }
     &:before {
       color: gray;
@@ -95,7 +103,7 @@
       background: #fff;    
     }
     &:before {
-      color: gray;
+      color: #666;
     }
   }
 }
