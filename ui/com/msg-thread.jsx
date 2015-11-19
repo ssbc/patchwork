@@ -11,18 +11,26 @@ import app from '../lib/app'
 import u from '../lib/util'
 
 class SaveBtn extends React.Component {
-  onClick(e) {
-    e.stopPropagation()
-    this.props.onClick()
-  }
   render() {
     const b = this.props.isBookmarked
     const title = 'Save'+(b?'d':'')
-    return <a className={'btn '+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+    return <a className={'btn '+(b?' selected':'')} onClick={this.props.onClick} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title} Thread
     </a>
   }
 }
+
+class UnreadBtn extends React.Component {
+  render() {
+    const b = this.props.isUnread
+    const title = (b?'Mark Read':'Mark Unread')
+    const icon = 'fa fa-'+(b?'square-o':'check-square-o')
+    return <a className="btn" onClick={this.props.onClick} title={title}>
+      <i className={icon} /> Read
+    </a>
+  }
+}
+            
 
 export default class Thread extends React.Component {
   constructor(props) {
@@ -119,16 +127,16 @@ export default class Thread extends React.Component {
       this.liveStream(true, ()=>{})
   }
 
-  onMarkUnread() {
+  onToggleUnread() {
     // mark unread in db
     let thread = this.state.thread
-    app.ssb.patchwork.markUnread(thread.key, (err) => {
+    app.ssb.patchwork.toggleRead(thread.key, (err, isRead) => {
       if (err)
         return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkUnread of MsgThread')
 
       // re-render
-      thread.isRead = false
-      thread.hasUnread = true
+      thread.isRead = isRead
+      thread.hasUnread = !isRead
       this.setState(this.state)
     })
   }
@@ -209,8 +217,9 @@ export default class Thread extends React.Component {
   }
 
   render() {
-    let thread = this.state.thread
-    let threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const thread = this.state.thread
+    const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     return <div className="msg-thread">
       <div className="toolbar floating flex">
         <div className="centered">
@@ -220,7 +229,9 @@ export default class Thread extends React.Component {
           { !threadRoot && thread ?
             <SaveBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
             : '' }
-          <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+          { canMarkUnread ?
+            <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
+            : '' }
         </div>
       </div>
       <VerticalFilledContainer>
