@@ -198,7 +198,7 @@ export default class Thread extends React.Component {
     let thread = this.state.thread
     let threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     return <div className="msg-thread">
-      <div className="toolbar flex">
+      <div className="toolbar floating flex">
         { threadRoot ?
           <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
           : '' }

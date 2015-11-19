@@ -5,6 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import autosize from 'autosize'
+import Tabs from './tabs'
 import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
@@ -12,19 +13,18 @@ import social from '../lib/social-graph'
 
 const RECP_LIMIT = 7
 
-class ComposerAudience extends React.Component {
-  render() {
-    if (this.props.isReadOnly) {
-      return <div className="composer-audience">
-        { this.props.isPublic ? 
-          <strong><i className="fa fa-reply" /> <i className="fa fa-group" /> Public</strong> : 
-          <strong><i className="fa fa-reply" /> <i className="fa fa-lock" /> Private</strong> }
-      </div>
-    }
-    
-    let pubBtn = ( this.props.isPublic) ? <strong><i className="fa fa-group" /> Public</strong> : <a onClick={this.props.onSetPublic}><i className="fa fa-group" /> Public</a>
-    let priBtn = (!this.props.isPublic) ? <strong><i className="fa fa-lock" /> Private</strong> : <a onClick={this.props.onSetPrivate}><i className="fa fa-lock" /> Private</a>
-    return <div className="composer-audience">{pubBtn}{priBtn}</div>
+const TOOLBAR_TABS = [
+  { label: <span><i className="fa fa-group" /> Public</span> },
+  { label: <span><i className="fa fa-lock" /> Private</span> }
+]
+const TOOLBAR_TAB_PUBLIC  = TOOLBAR_TABS[0]
+const TOOLBAR_TAB_PRIVATE = TOOLBAR_TABS[1]
+
+class ComposerToolbar extends React.Component {
+  render() {    
+    return <div className="toolbar">
+      <Tabs options={TOOLBAR_TABS} selected={this.props.isPublic ? TOOLBAR_TAB_PUBLIC : TOOLBAR_TAB_PRIVATE} onSelect={this.props.onSelect} />
+    </div>
   }
 }
 
@@ -170,9 +170,12 @@ export default class Composer extends React.Component {
     }
 
     // convenient event helpers
-    this.audienceHandlers = {
-      onSetPublic: ()  => { this.setState({ isPublic: true  }); this.updateDraft({ isPublic: true  }) },
-      onSetPrivate: () => { this.setState({ isPublic: false }); this.updateDraft({ isPublic: false }) }
+    this.toolbarHandlers = {
+      onSelect: (v)  => {
+        const isPublic = (v == TOOLBAR_TAB_PUBLIC)
+        this.setState({ isPublic: isPublic })
+        this.updateDraft({ isPublic: isPublic })
+      }
     }
   }
 
@@ -354,7 +357,7 @@ export default class Composer extends React.Component {
     let msgType = this.state.isPublic ? 'public' : 'private'
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <ComposerAudience isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.audienceHandlers} />
+      <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
         <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
@@ -373,11 +376,6 @@ export default class Composer extends React.Component {
             <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.state.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
         </div>
       </div>
-      <ComposerDrafts
-        currentDraft={this.state.currentDraft}
-        drafts={this.state.drafts}
-        onOpenDraft={this.onOpenDraft.bind(this)}
-        onDeleteDraft={this.onDeleteDraft.bind(this)} />
     </div>
   }
 }

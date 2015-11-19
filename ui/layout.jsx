@@ -42,7 +42,7 @@ export default class Layout extends React.Component {
     return <div className="layout-rows">
       <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       { composing ?
-        <FAB className="expanded" icon="caret-right" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
+        <FAB className="expanded gray" icon="caret-right" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
         <FAB onClick={this.toggleComposerOpen.bind(this)} /> }
       <div className="layout-columns">
         <LeftNav
