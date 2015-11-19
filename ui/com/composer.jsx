@@ -4,8 +4,8 @@ import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import autosize from 'autosize'
 import Tabs from './tabs'
+import { verticalFilled } from './index'
 import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
@@ -88,14 +88,13 @@ class ComposerRecps extends React.Component {
   }
 }
 
-class ComposerTextarea extends React.Component {
+class ComposerTextareaFixed extends React.Component {
   componentDidMount() {
     // setup the suggest-box
     let textarea = this.refs && this.refs.textarea
     if (!textarea || textarea.isSetup)
       return
     textarea.isSetup = true
-    autosize(textarea)
     suggestBox(textarea, app.suggestOptions)
     textarea.addEventListener('suggestselect', this.props.onChange)
   }
@@ -107,9 +106,10 @@ class ComposerTextarea extends React.Component {
     }
   }
   render() {
-    return <textarea ref="textarea" {...this.props} onKeyDown={this.onKeyDown.bind(this)} />
+    return <textarea ref="textarea" {...this.props} onKeyDown={this.onKeyDown.bind(this)} style={{height: this.props.height, overflow: 'auto'}} />
   }
 }
+const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed)
 
 class ComposerDrafts extends React.Component {
   render() {
@@ -355,6 +355,7 @@ export default class Composer extends React.Component {
 
   render() {
     let msgType = this.state.isPublic ? 'public' : 'private'
+    const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
