@@ -26,11 +26,11 @@ export default class Oneline extends React.Component {
             <i className="fa fa-bookmark-o" /> }
         </a>
       </div>
-      <div className="authors">
-        { recps.length ? <UserLinks ids={recps.map(link => link.link)} /> : <UserLink id={msg.value.author} /> } {replies}
-      </div>
       <div className="type">
         { msg.plaintext ? '' : <i className="fa fa-lock" title="Secret Message" /> }
+      </div>
+      <div className="authors">
+        { recps.length ? <UserLinks ids={recps.map(link => link.link)} /> : <UserLink id={msg.value.author} /> } {replies}
       </div>
       <div className="content">
         <Content msg={msg} forceRaw={this.props.forceRaw} />
