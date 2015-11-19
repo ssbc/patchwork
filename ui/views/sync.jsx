@@ -36,6 +36,7 @@ class Peer extends React.Component {
       else if (peer.progress.sync || peer.progress.total === 0)
         status = <div className="light">Syncing</div>
       else
+        // NOTE: I've not seen this progress working in recent memory
         status = <div className="light"><progress value={peer.progress.current / peer.progress.total} /></div>
     } else if (peer.time) {
       if (peer.time.connect > peer.time.attempt)
@@ -50,6 +51,30 @@ class Peer extends React.Component {
       <div className="flex-fill">
         <div><UserLink id={peer.key} /> { isMember ? <span className="light">Joined</span> : '' }</div>
         <div><small>{peerId(peer)}</small></div>
+      </div>
+      {status}
+    </div>
+  }
+}
+
+class PeerStatus extends React.Component {
+  render() {
+    let peer = this.props.peer
+    let status = ''
+    if (!peer.connected) {
+      if (peer.time && peer.time.connect) {
+        status = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
+      } else {
+        status = '...'
+      }
+    }
+
+    const isMember = social.follows(peer.key, app.user.id)
+    return <div className='peer flex'>
+      <div className='flex-fill'>
+        <span className={'connection-status'+((peer.connected)?' connected ':'')}></span>
+        <UserLink id={peer.key} />
+        { isMember ? '' : <i className='unknown-peer-symbol fa fa-question-circle' /> }
       </div>
       {status}
     </div>
@@ -142,29 +167,36 @@ export default class Sync extends React.Component {
   render() {
     const stats = this.state.stats
     const downloading = Math.max(stats.connected-stats.membersofActive, 0)
+    const globalConnectionsCount = stats.connected
+    const localConnectionsCount = '?'
     
     return <VerticalFilledContainer id="sync">
       <div className="header">
-        { this.state.isWifiMode ?
-          <div>
-            <h1><i className="fa fa-wifi" /> WiFi Mode</h1>
-            <h3>
-              { stats.connected > 0 ?
-                ("You're not uploading to any pubs, but you are downloading. You can send updates to peers on your Local Area Network.") :
-                "You're not connected to any pubs, but you can still connect to peers on your Local Area Network." }
-            </h3>
-          </div>
-          :
-          <div>
-            <h1><i className="fa fa-globe" /> Global Mode</h1>
-            <h3>{"You're successfully uploading to "+stats.membersofActive+" pub"+s(stats.membersofActive)+", and downloading from "+downloading+" other"+s(downloading)+"."}</h3>
-          </div>
+        <h1>Connections</h1>
+        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Global</div>
+        <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local</div>
+      </div>
+
+      <div className='peer-status-group'> 
+        <h2>Pubs</h2>
+        {
+          this.state.peers.filter((peer) => social.follows(peer.key, app.user.id) ).
+            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
-        <div className="toolbar">
+        <div className="toolbar join-pub">
           <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
         </div>
       </div>
-      {this.state.peers.map((peer, i) => <Peer key={peerId(peer)} peer={peer} />)}
+
+      <div className='peer-status-group'> 
+        <h2>Users</h2>
+        {
+          this.state.peers.filter((peer) => !social.follows(peer.key, app.user.id) ).
+            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
+        }
+      </div>
+
     </VerticalFilledContainer>
   }
 }
+      //{this.state.peers.map((peer, i) => <Peer key={peerId(peer)} peer={peer} />)}

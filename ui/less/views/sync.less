@@ -8,19 +8,36 @@
       font-size: 250%;
       margin: 0 0 12px;
     }
-    h3 {
-      font-weight: 300;
-    }
     .warning {
       margin-top: 10px;
       padding: 10px;
       background: #fafafa;
       font-weight: 300;
       color: #555;
+    }
+  }
+  .connection-counter{
+    display: inline-block;
+    margin-right: 40px;
+    margin-top: 5px;
 
-      i {
-        margin-right: 5px;
-      }
+    i {
+      color: #444;
+      font-size: 30px;
+      margin: 0 2px 4px;
+      vertical-align: middle;
+    } 
+  }
+  .peer-status-group {
+    color: #444;
+    padding: 20px;
+    margin: 40px 20px 20px;
+    background-color: #fff;
+
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      font-weight: 300;
     }
   }
   .peer {
@@ -38,4 +55,29 @@
       color: gray;
     }
   }
+
+  .unknown-peer-symbol {
+    margin-left: 10px;
+    color: #B9B9B9;
+  }
+  
+  .connection-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+
+    background-color: #B9B9B9;
+
+    &.connected {
+      background-color: #2AD02A;
+    }
+  }
+
+  .toolbar.join-pub {
+    margin-top: 20px;
+  }
+
 }

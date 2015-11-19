@@ -62,7 +62,7 @@ class LeftNav extends React.Component {
 
       <div className="leftnav-item label">Network</div>
       <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
-      <NavLink to="/sync" location={this.props.location} icon={isWifiMode?'wifi':'globe'} label={isWifiMode?'WiFi Mode':'Global Mode'} />
+      <NavLink to="/sync" location={this.props.location} icon={isWifiMode?'wifi':'globe'} label={isWifiMode?'WiFi Mode':'Connections'} />
       <Issues />
     </div>
   }
