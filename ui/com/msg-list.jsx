@@ -27,6 +27,7 @@ export default class MsgList extends React.Component {
     this.botcursor = null
     this.state = {
       msgs: [],
+      newMsgQueue: [], // used to store message updates that we dont want to render immediately
       selected: null,
       isLoading: false,
       isAtEnd: false,
@@ -117,7 +118,7 @@ export default class MsgList extends React.Component {
           query = false
         this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
           this.botcursor = null
-          this.loadMore(30)
+          this.loadMore({ amt: 30 })
         })
       }
     }
@@ -126,7 +127,7 @@ export default class MsgList extends React.Component {
   componentDidMount() {
     // load first messages
     var start = Date.now()
-    this.loadMore(DEFAULT_BATCH_LOAD_AMT, () => console.log(Date.now() - start))
+    this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -152,9 +153,9 @@ export default class MsgList extends React.Component {
   }
 
   reload() {
-    this.setState({ msgs: [], isAtEnd: false }, () => {
+    this.setState({ isAtEnd: false, newMsgQueue: [] }, () => {
       this.botcursor = null
-      this.loadMore(DEFAULT_BATCH_LOAD_AMT)
+      this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT, fresh: true })
     })
   }
 
@@ -200,20 +201,15 @@ export default class MsgList extends React.Component {
       // :TODO: restore search
       // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
-        // remove any noticeable duplicates...
-        // check if the message is already in the first N and remove it if so
-        for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
-          if (this.state.msgs[i].key === msg.key) {
-            this.state.msgs.splice(i, 1)
-            break
-          }
+
+        if (this.props.queueNewMsgs) {
+          // queue the new msgs on the ui
+          this.state.newMsgQueue.push(msg)
+          this.setState({ newMsgQueue: this.state.newMsgQueue })
+        } else {
+          // immediately render
+          this.prependNewMsg(msg)          
         }
-        // add to start of msgs
-        var selected = this.state.selected
-        if (selected && selected.key === msg.key)
-          selected = msg // update selected, in case we replaced the current msg
-        this.state.msgs.unshift(msg)
-        this.setState({ msgs: this.state.msgs, selected: selected })
       })
     )
   }
@@ -258,15 +254,15 @@ export default class MsgList extends React.Component {
     }
   }
 
-  loadMore(amt, done) {
-    amt = amt || 50
+  // load messages from the bottom of the list
+  loadMore({ amt = 50, fresh = false } = {}, done) {
     if (this.state.isLoading || this.state.isAtEnd)
       return
 
     var lastmsg
     let source = this.props.source || app.ssb.createFeedStream
     let cursor = this.props.cursor || ((msg) => { if (msg) { return msg.value.timestamp } })
-    let updatedMsgs = this.state.msgs
+    let updatedMsgs = (fresh) ? [] : this.state.msgs
 
     this.setState({ isLoading: true })
     pull(
@@ -299,12 +295,40 @@ export default class MsgList extends React.Component {
     )
   }
 
+  // add messages to the top
+  prependNewMsg(msgs) {
+    var selected = this.state.selected
+    msgs = Array.isArray(msgs) ? msgs : [msgs]
+    msgs.forEach(msg => {
+      // remove any noticeable duplicates...
+      // check if the message is already in the first N and remove it if so
+      for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
+        if (this.state.msgs[i].key === msg.key) {
+          this.state.msgs.splice(i, 1)
+          break
+        }
+      }
+      // add to start of msgs
+      if (selected && selected.key === msg.key)
+        selected = msg // update selected, in case we replaced the current msg
+      this.state.msgs.unshift(msg)
+    })
+    this.setState({ msgs: this.state.msgs, selected: selected })
+  }
+
+  // flush queue into the page
+  prependQueuedMsgs() {
+    this.prependNewMsg(this.state.newMsgQueue)
+    this.setState({ newMsgQueue: [] })
+  }
+
   render() {
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
     const selectedKey = this.state.selected && this.state.selected.key
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
+    const nQueued = this.state.newMsgQueue.length
     let isRenderingNew = true
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
@@ -313,7 +337,7 @@ export default class MsgList extends React.Component {
           elementHeight={this.props.listItemHeight||60}
           containerHeight={this.state.containerHeight}
           infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
-          onInfiniteLoad={this.loadMore.bind(this, 30)}
+          onInfiniteLoad={this.loadMore.bind(this, { amt: 30 })}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
           { this.props.hero ? this.props.hero() : '' }
@@ -323,6 +347,9 @@ export default class MsgList extends React.Component {
               { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
             </div>
           </div>
+          { nQueued ?
+            <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
+            : '' }
           { isEmpty ?
             <div className="empty-msg">
               { this.state.searchQuery ?

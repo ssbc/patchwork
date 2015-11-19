@@ -19,11 +19,6 @@ function peerSorter (a, b) {
   return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
 }
 
-// helper to put an s at the end of words if they're plural only
-function s (n) {
-  return n === 1 ? '' : 's'
-}
-
 class Peer extends React.Component {
   render() {
     let peer = this.props.peer
@@ -157,7 +152,7 @@ export default class Sync extends React.Component {
           :
           <div>
             <h1><i className="fa fa-globe" /> Global Mode</h1>
-            <h3>{"You're successfully uploading to "+stats.membersofActive+" pub"+s(stats.membersofActive)+", and downloading from "+downloading+" other"+s(downloading)+"."}</h3>
+            <h3>{"You're successfully uploading to "+stats.membersofActive+" pub"+u.plural(stats.membersofActive)+", and downloading from "+downloading+" other"+u.plural(downloading)+"."}</h3>
           </div>
         }
         <div className="toolbar">

@@ -35,6 +35,7 @@ export default class NewsFeed extends React.Component {
         threads
         floatingToolbar
         showNewDivider
+        queueNewMsgs
         ListItem={Card}
         filters={FILTERS}
         selected={mid}

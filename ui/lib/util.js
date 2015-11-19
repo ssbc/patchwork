@@ -14,6 +14,11 @@ exports.debounce = function (fn, wait) {
   }
 }
 
+// helper to put an s at the end of words if they're plural only
+exports.plural = function (n) {
+  return n === 1 ? '' : 's'
+}
+
 exports.shortString = function(str, len) {
   len = len || 6
   if (str.length - 3 > len)
