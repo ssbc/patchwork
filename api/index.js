@@ -138,7 +138,8 @@ exports.init = function (sbot, opts) {
         inbox: state.inbox.rows.length,
         inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         bookmarks: state.bookmarks.rows.length,
-        bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length
+        bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
+        notificationsUnread: state.notifications.filter(function (row) { return row.ts > state.notifications.lastAccessed }).length
       })
     })
   }
@@ -415,6 +416,9 @@ exports.init = function (sbot, opts) {
   // helper to get messages from an index
   function indexStreamFn (index, getkey) {
     return function (opts) {
+      var lastAccessed = index.lastAccessed
+      index.touch()
+
       // emulate the `ssb.createFeedStream` interface
       var lt      = o(opts, 'lt')
       var lte     = o(opts, 'lte')
@@ -486,6 +490,7 @@ exports.init = function (sbot, opts) {
 
           var r = lookup(row)
           if (r) {
+            r.isNew = r.ts > lastAccessed
             readPush.push(r)
             added++
           }

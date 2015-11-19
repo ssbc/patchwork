@@ -6,6 +6,11 @@ var threadlib = require('patchwork-threads')
 module.exports.index = function () {
   var index = new EventEmitter()
   index.rows = []
+  index.lastAccessed = Date.now()
+
+  index.touch = function () {
+    index.lastAccessed = Date.now()
+  }
 
   index.sortedInsert = function (ts, key) {
     var row = (typeof ts == 'object') ? ts : { ts: ts, key: key }
