@@ -213,13 +213,15 @@ export default class Thread extends React.Component {
     let threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     return <div className="msg-thread">
       <div className="toolbar floating flex">
-        { threadRoot ?
-          <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
-          : '' }
-        { !threadRoot && thread ?
-          <SaveBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
-          : '' }
-        <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+        <div className="centered">
+          { threadRoot ?
+            <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
+            : '' }
+          { !threadRoot && thread ?
+            <SaveBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+            : '' }
+          <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
+        </div>
       </div>
       <VerticalFilledContainer>
         <div className="items">

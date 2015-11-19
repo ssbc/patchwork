@@ -6,7 +6,7 @@ import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 
 const FILTERS = [
-  { label: 'All', fn: msg => true },
+  { label: 'All Messages', fn: msg => true },
   { label: 'Unread', fn: msg => msg.hasUnread },
   { label: 'Private', fn: msg => !msg.plaintext }
 ]
