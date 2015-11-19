@@ -193,7 +193,10 @@ export default class Card extends React.Component {
         { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
 
-    return <div className={'msg-view card-post' + (this.state.isOversized?' oversized':'') + (this.state.isExpanded?' expanded':'')}>
+    const oversizedCls = (this.state.isOversized?'oversized':'')
+    const expandedCls  = (this.state.isExpanded?'expanded':'')
+    const newCls       = (msg.isNew?'new':'')
+    return <div className={`msg-view card-post ${oversizedCls} ${expandedCls} ${newCls}`}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
         <div><a onClick={this.onSelect.bind(this)}><NiceDate ts={msg.value.timestamp} /></a></div>

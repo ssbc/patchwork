@@ -18,3 +18,19 @@
     }
   }
 }
+.new-msgs-divider {
+  border-bottom: 1px solid #ccc;
+  position: relative;
+
+  &:after {
+    content: 'new ↑';
+    position: absolute;
+    left: 45%;
+    top: -12px;
+    background: #eee;
+    color: #999;
+    padding: 0 4px 0 6px;
+    transform: translateX(-50%);
+    font-weight: 300;
+  }
+}

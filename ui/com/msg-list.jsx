@@ -305,6 +305,7 @@ export default class MsgList extends React.Component {
     const selectedKey = this.state.selected && this.state.selected.key
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
+    let isRenderingNew = true
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
         <Infinite
@@ -331,7 +332,22 @@ export default class MsgList extends React.Component {
             :
             <div>
               { this.state.msgs.map((m, i) => {
-                return <ListItem key={m.key} msg={m} {...this.handlers} selected={selectedKey === m.key} forceRaw={this.props.forceRaw} />
+                // render item
+                let item = <ListItem
+                  key={m.key}
+                  msg={m}
+                  {...this.handlers}
+                  selected={selectedKey === m.key}
+                  forceRaw={this.props.forceRaw} />
+                let divider
+
+                // render "new msgs" divider, if there were new msgs
+                const wasRenderingNew = isRenderingNew
+                isRenderingNew = m.isNew
+                if (this.props.showNewDivider && wasRenderingNew && !m.isNew && i > 0) {
+                  return <div key="new-msgs-divider"><hr className="new-msgs-divider" />{item}</div>
+                }
+                return item
               }) }
             </div>
           }
