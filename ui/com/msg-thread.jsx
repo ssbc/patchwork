@@ -10,6 +10,20 @@ import Composer from './composer'
 import app from '../lib/app'
 import u from '../lib/util'
 
+class SaveBtn extends React.Component {
+  onClick(e) {
+    e.stopPropagation()
+    this.props.onClick()
+  }
+  render() {
+    const b = this.props.isBookmarked
+    const title = 'Save'+(b?'d':'')
+    return <a className={'btn '+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+        <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title} Thread
+    </a>
+  }
+}
+
 export default class Thread extends React.Component {
   constructor(props) {
     super(props)
@@ -202,6 +216,9 @@ export default class Thread extends React.Component {
         { threadRoot ?
           <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-caret-up" /> Parent Thread</a>
           : '' }
+        { !threadRoot && thread ?
+          <SaveBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+          : '' }
         <a className="btn" onClick={this.onMarkUnread.bind(this)} title="Mark Unread"><i className="fa fa-eye-slash" /> Mark Unread</a>
       </div>
       <VerticalFilledContainer>
@@ -212,6 +229,7 @@ export default class Thread extends React.Component {
               key={msg.key}
               msg={msg}
               noReplies
+              noBookmark
               forceRaw={this.props.forceRaw}
               forceOpen={isFirst}
               onSelect={()=>this.openMsg(msg.key)}
