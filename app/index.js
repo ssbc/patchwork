@@ -5,7 +5,7 @@ var http = require('http')
 var fs   = require('fs')
 
 var httpStack  = require('./http-server')
-var windows    = require('./lib/windows')
+var windows    = require('./windows')
 var config     = require('ssb-config/inject')(process.env.ssb_appname)
 var ssbKeys    = require('ssb-keys')
 var createSbot = require('scuttlebot')
@@ -45,7 +45,7 @@ app.on('ready', function () {
     sbot,
     { width: 1030, height: 720 }
   )
-  require('./lib/menu')(mainWindow)
+  require('./menu')(mainWindow)
   // mainWindow.openDevTools()
 
   // setup menu
