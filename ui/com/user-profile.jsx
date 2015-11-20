@@ -61,6 +61,7 @@ export default class UserProfile extends React.Component {
 
     // normal msg-list render
     const ListItem = (currentView === VIEW_PMS) ? Oneline : Card
+    const dateDividers = (currentView == VIEW_POSTS)
     const feed = (opts) => {
       opts = opts || {}
       opts.id = this.props.pid
@@ -95,7 +96,7 @@ export default class UserProfile extends React.Component {
     // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
     return <div className="user-profile" key={this.props.pid}>
-      <MsgList threads forceRaw={forceRaw} key={currentView.label} ListItem={ListItem} hero={hero} toolbar={toolbar} source={feed} cursor={cursor} filter={filter} refreshOnReply />
+      <MsgList threads forceRaw={forceRaw} dateDividers={dateDividers} key={currentView.label} ListItem={ListItem} hero={hero} toolbar={toolbar} source={feed} cursor={cursor} filter={filter} refreshOnReply />
     </div>
   }
 }
