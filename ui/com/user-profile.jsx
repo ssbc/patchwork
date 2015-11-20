@@ -11,11 +11,13 @@ import app from '../lib/app'
 const VIEWS = [
   { label: 'Posts' },
   { label: 'Private Messages' },
-  { label: 'About' }
+  { label: 'About' },
+  { label: 'Data' }
 ]
 const VIEW_POSTS = VIEWS[0]
 const VIEW_PMS   = VIEWS[1]
 const VIEW_ABOUT = VIEWS[2]
+const VIEW_DATA = VIEWS[3]
 
 export default class UserProfile extends React.Component {
   constructor(props) {
@@ -68,6 +70,7 @@ export default class UserProfile extends React.Component {
       if (msg)
         return msg.value.sequence
     }
+    const forceRaw = (currentView === VIEW_DATA)
     const filter = (currentView === VIEW_PMS)
       ? (msg) => {
         // toplevel post by this user
@@ -77,7 +80,8 @@ export default class UserProfile extends React.Component {
         if (msg.value.author == this.props.pid && c.type == 'post' && !(c.root || c.branch))
           return true
       }
-      : (msg) => {
+      : (currentView === VIEW_POSTS)
+      ? (msg) => {      
         // toplevel post by this user
         var c = msg.value.content
         if (!msg.plaintext)
@@ -85,12 +89,13 @@ export default class UserProfile extends React.Component {
         if (msg.value.author == this.props.pid && c.type == 'post' && !(c.root || c.branch))
           return true
       }
+      : () => true // allow all
   
     // MsgList must have refreshOnReply
     // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
     return <div className="user-profile" key={this.props.pid}>
-      <MsgList threads key={currentView.label} ListItem={ListItem} hero={hero} toolbar={toolbar} source={feed} cursor={cursor} filter={filter} refreshOnReply />
+      <MsgList threads forceRaw={forceRaw} key={currentView.label} ListItem={ListItem} hero={hero} toolbar={toolbar} source={feed} cursor={cursor} filter={filter} refreshOnReply />
     </div>
   }
 }
