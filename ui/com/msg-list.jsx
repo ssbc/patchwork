@@ -335,6 +335,7 @@ export default class MsgList extends React.Component {
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
+    const endOfToday = moment().endOf('day')
     var lastDate = moment().startOf('day')
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
@@ -377,7 +378,7 @@ export default class MsgList extends React.Component {
                 const lastPost = threadlib.getLastThreadPost(m)
                 lastDate = moment(lastPost.value.timestamp)
                 if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day'))
-                  return <div key={m.key}><hr className="msgs-divider" data-label={lastDate.fromNow()} />{item}</div>
+                  return <div key={m.key}><hr className="msgs-divider" data-label={lastDate.endOf('day').from(endOfToday)} />{item}</div>
                 return item
               }) }
             </div>
