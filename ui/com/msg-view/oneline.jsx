@@ -30,7 +30,7 @@ export default class Oneline extends React.Component {
         </a>
       </div>
       <div className="type">{ msg.plaintext ? '' : <i className="fa fa-lock" title="Secret Message" /> }</div>
-      <div className="authors"><UserLinks ids={recps} shorten /></div>
+      <div className="authors"><UserLinks ids={recps} shorten={recps.length > 1} /></div>
       <div className="replies">{replies}</div>
       <div className="content"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
       <div className="date"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>
