@@ -60,9 +60,9 @@ class LeftNav extends React.Component {
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Saved" count={this.state.indexCounts.bookmarksUnread} />
 
-      <div className="leftnav-item label">Network</div>
+      <div className="leftnav-item label">---</div>
       <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
-      <NavLink to="/sync" location={this.props.location} icon={isWifiMode?'wifi':'globe'} label={isWifiMode?'WiFi Mode':'Connections'} />
+      <NavLink to="/sync" location={this.props.location} icon={isWifiMode?'wifi':'globe'} label='Network' />
       <Issues />
     </div>
   }

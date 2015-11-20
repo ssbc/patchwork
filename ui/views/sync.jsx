@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import pull from 'pull-stream'
+import ip from 'ip'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
@@ -162,8 +163,13 @@ export default class Sync extends React.Component {
   render() {
     const stats = this.state.stats
     const downloading = Math.max(stats.connected-stats.membersofActive, 0)
-    const globalConnectionsCount = stats.connected
-    const localConnectionsCount = '?'
+    //const globalConnectionsCount = stats.connected
+    const globalConnectionsCount = Math.max(stats.connected-stats.membersofActive, 0)
+    // this needs checking
+    const localConnectionsCount = this.state.peers.
+      filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host) ).
+      filter((peer) => peer.connected).
+      length
     
     return <VerticalFilledContainer id="sync">
       <div className="header">
@@ -175,7 +181,7 @@ export default class Sync extends React.Component {
       <div className='peer-status-group'> 
         <h2>Pubs</h2>
         {
-          this.state.peers.filter((peer) => social.follows(peer.key, app.user.id) ).
+          this.state.peers.filter((peer) => peer.host != 'localhost' && !ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
         <div className="toolbar join-pub">
@@ -184,13 +190,12 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'> 
-        <h2>Users</h2>
+        <h2>Local Users</h2>
         {
-          this.state.peers.filter((peer) => !social.follows(peer.key, app.user.id) ).
+          this.state.peers.filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
       </div>
-
     </VerticalFilledContainer>
   }
 }
