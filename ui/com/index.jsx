@@ -11,8 +11,9 @@ import u from '../lib/util'
 
 export class UserLink extends React.Component {
   render() {
-    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
-    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link" title={name}>{name}</Link>
+    const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    const label = (this.props.shorten) ? name.slice(0, 3) : name
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link" title={name}>{label}</Link>
   }
 }
 
@@ -34,7 +35,7 @@ export class UserLinks extends React.Component {
     return <span>
       {this.props.ids.map((id, i) => {
         let isLast = (i === n-1)
-        return <span key={id} ><UserLink id={id} />{isLast ? '' : ', '}</span>
+        return <span key={id} ><UserLink id={id} shorten={this.props.shorten} />{isLast ? '' : ', '}</span>
       })}
     </span>
   }
