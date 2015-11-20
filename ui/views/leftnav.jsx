@@ -55,7 +55,7 @@ class LeftNav extends React.Component {
       <div className="titlebar">
         <a className="back" onClick={this.onClickBack}><span>back</span> <i className="fa fa-arrow-circle-o-left" /></a>
       </div>
-      <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" count={this.state.indexCounts.newsfeedUnread} />
+      <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/notifications" location={this.props.location} icon="rss" label="Updates" count={this.state.indexCounts.notificationsUnread} />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Saved" count={this.state.indexCounts.bookmarksUnread} />

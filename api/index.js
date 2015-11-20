@@ -135,7 +135,6 @@ exports.init = function (sbot, opts) {
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       cb(null, {
-        newsfeedUnread: state.newsfeed.countUntouched(),
         inbox: state.inbox.rows.length,
         inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         bookmarks: state.bookmarks.rows.length,
