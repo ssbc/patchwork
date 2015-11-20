@@ -19,11 +19,6 @@ function peerSorter (a, b) {
   return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
 }
 
-// helper to put an s at the end of words if they're plural only
-function s (n) {
-  return n === 1 ? '' : 's'
-}
-
 class Peer extends React.Component {
   render() {
     let peer = this.props.peer

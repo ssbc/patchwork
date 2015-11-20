@@ -4,9 +4,42 @@
     color: gray;
     background: #fff;
   }
+  .new-msgs-divider {
+    border-bottom: 1px solid #ccc;
+    position: relative;
+
+    &:after {
+      content: 'new ↑';
+      position: absolute;
+      left: 45%;
+      top: -12px;
+      background: #eee;
+      color: #999;
+      padding: 0 4px 0 6px;
+      transform: translateX(-50%);
+      font-weight: 300;
+    }
+  }
+  .new-msg-queue {
+    .elevation-btn;
+    transition: background 0.2s, box-shadow 0.2s;
+    display: block;
+    text-align: center;
+    padding: 15px 90px 15px 0;
+    background: #4DA1FF;
+    color: #F5FAFF;
+    font-weight: 100;
+    font-size: 21px;
+
+    &:hover {
+      .elevation-btn-raised;
+      text-decoration: none;
+      background: #0079FF;
+    }
+  }
 }
 .msg-list-items {
-  padding-top: 40px;
+  padding-top: 45px;
   .empty {
     padding: 10px;
   }

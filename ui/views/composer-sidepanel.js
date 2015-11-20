@@ -11,7 +11,7 @@ export default class ComposerSidePanel extends React.Component {
   render() {
     return <div id="rightpane" className={this.props.isOpen?'open':''}>
       <div className="inner">
-        <Composer onSend={this.onSend} />
+        <Composer verticalFilled onSend={this.onSend} />
       </div>
     </div>
   }
