@@ -7,6 +7,7 @@ var URL    = require('url')
 var fs     = require('fs')
 var refs   = require('ssb-ref')
 var Stack  = require('stack')
+var ip     = require('ip')
 
 function respond (res, status, message) {
   res.writeHead(status)
@@ -38,12 +39,8 @@ function respondSource (res, source, wrap) {
 
 var Localhost = exports.Localhost = function () {
   return function (req, res, next) {
-    // TODO use ip.isLoopback
-    if (req.socket.remoteAddress != '127.0.0.1' &&
-        req.socket.remoteAddress != '::ffff:127.0.0.1' &&
-        req.socket.remoteAddress != '::1') {
-      respond(res, 403, 'Remote access forbidden')
-    }
+    if (!ip.isLoopback(req.socket.remoteAddress))
+      return respond(res, 403, 'Remote access forbidden')
     next()
   }
 }
