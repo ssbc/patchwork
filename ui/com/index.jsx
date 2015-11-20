@@ -1,7 +1,6 @@
 'use babel'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import moment from 'moment'
 import { Link } from 'react-router'
 import Modal from 'react-modal'
 import xtend from 'xtend'
@@ -62,21 +61,9 @@ export class UserBtn extends React.Component {
   }
 }
 
-const startOfDay = moment().startOf('day')
-const lastWeek = moment().subtract(1, 'weeks')
-const lastYear = moment().subtract(1, 'years')
 export class NiceDate extends React.Component {
   render() {
-    var d = moment(this.props.ts)
-    if (d.isBefore(lastYear))
-      d = d.format('')
-    else if (d.isBefore(lastWeek))
-      d = d.format('MMM D')
-    else if (d.isBefore(startOfDay))
-      d = d.format('ddd h:mma')
-    else
-      d = d.format('h:mma')
-    return <span>{d}</span>
+    return <span>{u.niceDate(this.props.ts)}</span>
   }
 }
 

@@ -4,12 +4,12 @@
     color: gray;
     background: #fff;
   }
-  .new-msgs-divider {
+  hr {
     border-bottom: 1px solid #ccc;
     position: relative;
 
     &:after {
-      content: 'new ↑';
+      content: attr(data-label);
       position: absolute;
       left: 45%;
       top: -12px;
