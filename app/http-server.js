@@ -38,6 +38,7 @@ function respondSource (res, source, wrap) {
 
 var Localhost = exports.Localhost = function () {
   return function (req, res, next) {
+    // TODO use ip.isLoopback
     if (req.socket.remoteAddress != '127.0.0.1' &&
         req.socket.remoteAddress != '::ffff:127.0.0.1' &&
         req.socket.remoteAddress != '::1') {
@@ -59,14 +60,13 @@ var CSP = exports.CSP = function (origin) {
   }
 }
 
-var ServeBlobs = exports.ServeBlobs = function (blobs) {
+var ServeBlobs = exports.ServeBlobs = function (sbot) {
   return function (req, res, next) {
     var parsed = URL.parse(req.url)
     var hash = parsed.pathname.slice(1)
-    blobs.has(hash, function(err, has) {
+    sbot.blobs.want(hash, function(err, has) {
       if (!has) return respond(res, 404, 'File not found')
-      var desigiledHash = hash.slice(1)
-      respondSource(res, blobs.get(desigiledHash), false)
+      respondSource(res, sbot.blobs.get(hash), false)
     })
   }
 }
@@ -86,11 +86,11 @@ var ServeFiles = exports.ServeFiles = function () {
   }
 }
 
-exports.BlobStack = function (blobs, opts) {
+exports.BlobStack = function (sbot, opts) {
   return Stack(
     Localhost(),
     CSP('http://localhost:7777'),
-    ServeBlobs(blobs)
+    ServeBlobs(sbot)
   )
 }
 

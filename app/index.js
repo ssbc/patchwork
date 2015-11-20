@@ -37,7 +37,7 @@ app.on('ready', function () {
   )
 
   // setup blob serving
-  http.createServer(httpStack.BlobStack(sbot._blobs)).listen(7777)
+  http.createServer(httpStack.BlobStack(sbot)).listen(7777)
 
   // open main window
   var mainWindow = windows.open(
