@@ -3,8 +3,9 @@ var multicb = require('multicb')
 var EventEmitter = require('events').EventEmitter
 var threadlib = require('patchwork-threads')
 
-module.exports.index = function () {
+module.exports.index = function (name) {
   var index = new EventEmitter()
+  index.name = name
   index.rows = []
   index.lastAccessed = Date.now()
 
