@@ -49,6 +49,7 @@
     "phoenix-router": "~1.0.0",
     "published-working-tree": "~0.0.0",
     "pull-cat": "^1.1.7",
+    "pull-identify-filetype": "^1.0.0",
     "pull-ipc": "0.0.1",
     "pull-level": "~1.2.0",
     "pull-merge": "~1.0.2",
@@ -70,6 +71,7 @@
     "ssb-msg-schemas": "~6.0.0",
     "ssb-msgs": "~5.1.0",
     "ssb-ref": "~2.2.0",
+    "stack": "^0.1.0",
     "stream-to-pull-stream": "^1.6.1",
     "suggest-box": "~1.1.6",
     "xtend": "^4.0.0"

@@ -4,6 +4,7 @@ var path = require('path')
 var http = require('http')
 var fs   = require('fs')
 
+var httpStack  = require('./http-server')
 var windows    = require('./lib/windows')
 var config     = require('ssb-config/inject')(process.env.ssb_appname)
 var ssbKeys    = require('ssb-keys')
@@ -35,16 +36,13 @@ app.on('ready', function () {
     JSON.stringify(sbot.getManifest(), null, 2)
   )
 
-  // setup blob and file serving
-  var blobs = require('./lib/blobs')(sbot, { blobs_dir: path.join(config.path, 'blobs'), checkout_dir: app.getPath('userDesktop') })
-  http.createServer(blobs.server({ serveFiles: false })).listen(7777)
-  http.createServer(blobs.server({ serveFiles: true })).listen(7778)
+  // setup blob serving
+  http.createServer(httpStack.BlobStack(sbot._blobs)).listen(7777)
 
   // open main window
   var mainWindow = windows.open(
     'file://' + path.join(__dirname, '../ui/main.html'),
     sbot,
-    blobs,
     { width: 1030, height: 720 }
   )
   require('./lib/menu')(mainWindow)
