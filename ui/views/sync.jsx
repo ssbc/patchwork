@@ -179,13 +179,14 @@ export default class Sync extends React.Component {
     return <VerticalFilledContainer id="sync">
       <div className="header">
         <h1>Network</h1>
-        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Global</div>
+        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Pubs</div>
         <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local</div>
+        <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />
       </div>
 
       <div className='peer-status-group'> 
         <div className="peer-status-group-header">
-          <h2>Pubs</h2>
+          <h2><i className="fa fa-globe" /> Pubs</h2>
           <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
           <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
         </div>
@@ -193,14 +194,11 @@ export default class Sync extends React.Component {
           this.state.peers.filter((peer) => peer.host != 'localhost' && !ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
-        <div className="toolbar join-pub">
-          <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
-        </div>
       </div>
 
       <div className='peer-status-group'> 
         <div className="peer-status-group-header">
-          <h2>Local Peers</h2>
+          <h2><i className="fa fa-wifi" /> Local</h2>
         </div>
         {
           this.state.peers.filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host)).
