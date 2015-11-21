@@ -62,7 +62,7 @@ class PeerStatus extends React.Component {
       if (peer.time && peer.time.connect) {
         lastConnected = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
       } else {
-        lastConnected = <i className="fa fa-close" title="last attempted connection: " />
+        lastConnected = <i className="fa fa-close connection-status" title="last attempted connection: " />
       }
     }
 
@@ -71,8 +71,8 @@ class PeerStatus extends React.Component {
     const isMember = social.follows(peer.key, app.user.id)
     return <div className='peer flex'>
       <div className='flex-fill'>
-        { isMember ? <i className={'fa fa-star known-peer-symbol connection-status'+connectionClass} /> : 
-                     <i className={'unknown-peer-symbol fa fa-circle connection-status'+connectionClass} /> }
+        { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> : 
+                     <i className={'fa fa-circle connection-status'+connectionClass} /> }
         <UserLink id={peer.key} />
       </div>
       {lastConnected}
