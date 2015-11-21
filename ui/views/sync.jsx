@@ -62,7 +62,7 @@ class PeerStatus extends React.Component {
       if (peer.time && peer.time.connect) {
         lastConnected = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
       } else {
-        lastConnected = '...'
+        lastConnected = <i className="fa fa-close" title="last attempted connection: " />
       }
     }
 
@@ -165,8 +165,8 @@ export default class Sync extends React.Component {
     const stats = this.state.stats
     const downloading = Math.max(stats.connected-stats.membersofActive, 0)
     // this needs checking
-    //const globalConnectionsCount = stats.connected
-    const globalConnectionsCount = Math.max(stats.connected-stats.membersofActive, 0)
+    const globalConnectionsCount = stats.connected
+    //const globalConnectionsCount = Math.max(stats.connected-stats.membersofActive, 0)
     const localConnectionsCount = this.state.peers.
       filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host) ).
       filter((peer) => peer.connected).
@@ -174,7 +174,7 @@ export default class Sync extends React.Component {
     
     return <VerticalFilledContainer id="sync">
       <div className="header">
-        <h1>Connections</h1>
+        <h1>Network</h1>
         <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Global</div>
         <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local</div>
       </div>
