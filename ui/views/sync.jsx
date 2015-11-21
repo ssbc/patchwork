@@ -195,8 +195,11 @@ export default class Sync extends React.Component {
       <div className='peer-status-group'> 
         <div className="peer-status-group-header">
           <h2><i className="fa fa-globe" /> Pubs</h2>
-          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
-          <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
+          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share data.</div>
+          <div className='explanatory-text'>
+            <i className='fa fa-star' /> : Is following you - they will replicate your data. <br />
+            <i className='fa fa-circle' /> : I not following you, but you might share data about mutual aquantances.
+          </div>
         </div>
         {
           this.state.peers.filter(isNotLAN).
@@ -207,6 +210,7 @@ export default class Sync extends React.Component {
       <div className='peer-status-group'> 
         <div className="peer-status-group-header">
           <h2><i className="fa fa-wifi" /> Local</h2>
+          { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
         </div>
         {
           this.state.peers.filter(isLAN).
