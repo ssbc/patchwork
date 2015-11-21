@@ -66,11 +66,13 @@ class PeerStatus extends React.Component {
       }
     }
 
+        // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
+        //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
     return <div className='peer flex'>
       <div className='flex-fill'>
-        { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
-                     <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
+        { isMember ? <i className={'fa fa-star known-peer-symbol connection-status'+connectionClass} /> : 
+                     <i className={'unknown-peer-symbol fa fa-circle connection-status'+connectionClass} /> }
         <UserLink id={peer.key} />
       </div>
       {lastConnected}

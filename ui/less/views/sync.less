@@ -68,16 +68,14 @@
     vertical-align: middle;
 
     &.known-peer-symbol {
-      width: 2*@symbol-radius;
-      height: 2*@symbol-radius;
-      border-radius: @symbol-radius;
-      background-color: #B9B9B9;
-
+      color: #B9B9B9;
       &.connected {
-        background-color: #2AD02A;
+        color: #2AD02A;
       }
     }
     &.unknown-peer-symbol {
+      font-size: 11px;
+      margin-left: 3px;
       color: #B9B9B9;
       &.connected {
         color: #2AD02A;
