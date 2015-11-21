@@ -63,21 +63,23 @@ function isNotLAN (peer) {
 
 class PeerStatus extends React.Component {
   render() {
-    let peer = this.props.peer
-    let connectionClass = peer.connected ? ' connected' : ''
+    const peer = this.props.peer
+    const connectionClass = peer.connected ? ' connected' : ''
+    let failureClass = ''
     let lastConnected = ''
     if (!peer.connected) {
       if (peer.time && peer.time.connect) {
         lastConnected = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
       } else {
-        lastConnected = <i className="fa fa-close connection-status" title="last attempted connection: " />
+        failureClass = ' failure'
+        lastConnected = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
       }
     }
 
         // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
         //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
-    return <div className='peer flex'>
+    return <div className={'peer flex'+failureClass}>
       <div className='flex-fill'>
         { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> : 
                      <i className={'fa fa-circle connection-status'+connectionClass} /> }
@@ -185,25 +187,27 @@ export default class Sync extends React.Component {
     return <VerticalFilledContainer id="sync">
       <div className="header">
         <h1>Network</h1>
-        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Global</div>
+        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Pubs</div>
         <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local</div>
+        <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />
       </div>
 
       <div className='peer-status-group'> 
-        <h2>Pubs</h2>
-        <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
-        <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
+        <div className="peer-status-group-header">
+          <h2><i className="fa fa-globe" /> Pubs</h2>
+          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
+          <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
+        </div>
         {
           this.state.peers.filter(isNotLAN).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
-        <div className="toolbar join-pub">
-          <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
-        </div>
       </div>
 
       <div className='peer-status-group'> 
-        <h2>Local Peers</h2>
+        <div className="peer-status-group-header">
+          <h2><i className="fa fa-wifi" /> Local</h2>
+        </div>
         {
           this.state.peers.filter(isLAN).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
