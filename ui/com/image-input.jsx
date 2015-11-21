@@ -84,6 +84,7 @@ export default class ImageInput extends React.Component {
       const img = document.createElement('img')
       const imgdim = ni.getSize()
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
+      img.src = dataUrl
       this.refs.scaleSlider.value = 0
 
       this.setState({
