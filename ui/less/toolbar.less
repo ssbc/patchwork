@@ -1,0 +1,49 @@
+.toolbar {
+  background: #fafafa;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+  font-weight: 300;
+  .elevation-toolbar;
+  font-size: 18px;
+
+  &.floating {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
+  }
+
+  .centered {
+    width: 745px;
+    margin: 0px auto; 
+    .tabs {
+      margin-left: 20px;
+    }
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    &:hover {
+      .elevation-btn-raised;
+      background: #fff;
+    }
+    &.highlighted {
+      background: #4880F1;//linear-gradient(to bottom, #6A99F5, #4880F1);
+      &:hover {
+        background: #5E90F5;
+      }
+    }
+    &.disabled, &:disabled {
+      color: #aaa;
+      box-shadow: none;
+      background: #eee;
+      cursor: default;
+    }
+    &.bordered {
+      border-right: 1px solid #ccc;
+    }
+  }
+}

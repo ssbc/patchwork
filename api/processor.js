@@ -9,90 +9,77 @@ module.exports = function (sbot, db, state, emit) {
       var author = msg.value.author
       var by_me = (author === sbot.id)
       var c = msg.value.content
-      
-      // inbox index
-      if (c.recps) {
-        var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-        attachIsRead(row)
-        row.author = msg.value.author // inbox index is filtered on read by the friends graph
-        return
+      var root = mlib.link(c.root, 'msg')
+      var recps = mlib.links(c.recps)
+      var mentions = mlib.links(c.mentions)
+
+      // newsfeed index: add public posts
+      if (!root && recps.length === 0) {
+        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'newsfeed' })
       }
 
-      // home index
-      state.home.sortedUpsert(msg.value.timestamp, msg.key)
-      if (mlib.link(c.root, 'msg')) {
-        // a reply, put its *parent* in the home index
-        state.pinc()
-        u.getRootMsg(sbot, msg, function (err, rootmsg) {
-          if (rootmsg && typeof rootmsg.value.content != 'string') // dont put encrypted msgs in homestream
-            state.home.sortedUpsert(rootmsg.value.timestamp, rootmsg.key)
-          state.pdec()            
-        })
+      // newsfeed index: update for replies
+      var newsfeedRow
+      if (root) {
+        newsfeedRow = state.newsfeed.find(root.link)
+        if (newsfeedRow) {
+          state.newsfeed.sortedUpsert(msg.value.timestamp, root.link)
+          emit('index-change', { index: 'newsfeed' })
+        }
       }
 
-      if (!by_me) {
-        // emit home-add if by a followed user and in the last hour
-        if (follows(sbot.id, author) && ((Date.now() - msg.value.timestamp) < 1000*60*60))
-          emit('home-add')
+      // bookmarks index: update for replies
+      var bookmarkRow
+      if (root) {
+        bookmarkRow = state.bookmarks.find(root.link)
+        if (bookmarkRow) {
+          state.bookmarks.sortedUpsert(msg.value.timestamp, root.link)
+          emit('index-change', { index: 'bookmarks' })
+          attachChildIsRead(bookmarkRow, msg.key)
+        }
       }
 
-      // inbox index
-      if (!by_me) {
-        var inboxed = false
-        mlib.links(c.root, 'msg').forEach(function (link) {
-          if (inboxed) return
-          // a reply to my messages?
-          if (state.mymsgs.indexOf(link.link) >= 0) {
-            var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-            attachIsRead(row)
-            row.author = msg.value.author // inbox index is filtered on read by the friends graph
-            if (follows(sbot.id, row.author))
-              emit('index-change', { index: 'inbox' })
-            inboxed = true
-          }
-        })
-        mlib.links(c.mentions, 'feed').forEach(function (link) {
-          if (inboxed) return
-          // mentions me?
-          if (link.link == sbot.id) {
-            var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-            attachIsRead(row)
-            row.author = msg.value.author // inbox index is filtered on read by the friends graph
-            if (follows(sbot.id, row.author))
-              emit('index-change', { index: 'inbox' })
-            inboxed = true
-          }
-        })
+      // inbox index: update for replies
+      var inboxRow
+      if (root) {
+        inboxRow = state.inbox.find(root.link)
+        if (inboxRow) {
+          state.inbox.sortedUpsert(msg.value.timestamp, root.link)
+          emit('index-change', { index: 'inbox' })
+          attachChildIsRead(inboxRow, msg.key)
+        }
       }
-    },
 
-    site: function (msg) {
-      var site = getSite(msg.value.author)
+      // inbox index: add msgs addressed to the user
+      if (!inboxRow) { // dont bother if already updated inbox for this msg
+        if (findLink(recps, sbot.id)) {
+          inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, root ? root.link : msg.key)
+          emit('index-change', { index: 'inbox' })
+          attachChildIsRead(inboxRow, msg.key)          
+        }
+      }
 
-      // additions
-      mlib.links(msg.value.content.includes, 'blob').forEach(function (link) {
-        if (!link.path)
-          return
-        site[link.path] = link
-      })
-
-      // removals
-      var excludes = msg.value.content.excludes
-      if (excludes) {
-        ;(Array.isArray(excludes) ? excludes : [excludes]).forEach(function (item) {
-          if (!item.path)
-            return
-          delete site[item.path]
-        })
+      // notifications index: add msgs that mention the user
+      if (findLink(mentions, sbot.id)) {
+        var notificationsRow = state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'notifications' })
+        attachIsRead(notificationsRow)   
       }
     },
 
-    contact: function (msg) {
-      // update profiles
+    contact: function (msg) {      
       mlib.links(msg.value.content.contact, 'feed').forEach(function (link) {
+        // update profiles
         var toself = link.link === msg.value.author
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
+
+        // notifications indexes: add follows or blocks
+        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
+          state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+          emit('index-change', { index: 'notifications' })
+        }
       })
     },
 
@@ -106,41 +93,34 @@ module.exports = function (sbot, db, state, emit) {
     },
 
     vote: function (msg) {
-      // update tallies
-      var link = mlib.link(msg.value.content.vote, 'msg')
-
-      if (link) {
-        if (msg.value.author == sbot.id)
-          updateMyVote(msg, link)
-        else if (state.mymsgs.indexOf(link.link) >= 0) // vote on my msg?
-          updateVoteOnMymsg(msg, link)
-      }
-    },
-
-    flag: function (msg) {
-      // inbox index
-      var link = mlib.link(msg.value.content.flag, 'msg')
-      if (sbot.id != msg.value.author && link && state.mymsgs.indexOf(link.link) >= 0) {
-        var row = state.inbox.sortedInsert(msg.value.timestamp, msg.key)
-        attachIsRead(row)
-        row.author = msg.value.author // inbox index is filtered on read by the friends graph
-        if (follows(sbot.id, msg.value.author))
-          emit('index-change', { index: 'inbox' })
+      // notifications index: add votes on your messages
+      var msgLink = mlib.link(msg.value.content.vote, 'msg')
+      if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
+        state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+        emit('index-change', { index: 'notifications' })
       }
 
       // user flags
-      var link = mlib.link(msg.value.content.flag, 'feed')
-      if (link) {
+      var userLink = mlib.link(msg.value.content.vote, 'feed')
+      if (userLink) {
         var source = getProfile(msg.value.author)
-        var target = getProfile(link.link)
+        var target = getProfile(userLink.link)
+        source.assignedTo[target.id] = source.assignedTo[target.id] || {}
+        target.assignedBy[source.id] = target.assignedBy[source.id] || {}
 
-        var flag = link.reason ? { key: msg.key, reason: link.reason } : false
-        source.assignedTo[target.id].flagged = flag
-        target.assignedBy[source.id].flagged = flag
-
-        // track if by local user
-        if (source.id === sbot.id)
-          target.flagged = flag
+        if (userLink.value < 0) {
+          // a flag
+          source.assignedTo[target.id].flagged = userLink
+          target.assignedBy[source.id].flagged = userLink
+          if (source.id === sbot.id)
+            target.flagged = userLink
+        } else {
+          // not a flag
+          source.assignedTo[target.id].flagged = false
+          target.assignedBy[source.id].flagged = false
+          if (source.id === sbot.id)
+            target.flagged = false
+        }
       }
     }
   }
@@ -164,13 +144,6 @@ module.exports = function (sbot, db, state, emit) {
       }
     }
     return profile
-  }
-
-  function getSite (pid) {
-    var site = state.sites[pid]
-    if (!site)
-      state.sites[pid] = site = {}
-    return site
   }
 
   function updateSelfContact (author, msg) {
@@ -215,14 +188,6 @@ module.exports = function (sbot, db, state, emit) {
       // if from the user, update names (in case un/following changes conflict status)
       if (source.id == sbot.id)
         rebuildNamesFor(target)
-
-      // follows index
-      if (target.id == sbot.id) {
-        // use the follower's id as the key to this index, so we only have 1 entry per other user max
-        var row = state.follows.sortedUpsert(msg.value.timestamp, msg.key)
-        row.following = c.following
-        attachIsRead(row, msg.key)
-      }
     }
 
     // blocking: bool
@@ -288,35 +253,59 @@ module.exports = function (sbot, db, state, emit) {
     }
   }
 
-  function updateMyVote (msg, l) {
-    // myvotes index
-    var row = state.myvotes.sortedUpsert(msg.value.timestamp, l.link)
-    row.vote = l.value
-  }
-
-  function updateVoteOnMymsg (msg, l) {
-    // votes index
-    // construct a composite key which will be the same for all votes by this user on the given target
-    var votekey = l.link + '::' + msg.value.author // lonnng fucking key
-    var row = state.votes.sortedUpsert(msg.value.timestamp, votekey)
-    row.vote = l.value
-    row.votemsg = msg.key
-    if (row.vote > 0) attachIsRead(row, msg.key)
-    else              row.isread = true // we dont care about non-upvotes
-  }
-
   function attachIsRead (indexRow, key) {
     key = key || indexRow.key
     state.pinc()
     db.isread.get(key, function (err, v) {
-      state.pdec()
       indexRow.isread = !!v
+      state.pdec()
     })
+  }
+
+  // look up the child and root isread state, combine them with the current row's isread state
+  function attachChildIsRead (indexRow, childKey, cb) {
+    state.pinc()
+    var rootIsRead, childIsRead
+
+    // get child isread
+    db.isread.get(childKey, function (err, v) {
+      childIsRead = !!v
+      next()
+    })
+
+    // lookup the root isread from DB if not already on the row
+    if (typeof indexRow.isread == 'boolean') {
+      rootIsRead = indexRow.isread
+    } else {
+      db.isread.get(indexRow.key, function (err, v) {
+        rootIsRead = !!v
+        next()
+      })      
+    }
+
+    function next () {
+      // wait for both
+      if (typeof rootIsRead != 'boolean' || typeof childIsRead != 'boolean')
+        return
+
+      // combine child and root isread state
+      indexRow.isread = rootIsRead && childIsRead
+      
+      cb && cb(null, indexRow.isread)
+      state.pdec() // call this last, after all async work is done
+    }
   }
 
   function follows (a, b) {
     var aT = getProfile(a).assignedTo[b]
     return (a != b && aT && aT.following)
+  }
+
+  function findLink (links, id) {
+    for (var i=0; i < (links ? links.length : 0); i++) {
+      if (links[i].link === id)
+        return links[i]
+    }
   }
 
   // exported api

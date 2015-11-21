@@ -1,0 +1,85 @@
+
+// Base typography and aesthetics
+body {
+  font-family: @interface-font;
+  background: #eee;
+  overflow: hidden;
+}
+p, ul, ol {
+  font-family: @content-font;
+}
+ol {
+  list-style-type: none;
+  padding: 0 0 0 1em;
+  line-height: 1.4;
+  li {
+    counter-increment: step-counter;
+    &::before {
+      content: counter(step-counter) + '.';
+      margin-right: 5px;
+      font-size: 80%;
+      font-weight: bold;
+    }
+  }
+}
+a {
+  color: #006EFF;
+  text-decoration: none;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+hr {
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+// Inline code
+code {
+  font-family: @code-font;
+  padding: 2px 4px;
+  font-size: 90%;
+  color: @dark-gray2;
+  background-color: @white1;
+  border-radius: 2px;
+}
+
+// Blocks of code
+pre {
+  font-family: @code-font;
+  display: block;
+  padding: 2px 6px;
+  font-size: 90%;
+  word-break: break-all;
+  word-wrap: break-word;
+  color: @dark-gray2;
+  background-color: @white1;
+  border: 1px solid @light-gray2;
+  border-radius: 3px;
+
+  // Account for some code outputs that place code tags in pre tags
+  code {
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    white-space: pre-wrap;
+    background-color: transparent;
+    border-radius: 0;
+  }
+}
+
+// Blockquotes
+blockquote {
+  border-left: 8px solid @light-gray2;
+  margin-left: 0;
+  padding-left: 1em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  color: @dark-gray2;
+}
+
+// Bookmark icon colors
+.fa-bookmark {
+  color: #EFBD32 !important;
+}

@@ -1,0 +1,42 @@
+#rightpane {
+  .elevation-dialog;
+  background: #fff;
+  border-left: 1px solid #ddd;
+  position: relative;
+  z-index: 2000; // double the z-index of floating toolbars
+  overflow: hidden;
+  width: 0;
+//  transition: width 0.15s;
+//  transition-timing-function: cubic-bezier(0.47, 0, 0.75, 0.72);
+
+  &.open {
+    width: 523px;
+  }
+
+  .inner {
+    // dont resize based on parent size
+    width: 523px;
+  }
+
+  .composer {
+    box-shadow: none;
+    margin: 0;
+
+    .composer-ctrls {
+      position: fixed;
+      bottom: 0;
+      width: 432px;
+      background: #f5f5f5;
+      font-weight: 300;
+      border-top: 1px solid #ddd;
+    }
+
+    textarea {
+      padding: 10px 10px 50px; // make space at bottom for floating toolbar
+    }
+
+    .composer-ctrls {
+      font-size: 18px;
+    }
+  }
+}

@@ -1,25 +1,17 @@
-.notifications {
-  .note {
-    margin: 0 32px;
-    &.warning { 
-      color: #444;
-      background: #fff;
-      padding: 10px 15px 10px;
-      border: 1px solid #ccc;
+.notifications {  
+  margin: 5px;
+  padding: 3px 0px;
 
-      h3 {
-        font-weight: bold;
-        margin: 0 0 3px;
-        color: #D71611;
-      }
-      ul.list-inline {
-        margin-bottom: 2px;
-      }
-    }
-    .user-img img {
-      width: 20px;
-      height: 20px;
-      border-radius: 10px;
+  & > div {
+    margin: 6px 10px;
+    white-space: nowrap;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .user-link {
+      color: #555;
+      font-weight: bold;
     }
   }
 }

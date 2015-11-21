@@ -1,0 +1,52 @@
+.msg-list {
+  .empty-msg {
+    padding: 20px 20px;
+    color: gray;
+    background: #fff;
+  }
+  hr {
+    border-bottom: 1px solid #ccc;
+    position: relative;
+
+    &:after {
+      content: attr(data-label);
+      position: absolute;
+      left: 45%;
+      top: -12px;
+      background: #eee;
+      color: #999;
+      padding: 0 4px 0 6px;
+      transform: translateX(-50%);
+      font-weight: 300;
+    }
+  }
+  :first-child > hr {
+    margin-top: 20px; // add top margin when the divider is the first item in the list
+  }
+  .new-msg-queue {
+    .elevation-btn;
+    transition: background 0.2s, box-shadow 0.2s;
+    display: block;
+    text-align: center;
+    padding: 15px 90px 15px 0;
+    background: #4DA1FF;
+    color: #F5FAFF;
+    font-weight: 100;
+    font-size: 21px;
+
+    &:hover {
+      .elevation-btn-raised;
+      text-decoration: none;
+      background: #0079FF;
+    }
+  }
+}
+.msg-list-items {
+  padding-top: 45px;
+  .empty {
+    padding: 10px;
+  }
+  .msg-view.card-post {
+    margin: 20px auto;
+  }
+}

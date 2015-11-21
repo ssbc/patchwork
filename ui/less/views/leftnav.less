@@ -1,0 +1,35 @@
+#leftnav {
+  background: #39414D;
+
+  hr {
+    border-color: #535D69;
+    margin: 15px 15px 15px 10px;
+  }
+}
+.leftnav-item {
+  display: block;
+  padding: 10px;
+  i {
+    margin-right: 5px;
+    width: 16px;
+    text-align: center;
+    &.fa-database {
+      font-size: 13px;
+    }
+  }
+  &.label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #DAE5F3;
+  }
+}
+
+a.leftnav-item {
+  color: #CDD9E2;
+  font-weight: 100;
+  &:hover, &.selected {
+    color: #E9F1F7;
+    background: rgba(255,255,255,0.1);
+    text-decoration: none;
+  }
+}

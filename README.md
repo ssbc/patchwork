@@ -22,10 +22,27 @@ Install node v4.2 (you might like to use [nvm](https://github.com/creationix/nvm
 npm install ssb-patchwork -g
 ```
 
+or
+
+```bash
+git clone https://github.com/ssbc/patchwork.git
+cd patchwork
+npm install
+npm run build:ui
+```
+
 ## Run
 
-``` bash
+```bash
+# if installed globally
 patchwork
+```
+
+or
+
+```bash
+# from the checkout directory
+npm start
 ```
 
 If it's your first time running patchwork,
@@ -33,30 +50,9 @@ follow the on screen instructions to start a new identity
 and join a pub server.
 
 
-## Development & App-building :
+## Docs
 
-to build for windows:
-
-```
-# Linux dependencies
-add-apt-repository ppa:ubuntu-wine/ppa -y
-apt-get update
-apt-get install nsis wine
-
-# OSX dependencies
-brew install makensis wine
-```
-
-```
-npm install -d
-npm run build
-npm run pack
-```
-
----
-
-Relevant docs:
-
- - https://github.com/maxogden/electron-packager
- - https://github.com/loopline-systems/electron-builder
- - https://github.com/atom/electron/tree/master/docs
+- [Building Patchwork](./docs/BUILDING.md)
+- [Creating a Testing Environment, and Running Tests](./docs/TESTING.md)
+- [Patchwork Project Structure](./docs/PROJECT-STRUCTURE.md)
+- [SSB Docs Repo](https://github.com/ssbc/docs)

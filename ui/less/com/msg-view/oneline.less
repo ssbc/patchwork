@@ -1,0 +1,71 @@
+.msg-view.oneline {
+  display: flex;
+  height: 24px;
+  padding: 8px 0 6px;
+  overflow: hidden;
+  color: #555;
+  background: #fafafa;
+  border-bottom: 1px solid #ddd;
+
+  .bookmark {
+    flex: 0 0 30px;
+    padding: 2px 0 0 0;
+    text-align: center;
+    .fa-bookmark-o {
+      color: gray;
+    }
+    .fa-bookmark {
+      color: #EFBD32;
+    }
+  }
+  .type {
+    flex: 0 0 18px;
+    padding: 2px 0 0 0;
+  }
+  .authors {
+    flex: 0 0 80px;
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: ellipsis;
+    a {
+      color: #555;
+    }
+  }
+  .replies {
+    flex: 0 0 40px;
+    padding-top: 1px;
+    text-align: center;
+    margin-right: 5px;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+  }
+  .content {
+    flex: 1;
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: @dark-gray3;
+    font-weight: 300;
+    font-family: Helvetica;
+    font-size: 90%;
+    line-height: 1.8;
+  }
+  .date {
+    flex: 0 0 100px;  
+    text-align: right;
+    font-weight: 300;
+    padding-right: 10px;
+  }
+
+  &.unread {
+    background: #fff;
+    color: #333;
+    .authors, .replies, .content {
+      font-weight: bold;
+    }
+  }
+  
+  &:hover {
+    background: #eee;
+  }
+}

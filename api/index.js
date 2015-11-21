@@ -9,6 +9,7 @@ var Notify      = require('pull-notify')
 var toPull      = require('stream-to-pull-stream')
 var ref         = require('ssb-ref')
 var pathlib     = require('path')
+var threadlib   = require('patchwork-threads')
 var u           = require('./util')
 
 exports.name        = 'patchwork'
@@ -22,27 +23,22 @@ exports.init = function (sbot, opts) {
   var phoenixdb = sbot.sublevel('patchwork')
   var db = {
     isread: phoenixdb.sublevel('isread'),
-    subscribed: phoenixdb.sublevel('subscribed')
+    bookmarked: phoenixdb.sublevel('bookmarked')
   }
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
-    home: u.index(), // also has `.isread`
-    inbox: u.index(), // also has `.isread` and `.author`
-    votes: u.index(), // also has `.isread`, `.vote`, and `.votemsg`
-    myvotes: u.index(), // also has  `.vote`
-    follows: u.index(), // also has `.isread` and `.following`
+    newsfeed: u.index('newsfeed'),
+    inbox: u.index('inbox'),
+    bookmarks: u.index('bookmarks'),
+    notifications: u.index('notifications'),
 
     // views
     profiles: {},
-    sites: {},
     names: {}, // ids -> names
     ids: {}, // names -> ids
     actionItems: {}
   }
-
-  var processor = require('./processor')(sbot, db, state, emit)
-  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onPrehistorySync }), pull.drain(processor))
 
   // track sync state
   // - processor does async processing for each message that comes in
@@ -64,15 +60,43 @@ exports.init = function (sbot, opts) {
     }
   }
 
-  var isPreHistorySynced = false // track so we dont emit events for old messages
+  // load bookmarks into an index
+  state.pinc()
+  pull(
+    pl.read(db.bookmarked, { keys: true, values: false }),
+    pull.asyncMap(function (key, cb) {
+      var obj = { key: key, value: null, isread: false }
+      db.isread.get(key, function (err, isread) { obj.isread = isread; done() })
+      sbot.get(key, function (err, value) { obj.value = value; done() })
+      var n=0;
+      function done() {
+        if (++n == 2) cb(null, obj)
+      }
+    }),
+    pull.drain(
+      function (msg) {
+        if (msg.value) {
+          var row = state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+          row.isread = msg.isread
+        }
+      },
+      function () { state.pdec() }
+    )
+  )
+
+  // setup sbot log processor
+  var processor = require('./processor')(sbot, db, state, emit)
+  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onHistorySync }), pull.drain(processor))
+
+  var isHistorySynced = false // track so we dont emit events for old messages
   // grab for history sync
   state.pinc()
-  function onPrehistorySync () {
+  function onHistorySync () {
     console.log('Log history read...')
     // when all current items finish, consider prehistory synced (and start emitting)
     awaitSync(function () { 
       console.log('Indexes generated')
-      isPreHistorySynced = true
+      isHistorySynced = true
     })
     // release
     state.pdec()
@@ -81,12 +105,13 @@ exports.init = function (sbot, opts) {
   // events stream
   var notify = Notify()
   function emit (type, data) {
-    if (!isPreHistorySynced)
+    if (!isHistorySynced)
       return
     var e = data || {}
     e.type = type
     if (e.type == 'index-change') {
       api.getIndexCounts(function (err, counts) {
+        e.counts = counts
         e.total = counts[e.index]
         e.unread = counts[e.index+'Unread']
         notify(e)
@@ -101,53 +126,36 @@ exports.init = function (sbot, opts) {
     return notify.listen()
   }
 
-  api.getPaths = function (cb) {
-    cb(null, {
-      site: pathlib.join(opts.path, 'publish')
-    })
-  }
-
   api.getMyProfile = function (cb) {
     awaitSync(function () {
       api.getProfile(sbot.id, cb)
     })
   }
 
-  function isInboxFriend (row) {
-    if (row.author == sbot.id) return true
-    var p = state.profiles[sbot.id]
-    if (!p) return false
-    return p.assignedTo[row.author] && p.assignedTo[row.author].following
-  }
-
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       cb(null, {
-        inbox: state.inbox.rows.filter(isInboxFriend).length,
-        inboxUnread: state.inbox.filter(function (row) { return isInboxFriend(row) && row.author != sbot.id && !row.isread }).length,
-        votes: state.votes.filter(function (row) { return row.vote > 0 }).length,
-        votesUnread: state.votes.filter(function (row) { return row.vote > 0 && !row.isread }).length,
-        follows: state.follows.filter(function (row) { return row.following }).length,
-        followsUnread: state.follows.filter(function (row) { return row.following && !row.isread }).length,
-        home: state.home.rows.length
+        inbox: state.inbox.rows.length,
+        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
+        bookmarks: state.bookmarks.rows.length,
+        bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
+        notificationsUnread: state.notifications.countUntouched()
       })
     })
   }
 
+  api.createNewsfeedStream = indexStreamFn(state.newsfeed, function (row) { 
+    return row.key
+  })
   api.createInboxStream = indexStreamFn(state.inbox, function (row) { 
-    if (!isInboxFriend(row)) return false
     return row.key
   })
-  api.createVoteStream = indexStreamFn(state.votes, function (row) { 
-    if (row.vote <= 0) return false
-    return row.votemsg
-  })
-  api.createMyvoteStream = indexStreamFn(state.myvotes, function (row) { 
-    if (row.vote <= 0) return false
+  api.createBookmarkStream = indexStreamFn(state.bookmarks, function (row) { 
     return row.key
   })
-  api.createFollowStream = indexStreamFn(state.follows)
-  api.createHomeStream = indexStreamFn(state.home)
+  api.createNotificationsStream = indexStreamFn(state.notifications, function (row) { 
+    return row.key
+  })
 
   function indexMarkRead (indexname, key, keyname) {
     if (Array.isArray(key)) {
@@ -186,22 +194,24 @@ exports.init = function (sbot, opts) {
   }
 
   api.markRead = function (key, cb) {
-    indexMarkRead('inbox', key)
-    indexMarkRead('votes', key, 'votemsg')
-    indexMarkRead('follows', key)
-    if (Array.isArray(key))
-      db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
-    else
-      db.isread.put(key, 1, cb)
+    awaitSync(function () {
+      indexMarkRead('inbox', key)
+      indexMarkRead('bookmarks', key)
+      if (Array.isArray(key))
+        db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
+      else
+        db.isread.put(key, 1, cb)
+    })
   }
   api.markUnread = function (key, cb) {
-    indexMarkUnread('inbox', key)
-    indexMarkUnread('votes', key, 'votemsg')
-    indexMarkUnread('follows', key)
-    if (Array.isArray(key))
-      db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
-    else
-      db.isread.del(key, cb) 
+    awaitSync(function () {
+      indexMarkUnread('inbox', key)
+      indexMarkUnread('bookmarks', key)
+      if (Array.isArray(key))
+        db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
+      else
+        db.isread.del(key, cb) 
+    })
   }
   api.toggleRead = function (key, cb) {
     api.isRead(key, function (err, v) {
@@ -231,27 +241,43 @@ exports.init = function (sbot, opts) {
     }
   }
  
-  api.subscribe = function (key, cb) {
-    db.subscribed.put(key, 1, cb)
+  api.bookmark = function (key, cb) {
+    sbot.get(key, function (err, value) {
+      if (err) return cb(err)
+      var done = multicb({ pluck: 1, spread: true })
+      db.bookmarked.put(key, 1, done()) // update bookmarks index
+      u.getThreadHasUnread(sbot, key, done()) // get the target thread's read/unread state
+      done(function (err, putRes, hasUnread) {
+        // insert into the bookmarks index
+        var bookmarksRow = state.bookmarks.sortedUpsert(value.timestamp, key)
+        bookmarksRow.isread = !hasUnread // set isread state
+        emit('index-change', { index: 'bookmarks' })
+        cb(err, putRes)
+      })
+    })
   }
-  api.unsubscribe = function (key, cb) {
-    db.subscribed.del(key, cb) 
+  api.unbookmark = function (key, cb) {
+    sbot.get(key, function (err, value) {
+      if (err) return cb(err)
+      state.bookmarks.remove(key)
+      db.bookmarked.del(key, cb) 
+    })
   }
-  api.toggleSubscribed = function (key, cb) {
-    api.isSubscribed(key, function (err, v) {
+  api.toggleBookmark = function (key, cb) {
+    api.isBookmarked(key, function (err, v) {
       if (!v) {
-        api.subscribe(key, function (err) {
+        api.bookmark(key, function (err) {
           cb(err, true)
         })
       } else {
-        api.unsubscribe(key, function (err) {
+        api.unbookmark(key, function (err) {
           cb(err, false)
         })
       }
     })
   }
-  api.isSubscribed = function (key, cb) {
-    db.subscribed.get(key, function (err, v) {
+  api.isBookmarked = function (key, cb) {
+    db.bookmarked.get(key, function (err, v) {
       cb && cb(null, !!v)
     })
   }
@@ -363,39 +389,6 @@ exports.init = function (sbot, opts) {
     return eventPush
   }
 
-  api.getSite = function (id, cb) {
-    awaitSync(function () { cb(null, state.sites[id]) })
-  }
-
-  var sitePathRegex = /(@.*\.ed25519)(.*)/
-  api.getSiteLink = function (url, cb) {
-    awaitSync(function () {
-      // parse url
-      var parts = sitePathRegex.exec(url)
-      if (!parts) {
-        var err = new Error('Not found')
-        err.notFound = true
-        return cb(err)
-      }
-
-      var pid = parts[1]
-      var path = parts[2]
-      if (path.charAt(0) == '/')
-        path = path.slice(1) // skip the preceding slash
-      if (!path)
-        path = 'index.html' // default asset
-
-      // lookup the link
-      var link = (state.sites[pid]) ? state.sites[pid][path] : null
-      if (!link) {
-        var err = new Error('Not found')
-        err.notFound = true
-        return cb(err)
-      }
-      cb(null, link)
-    })
-  }
-
   api.getProfile = function (id, cb) {
     awaitSync(function () { cb(null, state.profiles[id]) })
   }
@@ -423,12 +416,17 @@ exports.init = function (sbot, opts) {
   // helper to get messages from an index
   function indexStreamFn (index, getkey) {
     return function (opts) {
+      var lastAccessed = index.lastAccessed
+      index.touch()
+      emit('index-change', { index: index.name })
+
       // emulate the `ssb.createFeedStream` interface
-      var lt    = o(opts, 'lt')
-      var lte   = o(opts, 'lte')
-      var gt    = o(opts, 'gt')
-      var gte   = o(opts, 'gte')
-      var limit = o(opts, 'limit')
+      var lt      = o(opts, 'lt')
+      var lte     = o(opts, 'lte')
+      var gt      = o(opts, 'gt')
+      var gte     = o(opts, 'gte')
+      var limit   = o(opts, 'limit')
+      var threads = o(opts, 'threads')
 
       // lt, lte, gt, gte should look like:
       // [msg.value.timestamp, msg.value.author]
@@ -448,16 +446,24 @@ exports.init = function (sbot, opts) {
 
       // helper to fetch rows
       function fetch (row, cb) {
-        sbot.get(row.key, function (err, value) {
-          // if (err) {
-            // suppress this error
-            // the message isnt in the local cache (yet)
-            // but it got into the index, likely due to a link
-            // instead of an error, we'll put a null there to indicate the gap
-          // }
-          row.value = value
-          cb(null, row)
-        })
+        if (threads) {
+          threadlib.getPostSummary(sbot, row.key, function (err, thread) {
+            for (var k in thread)
+              row[k] = thread[k]
+            cb(null, row)
+          })
+        } else {
+          sbot.get(row.key, function (err, value) {
+            // if (err) {
+              // suppress this error
+              // the message isnt in the local cache (yet)
+              // but it got into the index, likely due to a link
+              // instead of an error, we'll put a null there to indicate the gap
+            // }
+            row.value = value
+            cb(null, row)
+          })
+        }
       }
 
       // readstream
@@ -485,6 +491,7 @@ exports.init = function (sbot, opts) {
 
           var r = lookup(row)
           if (r) {
+            r.isNew = r.ts > lastAccessed
             readPush.push(r)
             added++
           }

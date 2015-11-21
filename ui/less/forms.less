@@ -1,0 +1,94 @@
+form {
+  h1 {
+    font-weight: 100;
+    font-size: 250%;
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+    width: 420px;
+    margin: 0 auto;
+    & > div {
+      margin-bottom: 10px;
+    }
+  }
+  input {
+    font-size: 125%;
+    &:focus {
+      outline: 0;
+      background: #fafafa;
+    }
+    &[type="text"] {
+      transition: background 0.2s, box-shadow 0.2s;
+      padding: 2px 6px;
+      border: 1px solid #aaa;
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
+      border-radius: 2px;
+      background: #fafafa;
+      &:focus {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background: #fff;
+      }
+    }
+    &[type="file"] {
+      display: none;
+    }
+    &[type="range"] {
+      width: 512px;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  .error {
+    color: #CA1919;
+  }
+
+  &.fullwidth {
+    h1 {
+      text-align: center;
+    }
+    input {
+      width: 406px;
+      margin-bottom: 5px;
+    }
+  }
+
+  &.stacked {
+    h1 {
+      margin-left: 80px;
+    }
+    label {
+      span {
+        display: inline-block;
+        width: 70px;
+        margin-right: 10px;
+        text-align: right;
+      }
+      .btn { 
+        border: 1px solid #ccc;
+        color: #333;
+      }
+      p {
+        margin-left: 80px;
+        color: red;
+      }
+    }
+  }
+  &.inline {
+    label {
+      span {
+        margin: 0 5px;
+      }
+      input {
+        margin: 0 5px;
+      }
+    }
+    .inline-group {
+      display: flex;
+      label {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  }
+}

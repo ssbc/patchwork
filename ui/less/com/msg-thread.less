@@ -1,0 +1,34 @@
+.msg-thread {
+  .items {
+    position: relative;
+    padding: 40px 0 100px;
+
+    .msg-view {
+      position: relative;
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 91px;
+        width: 2px;
+        background: #d5d5d5;
+        z-index: 0;
+        bottom: -21px;
+        height: 20px;
+      }
+    }
+  }
+  .container {
+    max-width: 600px;
+    margin: 0px auto;
+  }
+  .composer {
+    max-width: 523px;
+    margin: 0 0 0 77px;
+    padding-top: 1px; // make background take full space
+    box-shadow: none;
+    .toolbar {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+// inspired by https://www.google.com/design/spec/what-is-material/elevation-shadows.html#elevation-shadows-shadows
+
+.elevation(@height) when (@height < 6) {
+  box-shadow: 0px @height (@height * 2) rgba(0, 0, 0, 0.1);
+}
+.elevation(@height) when (@height >= 6) {
+  box-shadow: 0px @height (@height * 2) rgba(0, 0, 0, 0.2);
+}
+.generate-elevations(@n, @i: 1) when (@i =< @n) {
+  .elevation-@{i} {
+    .elevation(@i + 0px);
+  }
+  .generate-elevations(@n, (@i + 1));
+}
+.alias-elevation(@alias, @n) {
+  .elevation-@{alias} {
+    .elevation(@n + 0px);
+  }
+}
+
+// generate:
+// .elevation-1, .elevation-2, ... .elevation-24
+.generate-elevations(24);
+
+// aliases:
+// .elevation-dialog == .elevation-24, etc
+.alias-elevation(dialog, 24);
+.alias-elevation(picker, 24);
+.alias-elevation(drawer, 16);
+.alias-elevation(fab-raised, 12);
+.alias-elevation(submenu, 9);
+.alias-elevation(menu, 8);
+.alias-elevation(card-pickedup, 8);
+.alias-elevation(btn-raised, 8);
+.alias-elevation(fab, 6);
+.alias-elevation(toolbar, 4);
+.alias-elevation(card, 2);
+.alias-elevation(btn, 2);
+.alias-elevation(switch, 1);

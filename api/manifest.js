@@ -1,23 +1,21 @@
 module.exports = {
   createEventStream: 'source',
-  getPaths: 'async',
 
   getIndexCounts: 'async',
+  createNewsfeedStream: 'source',
   createInboxStream: 'source',
-  createVoteStream: 'source',
-  createMyvoteStream: 'source',
-  createFollowStream: 'source',
-  createHomeStream: 'source',
+  createBookmarkStream: 'source',
+  createNotificationsStream: 'source',
 
   markRead: 'async',
   markUnread: 'async',
   toggleRead: 'async',
   isRead: 'async',
 
-  subscribe: 'async',
-  unsubscribe: 'async',
-  toggleSubscribed: 'async',
-  isSubscribed: 'async',
+  bookmark: 'async',
+  unbookmark: 'async',
+  toggleBookmark: 'async',
+  isBookmarked: 'async',
 
   addFileToBlobs: 'async',
   saveBlobToFile: 'async',
@@ -27,9 +25,6 @@ module.exports = {
   getMyProfile: 'async',
   getProfile: 'async',
   getAllProfiles: 'async',
-
-  getSite: 'async',
-  getSiteLink: 'async',
 
   getNamesById: 'async',
   getName: 'async',

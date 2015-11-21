@@ -46,8 +46,8 @@ tape('profiles track follows, names, and flags between users', function (t) {
 
     var done = multicb()
     users.alice.add({ type: 'about', about: users.bob.id, name: 'robert' }, done())
-    users.alice.add({ type: 'flag', flag: { link: users.charlie.id, reason: 'such a jerk!' } }, done())
-    users.bob.add({ type: 'flag', flag: { link: users.charlie.id, reason: 'dont like him' } }, done())
+    users.alice.add({ type: 'vote', vote: { link: users.charlie.id, value: -1, reason: 'such a jerk!' } }, done())
+    users.bob.add({ type: 'vote', vote: { link: users.charlie.id, value: -1, reason: 'dont like him' } }, done())
     done(function (err) {
       if (err) throw err
 

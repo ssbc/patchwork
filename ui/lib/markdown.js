@@ -36,11 +36,11 @@ blockRenderer.urltransform = function (url) {
 
   if (islink) {
     if (ssbref.isFeedId(url))
-      return '#/profile/'+url
+      return '#/profile/'+encodeURIComponent(url)
     else if (ssbref.isMsgId(url))
-      return '#/msg/'+url
+      return '#/msg/'+encodeURIComponent(url)
     else if (ssbref.isBlobId(url))
-      return '#/webview/'+url
+      return '#/webview/'+encodeURIComponent(url)
   }
   else if (url.indexOf('http') !== 0) {
     return false;
@@ -68,23 +68,14 @@ blockRenderer.link = function(href, title, text) {
   return out;
 };
 
-// override to support <video> tags (HACK)
 blockRenderer.image  = function (href, title, text) {
   href = href.replace(/^&amp;/, '&')
   if (ssbref.isLink(href)) {
-    if ((''+text).indexOf('.webm') >= 0) {
-      var out = '<video loop=1 muted=1 src="http://localhost:7777/' + href + '?fallback=video" alt="' + text + '"'
-      if (title) {
-        out += ' title="' + title + '"'
-      }
-      out += '></video>'
-    } else {
-      var out = '<a href="#/webview/' + href + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
-      if (title) {
-        out += ' title="' + title + '"'
-      }
-      out += '></a>'
+    var out = '<a href="#/webview/' + encodeURIComponent(href) + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
+    if (title) {
+      out += ' title="' + title + '"'
     }
+    out += '></a>'
     return out
   }
   return text
@@ -93,14 +84,11 @@ blockRenderer.image  = function (href, title, text) {
 // inline renderer just spits out the text of links and images
 inlineRenderer.urltransform = function (url) { return false }
 inlineRenderer.link = function (href, title, text) { return unquote(text) }
-inlineRenderer.image  = function (href, title, text) {
-  if (text == 'webcam.webm') return '' // :HACK: webcam embed title, just dont render
-  return unquote(text)
-}
+inlineRenderer.image  = function (href, title, text) { return unquote(text) }
 inlineRenderer.code = function(code, lang, escaped) { return unquote(code) }
 inlineRenderer.blockquote = function(quote) { return unquote(quote) }
 inlineRenderer.html = function(html) { return false }
-inlineRenderer.heading = function(text, level, raw) { return unquote(text) }
+inlineRenderer.heading = function(text, level, raw) { return '<strong>'+unquote(text)+'</strong> ' }
 inlineRenderer.hr = function() { return ' --- ' }
 inlineRenderer.br = function() { return ' ' }
 inlineRenderer.list = function(body, ordered) { return unquote(body) }
@@ -109,7 +97,7 @@ inlineRenderer.paragraph = function(text) { return unquote(text)+' ' }
 inlineRenderer.table = function(header, body) { return unquote(header + ' ' + body) }
 inlineRenderer.tablerow = function(content) { return unquote(content) }
 inlineRenderer.tablecell = function(content, flags) { return unquote(content) }
-inlineRenderer.strong = function(text) { return unquote(text) }
+inlineRenderer.strong = function(text) { return '<strong>'+unquote(text)+'</strong>' }
 inlineRenderer.em = function(text) { return unquote(text) }
 inlineRenderer.codespan = function(text) { return unquote(text) }
 inlineRenderer.del = function(text) { return unquote(text) }
@@ -127,7 +115,7 @@ marked.setOptions({
   sanitize: true,
   smartLists: true,
   smartypants: false,
-  emoji: renderEmoji,
+  emoji: renderEmoji(16),
   renderer: blockRenderer
 })
 
@@ -149,22 +137,24 @@ exports.block = function(text, mentionNames) {
 }
 
 exports.inline = function(text) {
-  return marked(''+(text||''), { renderer: inlineRenderer })
+  return marked(''+(text||''), { renderer: inlineRenderer, emoji: renderEmoji(12) })
 }
 
 var emojiRegex = /(\s|>|^)?:([A-z0-9_]+):(\s|<|$)/g;
 exports.emojis = function (str) {
   return str.replace(emojiRegex, function(full, $1, $2, $3) {
-    return ($1||'') + renderEmoji($2) + ($3||'')
+    return ($1||'') + renderEmoji(16)($2) + ($3||'')
   })
 }
 
-function renderEmoji (emoji) {
-  return emoji in emojiNamedCharacters ?
-      '<img src="./img/emoji/' + encodeURI(emoji) + '.png"'
-      + ' alt=":' + escape(emoji) + ':"'
-      + ' title=":' + escape(emoji) + ':"'
-      + ' class="emoji" align="absmiddle" height="20" width="20">'
-    : ':' + emoji + ':'
+function renderEmoji (size) {
+  size = size||20
+  return function (emoji) {
+    return emoji in emojiNamedCharacters ?
+        '<img src="./img/emoji/' + encodeURI(emoji) + '.png"'
+        + ' alt=":' + escape(emoji) + ':"'
+        + ' title=":' + escape(emoji) + ':"'
+        + ' class="emoji" align="absmiddle" height="'+size+'" width="'+size+'">'
+      : ':' + emoji + ':'
+    }
 }
-
