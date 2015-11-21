@@ -55,21 +55,23 @@ function peerSorter (a, b) {
 
 class PeerStatus extends React.Component {
   render() {
-    let peer = this.props.peer
-    let connectionClass = peer.connected ? ' connected' : ''
+    const peer = this.props.peer
+    const connectionClass = peer.connected ? ' connected' : ''
+    let failureClass = ''
     let lastConnected = ''
     if (!peer.connected) {
       if (peer.time && peer.time.connect) {
         lastConnected = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
       } else {
-        lastConnected = <i className="fa fa-close connection-status" title="last attempted connection: " />
+        failureClass = ' failure'
+        lastConnected = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
       }
     }
 
         // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
         //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
-    return <div className='peer flex'>
+    return <div className={'peer flex'+failureClass}>
       <div className='flex-fill'>
         { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> : 
                      <i className={'fa fa-circle connection-status'+connectionClass} /> }
@@ -182,9 +184,11 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'> 
-        <h2>Pubs</h2>
-        <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
-        <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
+        <div className="peer-status-group-header">
+          <h2>Pubs</h2>
+          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
+          <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
+        </div>
         {
           this.state.peers.filter((peer) => peer.host != 'localhost' && !ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
@@ -195,7 +199,9 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'> 
-        <h2>Local Peers</h2>
+        <div className="peer-status-group-header">
+          <h2>Local Peers</h2>
+        </div>
         {
           this.state.peers.filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
