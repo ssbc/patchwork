@@ -23,13 +23,21 @@
     padding: 2px 0 0 0;
   }
   .authors {
-    flex: 0 0 170px;
+    flex: 0 0 80px;
     overflow: hidden;
     white-space: pre;
     text-overflow: ellipsis;
     a {
       color: #555;
     }
+  }
+  .replies {
+    flex: 0 0 40px;
+    padding-top: 1px;
+    text-align: center;
+    margin-right: 5px;
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
   }
   .content {
     flex: 1;
@@ -52,7 +60,7 @@
   &.unread {
     background: #fff;
     color: #333;
-    .authors, .content {
+    .authors, .replies, .content {
       font-weight: bold;
     }
   }

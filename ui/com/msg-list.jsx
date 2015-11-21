@@ -1,5 +1,6 @@
 'use babel'
 import pull from 'pull-stream'
+import moment from 'moment'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import schemas from 'ssb-msg-schemas'
@@ -203,12 +204,17 @@ export default class MsgList extends React.Component {
       pull.drain(msg => {
 
         if (this.props.queueNewMsgs) {
+          // suppress if by the local user
+          const lastMsg = threadlib.getLastThreadPost(msg)
+          if (lastMsg && lastMsg.value.author === app.user.id)
+            return this.prependNewMsg(msg)
+
           // queue the new msgs on the ui
           this.state.newMsgQueue.push(msg)
           this.setState({ newMsgQueue: this.state.newMsgQueue })
         } else {
           // immediately render
-          this.prependNewMsg(msg)          
+          this.prependNewMsg(msg)
         }
       })
     )
@@ -329,7 +335,8 @@ export default class MsgList extends React.Component {
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
-    let isRenderingNew = true
+    const endOfToday = moment().endOf('day')
+    var lastDate = moment().startOf('day')
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
         <Infinite
@@ -360,20 +367,18 @@ export default class MsgList extends React.Component {
             <div>
               { this.state.msgs.map((m, i) => {
                 // render item
-                let item = <ListItem
+                const item = <ListItem
                   key={m.key}
                   msg={m}
                   {...this.handlers}
                   selected={selectedKey === m.key}
                   forceRaw={this.props.forceRaw} />
-                let divider
 
-                // render "new msgs" divider, if there were new msgs
-                const wasRenderingNew = isRenderingNew
-                isRenderingNew = m.isNew
-                if (this.props.showNewDivider && wasRenderingNew && !m.isNew && i > 0) {
-                  return <div key="new-msgs-divider"><hr className="new-msgs-divider" />{item}</div>
-                }
+                const oldLastDate = lastDate
+                const lastPost = threadlib.getLastThreadPost(m)
+                lastDate = moment(lastPost.value.timestamp)
+                if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day'))
+                  return <div key={m.key}><hr className="msgs-divider" data-label={lastDate.endOf('day').from(endOfToday)} />{item}</div>
                 return item
               }) }
             </div>

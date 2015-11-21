@@ -3,6 +3,7 @@ var ip = require('ip')
 var mlib = require('ssb-msgs')
 var mime = require('mime-types')
 var multicb = require('multicb')
+var moment = require('moment')
 var app = require('./app')
 var social = require('./social-graph')
 
@@ -33,6 +34,22 @@ exports.bytesHuman = function (nBytes) {
     str = nApprox.toFixed(2) + dataSizes[i]
   }
   return str
+}
+
+const startOfDay = moment().startOf('day')
+const lastWeek = moment().subtract(1, 'weeks')
+const lastYear = moment().subtract(1, 'years')
+exports.niceDate = function (ts) {
+  var d = moment(ts)
+  if (d.isBefore(lastYear))
+    d = d.format('')
+  else if (d.isBefore(lastWeek))
+    d = d.format('MMM D')
+  else if (d.isBefore(startOfDay))
+    d = d.format('ddd h:mma')
+  else
+    d = d.format('h:mma')
+  return d
 }
 
 exports.getName = function (id) {

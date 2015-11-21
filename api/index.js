@@ -28,10 +28,10 @@ exports.init = function (sbot, opts) {
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
-    newsfeed: u.index(),
-    inbox: u.index(),
-    bookmarks: u.index(),
-    notifications: u.index(),
+    newsfeed: u.index('newsfeed'),
+    inbox: u.index('inbox'),
+    bookmarks: u.index('bookmarks'),
+    notifications: u.index('notifications'),
 
     // views
     profiles: {},
@@ -135,7 +135,6 @@ exports.init = function (sbot, opts) {
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       cb(null, {
-        newsfeedUnread: state.newsfeed.countUntouched(),
         inbox: state.inbox.rows.length,
         inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         bookmarks: state.bookmarks.rows.length,
@@ -419,6 +418,7 @@ exports.init = function (sbot, opts) {
     return function (opts) {
       var lastAccessed = index.lastAccessed
       index.touch()
+      emit('index-change', { index: index.name })
 
       // emulate the `ssb.createFeedStream` interface
       var lt      = o(opts, 'lt')
