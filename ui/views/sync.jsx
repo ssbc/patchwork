@@ -183,8 +183,8 @@ export default class Sync extends React.Component {
 
       <div className='peer-status-group'> 
         <h2>Pubs</h2>
-        <p className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</p>
-        <p className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).  </p>  
+        <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
+        <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
         {
           this.state.peers.filter((peer) => peer.host != 'localhost' && !ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
