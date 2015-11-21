@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import pull from 'pull-stream'
+import ip from 'ip'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
@@ -19,34 +20,72 @@ function peerSorter (a, b) {
   return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
 }
 
-class Peer extends React.Component {
-  render() {
-    let peer = this.props.peer
+function isLAN (peer) {
+  return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
+}
 
-    // status: connection progress or last-connect info
-    let status = ''
-    if (peer.connected) {
-      if (!peer.progress)
-        status = <div className="light">Syncing</div>
-      else if (peer.progress.sync || peer.progress.total === 0)
-        status = <div className="light">Syncing</div>
-      else
-        status = <div className="light"><progress value={peer.progress.current / peer.progress.total} /></div>
-    } else if (peer.time) {
-      if (peer.time.connect > peer.time.attempt)
-        status = <div className="light">Synced at <NiceDate ts={peer.time.connect} /></div>
-      else if (peer.time.attempt) {
-        status = <div className="light">Connect failed at <NiceDate ts={peer.time.attempt} /></div>
+function isNotLAN (peer) {
+  return !isLAN(peer)
+}
+
+//class Peer extends React.Component {
+  //render() {
+    //let peer = this.props.peer
+
+    //// status: connection progress or last-connect info
+    //let status = ''
+    //if (peer.connected) {
+      //if (!peer.progress)
+        //status = <div className="light">Syncing</div>
+      //else if (peer.progress.sync || peer.progress.total === 0)
+        //status = <div className="light">Syncing</div>
+      //else
+        //// NOTE: I've not seen this progress working in recent memory
+        //status = <div className="light"><progress value={peer.progress.current / peer.progress.total} /></div>
+    //} else if (peer.time) {
+      //if (peer.time.connect > peer.time.attempt)
+        //status = <div className="light">Synced at <NiceDate ts={peer.time.connect} /></div>
+      //else if (peer.time.attempt) {
+        //status = <div className="light">Connect failed at <NiceDate ts={peer.time.attempt} /></div>
+      //}
+    //}
+
+    //const isMember = social.follows(peer.key, app.user.id)
+    //return <div className={'peer flex'+((peer.connected)?' connected':'')+(isMember?' ismember':'')}>
+      //<div className="flex-fill">
+        //<div><UserLink id={peer.key} /> { isMember ? <span className="light">Joined</span> : '' }</div>
+        //<div><small>{peerId(peer)}</small></div>
+      //</div>
+      //{status}
+    //</div>
+  //}
+//}
+
+class PeerStatus extends React.Component {
+  render() {
+    const peer = this.props.peer
+    const connectionClass = peer.connected ? ' connected' : ''
+    let failureClass = ''
+    let lastConnected = ''
+    if (!peer.connected) {
+      if (peer.time && peer.time.connect) {
+        lastConnected = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
+      } else {
+        failureClass = ' failure'
+        lastConnected = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
       }
     }
 
+        // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
+        //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
-    return <div className={'peer flex'+((peer.connected)?' connected':'')+(isMember?' ismember':'')}>
-      <div className="flex-fill">
-        <div><UserLink id={peer.key} /> { isMember ? <span className="light">Joined</span> : '' }</div>
-        <div><small>{peerId(peer)}</small></div>
+    return <div className={'peer flex'+failureClass}>
+      <div className='flex-fill'>
+        { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> : 
+                     <i className={'fa fa-circle connection-status'+connectionClass} /> }
+        <UserLink id={peer.key} />
       </div>
-      {status}
+      {lastConnected}
     </div>
   }
 }
@@ -137,29 +176,48 @@ export default class Sync extends React.Component {
   render() {
     const stats = this.state.stats
     const downloading = Math.max(stats.connected-stats.membersofActive, 0)
+    // this needs checking
+    const globalConnectionsCount = stats.connected
+    //const globalConnectionsCount = Math.max(stats.connected-stats.membersofActive, 0)
+    const localConnectionsCount = this.state.peers.
+      filter(isLAN).
+      filter((peer) => peer.connected).
+      length
     
     return <VerticalFilledContainer id="sync">
       <div className="header">
-        { this.state.isWifiMode ?
-          <div>
-            <h1><i className="fa fa-wifi" /> WiFi Mode</h1>
-            <h3>
-              { stats.connected > 0 ?
-                ("You're not uploading to any pubs, but you are downloading. You can send updates to peers on your Local Area Network.") :
-                "You're not connected to any pubs, but you can still connect to peers on your Local Area Network." }
-            </h3>
-          </div>
-          :
-          <div>
-            <h1><i className="fa fa-globe" /> Global Mode</h1>
-            <h3>{"You're successfully uploading to "+stats.membersofActive+" pub"+u.plural(stats.membersofActive)+", and downloading from "+downloading+" other"+u.plural(downloading)+"."}</h3>
-          </div>
-        }
-        <div className="toolbar">
-          <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />{' '}
-        </div>
+        <h1>Network</h1>
+        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Pubs</div>
+        <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local</div>
+        <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />
       </div>
-      {this.state.peers.map((peer, i) => <Peer key={peerId(peer)} peer={peer} />)}
+
+      <div className='peer-status-group'> 
+        <div className="peer-status-group-header">
+          <h2><i className="fa fa-globe" /> Pubs</h2>
+          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and share data.</div>
+          <div className='explanatory-text'>
+            <i className='fa fa-star' /> Is following you - they will replicate your data. <br />
+            <i className='fa fa-circle' /> Is not following you, but you might share data about mutual aquantances.
+          </div>
+        </div>
+        {
+          this.state.peers.filter(isNotLAN).
+            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
+        }
+      </div>
+
+      <div className='peer-status-group'> 
+        <div className="peer-status-group-header">
+          <h2><i className="fa fa-wifi" /> Local</h2>
+          { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
+        </div>
+        {
+          this.state.peers.filter(isLAN).
+            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
+        }
+      </div>
     </VerticalFilledContainer>
   }
 }
+      //{this.state.peers.map((peer, i) => <Peer key={peerId(peer)} peer={peer} />)}

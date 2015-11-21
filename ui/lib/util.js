@@ -89,7 +89,7 @@ exports.getPubStats = function (peers) {
   var membersof=0, membersofActive=0, membersofUntried=0, connected=0
   ;(peers||app.peers).forEach(function (peer) {
     // filter out LAN peers
-    if (peer.host == 'localhost' || ip.isPrivate(peer.host))
+    if (ip.isLoopback(peer.host) || ip.isPrivate(peer.host))
       return
     var connectSuccess = (peer.time && peer.time.connect && (peer.time.connect > peer.time.attempt) || peer.connected)
     if (connectSuccess)

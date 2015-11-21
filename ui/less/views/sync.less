@@ -1,15 +1,11 @@
 #sync {
   background: #fafafa;
   .header {
-    background: #fff;
     padding: 20px;
     h1 {
       font-weight: 100;
       font-size: 250%;
       margin: 0 0 12px;
-    }
-    h3 {
-      font-weight: 300;
     }
     .warning {
       margin-top: 10px;
@@ -17,15 +13,45 @@
       background: #fafafa;
       font-weight: 300;
       color: #555;
+    }
+    .btn {
+      background: #fff;
+    }
+  }
+  .connection-counter{
+    display: inline-block;
+    margin-right: 40px;
+    margin-top: 5px;
 
-      i {
-        margin-right: 5px;
-      }
+    i {
+      color: #444;
+      font-size: 30px;
+      margin: 0 2px 4px;
+      vertical-align: middle;
+    } 
+  }
+  .peer-status-group {
+    color: #444;
+    margin: 0px 20px 20px;
+    background-color: #fff;
+    max-width: 800px;
+
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+    .peer-status-group-header {
+      padding: 20px;
+      padding-top: 1px;
     }
   }
   .peer {
     padding: 10px;
     border-top: 1px solid #ddd;
+    &.failure {
+      background: #fafafa;
+      a {
+        color: #999;
+      }
+    }
     &:last-child {
       border-bottom: 1px solid #ddd;
     }
@@ -38,4 +64,46 @@
       color: gray;
     }
   }
+
+  .explanatory-text {
+    color: #676767;
+    font-weight: 300;
+    margin: 1em 0;
+    i {
+      color: #B9B9B9;
+      width: 15px;
+    }
+    i.fa-circle { 
+      font-size: 11px;
+      width: 13px;
+      padding-left: 2px;
+    }
+  }
+
+  .connection-status {
+    @symbol-radius: 6px;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    color: #B9B9B9;
+
+    &.connected {
+      color: #2AD02A;
+    }
+    &.fa-star {
+    }
+    &.fa-circle {
+      font-size: 11px;
+      margin-left: 3px;
+      color: #B9B9B9;
+      &.connected {
+        color: #2AD02A;
+      }
+    }
+  }
+
+  .toolbar.join-pub {
+    margin-top: 20px;
+  }
+
 }
