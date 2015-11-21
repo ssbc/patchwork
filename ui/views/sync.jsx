@@ -66,11 +66,13 @@ class PeerStatus extends React.Component {
       }
     }
 
+        // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
+        //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
     return <div className='peer flex'>
       <div className='flex-fill'>
-        { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
-                     <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
+        { isMember ? <i className={'fa fa-star known-peer-symbol connection-status'+connectionClass} /> : 
+                     <i className={'unknown-peer-symbol fa fa-circle connection-status'+connectionClass} /> }
         <UserLink id={peer.key} />
       </div>
       {lastConnected}
@@ -181,8 +183,8 @@ export default class Sync extends React.Component {
 
       <div className='peer-status-group'> 
         <h2>Pubs</h2>
-        <p className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</p>
-        <p className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).  </p>  
+        <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
+        <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
         {
           this.state.peers.filter((peer) => peer.host != 'localhost' && !ip.isPrivate(peer.host)).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
