@@ -20,6 +20,14 @@ function peerSorter (a, b) {
   return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
 }
 
+function isLAN (peer) {
+  return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
+}
+
+function isNotLAN (peer) {
+  return !isLAN(peer)
+}
+
 //class Peer extends React.Component {
   //render() {
     //let peer = this.props.peer
@@ -170,7 +178,7 @@ export default class Sync extends React.Component {
     const globalConnectionsCount = stats.connected
     //const globalConnectionsCount = Math.max(stats.connected-stats.membersofActive, 0)
     const localConnectionsCount = this.state.peers.
-      filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host) ).
+      filter(isLAN).
       filter((peer) => peer.connected).
       length
     
@@ -186,7 +194,7 @@ export default class Sync extends React.Component {
         <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and catch up and share gossip.</div>
         <div className='explanatory-text'><i className='unknown-peer-symbol fa fa-question-circle' /> : A peer that is not yet following you (so won't propogate your news).</div>  
         {
-          this.state.peers.filter((peer) => peer.host != 'localhost' && !ip.isPrivate(peer.host)).
+          this.state.peers.filter(isNotLAN).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
         <div className="toolbar join-pub">
@@ -197,7 +205,7 @@ export default class Sync extends React.Component {
       <div className='peer-status-group'> 
         <h2>Local Peers</h2>
         {
-          this.state.peers.filter((peer) => peer.host == 'localhost' || ip.isPrivate(peer.host)).
+          this.state.peers.filter(isLAN).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
       </div>
