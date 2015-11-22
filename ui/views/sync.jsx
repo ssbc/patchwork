@@ -76,12 +76,12 @@ class PeerStatus extends React.Component {
       }
     }
 
-        // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> : 
+        // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> :
         //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
     return <div className={'peer flex'+failureClass}>
       <div className='flex-fill'>
-        { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> : 
+        { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> :
                      <i className={'fa fa-circle connection-status'+connectionClass} /> }
         <UserLink id={peer.key} />
       </div>
@@ -164,7 +164,7 @@ export default class Sync extends React.Component {
   onUseInvite() {
     this.props.history.pushState(null, '/')
   }
-  
+
   // TODO needed?
   /*onAddNode(addr) {
     app.ssb.gossip.connect(addr, function (err) {
@@ -183,7 +183,7 @@ export default class Sync extends React.Component {
       filter(isLAN).
       filter((peer) => peer.connected).
       length
-    
+
     return <VerticalFilledContainer id="sync">
       <div className="header">
         <h1>Network</h1>
@@ -192,7 +192,18 @@ export default class Sync extends React.Component {
         <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />
       </div>
 
-      <div className='peer-status-group'> 
+      <div className='peer-status-group'>
+        <div className="peer-status-group-header">
+          <h2><i className="fa fa-wifi" /> Local</h2>
+          { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
+        </div>
+        {
+          this.state.peers.filter(isLAN).
+            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
+        }
+      </div>
+
+      <div className='peer-status-group'>
         <div className="peer-status-group-header">
           <h2><i className="fa fa-globe" /> Pubs</h2>
           <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and share data.</div>
@@ -207,16 +218,6 @@ export default class Sync extends React.Component {
         }
       </div>
 
-      <div className='peer-status-group'> 
-        <div className="peer-status-group-header">
-          <h2><i className="fa fa-wifi" /> Local</h2>
-          { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
-        </div>
-        {
-          this.state.peers.filter(isLAN).
-            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
-        }
-      </div>
     </VerticalFilledContainer>
   }
 }
