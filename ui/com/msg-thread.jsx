@@ -126,6 +126,13 @@ export default class Thread extends React.Component {
               this.state.msgs.push(msg)
               this.state.thread.related = (this.state.thread.related||[]).concat(msg)
               this.setState({ thread: this.state.thread, msgs: this.state.msgs })
+
+              // mark read
+              thread.hasUnread = true
+              threadlib.markThreadRead(app.ssb, this.state.thread, err => {
+                if (err)
+                  app.minorIssue('Failed to mark live-streamed reply as read', err)
+              })
             }
           })
         )
