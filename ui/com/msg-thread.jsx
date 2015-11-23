@@ -118,6 +118,9 @@ export default class Thread extends React.Component {
           pull.filter(obj => !obj.sync), // filter out the sync obj
           pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
           pull.drain((msg) => {
+            if (!this.state.thread)
+              return
+            
             var c = msg.value.content
             var root = mlib.link(c.root, 'msg')
             // reply post to this thread?
