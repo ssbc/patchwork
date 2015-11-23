@@ -172,9 +172,14 @@ export default class Composer extends React.Component {
     // convenient event helpers
     this.toolbarHandlers = {
       onSelect: (v)  => {
+        // update state
         const isPublic = (v == TOOLBAR_TAB_PUBLIC)
-        this.setState({ isPublic: isPublic })
         this.updateDraft({ isPublic: isPublic })
+        this.setState({ isPublic: isPublic }, () => {
+          // trigger size recalc
+          try { this.refs.textarea.calcHeight() }
+          catch (e) { console.log(e) }
+        })
       }
     }
   }
@@ -361,7 +366,7 @@ export default class Composer extends React.Component {
       <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        <ComposerTextarea value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
+        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
