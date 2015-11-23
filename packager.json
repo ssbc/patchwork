@@ -1,8 +1,8 @@
 {
   "osx" : {
-    "title": "Scuttlebot",
+    "title": "Patchwork",
     "background": "assets/osx/installer.png",
-    "icon": "assets/osx/scuttlebot.icns",
+    "icon": "assets/osx/patchwork.icns",
     "icon-size": 80,
     "contents": [
       { "x": 438, "y": 344, "type": "link", "path": "/Applications" },
@@ -10,7 +10,7 @@
     ]
   },
   "win" : {
-    "title" : "Scuttlebot",
-    "icon" : "assets/win/scuttlebot.ico"
+    "title" : "Patchwork",
+    "icon" : "assets/win/patchwork.ico"
   }
 }

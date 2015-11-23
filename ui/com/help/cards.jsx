@@ -34,7 +34,7 @@ export class Inbox extends React.Component {
 export class Bookmarks extends React.Component {
   render() {
     return <div className="card">
-      <h2><i className="fa fa-bookmark-o" /> Saved</h2>
+      <h2><i className="fa fa-bookmark-o" /> Bookmarked</h2>
       <p>{"Posts you've bookmarked by pressing the "}<i className="fa fa-bookmark-o" /> button. Bookmarks are not shared with the network.</p>
     </div>
   }

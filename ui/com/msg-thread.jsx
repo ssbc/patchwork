@@ -10,10 +10,10 @@ import Composer from './composer'
 import app from '../lib/app'
 import u from '../lib/util'
 
-class SaveBtn extends React.Component {
+class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
-    const title = 'Save'+(b?'d':'')
+    const title = 'Bookmark'+(b?'ed':'')
     return <a className={'btn '+(b?' selected':'')} onClick={this.props.onClick} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title} Thread
     </a>
@@ -244,7 +244,7 @@ export default class Thread extends React.Component {
             <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
             : '' }
           { !threadRoot && thread ?
-            <SaveBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+            <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
             : '' }
           { canMarkUnread ?
             <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />

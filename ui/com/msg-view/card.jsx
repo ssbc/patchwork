@@ -26,14 +26,14 @@ function userIsTrusted (userId) {
   return userId === app.user.id || social.follows(app.user.id, userId)
 }
 
-class SaveBtn extends React.Component {
+class BookmarkBtn extends React.Component {
   onClick(e) {
     e.stopPropagation()
     this.props.onClick()
   }
   render() {
     const b = this.props.isBookmarked
-    const title = 'Save'+(b?'d':'')
+    const title = 'Bookmark'+(b?'ed':'')
     return <span>
       <a className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} />
@@ -218,7 +218,7 @@ export default class Card extends React.Component {
           </div>
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
-            { !this.props.noBookmark ? <SaveBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
+            { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
             <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
           </div>
         </div>
