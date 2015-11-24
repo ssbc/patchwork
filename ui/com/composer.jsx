@@ -215,7 +215,7 @@ export default class Composer extends React.Component {
           app.issue('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
         } else {
           var str = ''
-          if (!(/(^|\s)$/.test(this.state.text.value)))
+          if (!(/(^|\s)$/.test(this.state.text)))
             str += ' ' // add some space if not on a newline
           if (isImageFilename(f.name))
             str += '!' // inline the image
@@ -233,6 +233,7 @@ export default class Composer extends React.Component {
       if (!add(filesInput.files[i]))
         return false
     }
+    filesInput.value = '' // clear file list
   }
 
   onAddRecp(id) {
