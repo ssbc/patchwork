@@ -345,7 +345,7 @@ export default class Composer extends React.Component {
         if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
           // remove draft and reset form
-          this.setState({ text: '' })
+          this.setState({ text: '', isPreviewing: false })
           if (this.state.currentDraft)
             this.onDeleteDraft(this.state.currentDraft)
 
