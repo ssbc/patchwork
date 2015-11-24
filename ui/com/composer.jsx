@@ -204,14 +204,14 @@ export default class Composer extends React.Component {
       // limit to 5mb
       if (f.size > 5 * (1024*1024)) {
         var inMB = Math.round(f.size / (1024*1024) * 100) / 100
-        modals.error('Error Attaching File', f.name + ' is larger than the 5 megabyte limit (' + inMB + ' MB)')
+        app.issue('Error Attaching File', new Error(f.name + ' is larger than the 5 megabyte limit (' + inMB + ' MB)'))
         this.setState({ isAddingFiles: false })
         return false
       }
       // hash file
       app.ssb.patchwork.addFileToBlobs(f.path, (err, res) => {
         if (err) {
-          modals.error('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
+          app.issue('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
         } else {
           var str = ''
           if (!(/(^|\s)$/.test(this.state.text.value)))
@@ -336,7 +336,7 @@ export default class Composer extends React.Component {
       var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
       let published = (err, msg) => {
         this.setState({ isSending: false })
-        if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
+        if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
           // remove draft and reset form
           this.setState({ text: '' })
