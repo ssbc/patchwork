@@ -91,6 +91,13 @@ export function verticalFilled (Component) {
       }
       this.setState({ height: height })
     },
+    scrollTo(top) {
+      const el = this.refs && this.refs.el
+      if (!el) return
+      if (el.scrollTo)
+        return el.scrollTo(top) // use the child's impl
+      ReactDOM.findDOMNode(this.refs.el).scrollTop = top
+    },
     render() {
       return <Component ref="el" {...this.props} {...this.state} />
     }

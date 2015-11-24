@@ -18,6 +18,10 @@ import u from '../lib/util'
 // how many messages to fetch in a batch?
 const DEFAULT_BATCH_LOAD_AMT = 30
 
+// what's the avg height a message will be?
+// (used in loading calculations, when trying to scroll to a specific spot. doesnt need to be exact)
+const AVG_RENDERED_MSG_HEIGHT = 200
+
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
 
@@ -232,6 +236,16 @@ export default class MsgList extends React.Component {
     this.setState({ containerHeight: height })
   }
 
+  // infinite load call
+  onInfiniteLoad(scrollingTo) {
+    var amt = DEFAULT_BATCH_LOAD_AMT
+    if (scrollingTo) {
+      // trying to reach a dest, increase amount to load with a rough guess of how many are needed
+      amt = Math.max((scrollingTo / AVG_RENDERED_MSG_HEIGHT)|0, DEFAULT_BATCH_LOAD_AMT)
+    }
+    this.loadMore({ amt })
+  }
+
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
     if (this.props.threads && !('related' in msg)) {
@@ -345,7 +359,7 @@ export default class MsgList extends React.Component {
           elementHeight={this.props.listItemHeight||60}
           containerHeight={this.state.containerHeight}
           infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
-          onInfiniteLoad={this.loadMore.bind(this, { amt: 30 })}
+          onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
           { this.props.hero ? this.props.hero() : '' }
