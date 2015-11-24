@@ -6,14 +6,15 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import Tabs from './tabs'
+import { Block as MarkdownBlock } from './markdown'
 import { verticalFilled } from './index'
 import u from '../lib/util'
 import app from '../lib/app'
 import mentionslib from '../lib/mentions'
 import social from '../lib/social-graph'
 
+const MarkdownBlockVerticalFilled = verticalFilled(MarkdownBlock)
 const RECP_LIMIT = 7
-
 const TOOLBAR_TABS = [
   { label: <span><i className="fa fa-group" /> Public</span> },
   { label: <span><i className="fa fa-lock" /> Private</span> }
@@ -161,6 +162,7 @@ export default class Composer extends React.Component {
     // setup state (pulling from thread)
     this.state = {
       isPublic: this.props.thread ? isThreadPublic(this.props.thread) : true,
+      isPreviewing: false,
       isSending: false,
       isReply: !!this.props.thread,
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
@@ -365,12 +367,15 @@ export default class Composer extends React.Component {
   render() {
     let msgType = this.state.isPublic ? 'public' : 'private'
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
+    const ComposerPreview  = (this.props.verticalFilled) ? MarkdownBlockVerticalFilled : MarkdownBlock
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} />
+        { this.state.isPreviewing ?
+          <ComposerPreview md={this.state.text} /> :
+          <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} /> }
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
@@ -379,6 +384,11 @@ export default class Composer extends React.Component {
             (this.state.isAddingFiles ?
               <em>Adding...</em> :
               <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
+        </div>
+        <div>
+          <a className="btn" onClick={()=>this.setState({ isPreviewing: !this.state.isPreviewing })}>
+            { this.state.isPreviewing ? 'Edit' : 'Preview' }
+          </a>
         </div>
         <div>
           { (!this.canSend() || this.state.isSending) ?
