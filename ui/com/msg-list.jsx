@@ -195,6 +195,7 @@ export default class MsgList extends React.Component {
     this.liveStream = source(opts)
     pull(
       this.liveStream,
+      pull.filter(msg => !msg.sync),
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
