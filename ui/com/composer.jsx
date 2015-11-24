@@ -4,6 +4,7 @@ import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
+import mime from 'mime-types'
 import Tabs from './tabs'
 import { verticalFilled } from './index'
 import u from '../lib/util'
@@ -216,6 +217,8 @@ export default class Composer extends React.Component {
           var str = ''
           if (!(/(^|\s)$/.test(this.state.text.value)))
             str += ' ' // add some space if not on a newline
+          if (isImageFilename(f.name))
+            str += '!' // inline the image
           str += '['+(f.name||'untitled')+']('+res.hash+')'
           this.setState({ text: this.state.text + str })
         }
@@ -390,4 +393,9 @@ function isThreadPublic (thread) {
   if ('plaintext' in thread)
     return thread.plaintext
   return (typeof thread.value.content !== 'string')
+}
+
+function isImageFilename (name) {
+  var ct = mime.contentType(name)
+  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
 }
