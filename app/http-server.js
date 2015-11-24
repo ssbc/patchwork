@@ -48,10 +48,10 @@ var Localhost = exports.Localhost = function () {
 var CSP = exports.CSP = function (origin) {
   return function (req, res, next) {
     res.setHeader('Content-Security-Policy', 
-      "default-src "+origin+" 'unsafe-inline' 'unsafe-eval' data: ssb:; "+
+      "default-src "+origin+" 'unsafe-inline' 'unsafe-eval' data:; "+
       "object-src 'none'; "+
       "frame-src 'none'; "+
-      "sandbox allow-same-origin allow-scripts allow-top-navigation allow-popups"
+      "sandbox"
     )
     next()
   }

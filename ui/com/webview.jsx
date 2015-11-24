@@ -40,7 +40,7 @@ export default class WebView extends React.Component {
     this.hasSetupWebviewEl = true
 
     // setup rpc
-    var ssb = muxrpc(null, manifest, serialize)(app.ssb)
+    /*var ssb = muxrpc(null, manifest, serialize)(app.ssb)
     function serialize (stream) { return stream }
 
     var rpcStream = ssb.createStream()
@@ -71,9 +71,10 @@ export default class WebView extends React.Component {
         console.warn('Security Error. Webview circumvented navigation sandbox.')
         webviewEl.src = 'data:text/html,<strong>Security Error</strong> This page attempted to navigate out of its sandbox through explicit circumvention. Do not trust it!'
       }
-    })
+    })*/
   }
   render() {
-    return <webview ref="wv" src={this.props.url} preload="./webview-preload.js" style={{height: this.props.height}} />
+    // preload="./webview-preload.js" 
+    return <webview ref="wv" src={this.props.url} style={{height: this.props.height}} />
   }
 }

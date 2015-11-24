@@ -4,6 +4,7 @@ import suggestBox from 'suggest-box'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
+import mime from 'mime-types'
 import Tabs from './tabs'
 import { verticalFilled } from './index'
 import u from '../lib/util'
@@ -204,18 +205,20 @@ export default class Composer extends React.Component {
       // limit to 5mb
       if (f.size > 5 * (1024*1024)) {
         var inMB = Math.round(f.size / (1024*1024) * 100) / 100
-        modals.error('Error Attaching File', f.name + ' is larger than the 5 megabyte limit (' + inMB + ' MB)')
+        app.issue('Error Attaching File', new Error(f.name + ' is larger than the 5 megabyte limit (' + inMB + ' MB)'))
         this.setState({ isAddingFiles: false })
         return false
       }
       // hash file
       app.ssb.patchwork.addFileToBlobs(f.path, (err, res) => {
         if (err) {
-          modals.error('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
+          app.issue('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
         } else {
           var str = ''
-          if (!(/(^|\s)$/.test(this.state.text.value)))
+          if (!(/(^|\s)$/.test(this.state.text)))
             str += ' ' // add some space if not on a newline
+          if (isImageFilename(f.name))
+            str += '!' // inline the image
           str += '['+(f.name||'untitled')+']('+res.hash+')'
           this.setState({ text: this.state.text + str })
         }
@@ -230,6 +233,7 @@ export default class Composer extends React.Component {
       if (!add(filesInput.files[i]))
         return false
     }
+    filesInput.value = '' // clear file list
   }
 
   onAddRecp(id) {
@@ -336,7 +340,7 @@ export default class Composer extends React.Component {
       var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
       let published = (err, msg) => {
         this.setState({ isSending: false })
-        if (err) modals.error('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
+        if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
           // remove draft and reset form
           this.setState({ text: '' })
@@ -390,4 +394,9 @@ function isThreadPublic (thread) {
   if ('plaintext' in thread)
     return thread.plaintext
   return (typeof thread.value.content !== 'string')
+}
+
+function isImageFilename (name) {
+  var ct = mime.contentType(name)
+  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
 }
