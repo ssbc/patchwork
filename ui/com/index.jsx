@@ -75,6 +75,7 @@ export function verticalFilled (Component) {
     },
     componentDidMount() {
       this.calcHeight()
+      this.historyScrollTo()
       this.resizeListener = this.calcHeight
       window.addEventListener('resize', this.resizeListener)
     },
@@ -91,6 +92,32 @@ export function verticalFilled (Component) {
       }
       this.setState({ height: height })
     },
+    scrollTo(top) {
+      const el = this.refs && this.refs.el
+      if (!el) return
+      if (el.scrollTo)
+        return el.scrollTo(top) // use the child's impl
+
+      // make sure it scrolls (may need some loading time)
+      var n = 0
+      const el2 = ReactDOM.findDOMNode(this.refs.el)
+      function doit () {
+        el2.scrollTop = top
+        if (el2.scrollTop != top && ++n < 100)
+          setTimeout(doit, 10)
+      }
+      doit()
+    },
+    historyScrollTo() {
+      if (!this.props.id)
+        return // we dont have an id, no scrolltop to record
+      if (!history.state)
+        return // no state in the history
+      const vfScrollTops = history.state.vfScrollTops
+      if (!vfScrollTops || !vfScrollTops[this.props.id])
+        return // no scrolltop in the history for this one
+      this.scrollTo(vfScrollTops[this.props.id])
+    },
     render() {
       return <Component ref="el" {...this.props} {...this.state} />
     }
@@ -99,7 +126,7 @@ export function verticalFilled (Component) {
 }
 class _VerticalFilledContainer extends React.Component {
   render() {
-    return <div {...this.props} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
+    return <div className="vertical-filled" {...this.props} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
   }
 }
 export var VerticalFilledContainer = verticalFilled(_VerticalFilledContainer)

@@ -16,6 +16,7 @@ var SSBClient = require('./muxrpc-ipc')
 var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')
+var createHashHistory = require('history').createHashHistory
 
 // event streams and listeners
 var patchworkEventStream = null
@@ -31,6 +32,7 @@ module.exports = extend(new Emitter(), {
   fetchLatestState: fetchLatestState,
 
   // ui data
+  history: createHashHistory(),
   isComposerOpen: false,
   suggestOptions: { 
     ':': Object.keys(emojis).map(function (emoji) {

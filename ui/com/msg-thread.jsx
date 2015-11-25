@@ -235,7 +235,7 @@ export default class Thread extends React.Component {
   }
 
   openMsg(id) {
-    window.location.hash = '#/msg/'+encodeURIComponent(id)
+    app.history.pushState(null, '/msg/'+encodeURIComponent(id))
   }
   onSelectRoot() {
     let thread = this.state.thread
@@ -261,7 +261,7 @@ export default class Thread extends React.Component {
             : '' }
         </div>
       </div>
-      <VerticalFilledContainer>
+      <VerticalFilledContainer id="msg-thread-vertical">
         <div className="items">
           { this.state.msgs.map((msg, i) => {
             const isFirst = (i === 0)
