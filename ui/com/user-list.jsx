@@ -73,7 +73,7 @@ export default class UserList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: (user) => {
-        window.location = '#/profile/'+encodeURIComponent(user.id)
+        app.history.pushState(null, '/profile/'+encodeURIComponent(user.id))
       }
     }
   }

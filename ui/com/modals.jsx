@@ -73,7 +73,7 @@ export class SetupModal extends React.Component {
     const done = () => {
       if (++n >= m) {
         if (app.user.needsSetup)
-          window.location.hash = '#/help/welcome'
+          app.history.pushState(null, '/help/welcome')
         else
           app.fetchLatestState()
         this.onClose()

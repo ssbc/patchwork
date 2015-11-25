@@ -47,7 +47,7 @@ class SimpleInfinite extends React.Component {
   }
 
   render() {
-    return <div ref="container" onScroll={this.onScroll} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children}</div>
+    return <div id={this.props.id} className="vertical-filled" ref="container" onScroll={this.onScroll} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children}</div>
   }
 }
 export default verticalFilled(SimpleInfinite)

@@ -45,7 +45,7 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        window.location.hash = '#/msg/' + encodeURIComponent(msg.key)
+        app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB
@@ -355,6 +355,7 @@ export default class MsgList extends React.Component {
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
         <Infinite
+          id="msg-list-infinite"
           ref="container"
           elementHeight={this.props.listItemHeight||60}
           containerHeight={this.state.containerHeight}

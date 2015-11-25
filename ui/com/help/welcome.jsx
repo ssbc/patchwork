@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import { Link } from 'react-router'
 import { InviteModalBtn } from '../modals'
 
 export default class WelcomeHelp extends React.Component {
@@ -23,7 +24,7 @@ export default class WelcomeHelp extends React.Component {
         <h2>Step 3: <img className="emoji" src="./img/emoji/metal.png" width="20" height="20"/></h2>
         <p>You can send <strong>Public Posts</strong> and <strong>Secret Messages</strong> using the blue button on the top right of your feed.</p>
       </div>
-      <a className="card centered btn selected highlighted" style={{display: 'block', textAlign: 'center'}} href='#/'><h3>Got it.</h3></a>
+      <Link className="card centered btn selected highlighted" style={{display: 'block', textAlign: 'center'}} to='/'><h3>Got it.</h3></Link>
     </div>
   }
 }
