@@ -6,6 +6,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import Tabs from './tabs'
+import TokensInput from './tokens-input'
 import { Block as MarkdownBlock } from './markdown'
 import { verticalFilled } from './index'
 import u from '../lib/util'
@@ -26,66 +27,6 @@ class ComposerToolbar extends React.Component {
   render() {    
     return <div className="toolbar">
       <Tabs options={TOOLBAR_TABS} selected={this.props.isPublic ? TOOLBAR_TAB_PUBLIC : TOOLBAR_TAB_PRIVATE} onSelect={this.props.onSelect} />
-    </div>
-  }
-}
-
-class ComposerRecp extends React.Component {
-  render() {
-    return <span className="recp">
-      {u.getName(this.props.id)}
-      {this.props.isReadOnly ? '' : <a onClick={() => this.props.onRemove(this.props.id)}><i className="fa fa-remove"/></a>}
-    </span>
-  }
-}
-
-class ComposerRecps extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { inputText: '' }
-  }
-
-  componentDidMount() {
-    this.setupSuggest()
-  }
-  componentDidUpdate() {
-    this.setupSuggest()
-  }
-  setupSuggest() {
-    // setup the suggest-box
-    const input = this.refs && this.refs.input
-    if (!input || input.isSetup)
-      return
-    input.isSetup = true
-    suggestBox(input, { any: app.suggestOptions['@'] }, { cls: 'msg-recipients' })
-    input.addEventListener('suggestselect', this.onSuggestSelect.bind(this))
-  }
-
-  onChange(e) {
-    this.setState({ inputText: e.target.value })
-  }
-
-  onSuggestSelect(e) {
-    this.props.onAdd(e.detail.id)
-    this.setState({ inputText: '' })
-  }
-
-  render() {
-    if (this.props.isPublic)
-      return <div/>
-    let isAtLimit = (this.props.recps.length >= RECP_LIMIT)
-    let warnings = this.props.recps.filter((id) => (id !== app.user.id) && !social.follows(id, app.user.id))
-    return <div className="composer-recps">
-      <div>
-        To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
-        { (!isAtLimit && !this.props.isReadOnly) ?
-          <input ref="input" type="text" placeholder="Add a recipient" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
-          '' }
-      </div>
-      { isAtLimit ? <div className="warning">Recipient limit reached</div> : '' }
-      { warnings.length ?
-        <div>{warnings.map(id => <div key={id} className="warning">Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :
-        '' }
     </div>
   }
 }
@@ -238,7 +179,8 @@ export default class Composer extends React.Component {
     filesInput.value = '' // clear file list
   }
 
-  onAddRecp(id) {
+  onAddRecp(entry) {
+    const id = entry.id
     let recps = this.state.recps
 
     // enforce limit
@@ -254,7 +196,8 @@ export default class Composer extends React.Component {
     this.updateDraft({ recps: recps })
   }
 
-  onRemoveRecp(id) {
+  onRemoveRecp(token) {
+    const id = token.value
     let recps = this.state.recps
     var i = recps.indexOf(id)
     if (i !== -1) {
@@ -366,12 +309,25 @@ export default class Composer extends React.Component {
 
   render() {
     let msgType = this.state.isPublic ? 'public' : 'private'
+    const recpTokens = this.state.recps.map(r => ({ value: r, label: u.getName(r) }))
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const ComposerPreview  = (this.props.verticalFilled) ? MarkdownBlockVerticalFilled : MarkdownBlock
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
-      <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
+      { this.state.isPublic ?
+        '' :
+        <TokensInput
+          className="composer-recps"
+          label="To:"
+          placeholder="Add a recipient"
+          tokens={recpTokens}
+          suggestOptions={app.suggestOptions['@']}
+          onAdd={this.onAddRecp.bind(this)}
+          onRemove={this.onRemoveRecp.bind(this)}
+          isReadOnly={this.state.isReply} 
+          maxTokens={RECP_LIMIT}
+          limitErrorMsg={`Recipient limit (${RECP_LIMIT}) reached`} /> }
       <div className="composer-content">
         { this.state.isPreviewing ?
           <ComposerPreview md={this.state.text} /> :
