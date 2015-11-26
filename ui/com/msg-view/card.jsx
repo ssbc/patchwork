@@ -145,6 +145,8 @@ export default class Card extends React.Component {
       return this.renderNotFound(msg)
     if (msg.isLink)
       return this.renderLink(msg)
+    if (msg.isMention)
+      return this.renderMention(msg)
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
@@ -175,6 +177,16 @@ export default class Card extends React.Component {
     const name = u.shortString(msg.value.content.text || msg.key, 100)
     return <div key={msg.key} className="msg-view card-missing-post">
       <div><i className="fa fa-angle-up" /> <MsgLink id={msg.key} name={name} /></div>
+    </div>
+  }
+
+  renderMention(msg) {
+    const name = u.shortString(msg.value.content.text || msg.key, 100)
+    return <div key={msg.key} className="msg-view card-mention">
+      <div>
+        <i className="fa fa-hand-o-right" />
+        <div><UserLink id={msg.value.author} /> referenced this thread in <MsgLink id={msg.key} name={name} /></div>
+      </div>
     </div>
   }
 

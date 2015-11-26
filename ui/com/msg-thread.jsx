@@ -5,7 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
 import { VerticalFilledContainer } from './index'
 import Card from './msg-view/card'
-import { isaReplyTo } from '../lib/msg-relation'
+import { isaReplyTo, relationsTo } from '../lib/msg-relation'
 import Composer from './composer'
 import app from '../lib/app'
 import u from '../lib/util'
@@ -68,14 +68,32 @@ export default class Thread extends React.Component {
           return // messages can be in the thread multiple times if there are >1 links
         msgIds.add(msg.key)
 
-        // reply posts only
-        if (msg.value.content.type == 'post' && isaReplyTo(msg, thread))
-          msgs.push(msg)
+        if (msg.value.content.type == 'post') {
+          // replies
+          if (isaReplyTo(msg, thread)) {
+            msgs.push(msg)
+
+            // sub-messages
+            ;(msg.related||[]).forEach(submsg => {
+              // mentions
+              if (relationsTo(submsg, msg).indexOf('mentions') >= 0) {
+                msgs.push({ key: submsg.key, isMention: true, value: submsg.value })
+              }
+            })
+          }
+          // mentions
+          else if (relationsTo(msg, thread).indexOf('mentions') >= 0) {
+            msgs.push({ key: msg.key, isMention: true, value: msg.value })
+          }
+        }
       })
 
       // check for missing parents
       let numAdded=0
       msgs.slice().forEach((msg, i) => { // slice() - iterate a duplicate so that splices dont alter our iteration
+        if (msg.isMention)
+          return // ignore the mentions
+
         const branch = mlib.link(msg.value.content.branch, 'msg')
         if (branch && !msgIds.has(branch.link)) {
           if (i === 0) {
