@@ -2,7 +2,7 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import { UserLink, UserLinks, NiceDate } from '../index'
+import { UserLink, UserPics, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import app from '../../lib/app'
@@ -30,7 +30,7 @@ export default class Oneline extends React.Component {
         </a>
       </div>
       <div className="type">{ msg.plaintext ? '' : <i className="fa fa-lock" title="Secret Message" /> }</div>
-      <div className="authors"><UserLinks ids={recps} shorten={recps.length > 1} /></div>
+      <div className="authors"><UserPics ids={recps} /></div>
       <div className="replies">{replies}</div>
       <div className="content"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
       <div className="date"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>

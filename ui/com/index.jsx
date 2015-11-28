@@ -49,6 +49,16 @@ export class UserPic extends React.Component {
   }
 }
 
+export class UserPics extends React.Component {
+  render() {
+    let ids = this.props.ids
+    ids.sort()
+    return <span>
+      {ids.map((id, i) => <UserPic id={id} key={`pic-${i}`} />)}
+    </span>
+  }
+}
+
 export class UserBtn extends React.Component {
   render() {
     const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
