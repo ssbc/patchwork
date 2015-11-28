@@ -80,9 +80,9 @@ export default class Thread extends React.Component {
               return
             
             var c = msg.value.content
-            var root = mlib.link(c.root, 'msg')
+            var rels = mlib.relationsTo(msg, this.state.thread)
             // reply post to this thread?
-            if (c.type == 'post' && root && root.link === this.state.thread.key) {
+            if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
               // add to thread and flatlist
               this.state.msgs.push(msg)
               this.state.thread.related = (this.state.thread.related||[]).concat(msg)
