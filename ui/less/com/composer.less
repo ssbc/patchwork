@@ -16,6 +16,22 @@
       }
     }*/
   }
+
+  .topic {
+    display: flex;  
+    padding: 10px;
+    border: 1px solid #eee;
+    margin: 5px;
+    font-weight: 300;
+    input {
+      flex: 1;
+      border: 0;
+      margin-left: 5px;
+      &:focus, &:active {
+        outline: 0;
+      }
+    }
+  }
   
   .composer-content {
     font-family: @content-font;
