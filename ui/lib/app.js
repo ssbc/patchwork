@@ -52,6 +52,7 @@ module.exports = extend(new Emitter(), {
   // application state, fetched every refresh
   actionItems: {},
   indexCounts: {},
+  topics: [], // array of { topic: String, count: Number }
   user: {
     id: null,
     profile: {},
@@ -128,6 +129,11 @@ function fetchLatestState (cb) {
     app.isWifiMode      = require('./util').getPubStats(app.peers).hasSyncIssue
     app.user.profile    = app.users.profiles[app.user.id]
     app.user.needsSetup = !app.users.names[app.user.id]
+
+    // get topics list
+    app.topics = Object.keys(app.indexCounts)
+      .filter(function (k) { return k.indexOf('topic-') === 0 })
+      .map(function (k) { return { topic: k.slice(6), count: app.indexCounts[k] }})
 
     // get friend list
     var social = require('./social-graph')
