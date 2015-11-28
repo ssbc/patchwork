@@ -48,7 +48,13 @@ export default class Thread extends React.Component {
     threadlib.getPostThread(app.ssb, id, (err, thread) => {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
-      this.setState({ thread: thread })
+
+      // set state, after some processing
+      this.setState({
+        thread: thread,
+        msgs: threadlib.flattenThread(thread),
+        isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
+      })
 
       // mark read
       if (thread.hasUnread) {
@@ -58,72 +64,6 @@ export default class Thread extends React.Component {
           this.setState({ thread: thread })
         })
       }
-
-      // collapse thread into a flat message-list
-      let msgIds = new Set([thread.key])
-      let msgs = [thread]
-      ;(thread.related||[]).forEach(msg => {
-        // filter out duplicates
-        if (msgIds.has(msg.key))
-          return // messages can be in the thread multiple times if there are >1 links
-        msgIds.add(msg.key)
-
-        if (msg.value.content.type == 'post') {
-          // replies
-          if (isaReplyTo(msg, thread)) {
-            msgs.push(msg)
-
-            // sub-messages
-            ;(msg.related||[]).forEach(submsg => {
-              // mentions
-              if (relationsTo(submsg, msg).indexOf('mentions') >= 0) {
-                msgs.push({ key: submsg.key, isMention: true, value: submsg.value })
-              }
-            })
-          }
-          // mentions
-          else if (relationsTo(msg, thread).indexOf('mentions') >= 0) {
-            msgs.push({ key: msg.key, isMention: true, value: msg.value })
-          }
-        }
-      })
-
-      // check for missing parents
-      let numAdded=0
-      msgs.slice().forEach((msg, i) => { // slice() - iterate a duplicate so that splices dont alter our iteration
-        if (msg.isMention)
-          return // ignore the mentions
-
-        const branch = mlib.link(msg.value.content.branch, 'msg')
-        if (branch && !msgIds.has(branch.link)) {
-          if (i === 0) {
-            // topmost post
-            // user may have navigated to a reply - try to load the parent, display a link if found and a warning if not
-            app.ssb.get(branch.link, (err, parentValue) => {
-              // async - use this.state.msgs
-              if (parentValue) {
-                this.state.msgs.unshift({ key: branch.link, isLink: true, value: parentValue })
-                this.setState({ msgs: this.state.msgs })
-              } else {
-                this.state.msgs.unshift({ key: branch.link, isNotFound: true })
-                this.setState({ msgs: this.state.msgs })
-              }
-            })
-          } else {
-            // one of the replies
-            // if the parent isnt somewhere in the thread, then we dont have it
-            msgs.splice(i+numAdded, 0, { key: branch.link, isNotFound: true }) // insert right above this post
-            msgIds.add(branch.link)
-            numAdded++ // track how many added, to know what offset inserts should be added at
-          }
-        }
-      })
-
-      this.setState({
-        thread: thread,
-        isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false,
-        msgs: msgs
-      })
 
       // listen for new replies
       if (this.props.live) {
