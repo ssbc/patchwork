@@ -32,6 +32,7 @@ exports.init = function (sbot, opts) {
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
     notifications: u.index('notifications'),
+    // other indexes: topic-* are created as needed
 
     // views
     profiles: {},
@@ -134,28 +135,30 @@ exports.init = function (sbot, opts) {
 
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
-      cb(null, {
+      var counts = {
         inbox: state.inbox.rows.length,
         inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         bookmarks: state.bookmarks.rows.length,
         bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
         notificationsUnread: state.notifications.countUntouched()
-      })
+      }
+      for (var k in state) {
+        if (k.indexOf('topic-') === 0)
+          counts[k] = state[k].rows.length
+      }
+      cb(null, counts)
     })
   }
 
-  api.createNewsfeedStream = indexStreamFn(state.newsfeed, function (row) { 
-    return row.key
-  })
-  api.createInboxStream = indexStreamFn(state.inbox, function (row) { 
-    return row.key
-  })
-  api.createBookmarkStream = indexStreamFn(state.bookmarks, function (row) { 
-    return row.key
-  })
-  api.createNotificationsStream = indexStreamFn(state.notifications, function (row) { 
-    return row.key
-  })
+  api.createNewsfeedStream = indexStreamFn(state.newsfeed)
+  api.createInboxStream = indexStreamFn(state.inbox)
+  api.createBookmarkStream = indexStreamFn(state.bookmarks)
+  api.createNotificationsStream = indexStreamFn(state.notifications)
+  api.createTopicStream = function (topic, opts) {
+    if (!topic || typeof topic !== 'string' || !state['topic-'+topic])
+      return pull.values([])
+    return indexStreamFn(state['topic-'+topic])(opts)
+  }
 
   function indexMarkRead (indexname, key, keyname) {
     if (Array.isArray(key)) {

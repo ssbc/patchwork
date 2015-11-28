@@ -696,3 +696,99 @@ tape('notifications index includes messages which mention the local user', funct
     })
   })
 })
+
+tape('topic index created when used', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    var done = multicb()
+    users.alice.add({ type: 'post', text: 'hello from alice', topic: 'topic-a' }, done())
+    users.bob.add({ type: 'post', text: 'hello from bob', topic: 'topic-a' }, done())
+    users.charlie.add({ type: 'post', text: 'hello from charlie', topic: 'the b topic' }, done())
+    done(function (err) {
+      if (err) throw err
+
+      pull(sbot.patchwork.createTopicStream('topic-a'), pull.collect(function (err, msgs) {
+        if (err) throw err
+        t.equal(msgs.length, 2)
+
+        pull(sbot.patchwork.createTopicStream('the b topic'), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 1)
+
+          sbot.patchwork.getIndexCounts(function (err, counts) {
+            if (err) throw err
+            t.equal(counts['topic-topic-a'], 2)
+            t.equal(counts['topic-the b topic'], 1)
+            t.end()
+            sbot.close()
+          })
+        }))
+      }))
+    })
+  })
+})
+
+tape('topic index gives empty results when not yet used', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    pull(sbot.patchwork.createTopicStream('some random, unused topic'), pull.collect(function (err, msgs) {
+      if (err) throw err
+      t.equal(msgs.length, 0)
+      t.end()
+      sbot.close()
+    }))
+  })
+})
+
+tape('topic index reorders correctly on replies', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'post', text: 'hello from alice', topic: 'the topic' }, function (err, msgA) {
+      if (err) throw err
+
+      users.charlie.add({ type: 'post', text: 'hello from charlie', topic: 'the topic' }, function (err, msgB) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createTopicStream('the topic', { threads: true }), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 2)
+          // most recent post is first
+          t.equal(msgs[0].key, msgB.key)
+          t.equal(msgs[1].key, msgA.key)
+
+          users.bob.add({ type: 'post', text: 'reply from bob', root: msgA.key, branch: msgA.key, topic: 'the topic' }, function (err, reply) {
+            if (err) throw err
+
+            pull(sbot.patchwork.createTopicStream('the topic', { threads: true }), pull.collect(function (err, msgs) {
+              if (err) throw err
+              t.equal(msgs.length, 2)
+              // reordered due to reply
+              t.equal(msgs[0].key, msgA.key)
+              t.equal(msgs[1].key, msgB.key)
+              t.end()
+              sbot.close()
+            }))
+          })
+        }))
+      })
+    })
+  })
+})

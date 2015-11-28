@@ -6,6 +6,7 @@ module.exports = {
   createInboxStream: 'source',
   createBookmarkStream: 'source',
   createNotificationsStream: 'source',
+  createTopicStream: 'source',
 
   markRead: 'async',
   markUnread: 'async',
