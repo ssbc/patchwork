@@ -6,6 +6,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import Tabs from './tabs'
+import TokensInput from './tokens-input'
 import { Block as MarkdownBlock } from './markdown'
 import { verticalFilled } from './index'
 import u from '../lib/util'
@@ -16,76 +17,48 @@ import social from '../lib/social-graph'
 const MarkdownBlockVerticalFilled = verticalFilled(MarkdownBlock)
 const RECP_LIMIT = 7
 const TOOLBAR_TABS = [
-  { label: <span><i className="fa fa-group" /> Public</span> },
-  { label: <span><i className="fa fa-lock" /> Private</span> }
+  { label: <span><i className="fa fa-group" /> All</span>, className: 'tab-composer-all', icon: 'group' },
+  { label: <span><i className="fa fa-commenting-o" /> Topic</span>, className: 'tab-composer-topic', icon: 'commenting-o' },
+  { label: <span><i className="fa fa-lock" /> Mail</span>, className: 'tab-composer-mail', icon: 'lock' }
 ]
-const TOOLBAR_TAB_PUBLIC  = TOOLBAR_TABS[0]
-const TOOLBAR_TAB_PRIVATE = TOOLBAR_TABS[1]
+const TOOLBAR_TAB_ALL  = TOOLBAR_TABS[0]
+const TOOLBAR_TAB_TOPIC  = TOOLBAR_TABS[1]
+const TOOLBAR_TAB_MAIL = TOOLBAR_TABS[2]
 
 class ComposerToolbar extends React.Component {
   render() {    
     return <div className="toolbar">
-      <Tabs options={TOOLBAR_TABS} selected={this.props.isPublic ? TOOLBAR_TAB_PUBLIC : TOOLBAR_TAB_PRIVATE} onSelect={this.props.onSelect} />
+      <Tabs options={TOOLBAR_TABS} fill selected={this.props.currentTab} onSelect={this.props.onSelect} />
     </div>
   }
 }
 
-class ComposerRecp extends React.Component {
-  render() {
-    return <span className="recp">
-      {u.getName(this.props.id)}
-      {this.props.isReadOnly ? '' : <a onClick={() => this.props.onRemove(this.props.id)}><i className="fa fa-remove"/></a>}
-    </span>
-  }
-}
-
-class ComposerRecps extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { inputText: '' }
-  }
-
+class ComposerTopic extends React.Component {
   componentDidMount() {
-    this.setupSuggest()
-  }
-  componentDidUpdate() {
-    this.setupSuggest()
-  }
-  setupSuggest() {
     // setup the suggest-box
-    const input = this.refs && this.refs.input
+    let input = this.refs && this.refs.input
     if (!input || input.isSetup)
       return
     input.isSetup = true
-    suggestBox(input, { any: app.suggestOptions['@'] }, { cls: 'msg-recipients' })
-    input.addEventListener('suggestselect', this.onSuggestSelect.bind(this))
-  }
 
-  onChange(e) {
-    this.setState({ inputText: e.target.value })
+    function getSuggestMatch (word, cb) {
+      let options = []
+      app.topics.forEach(t => {
+        if (t.topic.indexOf(word) === 0) {
+          options.push({
+            title: t.topic,
+            value: t.topic
+          })
+        }
+      })
+      cb(null, options)
+    }
+    suggestBox(input, { any: getSuggestMatch })
+    input.addEventListener('suggestselect', this.props.onChange)
   }
-
-  onSuggestSelect(e) {
-    this.props.onAdd(e.detail.id)
-    this.setState({ inputText: '' })
-  }
-
-  render() {
-    if (this.props.isPublic)
-      return <div/>
-    let isAtLimit = (this.props.recps.length >= RECP_LIMIT)
-    let warnings = this.props.recps.filter((id) => (id !== app.user.id) && !social.follows(id, app.user.id))
-    return <div className="composer-recps">
-      <div>
-        To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
-        { (!isAtLimit && !this.props.isReadOnly) ?
-          <input ref="input" type="text" placeholder="Add a recipient" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
-          '' }
-      </div>
-      { isAtLimit ? <div className="warning">Recipient limit reached</div> : '' }
-      { warnings.length ?
-        <div>{warnings.map(id => <div key={id} className="warning">Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :
-        '' }
+  render() {    
+    return <div className="topic">
+      <span>Topic:</span><input ref="input" onChange={this.props.onChange} value={this.props.value} placeholder="Choose a community (required)" />
     </div>
   }
 }
@@ -113,72 +86,29 @@ class ComposerTextareaFixed extends React.Component {
 }
 const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed)
 
-class ComposerDrafts extends React.Component {
-  render() {
-    if (!this.props.drafts.length)
-      return <span/>
-    return <div className="composer-drafts">
-      { this.props.drafts.map((draft, i) => {
-        const current = draft === this.props.currentDraft
-        return <div key={'draft'+i} className={current?'selected':''}>
-          <div onClick={()=>this.props.onOpenDraft(draft)}>{draft.text}</div>
-          { current ?
-            <div><i className="fa fa-pencil" /></div> :
-            <div className="delete" onClick={()=>this.props.onDeleteDraft(draft)}><i className="fa fa-times" /></div> }
-        </div>
-      }) }
-    </div>
-  }
-}
-
 export default class Composer extends React.Component {
   constructor(props) {
     super(props)
 
-    // load drafts, if not writing a reply
-    var drafts
-    if (!this.props.thread) {
-      try { drafts = JSON.parse(localStorage.drafts) }
-      catch (e) {}
-    }
-
     // thread info
-    let recps = []
     this.threadRoot = null
     this.threadBranch = null
     if (this.props.thread) {
       // root and branch links
       this.threadRoot = this.props.thread.key
       this.threadBranch = threadlib.getLastThreadPost(this.props.thread).key
-
-      // extract encryption recipients from thread
-      if (Array.isArray(this.props.thread.value.content.recps)) {
-        recps = mlib.links(this.props.thread.value.content.recps)
-          .map(function (recp) { return recp.link })
-          .filter(Boolean)
-      }
     }
 
     // setup state (pulling from thread)
-    this.state = {
-      isPublic: this.props.thread ? isThreadPublic(this.props.thread) : true,
-      isPreviewing: false,
-      isSending: false,
-      isReply: !!this.props.thread,
-      hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
-      recps: recps,
-      currentDraft: null, // only used if !isReply
-      drafts: drafts || [], // only used if !isReply
-      text: ''
-    }
+    this.state = this.buildFreshState()
 
     // convenient event helpers
     this.toolbarHandlers = {
-      onSelect: (v)  => {
+      onSelect: (tab)  => {
         // update state
-        const isPublic = (v == TOOLBAR_TAB_PUBLIC)
-        this.updateDraft({ isPublic: isPublic })
-        this.setState({ isPublic: isPublic }, () => {
+        const isPublic = (tab !== TOOLBAR_TAB_MAIL)
+        const isTopic = (tab === TOOLBAR_TAB_TOPIC)
+        this.setState({ currentTab: tab, isTopic: isTopic, isPublic: isPublic }, () => {
           // trigger size recalc
           try { this.refs.textarea.calcHeight() }
           catch (e) { console.log(e) }
@@ -187,9 +117,40 @@ export default class Composer extends React.Component {
     }
   }
 
+  buildFreshState() {
+    let recps = []
+    let topic = ''
+    if (this.props.thread) {
+      topic = this.props.thread.value.content.topic || ''
+
+      // extract encryption recipients from thread
+      if (Array.isArray(this.props.thread.value.content.recps)) {
+        recps = mlib.links(this.props.thread.value.content.recps)
+          .map(function (recp) { return recp.link })
+          .filter(Boolean)
+      }
+    }
+    const isPublic = this.props.thread ? isThreadPublic(this.props.thread) : true
+    return {
+      currentTab: isPublic ? TOOLBAR_TAB_ALL : TOOLBAR_TAB_MAIL,
+      isPublic: isPublic,
+      isTopic: !!topic,
+      isPreviewing: false,
+      isSending: false,
+      isReply: !!this.props.thread,
+      hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
+      recps: recps,
+      text: '',
+      topic: topic
+    }
+  }
+
   onChangeText(e) {
     this.setState({ text: e.target.value })
-    this.updateDraft({ text: e.target.value })
+  }
+
+  onChangeTopic(e) {
+    this.setState({ topic: e.target.value })
   }
 
   onAttach() {
@@ -238,7 +199,8 @@ export default class Composer extends React.Component {
     filesInput.value = '' // clear file list
   }
 
-  onAddRecp(id) {
+  onAddRecp(entry) {
+    const id = entry.id
     let recps = this.state.recps
 
     // enforce limit
@@ -251,62 +213,28 @@ export default class Composer extends React.Component {
       recps.splice(i, 1)
     recps.push(id)
     this.setState({ recps: recps })
-    this.updateDraft({ recps: recps })
   }
 
-  onRemoveRecp(id) {
+  onRemoveRecp(token) {
+    const id = token.value
     let recps = this.state.recps
     var i = recps.indexOf(id)
     if (i !== -1) {
       recps.splice(i, 1)
       this.setState({ recps: recps })
-      this.updateDraft({ recps: recps })
     }
-  }
-
-  onOpenDraft(draft) {
-    this.setState({ currentDraft: draft, text: draft.text, recps: draft.recps, isPublic: draft.isPublic })
-  }
-
-  onDeleteDraft(draft) {
-    // remove draft
-    const drafts = this.state.drafts.filter(d => d !== draft)
-    this.setState({ drafts: drafts })
-    // save
-    localStorage.drafts = JSON.stringify(drafts)
-  }
-
-  updateDraft(values) {
-    // dont use drafts in replies (atm)
-    if (this.state.isReply)
-      return
-
-    // get/create draft
-    let draft = this.state.currentDraft
-    if (!draft) {
-      draft = { text: this.state.text, recps: this.state.recps, isPublic: this.state.isPublic }
-      this.state.drafts.unshift(draft)
-      this.setState({
-        currentDraft: this.state.currentDraft || draft,
-        drafts: this.state.drafts
-      })
-    }
-
-    // update values
-    for (var k in values)
-      draft[k] = values[k]
-
-    // save
-    localStorage.drafts = JSON.stringify(this.state.drafts)
   }
 
   canSend() {
-    return !!this.state.text.trim()
+    return !!this.state.text.trim() && (!this.state.isTopic || !!this.state.topic.trim())
   }
 
   onSend() {
     var text = this.state.text
+    var topic = this.state.topic
     if (!text.trim())
+      return
+    if (this.state.isTopic && !topic.trim())
       return
 
     this.setState({ isSending: true })
@@ -339,15 +267,15 @@ export default class Composer extends React.Component {
       }
 
       // publish
-      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
+      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks, topic||undefined)
+      if (topic && !post.topic) // TEMP make sure topic gets added, remove this when ssb-msg-schemas update is deployed!!
+        post.topic = topic
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
         else {
-          // remove draft and reset form
-          this.setState({ text: '', isPreviewing: false })
-          if (this.state.currentDraft)
-            this.onDeleteDraft(this.state.currentDraft)
+          // reset form
+          this.setState(this.buildFreshState())
 
           // mark read (include the thread root because the api will automatically mark the root unread on new reply)
           app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key)
@@ -365,13 +293,28 @@ export default class Composer extends React.Component {
   }
 
   render() {
-    let msgType = this.state.isPublic ? 'public' : 'private'
+    const recpTokens = this.state.recps.map(r => ({ value: r, label: u.getName(r) }))
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const ComposerPreview  = (this.props.verticalFilled) ? MarkdownBlockVerticalFilled : MarkdownBlock
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
-      <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
+      <ComposerToolbar currentTab={this.state.currentTab} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
+      { this.state.currentTab === TOOLBAR_TAB_TOPIC ?
+        <ComposerTopic value={this.state.topic} onChange={this.onChangeTopic.bind(this)} />
+        : '' }
+      { this.state.currentTab === TOOLBAR_TAB_MAIL ?
+        <TokensInput
+          className="composer-recps"
+          label="To:"
+          placeholder="Add a recipient"
+          tokens={recpTokens}
+          suggestOptions={app.suggestOptions['@']}
+          onAdd={this.onAddRecp.bind(this)}
+          onRemove={this.onRemoveRecp.bind(this)}
+          isReadOnly={this.state.isReply} 
+          maxTokens={RECP_LIMIT}
+          limitErrorMsg={`Recipient limit (${RECP_LIMIT}) reached`} />
+        : '' }
       <div className="composer-content">
         { this.state.isPreviewing ?
           <ComposerPreview md={this.state.text} /> :
@@ -393,7 +336,7 @@ export default class Composer extends React.Component {
         <div>
           { (!this.canSend() || this.state.isSending) ?
             <a className="btn disabled">Send</a> :
-            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.state.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ 'fa fa-'+this.state.currentTab.icon }/> Send</a> }
         </div>
       </div>
     </div>

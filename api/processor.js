@@ -13,19 +13,34 @@ module.exports = function (sbot, db, state, emit) {
       var recps = mlib.links(c.recps)
       var mentions = mlib.links(c.mentions)
 
-      // newsfeed index: add public posts
-      if (!root && recps.length === 0) {
-        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
-        emit('index-change', { index: 'newsfeed' })
-      }
-
-      // newsfeed index: update for replies
-      var newsfeedRow
-      if (root) {
-        newsfeedRow = state.newsfeed.find(root.link)
-        if (newsfeedRow) {
-          state.newsfeed.sortedUpsert(msg.value.timestamp, root.link)
+      if (c.topic && typeof c.topic === 'string') {
+        // topics index: add root posts / update for replies
+        var indexName = 'topic-'+c.topic
+        var index = state[indexName] = (state[indexName] || u.index(indexName))
+        if (root) {
+          // reply
+          var topicRow = index.find(root.link)
+          if (topicRow) {
+            index.sortedUpsert(msg.value.timestamp, root.link)
+            emit('index-change', { index: indexName })            
+          }
+        } else {
+          // new post
+          index.sortedUpsert(msg.value.timestamp, msg.key)
+          emit('index-change', { index: indexName })
+        }
+      } else {
+        // newsfeed index: add public posts / update for replies
+        if (!root && recps.length === 0) {
+          state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
           emit('index-change', { index: 'newsfeed' })
+        }
+        else if (root) {
+          var newsfeedRow = state.newsfeed.find(root.link)
+          if (newsfeedRow) {
+            state.newsfeed.sortedUpsert(msg.value.timestamp, root.link)
+            emit('index-change', { index: 'newsfeed' })
+          }
         }
       }
 

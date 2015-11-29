@@ -32,6 +32,7 @@ export default (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
       <IndexRoute component={NewsFeed} />
+      <Route path="topic/:topic" component={NewsFeed} />
       <Route path="msg/:id" component={Msg} />
       <Route path="notifications" component={Notifications} />
       <Route path="inbox" component={Inbox} />
