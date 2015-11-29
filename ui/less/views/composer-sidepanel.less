@@ -2,12 +2,15 @@
   .elevation-dialog;
   background: #fff;
   border-left: 1px solid #ddd;
-  position: relative;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
   z-index: 2000; // double the z-index of floating toolbars
   overflow: hidden;
   width: 0;
-//  transition: width 0.15s;
-//  transition-timing-function: cubic-bezier(0.47, 0, 0.75, 0.72);
+  transition: width 0.15s;
+  transition-timing-function: cubic-bezier(0.47, 0, 0.75, 0.72);
 
   &.open {
     width: 523px;

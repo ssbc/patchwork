@@ -14,17 +14,12 @@
     background: #4DA1FF;
     text-align: center;
     color: #fff;
-    transition: 0.2s box-shadow, 0.2s background, 0.2s color, 0.2s border-radius, 0.2s width;
+    transition: 0.2s ease-out;
+    whitespace: pre;
 
     .inner {
       position: relative;
       top: 13px;
-
-      .fa-caret-right {
-        // adjustment to make icon line up with text
-        position: relative;
-        top: 2px;
-      }
     }
 
     &:before {
@@ -59,7 +54,6 @@
       width: 50px;
       height: 23px;
       border-radius: 0;
-      text-align: right;
       font-weight: 100;
       font-size: 18px;
       border-top: 1px solid #ddd;
