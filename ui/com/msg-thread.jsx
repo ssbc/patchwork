@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
@@ -262,23 +263,23 @@ export default class Thread extends React.Component {
         </div>
       </div>
       <VerticalFilledContainer id="msg-thread-vertical">
-        <div className="items">
-          { this.state.msgs.map((msg, i) => {
-            const isFirst = (i === 0)
-            return <Card
-              key={msg.key}
-              msg={msg}
-              noReplies
-              noBookmark
-              forceRaw={this.props.forceRaw}
-              forceOpen={isFirst}
-              onSelect={()=>this.openMsg(msg.key)}
-              onToggleStar={()=>this.onToggleStar(msg)}
-              onFlag={(msg, reason)=>this.onFlag(msg, reason)}
-              onToggleBookmark={()=>this.onToggleBookmark(msg)} />
-          }) }
-          { thread ? <div className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div> : '' }
-        </div>
+        <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+            { this.state.msgs.map((msg, i) => {
+              const isFirst = (i === 0)
+              return <Card
+                key={msg.key}
+                msg={msg}
+                noReplies
+                noBookmark
+                forceRaw={this.props.forceRaw}
+                forceOpen={isFirst}
+                onSelect={()=>this.openMsg(msg.key)}
+                onToggleStar={()=>this.onToggleStar(msg)}
+                onFlag={(msg, reason)=>this.onFlag(msg, reason)}
+                onToggleBookmark={()=>this.onToggleBookmark(msg)} />
+            }) }
+            { thread ? <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div> : '' }
+        </ReactCSSTransitionGroup>
       </VerticalFilledContainer>
     </div>
   }

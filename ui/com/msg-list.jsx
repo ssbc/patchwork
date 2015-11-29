@@ -3,6 +3,7 @@ import pull from 'pull-stream'
 import moment from 'moment'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
@@ -380,7 +381,7 @@ export default class MsgList extends React.Component {
                 (this.props.emptyMsg || 'No new messages.') }
             </div>
             :
-            <div>
+            <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
               { this.state.msgs.map((m, i) => {
                 // render item
                 const item = <ListItem
@@ -397,7 +398,7 @@ export default class MsgList extends React.Component {
                   return <div key={m.key}><hr className="msgs-divider" data-label={lastDate.endOf('day').from(endOfToday)} />{item}</div>
                 return item
               }) }
-            </div>
+            </ReactCSSTransitionGroup>
           }
           {append}
         </Infinite>
