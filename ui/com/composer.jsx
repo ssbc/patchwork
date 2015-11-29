@@ -130,9 +130,10 @@ export default class Composer extends React.Component {
           .filter(Boolean)
       }
     }
+    const isPublic = this.props.thread ? isThreadPublic(this.props.thread) : true
     return {
-      currentTab: this.props.thread ? TOOLBAR_TAB_MAIL : TOOLBAR_TAB_ALL,
-      isPublic: this.props.thread ? isThreadPublic(this.props.thread) : true,
+      currentTab: isPublic ? TOOLBAR_TAB_ALL : TOOLBAR_TAB_MAIL,
+      isPublic: isPublic,
       isTopic: !!topic,
       isPreviewing: false,
       isSending: false,
