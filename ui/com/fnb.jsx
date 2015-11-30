@@ -33,7 +33,7 @@ export default class FNB extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      isExpanded: true
+      isExpanded: false
     }
   }
   onClick() {
