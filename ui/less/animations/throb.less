@@ -1,0 +1,12 @@
+.anim-throb(@delay: 0s) {
+  animation: throb-keyframes 0.6s @delay linear infinite;
+}
+
+@keyframes throb-keyframes {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}

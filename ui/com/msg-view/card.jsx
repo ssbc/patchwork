@@ -48,9 +48,9 @@ class DigBtn extends React.Component {
     this.props.onClick()
   }
   render() {
-    let label = this.props.isUpvoted ? 'Dug it' : 'Dig it'
+    let label = this.props.isUpvoted ? 'Dug' : 'Dig'
     return <a className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
-      <i className="fa fa-hand-peace-o" /> {label}
+      <i className="fa fa-hand-peace-o" /> {label.split('').map((l,i) => <span key={i}>{l}</span>)} <span>i</span><span>t</span>
     </a>
   }
 }
