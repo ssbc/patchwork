@@ -1,8 +1,8 @@
 'use babel'
 import React from 'react'
-import MsgList from '../com/msg-list'
-import Notification from '../com/msg-view/notification'
-import * as HelpCards from '../com/help/cards'
+import MsgList from './msg-list'
+import Notification from './msg-view/notification'
+import app from '../lib/app'
 
 const FILTERS = [
   { label: 'All', fn: msg => true },
@@ -16,26 +16,33 @@ export default class Notifications extends React.Component {
     if (msg)
       return [msg.ts, false]
   }
-
-  helpCards() {
-    return <div className="cards-flow">
-      <HelpCards.Notifications />
-      <HelpCards.Pubs />
-      <HelpCards.FindingUsers />
-    </div>
-  }
-
   render() {
-    return <div id="notifications">
+    return <div className="notifications">
       <MsgList
-        floatingToolbar
         ListItem={Notification}
         emptyMsg="No new notifications."
-        append={this.helpCards.bind(this)}
         filters={FILTERS}
         source={app.ssb.patchwork.createNotificationsStream}
         cursor={this.cursor} 
         live={{ gt: [Date.now(), false] }} />
+    </div>
+  }
+}
+
+export default class FNB extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isExpanded: true
+    }
+  }
+  onClick() {
+    this.setState({ isExpanded: !this.state.isExpanded })
+  }
+  render() {
+    return <div className={'fnb '+(this.props.className||'')+(this.state.isExpanded?' expanded':'')}>
+      <div className="fnb-btn"><a onClick={this.onClick.bind(this)}><i className="fa fa-bell" /></a></div>
+      { this.state.isExpanded ? <Notifications/> : '' }
     </div>
   }
 }

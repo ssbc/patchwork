@@ -1,0 +1,62 @@
+.fnb {
+  position: fixed;
+  top: 0;
+  right: 15px;
+  z-index: 2000;
+
+  .fnb-btn {
+    text-align: right;
+
+    a {
+      display: inline-block;
+      font-size: 24px;
+      width: 30px;
+      padding: 5px 8px;
+      color: gray;
+      text-align: center;
+      border: 1px solid transparent;
+
+      &:hover {
+        background: #fff;
+        color: #666;
+      }
+    }
+  }
+
+  &.expanded {
+    height: 100%;
+    .fnb-btn a {
+      position: relative;
+      background: #fff;
+      color: #666; 
+      border: 1px solid #ccc;
+      border-bottom: 0;
+
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        height: 2px;
+        width: 100%;
+        background: #fff;
+      }
+    }
+  }
+
+  .notifications {
+    .elevation-menu;
+    height: 100%;
+    overflow: hidden;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+
+    .toolbar {
+      background: #fff;
+      font-size: 14px;
+    }
+    .msg-list-items {
+      padding-top: 0;
+    }
+  }
+}
