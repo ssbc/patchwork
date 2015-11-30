@@ -17,7 +17,7 @@ export default class Notifications extends React.Component {
       return [msg.ts, false]
   }
   render() {
-    return <div className="notifications">
+    return <div className="notifications" onMouseLeave={this.props.onMouseLeave}>
       <MsgList
         ListItem={Notification}
         emptyMsg="No new notifications."
@@ -54,10 +54,13 @@ export default class FNB extends React.Component {
   onClick() {
     this.setState({ isExpanded: !this.state.isExpanded })
   }
+  onMouseLeave() {
+    this.setState({ isExpanded: false })
+  }
 
   render() {
     const count = this.state.count || ''
-    return <div className={'fnb '+(this.props.className||'')+(this.state.isExpanded?' expanded':'')}>
+    return <div className={'fnb '+(this.props.className||'')+(this.state.isExpanded?' expanded':'')} onMouseLeave={this.onMouseLeave.bind(this)}>
       <div className="fnb-btn"><a className={count?'attention':''} data-count={count} onClick={this.onClick.bind(this)}><i className="fa fa-bell" /></a></div>
       { this.state.isExpanded ? <Notifications/> : '' }
     </div>
