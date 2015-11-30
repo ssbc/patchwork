@@ -8,6 +8,7 @@
     text-align: right;
 
     a {
+      position: relative;
       display: inline-block;
       font-size: 24px;
       width: 30px;
@@ -16,8 +17,26 @@
       text-align: center;
       border: 1px solid transparent;
 
+      &:before {
+        content: attr(data-count);
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        color: #fff;
+        font-family: @code-font;
+        font-size: 9px;
+        transform: translateX(-50%);
+      }
+
       &:hover {
         color: #666;
+      }
+
+      &.attention {
+        color: #C32727;
+        &:hover {
+          color: darken(#C32727, 10%);
+        }
       }
     }
   }
@@ -25,7 +44,6 @@
   &.expanded {
     height: 100%;
     .fnb-btn a {
-      position: relative;
       background: #fff;
       color: #666; 
       border: 1px solid #ccc;

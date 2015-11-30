@@ -33,15 +33,32 @@ export default class FNB extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      isExpanded: false
+      isExpanded: false,
+      count: 0
+    }
+    this.setCount = () => {
+      this.setState({ count: app.indexCounts.notificationsUnread })
     }
   }
+  componentDidMount() {
+    // setup event stream
+    app.on('update:all', this.setCount)
+    app.on('update:indexCounts', this.setCount)
+  }
+  componentWillUnmount() {
+    // abort streams
+    app.removeListener('update:all', this.setCount)
+    app.removeListener('update:indexCounts', this.setCount)
+  }
+
   onClick() {
     this.setState({ isExpanded: !this.state.isExpanded })
   }
+
   render() {
+    const count = this.state.count || ''
     return <div className={'fnb '+(this.props.className||'')+(this.state.isExpanded?' expanded':'')}>
-      <div className="fnb-btn"><a onClick={this.onClick.bind(this)}><i className="fa fa-bell" /></a></div>
+      <div className="fnb-btn"><a className={count?'attention':''} data-count={count} onClick={this.onClick.bind(this)}><i className="fa fa-bell" /></a></div>
       { this.state.isExpanded ? <Notifications/> : '' }
     </div>
   }
