@@ -43,8 +43,8 @@ export default class Layout extends React.Component {
     return <div className="layout-rows">
       <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       { composing ?
-        <FAB className="expanded gray" icon="caret-right" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
-        <FAB onClick={this.toggleComposerOpen.bind(this)} /> }
+        <FAB className="expanded gray" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
+        <FAB icon="pencil" onClick={this.toggleComposerOpen.bind(this)} /> }
       <FNB />
       <div className="layout-columns">
         <LeftNav
@@ -55,9 +55,9 @@ export default class Layout extends React.Component {
           friends={this.state.user.friends}
           following={this.state.user.nonfriendFolloweds}
           followers={this.state.user.nonfriendFollowers} />
-        <div id="mainview" className={composing?'contracted':''}>{this.props.children}</div>
-        <ComposerSidePanel isOpen={this.state.isComposerOpen} />
+        <div id="mainview">{this.props.children}</div>
       </div>
+      <ComposerSidePanel isOpen={this.state.isComposerOpen} />
     </div>
   }
 }

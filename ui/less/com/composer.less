@@ -78,6 +78,19 @@
     .btn {
       padding: 10px 20px;
       border-radius: 0;
+      background: none;
+      box-shadow: none;
+      &:hover {
+        .elevation-btn-raised;
+        background: #fff;
+      }   
+      &.highlighted {
+        color: #fff;
+        background: #4880F1;
+        &:hover {
+          background: #2967E2;
+        }
+      }
       &.disabled {
         cursor: default;
         color: #aaa !important;
