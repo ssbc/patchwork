@@ -365,10 +365,8 @@ export default class MsgList extends React.Component {
           isInfiniteLoading={this.state.isLoading} >
           { this.props.hero ? this.props.hero() : '' }
           <div className={'msg-list-ctrls toolbar'+(this.props.floatingToolbar?' floating':'')}>
-            <div className="centered">
-              { this.props.toolbar ? this.props.toolbar() : '' }
-              { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
-            </div>
+            { this.props.toolbar ? this.props.toolbar() : '' }
+            { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
           </div>
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>

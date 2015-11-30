@@ -5,6 +5,7 @@ import LeftNav from './views/leftnav'
 import ComposerSidePanel from './views/composer-sidepanel'
 import { SetupModal, FABComposerModal } from './com/modals'
 import FAB from './com/fab'
+import FNB from './com/fnb'
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -44,6 +45,7 @@ export default class Layout extends React.Component {
       { composing ?
         <FAB className="expanded gray" icon="caret-right" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
         <FAB onClick={this.toggleComposerOpen.bind(this)} /> }
+      <FNB />
       <div className="layout-columns">
         <LeftNav
           location={this.props.location.pathname}
