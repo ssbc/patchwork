@@ -33,19 +33,49 @@ function isNotLAN (peer) {
 
 class PeerGraph extends React.Component {
 
-  componentDidMount () {
-    const el = ReactDOM.findDOMNode(this)
-    const graph = peersToGraph(this.props.peers)
-    const renderer = setupRenderer(graph, el)
-    renderer.run()
+  constructor (props) {
+    super(props)
+    this.state = {
+      graph: peersToGraph(props.peers)
+    }
   }
 
-  render() {
+  componentDidMount () {
+    this.setupRenderer()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    console.log("next peers", nextProps.peers)
+    // TODO merge diff between this.props and nextProps
+    // into updates for this.state.graph
+    // which the render will listen to through events
+    // and apply appropriately
+    //
+    // HACK instead
+    this.state.graph = updateGraph(this.state.graph, nextProps.peers)
+  }
+
+  componentWillUnmount () {
+    this.state.renderer.dispose()
+  }
+
+  setupRenderer () {
+    const el = ReactDOM.findDOMNode(this)
+    const renderer = createRenderer(this.state.graph, el)
+
+    renderer.run()
+
+    this.setState({
+      renderer: renderer
+    })
+  }
+
+  render () {
     return <div className="peer-graph-container" />
   }
 }
 
-function setupRenderer (graph, el) {
+function createRenderer (graph, el) {
   return ngraphSvg(graph, {
     container: el
   })
@@ -55,11 +85,40 @@ function setupRenderer (graph, el) {
 function peersToGraph (peers) {
   let graph = ngraphGraph()
   // TODO
-  graph.addLink(0, 1)
-  graph.addLink(2, 1)
+  console.log("peers", peers)
+  if (!peers) {
+    return graph
+  }
+
+  peers.forEach( function(peer) {
+    peers.forEach( function(otherPeer) {
+      if (peer === otherPeer) return
+
+      if ( social.follows(peer.key, otherPeer.key) && social.follows(otherPeer.key, peer.key) ) {
+        graph.addLink(peer.key, otherPeer.key)
+      }
+    })
+  })
   // TODO
   return graph
 }
+
+function updateGraph (graph, peers) {
+  //TODO dry up
+  
+  peers.forEach( function(peer) {
+    peers.forEach( function(otherPeer) {
+      if (peer === otherPeer) return
+
+      if ( social.follows(peer.key, otherPeer.key) && social.follows(otherPeer.key, peer.key) ) {
+        graph.addLink(peer.key, otherPeer.key)
+      }
+    })
+  })
+  return graph
+}
+
+
 
 //class Peer extends React.Component {
   //render() {
@@ -252,7 +311,7 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
-        <PeerGraph />
+        <PeerGraph peers={this.state.peers} />
       </div>
 
     </VerticalFilledContainer>
