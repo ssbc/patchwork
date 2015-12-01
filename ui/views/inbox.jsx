@@ -31,6 +31,7 @@ export default class Inbox extends React.Component {
       <MsgList
         threads
         floatingToolbar
+        search
         ListItem={Oneline}
         filters={FILTERS}
         live={{ gt: [Date.now(), null] }}
