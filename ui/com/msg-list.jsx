@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
+import ssbref from 'ssb-ref'
 import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
 import SimpleInfinite from './simple-infinite'
@@ -232,11 +233,22 @@ export default class MsgList extends React.Component {
 
   onSearchKeyDown(e) {
     if (e.keyCode == 13) { // on enter
-      console.log('setting search', e.target.value)
       var query = e.target.value
-      if (query && query.trim())
-        query = new RegExp(query, 'i')
-      else
+      if (query && query.trim()) {
+        if (ssbref.isLink(query)) {
+          // a link, lookup
+          if (ssbref.isFeedId(query)) {
+            app.history.pushState(null, '/profile/'+encodeURIComponent(query))
+          } else if (ssbref.isMsgId(query)) {
+            app.history.pushState(null, '/msg/'+encodeURIComponent(query))
+          } else if (ssbref.isBlobId(query)) {
+            app.history.pushState(null, '/webview/'+encodeURIComponent(query))            
+          }
+        } else {
+          // text query
+          query = new RegExp(query, 'i')
+        }
+      } else
         query = false
       this.reload({ searchQuery: query })
     }
