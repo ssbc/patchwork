@@ -1,7 +1,10 @@
 'use babel'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import pull from 'pull-stream'
 import ip from 'ip'
+import ngraphGraph from 'ngraph.graph'
+import ngraphSvg from 'ngraph.svg'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
@@ -26,6 +29,36 @@ function isLAN (peer) {
 
 function isNotLAN (peer) {
   return !isLAN(peer)
+}
+
+class PeerGraph extends React.Component {
+
+  componentDidMount () {
+    const el = ReactDOM.findDOMNode(this)
+    const graph = peersToGraph(this.props.peers)
+    const renderer = setupRenderer(graph, el)
+    renderer.run()
+  }
+
+  render() {
+    return <div className="peer-graph-container" />
+  }
+}
+
+function setupRenderer (graph, el) {
+  return ngraphSvg(graph, {
+    container: el
+  })
+}
+
+
+function peersToGraph (peers) {
+  let graph = ngraphGraph()
+  // TODO
+  graph.addLink(0, 1)
+  graph.addLink(2, 1)
+  // TODO
+  return graph
 }
 
 //class Peer extends React.Component {
@@ -216,6 +249,10 @@ export default class Sync extends React.Component {
           this.state.peers.filter(isNotLAN).
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
+      </div>
+
+      <div className='peer-status-group'>
+        <PeerGraph />
       </div>
 
     </VerticalFilledContainer>

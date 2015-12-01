@@ -48,6 +48,8 @@
     "multiblob": "^1.5.0",
     "multicb": "^1.1.0",
     "muxrpc": "^6.1.1",
+    "ngraph.graph": "0.0.12",
+    "ngraph.svg": "0.0.15",
     "nicedate": "~0.0.0",
     "observable": "^2.1.3",
     "once": "~1.3.1",
