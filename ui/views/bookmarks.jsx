@@ -30,6 +30,7 @@ export default class Bookmarks extends React.Component {
       <MsgList
         threads
         floatingToolbar
+        search
         live={{ gt: [Date.now(), null] }}
         ListItem={Oneline}
         filters={FILTERS}
