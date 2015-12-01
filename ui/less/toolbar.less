@@ -46,4 +46,26 @@
       border-right: 1px solid #ccc;
     }
   }
+
+  .search {
+    display: inline-block;
+    position: relative;
+    i {
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      color: #aaa;
+    }
+    input {
+      color: gray;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      padding: 2px 0 3px 30px;
+      width: 120px;
+
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
 }
