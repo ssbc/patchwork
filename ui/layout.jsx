@@ -3,7 +3,8 @@ import React from 'react'
 import app from './lib/app'
 import LeftNav from './views/leftnav'
 import ComposerSidePanel from './views/composer-sidepanel'
-import { SetupModal, FABComposerModal } from './com/modals'
+import { FABComposerModal } from './com/modals'
+import SetupFlow from './com/modals/setup-flow'
 import FAB from './com/fab'
 import FNB from './com/fnb'
 
@@ -41,7 +42,7 @@ export default class Layout extends React.Component {
   render() {
     const composing = this.state.isComposerOpen
     return <div className="layout-rows">
-      <SetupModal isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <SetupFlow isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       { composing ?
         <FAB className="expanded gray" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
         <FAB icon="pencil" onClick={this.toggleComposerOpen.bind(this)} /> }

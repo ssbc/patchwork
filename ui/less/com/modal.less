@@ -1,3 +1,76 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(100, 100, 100, 0.75);
+  z-index: 10000;
+
+  .modal-inner {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    left: 50%;
+    width: 640px;
+    transform: translateX(-50%);
+
+    box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    border: 0;
+    background: #fff;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    outline: none;
+    padding: 0;
+  }
+
+  .modal-content {
+    flex: 1;
+    padding: 0 50px;
+    h1 {
+      margin-top: 30px;
+      font-weight: 200;
+      font-size: 2.5em;
+      color: #777;
+
+      .rainbow {
+        font-weight: normal;
+        span:nth-child(1) { .anim-rainbow-color(0.1s); }
+        span:nth-child(2) { .anim-rainbow-color(0.15s); }
+        span:nth-child(3) { .anim-rainbow-color(0.2s); }
+        span:nth-child(4) { .anim-rainbow-color(0.25s); }
+        span:nth-child(5) { .anim-rainbow-color(0.3s); }
+        span:nth-child(6) { .anim-rainbow-color(0.35s); }
+        span:nth-child(7) { .anim-rainbow-color(0.4s); }
+        span:nth-child(8) { .anim-rainbow-color(0.45s); }
+      }
+    }
+  }
+  .modal-helptext {
+    flex: 0 0 100px;
+  }
+  .modal-ctrls {
+    display: flex;
+    flex: 0 0 70px;
+    padding: 0 20px 0 0;
+    .stepped-progress-bar {
+      flex: 1;
+      margin: 7px 5px 0 0;
+    }
+    .next {
+      flex: 0 0 170px;
+    }
+  }
+  .btn {
+    padding: 10px 50px;
+    font-size: 18px;
+  }
+}
+
 .ReactModal__Content {
   form {
     height: 100%;
