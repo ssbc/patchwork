@@ -45,7 +45,6 @@ class UserGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    console.log("next users", nextProps.users)
     // TODO merge diff between this.props and nextProps
     // into updates for this.state.graph
     // which the render will listen to through events
@@ -77,11 +76,23 @@ class UserGraph extends React.Component {
 }
 
 function createRenderer (graph, el) {
+  const radius = 4
+
   return ngraphSvg(graph, {
     container: el,
     physics: {
       springLength: 100
     }
+  }).node(function(node) {
+    
+    return ngraphSvg.svg("circle", {
+      r: radius,
+      cx: 2*radius,
+      cy: 2*radius,
+      fill: "#00a2e8"
+    })
+  }).placeNode(function nodePositionCallback(nodeUI, pos) {
+    nodeUI.attr("cx", pos.x).attr("cy", pos.y);
   })
 }
 
@@ -103,8 +114,10 @@ function updateGraph (graph, users) {
     if (graph.getNode(user.id)) return 
 
     const newNode = graph.addNode(user.id, {
+      id: user.id,
       name: user.name
     })
+    //const newNode = addCustomNode(graph, user)
     users.forEach( function(otherUser) {
       if (user === otherUser) return
 
