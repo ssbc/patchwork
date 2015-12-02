@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
+import ssbref from 'ssb-ref'
 import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
 import SimpleInfinite from './simple-infinite'
@@ -110,22 +111,6 @@ export default class MsgList extends React.Component {
         if (this.state.isLoading)
           return
         this.setState({ activeFilter: filter }, () => this.reload())
-      },
-      onSearchKeydown: (e) => {
-        // enter pressed?
-        if (e.keyCode !== 13)
-          return
-
-        // set the query and reload messages
-        let query = this.refs.searchInput.value
-        if (query.trim())
-          query = new RegExp(query.trim(), 'i')
-        else
-          query = false
-        this.setState({ searchQuery: query, msgs: [], isAtEnd: false }, () => {
-          this.botcursor = null
-          this.loadMore({ amt: 30 })
-        })
       }
     }
   }
@@ -158,8 +143,8 @@ export default class MsgList extends React.Component {
     </div>
   }
 
-  reload() {
-    this.setState({ isAtEnd: false, newMsgQueue: [] }, () => {
+  reload(newState) {
+    this.setState({ isAtEnd: false, newMsgQueue: [], ...newState }, () => {
       this.botcursor = null
       this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT, fresh: true })
     })
@@ -205,8 +190,7 @@ export default class MsgList extends React.Component {
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
       (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
-      // :TODO: restore search
-      // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
+      (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
 
         if (this.props.queueNewMsgs) {
@@ -247,6 +231,29 @@ export default class MsgList extends React.Component {
     this.loadMore({ amt })
   }
 
+  onSearchKeyDown(e) {
+    if (e.keyCode == 13) { // on enter
+      var query = e.target.value
+      if (query && query.trim()) {
+        if (ssbref.isLink(query)) {
+          // a link, lookup
+          if (ssbref.isFeedId(query)) {
+            app.history.pushState(null, '/profile/'+encodeURIComponent(query))
+          } else if (ssbref.isMsgId(query)) {
+            app.history.pushState(null, '/msg/'+encodeURIComponent(query))
+          } else if (ssbref.isBlobId(query)) {
+            app.history.pushState(null, '/webview/'+encodeURIComponent(query))            
+          }
+        } else {
+          // text query
+          query = new RegExp(query, 'i')
+        }
+      } else
+        query = false
+      this.reload({ searchQuery: query })
+    }
+  }
+
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
     if (this.props.threads && !('related' in msg)) {
@@ -260,12 +267,12 @@ export default class MsgList extends React.Component {
     let query = this.state.searchQuery
     if (checkMatch(thread))
       return true
-    if (!thread.related)
-      return false
-    for (var i=0; i < thread.related.length; i++) {
-      if (checkMatch(thread.related[i]))
-        return true
-    }
+    // if (!thread.related)
+    //   return false
+    // for (var i=0; i < thread.related.length; i++) {
+    //   if (checkMatch(thread.related[i]))
+    //     return true
+    // }
     return false
 
     function checkMatch (msg) {
@@ -295,8 +302,7 @@ export default class MsgList extends React.Component {
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
       (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
       pull.take(amt), // apply limit
-      // :TODO: restore search
-      // (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
+      (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.collect((err, msgs) => {
         if (err)
           console.warn('Error while fetching messages', err)
@@ -368,6 +374,7 @@ export default class MsgList extends React.Component {
           <div className={'msg-list-ctrls toolbar'+(this.props.floatingToolbar?' floating':'')}>
             { this.props.toolbar ? this.props.toolbar() : '' }
             { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
+            { this.props.search  ? <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div> : '' }
           </div>
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
