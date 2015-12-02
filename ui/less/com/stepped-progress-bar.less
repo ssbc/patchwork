@@ -36,16 +36,22 @@
       left: -50%;
       top: 9px;
       z-index: -1;
+
+      background: linear-gradient(to right, #ddd 50%, #4DA1FF 50%);
+      background-size: 200% 100%;
+      background-position: 0 0;
+      transition: background-position 1s;
     }
     &:first-child:after {
       content: none; 
     }
     &.active:before {
       cursor: pointer;
-    }
-    &.active:before,  &.active:after{
       background: #4DA1FF;
       color: #ddd;
+    }
+    &.active:after{
+      background-position: -100% 0;
     }
   }
 }
