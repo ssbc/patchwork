@@ -93,8 +93,9 @@ function createRenderer (graph, el) {
       theta: 0.8
     }
   }).node( function nodeBuilder(node) {
-    const nodeColor = ( node.data.isUser || (social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)) ) ? "#F00" : "#FFB6B6"
-    const radius = 3
+    const isFriend = node.data.isUser || (social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)) 
+    const nodeColor = "#F00"
+    const radius = isFriend ? 3 : 2
     
     return ngraphSvg.svg("circle", {
       r: radius,
@@ -108,7 +109,7 @@ function createRenderer (graph, el) {
   }).link( function linkBuilder(linkUI, pos) {
 
     console.log('linkUI', linkUI)
-    const linkOpacity = ( linkUI.toId == app.user.id || linkUI.fromId == app.user.id ) ? 0.9 : 0.15
+    const linkOpacity = ( linkUI.toId == app.user.id || linkUI.fromId == app.user.id ) ? 0.8 : 0.15
 
     return ngraphSvg.svg("line", {
       stroke: "#F00",
