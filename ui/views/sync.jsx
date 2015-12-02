@@ -31,12 +31,12 @@ function isNotLAN (peer) {
   return !isLAN(peer)
 }
 
-class PeerGraph extends React.Component {
+class UserGraph extends React.Component {
 
   constructor (props) {
     super(props)
     this.state = {
-      graph: peersToGraph(props.peers)
+      graph: usersToGraph(props.users)
     }
   }
 
@@ -45,14 +45,14 @@ class PeerGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    console.log("next peers", nextProps.peers)
+    console.log("next users", nextProps.users)
     // TODO merge diff between this.props and nextProps
     // into updates for this.state.graph
     // which the render will listen to through events
     // and apply appropriately
     //
     // HACK instead
-    this.state.graph = updateGraph(this.state.graph, nextProps.peers)
+    this.state.graph = updateGraph(this.state.graph, nextProps.users)
   }
 
   componentWillUnmount () {
@@ -62,6 +62,7 @@ class PeerGraph extends React.Component {
   setupRenderer () {
     const el = ReactDOM.findDOMNode(this)
     const renderer = createRenderer(this.state.graph, el)
+
 
     renderer.run()
 
@@ -77,45 +78,59 @@ class PeerGraph extends React.Component {
 
 function createRenderer (graph, el) {
   return ngraphSvg(graph, {
-    container: el
+    container: el,
+    physics: {
+      springLength: 100
+    }
   })
 }
 
 
-function peersToGraph (peers) {
+function usersToGraph (users) {
   let graph = ngraphGraph()
-  // TODO
-  console.log("peers", peers)
-  if (!peers) {
+
+  console.log("users", users)
+  if (!users) {
     return graph
   }
 
-  peers.forEach( function(peer) {
-    peers.forEach( function(otherPeer) {
-      if (peer === otherPeer) return
+  return updateGraph(graph, users)
+}
 
-      if ( social.follows(peer.key, otherPeer.key) && social.follows(otherPeer.key, peer.key) ) {
-        graph.addLink(peer.key, otherPeer.key)
+function updateGraph (graph, users) {
+  users.forEach( function(user) {
+    // TODO - this early return will assume there are no new connections for that user
+    if (graph.getNode(user.id)) return 
+
+    const newNode = graph.addNode(user.id, {
+      name: user.name
+    })
+    users.forEach( function(otherUser) {
+      if (user === otherUser) return
+
+      if ( social.follows(user.id, otherUser.id) && social.follows(otherUser.id, user.id) ) {
+        graph.addLink(user.id, otherUser.id)
       }
     })
   })
-  // TODO
   return graph
 }
 
-function updateGraph (graph, peers) {
-  //TODO dry up
-  
-  peers.forEach( function(peer) {
-    peers.forEach( function(otherPeer) {
-      if (peer === otherPeer) return
+function addCustomNode (graph, user) {
+  const radius = 5
+  const renderer = this.state.renderer
 
-      if ( social.follows(peer.key, otherPeer.key) && social.follows(otherPeer.key, peer.key) ) {
-        graph.addLink(peer.key, otherPeer.key)
-      }
+  renderer.node(function() {
+    return ngraphSvg.svg("circle", {
+      r: radius,
+      cx: 2*radius,
+      cy: 2*radius,
+      fill: "#00a2e8"
     })
+  }).placeNode(function nodePositionCallback(nodeUI, pos) {
+    nodeUI.attr("x", pos.x - radius).attr("y", pos.y - radius);
   })
-  return graph
+
 }
 
 
@@ -186,6 +201,7 @@ export default class Sync extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      users: [],
       peers: [],
       stats: {},
       isWifiMode: app.isWifiMode
@@ -210,6 +226,30 @@ export default class Sync extends React.Component {
         stats: u.getPubStats(peers)
       })
     })
+
+    //fetch users list
+    //TODO - dry up (copied this from user-list.jsx)
+    pull(
+      app.ssb.latest(),
+      pull.map((user) => {
+        user.name = u.getName(user.id)
+        user.isUser = user.id === app.user.id
+        user.nfollowers = social.followers(user.id).length
+        user.followed = social.follows(app.user.id, user.id)
+        user.follows = social.follows(user.id, app.user.id)
+        return user
+      }),
+      pull.collect((err, users) => {
+        if (err)
+          return app.minorIssue('An error occurred while fetching known users', err)
+
+        users.sort(function (a, b) {
+          return b.nfollowers - a.nfollowers
+        })
+        console.log("pulled users", users)
+        this.setState({ users: users })
+      })
+    )
 
     // setup event streams
     pull((this.gossipChangeStream = app.ssb.gossip.changes()), pull.drain(this.onGossipEvent.bind(this)))
@@ -311,7 +351,7 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
-        <PeerGraph peers={this.state.peers} />
+        <UserGraph users={this.state.users} />
       </div>
 
     </VerticalFilledContainer>
