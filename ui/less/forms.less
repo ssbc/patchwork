@@ -6,8 +6,6 @@ form {
   fieldset {
     border: 0;
     padding: 0;
-    width: 420px;
-    margin: 0 auto;
     & > div {
       margin-bottom: 10px;
     }
@@ -20,11 +18,11 @@ form {
     }
     &[type="text"] {
       transition: background 0.2s, box-shadow 0.2s;
-      padding: 2px 6px;
+      padding: 2px 6px 3px;
       border: 1px solid #aaa;
-      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);
       border-radius: 2px;
-      background: #fafafa;
+      background: #fefefe;
+      font-weight: 300;
       &:focus {
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         background: #fff;
@@ -70,6 +68,29 @@ form {
       }
       p {
         margin-left: 80px;
+        color: red;
+      }
+    }
+  }
+  &.block {
+    h1 {
+      margin-left: 80px;
+    }
+    label {
+      span {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input {
+        width: 268px;
+      }
+      .btn { 
+        border: 1px solid #ccc;
+        color: #333;
+        width: 280px;
+        font-weight: 200;
+      }
+      p {
         color: red;
       }
     }

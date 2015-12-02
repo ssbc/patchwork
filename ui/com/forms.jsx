@@ -26,30 +26,35 @@ class RadioSet extends React.Component {
 export class SetupForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = this.validate(app.users.names[app.user.id]||'')
+    this.state = this.validate(app.users.names[app.user.id]||'', true)
   }
 
   onChangeName(e) {
     this.setState(this.validate(e.target.value))
   }
 
-  validate (name) {
+  validate (name, supressEmit) {
     let badNameCharsRegex = /[^A-z0-9\._-]/
+    const emit = (b) => { this.props.onValidChange && !supressEmit && this.props.onValidChange(b) }
     if (!name.trim()) {
+      emit(false)
       return { error: false, isValid: false, name: name }
     } else if (badNameCharsRegex.test(name)) {
+      emit(false)
       return {
         name: name,
         error: 'We\'re sorry, your name can only include A-z 0-9 . _ - and cannot have spaces.',
         isValid: false
       }
     } else if (name.slice(-1) == '.') {
+      emit(false)
       return {
         name: name,
         error: 'We\'re sorry, your name cannot end with a period.',
         isValid: false
       }
     } else {
+      emit(true)
       return {
         name: name,
         error: false,
@@ -58,8 +63,7 @@ export class SetupForm extends React.Component {
     }
   }
 
-  onSubmit(e) {
-    e.preventDefault()
+  getValues(done) {
     const canvas = this.refs.imageInputContainer.querySelector('canvas')
     if (canvas) {
       ImageInput.uploadCanvasToBlobstore(canvas, (err, hasher) => {
@@ -70,11 +74,16 @@ export class SetupForm extends React.Component {
           width: 512,
           height: 512
         }
-        this.props.onSubmit({ name: this.state.name, image: imageLink })
+        done({ name: this.state.name, image: imageLink })
       })
     } else {
-      this.props.onSubmit({ name: this.state.name })      
-    }
+      done({ name: this.state.name })      
+    }    
+  }
+
+  onSubmit(e) {
+    e.preventDefault()
+    this.getValues(this.props.onSubmit)
   }
 
   onCancel(e) {
@@ -93,22 +102,17 @@ export class SetupForm extends React.Component {
     const isNew = !app.users.names[app.user.id]
     const currentImg = this.getCurrentImg()
 
-    return <form className="stacked" onSubmit={this.onSubmit.bind(this)}>
-      <fieldset style={{width: '600px'}}>
-        <h1>{isNew ? 'New Account' : 'Edit Your Profile'}</h1>
+    return <form className="block" onSubmit={this.onSubmit.bind(this)}>
+      <fieldset>
         <div>
           <label>
-            <span>nickname</span>
+            <span>Name</span>
             <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} />
             { this.state.error ? <p className="error">{this.state.error}</p> : '' }
           </label>
         </div>
-        <div ref="imageInputContainer"><ImageInput label="picture" current={currentImg} /></div>
+        <div ref="imageInputContainer"><ImageInput label="Image" current={currentImg} /></div>
       </fieldset>
-      <div className="toolbar">
-        {isNew ? '' : <button className="btn cancel" tabIndex="-1" onClick={this.onCancel.bind(this)}><i className="fa fa-times" /> Discard</button>}
-        <button className="btn ok" disabled={!this.state.isValid}>Save <i className="fa fa-check" /></button>
-      </div>
     </form>
   }
 }
