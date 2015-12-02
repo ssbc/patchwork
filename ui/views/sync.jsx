@@ -92,21 +92,28 @@ function createRenderer (graph, el) {
       gravity: -1.5,
       theta: 0.8
     }
-  }).node( (node) => {
-
-    if (node.data) console.log('node data : isUser, isLAN', node.data.isUser, node.data.isLAN)
-    const color = (node.data && node.data.isUser) ? "red" : "#B9B9B9"
+  }).node( function nodeBuilder(node) {
+    const nodeColor = ( node.data.isUser || (social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)) ) ? "#F00" : "#FFB6B6"
     const radius = 3
     
     return ngraphSvg.svg("circle", {
       r: radius,
       cx: 2*radius,
       cy: 2*radius,
-      fill: color,
+      fill: nodeColor,
       text: node.data ? node.data.name : undefined
     })
-  }).placeNode(function nodePositionCallback(nodeUI, pos) {
-    nodeUI.attr("cx", pos.x).attr("cy", pos.y);
+  }).placeNode( function nodePositionCallback(nodeUI, pos) {
+    nodeUI.attr("cx", pos.x).attr("cy", pos.y)
+  }).link( function linkBuilder(linkUI, pos) {
+
+    console.log('linkUI', linkUI)
+    const linkOpacity = ( linkUI.toId == app.user.id || linkUI.fromId == app.user.id ) ? 0.9 : 0.15
+
+    return ngraphSvg.svg("line", {
+      stroke: "#F00",
+      opacity: linkOpacity
+    })
   })
 }
 
