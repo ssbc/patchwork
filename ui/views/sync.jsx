@@ -31,12 +31,11 @@ function isNotLAN (peer) {
   return !isLAN(peer)
 }
 
-class UserGraph extends React.Component {
-
+class PeerGraph extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      graph: usersToGraph(props.users)
+      graph: peersToGraph(props.peersForGraph)
     }
   }
 
@@ -51,7 +50,7 @@ class UserGraph extends React.Component {
     // and apply appropriately
     //
     // HACK instead
-    this.state.graph = updateGraph(this.state.graph, nextProps.users)
+    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph)
   }
 
   componentWillUnmount () {
@@ -61,7 +60,6 @@ class UserGraph extends React.Component {
   setupRenderer () {
     const el = ReactDOM.findDOMNode(this)
     const renderer = createRenderer(this.state.graph, el)
-
 
     renderer.run()
 
@@ -76,20 +74,36 @@ class UserGraph extends React.Component {
 }
 
 function createRenderer (graph, el) {
-  const radius = 4
 
   return ngraphSvg(graph, {
     container: el,
+    // defaults
+    //physics: {
+    //  springLength: 30,
+    //  springCoeff: 0.0008,
+    //  dragCoeff: 0.01,
+    //  gravity: -1.2,
+    //  theta: 1
+    //}
     physics: {
-      springLength: 100
+      springLength: 20,
+      springCoeff: 0.0001,
+      dragCoeff: 0.15,
+      gravity: -1.5,
+      theta: 0.8
     }
-  }).node(function(node) {
+  }).node( (node) => {
+
+    if (node.data) console.log('node data : isUser, isLAN', node.data.isUser, node.data.isLAN)
+    const color = (node.data && node.data.isUser) ? "red" : "#B9B9B9"
+    const radius = 3
     
     return ngraphSvg.svg("circle", {
       r: radius,
       cx: 2*radius,
       cy: 2*radius,
-      fill: "#00a2e8"
+      fill: color,
+      text: node.data ? node.data.name : undefined
     })
   }).placeNode(function nodePositionCallback(nodeUI, pos) {
     nodeUI.attr("cx", pos.x).attr("cy", pos.y);
@@ -97,56 +111,43 @@ function createRenderer (graph, el) {
 }
 
 
-function usersToGraph (users) {
+function peersToGraph (peers) {
   let graph = ngraphGraph()
 
-  console.log("users", users)
-  if (!users) {
-    return graph
-  }
+  if (!peers) return graph
 
-  return updateGraph(graph, users)
+  return updateGraph(graph, peers)
 }
 
-function updateGraph (graph, users) {
-  users.forEach( function(user) {
-    // TODO - this early return will assume there are no new connections for that user
-    if (graph.getNode(user.id)) return 
+function updateGraph (graph, peers) {
+  if (!peers) return graph
 
-    const newNode = graph.addNode(user.id, {
-      id: user.id,
-      name: user.name
+  //create each peer
+  peers.forEach( function(peer) {
+    // TODO - this early return will assume there are no new connections for that peer
+    if (graph.getNode(peer.id)) return 
+
+    const newNode = graph.addNode(peer.id, {
+      id: peer.id,
+      name: peer.name,
+      isLAN: peer.isLAN,
+      isUser: peer.isUser
     })
-    //const newNode = addCustomNode(graph, user)
-    users.forEach( function(otherUser) {
-      if (user === otherUser) return
 
-      if ( social.follows(user.id, otherUser.id) && social.follows(otherUser.id, user.id) ) {
-        graph.addLink(user.id, otherUser.id)
+  })
+  //add links for each peer
+  peers.forEach( function(peer) {
+    peers.forEach( function(otherPeer) {
+      if (peer === otherPeer) return
+      if (graph.getLink(peer.id, otherPeer.id)) return
+
+      if ( social.follows(peer.id, otherPeer.id) && social.follows(otherPeer.id, peer.id) ) {
+        graph.addLink(peer.id, otherPeer.id)
       }
     })
   })
   return graph
 }
-
-function addCustomNode (graph, user) {
-  const radius = 5
-  const renderer = this.state.renderer
-
-  renderer.node(function() {
-    return ngraphSvg.svg("circle", {
-      r: radius,
-      cx: 2*radius,
-      cy: 2*radius,
-      fill: "#00a2e8"
-    })
-  }).placeNode(function nodePositionCallback(nodeUI, pos) {
-    nodeUI.attr("x", pos.x - radius).attr("y", pos.y - radius);
-  })
-
-}
-
-
 
 //class Peer extends React.Component {
   //render() {
@@ -247,9 +248,10 @@ export default class Sync extends React.Component {
       pull.map((user) => {
         user.name = u.getName(user.id)
         user.isUser = user.id === app.user.id
-        user.nfollowers = social.followers(user.id).length
+        //user.nfollowers = social.followers(user.id).length
         user.followed = social.follows(app.user.id, user.id)
         user.follows = social.follows(user.id, app.user.id)
+        user.isLAN = isLAN(user)
         return user
       }),
       pull.collect((err, users) => {
@@ -260,7 +262,9 @@ export default class Sync extends React.Component {
           return b.nfollowers - a.nfollowers
         })
         console.log("pulled users", users)
-        this.setState({ users: users })
+        //console.log("peer count", users.length)
+        //console.log("user friends", users.filter((u) =>{ return u.follows && u.followed }).length)
+        this.setState({ peersForGraph: users })
       })
     )
 
@@ -364,7 +368,7 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
-        <UserGraph users={this.state.users} />
+        <PeerGraph peersForGraph={this.state.peersForGraph} />
       </div>
 
     </VerticalFilledContainer>
