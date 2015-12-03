@@ -10,8 +10,9 @@ class NavLink extends React.Component {
   render() {
     const selected = (this.props.to === this.props.location)
     const cls = 'leftnav-item '+(selected?'selected':'')
+    const count = this.props.count ? <div className="count">{this.props.count}</div> : ''
     if (!this.props.children)
-      return <Link className={cls} to={this.props.to}><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</Link>
+      return <Link className={cls} to={this.props.to}><i className={'fa fa-'+this.props.icon} /> {this.props.label}{count}</Link>
     return <Link className={cls} to={this.props.to}>{this.props.children}</Link>
   }
 }

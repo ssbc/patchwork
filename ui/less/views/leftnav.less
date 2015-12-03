@@ -8,6 +8,7 @@
 }
 .leftnav-item {
   display: block;
+  position: relative;
   padding: 12px 10px;
   text-align: center;
   i {
@@ -18,6 +19,20 @@
   }
   span {
     display: none;
+  }
+  .count {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 5px;
+    background: #E7ECF1;
+    color: #39414D;
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    border: 1px solid #39414D;
+    font-size: 12px;
+    font-weight: bold;
   }
   &.label {
     font-size: 13px;
