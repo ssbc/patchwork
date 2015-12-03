@@ -6,7 +6,7 @@ export default class ModalFlow extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      step: 0,
+      step: false,
       isReady: true,
       canProgress: false,
       helpText: false,
@@ -14,34 +14,39 @@ export default class ModalFlow extends React.Component {
     }
   }
 
-  renderProgressBar() {
-    return <SteppedProgressBar current={this.state.step} labels={this.steps.map(s => s.label)} onClick={this.onProgressClick.bind(this)} />
-  }
-
-  renderCurrentStep() {
-    return this.steps[this.state.step].render()
+  componentDidMount() {
+    // go to first step
+    this.gotoStep(1)
   }
 
   gotoStep(step) {
-    this.setState({ step: step })
+    this.setState({
+      step: step,
+      helpText: false,
+      isReady: true,
+      canProgress: false
+    })
   }
 
   gotoNextStep() {
     this.gotoStep(this.state.step + 1)
   }
 
-  onProgressClick(step) {
-    if (step < this.state.step)
-      this.gotoStep(step)
+  getStepCom() {
+    if (this.state.step === false)
+      return false
+    return this.stepComs[this.state.step]
   }
 
   onNextClick() {
-    var next = this.steps[this.state.step].onSubmit || this.gotoNextStep.bind(this)
+    const step = this.refs.step
+    const next = (step && step.submit) || this.gotoNextStep.bind(this)
     next()
   }
 
   render() {
-    if (!this.props.isOpen)
+    var StepCom = this.getStepCom()
+    if (!this.props.isOpen || !StepCom)
       return <span/>
     
     var nextCls = ['btn']
@@ -50,12 +55,18 @@ export default class ModalFlow extends React.Component {
     else if (this.state.isReady)
       nextCls.push('highlighted')
 
+    const setHelpText = helpText => { this.setState({ helpText: helpText }) }
+    const setCanProgress = canProgress => { this.setState({ canProgress: canProgress }) }
+    const setIsReady = isReady => { this.setState({ isReady: isReady }) }
+
     return <div className="modal modal-flow">
       <div className="modal-inner">
-        <div className="modal-content">{ this.renderCurrentStep() }</div>
+        <div className="modal-content">
+          <StepCom ref="step" setIsReady={setIsReady} setCanProgress={setCanProgress} setHelpText={setHelpText} gotoNextStep={this.gotoNextStep.bind(this)} />
+        </div>
         { this.state.helpText ? <div className="modal-helptext">{this.state.helpText}</div> : '' }
         <div className="modal-ctrls">
-          { this.renderProgressBar() }
+          <SteppedProgressBar current={this.state.step} labels={this.stepLabels} />
           <div className="next">
             <button disabled={!this.state.canProgress} className={nextCls.join(' ')} onClick={this.onNextClick.bind(this)}>
               {this.state.nextText||'Next'} <i className="fa fa-angle-right" />

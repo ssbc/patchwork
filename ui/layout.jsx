@@ -29,7 +29,7 @@ export default class Layout extends React.Component {
       isWifiMode: app.isWifiMode,
       user: app.user,
       users: app.users,
-      setupIsOpen: app.user.needsSetup,
+      setupIsOpen: true,//app.user.needsSetup,
       setupCantClose: app.user.needsSetup,
       isComposerOpen: app.isComposerOpen
     }

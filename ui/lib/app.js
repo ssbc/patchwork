@@ -97,6 +97,8 @@ function onPatchworkEvent (e) {
 function pollPeers () {
   app.ssb.gossip.peers(function (err, peers) {
     var isWifiMode = require('./util').getPubStats(peers).hasSyncIssue
+    app.peers = peers
+    app.emit('update:peers')
     if (isWifiMode !== app.isWifiMode) {
       app.isWifiMode = isWifiMode
       app.emit('update:isWifiMode')

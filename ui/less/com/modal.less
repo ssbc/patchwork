@@ -30,12 +30,13 @@
 
   .modal-content {
     flex: 1;
-    padding: 0 50px;
-    h1 {
-      margin-top: 30px;
+    padding: 0 40px;
+    h1, h2, h3 {
       font-weight: 200;
+    }
+    h1 {
+      margin-top: 40px;
       font-size: 2.5em;
-      color: #777;
 
       .rainbow {
         span:nth-child(1) { .anim-rainbow-color(0.1s); }
@@ -54,9 +55,18 @@
         span:nth-child(14) { .anim-rainbow-color(0.75s); }
       }
     }
+
+    .mdl-spinner-container {
+      width: 30px;
+      margin: 30px auto 0;
+    }
   }
   .modal-helptext {
-    flex: 0 0 100px;
+    flex: 0 0 70px;
+    padding: 0 40px;
+    font-weight: 200;
+    color: gray;
+    text-align: justify;
   }
   .modal-ctrls {
     display: flex;
@@ -65,6 +75,8 @@
     .stepped-progress-bar {
       flex: 1;
       margin: 7px 5px 0 0;
+      position: relative;
+      left: -20px;
     }
     .next {
       flex: 0 0 170px;

@@ -46,12 +46,15 @@
       content: none; 
     }
     &.active:before {
-      cursor: pointer;
       background: #4DA1FF;
       color: #ddd;
     }
     &.active:after{
       background-position: -100% 0;
     }
+  }
+
+  &.can-go-back li.active:before {
+    cursor: pointer;
   }
 }
