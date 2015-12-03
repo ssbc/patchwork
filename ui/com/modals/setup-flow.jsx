@@ -21,19 +21,14 @@ const NEARBY_FOUND_HELPTEXT = 'These users are on your WiFi. Be careful! Names a
 class ProfileSetupStep extends React.Component {  
   submit() {
     this.refs.form.getValues(values => {
-      let n = 0, m = 0
-      const cb = () => {
-        m++
-        return (err) => {
-          if (err) app.issue('Error While Publishing', err, 'Setup modal publishing new about msg')
-          else if (++n >= m)
-            this.props.gotoNextStep()
-        }
-      }
-      if (values.name)
-        app.ssb.publish(schemas.name(app.user.id, values.name), cb())
-      if (values.image)
-        app.ssb.publish(schemas.image(app.user.id, values.image), cb())
+      var done = multicb()
+      if (values.name)  app.ssb.publish(schemas.name(app.user.id, values.name), done())
+      if (values.image) app.ssb.publish(schemas.image(app.user.id, values.image), done())
+      done(err => {
+        if (err)
+          return app.issue('Error While Publishing', err, 'Setup modal publishing new about msg')
+        this.props.gotoNextStep()
+      })
     })
   }
 

@@ -16,7 +16,7 @@ export default class ModalFlow extends React.Component {
 
   componentDidMount() {
     // go to first step
-    this.gotoStep(1)
+    this.gotoStep(0)
   }
 
   gotoStep(step) {

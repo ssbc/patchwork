@@ -49,7 +49,7 @@ export default class ImageInput extends React.Component {
       this.setState({
         img: img,
         imgdim: imgdim,
-        editorMsg: 'drag to crop',
+        editorMsg: 'use the slider to zoom, and drag the image to crop',
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
@@ -90,7 +90,7 @@ export default class ImageInput extends React.Component {
       this.setState({
         img: img,
         imgdim: imgdim,
-        editorMsg: 'drag to crop',
+        editorMsg: 'use the slider to zoom, and drag the image to crop',
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
