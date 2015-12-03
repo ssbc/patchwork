@@ -40,7 +40,7 @@ export default class ModalFlow extends React.Component {
 
   onNextClick() {
     const step = this.refs.step
-    const next = (step && step.submit) || this.gotoNextStep.bind(this)
+    const next = (step && step.submit.bind(step)) || this.gotoNextStep.bind(this)
     next()
   }
 

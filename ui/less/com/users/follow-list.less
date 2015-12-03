@@ -1,0 +1,69 @@
+.follow-list {
+  margin-bottom: 30px;
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  .follow-list-user {
+    display: flex;
+    position: relative;
+    padding: 17px 20px 15px;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #e5e5e5;
+
+    &:last-child {
+      border: 0;
+    }
+
+    &:hover {
+      background: #fafafa;
+    }
+
+    & > :nth-child(1) {
+      flex: 0 0 60px;
+    }
+    & > :nth-child(2) {
+      flex: 0 0 60px;
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 2px;
+      }
+    }
+    & > :nth-child(3) {
+      flex: 1;
+      .name, .id {
+        white-space: pre;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .name {
+        font-size: 18px;
+        em {
+          color: gray;
+        }
+      }
+      .id {
+        color: gray;
+        font-size: 15px;
+        font-weight: 200;
+      }
+    }
+    .checkbox {
+      border: 1px solid #ddd;
+      padding: 13px 13px 11px 11px;
+      width: 12px;
+      height: 12px;
+      border-radius: 26px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+      background: #fdfdfd;
+      i {
+        color: #0DCE0D;
+        font-size: 32px;
+        position: relative;
+        top: -10px;
+        left: -9px;
+      }
+    }
+  }
+}
