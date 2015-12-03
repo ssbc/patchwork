@@ -8,11 +8,11 @@ import u from '../lib/util'
 
 class NavLink extends React.Component {
   render() {
-    var selected = (this.props.to === this.props.location)
-    let content = this.props.children
-    if (!content)
-      content = <span><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</span>
-    return <Link className={'leftnav-item '+(selected?'selected':'')} to={this.props.to}>{content}</Link>
+    const selected = (this.props.to === this.props.location)
+    const cls = 'leftnav-item '+(selected?'selected':'')
+    if (!this.props.children)
+      return <Link className={cls} to={this.props.to}><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</Link>
+    return <Link className={cls} to={this.props.to}>{this.props.children}</Link>
   }
 }
 
@@ -53,7 +53,7 @@ class LeftNav extends React.Component {
     return <div id="leftnav" style={{height: this.props.height}}>
 
       <div className="titlebar">
-        <a className="back" onClick={this.onClickBack}><span>back</span> <i className="fa fa-arrow-circle-o-left" /></a>
+        <a className="back" onClick={this.onClickBack}><i className="fa fa-arrow-circle-o-left" /></a>
       </div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
