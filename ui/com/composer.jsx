@@ -148,7 +148,7 @@ export default class Composer extends React.Component {
     this.threadBranch = null
     if (this.props.thread) {
       // root and branch links
-      this.threadRoot = this.props.thread.key
+      this.threadRoot = getThreadRoot(this.props.thread)
       this.threadBranch = threadlib.getLastThreadPost(this.props.thread).key
 
       // extract encryption recipients from thread
@@ -409,4 +409,11 @@ function isThreadPublic (thread) {
 function isImageFilename (name) {
   var ct = mime.contentType(name)
   return (typeof ct == 'string' && ct.indexOf('image/') === 0)
+}
+
+function getThreadRoot (msg) {
+  var root = msg && msg.value && msg.value.content && msg.value.content.root
+  if (root && mlib.link(root, 'msg'))
+    return mlib.link(root, 'msg').link
+  return msg.key
 }

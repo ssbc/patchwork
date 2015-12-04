@@ -145,6 +145,8 @@ export default class Card extends React.Component {
       return this.renderNotFound(msg)
     if (msg.isLink)
       return this.renderLink(msg)
+    if (msg.isMention)
+      return this.renderMention(msg)
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
@@ -162,9 +164,11 @@ export default class Card extends React.Component {
           <i className="fa fa-warning" /> Missing Post
         </a>
         { expanded ?
-          <span
-            ><br/><br/>
+          <span>
+            <br/><br/>
             {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reference it.'}
+            <br/><br/>
+            <code>{msg.key}</code>
           </span> :
           ' This post could not be loaded.' }
       </div>
@@ -172,9 +176,19 @@ export default class Card extends React.Component {
   }
 
   renderLink(msg) {
-    const name = u.shortString(msg.value.content.text || msg.key, 100)
+    const name = u.shortString(msg.value ? (msg.value.content.text || msg.key) : msg.key, 100)
     return <div key={msg.key} className="msg-view card-missing-post">
       <div><i className="fa fa-angle-up" /> <MsgLink id={msg.key} name={name} /></div>
+    </div>
+  }
+
+  renderMention(msg) {
+    const name = u.shortString(msg.value.content.text || msg.key, 100)
+    return <div key={msg.key} className="msg-view card-mention">
+      <div>
+        <i className="fa fa-hand-o-right" />
+        <div><UserLink id={msg.value.author} /> referenced this thread in <MsgLink id={msg.key} name={name} /></div>
+      </div>
     </div>
   }
 
