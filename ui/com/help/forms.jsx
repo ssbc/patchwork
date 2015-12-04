@@ -5,7 +5,8 @@ export class InviteErrorExplanation extends React.Component {
   render() {
     if (!this.props.error)
       return <span/>
-    const msg = this.props.error.msg.toLowerCase()
+    console.log(this.props.error)
+    const msg = this.props.error.message.toLowerCase()
 
     if (~msg.indexOf('incorrect or expired') || ~msg.indexOf('has expired'))
       return <div className="error">Invite code is mis-issued or expired.</div>
@@ -34,18 +35,18 @@ export class InviteErrorHelp extends React.Component {
     if (!this.props.error)
       return <span/>
     const err = this.props.error
-    let msg = err.msg.toLowerCase()
+    let msg = err.message.toLowerCase()
 
     if (~msg.indexOf('incorrect or expired') || ~msg.indexOf('has expired'))
-      msg = 'Invite code is incorrect or expired. Make sure you copy/pasted it correctly. If you did, ask the pub-operator for a new code and try again.'
+      msg = 'The invite code is incorrect or expired. Make sure you copy/pasted it correctly. If you did, ask the pub-operator for a new code and try again.'
 
     if (~msg.indexOf('invalid') || ~msg.indexOf('feed to follow is missing') || ~msg.indexOf('may not be used to follow another key'))
-      msg = 'Invite code is malformed. Make sure you copy/pasted it correctly. If you did, ask the pub-server owner for a new code and try again.'
+      msg = 'The invite code is malformed. Make sure you copy/pasted it correctly. If you did, ask the pub-server owner for a new code and try again.'
 
     if (~msg.indexOf('pub server did not have correct public key'))
       msg = 'The pub server did not identify itself correctly for the invite code. Ask the pub-operator for a new code and try again.'
 
-    if (~msg.indexOf('unexpected end of parent stream'))
+    if (~msg.indexOf('could not connect to server') || ~msg.indexOf('unexpected end of parent stream'))
       msg = 'Failed to connect to the pub server. Check your connection, make sure the pub server is online, and try again.'
 
     if (~msg.indexOf('ENOTFOUND'))
@@ -53,6 +54,6 @@ export class InviteErrorHelp extends React.Component {
 
     if (!msg)
       return <span/>
-    return <div className="help-section">{msg}</div>
+    return <div className="help-text">{msg}</div>
   }
 }

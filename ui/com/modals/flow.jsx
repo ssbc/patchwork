@@ -9,8 +9,7 @@ export default class ModalFlow extends React.Component {
       step: false,
       isReady: true,
       canProgress: false,
-      helpText: false,
-      nextText: undefined
+      helpText: false
     }
   }
 
@@ -48,6 +47,8 @@ export default class ModalFlow extends React.Component {
     var StepCom = this.getStepCom()
     if (!this.props.isOpen || !StepCom)
       return <span/>
+
+    const nextText = (this.state.step >= (this.stepComs.length - 1)) ? 'Finish' : 'Next'
     
     var nextCls = ['btn']
     if (!this.state.canProgress)
@@ -69,7 +70,7 @@ export default class ModalFlow extends React.Component {
           <SteppedProgressBar current={this.state.step} labels={this.stepLabels} />
           <div className="next">
             <button disabled={!this.state.canProgress} className={nextCls.join(' ')} onClick={this.onNextClick.bind(this)}>
-              {this.state.nextText||'Next'} <i className="fa fa-angle-right" />
+              {nextText} <i className="fa fa-angle-right" />
             </button>
           </div>
         </div>

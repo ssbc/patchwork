@@ -1,11 +1,12 @@
 'use babel'
 import React from 'react'
 import schemas from 'ssb-msg-schemas'
+import ref from 'ssb-ref'
 import ip from 'ip'
 import multicb from 'multicb'
 import ModalFlow from './flow'
 import MDLSpinner from '../mdl-spinner'
-import { SetupForm } from '../forms'
+import { SetupForm, InviteForm } from '../forms'
 import FollowList from '../users/follow-list'
 import app from '../../lib/app'
 
@@ -16,6 +17,7 @@ const TIME_FOR_FIRST_SCAN = 5e3
 
 const NEARBY_SEARCHING_HELPTEXT = 'Patchwork is checking for other users on your WiFi. Don\'t worry if you can\'t find anybody, because you can try again later.'
 const NEARBY_FOUND_HELPTEXT = 'These users are on your WiFi. Be careful! Names and pictures are not unique, so ask your friends for their @ id if you\'re in a public setting.'
+const CLOUD_HELPTEXT = <span>You can add or remove services at any time, <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">including services you host</a>.</span>
 
 // user profile
 class ProfileSetupStep extends React.Component {  
@@ -146,9 +148,55 @@ class NearbySetupStep extends React.Component {
 }
 
 // use pub invites
-class PubSetupStep extends React.Component {
+class CloudSetupStep extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      info: false,
+      error: false,
+      isProcessing: false
+    }
+  }
+  componentDidMount() {
+    this.props.setHelpText(CLOUD_HELPTEXT)
+    this.props.setIsReady(true)
+    this.props.setCanProgress(true)
+  }
+  submit() {
+    this.refs.form.getValues(values => {
+      let code = values.code || ''
+      this.setState({ isProcessing: true, error: false, info: false })
+
+      // surrounded by quotes?
+      // (the scuttlebot cli ouputs invite codes with quotes, so this could happen)
+      if (code.charAt(0) == '"' && code.charAt(code.length - 1) == '"')
+        code = code.slice(1, -1) // strip em
+
+      // validate
+      if (!ref.isInvite(code))
+        return this.setState({ isProcessing: false, error: { message: 'Invalid invite code' } })
+
+      // use the invite
+      this.setState({ info: 'Contacting server with invite code, this may take a few moments...' })
+      app.ssb.invite.accept(code, (err) => {
+        if (err) {
+          console.error(err)
+          return this.setState({ isProcessing: false, info: false, error: err })
+        }
+
+        // trigger sync with the pub
+        app.ssb.gossip.connect(code.split('~')[0])
+        this.props.gotoNextStep()
+      })
+    })
+  }
   render() {
-    return <h1>Connect with {rainbow('Pubs')}</h1>
+    return <div>
+      <h1>Add {rainbow('Cloud Services')}</h1>
+      <h3>Cloud services host your messages, but {"can't"} read private data. <a onClick={this.props.gotoNextStep}>You can skip this step</a>, but you {"won't"} be visible on the Internet until you do it.</h3>
+      <InviteForm ref="form" info={this.state.info} error={this.state.error} isDisabled={this.state.isProcessing} />
+      { this.state.isProcessing ? <MDLSpinner /> : '' }
+    </div>
   }
 }
 
@@ -157,8 +205,8 @@ export default class SetupFlow extends ModalFlow {
   constructor(props) {
     super(props)
     // setup steps
-    this.stepLabels = ['Profile', 'Nearby', 'Pubs']
-    this.stepComs = [ProfileSetupStep, NearbySetupStep, PubSetupStep]
+    this.stepLabels = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
+    this.stepComs = [ProfileSetupStep, NearbySetupStep, CloudSetupStep]
   }
 }
 

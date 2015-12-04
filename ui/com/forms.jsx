@@ -180,16 +180,12 @@ export class InviteForm extends React.Component {
     this.state = {
       code: this.props.code
     }
-    this.on = {
-      change: (e) => {
-        this.setState({ code: e.target.value })
-      },
-      submit: (e) => {
-        e.preventDefault()
-        if (this.state.code)
-          this.props.onSubmit(this.state.code)
-      }
-    }
+  }
+  onChange(e) {
+    this.setState({ code: e.target.value })    
+  }
+  getValues(cb) {
+    cb({ code: this.state.code })
   }
   render() {
     const msg = (this.props.error) ?
@@ -197,18 +193,11 @@ export class InviteForm extends React.Component {
       (this.props.info || '')
     const helpText = (this.props.error) ? <InviteErrorHelp error={this.props.error} /> : ''
     return <div>
-      <form className="fullwidth" onSubmit={this.on.submit}>
+      <form className="fullwidth">
         <fieldset>
-          <h1>Join a Pub!</h1>
-          <input type="text" value={this.state.code} onChange={this.on.change} placeholder="Enter the invite code here" />
-          <div className="flex">
-            <div className="flex-fill">{msg}</div>
-            <div><button className="btn highlighted" disabled={this.props.isDisabled}>Use Code</button></div>
-          </div>
-          {helpText}
-          <div><strong>Pubs let you connect globally.</strong></div>
-          <div>{'Don\'t have an invite? You\'ll have to find a pub operator and ask for one. Ask the folks in #scuttlebutt, on Freenode.'}</div>
-          <div>Neckbeards can setup their own pubs. <a href="https://github.com/ssbc/docs#setup-up-a-pub" target="_blank">Read the setup documentation here.</a></div>
+          <input type="text" value={this.state.code} onChange={this.onChange.bind(this)} placeholder="Enter the invite code here" />
+          <div>{msg}</div>
+          <div>{helpText}</div>
         </fieldset>
       </form>
     </div>
