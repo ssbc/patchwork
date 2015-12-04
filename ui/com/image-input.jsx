@@ -3,7 +3,6 @@ import React from 'react'
 import NativeImage from 'native-image'
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
-import pushable from 'pull-pushable'
 import app from '../lib/app'
 
 const CANVAS_SIZE = 512
@@ -26,11 +25,26 @@ export default class ImageInput extends React.Component {
       zoom: 1,
       minzoom: 1,
 
+      rotation: 0,
+
       // image buffer
       hasImg: false,
       img: undefined,
       imgdim: undefined
     }
+  }
+
+  onRotate(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    this.setState({ rotation: (this.state.rotation + 1) % 4})
+
+    //MAGIC setTimeout. without this, it draws the last state not the current state.
+    //it wouldn't show correctly until you fiddled with another control.
+    //I couldn't figure out why, but this fixes it...
+    setTimeout(()=> {
+      this.drawCanvas()
+    }, 20)
   }
 
   componentDidMount() {
@@ -145,9 +159,21 @@ export default class ImageInput extends React.Component {
     const canvas = this.refs.canvas
     const ctx = canvas.getContext('2d')
     ctx.globalCompositeOperation = 'source-over'
+ 
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.drawImage(this.state.img, this.state.ox, this.state.oy, this.state.img.width * this.state.zoom, this.state.img.height * this.state.zoom)
+		ctx.save()
+
+    ctx.scale(this.state.zoom, this.state.zoom)
+    ctx.translate(this.state.ox, this.state.oy)
+  	ctx.translate(this.state.img.width/2, this.state.img.height/2)
+		ctx.rotate(this.state.rotation/2 * Math.PI)
+		ctx.drawImage(
+      this.state.img, 
+      -this.state.img.width/2, -this.state.img.height/2,
+      this.state.img.width, this.state.img.height
+    )
+		ctx.restore()
   }
 
   render() {
@@ -157,6 +183,7 @@ export default class ImageInput extends React.Component {
           <span>{this.props.label}</span>
           <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
           <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
+          <button className="btn" onClick={this.onRotate.bind(this)}>rotate: {this.state.rotation*90}</button>
         </label>
       </div>
       { this.state.hasImg ? 
@@ -184,7 +211,7 @@ export default class ImageInput extends React.Component {
     var hasher = createHash('sha256')
     var ps = pushable()
     pull(
-      ps,
+      pull.once(ImageInput.canvasToPng(canvas)),
       hasher,
       app.ssb.blobs.add(function (err) {
         if (err)
@@ -192,7 +219,5 @@ export default class ImageInput extends React.Component {
         cb(null, hasher)
       })
     )
-    ps.push(ImageInput.canvasToPng(canvas))
-    ps.end()
   }
 }
