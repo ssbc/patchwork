@@ -5,7 +5,7 @@ import LeftNav from './views/leftnav'
 import ComposerSidePanel from './views/composer-sidepanel'
 import { SetupModal, FABComposerModal } from './com/modals'
 import FAB from './com/fab'
-import FNB from './com/fnb'
+import Notifications from './com/msg-list/notifications'
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -45,7 +45,6 @@ export default class Layout extends React.Component {
       { composing ?
         <FAB className="expanded gray" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
         <FAB icon="pencil" onClick={this.toggleComposerOpen.bind(this)} /> }
-      <FNB />
       <div className="layout-columns">
         <LeftNav
           location={this.props.location.pathname}
@@ -56,6 +55,7 @@ export default class Layout extends React.Component {
           following={this.state.user.nonfriendFolloweds}
           followers={this.state.user.nonfriendFollowers} />
         <div id="mainview">{this.props.children}</div>
+        <div id="rightnav"><Notifications /></div>
       </div>
       <ComposerSidePanel isOpen={this.state.isComposerOpen} />
     </div>
