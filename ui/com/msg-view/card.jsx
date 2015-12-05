@@ -3,6 +3,8 @@ import React from 'react'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import clipboard from 'clipboard'
+import onImageLoaded from 'image-loaded'
+import multicb from 'multicb'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
@@ -128,10 +130,16 @@ export default class Card extends React.Component {
     // is the card oversized?
     if (!this.refs.body)
       return
-    const rect = this.refs.body.getClientRects()[0]
-    if (rect && rect.height > MAX_CONTENT_HEIGHT) {
-      this.setState({ isOversized: true })
-    }
+    // wait for images to finish loading
+    var done = multicb()
+    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
+    done(() => {
+      // check height
+      const rect = this.refs.body.getClientRects()[0]
+      if (rect && rect.height > MAX_CONTENT_HEIGHT) {
+        this.setState({ isOversized: true })
+      }
+    })
   }
 
   componentWillUnmount() {
