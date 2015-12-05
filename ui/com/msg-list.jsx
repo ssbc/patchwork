@@ -204,6 +204,7 @@ export default class MsgList extends React.Component {
           this.setState({ newMsgQueue: this.state.newMsgQueue })
         } else {
           // immediately render
+          msg.isLiveUpdate = true
           this.prependNewMsg(msg)
         }
       })
@@ -255,6 +256,8 @@ export default class MsgList extends React.Component {
   }
 
   processMsg(msg, cb) {
+
+          msg.isLiveUpdate = true
     // fetch thread data if not already present (using `related` as an indicator of that)
     if (this.props.threads && !('related' in msg)) {
       threadlib.getPostSummary(app.ssb, msg.key, cb)
