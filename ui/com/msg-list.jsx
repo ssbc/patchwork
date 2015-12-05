@@ -204,6 +204,7 @@ export default class MsgList extends React.Component {
           this.setState({ newMsgQueue: this.state.newMsgQueue })
         } else {
           // immediately render
+          msg.isLiveUpdate = true
           this.prependNewMsg(msg)
         }
       })
