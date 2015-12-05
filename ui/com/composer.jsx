@@ -5,6 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
+import multicb from 'multicb'
 import Tabs from './tabs'
 import { Block as MarkdownBlock } from './markdown'
 import { verticalFilled } from './index'
@@ -166,6 +167,7 @@ export default class Composer extends React.Component {
       isSending: false,
       isReply: !!this.props.thread,
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
+      addedFileMeta: {}, // map of file hash -> metadata
       recps: recps,
       currentDraft: null, // only used if !isReply
       drafts: drafts || [], // only used if !isReply
@@ -199,6 +201,7 @@ export default class Composer extends React.Component {
   // called by the files selector when files are chosen
   onFilesAdded() {
 
+    var done = multicb({ pluck: 1 })
     var filesInput = this.refs.files
     var handled=0, total = filesInput.files.length
     this.setState({ isAddingFiles: true, hasAddedFiles: true })
@@ -216,6 +219,7 @@ export default class Composer extends React.Component {
         if (err) {
           app.issue('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
         } else {
+          // insert the mention
           var str = ''
           if (!(/(^|\s)$/.test(this.state.text)))
             str += ' ' // add some space if not on a newline
@@ -223,6 +227,19 @@ export default class Composer extends React.Component {
             str += '!' // inline the image
           str += '['+(f.name||'untitled')+']('+res.hash+')'
           this.setState({ text: this.state.text + str })
+
+          // capture metadata
+          var meta = this.state.addedFileMeta[res.hash] = {
+            name: f.name || 'untitled',
+            size: f.size
+          }
+          if (mime.contentType(f.name))
+            meta.type = mime.contentType(f.name)
+          if (res.width)
+            meta.width = res.width
+          if (res.height)
+            meta.height = res.height
+          this.setState({ addedFileMeta: this.state.addedFileMeta })
         }
         if (++handled >= total)
           this.setState({ isAddingFiles: false })
@@ -320,6 +337,19 @@ export default class Composer extends React.Component {
         else
           app.issue('Error While Publishing', err, 'This error occured while trying to extract the mentions from a new post.')
         return
+      }
+
+      // add file meta to mentions
+      if (mentions && mentions.length) {
+        mentions.forEach(mention => {
+          var meta = this.state.addedFileMeta[mention.link]
+          if (meta) {
+            for (var k in meta) {
+              if (k != 'link')
+                mention[k] = meta[k]
+            }
+          }
+        })
       }
 
       let recps = null, recpLinks = null
