@@ -112,7 +112,7 @@ exports.getPubStats = function (peers) {
   }
 }
 
-exports.getDirectPeerIds = function (peers) {
+exports.getRelayPeerIds = function (peers) {
   let ids = new Array()
 
   ;(peers||app.peers).forEach(function (peer) {

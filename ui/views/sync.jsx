@@ -42,7 +42,7 @@ class PeerGraph extends React.Component {
     super(props)
     this.state = {
       graph: peersToGraph(props.peersForGraph),
-      directPeerIds: props.directPeerIds
+      relayPeerIds: props.relayPeerIds
     }
   }
 
@@ -94,15 +94,31 @@ function createRenderer (graph, el) {
       theta: 0.8
     }
   }).node( function nodeBuilder(node) {
-    const isFriend = node.data.isUser || (social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id))
-    const nodeColor = isFriend ? "#F00" : 'grey'
-    const radius = (node.data.isUser) ? 5 : 2
+    const isFriend = social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)
+
+    let radius = 5
+    let color = '#ddd'
+    const strokeColor = '#f00'
+    const strokeWidth = 1
+
+    if (node.data.isUser) { 
+      radius = 15
+      color = '#fff'
+    }
+    if (isFriend) {
+      color = '#f00'
+    }
+    if (node.data.isRelayPeer) radius = 10
+    if (node.data.isConnected) color = 'green' 
 
     return ngraphSvg.svg("circle", {
       r: radius,
       cx: 2*radius,
       cy: 2*radius,
-      fill: nodeColor,
+      fill: color,
+      stroke: strokeColor,
+      'stroke-width': strokeWidth,
+
       text: node.data ? node.data.name : undefined
     })
   }).placeNode( function nodePositionCallback(nodeUI, pos) {
@@ -112,26 +128,28 @@ function createRenderer (graph, el) {
     const toNode = graph.getNode(linkUI.toId)
 
     //link is from or to a 'pub'
-    const isDirectPeer = fromNode.data && (fromNode.data.isDirectPeer || toNode.data.isDirectPeer )
-    const isLinkingUser = linkUI.toId == app.user.id || linkUI.fromId == app.user.id
+    const isRelayPeer = fromNode.data && (fromNode.data.isRelayPeer || toNode.data.isRelayPeer )
+    const isLinkingUser = linkUI.toId === app.user.id || linkUI.fromId === app.user.id
 
     let linkOpacity = 0
     let linkStrokeWidth = 1
-    if (isLinkingUser && isDirectPeer) {
+    if (isLinkingUser && isRelayPeer) {
       linkOpacity = 0.6
       linkStrokeWidth = 5
-    } else if (isDirectPeer) {
+    } else if (isRelayPeer) {
       linkOpacity = 0.15
       linkStrokeWidth = 3
     }
 
-    const linkStroke = isDirectPeer ? '#F00' : 'grey'
-    //const linkStrokeDasharray = isDirectPeer ? 1 : '5, 5'
+    //const linkStroke = isRelayPeer ? '#F00' : 'grey'
+    //const linkStrokeDasharray = isRelayPeer ? 1 : '5, 5'
+    const linkStroke = '#F00'
+    const linkStrokeDasharray = isLinkingUser ? '1,1' : '1, 2'
 
     return ngraphSvg.svg("line", {
       stroke: linkStroke,
       'stroke-width': linkStrokeWidth,
-      //'stroke-dasharray': linkStrokeDasharray,
+      'stroke-dasharray': linkStrokeDasharray,
       opacity: linkOpacity
     })
   })
@@ -155,8 +173,8 @@ function updateGraph (graph, peers) {
 
     if (node) {
       //TODO figure our a way to update graph node data
-      //if (node.data.isDirectPeer === false && peer.isDirectPeer) {
-        //node.data.isDirectPeer = peer.isDirectPeer
+      //if (node.data.isRelayPeer === false && peer.isRelayPeer) {
+        //node.data.isRelayPeer = peer.isRelayPeer
       //}
     } else {
       graph.addNode(peer.id, {
@@ -164,7 +182,7 @@ function updateGraph (graph, peers) {
         name: peer.name,
         isLAN: peer.isLAN,
         isUser: peer.isUser,
-        isDirectPeer: peer.isDirectPeer
+        isRelayPeer: peer.isRelayPeer
       })
     }
 
@@ -175,7 +193,7 @@ function updateGraph (graph, peers) {
     peers.forEach( function(otherPeer) {
       if (peer === otherPeer) return
       // if neither node is a direct peer of mine (in this session), don't add this link
-      if (!(graph.getNode(peer.id).data.isDirectPeer || graph.getNode(peer.id).data.isDirectPeer)) return
+      if (!(graph.getNode(peer.id).data.isRelayPeer || graph.getNode(peer.id).data.isRelayPeer)) return
       // if link already exists, don't add again
       if (graph.getLink(peer.id, otherPeer.id)) return
 
@@ -275,7 +293,7 @@ export default class Sync extends React.Component {
       peers.sort(peerSorter)
       this.setState({
         peers: peers,
-        directPeerIds: u.getDirectPeerIds(peers),
+        relayPeerIds: u.getRelayPeerIds(peers),
         stats: u.getPubStats(peers)
       })
     })
@@ -288,11 +306,12 @@ export default class Sync extends React.Component {
       pull.map((user) => {
         user.name = u.getName(user.id)
         user.isUser = user.id === app.user.id
-        user.isDirectPeer = (this.state.directPeerIds && this.state.directPeerIds.indexOf(user.id) != -1) ? true : false
+        user.isLAN = isLAN(user)
+        user.isRelayPeer = (this.state.relayPeerIds && this.state.relayPeerIds.indexOf(user.id) != -1) ? true : false
+        //TODO get this working somehow...   user.isConnected = user.connected
         //user.nfollowers = social.followers(user.id).length
         user.followed = social.follows(app.user.id, user.id)
         user.follows = social.follows(user.id, app.user.id)
-        user.isLAN = isLAN(user)
         return user
       }),
       pull.collect((err, users) => {
@@ -334,7 +353,7 @@ export default class Sync extends React.Component {
     }
     this.setState({
       peers: peers,
-      directPeerIds: u.getDirectPeerIds(peers),
+      relayPeerIds: u.getRelayPeerIds(peers),
       stats: u.getPubStats(peers)
     })
   }
@@ -353,7 +372,7 @@ export default class Sync extends React.Component {
     if (i !== peers.length) {
       this.setState({
         peers: peers,
-        directPeerIds: u.getDirectPeerIds(peers),
+        relayPeerIds: u.getRelayPeerIds(peers),
         stats: u.getPubStats(peers)
       })
     }
@@ -416,7 +435,7 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
-        <PeerGraph peersForGraph={this.state.peersForGraph} directPeerIds={this.state.directPeerIds} />
+        <PeerGraph peersForGraph={this.state.peersForGraph} relayPeerIds={this.state.relayPeerIds} />
       </div>
 
     </VerticalFilledContainer>
