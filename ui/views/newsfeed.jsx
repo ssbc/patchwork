@@ -33,7 +33,6 @@ export default class NewsFeed extends React.Component {
     return <div id="newsfeed">
       <MsgList
         threads
-        floatingToolbar
         search
         queueNewMsgs
         dateDividers
