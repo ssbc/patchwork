@@ -8,19 +8,47 @@
 }
 .leftnav-item {
   display: block;
-  padding: 10px;
+  position: relative;
+  padding: 12px 10px;
+  text-align: center;
   i {
-    margin-right: 5px;
-    width: 16px;
-    text-align: center;
-    &.fa-database {
-      font-size: 13px;
+    font-size: 27px;
+    &.fa-newspaper-o, &.fa-users, &.fa-bookmark-o {
+      font-size: 24px;
     }
+  }
+  span {
+    display: none;
+  }
+  .count {
+    position: absolute;
+    right: 7px;
+    top: 5px;
+    background: #E7ECF1;
+    color: #39414D;
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    border: 1px solid #39414D;
+    font-size: 12px;
+    font-weight: bold;
   }
   &.label {
     font-size: 13px;
     font-weight: bold;
     color: #DAE5F3;
+  }
+}
+#leftnav.expanded .leftnav-item {
+  text-align: left;
+  i {
+    text-align: center;
+    font-size: 16px;
+    width: 16px;
+    margin-right: 5px;
+  }
+  span {
+    display: inline-block;
   }
 }
 
