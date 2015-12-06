@@ -37,14 +37,9 @@ export default class ImageInput extends React.Component {
   onRotate(e) {
     e.preventDefault()
     e.stopPropagation()
-    this.setState({ rotation: (this.state.rotation + 1) % 4})
-
-    //MAGIC setTimeout. without this, it draws the last state not the current state.
-    //it wouldn't show correctly until you fiddled with another control.
-    //I couldn't figure out why, but this fixes it...
-    setTimeout(()=> {
+    this.setState({ rotation: (this.state.rotation + 1) % 4}, () => {
       this.drawCanvas()
-    }, 20)
+    })
   }
 
   componentDidMount() {
@@ -183,14 +178,18 @@ export default class ImageInput extends React.Component {
           <span>{this.props.label}</span>
           <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
           <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
-          <button className="btn" onClick={this.onRotate.bind(this)}>rotate: {this.state.rotation*90}</button>
         </label>
       </div>
       { this.state.hasImg ? 
         <div className="image-input-ctrls">
-          <div style={{color: 'gray'}}>
-            { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
-            <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} />
+          <div className="flex" style={{color: 'gray', alignItems: 'center'}}>
+            <div style={{whiteSpace: 'pre', paddingRight: '15px'}}>
+              <label>Rotation: <button className="btn" onClick={this.onRotate.bind(this)}>{(this.state.rotation*90)+' degrees'}</button></label>
+            </div>
+            <div style={{flex: 1, paddingRight: '5px'}}>
+              { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
+              <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} />
+            </div>
           </div>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
             onMouseDown={this.onCanvasMouseDown.bind(this)}
