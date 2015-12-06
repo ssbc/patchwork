@@ -8,11 +8,12 @@ import u from '../lib/util'
 
 class NavLink extends React.Component {
   render() {
-    var selected = (this.props.to === this.props.location)
-    let content = this.props.children
-    if (!content)
-      content = <span><i className={'fa fa-'+this.props.icon} /> {this.props.label} {this.props.count ? ' ('+this.props.count+')' : ''}</span>
-    return <Link className={'leftnav-item '+(selected?'selected':'')} to={this.props.to}>{content}</Link>
+    const selected = (this.props.to === this.props.location)
+    const cls = 'leftnav-item '+(selected?'selected':'')
+    const count = this.props.count ? <div className="count">{this.props.count}</div> : ''
+    if (!this.props.children)
+      return <Link className={cls} to={this.props.to}><i className={'fa fa-'+this.props.icon} /> {this.props.label}{count}</Link>
+    return <Link className={cls} to={this.props.to}>{this.props.children}</Link>
   }
 }
 
@@ -53,15 +54,12 @@ class LeftNav extends React.Component {
     return <div id="leftnav" style={{height: this.props.height}}>
 
       <div className="titlebar">
-        <a className="back" onClick={this.onClickBack}><span>back</span> <i className="fa fa-arrow-circle-o-left" /></a>
+        <a className="back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
       </div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
-      <NavLink to="/notifications" location={this.props.location} icon="rss" label="Updates" count={this.state.indexCounts.notificationsUnread} />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Bookmarked" count={this.state.indexCounts.bookmarksUnread} />
-
-      <hr/>
-      <NavLink to="/profile" location={this.props.location} icon="at" label="Contacts" />
+      <NavLink to="/profile" location={this.props.location} icon="users" label="Contacts" />
       <NavLink to="/sync" location={this.props.location} icon={isWifiMode?'wifi':'globe'} label='Network' />
       <Issues />
     </div>

@@ -4,7 +4,6 @@ import { Router, Route, IndexRoute } from 'react-router'
 import app from './lib/app'
 import Layout from './layout'
 import NewsFeed from './views/newsfeed'
-import Notifications from './views/notifications'
 import Inbox from './views/inbox'
 import Bookmarks from './views/bookmarks'
 import Data from './views/data'
@@ -34,7 +33,6 @@ export default (
       <IndexRoute component={NewsFeed} />
       <Route path="topic/:topic" component={NewsFeed} />
       <Route path="msg/:id" component={Msg} />
-      <Route path="notifications" component={Notifications} />
       <Route path="inbox" component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />

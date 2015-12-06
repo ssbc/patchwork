@@ -1,20 +1,11 @@
 .toolbar {
   background: #fafafa;
-  margin-bottom: 5px;
   border-bottom: 1px solid #ccc;
   font-weight: 300;
-  .elevation-toolbar;
-  font-size: 18px;
-
-  &.floating {
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    width: 100%;
-  }
+  font-size: 15px;
 
   .centered {
-    width: 745px;
+    width: 645px;
     margin: 0px auto; 
     .tabs {
       margin-left: 20px;
@@ -22,7 +13,7 @@
   }
 
   .btn {
-    padding: 10px 20px;
+    padding: 7px 20px;
     border-radius: 0;
     box-shadow: none;
     background: none;
@@ -44,6 +35,30 @@
     }
     &.bordered {
       border-right: 1px solid #ccc;
+    }
+  }
+
+  .search {
+    display: inline-block;
+    position: relative;
+    padding-right: 5px;
+
+    i {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      color: #999;
+    }
+    input {
+      color: gray;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      padding: 3px 0 3px 30px;
+      width: 200px;
+
+      &:focus {
+        outline: 0;
+      }
     }
   }
 }

@@ -1,17 +1,17 @@
 .msg-view.notification {
   display: flex;
-  max-width: 600px;
-  margin: 1px auto;
+  max-width: 350px;
   overflow: hidden;
+  border-bottom: 1px solid #ddd;
+  transition: background 0.2s;
 
   &.new {
-    .elevation-card;
-    background: #fff;
+    background: #F2F6FB;
   }
 
   .ctrls {
-    flex: 0 0 50px;
-    padding: 32px 5px 0 3px;
+    flex: 0 0 40px;
+    padding: 22px 12px 0 3px;
     text-align: right;
     img {
       width: 30px;
@@ -20,7 +20,7 @@
   }
   .content {
     flex: 1;
-    padding: 30px 60px 30px 0;
+    padding: 20px 0;
     .user-link {
       color: #000;
     }

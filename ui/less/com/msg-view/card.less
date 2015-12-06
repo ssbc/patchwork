@@ -79,11 +79,25 @@
       color: #555;
     }
     a.vote {
-      &.selected {
-        color: #1F751F;
-      }
       &:hover {
-        color: green;
+        text-decoration: none;
+        i {
+          .anim-rainbow-color(0.1s);
+          transition: transform 0.2s cubic-bezier(0, 0, 0.75, 2.65);
+        }
+        span:nth-child(2) { .anim-rainbow-color(0.15s); }
+        span:nth-child(3) { .anim-rainbow-color(0.2s); }
+        span:nth-child(4) { .anim-rainbow-color(0.25s); }
+        span:nth-child(5) { .anim-rainbow-color(0.3s); }
+        span:nth-child(6) { .anim-rainbow-color(0.35s); }
+        span:nth-child(7) { .anim-rainbow-color(0.4s); }
+        span:nth-child(8) { .anim-rainbow-color(0.45s); }
+      }
+      &.selected {
+        font-weight: normal;
+        i {
+          transform: scale(1.2);
+        }
       }
     }
     a.flag {
@@ -139,6 +153,30 @@
   }
   &.expanded div {
     background: #fff;
+  }
+}
+
+.msg-view.card-mention {
+  max-width: 600px;
+  margin: 20px auto;
+
+  &>div {
+    .elevation-card;
+    display: flex;
+    margin-left: 77px;
+    padding: 10px 15px;
+    font-weight: 300;
+    color: #666;
+    background: #FFF;
+    border: 1px solid #D5D5D5;
+
+    i {
+      margin: 4px 5px 0 0;
+    }
+    .user-link {
+      color: #555;
+      font-weight: normal;
+    }
   }
 }
 

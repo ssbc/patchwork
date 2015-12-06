@@ -4,6 +4,8 @@ import {Link} from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import clipboard from 'clipboard'
+import onImageLoaded from 'image-loaded'
+import multicb from 'multicb'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
@@ -49,9 +51,9 @@ class DigBtn extends React.Component {
     this.props.onClick()
   }
   render() {
-    let label = this.props.isUpvoted ? 'Dug it' : 'Dig it'
+    let label = this.props.isUpvoted ? 'Dug' : 'Dig'
     return <a className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
-      <i className="fa fa-hand-peace-o" /> {label}
+      <i className="fa fa-hand-peace-o" /> {label.split('').map((l,i) => <span key={i}>{l}</span>)} <span>i</span><span>t</span>
     </a>
   }
 }
@@ -129,10 +131,16 @@ export default class Card extends React.Component {
     // is the card oversized?
     if (!this.refs.body)
       return
-    const rect = this.refs.body.getClientRects()[0]
-    if (rect && rect.height > MAX_CONTENT_HEIGHT) {
-      this.setState({ isOversized: true })
-    }
+    // wait for images to finish loading
+    var done = multicb()
+    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
+    done(() => {
+      // check height
+      const rect = this.refs.body.getClientRects()[0]
+      if (rect && rect.height > MAX_CONTENT_HEIGHT) {
+        this.setState({ isOversized: true })
+      }
+    })
   }
 
   componentWillUnmount() {
@@ -146,6 +154,8 @@ export default class Card extends React.Component {
       return this.renderNotFound(msg)
     if (msg.isLink)
       return this.renderLink(msg)
+    if (msg.isMention)
+      return this.renderMention(msg)
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
@@ -163,9 +173,11 @@ export default class Card extends React.Component {
           <i className="fa fa-warning" /> Missing Post
         </a>
         { expanded ?
-          <span
-            ><br/><br/>
+          <span>
+            <br/><br/>
             {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reference it.'}
+            <br/><br/>
+            <code>{msg.key}</code>
           </span> :
           ' This post could not be loaded.' }
       </div>
@@ -173,9 +185,19 @@ export default class Card extends React.Component {
   }
 
   renderLink(msg) {
-    const name = u.shortString(msg.value.content.text || msg.key, 100)
+    const name = u.shortString(msg.value ? (msg.value.content.text || msg.key) : msg.key, 100)
     return <div key={msg.key} className="msg-view card-missing-post">
       <div><i className="fa fa-angle-up" /> <MsgLink id={msg.key} name={name} /></div>
+    </div>
+  }
+
+  renderMention(msg) {
+    const name = u.shortString(msg.value.content.text || msg.key, 100)
+    return <div key={msg.key} className="msg-view card-mention">
+      <div>
+        <i className="fa fa-hand-o-right" />
+        <div><UserLink id={msg.value.author} /> referenced this thread in <MsgLink id={msg.key} name={name} /></div>
+      </div>
     </div>
   }
 

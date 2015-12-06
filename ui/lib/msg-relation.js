@@ -22,6 +22,18 @@ export function countReplies (thread, filter) {
 }
 
 export function isaReplyTo (a, b) {
-  var c = a.value.content
-  return (c.root && mlib.link(c.root).link == b.key || c.branch && mlib.link(c.branch).link == b.key)
+  var ac = a.value.content
+  return (ac.root && mlib.link(ac.root).link == b.key || ac.branch && mlib.link(ac.branch).link == b.key)
+}
+
+export function relationsTo (a, b) {
+  var rels = []
+  const ac = a.value.content
+  for (var k in ac) {
+    mlib.links(ac[k]).forEach(l => {
+      if (l.link === b.key)
+        rels.push(k)
+    })
+  }
+  return rels
 }

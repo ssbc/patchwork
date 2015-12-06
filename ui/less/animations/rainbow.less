@@ -1,0 +1,26 @@
+// http://codepen.io/Bidji/pen/dPEzwq
+
+.anim-rainbow-color(@delay: 0s) {
+  animation: rainbow-color-keyframes 0.6s @delay linear infinite;
+}
+
+@keyframes rainbow-color-keyframes {
+  0% {
+    color: #0057B8;
+  }
+  20% {
+    color: #F11E4A;
+  }
+  40% {
+    color: #F8A527;
+  }
+  60% {
+    color: #266D7F;
+  }
+  80% {
+    color: #82A;
+  }
+  100% {
+    color: #0057B8;
+  }
+}

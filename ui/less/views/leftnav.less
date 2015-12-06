@@ -1,6 +1,21 @@
 #leftnav {
   background: #39414D;
 
+  .titlebar {
+    height: 33px;
+    background: #FAFAFA;
+    a {
+      display: block;
+      padding: 1px 0 3px;
+      text-align: center;
+      font-size: 24px;
+      color: rgb(104, 120, 144);
+      &:hover {
+        color: rgb(57, 65, 77);
+      }
+    }
+  }
+
   hr {
     border-color: #535D69;
     margin: 15px 15px 15px 10px;
@@ -8,14 +23,30 @@
 }
 .leftnav-item {
   display: block;
-  padding: 10px;
+  position: relative;
+  padding: 12px 10px;
+  text-align: center;
   i {
-    margin-right: 5px;
-    width: 16px;
-    text-align: center;
-    &.fa-database {
-      font-size: 13px;
+    font-size: 27px;
+    &.fa-newspaper-o, &.fa-users, &.fa-bookmark-o {
+      font-size: 24px;
     }
+  }
+  span {
+    display: none;
+  }
+  .count {
+    position: absolute;
+    right: 7px;
+    top: 5px;
+    background: #E7ECF1;
+    color: #39414D;
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    border: 1px solid #39414D;
+    font-size: 12px;
+    font-weight: bold;
   }
   &.label {
     font-size: 13px;
@@ -23,13 +54,29 @@
     color: #DAE5F3;
   }
 }
+#leftnav.expanded .leftnav-item {
+  text-align: left;
+  i {
+    text-align: center;
+    font-size: 16px;
+    width: 16px;
+    margin-right: 5px;
+  }
+  span {
+    display: inline-block;
+  }
+}
 
 a.leftnav-item {
   color: #CDD9E2;
   font-weight: 100;
+  border-right: 0px solid #697786;
+  transition: 0.2s border-width, 0.2s color;
+
   &:hover, &.selected {
     color: #E9F1F7;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
     text-decoration: none;
+    border-right-width: 5px;
   }
 }

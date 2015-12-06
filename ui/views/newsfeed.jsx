@@ -57,7 +57,7 @@ export default class NewsFeed extends React.Component {
       <MsgList
         key={this.props.params.topic}
         threads
-        floatingToolbar
+        search
         queueNewMsgs
         dateDividers
         ListItem={Card}
