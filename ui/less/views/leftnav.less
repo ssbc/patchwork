@@ -55,9 +55,13 @@
 a.leftnav-item {
   color: #CDD9E2;
   font-weight: 100;
+  border-right: 0px solid #697786;
+  transition: 0.2s border-width, 0.2s color;
+
   &:hover, &.selected {
     color: #E9F1F7;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.4);
     text-decoration: none;
+    border-right-width: 5px;
   }
 }
