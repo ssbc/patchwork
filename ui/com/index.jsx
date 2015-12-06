@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import { Link } from 'react-router'
 import Modal from 'react-modal'
 import xtend from 'xtend'
+import TimeAgo from 'react-timeago'
 import app from '../lib/app'
 import social from '../lib/social-graph'
 import u from '../lib/util'
@@ -64,6 +65,15 @@ export class UserBtn extends React.Component {
 export class NiceDate extends React.Component {
   render() {
     return <span>{u.niceDate(this.props.ts)}</span>
+  }
+}
+
+export class LastSeen extends React.Component {
+  render() {
+    const isRecent = new Date - this.props.ts < 60000
+    return <span>
+      {isRecent ? 'moments ago' : <TimeAgo date={this.props.ts} />}
+    </span>
   }
 }
 

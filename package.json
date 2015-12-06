@@ -72,6 +72,7 @@
     "react-infinite": "^0.5.10",
     "react-modal": "^0.6.0",
     "react-router": "^1.0.0-rc1",
+    "react-timeago": "^2.2.1",
     "scuttlebot": "~7.3.3",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",

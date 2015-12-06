@@ -5,7 +5,7 @@ import ip from 'ip'
 import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
-import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
+import { UserLink, NiceDate, LastSeen, VerticalFilledContainer } from '../com/index'
 import { PromptModalBtn, InviteModalBtn } from '../com/modals'
 
 function peerId (peer) {
@@ -69,15 +69,13 @@ class PeerStatus extends React.Component {
     let lastConnected = ''
     if (!peer.connected) {
       if (peer.time && peer.time.connect) {
-        lastConnected = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
+        lastConnected = <div className="light"><LastSeen ts={peer.time.connect} /></div>
       } else {
         failureClass = ' failure'
-        lastConnected = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
+        lastConnected = ''
       }
     }
 
-        // { isMember ? <span className={'known-peer-symbol connection-status'+connectionClass}></span> :
-        //              // <i className={'unknown-peer-symbol fa fa-question-circle connection-status'+connectionClass} /> }
     const isMember = social.follows(peer.key, app.user.id)
     return <div className={'peer flex'+failureClass}>
       <div className='flex-fill'>
