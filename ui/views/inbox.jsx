@@ -30,7 +30,6 @@ export default class Inbox extends React.Component {
     return <div id="inbox">
       <MsgList
         threads
-        floatingToolbar
         search
         ListItem={Oneline}
         filters={FILTERS}

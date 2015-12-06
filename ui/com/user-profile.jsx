@@ -10,14 +10,12 @@ import app from '../lib/app'
 
 const VIEWS = [
   { label: 'Posts' },
-  { label: 'Private Messages' },
   { label: 'About' },
   { label: 'Data' }
 ]
 const VIEW_POSTS = VIEWS[0]
-const VIEW_PMS   = VIEWS[1]
-const VIEW_ABOUT = VIEWS[2]
-const VIEW_DATA = VIEWS[3]
+const VIEW_ABOUT = VIEWS[1]
+const VIEW_DATA = VIEWS[2]
 
 export default class UserProfile extends React.Component {
   constructor(props) {
@@ -60,7 +58,7 @@ export default class UserProfile extends React.Component {
     }
 
     // normal msg-list render
-    const ListItem = (currentView === VIEW_PMS) ? Oneline : Card
+    const ListItem = Card
     const dateDividers = (currentView == VIEW_POSTS)
     const feed = (opts) => {
       opts = opts || {}
@@ -72,16 +70,7 @@ export default class UserProfile extends React.Component {
         return msg.value.sequence
     }
     const forceRaw = (currentView === VIEW_DATA)
-    const filter = (currentView === VIEW_PMS)
-      ? (msg) => {
-        // toplevel post by this user
-        var c = msg.value.content
-        if (msg.plaintext)
-          return false
-        if (msg.value.author == this.props.pid && c.type == 'post' && !(c.root || c.branch))
-          return true
-      }
-      : (currentView === VIEW_POSTS)
+    const filter = (currentView === VIEW_POSTS)
       ? (msg) => {      
         // toplevel post by this user
         var c = msg.value.content

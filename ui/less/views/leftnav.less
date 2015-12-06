@@ -1,6 +1,21 @@
 #leftnav {
   background: #39414D;
 
+  .titlebar {
+    height: 33px;
+    background: #FAFAFA;
+    a {
+      display: block;
+      padding: 1px 0 3px;
+      text-align: center;
+      font-size: 24px;
+      color: rgb(104, 120, 144);
+      &:hover {
+        color: rgb(57, 65, 77);
+      }
+    }
+  }
+
   hr {
     border-color: #535D69;
     margin: 15px 15px 15px 10px;
@@ -55,9 +70,13 @@
 a.leftnav-item {
   color: #CDD9E2;
   font-weight: 100;
+  border-right: 0px solid #697786;
+  transition: 0.2s border-width, 0.2s color;
+
   &:hover, &.selected {
     color: #E9F1F7;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
     text-decoration: none;
+    border-right-width: 5px;
   }
 }

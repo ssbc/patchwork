@@ -362,6 +362,11 @@ export default class MsgList extends React.Component {
     var lastDate = moment().startOf('day')
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
+        <div className="msg-list-ctrls toolbar">
+          { this.props.toolbar ? this.props.toolbar() : '' }
+          { this.props.search  ? <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div> : '' }
+          { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
+        </div>
         <Infinite
           id="msg-list-infinite"
           ref="container"
@@ -372,11 +377,6 @@ export default class MsgList extends React.Component {
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
           { this.props.hero ? this.props.hero() : '' }
-          <div className={'msg-list-ctrls toolbar'+(this.props.floatingToolbar?' floating':'')}>
-            { this.props.toolbar ? this.props.toolbar() : '' }
-            { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
-            { this.props.search  ? <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div> : '' }
-          </div>
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
             : '' }
