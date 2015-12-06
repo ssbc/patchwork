@@ -29,7 +29,6 @@ export default class Bookmarks extends React.Component {
     return <div id="bookmarks">
       <MsgList
         threads
-        floatingToolbar
         search
         live={{ gt: [Date.now(), null] }}
         ListItem={Oneline}
