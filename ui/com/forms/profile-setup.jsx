@@ -1,0 +1,122 @@
+'use babel'
+import React from 'react'
+import schemas from 'ssb-msg-schemas'
+import multicb from 'multicb'
+import { rainbow } from '../index'
+import ImageInput from '../form-elements/image-input'
+import app from '../../lib/app'
+
+function getCurrentName() {
+  return app.users.names[app.user.id]||''
+}
+
+function getCurrentImg() {
+  const profile = app.users.profiles[app.user.id]
+  if (profile && profile.self.image)
+    return profile.self.image.link
+}
+
+export default class ProfileSetup extends React.Component {  
+  constructor(props) {
+    super(props)
+    this.state = this.validate(getCurrentName(), true)
+  }
+
+  componentDidMount() {
+    this.validate(this.state.name) // emit isValid update
+  }
+
+  onChangeName(e) {
+    this.setState(this.validate(e.target.value))
+  }
+
+  validate (name, supressEmit) {
+    let badNameCharsRegex = /[^A-z0-9\._-]/
+    const emit = (b) => { this.props.setIsValid && !supressEmit && this.props.setIsValid(b) }
+    if (!name.trim()) {
+      emit(false)
+      return { error: false, isValid: false, name: name }
+    } else if (badNameCharsRegex.test(name)) {
+      emit(false)
+      return {
+        name: name,
+        error: 'We\'re sorry, your name can only include A-z 0-9 . _ - and cannot have spaces.',
+        isValid: false
+      }
+    } else if (name.slice(-1) == '.') {
+      emit(false)
+      return {
+        name: name,
+        error: 'We\'re sorry, your name cannot end with a period.',
+        isValid: false
+      }
+    } else {
+      emit(true)
+      return {
+        name: name,
+        error: false,
+        isValid: true
+      }
+    }
+  }
+
+  getValues(cb) {
+    const canvas = this.refs.imageInputContainer.querySelector('canvas')
+    if (canvas) {
+      ImageInput.uploadCanvasToBlobstore(canvas, (err, hasher) => {
+        const imageLink = {
+          link: '&'+hasher.digest,
+          size: hasher.size,
+          type: 'image/png',
+          width: 512,
+          height: 512
+        }
+        cb({ name: this.state.name, image: imageLink })
+      })
+    } else {
+      cb({ name: this.state.name })      
+    }    
+  }
+
+  submit(cb) {
+    this.getValues(values => {
+      // publish update messages
+      var done = multicb()
+      if (values.name && values.name !== getCurrentName())
+        app.ssb.publish(schemas.name(app.user.id, values.name), done())
+      if (values.image && values.image.link !== getCurrentImg())
+        app.ssb.publish(schemas.image(app.user.id, values.image), done())
+
+      done(err => {
+        if (err) return cb(err)
+
+        // if in a flow, just go to next step
+        if (this.props.gotoNextStep)
+          return cb()
+
+        // single modal, update app state now
+        app.fetchLatestState(cb)
+      })
+    })
+  }
+
+  render() {
+    const currentName = getCurrentName()
+    const currentImg = getCurrentImg()
+    return <div>
+      <h1>{(currentName) ? rainbow('Edit Profile') : <span>Welcome to {rainbow('Patchwork')}</span>}</h1>
+      <form className="block" onSubmit={e=>e.preventDefault()}>
+        <fieldset>
+          <div>
+            <label>
+              <span>Name</span>
+              <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} />
+              { this.state.error ? <p className="error">{this.state.error}</p> : '' }
+            </label>
+          </div>
+          <div ref="imageInputContainer"><ImageInput label="Image" current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} /></div>
+        </fieldset>
+      </form>
+    </div>
+  }
+}

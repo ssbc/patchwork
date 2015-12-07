@@ -9,7 +9,9 @@ import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
 import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
-import { PromptModalBtn, InviteModalBtn } from '../com/modals'
+import PubInvite from '../com/forms/pub-invite'
+import Modal from '../com/modals/single'
+import ModalBtn from '../com/modals/btn'
 
 function peerId (peer) {
   return peer.host+':'+peer.port+':'+peer.key
@@ -437,7 +439,7 @@ export default class Sync extends React.Component {
         <h1>Network</h1>
         <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Pubs</div>
         <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local</div>
-        <InviteModalBtn className="btn" onUseInvite={this.onUseInvite.bind(this)} />
+        <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
       </div>
 
       <div className='peer-status-group'>
@@ -454,7 +456,7 @@ export default class Sync extends React.Component {
       <div className='peer-status-group'>
         <div className="peer-status-group-header">
           <h2><i className="fa fa-globe" /> Pubs</h2>
-          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. They're commonly servers which have been set up to operate as your local pub - a place to drop by and share data.</div>
+          <div className='explanatory-text'>Pubs are just peers with static addresses, which means they are easy to find. {"They're"} commonly servers which have been set up to operate as your local pub - a place to drop by and share data.</div>
           <div className='explanatory-text'>
             <i className='fa fa-star' /> Is following you - they will replicate your data. <br />
             <i className='fa fa-circle' /> Is not following you, but you might share data about mutual aquantances.

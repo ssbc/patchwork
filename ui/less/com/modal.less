@@ -1,3 +1,111 @@
+.modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(100, 100, 100, 0.75);
+  z-index: 10000;
+  cursor: default;
+
+  .modal-inner {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    width: 640px;
+    transform: translateX(-50%);
+
+    box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+    border: 0;
+    background: #fff;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    outline: none;
+    padding: 0;
+  }
+  &.fullheight .modal-inner {
+    bottom: 40px;  
+  }
+
+  .modal-content {
+    flex: 1;
+    padding: 0 40px;
+    h1, h2, h3 {
+      font-weight: 200;
+    }
+    h1 {
+      margin-top: 40px;
+      font-size: 2.5em;
+
+      .rainbow {
+        span:nth-child(1) { .anim-rainbow-color(0.1s); }
+        span:nth-child(2) { .anim-rainbow-color(0.15s); }
+        span:nth-child(3) { .anim-rainbow-color(0.2s); }
+        span:nth-child(4) { .anim-rainbow-color(0.25s); }
+        span:nth-child(5) { .anim-rainbow-color(0.3s); }
+        span:nth-child(6) { .anim-rainbow-color(0.35s); }
+        span:nth-child(7) { .anim-rainbow-color(0.4s); }
+        span:nth-child(8) { .anim-rainbow-color(0.45s); }
+        span:nth-child(9) { .anim-rainbow-color(0.5s); }
+        span:nth-child(10) { .anim-rainbow-color(0.55s); }
+        span:nth-child(11) { .anim-rainbow-color(0.6s); }
+        span:nth-child(12) { .anim-rainbow-color(0.65s); }
+        span:nth-child(13) { .anim-rainbow-color(0.7s); }
+        span:nth-child(14) { .anim-rainbow-color(0.75s); }
+      }
+    }
+
+    .mdl-spinner-container {
+      width: 30px;
+      margin: 30px auto 0;
+    }
+  }
+  .modal-helptext {
+    padding: 0 40px 20px;
+    font-weight: 200;
+    color: gray;
+    text-align: justify;
+  }
+  .modal-ctrls {
+    display: flex;
+    flex: 0 0 70px;
+    padding: 0 20px 0 0;
+    .cancel {
+      flex: 1;
+      padding-left: 26px;
+      .btn {
+        box-shadow: none;
+        background: #eee;
+        &:hover {
+          .elevation-btn-raised;
+          background: #fdfdfd;
+        }
+      }
+    }
+    .stepped-progress-bar {
+      flex: 1;
+      margin: 2px 5px 0 0;
+      position: relative;
+      left: -20px;
+    }
+    .next {
+      flex: 0 0 170px;
+
+      .disabled {
+        box-shadow: none;
+      }
+    }
+  }
+  .btn {
+    padding: 10px 50px;
+    font-size: 18px;
+  }
+}
+
 .ReactModal__Content {
   form {
     height: 100%;

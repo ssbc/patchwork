@@ -3,8 +3,7 @@ import React from 'react'
 import NativeImage from 'native-image'
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
-import pushable from 'pull-pushable'
-import app from '../lib/app'
+import app from '../../lib/app'
 
 const CANVAS_SIZE = 512
 
@@ -26,11 +25,21 @@ export default class ImageInput extends React.Component {
       zoom: 1,
       minzoom: 1,
 
+      rotation: 0,
+
       // image buffer
       hasImg: false,
       img: undefined,
       imgdim: undefined
     }
+  }
+
+  onRotate(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    this.setState({ rotation: (this.state.rotation + 1) % 4}, () => {
+      this.drawCanvas()
+    })
   }
 
   componentDidMount() {
@@ -49,7 +58,7 @@ export default class ImageInput extends React.Component {
       this.setState({
         img: img,
         imgdim: imgdim,
-        editorMsg: 'drag to crop',
+        editorMsg: 'Zoom:',
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
@@ -90,7 +99,7 @@ export default class ImageInput extends React.Component {
       this.setState({
         img: img,
         imgdim: imgdim,
-        editorMsg: 'drag to crop',
+        editorMsg: 'Zoom:',
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
@@ -145,9 +154,21 @@ export default class ImageInput extends React.Component {
     const canvas = this.refs.canvas
     const ctx = canvas.getContext('2d')
     ctx.globalCompositeOperation = 'source-over'
+ 
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.drawImage(this.state.img, this.state.ox, this.state.oy, this.state.img.width * this.state.zoom, this.state.img.height * this.state.zoom)
+		ctx.save()
+
+    ctx.scale(this.state.zoom, this.state.zoom)
+    ctx.translate(this.state.ox, this.state.oy)
+  	ctx.translate(this.state.img.width/2, this.state.img.height/2)
+		ctx.rotate(this.state.rotation/2 * Math.PI)
+		ctx.drawImage(
+      this.state.img, 
+      -this.state.img.width/2, -this.state.img.height/2,
+      this.state.img.width, this.state.img.height
+    )
+		ctx.restore()
   }
 
   render() {
@@ -161,9 +182,14 @@ export default class ImageInput extends React.Component {
       </div>
       { this.state.hasImg ? 
         <div className="image-input-ctrls">
-          <div style={{color: 'gray'}}>
-            { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
-            <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} />
+          <div className="flex" style={{color: 'gray', alignItems: 'center'}}>
+            <div style={{whiteSpace: 'pre', paddingRight: '15px'}}>
+              <label>Rotation: <button className="btn" onClick={this.onRotate.bind(this)}>{(this.state.rotation*90)+' degrees'}</button></label>
+            </div>
+            <div style={{flex: 1, paddingRight: '5px'}}>
+              { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
+              <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} style={{height: '45px', verticalAlign: 'middle'}} />
+            </div>
           </div>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
             onMouseDown={this.onCanvasMouseDown.bind(this)}
@@ -182,9 +208,8 @@ export default class ImageInput extends React.Component {
 
   static uploadCanvasToBlobstore(canvas, cb) {
     var hasher = createHash('sha256')
-    var ps = pushable()
     pull(
-      ps,
+      pull.once(ImageInput.canvasToPng(canvas)),
       hasher,
       app.ssb.blobs.add(function (err) {
         if (err)
@@ -192,7 +217,5 @@ export default class ImageInput extends React.Component {
         cb(null, hasher)
       })
     )
-    ps.push(ImageInput.canvasToPng(canvas))
-    ps.end()
   }
 }
