@@ -381,7 +381,7 @@ export default class MsgList extends React.Component {
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
             : '' }
-          { this.props.composer ? <ComposerCard /> : '' }
+          { this.props.composer ? <ComposerCard {...this.props.composerProps} /> : '' }
           { isEmpty ?
             <div className="empty-msg">
               { this.state.searchQuery ?

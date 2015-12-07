@@ -32,7 +32,7 @@ export default class NewsFeed extends React.Component {
     return <div id="newsfeed">
       <MsgList
         threads
-        composer
+        composer composerProps={{isPublic: true}}
         search
         queueNewMsgs
         dateDividers
