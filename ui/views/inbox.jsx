@@ -30,6 +30,7 @@ export default class Inbox extends React.Component {
     return <div id="inbox">
       <MsgList
         threads
+        composer composerProps={{placeholder: 'Write a new private message'}}
         search
         ListItem={Oneline}
         filters={FILTERS}
