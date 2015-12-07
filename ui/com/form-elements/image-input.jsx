@@ -3,7 +3,7 @@ import React from 'react'
 import NativeImage from 'native-image'
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
-import app from '../lib/app'
+import app from '../../lib/app'
 
 const CANVAS_SIZE = 512
 
@@ -58,7 +58,7 @@ export default class ImageInput extends React.Component {
       this.setState({
         img: img,
         imgdim: imgdim,
-        editorMsg: 'drag to crop',
+        editorMsg: 'Zoom:',
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
@@ -99,7 +99,7 @@ export default class ImageInput extends React.Component {
       this.setState({
         img: img,
         imgdim: imgdim,
-        editorMsg: 'drag to crop',
+        editorMsg: 'Zoom:',
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
@@ -188,7 +188,7 @@ export default class ImageInput extends React.Component {
             </div>
             <div style={{flex: 1, paddingRight: '5px'}}>
               { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
-              <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} />
+              <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} style={{height: '45px', verticalAlign: 'middle'}} />
             </div>
           </div>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
@@ -208,7 +208,6 @@ export default class ImageInput extends React.Component {
 
   static uploadCanvasToBlobstore(canvas, cb) {
     var hasher = createHash('sha256')
-    var ps = pushable()
     pull(
       pull.once(ImageInput.canvasToPng(canvas)),
       hasher,

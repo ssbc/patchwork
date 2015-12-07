@@ -5,7 +5,6 @@ import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
 import * as HelpCards from '../com/help/cards'
-import WelcomeHelp from '../com/help/welcome'
 import app from '../lib/app'
 import social from '../lib/social-graph'
 

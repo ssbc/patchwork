@@ -1,7 +1,8 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import { InviteModalBtn } from '../modals'
+import PubInvite from '../forms/pub-invite'
+import ModalBtn from '../modals/btn'
 import app from '../../lib/app'
 
 export class NewsFeed extends React.Component {
@@ -55,9 +56,9 @@ export class Pubs extends React.Component {
       return <span/>
     return <div className="card">
       <h2>{"You're in WiFi mode."}</h2>
-      <p>To reach the global network, you need to join a Pub.</p>
+      <p>To reach the global network, you need to be followed by a Public Peer.</p>
       <div className="card-well">
-        <InviteModalBtn className="btn" />
+        <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
       </div>
     </div>
   }

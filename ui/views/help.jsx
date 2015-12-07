@@ -1,11 +1,9 @@
 'use babel'
 import React from 'react'
 import { VerticalFilledContainer } from '../com/index'
-import WelcomeHelp from '../com/help/welcome'
 
 const HELP_SECTIONS = {
-  index: WelcomeHelp, // TODO
-  welcome: WelcomeHelp
+  index: ''
 }
 
 export default class Help extends React.Component {

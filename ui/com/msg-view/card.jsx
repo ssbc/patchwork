@@ -8,8 +8,8 @@ import multicb from 'multicb'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
-import { ModalContainer } from '../modals'
-import { FlagMsgForm } from '../forms'
+import Modal from '../modals/single'
+import FlagMsgForm from '../forms/flag-msg'
 import { countReplies } from '../../lib/msg-relation'
 import DropdownBtn from '../dropdown'
 import u from '../../lib/util'
@@ -263,9 +263,7 @@ export default class Card extends React.Component {
           { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
       </div>
-      <ModalContainer isOpen={this.state.isFlagModalOpen} onRequestClose={this.onCloseFlagModal.bind(this)}>
-        <FlagMsgForm msg={msg} onSubmit={this.onSubmitFlag.bind(this)} />
-      </ModalContainer>
+      <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
     </div>
   }
 }
