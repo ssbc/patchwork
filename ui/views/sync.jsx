@@ -77,7 +77,7 @@ class PeerGraph extends React.Component {
 }
 
 function createRenderer (graph, el) {
-  return ngraphSvg(graph, {
+  let renderer = ngraphSvg(graph, {
     container: el,
     // defaults
     //physics: {
@@ -90,7 +90,7 @@ function createRenderer (graph, el) {
     physics: {
       springLength: 20,
       springCoeff: 0.0001,
-      dragCoeff: 0.02,
+      dragCoeff: 0.01,
       gravity: -1.5,
       theta: 0.7
       //theta: 0.8
@@ -156,6 +156,24 @@ function createRenderer (graph, el) {
       opacity: linkOpacity
     })
   })
+
+  let group = ngraphSvg.svg("g", {transform: "translate(10 20)"})
+  let text = ngraphSvg.svg("text", {fill: 'black'}).text("John Dot Awesome") 
+  let img = ngraphSvg.svg("image", {
+    //'xlink:href': 'http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png',
+    width: 80,
+    height: 80,
+    x: 0,
+    y: 5
+  })
+  //img.attr('xlink:href', "http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png")
+  img.setAttribute('xlink:href', "http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png")
+
+  group.append(text)
+  group.append(img)
+
+  renderer.svgRoot.append( group )
+  return renderer
 }
 
 
@@ -216,6 +234,8 @@ function updateGraph (graph, peers, relayPeerIds) {
       }
     })
   })
+  
+  //add empty info box
   return graph
 }
 
