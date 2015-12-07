@@ -20,7 +20,9 @@ function peerSorter (a, b) {
   const bBoost = (social.follows(b.key, app.user.id)) ? 1000 : 0
   const aBoost = (social.follows(a.key, app.user.id)) ? 1000 : 0
   // then sort by # of announcers
-  return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
+  try {
+    return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
+  } catch(err) { console.log('a', a); console.log('b', b); throw err }
 }
 
 function isLAN (peer) {
@@ -40,8 +42,9 @@ function lastConnected (peer) {
 class PeerGraph extends React.Component {
   constructor (props) {
     super(props)
+    console.log('PeerGraph constructor:', props.relayPeerIds)
     this.state = {
-      graph: peersToGraph(props.peersForGraph),
+      graph: peersToGraph(props.peersForGraph, props.relayPeerIds),
       relayPeerIds: props.relayPeerIds
     }
   }
@@ -51,7 +54,8 @@ class PeerGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph)
+    console.log('nextProps.relayPeerIds', nextProps.relayPeerIds)
+    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph, nextProps.relayPeerIds)
   }
 
   componentWillUnmount () {
@@ -60,7 +64,7 @@ class PeerGraph extends React.Component {
 
   setupRenderer () {
     const el = ReactDOM.findDOMNode(this)
-    const renderer = createRenderer(this.state.graph, el)
+    const renderer = createRenderer(this.state.graph, this.state.relayPeerIds, el)
 
     renderer.run()
 
@@ -74,8 +78,7 @@ class PeerGraph extends React.Component {
   }
 }
 
-function createRenderer (graph, el) {
-
+function createRenderer (graph, relayPeerIds, el) {
   return ngraphSvg(graph, {
     container: el,
     // defaults
@@ -89,26 +92,28 @@ function createRenderer (graph, el) {
     physics: {
       springLength: 20,
       springCoeff: 0.0001,
-      dragCoeff: 0.01,
+      dragCoeff: 0.02,
       gravity: -1.5,
-      theta: 0.8
+      theta: 0.7
+      //theta: 0.8
     }
   }).node( function nodeBuilder(node) {
     const isFriend = social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)
+    const isRelayPeer = node.data.isRelayPeer
 
     let radius = 5
-    let color = '#ddd'
+    let color = '#fff'
     const strokeColor = '#f00'
     const strokeWidth = 1
 
     if (node.data.isUser) { 
       radius = 15
-      color = '#fff'
+      color = '#f00'
     }
     if (isFriend) {
       color = '#f00'
     }
-    if (node.data.isRelayPeer) radius = 10
+    if (isRelayPeer) radius = 10
     if (node.data.isConnected) color = 'green' 
 
     return ngraphSvg.svg("circle", {
@@ -128,21 +133,23 @@ function createRenderer (graph, el) {
     const toNode = graph.getNode(linkUI.toId)
 
     //link is from or to a 'pub'
-    const isRelayPeer = fromNode.data && (fromNode.data.isRelayPeer || toNode.data.isRelayPeer )
+    const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
     const isLinkingUser = linkUI.toId === app.user.id || linkUI.fromId === app.user.id
+
+    console.log(relayPeerIds)
 
     let linkOpacity = 0
     let linkStrokeWidth = 1
-    if (isLinkingUser && isRelayPeer) {
+    if (isLinkingUser && involvesRelayPeer) {
       linkOpacity = 0.6
       linkStrokeWidth = 5
-    } else if (isRelayPeer) {
+    } else if (involvesRelayPeer) {
       linkOpacity = 0.15
       linkStrokeWidth = 3
     }
 
-    //const linkStroke = isRelayPeer ? '#F00' : 'grey'
-    //const linkStrokeDasharray = isRelayPeer ? 1 : '5, 5'
+    //const linkStroke = involvesRelayPeer ? '#F00' : 'grey'
+    //const linkStrokeDasharray = involvesRelayPeer ? 1 : '5, 5'
     const linkStroke = '#F00'
     const linkStrokeDasharray = isLinkingUser ? '1,1' : '1, 2'
 
@@ -156,33 +163,40 @@ function createRenderer (graph, el) {
 }
 
 
-function peersToGraph (peers) {
+function peersToGraph (peers, relayPeerIds) {
   let graph = ngraphGraph()
 
   if (!peers) return graph
 
-  return updateGraph(graph, peers)
+  return updateGraph(graph, peers, relayPeerIds)
 }
 
-function updateGraph (graph, peers) {
+function updateGraph (graph, peers, relayPeerIds) {
   if (!peers) return graph
+  console.log('updateGraph',relayPeerIds)
 
   //get and update OR create each peer node
   peers.forEach( function(peer) {
     let node = graph.getNode(peer.id)
+    const isRelayPeer = (relayPeerIds && relayPeerIds.indexOf(peer.id) != -1) ? true : false
 
+    // Might need to remove node to reset rendering?
+    if (node && !node.data.isRelayPeer && isRelayPeer) { 
+      graph.removeNode(node.data.id)
+      node = undefined
+    }
+      
     if (node) {
-      //TODO figure our a way to update graph node data
-      //if (node.data.isRelayPeer === false && peer.isRelayPeer) {
-        //node.data.isRelayPeer = peer.isRelayPeer
-      //}
+      if (!node.data.isRelayPeer && isRelayPeer) { 
+        node.data.isRelayPeer = isRelayPeer
+      }
     } else {
       graph.addNode(peer.id, {
         id: peer.id,
         name: peer.name,
         isLAN: peer.isLAN,
         isUser: peer.isUser,
-        isRelayPeer: peer.isRelayPeer
+        isRelayPeer: isRelayPeer
       })
     }
 
@@ -191,14 +205,17 @@ function updateGraph (graph, peers) {
   //add links for each peer
   peers.forEach( function(peer) {
     peers.forEach( function(otherPeer) {
+      const involvesRelayPeer = (relayPeerIds && (relayPeerIds.indexOf(peer.id) != -1 || relayPeerIds.indexOf(peer.id) != -1)) ? true : false
+
       if (peer === otherPeer) return
       // if neither node is a direct peer of mine (in this session), don't add this link
-      if (!(graph.getNode(peer.id).data.isRelayPeer || graph.getNode(peer.id).data.isRelayPeer)) return
+      if (!involvesRelayPeer) return
       // if link already exists, don't add again
       if (graph.getLink(peer.id, otherPeer.id)) return
 
+
       //draw one edge per connection.   determine nature later?
-      if (social.follows(otherPeer.id, peer.id) || social.follows(otherPeer.id, peer.id)) {
+      if (social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)) {
         graph.addLink(peer.id, otherPeer.id)
       }
     })
@@ -291,6 +308,7 @@ export default class Sync extends React.Component {
       if (err) return app.minorIssue('Failed to fetch peers list', err, 'This happened while loading the sync page')
       peers = peers || []
       peers.sort(peerSorter)
+      console.log('DidMount: ', u.getRelayPeerIds(peers))
       this.setState({
         peers: peers,
         relayPeerIds: u.getRelayPeerIds(peers),
@@ -307,7 +325,6 @@ export default class Sync extends React.Component {
         user.name = u.getName(user.id)
         user.isUser = user.id === app.user.id
         user.isLAN = isLAN(user)
-        user.isRelayPeer = (this.state.relayPeerIds && this.state.relayPeerIds.indexOf(user.id) != -1) ? true : false
         //TODO get this working somehow...   user.isConnected = user.connected
         //user.nfollowers = social.followers(user.id).length
         user.followed = social.follows(app.user.id, user.id)
