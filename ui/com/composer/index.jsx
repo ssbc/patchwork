@@ -6,30 +6,15 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import multicb from 'multicb'
-import Tabs from './tabs'
-import { Block as MarkdownBlock } from './markdown'
-import { verticalFilled } from './index'
-import u from '../lib/util'
-import app from '../lib/app'
-import mentionslib from '../lib/mentions'
-import social from '../lib/social-graph'
+import { Block as MarkdownBlock } from '../markdown'
+import { verticalFilled } from '../index'
+import u from '../../lib/util'
+import app from '../../lib/app'
+import mentionslib from '../../lib/mentions'
+import social from '../../lib/social-graph'
 
 const MarkdownBlockVerticalFilled = verticalFilled(MarkdownBlock)
 const RECP_LIMIT = 7
-const TOOLBAR_TABS = [
-  { label: <span><i className="fa fa-group" /> Public</span> },
-  { label: <span><i className="fa fa-lock" /> Private</span> }
-]
-const TOOLBAR_TAB_PUBLIC  = TOOLBAR_TABS[0]
-const TOOLBAR_TAB_PRIVATE = TOOLBAR_TABS[1]
-
-class ComposerToolbar extends React.Component {
-  render() {    
-    return <div className="toolbar">
-      <Tabs options={TOOLBAR_TABS} selected={this.props.isPublic ? TOOLBAR_TAB_PUBLIC : TOOLBAR_TAB_PRIVATE} onSelect={this.props.onSelect} />
-    </div>
-  }
-}
 
 class ComposerRecp extends React.Component {
   render() {
@@ -172,20 +157,6 @@ export default class Composer extends React.Component {
       currentDraft: null, // only used if !isReply
       drafts: drafts || [], // only used if !isReply
       text: ''
-    }
-
-    // convenient event helpers
-    this.toolbarHandlers = {
-      onSelect: (v)  => {
-        // update state
-        const isPublic = (v == TOOLBAR_TAB_PUBLIC)
-        this.updateDraft({ isPublic: isPublic })
-        this.setState({ isPublic: isPublic }, () => {
-          // trigger size recalc
-          try { this.refs.textarea.calcHeight() }
-          catch (e) { console.log(e) }
-        })
-      }
     }
   }
 
@@ -400,7 +371,6 @@ export default class Composer extends React.Component {
     const ComposerPreview  = (this.props.verticalFilled) ? MarkdownBlockVerticalFilled : MarkdownBlock
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <ComposerToolbar isPublic={this.state.isPublic} isReadOnly={this.state.isReply} {...this.toolbarHandlers} />
       <ComposerRecps isPublic={this.state.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
         { this.state.isPreviewing ?

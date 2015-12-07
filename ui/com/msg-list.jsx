@@ -9,6 +9,7 @@ import mlib from 'ssb-msgs'
 import ssbref from 'ssb-ref'
 import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
+import ComposerCard from './composer/card'
 import SimpleInfinite from './simple-infinite'
 import Summary from './msg-view/summary'
 import Tabs from './tabs'
@@ -380,6 +381,7 @@ export default class MsgList extends React.Component {
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
             : '' }
+          { this.props.composer ? <ComposerCard /> : '' }
           { isEmpty ?
             <div className="empty-msg">
               { this.state.searchQuery ?

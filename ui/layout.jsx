@@ -3,7 +3,6 @@ import React from 'react'
 import app from './lib/app'
 import LeftNav from './views/leftnav'
 import ComposerSidePanel from './views/composer-sidepanel'
-import FAB from './com/fab'
 import Notifications from './com/msg-list/notifications'
 import ModalFlow from './com/modals/flow'
 import ProfileSetup from './com/forms/profile-setup'
@@ -48,9 +47,6 @@ export default class Layout extends React.Component {
     const composing = this.state.isComposerOpen
     return <div className="layout-rows">
       <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
-      { composing ?
-        <FAB className="expanded gray" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
-        <FAB icon="pencil" onClick={this.toggleComposerOpen.bind(this)} /> }
       <div className="layout-columns">
         <LeftNav
           location={this.props.location.pathname}
