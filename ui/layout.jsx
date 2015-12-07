@@ -3,10 +3,15 @@ import React from 'react'
 import app from './lib/app'
 import LeftNav from './views/leftnav'
 import ComposerSidePanel from './views/composer-sidepanel'
-import { FABComposerModal } from './com/modals'
-import SetupFlow from './com/modals/setup-flow'
 import FAB from './com/fab'
 import FNB from './com/fnb'
+import ModalFlow from './com/modals/flow'
+import ProfileSetup from './com/forms/profile-setup'
+import FollowNearby from './com/forms/follow-nearby'
+import PubInvite from './com/forms/pub-invite'
+
+const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
+const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
 
 export default class Layout extends React.Component {
   constructor(props) {
@@ -42,7 +47,7 @@ export default class Layout extends React.Component {
   render() {
     const composing = this.state.isComposerOpen
     return <div className="layout-rows">
-      <SetupFlow isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       { composing ?
         <FAB className="expanded gray" onClick={this.toggleComposerOpen.bind(this)}>Close</FAB> :
         <FAB icon="pencil" onClick={this.toggleComposerOpen.bind(this)} /> }

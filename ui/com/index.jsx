@@ -67,6 +67,11 @@ export class NiceDate extends React.Component {
   }
 }
 
+// helper to create rainbowed-out elements
+export function rainbow (str) {
+  return <span className="rainbow">{str.split('').map((c,i) => <span key={i}>{c}</span>)}</span>
+}
+
 // higher-order component, adds vertical-filling behavior (take all vertical space possible)
 export function verticalFilled (Component) {
   const VerticalFilledCom = React.createClass({

@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import SteppedProgressBar from '../stepped-progress-bar'
+import app from '../../lib/app'
 
 export default class ModalFlow extends React.Component {
   constructor(props) {
@@ -8,7 +9,7 @@ export default class ModalFlow extends React.Component {
     this.state = {
       step: false,
       isReady: true,
-      canProgress: false,
+      isValid: false,
       helpText: false
     }
   }
@@ -18,29 +19,37 @@ export default class ModalFlow extends React.Component {
     this.gotoStep(0)
   }
 
-  gotoStep(step) {
+  gotoStep(step, cb) {
     this.setState({
       step: step,
       helpText: false,
       isReady: true,
-      canProgress: false
-    })
+      isValid: false
+    }, cb)
   }
 
   gotoNextStep() {
-    this.gotoStep(this.state.step + 1)
+    this.gotoStep(this.state.step + 1, () => {
+      if (!this.getStepCom())
+        this.props.onClose && this.props.onClose()
+    })
   }
 
   getStepCom() {
     if (this.state.step === false)
       return false
-    return this.stepComs[this.state.step]
+    return this.props.Forms[this.state.step]
   }
 
   onNextClick() {
     const step = this.refs.step
     const next = (step && step.submit.bind(step)) || this.gotoNextStep.bind(this)
-    next()
+    next(err => {
+      if (err)
+        app.issue('There was an error', err)
+      else
+        this.gotoNextStep()
+    })
   }
 
   render() {
@@ -48,28 +57,28 @@ export default class ModalFlow extends React.Component {
     if (!this.props.isOpen || !StepCom)
       return <span/>
 
-    const nextText = (this.state.step >= (this.stepComs.length - 1)) ? 'Finish' : 'Next'
+    const nextText = (this.state.step >= (this.props.Forms.length - 1)) ? 'Finish' : 'Next'
     
     var nextCls = ['btn']
-    if (!this.state.canProgress)
+    if (!this.state.isValid)
       nextCls.push('disabled')
     else if (this.state.isReady)
       nextCls.push('highlighted')
 
     const setHelpText = helpText => { this.setState({ helpText: helpText }) }
-    const setCanProgress = canProgress => { this.setState({ canProgress: canProgress }) }
+    const setIsValid = isValid => { this.setState({ isValid: isValid }) }
     const setIsReady = isReady => { this.setState({ isReady: isReady }) }
 
-    return <div className="modal modal-flow">
+    return <div className={'modal modal-flow '+(this.props.fullheight?'fullheight':'')}>
       <div className="modal-inner">
         <div className="modal-content">
-          <StepCom ref="step" setIsReady={setIsReady} setCanProgress={setCanProgress} setHelpText={setHelpText} gotoNextStep={this.gotoNextStep.bind(this)} />
+          <StepCom ref="step" setIsReady={setIsReady} setIsValid={setIsValid} setHelpText={setHelpText} gotoNextStep={this.gotoNextStep.bind(this)} />
         </div>
         { this.state.helpText ? <div className="modal-helptext">{this.state.helpText}</div> : '' }
         <div className="modal-ctrls">
-          <SteppedProgressBar current={this.state.step} labels={this.stepLabels} />
+          <SteppedProgressBar current={this.state.step} labels={this.props.labels} />
           <div className="next">
-            <button disabled={!this.state.canProgress} className={nextCls.join(' ')} onClick={this.onNextClick.bind(this)}>
+            <button disabled={!this.state.isValid} className={nextCls.join(' ')} onClick={this.onNextClick.bind(this)}>
               {nextText} <i className="fa fa-angle-right" />
             </button>
           </div>

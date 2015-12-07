@@ -3,7 +3,6 @@ import React from 'react'
 import { Link } from 'react-router'
 import { verticalFilled } from '../com'
 import Issues from '../com/issues'
-import { InviteModalBtn } from '../com/modals'
 import u from '../lib/util'
 
 class NavLink extends React.Component {
@@ -51,7 +50,6 @@ class LeftNav extends React.Component {
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
-
       <div className="titlebar">
         <a className="back" onClick={this.onClickBack}><span>back</span> <i className="fa fa-arrow-circle-o-left" /></a>
       </div>

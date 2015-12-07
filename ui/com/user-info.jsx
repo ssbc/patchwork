@@ -4,7 +4,9 @@ import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import mentionslib from '../lib/mentions'
-import { RenameModalBtn } from './modals'
+import ModalBtn from './modals/btn'
+import Rename from './forms/rename'
+import ProfileSetup from './forms/profile-setup'
 import { UserLink, UserPic, UserBtn } from './index'
 import DropdownBtn from './dropdown'
 import app from '../lib/app'
@@ -23,7 +25,7 @@ class AutoRefreshingComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = this.computeState()
-    this.refreshState = props => this.setState(this.computeState(props))
+    this.refreshState = props => { this.setState(this.computeState(props)) }
   }
   componentDidMount() {
     app.on('update:all', this.refreshState) // re-render on app state updates
@@ -54,15 +56,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         let msg = (this.state.isFollowing) ? schemas.unfollow(this.props.pid) : schemas.follow(this.props.pid)
         app.ssb.publish(msg, (err) => {
           if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
-          reload()
-        })
-      },
-      rename: (name) => {
-        if (name === this.state.name)
-          return
-        // publish about msg
-        app.ssb.publish(schemas.name(this.props.pid, name), (err) => {
-          if (err) return app.issue('Failed to publish about msg', err, 'Profile view onRename')
           reload()
         })
       },
@@ -140,7 +133,7 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
-            <a className="btn" onClick={()=>{app.emit('modal:setup', true)}}><i className="fa fa-wrench" /> Edit Profile</a> :
+            <ModalBtn className="btn" Form={ProfileSetup} fullheight nextLabel="Publish"><i className="fa fa-wrench" /> Edit Profile</ModalBtn> :
             <span className="btn-group">
               { (this.state.hasBlocked) ?
                 <span className="btn disabled">Blocked</span> :
@@ -150,7 +143,7 @@ export class UserInfoHeader extends AutoRefreshingComponent {
                     <span><i className="fa fa-user-times" /> Unfollow</span> :
                     <span><i className="fa fa-user-plus" /> Follow</span> }
                 </a> }
-              <RenameModalBtn name={this.state.name} onSubmit={this.on.rename} className="btn" />
+              <ModalBtn className="btn" Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" /> Rename</ModalBtn>
               { (this.state.hasBlocked) ?
                 <a className="btn" onClick={this.on.unflag}><i className="fa fa-times" /> Unflag</a> :
                 <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.on.flag}><i className="fa fa-flag" /> Flag</DropdownBtn>  }

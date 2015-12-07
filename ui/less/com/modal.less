@@ -1,11 +1,12 @@
 .modal {
   position: fixed;
   top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
   background-color: rgba(100, 100, 100, 0.75);
   z-index: 10000;
+  cursor: default;
 
   .modal-inner {
     display: flex;
@@ -13,7 +14,6 @@
 
     position: absolute;
     top: 40px;
-    bottom: 40px;
     left: 50%;
     width: 640px;
     transform: translateX(-50%);
@@ -26,6 +26,9 @@
     -webkit-overflow-scrolling: touch;
     outline: none;
     padding: 0;
+  }
+  &.fullheight .modal-inner {
+    bottom: 40px;  
   }
 
   .modal-content {
@@ -62,7 +65,7 @@
     }
   }
   .modal-helptext {
-    padding: 0 40px;
+    padding: 0 40px 20px;
     font-weight: 200;
     color: gray;
     text-align: justify;
@@ -71,6 +74,18 @@
     display: flex;
     flex: 0 0 70px;
     padding: 0 20px 0 0;
+    .cancel {
+      flex: 1;
+      padding-left: 26px;
+      .btn {
+        box-shadow: none;
+        background: #eee;
+        &:hover {
+          .elevation-btn-raised;
+          background: #fdfdfd;
+        }
+      }
+    }
     .stepped-progress-bar {
       flex: 1;
       margin: 2px 5px 0 0;

@@ -140,17 +140,19 @@ function fetchLatestState (cb) {
 
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
-    for (var id in app.users.profiles) {
-      if (id == app.user.profile.id || (app.user.profile.assignedTo[id] && app.user.profile.assignedTo[id].following)) {
-        var name = app.users.names[id]
-        app.suggestOptions['@'].push({
-          id: id,
-          cls: 'user',        
-          title: name || id,
-          image: require('./util').profilePicUrl(id),
-          subtitle: name || id,
-          value: name || id.slice(1) // if using id, dont include the @ sigil
-        })
+    if (app.user.profile) {
+      for (var id in app.users.profiles) {
+        if (id == app.user.profile.id || (app.user.profile.assignedTo[id] && app.user.profile.assignedTo[id].following)) {
+          var name = app.users.names[id]
+          app.suggestOptions['@'].push({
+            id: id,
+            cls: 'user',        
+            title: name || id,
+            image: require('./util').profilePicUrl(id),
+            subtitle: name || id,
+            value: name || id.slice(1) // if using id, dont include the @ sigil
+          })
+        }
       }
     }
 

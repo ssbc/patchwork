@@ -4,7 +4,7 @@ import NativeImage from 'native-image'
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
 import pushable from 'pull-pushable'
-import app from '../lib/app'
+import app from '../../lib/app'
 
 const CANVAS_SIZE = 512
 
