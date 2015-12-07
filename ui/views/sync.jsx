@@ -42,7 +42,6 @@ function lastConnected (peer) {
 class PeerGraph extends React.Component {
   constructor (props) {
     super(props)
-    console.log('PeerGraph constructor:', props.relayPeerIds)
     this.state = {
       graph: peersToGraph(props.peersForGraph, props.relayPeerIds),
       relayPeerIds: props.relayPeerIds
@@ -54,7 +53,6 @@ class PeerGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    console.log('nextProps.relayPeerIds', nextProps.relayPeerIds)
     this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph, nextProps.relayPeerIds)
   }
 
@@ -64,7 +62,7 @@ class PeerGraph extends React.Component {
 
   setupRenderer () {
     const el = ReactDOM.findDOMNode(this)
-    const renderer = createRenderer(this.state.graph, this.state.relayPeerIds, el)
+    const renderer = createRenderer(this.state.graph, el)
 
     renderer.run()
 
@@ -78,7 +76,7 @@ class PeerGraph extends React.Component {
   }
 }
 
-function createRenderer (graph, relayPeerIds, el) {
+function createRenderer (graph, el) {
   return ngraphSvg(graph, {
     container: el,
     // defaults
@@ -136,8 +134,6 @@ function createRenderer (graph, relayPeerIds, el) {
     const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
     const isLinkingUser = linkUI.toId === app.user.id || linkUI.fromId === app.user.id
 
-    console.log(relayPeerIds)
-
     let linkOpacity = 0
     let linkStrokeWidth = 1
     if (isLinkingUser && involvesRelayPeer) {
@@ -173,7 +169,6 @@ function peersToGraph (peers, relayPeerIds) {
 
 function updateGraph (graph, peers, relayPeerIds) {
   if (!peers) return graph
-  console.log('updateGraph',relayPeerIds)
 
   //get and update OR create each peer node
   peers.forEach( function(peer) {
@@ -185,7 +180,8 @@ function updateGraph (graph, peers, relayPeerIds) {
       graph.removeNode(node.data.id)
       node = undefined
     }
-      
+    
+   //TODO tidy this up if removeNode is only way to update rendering of a node
     if (node) {
       if (!node.data.isRelayPeer && isRelayPeer) { 
         node.data.isRelayPeer = isRelayPeer
@@ -308,7 +304,6 @@ export default class Sync extends React.Component {
       if (err) return app.minorIssue('Failed to fetch peers list', err, 'This happened while loading the sync page')
       peers = peers || []
       peers.sort(peerSorter)
-      console.log('DidMount: ', u.getRelayPeerIds(peers))
       this.setState({
         peers: peers,
         relayPeerIds: u.getRelayPeerIds(peers),

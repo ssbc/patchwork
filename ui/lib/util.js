@@ -118,7 +118,7 @@ exports.getRelayPeerIds = function (peers) {
   ;(peers||app.peers).forEach(function (peer) {
     if (ip.isLoopback(peer.host)) return
 
-    if (peer.time && peer.time.connect) {
+    if (peer.connected || (peer.time && peer.time.connect)) {
       ids.push( peer.id )
     }
   })
