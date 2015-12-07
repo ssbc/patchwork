@@ -12,7 +12,7 @@ export default class ComposerCard extends React.Component {
   onClick() {
     this.setState({ isOpen: true }, () => {
       // focus the textarea
-      this.refs.container.querySelector('textarea').focus()
+      this.refs.container.querySelector('input[type=text], textarea').focus()
     })
   }
   onSend() {
@@ -23,7 +23,7 @@ export default class ComposerCard extends React.Component {
       <div className="left-meta"><UserPic id={app.user.id} /></div>
       { this.state.isOpen ?
         <Composer {...this.props} onSend={this.onSend.bind(this)} /> :
-        <div className="composer placeholder" onClick={this.onClick.bind(this)}>Write a message</div> }
+        <div className="composer placeholder" onClick={this.onClick.bind(this)}>{this.props.placeholder}</div> }
     </div>
   }
 }

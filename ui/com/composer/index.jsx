@@ -6,7 +6,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import multicb from 'multicb'
-import ComposerRecps from './recps'
+import { RECP_LIMIT, ComposerRecps } from './recps'
 import { Block as MarkdownBlock } from '../markdown'
 import { verticalFilled } from '../index'
 import u from '../../lib/util'
@@ -249,7 +249,7 @@ export default class Composer extends React.Component {
       <div className="composer-content">
         { this.state.isPreviewing ?
           <ComposerPreview md={this.state.text} /> :
-          <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? `Write a message` : `Write a reply`} /> }
+          <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} /> }
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">

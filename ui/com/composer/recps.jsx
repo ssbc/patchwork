@@ -5,7 +5,7 @@ import app from '../../lib/app'
 import u from '../../lib/util'
 import social from '../../lib/social-graph'
 
-const RECP_LIMIT = 7
+export const RECP_LIMIT = 7
 
 class ComposerRecp extends React.Component {
   render() {
@@ -16,7 +16,7 @@ class ComposerRecp extends React.Component {
   }
 }
 
-export default class ComposerRecps extends React.Component {
+export class ComposerRecps extends React.Component {
   constructor(props) {
     super(props)
     this.state = { inputText: '' }
