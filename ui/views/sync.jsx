@@ -68,6 +68,27 @@ class PeerGraph extends React.Component {
 
     renderer.run()
 
+    renderer.svgRoot.addEventListener('mouseover', function(ev) { 
+      if (ev.target.nodeName == "circle") {
+        const name = ev.target.getAttribute('text')
+        const peerId = ev.target.getAttribute('peerId')
+
+        document.querySelector("svg g text").innerHTML = name
+        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(peerId))
+      }
+
+      ev.stopPropagation()
+    })
+    renderer.svgRoot.addEventListener('mouseout', function(ev) { 
+      if (ev.target.nodeName == "circle") {
+        document.querySelector("svg g text").innerHTML = ''
+        document.querySelector("svg g image").setAttribute('xlink:href', '')
+      }
+
+      ev.stopPropagation()
+    })
+
+
     this.setState({
       renderer: renderer
     })
@@ -117,7 +138,7 @@ function createRenderer (graph, el) {
       cx: 2*radius,
       cy: 2*radius,
       class: nodeClass.join(' '),
-      userId: node.data.id,
+      peerId: node.data.id,
       text: node.data ? node.data.name : undefined
     })
   }).placeNode( function nodePositionCallback(nodeUI, pos) {
@@ -140,17 +161,21 @@ function createRenderer (graph, el) {
   })
 
   let group = ngraphSvg.svg("g", {transform: "translate(10 20)"})
-  let text = ngraphSvg.svg("text", {fill: 'black'}).text("John Dot Awesome") 
+  let text = ngraphSvg.svg("text", {
+    fill: '#555',
+    x: 0,
+    y: 90
+  })
   let img = ngraphSvg.svg("image", {
-    link: 'http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png',
+    link: '',
     width: 80,
     height: 80,
     x: 0,
-    y: 5
+    y: -5
   })
 
-  group.append(text)
   group.append(img)
+  group.append(text)
 
   renderer.svgRoot.append( group )
   return renderer
