@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import MsgList from '../msg-list'
-import Oneline from '../msg-view/oneline'
+import Summary from '../msg-view/Summary'
 import app from '../../lib/app'
 
 const FILTERS = [
@@ -18,7 +18,7 @@ export default class Bookmarks extends React.Component {
   render() {
     return <div className="bookmarks">
       <MsgList
-        ListItem={Oneline}
+        ListItem={Summary}
         emptyMsg="No messages."
         filters={FILTERS}
         source={app.ssb.patchwork.createBookmarkStream}
