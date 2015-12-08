@@ -102,28 +102,22 @@ function createRenderer (graph, el) {
     const isRelayPeer = node.data.isRelayPeer
 
     let radius = 5
-    let color = '#fff'
-    const strokeColor = '#f00'
-    const strokeWidth = 1
+    let nodeClass = new Array
 
     if (node.data.isUser) { 
       radius = 15
-      color = '#f00'
+      nodeClass.push('is-user')
     }
-    if (isFriend) {
-      color = '#f00'
-    }
+    if (isFriend) nodeClass.push('is-friend')
+    if (node.data.isConnected) nodeClass.push('is-connected')
     if (isRelayPeer) radius = 10
-    if (node.data.isConnected) color = 'green' 
 
     return ngraphSvg.svg("circle", {
       r: radius,
       cx: 2*radius,
       cy: 2*radius,
-      fill: color,
-      stroke: strokeColor,
-      'stroke-width': strokeWidth,
-
+      class: nodeClass.join(' '),
+      userId: node.data.id,
       text: node.data ? node.data.name : undefined
     })
   }).placeNode( function nodePositionCallback(nodeUI, pos) {
@@ -136,40 +130,24 @@ function createRenderer (graph, el) {
     const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
     const isLinkingUser = linkUI.toId === app.user.id || linkUI.fromId === app.user.id
 
-    let linkOpacity = 0
-    let linkStrokeWidth = 1
-    if (isLinkingUser && involvesRelayPeer) {
-      linkOpacity = 0.6
-      linkStrokeWidth = 5
-    } else if (involvesRelayPeer) {
-      linkOpacity = 0.15
-      linkStrokeWidth = 3
-    }
-
-    //const linkStroke = involvesRelayPeer ? '#F00' : 'grey'
-    //const linkStrokeDasharray = involvesRelayPeer ? 1 : '5, 5'
-    const linkStroke = '#F00'
-    const linkStrokeDasharray = isLinkingUser ? '1,1' : '1, 2'
+    let linkClass = new Array
+    if (isLinkingUser) linkClass.push('is-linking-user')
+    if (involvesRelayPeer) linkClass.push('involves-relay-peer')
 
     return ngraphSvg.svg("line", {
-      stroke: linkStroke,
-      'stroke-width': linkStrokeWidth,
-      'stroke-dasharray': linkStrokeDasharray,
-      opacity: linkOpacity
+      class: linkClass.join(' ')
     })
   })
 
   let group = ngraphSvg.svg("g", {transform: "translate(10 20)"})
   let text = ngraphSvg.svg("text", {fill: 'black'}).text("John Dot Awesome") 
   let img = ngraphSvg.svg("image", {
-    //'xlink:href': 'http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png',
+    link: 'http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png',
     width: 80,
     height: 80,
     x: 0,
     y: 5
   })
-  //img.attr('xlink:href', "http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png")
-  img.setAttribute('xlink:href', "http://localhost:7777/&xISx10wRtEirc1+LEHp0khJc5lrsybHBnIry78pan9U=.sha256?fallback=img&name=JohnDotAwesome.png")
 
   group.append(text)
   group.append(img)
