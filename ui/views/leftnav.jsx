@@ -35,10 +35,6 @@ class LeftNav extends React.Component {
     app.removeListener('update:indexCounts', this.refreshState)
   }
 
-  onClickBack() {
-    window.history.back()
-  }
-
   nameOf(id) {
     return this.props.names[id] || u.shortString(id||'', 6)
   }
@@ -51,9 +47,6 @@ class LeftNav extends React.Component {
     }
 
     return <div id="leftnav" style={{height: this.props.height}}>
-      <div className="titlebar">
-        <a className="back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
-      </div>
       <NavLink to="/" location={this.props.location} icon="newspaper-o" label="Feed" />
       <NavLink to="/inbox" location={this.props.location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
       <NavLink to="/bookmarks" location={this.props.location} icon="bookmark-o" label="Bookmarked" count={this.state.indexCounts.bookmarksUnread} />

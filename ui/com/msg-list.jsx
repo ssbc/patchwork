@@ -365,7 +365,6 @@ export default class MsgList extends React.Component {
       <div className="msg-list-items">
         <div className="msg-list-ctrls toolbar">
           { this.props.toolbar ? this.props.toolbar() : '' }
-          { this.props.search  ? <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div> : '' }
           { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
         </div>
         <Infinite

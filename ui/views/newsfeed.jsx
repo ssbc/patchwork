@@ -33,7 +33,6 @@ export default class NewsFeed extends React.Component {
       <MsgList
         threads
         composer composerProps={{isPublic: true, placeholder: 'Write a new public post'}}
-        search
         queueNewMsgs
         dateDividers
         ListItem={Card}
