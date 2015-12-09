@@ -386,6 +386,7 @@ export default class MsgList extends React.Component {
                   key={m.key}
                   msg={m}
                   {...this.handlers}
+                  {...this.props.listItemProps}
                   selected={selectedKey === m.key}
                   forceRaw={this.props.forceRaw} />
 

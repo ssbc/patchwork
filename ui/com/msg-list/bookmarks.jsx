@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import MsgList from '../msg-list'
-import Summary from '../msg-view/summary'
+import Oneline from '../msg-view/Oneline'
 import Tabs from '../tabs'
 import app from '../../lib/app'
 
@@ -38,7 +38,8 @@ export default class Bookmarks extends React.Component {
     return <div className="bookmarks">
       <MsgList
         ref="list"
-        ListItem={Summary}
+        ListItem={Oneline}
+        listItemProps={{ summary: true }}
         Toolbar={Toolbar}
         filter={this.state.filter.fn}
         emptyMsg="No messages."
