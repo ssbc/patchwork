@@ -102,7 +102,7 @@ exports.getPubStats = function (peers) {
         membersofUntried++
     }
   })
-  
+
   return {
     membersof: membersof,
     membersofActive: membersofActive,
@@ -111,3 +111,18 @@ exports.getPubStats = function (peers) {
     hasSyncIssue: (!membersof || (!membersofUntried && !membersofActive))
   }
 }
+
+exports.getRelayPeerIds = function (peers) {
+  let ids = new Array()
+
+  ;(peers||app.peers).forEach(function (peer) {
+    if (ip.isLoopback(peer.host)) return
+
+    if (peer.connected || (peer.time && peer.time.connect)) {
+      ids.push( peer.id )
+    }
+  })
+
+  return ids
+}
+
