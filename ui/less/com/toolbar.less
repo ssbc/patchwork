@@ -23,29 +23,19 @@
     background: none;
   }
 
+  .divider {
+    width: 1px;
+    border-left: 1px solid #ccc;
+    margin: 0 12px;
+  }
+
   .btn {
     padding: 5px 20px;
     border-radius: 0;
     box-shadow: none;
     background: none;
     &:hover {
-      .elevation-btn-raised;
-      background: #fff;
-    }
-    &.highlighted {
-      background: #4880F1;//linear-gradient(to bottom, #6A99F5, #4880F1);
-      &:hover {
-        background: #5E90F5;
-      }
-    }
-    &.disabled, &:disabled {
-      color: #aaa;
-      box-shadow: none;
-      background: #eee;
-      cursor: default;
-    }
-    &.bordered {
-      border-right: 1px solid #ccc;
+      color: #459EFF;
     }
   }
   .ctrl {
@@ -92,6 +82,13 @@
       .ctrl .label {
         display: none;
       }
+    }
+  }
+
+  .dipswitch {
+    margin: 0 5px;
+    &:hover, &.checked {
+      color: #459EFF;
     }
   }
 

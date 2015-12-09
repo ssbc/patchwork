@@ -207,7 +207,7 @@ export default class Thread extends React.Component {
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     return <div className="msg-thread">
-      <div className="toolbar floating flex">
+      <div className="toolbar flex">
         { threadRoot ?
           <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
           : '' }
