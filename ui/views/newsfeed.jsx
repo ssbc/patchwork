@@ -63,8 +63,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
   render() {
     const listItem = LISTITEMS[this.state.listItemIndex]
-    console.log(this.state, listItem)
     const ListItem = listItem.Component
+    const queueNewMsgs = (listItem == LISTITEM_CARD) // only queue new messages for cards
     const Toolbar = (props) => {
       if (!this.state.isToolbarOpen) {
         return <div className="toolbar floating">
@@ -90,7 +90,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         ref="list"
         threads
         composer composerProps={{isPublic: true, placeholder: 'Write a new public post'}}
-        queueNewMsgs
+        queueNewMsgs={queueNewMsgs}
         dateDividers
         filter={filter}
         Toolbar={Toolbar}

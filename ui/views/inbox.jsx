@@ -62,6 +62,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
   render() {
     const listItem = LISTITEMS[this.state.listItemIndex]
     const ListItem = listItem.Component
+    const queueNewMsgs = (listItem == LISTITEM_CARD) // only queue new messages for cards
     const Toolbar = (props) => {
       if (!this.state.isToolbarOpen) {
         return <div className="toolbar floating">
@@ -87,6 +88,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
         ref="list"
         threads
         dateDividers
+        queueNewMsgs={queueNewMsgs}
         composer composerProps={{placeholder: 'Write a new private message'}}
         filter={filter}
         Toolbar={Toolbar}
