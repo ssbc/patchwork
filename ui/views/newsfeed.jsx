@@ -32,6 +32,7 @@ export default class NewsFeed extends React.Component {
     return <div id="newsfeed">
       <MsgList
         threads
+        floatingToolbar
         composer composerProps={{isPublic: true, placeholder: 'Write a new public post'}}
         queueNewMsgs
         dateDividers

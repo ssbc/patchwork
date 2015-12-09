@@ -208,17 +208,15 @@ export default class Thread extends React.Component {
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     return <div className="msg-thread">
       <div className="toolbar floating flex">
-        <div className="centered">
-          { threadRoot ?
-            <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
-            : '' }
-          { !threadRoot && thread ?
-            <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
-            : '' }
-          { canMarkUnread ?
-            <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
-            : '' }
-        </div>
+        { threadRoot ?
+          <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
+          : '' }
+        { !threadRoot && thread ?
+          <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+          : '' }
+        { canMarkUnread ?
+          <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
+          : '' }
       </div>
       <VerticalFilledContainer id="msg-thread-vertical">
         <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>

@@ -363,7 +363,7 @@ export default class MsgList extends React.Component {
     var lastDate = moment().startOf('day').add(1, 'day')
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
-        <div className="msg-list-ctrls toolbar">
+        <div className={`msg-list-ctrls toolbar ${this.props.floatingToolbar ? 'floating' : ''}`}>
           { this.props.toolbar ? this.props.toolbar() : '' }
           { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
         </div>

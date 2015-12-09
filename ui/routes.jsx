@@ -5,7 +5,6 @@ import app from './lib/app'
 import Layout from './layout'
 import NewsFeed from './views/newsfeed'
 import Inbox from './views/inbox'
-import Bookmarks from './views/bookmarks'
 import Data from './views/data'
 import Msg from './views/msg'
 import Profile from './views/profile'
@@ -33,7 +32,6 @@ export default (
       <IndexRoute component={NewsFeed} />
       <Route path="msg/:id" component={Msg} />
       <Route path="inbox" component={Inbox} />
-      <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
       <Route path="profile" component={Profile} />
       <Route path="profile/:id" component={Profile} />
