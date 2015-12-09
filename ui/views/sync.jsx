@@ -102,6 +102,7 @@ class PeerGraph extends React.Component {
 function createRenderer (graph, el) {
   let renderer = ngraphSvg(graph, {
     container: el,
+    scrollSpeed: 0.01,
     // defaults
     //physics: {
     //  springLength: 30,
@@ -243,39 +244,6 @@ function updateGraph (graph, peers, relayPeerIds) {
   //add empty info box
   return graph
 }
-
-//class Peer extends React.Component {
-  //render() {
-    //let peer = this.props.peer
-
-    //// status: connection progress or last-connect info
-    //let status = ''
-    //if (peer.connected) {
-      //if (!peer.progress)
-        //status = <div className="light">Syncing</div>
-      //else if (peer.progress.sync || peer.progress.total === 0)
-        //status = <div className="light">Syncing</div>
-      //else
-        //// NOTE: I've not seen this progress working in recent memory
-        //status = <div className="light"><progress value={peer.progress.current / peer.progress.total} /></div>
-    //} else if (peer.time) {
-      //if (peer.time.connect > peer.time.attempt)
-        //status = <div className="light">Synced at <NiceDate ts={peer.time.connect} /></div>
-      //else if (peer.time.attempt) {
-        //status = <div className="light">Connect failed at <NiceDate ts={peer.time.attempt} /></div>
-      //}
-    //}
-
-    //const isMember = social.follows(peer.key, app.user.id)
-    //return <div className={'peer flex'+((peer.connected)?' connected':'')+(isMember?' ismember':'')}>
-      //<div className="flex-fill">
-        //<div><UserLink id={peer.key} /> { isMember ? <span className="light">Joined</span> : '' }</div>
-        //<div><small>{peerId(peer)}</small></div>
-      //</div>
-      //{status}
-    //</div>
-  //}
-//}
 
 class PeerStatus extends React.Component {
   render() {
@@ -445,6 +413,10 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
+        <PeerGraph peersForGraph={this.state.peersForGraph} relayPeerIds={this.state.relayPeerIds} />
+      </div>
+
+      <div className='peer-status-group'>
         <div className="peer-status-group-header">
           <h2><i className="fa fa-wifi" /> Local</h2>
           { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
@@ -469,11 +441,6 @@ export default class Sync extends React.Component {
             map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
         }
       </div>
-
-      <div className='peer-status-group'>
-        <PeerGraph peersForGraph={this.state.peersForGraph} relayPeerIds={this.state.relayPeerIds} />
-      </div>
-
     </VerticalFilledContainer>
   }
 }
