@@ -77,6 +77,36 @@ export class NiceDate extends React.Component {
   }
 }
 
+// parent class for components which should persist their state to localstorage
+// - subclasses must call super(props, storageId), where `storageId` is the localStorage key
+// - subclasses can also set defaultState to ensure certain values
+export class LocalStoragePersistedComponent extends React.Component {
+  constructor(props, storageId, defaultState) {
+    super(props)
+    
+    // load state from local storage
+    this.storageId = storageId
+    try { this.state = JSON.parse(localStorage[this.storageId]) }
+    catch(e) { this.state = {} }
+
+    // write any missing state props from default state
+    if (defaultState) {
+      for (var k in defaultState) {
+        if (!(k in this.state))
+          this.state[k] = defaultState[k]
+      }
+    }
+  }
+
+  setState(obj, cb) {
+    // override to persist to local storage
+    super.setState(obj, (prevState, currentProps) => {
+      localStorage[this.storageId] = JSON.stringify(this.state)
+      cb && cb(prevState, currentProps)
+    })
+  }
+}
+
 // helper to create rainbowed-out elements
 export function rainbow (str) {
   return <span className="rainbow">{str.split('').map((c,i) => <span key={i}>{c}</span>)}</span>

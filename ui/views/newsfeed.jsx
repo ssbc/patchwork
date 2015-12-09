@@ -2,6 +2,7 @@
 import React from 'react'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
+import { LocalStoragePersistedComponent } from '../com'
 import Dipswitch from '../com/form-elements/dipswitch'
 import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
@@ -22,14 +23,13 @@ function followedOnlyFilter (msg) {
   return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
 }
 
-export default class NewsFeed extends React.Component {
+export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
-    super(props)
-    this.state = {
+    super(props, 'newsfeedState', {
       isToolbarOpen: true,
-      listItem: LISTITEM_CARD,
+      listItemIndex: 0,
       isFollowedOnly: false
-    }
+    })
   }
 
   cursor (msg) {
@@ -52,7 +52,7 @@ export default class NewsFeed extends React.Component {
   }
 
   onSelectListItem(listItem) {
-    this.setState({ listItem: listItem })
+    this.setState({ listItemIndex: LISTITEMS.indexOf(listItem) })
   }
 
   onToggleFollowedOnly(b) {
@@ -62,7 +62,9 @@ export default class NewsFeed extends React.Component {
   }
 
   render() {
-    const ListItem = this.state.listItem.Component
+    const listItem = LISTITEMS[this.state.listItemIndex]
+    console.log(this.state, listItem)
+    const ListItem = listItem.Component
     const Toolbar = (props) => {
       if (!this.state.isToolbarOpen) {
         return <div className="toolbar floating">
@@ -70,11 +72,11 @@ export default class NewsFeed extends React.Component {
         </div>
       }
       return <div className="toolbar">
-        <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-caret-square-o-up" /></a>
+        <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-caret-square-o-up" /> Collapse</a>
         <span className="divider" />
         <Dipswitch label="Followed Only" checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} />
         <span className="divider" />
-        <Tabs options={LISTITEMS} selected={this.state.listItem} onSelect={this.onSelectListItem.bind(this)} />
+        <Tabs options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} />
       </div>
     }
     const filter = msg => {
