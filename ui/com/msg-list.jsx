@@ -344,6 +344,7 @@ export default class MsgList extends React.Component {
   }
 
   render() {
+    const Hero = this.props.Hero
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
@@ -365,7 +366,7 @@ export default class MsgList extends React.Component {
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
-          { this.props.hero ? this.props.hero() : '' }
+          { Hero ? <Hero/> : '' }
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
             : '' }

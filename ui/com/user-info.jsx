@@ -5,6 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import mentionslib from '../lib/mentions'
 import ModalBtn from './modals/btn'
+import Tabs from './tabs'
 import Rename from './forms/rename'
 import ProfileSetup from './forms/profile-setup'
 import { UserLink, UserPic, UserBtn } from './index'
@@ -129,6 +130,7 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         <img src={u.profilePicUrl(this.props.pid)} />
       </div>
       <div className="facts">
+        <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
         <h1>{this.state.name}</h1>
         <pre><code>{this.props.pid}</code></pre>
         <div>
