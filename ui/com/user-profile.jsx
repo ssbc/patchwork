@@ -3,30 +3,29 @@ import React from 'react'
 import MsgList from './msg-list'
 import Card from './msg-view/card'
 import Oneline from './msg-view/oneline'
-import Tabs from './tabs'
 import { VerticalFilledContainer } from './index'
 import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } from './user-info'
 import app from '../lib/app'
 
-const VIEWS = [
+const TABS = [
   { label: 'Posts' },
   { label: 'About' },
   { label: 'Data' }
 ]
-const VIEW_POSTS = VIEWS[0]
-const VIEW_ABOUT = VIEWS[1]
-const VIEW_DATA = VIEWS[2]
+const VIEW_POSTS = TABS[0]
+const VIEW_ABOUT = TABS[1]
+const VIEW_DATA = TABS[2]
 
 export default class UserProfile extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentView: VIEWS[0]
+      currentTab: TABS[0]
     }
   }
 
-  onSelectFilter(view) {
-    this.setState({ currentView: view })
+  onSelectTab(tab) {
+    this.setState({ currentTab: tab })
   }
 
   render() {
@@ -36,19 +35,15 @@ export default class UserProfile extends React.Component {
     // - render 1 way for about, and a different way for msg lists
     // - use the hero and toolbar attributes to maintain consistency (really shouldnt be part of MsgList)
     // - also, abuse the key attr on MsgList to get a rerender on view change
-    const currentView = this.state.currentView
-    const hero = () => {
-      return <UserInfoHeader key={this.props.pid} pid={this.props.pid} />
-    }
-    const toolbar = () => {
-      return <Tabs options={VIEWS} selected={currentView} onSelect={this.onSelectFilter.bind(this)} />
+    const currentTab = this.state.currentTab
+    const Hero = (props) => {
+      return <UserInfoHeader key={this.props.pid} pid={this.props.pid} tabs={TABS} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} />
     }
 
-    if (currentView === VIEW_ABOUT) {
+    if (currentTab === VIEW_ABOUT) {
       // about render
       return <VerticalFilledContainer className="user-profile" key={this.props.pid}>
-        {hero()}
-        <div className="toolbar"><div className="centered">{toolbar()}</div></div>
+        <Hero />
         <div className="user-profile-about">
           <UserInfoFlags pid={this.props.pid} />
           <UserInfoFollowers pid={this.props.pid} />
@@ -59,7 +54,6 @@ export default class UserProfile extends React.Component {
 
     // normal msg-list render
     const ListItem = Card
-    const dateDividers = (currentView == VIEW_POSTS)
     const feed = (opts) => {
       opts = opts || {}
       opts.id = this.props.pid
@@ -69,8 +63,8 @@ export default class UserProfile extends React.Component {
       if (msg)
         return msg.value.sequence
     }
-    const forceRaw = (currentView === VIEW_DATA)
-    const filter = (currentView === VIEW_POSTS)
+    const forceRaw = (currentTab === VIEW_DATA)
+    const filter = (currentTab === VIEW_POSTS)
       ? (msg) => {      
         // toplevel post by this user
         var c = msg.value.content
@@ -82,10 +76,20 @@ export default class UserProfile extends React.Component {
       : () => true // allow all
   
     // MsgList must have refreshOnReply
-    // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
+    // - Why: in other TABS, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
     return <div className="user-profile" key={this.props.pid}>
-      <MsgList threads forceRaw={forceRaw} dateDividers={dateDividers} key={currentView.label} ListItem={ListItem} hero={hero} toolbar={toolbar} source={feed} cursor={cursor} filter={filter} refreshOnReply />
+      <MsgList
+        key={currentTab.label}
+        threads
+        dateDividers
+        forceRaw={forceRaw}
+        ListItem={ListItem}
+        Hero={Hero}
+        source={feed}
+        cursor={cursor}
+        filter={filter}
+        refreshOnReply />
     </div>
   }
 }

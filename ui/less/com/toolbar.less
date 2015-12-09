@@ -2,7 +2,8 @@
   background: #fafafa;
   border-bottom: 1px solid #ccc;
   font-weight: 300;
-  font-size: 15px;
+  height: 28px;
+  padding: 5px 0;
 
   .centered {
     width: 645px;
@@ -12,29 +13,79 @@
     }
   }
 
+  &.floating {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 150px;
+    border: 0;
+    z-index: 1000;
+    background: none;
+  }
+
+  .divider {
+    width: 1px;
+    border-left: 1px solid #ccc;
+    margin: 0 12px;
+  }
+
   .btn {
-    padding: 7px 20px;
+    padding: 5px 20px;
     border-radius: 0;
     box-shadow: none;
     background: none;
     &:hover {
-      .elevation-btn-raised;
-      background: #fff;
+      color: #459EFF;
     }
-    &.highlighted {
-      background: #4880F1;//linear-gradient(to bottom, #6A99F5, #4880F1);
-      &:hover {
-        background: #5E90F5;
+  }
+  .ctrl {
+    display: inline-block;
+    padding: 0 12px;
+    font-size: 21px;
+    text-align: center;
+    color: rgb(104, 120, 144);
+    transition: color 0.2s;
+
+    &:hover, &.selected {
+      color: #459EFF;
+      text-decoration: none;
+    }
+
+    .count {
+      display: inline-block;
+      position: relative;
+      top: -10px;
+      font-size: 12px;
+      font-weight: normal;
+    }
+  }
+  .back {
+    width: 50px;
+    padding: 0;
+  }
+  .nav {
+    display: inline-block;
+    .ctrl i {
+      display: none;
+      padding: 0 8px;
+    }
+    .ctrl .label {
+      padding: 0 4px;
+    }
+    @media (max-width: 960px) {
+      .ctrl i {
+        display: inline;
+      }
+      .ctrl .label {
+        display: none;
       }
     }
-    &.disabled, &:disabled {
-      color: #aaa;
-      box-shadow: none;
-      background: #eee;
-      cursor: default;
-    }
-    &.bordered {
-      border-right: 1px solid #ccc;
+  }
+
+  .dipswitch {
+    margin: 0 5px;
+    &:hover, &.checked {
+      color: #459EFF;
     }
   }
 

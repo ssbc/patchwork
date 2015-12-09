@@ -3,21 +3,13 @@
 }
 .tabs a {
   display: inline-block;
-  padding: 7px 10px;
+  padding: 5px 10px;
   color: gray;
-  transition: box-shadow 0.2s, background 0.2s, color 0.2s;
+  transition: color 0.2s;
 
-  &:hover {
-    .elevation-btn-raised;
-    background: #fff;
+  &:hover, &.selected {
     text-decoration: none;
-  }
-  &.selected {
-    color: #555;
-    font-weight: normal;
-  }
-  &:active {
-    background: #fff;
+    color: #4597F1;
   }
 }
 .tabs.vertical a {

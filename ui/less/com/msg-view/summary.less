@@ -2,7 +2,13 @@
   display: flex;
   padding: 10px;
   overflow: hidden;
-  margin-right: 50px;
+  max-width: 680px;
+  margin: 0 auto;
+  border-bottom: 1px solid #ddd;
+
+  &:hover {
+    background: #fafafa;
+  }
 
   .ctrls {
     flex: 0 0 24px;
@@ -39,8 +45,7 @@
     color: @dark-gray3;
     font-weight: 300;
     font-family: Helvetica;
-    font-size: 90%;
-    line-height: 1.4;
+    line-height: 1.2;
 
     .body-line {
       white-space: pre;

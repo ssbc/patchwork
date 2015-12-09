@@ -1,16 +1,15 @@
 .msg-view.oneline {
   display: flex;
-  height: 24px;
+  height: 32px;
   padding: 8px 0 6px;
   overflow: hidden;
   color: #555;
-  background: #fafafa;
-  border-bottom: 1px solid #ddd;
 
   .bookmark {
     flex: 0 0 30px;
-    padding: 2px 0 0 0;
+    padding: 3px 0 0 0;
     text-align: center;
+    font-size: 21px;
     .fa-bookmark-o {
       color: gray;
     }
@@ -19,8 +18,9 @@
     }
   }
   .type {
-    flex: 0 0 18px;
-    padding: 2px 0 0 0;
+    flex: 0 0 20px;
+    padding: 3px 0 0 0;
+    font-size: 21px;
   }
   .authors {
     flex: 0 0 80px;
@@ -30,10 +30,16 @@
     a {
       color: #555;
     }
+    .user-pic img {
+      width: 32px;
+      height: 32px;
+      border-radius: 2px;
+      margin-right: 2px;
+    }
   }
   .replies {
     flex: 0 0 40px;
-    padding-top: 1px;
+    padding-top: 5px;
     text-align: center;
     margin-right: 5px;
     border-right: 1px solid #ccc;
@@ -45,16 +51,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: @dark-gray3;
-    font-weight: 300;
     font-family: Helvetica;
-    font-size: 90%;
-    line-height: 1.8;
+    line-height: 2.2;
+    padding-left: 3px;
   }
   .date {
     flex: 0 0 100px;  
     text-align: right;
-    font-weight: 300;
-    padding-right: 10px;
+    padding: 5px 10px 0 0;
   }
 
   &.unread {
@@ -66,6 +70,6 @@
   }
   
   &:hover {
-    background: #eee;
+    background: #fafafa;
   }
 }

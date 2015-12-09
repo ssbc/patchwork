@@ -12,7 +12,6 @@ import ReactInfinite from 'react-infinite'
 import ComposerCard from './composer/card'
 import SimpleInfinite from './simple-infinite'
 import Summary from './msg-view/summary'
-import Tabs from './tabs'
 import { VerticalFilledContainer, verticalFilled } from './index'
 import { isaReplyTo } from '../lib/msg-relation'
 import app from '../lib/app'
@@ -40,7 +39,6 @@ export default class MsgList extends React.Component {
       isLoading: false,
       isAtEnd: false,
       searchQuery: false,
-      activeFilter: props.filters ? props.filters[0] : null,
       containerHeight: window.innerHeight
     }
     this.liveStream = null
@@ -107,11 +105,6 @@ export default class MsgList extends React.Component {
           let recps = mlib.links(msg.value.content.recps).map(l => l.link)
           app.ssb.private.publish(voteMsg, recps, done)
         }
-      },
-      onSelectFilter: (filter) => {
-        if (this.state.isLoading)
-          return
-        this.setState({ activeFilter: filter }, () => this.reload())
       }
     }
   }
@@ -190,7 +183,6 @@ export default class MsgList extends React.Component {
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
-      (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
       (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
 
@@ -302,7 +294,6 @@ export default class MsgList extends React.Component {
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
-      (this.state.activeFilter) ? pull.filter(this.state.activeFilter.fn) : undefined, // run the user-selected filter
       pull.take(amt), // apply limit
       (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.collect((err, msgs) => {
@@ -353,6 +344,8 @@ export default class MsgList extends React.Component {
   }
 
   render() {
+    const Hero = this.props.Hero
+    const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
     const selectedKey = this.state.selected && this.state.selected.key
@@ -363,11 +356,7 @@ export default class MsgList extends React.Component {
     var lastDate = moment().startOf('day').add(1, 'day')
     return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
       <div className="msg-list-items">
-        <div className="msg-list-ctrls toolbar">
-          { this.props.toolbar ? this.props.toolbar() : '' }
-          { this.props.search  ? <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div> : '' }
-          { this.props.filters ? <Tabs options={this.props.filters} selected={this.state.activeFilter} onSelect={this.handlers.onSelectFilter} /> : '' }
-        </div>
+        { Toolbar ? <Toolbar/> : '' }
         <Infinite
           id="msg-list-infinite"
           ref="container"
@@ -377,7 +366,7 @@ export default class MsgList extends React.Component {
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading} >
-          { this.props.hero ? this.props.hero() : '' }
+          { Hero ? <Hero/> : '' }
           { nQueued ?
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
             : '' }

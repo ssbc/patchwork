@@ -88,11 +88,14 @@ export default class Issues extends React.Component {
     let close = () => this.setState({ isOpen: false })
     if (!this.state.numIssues)
       return <span/>
-    return <div>
-      <a className="leftnav-item" onClick={open}><i className="fa fa-exclamation-triangle" /> Issues ({this.state.numUnread})</a>
+    return <span>
+      <a className="ctrl" onClick={open}>
+        <i className="fa fa-exclamation-triangle" />
+        <span className="label">Issues</span> <div className="count">{this.state.numUnread}</div>
+      </a>
       <Modal isOpen={this.state.isOpen} onRequestClose={close} style={modalStyle}>
         {this.state.issues.map((issue, i) => <Issue key={'issue'+i} issue={issue} onDismiss={this.onDismiss.bind(this)} />)}
       </Modal>
-    </div>
+    </span>
   }
 }

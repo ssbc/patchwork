@@ -1,6 +1,5 @@
 .msg-view.notification {
   display: flex;
-  max-width: 350px;
   overflow: hidden;
   border-bottom: 1px solid #ddd;
   transition: background 0.2s;
@@ -20,7 +19,7 @@
   }
   .content {
     flex: 1;
-    padding: 20px 0;
+    padding: 20px 10px 20px 0;
     .user-link {
       color: #000;
     }
@@ -30,6 +29,8 @@
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      font-family: @content-font;
+      font-weight: 300;
     }
     div:last-child {
       font-weight: 300;
