@@ -17,17 +17,6 @@ const RIGHT_NAVS = {
   bookmarks: Bookmarks
 }
 
-class NavLink extends React.Component {
-  render() {
-    const selected = (this.props.to === this.props.location)
-    const cls = 'ctrl '+(selected?'selected':'')
-    const count = this.props.count ? <div className="count">{this.props.count}</div> : ''
-    if (!this.props.children)
-      return <Link className={cls} to={this.props.to}><i className={'fa fa-'+this.props.icon} /><span className="label">{this.props.label}</span> {count}</Link>
-    return <Link className={cls} to={this.props.to}>{this.props.children}</Link>
-  }
-}
-
 export default class Layout extends React.Component {
   constructor(props) {
     super(props)
@@ -45,7 +34,7 @@ export default class Layout extends React.Component {
   buildState() {
     // copy over app state
     return {
-      rightColumn: (this.state) ? this.state.rightColumn : false,
+      rightNav: (this.state) ? this.state.rightNav : false,
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
       user: app.user,
@@ -57,10 +46,10 @@ export default class Layout extends React.Component {
   }
 
   toggleRightNav(id) {
-    if (this.state.rightColumn == id)
-      this.setState({ rightColumn: false })
+    if (this.state.rightNav == id)
+      this.setState({ rightNav: false })
     else
-      this.setState({ rightColumn: id })
+      this.setState({ rightNav: id })
   }
 
   onClickBack() {
@@ -72,7 +61,22 @@ export default class Layout extends React.Component {
     const isWifiMode = this.state.isWifiMode
     const onToggleRightNav = (id) => () => { this.toggleRightNav(id) }
     const composing = this.state.isComposerOpen
-    const RightNavView = (this.state.rightColumn) ? RIGHT_NAVS[this.state.rightColumn] : null
+    const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
+
+    const NavLink = (props) => {
+      const selected = (props.to === props.location)
+      const cls = 'ctrl '+(selected?'selected':'')
+      const count = props.count ? <div className="count">{props.count}</div> : ''
+      if (!props.children)
+        return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
+      return <Link className={cls} to={props.to}>{props.children}</Link>
+    }
+    const NavToggle = (props) => {
+      const selected = (props.to === this.state.rightNav)
+      const cls = 'ctrl '+(selected?'selected':'')
+      return <a className={cls} onClick={onToggleRightNav(props.to)}><i className={'fa fa-'+props.icon} /></a>
+    }
+
     return <div className="layout-rows">
       <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar flex">
@@ -88,8 +92,8 @@ export default class Layout extends React.Component {
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input /></div>
-          <a className="ctrl" onClick={onToggleRightNav('bookmarks')}><i className="fa fa-bookmark-o" /></a>
-          <a className="ctrl" onClick={onToggleRightNav('notifications')}><i className="fa fa-bell-o" /></a>
+          <NavToggle to="bookmarks" icon="bookmark-o" />
+          <NavToggle to="notifications" icon="bell-o" />
         </div>
       </div>
       <div className="layout-columns">
