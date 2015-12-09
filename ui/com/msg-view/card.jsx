@@ -135,6 +135,8 @@ export default class Card extends React.Component {
     Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
     done(() => {
       // check height
+      if (!this.refs.body)
+        return
       const rect = this.refs.body.getClientRects()[0]
       if (rect && rect.height > MAX_CONTENT_HEIGHT) {
         this.setState({ isOversized: true })

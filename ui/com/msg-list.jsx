@@ -344,6 +344,7 @@ export default class MsgList extends React.Component {
   }
 
   render() {
+
     const Hero = this.props.Hero
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem

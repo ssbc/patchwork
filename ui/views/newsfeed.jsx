@@ -26,8 +26,9 @@ export default class NewsFeed extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      isToolbarOpen: true,
       listItem: LISTITEM_CARD,
-      followedOnly: false
+      isFollowedOnly: false
     }
   }
 
@@ -44,12 +45,18 @@ export default class NewsFeed extends React.Component {
     </div>
   }
 
+  onToggleToolbar() {
+    this.setState({ isToolbarOpen: !this.state.isToolbarOpen }, () => {
+      this.refs.list.calcContainerHeight()
+    })
+  }
+
   onSelectListItem(listItem) {
     this.setState({ listItem: listItem })
   }
 
   onToggleFollowedOnly(b) {
-    this.setState({ followedOnly: b }, () => {
+    this.setState({ isFollowedOnly: b }, () => {
       this.refs.list.reload()
     })
   }
@@ -57,14 +64,21 @@ export default class NewsFeed extends React.Component {
   render() {
     const ListItem = this.state.listItem.Component
     const Toolbar = (props) => {
+      if (!this.state.isToolbarOpen) {
+        return <div className="toolbar floating">
+          <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-caret-square-o-down" /></a>
+        </div>
+      }
       return <div className="toolbar">
-        <Dipswitch label="Followed Only" checked={this.state.followedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} />
+        <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-caret-square-o-up" /></a>
+        <span className="divider" />
+        <Dipswitch label="Followed Only" checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} />
         <span className="divider" />
         <Tabs options={LISTITEMS} selected={this.state.listItem} onSelect={this.onSelectListItem.bind(this)} />
       </div>
     }
     const filter = msg => {
-      if (this.state.followedOnly)
+      if (this.state.isFollowedOnly)
         return followedOnlyFilter(msg)
       return true
     }

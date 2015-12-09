@@ -25,8 +25,9 @@ export default class Inbox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      isToolbarOpen: true,
       listItem: LISTITEM_ONELINE,
-      unreadOnly: false
+      isUnreadOnly: false
     }
   }
   cursor (msg) {
@@ -42,12 +43,18 @@ export default class Inbox extends React.Component {
     </div>
   }
 
+  onToggleToolbar() {
+    this.setState({ isToolbarOpen: !this.state.isToolbarOpen }, () => {
+      this.refs.list.calcContainerHeight()
+    })
+  }
+
   onSelectListItem(listItem) {
     this.setState({ listItem: listItem })
   }
 
   onToggleUnreadOnly(b) {
-    this.setState({ unreadOnly: b }, () => {
+    this.setState({ isUnreadOnly: b }, () => {
       this.refs.list.reload()
     })
   }
@@ -55,14 +62,21 @@ export default class Inbox extends React.Component {
   render() {
     const ListItem = this.state.listItem.Component
     const Toolbar = (props) => {
+      if (!this.state.isToolbarOpen) {
+        return <div className="toolbar floating">
+          <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-caret-square-o-down" /></a>
+        </div>
+      }
       return <div className="toolbar">
-        <Dipswitch label="Unread Only" checked={this.state.unreadOnly} onToggle={this.onToggleUnreadOnly.bind(this)} />
+        <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-caret-square-o-up" /></a>
+        <span className="divider" />
+        <Dipswitch label="Unread Only" checked={this.state.isUnreadOnly} onToggle={this.onToggleUnreadOnly.bind(this)} />
         <span className="divider" />
         <Tabs options={LISTITEMS} selected={this.state.listItem} onSelect={this.onSelectListItem.bind(this)} />
       </div>
     }
     const filter = msg => {
-      if (this.state.unreadOnly)
+      if (this.state.isUnreadOnly)
         return unreadOnlyFilter(msg)
       return true
     }
