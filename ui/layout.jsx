@@ -23,8 +23,10 @@ export default class Layout extends React.Component {
     this.state = this.buildState()
 
     // listen for app change-events that should update our state
-    app.on('update:all', () => { this.setState(this.buildState()) })
-    app.on('update:isWifiMode', () => { this.setState(this.buildState()) })
+    const refresh = () => { this.setState(this.buildState()) }
+    app.on('update:all', refresh)
+    app.on('update:indexCounts', refresh)
+    app.on('update:isWifiMode', refresh)
     app.on('modal:setup', (isOpen) => this.setState({ setupIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
@@ -64,17 +66,16 @@ export default class Layout extends React.Component {
     const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
 
     const NavLink = (props) => {
-      const selected = (props.to === props.location)
+      const selected = (props.to === location)
       const cls = 'ctrl '+(selected?'selected':'')
       const count = props.count ? <div className="count">{props.count}</div> : ''
-      if (!props.children)
-        return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
-      return <Link className={cls} to={props.to}>{props.children}</Link>
+      return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
     }
     const NavToggle = (props) => {
       const selected = (props.to === this.state.rightNav)
       const cls = 'ctrl '+(selected?'selected':'')
-      return <a className={cls} onClick={onToggleRightNav(props.to)}><i className={'fa fa-'+props.icon} /></a>
+      const count = props.count ? <div className="count">{props.count}</div> : ''
+      return <a className={cls} onClick={onToggleRightNav(props.to)}><i className={'fa fa-'+props.icon} /> {count}</a>
     }
 
     return <div className="layout-rows">
@@ -83,17 +84,17 @@ export default class Layout extends React.Component {
         <div className="flex-fill">
           <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
           <div className="nav">
-            <NavLink to="/" location={location} icon="newspaper-o" label="Feed" />
-            <NavLink to="/inbox" location={location} icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
-            <NavLink to="/profile" location={location} icon="users" label="Contacts" />
-            <NavLink to="/sync" location={location} icon={isWifiMode?'wifi':'globe'} label='Network' />
+            <NavLink to="/" icon="newspaper-o" label="Feed" />
+            <NavLink to="/inbox" icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
+            <NavLink to="/profile" icon="users" label="Contacts" />
+            <NavLink to="/sync" icon={isWifiMode?'wifi':'globe'} label='Network' />
             <Issues />
           </div>
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input /></div>
-          <NavToggle to="bookmarks" icon="bookmark-o" />
-          <NavToggle to="notifications" icon="bell-o" />
+          <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
+          <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
       </div>
       <div className="layout-columns">
