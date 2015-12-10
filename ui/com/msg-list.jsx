@@ -349,7 +349,7 @@ export default class MsgList extends React.Component {
           { this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
           { isEmpty ?
             <div className="empty-msg">
-              (this.props.emptyMsg || 'No new messages.') }
+              { (this.props.emptyMsg || 'No messages.') }
             </div>
             :
             <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
