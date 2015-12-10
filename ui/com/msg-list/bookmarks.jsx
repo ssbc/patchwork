@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import MsgList from '../msg-list'
-import Oneline from '../msg-view/Oneline'
+import Oneline from '../msg-view/oneline'
 import Tabs from '../tabs'
 import app from '../../lib/app'
 
