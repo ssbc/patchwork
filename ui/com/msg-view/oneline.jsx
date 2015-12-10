@@ -21,14 +21,6 @@ export default class Oneline extends React.Component {
 
     if (this.props.summary) {
       return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
-        <div className="bookmark">
-          <a onClick={(e)=>{e.stopPropagation(); this.props.onToggleBookmark(msg)}}>
-            { msg.isBookmarked ?
-              <i className="fa fa-bookmark" /> :
-              <i className="fa fa-bookmark-o" /> }
-          </a>
-        </div>
-        <div className="replies">{replies}</div>
         <div className="authors"><UserPic id={msg.value.author} /></div>
         <div className="content"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
       </div>
