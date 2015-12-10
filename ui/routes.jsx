@@ -11,6 +11,7 @@ import Profile from './views/profile'
 import WebView from './views/webview'
 import Sync from './views/sync'
 import Help from './views/help'
+import Search from './views/search'
 
 function beforeNavigation (nextState) {
   if (nextState.action === 'PUSH') { // only on new navs, not on back-btn-driven navs
@@ -38,6 +39,7 @@ export default (
       <Route path="webview/:id" component={WebView} />
       <Route path="sync" component={Sync} />
       <Route path="help/:section" component={Help} />
+      <Route path="search/:query" component={Search} />
     </Route>
   </Router>
 )

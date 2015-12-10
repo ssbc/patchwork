@@ -38,7 +38,6 @@ export default class MsgList extends React.Component {
       selected: null,
       isLoading: false,
       isAtEnd: false,
-      searchQuery: false,
       containerHeight: window.innerHeight
     }
     this.liveStream = null
@@ -112,7 +111,7 @@ export default class MsgList extends React.Component {
   componentDidMount() {
     // load first messages
     var start = Date.now()
-    this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
+    this.loadMore({ amt: this.props.DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -183,7 +182,7 @@ export default class MsgList extends React.Component {
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
-      (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
+      (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
 
         if (this.props.queueNewMsgs) {
@@ -225,29 +224,6 @@ export default class MsgList extends React.Component {
     this.loadMore({ amt })
   }
 
-  onSearchKeyDown(e) {
-    if (e.keyCode == 13) { // on enter
-      var query = e.target.value
-      if (query && query.trim()) {
-        if (ssbref.isLink(query)) {
-          // a link, lookup
-          if (ssbref.isFeedId(query)) {
-            app.history.pushState(null, '/profile/'+encodeURIComponent(query))
-          } else if (ssbref.isMsgId(query)) {
-            app.history.pushState(null, '/msg/'+encodeURIComponent(query))
-          } else if (ssbref.isBlobId(query)) {
-            app.history.pushState(null, '/webview/'+encodeURIComponent(query))            
-          }
-        } else {
-          // text query
-          query = new RegExp(query, 'i')
-        }
-      } else
-        query = false
-      this.reload({ searchQuery: query })
-    }
-  }
-
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
     if (this.props.threads && !('related' in msg)) {
@@ -258,7 +234,7 @@ export default class MsgList extends React.Component {
 
   searchQueryFilter(thread) {
     // iterate the thread and its posts, looking for matches
-    let query = this.state.searchQuery
+    const regex = this.props.searchRegex
     if (checkMatch(thread))
       return true
     // if (!thread.related)
@@ -270,10 +246,9 @@ export default class MsgList extends React.Component {
     return false
 
     function checkMatch (msg) {
-      if (msg.value.content.type !== 'post' || (msg !== thread && !isaReplyTo(msg, thread)))
+      if (msg.value.content.type !== 'post')
         return false
-      // console.log('check match', query.test(''+msg.value.content.text), msg.value.content.text)
-      return query.test(''+msg.value.content.text)
+      return regex.test(''+msg.value.content.text)
     }
   }
 
@@ -294,8 +269,8 @@ export default class MsgList extends React.Component {
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
+      (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.take(amt), // apply limit
-      (this.state.searchQuery) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.collect((err, msgs) => {
         if (err)
           console.warn('Error while fetching messages', err)
@@ -344,7 +319,6 @@ export default class MsgList extends React.Component {
   }
 
   render() {
-
     const Hero = this.props.Hero
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
@@ -372,11 +346,10 @@ export default class MsgList extends React.Component {
             <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
             : '' }
           { this.props.composer ? <ComposerCard {...this.props.composerProps} /> : '' }
+          { this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
           { isEmpty ?
             <div className="empty-msg">
-              { this.state.searchQuery ?
-                'No results found.' :
-                (this.props.emptyMsg || 'No new messages.') }
+              (this.props.emptyMsg || 'No new messages.') }
             </div>
             :
             <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>

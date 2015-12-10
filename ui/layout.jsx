@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import ssbref from 'ssb-ref'
 import app from './lib/app'
 import Notifications from './com/msg-list/notifications'
 import Bookmarks from './com/msg-list/bookmarks'
@@ -58,6 +59,27 @@ export default class Layout extends React.Component {
     window.history.back()
   }
 
+  onSearchKeyDown(e) {
+    if (e.keyCode == 13) { // on enter
+      var query = e.target.value
+      if (query && query.trim()) {
+        if (ssbref.isLink(query)) {
+          // a link, lookup
+          if (ssbref.isFeedId(query)) {
+            app.history.pushState(null, '/profile/'+encodeURIComponent(query))
+          } else if (ssbref.isMsgId(query)) {
+            app.history.pushState(null, '/msg/'+encodeURIComponent(query))
+          } else if (ssbref.isBlobId(query)) {
+            app.history.pushState(null, '/webview/'+encodeURIComponent(query))            
+          }
+        } else {
+          // text query
+          app.history.pushState(null, '/search/'+encodeURIComponent(query))
+        }
+      }
+    }
+  }
+
   render() {
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
@@ -92,7 +114,7 @@ export default class Layout extends React.Component {
           </div>
         </div>
         <div>
-          <div className="search"><i className="fa fa-search" /><input /></div>
+          <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
           <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
           <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
