@@ -1,7 +1,7 @@
 .msg-view.oneline {
   display: flex;
   height: 32px;
-  padding: 8px 0 6px;
+  padding: 8px 6px 6px;
   overflow: hidden;
   color: #555;
 
@@ -18,7 +18,7 @@
     }
   }
   .type {
-    flex: 0 0 20px;
+    flex: 0 0 14px;
     padding: 3px 0 0 0;
     font-size: 21px;
     text-align: right;
@@ -55,16 +55,21 @@
     padding-left: 3px;
   }
   .date {
-    flex: 0 0 100px;  
     text-align: right;
-    padding: 5px 10px 0 0;
+    padding: 5px 0 0;
   }
 
   &.unread {
     background: #fff;
-    color: #333;
-    .authors, .replies, .content {
+    .replies {
       font-weight: bold;
+    }
+    &:before {
+      content: "\f0da";
+      top: 10px;
+      position: relative;
+      width: 12px;
+      font: normal normal normal 14px/1 FontAwesome;
     }
   }
   

@@ -1,4 +1,5 @@
 #rightnav {
+  background: #fff;
   width: 350px;
   border-left: 1px solid #ccc;
   .toolbar .tabs {
@@ -9,7 +10,21 @@
     }
   }
   .msg-view.oneline {
-    padding-left: 6px;
     border-bottom: 1px solid #ccc;
+    &.unread {
+      background: #EAF2FB;
+    }
+  }
+  .msg-view.notification {
+    &.new {
+      background: #EAF2FB;
+      &:before {
+        content: "\f0da";
+        top: 30px;
+        position: relative;
+        width: 12px;
+        font: normal normal normal 14px/1 FontAwesome;
+      }    
+    }
   }
 }
