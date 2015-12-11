@@ -12,6 +12,9 @@ class UserListItem extends React.Component {
   onClick() {
     this.props.onSelect(this.props.user)
   }
+  shouldComponentUpdate(nextProps) {
+    return this.props.selected !== nextProps.selected
+  }
   render() {
     let user = this.props.user
     return <div className={'user-list-item unread summary'+(this.props.selected ? ' selected' : '')} onClick={this.onClick.bind(this)}>
@@ -43,7 +46,7 @@ class UserListItems extends React.Component {
   }
 
   render() {
-    let renderUser = (user, i) => <UserListItem key={i} user={user} selected={user.id === this.props.selected} onSelect={this.props.onSelect} />
+    let renderUser = (user, i) => <UserListItem key={user.id} user={user} selected={user.id === this.props.selected} onSelect={this.props.onSelect} />
     let isSearchMatch = user => (this.state.searchQuery) ? this.state.searchQuery.test(u.getName(user.id)) : true
     let isSelf = user => (user.id === app.user.id)
     let isFollowed = user => (!isSelf(user) && user.followed)
