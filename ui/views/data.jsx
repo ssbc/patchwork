@@ -9,6 +9,6 @@ export default class Data extends React.Component {
     const source = opts => {
       return app.ssb.createLogStream(opts)
     }
-    return <div id="data"><MsgList forceRaw ListItem={Card} source={source} live={{ gt: Date.now() }} /></div>
+    return <div id="data"><MsgList ListItem={Card} source={source} live={{ gt: Date.now() }} /></div>
   }
 }
