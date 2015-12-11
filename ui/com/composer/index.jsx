@@ -245,8 +245,7 @@ export default class Composer extends React.Component {
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const Preview = (props) => {
       return <div>
-        <h1>{rainbow('Preview')}</h1>
-        <div className="card" style={{padding: '20px', margin: '0 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
+        <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
       </div>
     }
     return <div className="composer">
