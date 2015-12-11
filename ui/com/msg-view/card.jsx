@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import {Link} from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import clipboard from 'clipboard'
@@ -217,6 +218,7 @@ export default class Card extends React.Component {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
     const isViewingRaw = this.state.isViewingRaw
+    const topic = msg && msg.value && msg.value.content && msg.value.content.topic
 
     const dropdownOpts = [
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
@@ -238,7 +240,9 @@ export default class Card extends React.Component {
         <div className="header">
           <div className="header-left">
             <UserLink id={msg.value.author} />{' '}
-            {msg.plaintext ? '' : <i className="fa fa-lock"/>} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
+            {msg.plaintext ? '' : <i className="fa fa-lock"/>}{' '}
+            {msg.mentionsUser ? <i className="fa fa-at"/> : ''}{' '}
+            {topic ? <span><i className="fa fa-commenting-o"/> <Link to={`/topic/${topic}`}>{topic}</Link></span> : ''}
           </div>
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
