@@ -197,20 +197,26 @@ exports.init = function (sbot, opts) {
     awaitSync(function () {
       indexMarkRead('inbox', key)
       indexMarkRead('bookmarks', key)
-      if (Array.isArray(key))
+      if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
-      else
+        key.forEach(function (key) { emit('isread', { key: key, value: true }) })
+      } else {
         db.isread.put(key, 1, cb)
+        emit('isread', { key: key, value: true })
+      }
     })
   }
   api.markUnread = function (key, cb) {
     awaitSync(function () {
       indexMarkUnread('inbox', key)
       indexMarkUnread('bookmarks', key)
-      if (Array.isArray(key))
+      if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
-      else
+        key.forEach(function (key) { emit('isread', { key: key, value: false }) })
+      } else {
         db.isread.del(key, cb) 
+        emit('isread', { key: key, value: false })
+      }
     })
   }
   api.toggleRead = function (key, cb) {
