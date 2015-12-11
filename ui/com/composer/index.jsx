@@ -7,8 +7,9 @@ import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import multicb from 'multicb'
 import { RECP_LIMIT, ComposerRecps } from './recps'
+import Modal from '../modals/popup'
 import { Block as MarkdownBlock } from '../markdown'
-import { verticalFilled } from '../index'
+import { verticalFilled, rainbow } from '../index'
 import u from '../../lib/util'
 import app from '../../lib/app'
 import mentionslib from '../../lib/mentions'
@@ -240,16 +241,20 @@ export default class Composer extends React.Component {
   }
 
   render() {
-    let msgType = this.isPublic ? 'public' : 'private'
+    const setPreviewing = b => () => this.setState({ isPreviewing: b })
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
-    const ComposerPreview  = (this.props.verticalFilled) ? MarkdownBlockVerticalFilled : MarkdownBlock
+    const Preview = (props) => {
+      return <div>
+        <h1>{rainbow('Preview')}</h1>
+        <div className="card" style={{padding: '20px', margin: '0 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
+      </div>
+    }
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
+      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)}d  />
       <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
-        { this.state.isPreviewing ?
-          <ComposerPreview md={this.state.text} /> :
-          <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} /> }
+        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
       </div>
       <div className="composer-ctrls flex">
         <div className="flex-fill">
@@ -260,9 +265,7 @@ export default class Composer extends React.Component {
               <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
         </div>
         <div>
-          <a className="btn" onClick={()=>this.setState({ isPreviewing: !this.state.isPreviewing })}>
-            { this.state.isPreviewing ? 'Edit' : 'Preview' }
-          </a>
+          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
         </div>
         <div>
           { (!this.canSend() || this.state.isSending) ?
