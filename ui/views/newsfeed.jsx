@@ -79,13 +79,19 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         <Tabs options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} />
       </div>
     }
+    const source = (opts) => {
+      console.log(this.props.params.topic)
+      if (this.props.params.topic) 
+        return app.ssb.patchwork.createTopicStream(this.props.params.topic, opts)
+      return app.ssb.patchwork.createNewsfeedStream(opts)
+    }
     const filter = msg => {
       if (this.state.isFollowedOnly)
         return followedOnlyFilter(msg)
       return true
     }
 
-    return <div id="newsfeed">
+    return <div id="newsfeed" key={this.props.params.topic||'*'}>
       <MsgList
         ref="list"
         threads
@@ -98,7 +104,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your newsfeed is empty."
         append={this.helpCards.bind(this)}
-        source={app.ssb.patchwork.createNewsfeedStream}
+        source={source}
         cursor={this.cursor} />
     </div>
   }

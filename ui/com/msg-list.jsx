@@ -9,6 +9,7 @@ import mlib from 'ssb-msgs'
 import ssbref from 'ssb-ref'
 import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
+import classNames from 'classnames'
 import ComposerCard from './composer/card'
 import SimpleInfinite from './simple-infinite'
 import Summary from './msg-view/summary'
@@ -343,8 +344,8 @@ export default class MsgList extends React.Component {
     const nQueued = this.state.newMsgQueue.length
     const endOfToday = moment().endOf('day')
     var lastDate = moment().startOf('day').add(1, 'day')
-    return <div className={'msg-list'+(this.state.selected?' msg-is-selected':'')}>
-      <div className="msg-list-items">
+    return <div className="msg-list">
+      <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
         <Infinite
           id="msg-list-infinite"

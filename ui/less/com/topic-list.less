@@ -1,0 +1,27 @@
+.topic-list {
+  .search input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 1px;
+    transition: background 0.2s;
+    border: 0;
+    background: #fdfdfd;
+    &:focus {
+      outline: 0;
+      background: #fff;
+    }
+  }
+  .topic-list-item {
+    cursor: pointer;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    color: gray;
+    font-weight: 300;
+    padding: 5px;
+
+    &.selected {
+      color: #4597F1;
+    }
+  }
+}

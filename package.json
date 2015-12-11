@@ -38,6 +38,7 @@
   "dependencies": {
     "babel": "^5.8.23",
     "blob-to-buffer": "^1.2.3",
+    "classnames": "^2.2.1",
     "electron-prebuilt": "^0.33.7",
     "emoji-named-characters": "^1.0.1",
     "history": "^1.13.1",
