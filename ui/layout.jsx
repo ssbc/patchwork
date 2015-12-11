@@ -5,6 +5,7 @@ import ssbref from 'ssb-ref'
 import app from './lib/app'
 import Notifications from './com/msg-list/notifications'
 import Bookmarks from './com/msg-list/bookmarks'
+import Topics from './views/topics'
 import ModalFlow from './com/modals/flow'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
@@ -13,6 +14,9 @@ import Issues from './com/issues'
 
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
+const LEFT_NAVS = {
+  topics: Topics
+}
 const RIGHT_NAVS = {
   notifications: Notifications,
   bookmarks: Bookmarks
@@ -37,6 +41,7 @@ export default class Layout extends React.Component {
   buildState() {
     // copy over app state
     return {
+      leftNav: (this.state) ? this.state.leftNav : 'topics',
       rightNav: (this.state) ? this.state.rightNav : false,
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
@@ -85,6 +90,7 @@ export default class Layout extends React.Component {
     const isWifiMode = this.state.isWifiMode
     const onToggleRightNav = (id) => () => { this.toggleRightNav(id) }
     const composing = this.state.isComposerOpen
+    const LeftNavView = (this.state.leftNav) ? LEFT_NAVS[this.state.leftNav] : null
     const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
 
     const NavLink = (props) => {
@@ -120,8 +126,9 @@ export default class Layout extends React.Component {
         </div>
       </div>
       <div className="layout-columns">
+        { (LeftNavView) ? <div id="leftnav"><LeftNavView location={this.props.location} /></div> : '' }
         <div id="mainview">{this.props.children}</div>
-        { (RightNavView) ? <div id="rightnav"><RightNavView /></div> : '' }
+        { (RightNavView) ? <div id="rightnav"><RightNavView location={this.props.location} /></div> : '' }
       </div>
     </div>
   }

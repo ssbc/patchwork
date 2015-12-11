@@ -2,8 +2,11 @@
 import pull from 'pull-stream'
 import React from 'react'
 import classNames from 'classnames'
-import * as HelpCards from './help/cards'
 import app from '../lib/app'
+
+function cls (selected) {
+  return classNames({ 'topic-list-item': true, selected: selected })
+}
 
 class TopicListItem extends React.Component {
   onClick() {
@@ -14,7 +17,7 @@ class TopicListItem extends React.Component {
   }
   render() {
     const topic = this.props.topic
-    return <div className={classNames({'topic-list-item': true, selected: this.props.selected })} onClick={this.onClick.bind(this)}>
+    return <div className={cls(this.props.selected)} onClick={this.onClick.bind(this)}>
       { topic.topic } ({ topic.count })
     </div>
   }
@@ -32,16 +35,22 @@ class TopicList extends React.Component {
   }
 
   render() {
-    let renderTopic = (topic, i) => <TopicListItem key={topic.topic} topic={topic} selected={topic.topic === this.props.selected} onSelect={this.props.onSelect} />
-    let isSearchMatch = topic => (this.state.searchQuery) ? this.state.searchQuery.test(topic.topic) : true
+    const search = this.state.searchText
+    const renderTopic = (topic, i) => <TopicListItem key={topic.topic} topic={topic} selected={topic.topic === this.props.selected} onSelect={this.props.onSelect} />
+    const isPartialMatch = topic => ((this.state.searchQuery) ? this.state.searchQuery.test(topic.topic) : true)
+    const isExactMatch = topic => (topic.topic == search)
+    const hasExactMatch = (!!search && this.props.topics.filter(isExactMatch).length > 0)
     return <div className="topic-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="topic-list-ctrls">
         <div className="search">
-          <input type="text" placeholder="Find topic" value={this.state.searchText} onChange={this.onSearchChange.bind(this)} />
+          <input type="text" placeholder="Find topic" value={search} onChange={this.onSearchChange.bind(this)} />
         </div>
       </div>
-      { this.props.topics.filter(isSearchMatch).map(renderTopic) }
-      <HelpCards.ContactsTips />
+      <div className={cls(!this.props.selected)} onClick={()=>this.props.onSelect(false)}>All Topics</div>
+      { this.props.topics.filter(isPartialMatch).map(renderTopic) }
+      { !!search && !hasExactMatch ?
+        <div className={cls(this.props.selected == search)} onClick={()=>this.props.onSelect({ topic: search })}>+ {search}</div>
+        : '' }
     </div>
   }
 }

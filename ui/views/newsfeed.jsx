@@ -62,6 +62,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
 
   render() {
+    const topic = this.props.params.topic
     const listItem = LISTITEMS[this.state.listItemIndex]
     const ListItem = listItem.Component
     const queueNewMsgs = (listItem == LISTITEM_CARD) // only queue new messages for cards
@@ -80,9 +81,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       </div>
     }
     const source = (opts) => {
-      console.log(this.props.params.topic)
-      if (this.props.params.topic) 
-        return app.ssb.patchwork.createTopicStream(this.props.params.topic, opts)
+      if (topic) 
+        return app.ssb.patchwork.createTopicStream(topic, opts)
       return app.ssb.patchwork.createNewsfeedStream(opts)
     }
     const filter = msg => {
@@ -91,18 +91,18 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
-    return <div id="newsfeed" key={this.props.params.topic||'*'}>
+    return <div id="newsfeed" key={topic||'*'}>
       <MsgList
         ref="list"
         threads
-        composer composerProps={{isPublic: true, placeholder: 'Write a new public post'}}
+        composer composerProps={{isPublic: true, placeholder: 'Write a public post'+(topic?' on '+topic:'')}}
         queueNewMsgs={queueNewMsgs}
         dateDividers
         filter={filter}
         Toolbar={Toolbar}
         ListItem={ListItem}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Your newsfeed is empty."
+        emptyMsg={(topic) ? ('No posts on "'+topic+'"... yet!') : 'Your newsfeed is empty.'}
         append={this.helpCards.bind(this)}
         source={source}
         cursor={this.cursor} />
