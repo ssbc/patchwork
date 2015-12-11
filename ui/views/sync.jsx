@@ -258,7 +258,7 @@ class PeerStatus extends React.Component {
 
     if (!peer.connected) {
       if (lastConnected(peer)) {
-        lastConnectedMessage = <div className="light">Last seen at <NiceDate ts={peer.time.connect} /></div>
+        lastConnectedMessage = <div className="light">Synced <NiceDate ago ts={peer.time.connect} /></div>
       } else {
         failureClass = ' failure'
         lastConnectedMessage = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />

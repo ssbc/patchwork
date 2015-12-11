@@ -39,8 +39,10 @@ exports.bytesHuman = function (nBytes) {
 const startOfDay = moment().startOf('day')
 const lastWeek = moment().subtract(1, 'weeks')
 const lastYear = moment().subtract(1, 'years')
-exports.niceDate = function (ts) {
+exports.niceDate = function (ts, ago) {
   var d = moment(ts)
+  if (ago)
+    return d.fromNow()
   if (d.isBefore(lastYear))
     d = d.format('')
   else if (d.isBefore(lastWeek))

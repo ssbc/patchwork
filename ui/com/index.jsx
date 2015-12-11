@@ -73,7 +73,7 @@ export class UserBtn extends React.Component {
 
 export class NiceDate extends React.Component {
   render() {
-    return <span>{u.niceDate(this.props.ts)}</span>
+    return <span>{u.niceDate(this.props.ts, this.props.ago)}</span>
   }
 }
 
