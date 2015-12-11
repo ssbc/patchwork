@@ -94,6 +94,10 @@ class PeerGraph extends React.Component {
     })
   }
 
+  shouldComponentUpdate() {
+    return false
+  }
+
   render () {
     return <div className="peer-graph-container" />
   }
