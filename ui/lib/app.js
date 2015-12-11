@@ -92,6 +92,9 @@ function onPatchworkEvent (e) {
       app.indexCounts[k] = e.counts[k]
     app.emit('update:indexCounts')
   }
+  if (e.type == 'isread') {
+    app.emit('update:isread', { key: e.key, value: e.value })
+  }
 }
 
 function pollPeers () {

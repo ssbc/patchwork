@@ -81,6 +81,17 @@ export default class MsgList extends React.Component {
           app.ssb.private.publish(voteMsg, recps, done)
         }
       },
+      onIsread: (e) => {
+        // try to find the message
+        for (var i=0; i < this.state.msgs.length; i++) {
+          let msg = this.state.msgs[i]
+          if (msg.key === e.key) {
+            msg.hasUnread = !e.value
+            this.setState({ msgs: this.state.msgs })
+            return
+          }
+        }
+      },
       onFlag: (msg, reason) => {
         if (!reason)
           throw new Error('reason is required')
@@ -118,14 +129,17 @@ export default class MsgList extends React.Component {
     this.resizeListener = this.calcContainerHeight.bind(this)
     window.addEventListener('resize', this.resizeListener)
 
+    // listen to isread changes
+    app.on('update:isread', this.handlers.onIsread)
+
     // setup livestream
     if (this.props.live)
       this.setupLivestream()
   }
   componentWillUnmount() {
-    // stop autoresizing
+    // stop listeners
     window.removeEventListener('resize', this.resizeListener)
-    // abort livestream
+    app.removeListener('update:isread', this.handlers.onIsread)
     if (this.liveStream)
       this.liveStream(true, ()=>{})
   }
