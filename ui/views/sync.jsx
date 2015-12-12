@@ -137,7 +137,7 @@ function createRenderer (graph, el) {
     if (isConnectedPeer) nodeClass.push('is-connected')
     if (isRelayPeer) radius = 10
 
-    return ngraphSvg.svg("circle", {
+    const circle = ngraphSvg.svg("circle", {
       r: radius,
       cx: 2*radius,
       cy: 2*radius,
@@ -145,8 +145,14 @@ function createRenderer (graph, el) {
       id: node.data.id,
       text: node.data ? node.data.name : undefined
     })
+    const link = ngraphSvg.svg("a")
+    //const link = ngraphSvg.svg("a", { link: '#/profile/'+encodeURIComponent(node.data.id) })
+    link.append(circle)
+
+    return link
   }).placeNode( function nodePositionCallback(nodeUI, pos) {
-    nodeUI.attr("cx", pos.x).attr("cy", pos.y)
+    // place the childof the link (which is the circle)
+    nodeUI.children[0].attr("cx", pos.x).attr("cy", pos.y)
   }).link( function linkBuilder(linkUI, pos) {
     const fromNode = graph.getNode(linkUI.fromId)
     const toNode = graph.getNode(linkUI.toId)
@@ -249,7 +255,7 @@ function updateGraph (state, peers, contactedPeerIds) {
     peers.forEach( function(otherPeer) {
       if (peer === otherPeer) return
       // skip if reverse link already exists
-      if (graph.getLink(otherPeer.id, peer.id)) return
+      //if (graph.getLink(otherPeer.id, peer.id)) return
 
       const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
       const isConnected = (connected.indexOf(peer.id) != -1 && otherPeer.id == app.user.id) || 
