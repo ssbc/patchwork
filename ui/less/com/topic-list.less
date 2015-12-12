@@ -1,15 +1,24 @@
 .topic-list {
-  .search input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 9px;
-    transition: background 0.2s;
-    border: 0;
-    border-bottom: 1px solid #ddd;
-    background: #FAFAFA;
-    &:focus {
-      outline: 0;
-      background: #fff;
+  .search {
+    position: relative;
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px;
+      transition: background 0.2s;
+      border: 0;
+      border-bottom: 1px solid #ddd;
+      background: #FAFAFA;
+      &:focus {
+        outline: 0;
+        background: #fff;
+      }
+    }
+    .clear {
+      position: absolute;
+      right: 10px;
+      top: 6px;
+      font-weight: 300;
     }
   }
   .topic-list-item {
@@ -22,6 +31,15 @@
 
     &.selected {
       color: #4597F1;
+    }
+
+    .ctrls {
+      .pin {
+        color: gray;
+        &.pinned {
+          color: #006EFF;
+        }
+      }
     }
   }
 }

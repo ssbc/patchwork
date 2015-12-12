@@ -42,7 +42,7 @@ export default class Layout extends React.Component {
     // copy over app state
     return {
       leftNav: (this.state) ? this.state.leftNav : false,
-      rightNav: (this.state) ? this.state.rightNav : false,
+      rightNav: (this.state) ? this.state.rightNav : 'topics',
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
       user: app.user,

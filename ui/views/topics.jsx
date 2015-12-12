@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import { VerticalFilledContainer } from '../com'
-import TopicList from '../com/topic-list'
+import { ALL_TOPICS, TopicList } from '../com/topic-list'
 import app from '../lib/app'
 
 export default class Topics extends React.Component {
@@ -13,7 +13,12 @@ export default class Topics extends React.Component {
   }
   render() {
     const path = this.props.location.pathname
-    const selectedTopic = (path.indexOf('/topic/') === 0) ? path.slice('/topic/'.length) : false
+    const selectedTopic = (path.indexOf('/topic/') === 0)
+      ? path.slice('/topic/'.length)
+      : path === '/'
+      ? ALL_TOPICS
+      : false
+
     return <VerticalFilledContainer id="data">
       <TopicList topics={app.topics} selected={selectedTopic} onSelect={this.onSelect.bind(this)} />
     </VerticalFilledContainer>
