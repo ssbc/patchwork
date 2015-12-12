@@ -169,9 +169,10 @@ exports.init = function (sbot, opts) {
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
   api.createNotificationsStream = indexStreamFn(state.notifications)
   api.createTopicStream = function (topic, opts) {
-    if (!topic || typeof topic !== 'string' || !state['topic-'+topic])
-      return pull.values([])
-    return indexStreamFn(state['topic-'+topic])(opts)
+    if (typeof topic !== 'string' || !topic.trim())
+      return cb(new Error('Invalid topic'))
+    var index = getTopicIndex(topic)
+    return indexStreamFn(index)(opts)
   }
 
   function indexMarkRead (indexname, key, keyname) {
