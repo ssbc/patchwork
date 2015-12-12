@@ -26,7 +26,7 @@ class TopicListItem extends React.Component {
     const topic = this.props.topic
     const onSelect = () => this.props.onSelect(topic)
     return <div className={cls(this.props.selected, topic.hasNew)} onClick={onSelect}>
-      <div className="flex-fill">{ this.props.isNew ? '+ ' : '' }{ topic.topic }</div>
+      <div className="flex-fill"><i className="fa fa-commenting-o" /> { topic.topic }</div>
       <div className="ctrls">
         <a className={classNames({ pin: true, pinned: topic.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
       </div>

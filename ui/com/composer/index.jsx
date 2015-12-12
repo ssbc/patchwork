@@ -255,7 +255,6 @@ export default class Composer extends React.Component {
 
   render() {
     const topic = this.getTopic()
-    console.log('topic is', topic, this.props.thread)
     const setPreviewing = b => () => this.setState({ isPreviewing: b })
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const Preview = (props) => {

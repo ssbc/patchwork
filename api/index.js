@@ -322,20 +322,10 @@ exports.init = function (sbot, opts) {
           topics.push({
             topic: k.slice(6),
             lastUpdated: lastUpdated,
-            hasNew: (state[k].lastAccessed < lastUpdated),
             pinned: state[k].pinned
           })
         }
       }
-      topics.sort(function (a, b) {
-        // put pinned at top
-        if (a.pinned !== b.pinned) {
-          if (a.pinned) return -1
-          if (b.pinned) return 1
-        }
-        // go by last updated
-        return b.lastUpdated - a.lastUpdated
-      })
       cb(null, topics)
     })
   }
@@ -500,7 +490,6 @@ exports.init = function (sbot, opts) {
     return function (opts) {
       var lastAccessed = index.lastAccessed
       index.touch()
-      emit('index-change', { index: index.name })
 
       // emulate the `ssb.createFeedStream` interface
       var lt      = o(opts, 'lt')
