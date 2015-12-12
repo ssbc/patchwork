@@ -57,7 +57,7 @@ class PeerGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph, nextProps.contactedPeerIds)
+    this.state.graph = updateGraph(this.state, nextProps.peersForGraph, nextProps.contactedPeerIds)
   }
 
   componentWillUnmount () {
@@ -73,10 +73,10 @@ class PeerGraph extends React.Component {
     renderer.svgRoot.addEventListener('mouseover', function(ev) { 
       if (ev.target.nodeName == "circle") {
         const name = ev.target.getAttribute('text')
-        const peerId = ev.target.getAttribute('peerId')
+        const id = ev.target.getAttribute('id')
 
         document.querySelector("svg g text").innerHTML = name
-        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(peerId))
+        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(id))
       }
 
       ev.stopPropagation()
@@ -124,6 +124,7 @@ function createRenderer (graph, el) {
   }).node( function nodeBuilder(node) {
     const isFriend = social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)
     const isRelayPeer = node.data.isRelayPeer
+    const isConnectedPeer = node.data.isConnectedPeer
 
     let radius = 5
     let nodeClass = new Array
@@ -133,7 +134,7 @@ function createRenderer (graph, el) {
       nodeClass.push('is-user')
     }
     if (isFriend) nodeClass.push('is-friend')
-    if (node.data.isConnected) nodeClass.push('is-connected')
+    if (isConnectedPeer) nodeClass.push('is-connected')
     if (isRelayPeer) radius = 10
 
     return ngraphSvg.svg("circle", {
@@ -141,7 +142,7 @@ function createRenderer (graph, el) {
       cx: 2*radius,
       cy: 2*radius,
       class: nodeClass.join(' '),
-      peerId: node.data.id,
+      id: node.data.id,
       text: node.data ? node.data.name : undefined
     })
   }).placeNode( function nodePositionCallback(nodeUI, pos) {
@@ -153,7 +154,6 @@ function createRenderer (graph, el) {
     //link is from or to a 'relayPeer'
     const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
     const isLinkingUser = fromNode.data.isUser || toNode.data.isUser 
-    // CHECK:
     const isConnected = isLinkingUser && linkUI.data.isConnected
 
     let linkClass = new Array
@@ -162,7 +162,7 @@ function createRenderer (graph, el) {
     if (involvesRelayPeer) linkClass.push('involves-relay-peer')
 
     return ngraphSvg.svg("line", {
-      //id: fromNode.id+toNode.id,
+      id: fromNode.id + toNode.id,
       class: linkClass.join(' ')
     })
   })
@@ -194,10 +194,21 @@ function peersToGraph (peers, contactedPeerIds) {
 
   if (!peers || !contactedPeerIds) return graph
 
-  return updateGraph(graph, peers, contactedPeerIds)
+  return updateGraph(state, peers, contactedPeerIds)
 }
 
-function updateGraph (graph, peers, contactedPeerIds) {
+function toggleClass(classes, className) {
+  if ( new RegExp(className).test(classes) ) { 
+    return classes.replace(className, '')
+  } else { 
+    return classes + ' ' + className
+  }
+}
+
+function updateGraph (state, peers, contactedPeerIds) {
+  let graph = state.graph
+  const renderer = state.renderer
+
   if (!peers || !contactedPeerIds) return graph
   const remote = contactedPeerIds.remote
   const local = contactedPeerIds.local
@@ -210,59 +221,62 @@ function updateGraph (graph, peers, contactedPeerIds) {
     const isConnectedPeer = connected.indexOf(peer.id) != -1
 
     let node = graph.getNode(peer.id)
-    // if there's a node with a different RelayPeer setting, wipe the node for re-addition
-    if (node && (node.data.isRelayPeer != isRelayPeer)) { 
-      graph.removeNode(node.data.id)
-      node = undefined
+    if (node) {
+      if (node.data.isConnectedPeer != isConnectedPeer) { //update node if connected-status has changed
+        const svgNode = state.renderer.svgRoot.getElementById(node.data.id)
+        ngraphSvg.svg(svgNode, { class: toggleClass(svgNode.getAttribute('class'), 'is-connected') })
+      } 
+      //else if (node.data.isRelayPeer != isRelayPeer) {   //update node if relay-status has changed
+        //const svgNode = state.renderer.svgRoot.getElementById(node.data.id)
+        //ngraphSvg.svg(svgNode, { class: toggleClass(svgNode.getAttribute('class'), 'relay-peer') })
+      //}
+      
+    } else {
+      graph.addNode( peer.id , {
+        id: peer.id,
+        name: peer.name,
+        isUser: peer.isUser,
+        isLAN: peer.isLAN,
+        isRelayPeer: isRelayPeer,
+        isLocalPeer: isLocalPeer,
+        isConnectedPeer: isConnectedPeer
+      })
     }
-    
-    graph.addNode(peer.id, {
-      id: peer.id,
-      name: peer.name,
-      isUser: peer.isUser,
-      isLAN: peer.isLAN,
-      isRelayPeer: isRelayPeer,
-      isLocalPeer: isLocalPeer,
-      isConnectedPeer: isConnectedPeer
-    })
-
   })
 
   //add links for each peer
-  //TODO re-write and get newly calculated graph node data ^
   peers.forEach( function(peer) {
     peers.forEach( function(otherPeer) {
       if (peer === otherPeer) return
-
-      const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
-      const isConnected = connected.indexOf(peer.id) != -1 || connected.indexOf(otherPeer.id) != -1
-
-      // if neither node is a relay nor connected peer of mine (in this session), don't add this link
-      if (!involvesRelayPeer && !isConnected) return
-
-      const link = graph.getLink(peer.id, otherPeer.id)
-      if (link) {
-        // if link connection has changed, wipe link
-        if (link.data.isConnected != isConnected) {
-          graph.removeLink(link)
-          console.log('wiped link!')
-        } else {
-          // otherwise skip out (don't redraw link)
-          return
-        }
-      }
-
-      // don't add link if reverse link already exists
+      // skip if reverse link already exists
       if (graph.getLink(otherPeer.id, peer.id)) return
 
-      //draw one edge per connection.   determine nature later?
-      if (social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)) {
-        graph.addLink(peer.id, otherPeer.id, {
-          isConnected: isConnected
-        })
+      const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
+      const isConnected = (connected.indexOf(peer.id) != -1 && otherPeer.id == app.user.id) || 
+                          (connected.indexOf(otherPeer.id) != -1 && peer.id == app.user.id)
+
+      const areFriends = social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)
+
+      const edge = graph.getLink(peer.id, otherPeer.id)
+      if (edge) {
+        if (edge.data.isConnected != isConnected) { // update edge if connection has changed
+          //graph.removeLink(edge)
+          const svgEdge = state.renderer.svgRoot.getElementById(peer.id + otherPeer.id)
+          ngraphSvg.svg(svgEdge, { class: toggleClass(svgEdge.getAttribute('class'), 'is-connected') })
+        } 
+         
+        return
       }
+
+      // skip if not (connected OR (are friends with each other AND one is a relay))
+      if (!(isConnected || (areFriends && involvesRelayPeer) )) return
+
+      graph.addLink(peer.id, otherPeer.id, {
+        isConnected: isConnected
+      })
     })
   })
+
   
   //add empty info box
   return graph
