@@ -87,6 +87,18 @@
     }
   }
 
+  &.titlebar {
+    .ctrl {
+      opacity: 0.5;
+      transition: opacity 0.2s;
+
+      &:hover, &.selected {
+        color: #687890;
+        opacity: 1;
+      }
+    }
+  }
+
   .dipswitch {
     margin: 0 5px;
     &:hover, &.checked {
