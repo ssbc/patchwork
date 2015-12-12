@@ -18,6 +18,11 @@ module.exports = {
   toggleBookmark: 'async',
   isBookmarked: 'async',
 
+  getTopics: 'async',
+  pinTopic: 'async',
+  unpinTopic: 'async',
+  toggleTopicPinned: 'async',
+
   addFileToBlobs: 'async',
   saveBlobToFile: 'async',
 

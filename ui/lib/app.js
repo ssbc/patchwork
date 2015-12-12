@@ -93,8 +93,22 @@ function onPatchworkEvent (e) {
       app.indexCounts[k] = e.counts[k]
     app.emit('update:indexCounts')
   }
-  if (e.type == 'isread') {
+  else if (e.type == 'isread') {
     app.emit('update:isread', { key: e.key, value: e.value })
+  }
+  else if (e.type == 'topicpinned') {
+    // update the topic
+    var i
+    for (i = 0; i < app.topics.length; i++) {
+      if (app.topics[i].topic === e.topic) {
+        // immutable update - create a new object, so shouldUpdate works nicely in the topics list com
+        app.topics[i] = Object.assign({}, app.topics[i], { pinned: e.value })
+        break
+      }
+    }
+    if (i === app.topics.length)
+      app.topics.push({ topic: e.topic, pinned: e.value })
+    app.emit('update:topics')
   }
 }
 
@@ -122,6 +136,7 @@ function fetchLatestState (cb) {
   app.ssb.patchwork.getAllProfiles(done())
   app.ssb.patchwork.getActionItems(done())
   app.ssb.patchwork.getIndexCounts(done())
+  app.ssb.patchwork.getTopics(done())
   app.ssb.gossip.peers(done())
   done(function (err, data) {
     if (err) throw err.message
@@ -130,15 +145,11 @@ function fetchLatestState (cb) {
     app.users.profiles  = data[2]
     app.actionItems     = data[3]
     app.indexCounts     = data[4]
-    app.peers           = data[5]
+    app.topics          = data[5]
+    app.peers           = data[6]
     app.isWifiMode      = require('./util').getPubStats(app.peers).hasSyncIssue
     app.user.profile    = app.users.profiles[app.user.id]
     app.user.needsSetup = !app.users.names[app.user.id]
-
-    // get topics list
-    app.topics = Object.keys(app.indexCounts)
-      .filter(function (k) { return k.indexOf('topic-') === 0 })
-      .map(function (k) { return { topic: k.slice(6), count: app.indexCounts[k] }})
 
     // get friend list
     var social = require('./social-graph')

@@ -12,16 +12,23 @@ function cls (selected) {
 
 class TopicListItem extends React.Component {
   shouldComponentUpdate(nextProps) {
-    return this.props.selected !== nextProps.selected
+    return this.props.selected !== nextProps.selected || this.props.topic !== nextProps.topic
+  }
+  onPin(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    app.ssb.patchwork.toggleTopicPinned(this.props.topic.topic, err => {
+      if (err)
+        app.issue('Failed to pin topic', err)
+    })
   }
   render() {
     const topic = this.props.topic
     const onSelect = () => this.props.onSelect(this.props.topic)
-    const onPin = () => this.props.onPin(this.props.topic)
     return <div className={cls(this.props.selected)} onClick={onSelect}>
       <div className="flex-fill">{ topic.topic }</div>
       <div className="ctrls">
-        <a className={classNames({ pin: true, pinned: this.props.pinned })} onClick={onPin}><i className="fa fa-thumb-tack" /></a>
+        <a className={classNames({ pin: true, pinned: topic.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
       </div>
     </div>
   }

@@ -5,6 +5,11 @@ import { ALL_TOPICS, TopicList } from '../com/topic-list'
 import app from '../lib/app'
 
 export default class Topics extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { topics: app.topics||[] }
+    app.on('update:topics', () => this.setState({ topics: app.topics }))
+  }
   onSelect(topic) {
     if (!topic)
       app.history.pushState(null, '/')

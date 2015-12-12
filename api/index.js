@@ -20,10 +20,11 @@ exports.permissions = require('./permissions')
 exports.init = function (sbot, opts) {
 
   var api = {}
-  var phoenixdb = sbot.sublevel('patchwork')
+  var patchworkdb = sbot.sublevel('patchwork')
   var db = {
-    isread: phoenixdb.sublevel('isread'),
-    bookmarked: phoenixdb.sublevel('bookmarked')
+    isread: patchworkdb.sublevel('isread'),
+    bookmarked: patchworkdb.sublevel('bookmarked'),
+    topicpinned: patchworkdb.sublevel('topicpinned')
   }
   var state = {
     // indexes (lists of {key:, ts:})
@@ -83,6 +84,19 @@ exports.init = function (sbot, opts) {
       },
       function () { state.pdec() }
     )
+  )
+
+  // load topicpins into indexes
+  state.pinc()
+  pull(
+    pl.read(db.topicpinned, { keys: true, values: true }),
+    pull.drain(function (pin) {
+      if (typeof pin.key === 'string') {
+        var index = getTopicIndex(pin.key)
+        index.pinned = pin.value
+      }
+    },
+    function () { state.pdec() })
   )
 
   // setup sbot log processor
@@ -289,6 +303,64 @@ exports.init = function (sbot, opts) {
     db.bookmarked.get(key, function (err, v) {
       cb && cb(null, !!v)
     })
+  }
+
+  function getTopicIndex (topic) {
+    var k = 'topic-'+topic
+    var index = state[k]
+    if (!index)
+      index = state[k] = u.index(k)
+    return index
+  }
+  api.getTopics = function (cb) {
+    awaitSync(function () {
+      var topics = []
+      for (var k in state) {
+        if (k.indexOf('topic-') === 0) {
+          var lastUpdated = (state[k].rows[0]) ? state[k].rows[0].ts : 0
+          topics.push({
+            topic: k.slice(6),
+            lastUpdated: lastUpdated,
+            hasNew: (state[k].lastAccessed < lastUpdated),
+            pinned: state[k].pinned
+          })
+        }
+      }
+      topics.sort(function (a, b) {
+        // put pinned at top
+        if (a.pinned !== b.pinned) {
+          if (a.pinned) return -1
+          if (b.pinned) return 1
+        }
+        // go by last updated
+        return b.lastUpdated - a.lastUpdated
+      })
+      cb(null, topics)
+    })
+  }
+  api.pinTopic = function (topic, cb) {
+    var index = getTopicIndex(topic)
+    index.pinned = true
+    db.topicpinned.put(topic, 1, cb)
+    emit('topicpinned', { topic: topic, value: true })
+  }
+  api.unpinTopic = function (topic, cb) {
+    var index = getTopicIndex(topic)
+    index.pinned = false
+    db.topicpinned.del(topic, cb) 
+    emit('topicpinned', { topic: topic, value: false })
+  }
+  api.toggleTopicPinned = function (topic, cb) {
+    var index = getTopicIndex(topic)
+    if (index.pinned) {
+      api.unpinTopic(topic, function (err) {
+        cb(err, true)
+      })
+    } else {
+      api.pinTopic(topic, function (err) {
+        cb(err, false)
+      })
+    }
   }
 
   api.addFileToBlobs = function (path, cb) {

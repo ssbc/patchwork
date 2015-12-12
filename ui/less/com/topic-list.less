@@ -35,9 +35,19 @@
 
     .ctrls {
       .pin {
+        display: block;
+        width: 20px;
+        text-align: center;
         color: gray;
+        transition: color 0.2s;
+        &:hover {
+          color: #555;
+        }
         &.pinned {
           color: #006EFF;
+          &:hover {
+            color: darken(#006EFF, 10%);
+          }
         }
       }
     }
