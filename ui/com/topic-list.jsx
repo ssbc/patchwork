@@ -45,27 +45,41 @@ export class TopicList extends React.Component {
     this.setState({ searchText: v, searchQuery: (v) ? new RegExp(v, 'i') : false })
   }
 
+  onSearchKeyDown(e) {
+    if (e.keyCode == 13) {
+      e.preventDefault()
+      e.stopPropagation()
+      if (this.state.searchText.trim()) {
+        this.props.onSelect({ topic: this.state.searchText })
+        this.setState({ searchText: '', searchQuery: false })
+      }
+    }
+  }
+
   onClearSearch() {
     this.setState({ searchText: '', searchQuery: false })    
   }
 
   render() {
     const selected = this.props.selected
+    const selectedStr = (typeof selected === 'string') ? selected : false
     const search = this.state.searchText
     const renderTopic = (topic, i) => <TopicListItem key={topic.topic} topic={topic} selected={topic.topic === selected} onSelect={this.props.onSelect} />
     const isPartialMatch = topic => ((this.state.searchQuery) ? this.state.searchQuery.test(topic.topic) : true)
-    const isExactMatch = topic => (topic.topic == search)
-    const hasExactMatch = (!!search && this.props.topics.filter(isExactMatch).length > 0)
+    const isExactMatch = what => topic => (topic.topic == what)
+    const hasExactSelectedMatch = (!!selectedStr && this.props.topics.filter(isExactMatch(selectedStr)).length > 0)
+    const hasExactSearchMatch = (!!search && this.props.topics.filter(isExactMatch(search)).length > 0)
     return <div className="topic-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="topic-list-ctrls">
         <div className="search">
           { search ? <a className="btn highlighted clear" onClick={this.onClearSearch.bind(this)}>clear <i className="fa fa-times" /></a> : ''}
-          <input type="text" placeholder="Find topic" value={search} onChange={this.onSearchChange.bind(this)} />
+          <input type="text" placeholder="Choose a Topic" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
       <div className={cls(selected === ALL_TOPICS)} onClick={()=>this.props.onSelect(false)}>All Topics</div>
+      { !!selectedStr && !hasExactSelectedMatch ? renderTopic({ topic: selectedStr }) : '' }
       { this.props.topics.filter(isPartialMatch).map(renderTopic) }
-      { !!search && !hasExactMatch ? renderTopic({ topic: search }) : '' }
+      { !!search && !hasExactSearchMatch ? renderTopic({ topic: search }) : '' }
     </div>
   }
 }

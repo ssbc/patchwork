@@ -76,6 +76,17 @@ export default class Composer extends React.Component {
     }
   }
 
+  hasTopic() {
+    return !!this.getTopic()
+  }
+
+  getTopic() {
+    const topic = (this.props.thread) ? this.props.thread.value.content.topic : this.props.topic
+    if (typeof topic === 'string')
+      return topic.trim()
+    return false
+  }
+
   onChangeText(e) {
     this.setState({ text: e.target.value })
   }
@@ -218,6 +229,8 @@ export default class Composer extends React.Component {
 
       // publish
       var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
+      if (this.hasTopic())
+        post.topic = this.getTopic()
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
@@ -241,6 +254,8 @@ export default class Composer extends React.Component {
   }
 
   render() {
+    const topic = this.getTopic()
+    console.log('topic is', topic, this.props.thread)
     const setPreviewing = b => () => this.setState({ isPreviewing: b })
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const Preview = (props) => {
@@ -248,9 +263,13 @@ export default class Composer extends React.Component {
         <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
       </div>
     }
+    const sendIcon = (this.isPublic) ? 'users' : 'lock'
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)}d  />
+      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
+      { topic ? 
+        <div className="composer-topic"><i className="fa fa-commenting-o" /> {topic}</div>
+        : '' }
       <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
         <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
@@ -269,7 +288,7 @@ export default class Composer extends React.Component {
         <div>
           { (!this.canSend() || this.state.isSending) ?
             <a className="btn disabled">Send</a> :
-            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a> }
         </div>
       </div>
     </div>
