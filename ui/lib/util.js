@@ -112,17 +112,33 @@ exports.getPubStats = function (peers) {
   }
 }
 
-exports.getRelayPeerIds = function (peers) {
-  let ids = new Array()
+exports.getContactedPeerIds = function (peers) {
+  let local = new Array()
+  let remote = new Array()
+  let connected = new Array()
 
   ;(peers||app.peers).forEach(function (peer) {
     if (ip.isLoopback(peer.host)) return
 
+    if (peer.connected) {
+      connected.push(peer.id)
+    }
+
     if (peer.connected || (peer.time && peer.time.connect)) {
-      ids.push( peer.id )
+      //TODO not sure about this
+      if (ip.isPrivate(peer.host) || ip.isLoopback(peer.host)) { 
+      //if (ip.isPrivate(peer.host)) { 
+        local.push(peer.id)
+      } else {
+        remote.push(peer.id)
+      }
     }
   })
 
-  return ids
+  return {
+    local: local,
+    remote: remote,
+    connected: connected
+  }
 }
 

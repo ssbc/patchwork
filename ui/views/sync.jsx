@@ -28,7 +28,9 @@ function peerSorter (a, b) {
 }
 
 function isLAN (peer) {
-  return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
+  // TODO this looks like a typo? 
+  //return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
+  return ip.isPrivate(peer.host) || ip.isLoopback(peer.host)
 }
 
 function isNotLAN (peer) {
@@ -45,8 +47,8 @@ class PeerGraph extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      graph: peersToGraph(props.peersForGraph, props.relayPeerIds),
-      relayPeerIds: props.relayPeerIds
+      graph: peersToGraph(props.peersForGraph, props.contactedPeerIds),
+      contactedPeerIds: props.contactedPeerIds
     }
   }
 
@@ -55,7 +57,7 @@ class PeerGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph, nextProps.relayPeerIds)
+    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph, nextProps.contactedPeerIds)
   }
 
   componentWillUnmount () {
@@ -148,12 +150,15 @@ function createRenderer (graph, el) {
     const fromNode = graph.getNode(linkUI.fromId)
     const toNode = graph.getNode(linkUI.toId)
 
-    //link is from or to a 'pub'
+    //link is from or to a 'relayPeer'
     const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
-    const isLinkingUser = linkUI.toId === app.user.id || linkUI.fromId === app.user.id
+    const isLinkingUser = fromNode.data.isUser || toNode.data.isUser 
+    // CHECK:
+    const isConnected = isLinkingUser && (fromNode.data.isConnected || toNode.data.isConnected)
 
     let linkClass = new Array
     if (isLinkingUser) linkClass.push('is-linking-user')
+    if (isConnected) linkClass.push('is-connected')
     if (involvesRelayPeer) linkClass.push('involves-relay-peer')
 
     return ngraphSvg.svg("line", {
@@ -183,21 +188,26 @@ function createRenderer (graph, el) {
 }
 
 
-function peersToGraph (peers, relayPeerIds) {
+function peersToGraph (peers, contactedPeerIds) {
   let graph = ngraphGraph()
 
-  if (!peers) return graph
+  if (!peers || !contactedPeerIds) return graph
 
-  return updateGraph(graph, peers, relayPeerIds)
+  return updateGraph(graph, peers, contactedPeerIds)
 }
 
-function updateGraph (graph, peers, relayPeerIds) {
-  if (!peers) return graph
+function updateGraph (graph, peers, contactedPeerIds) {
+  if (!peers || !contactedPeerIds) return graph
+  const remote = contactedPeerIds.remote
+  const local = contactedPeerIds.local
+  const connected = contactedPeerIds.connected
 
   //get and update OR create each peer node
   peers.forEach( function(peer) {
     let node = graph.getNode(peer.id)
-    const isRelayPeer = (relayPeerIds && relayPeerIds.indexOf(peer.id) != -1) ? true : false
+    const isRelayPeer = remote.indexOf(peer.id) != -1
+    const isLocalPeer = local.indexOf(peer.id) != -1
+    const isConnectedPeer = connected.indexOf(peer.id) != -1
 
     // Might need to remove node to reset rendering?
     if (node && !node.data.isRelayPeer && isRelayPeer) { 
@@ -214,18 +224,22 @@ function updateGraph (graph, peers, relayPeerIds) {
       graph.addNode(peer.id, {
         id: peer.id,
         name: peer.name,
-        isLAN: peer.isLAN,
         isUser: peer.isUser,
-        isRelayPeer: isRelayPeer
+        isLAN: peer.isLAN,
+        isRelayPeer: isRelayPeer,
+        isLocalPeer: isLocalPeer,
+        isConnectedPeer: isConnectedPeer
       })
     }
 
   })
 
   //add links for each peer
+  //TODO re-write and get newly calculated graph node data ^
   peers.forEach( function(peer) {
     peers.forEach( function(otherPeer) {
-      const involvesRelayPeer = (relayPeerIds && (relayPeerIds.indexOf(peer.id) != -1 || relayPeerIds.indexOf(peer.id) != -1)) ? true : false
+      const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
+      const isConnected = connected.indexOf(peer.id) != -1 || connected.indexOf(otherPeer.id) != -1
 
       if (peer === otherPeer) return
       // if neither node is a direct peer of mine (in this session), don't add this link
@@ -299,7 +313,7 @@ export default class Sync extends React.Component {
       peers.sort(peerSorter)
       this.setState({
         peers: peers,
-        relayPeerIds: u.getRelayPeerIds(peers),
+        contactedPeerIds: u.getContactedPeerIds(peers),
         stats: u.getPubStats(peers)
       })
     })
@@ -356,9 +370,10 @@ export default class Sync extends React.Component {
       peers.push(e.peer)
       peers.sort(peerSorter)
     }
+
     this.setState({
       peers: peers,
-      relayPeerIds: u.getRelayPeerIds(peers),
+      contactedPeerIds: u.getContactedPeerIds(peers),
       stats: u.getPubStats(peers)
     })
   }
@@ -377,7 +392,7 @@ export default class Sync extends React.Component {
     if (i !== peers.length) {
       this.setState({
         peers: peers,
-        relayPeerIds: u.getRelayPeerIds(peers),
+        contactedPeerIds: u.getContactedPeerIds(peers),
         stats: u.getPubStats(peers)
       })
     }
@@ -413,7 +428,7 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
-        <PeerGraph peersForGraph={this.state.peersForGraph} relayPeerIds={this.state.relayPeerIds} />
+        <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
       </div>
 
       <div className='peer-status-group'>
