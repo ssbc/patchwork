@@ -26,7 +26,7 @@ class TopicListItem extends React.Component {
     const topic = this.props.topic
     const onSelect = () => this.props.onSelect(topic)
     return <div className={cls(this.props.selected, topic.hasNew)} onClick={onSelect}>
-      <div className="flex-fill">{ topic.topic }</div>
+      <div className="flex-fill">{ this.props.isNew ? '+ ' : '' }{ topic.topic }</div>
       <div className="ctrls">
         <a className={classNames({ pin: true, pinned: topic.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
       </div>
@@ -49,10 +49,8 @@ export class TopicList extends React.Component {
     if (e.keyCode == 13) {
       e.preventDefault()
       e.stopPropagation()
-      if (this.state.searchText.trim()) {
+      if (this.state.searchText.trim())
         this.props.onSelect({ topic: this.state.searchText })
-        this.setState({ searchText: '', searchQuery: false })
-      }
     }
   }
 
@@ -60,26 +58,34 @@ export class TopicList extends React.Component {
     this.setState({ searchText: '', searchQuery: false })    
   }
 
+  onClickCreate() {
+    this.props.onSelect({ topic: this.state.searchText })
+  }
+
   render() {
     const selected = this.props.selected
-    const selectedStr = (typeof selected === 'string') ? selected : false
     const search = this.state.searchText
-    const renderTopic = (topic, i) => <TopicListItem key={topic.topic} topic={topic} selected={topic.topic === selected} onSelect={this.props.onSelect} />
+    const renderTopic = (topic, isNew) => <TopicListItem key={topic.topic} topic={topic} isNew={isNew===true} selected={topic.topic === selected} onSelect={this.props.onSelect} />
     const isPartialMatch = topic => ((this.state.searchQuery) ? this.state.searchQuery.test(topic.topic) : true)
-    const isExactMatch = what => topic => (topic.topic == what)
-    const hasExactSelectedMatch = (!!selectedStr && this.props.topics.filter(isExactMatch(selectedStr)).length > 0)
-    const hasExactSearchMatch = (!!search && this.props.topics.filter(isExactMatch(search)).length > 0)
     return <div className="topic-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="topic-list-ctrls">
         <div className="search">
-          { search ? <a className="btn highlighted clear" onClick={this.onClearSearch.bind(this)}>clear <i className="fa fa-times" /></a> : ''}
-          <input type="text" placeholder="Choose a Topic" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
+          <input ref="searchInput" type="text" placeholder="Choose a Topic" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
       <div className={cls(selected === ALL_TOPICS)} onClick={()=>this.props.onSelect(false)}>All Topics</div>
-      { !!selectedStr && !hasExactSelectedMatch ? renderTopic({ topic: selectedStr }) : '' }
       { this.props.topics.filter(isPartialMatch).map(renderTopic) }
-      { !!search && !hasExactSearchMatch ? renderTopic({ topic: search }) : '' }
+      <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>
+        <p><small>{"Topics are channels for conversations."}</small></p>
+        <p>
+          { search
+            ? <small><a onClick={this.onClickCreate.bind(this)}>Open "{search}"</a> | </small>
+            : '' }
+          { search
+            ? <small><a onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
+            : '' }
+        </p>
+      </div>
     </div>
   }
 }

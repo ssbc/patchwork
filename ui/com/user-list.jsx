@@ -3,7 +3,7 @@ import pull from 'pull-stream'
 import React from 'react'
 import UserProfile from './user-profile'
 import { verticalFilled, VerticalFilledContainer, UserLink } from './index'
-import * as HelpCards from './help/cards'
+import { ContactsTips } from './help/cards'
 import app from '../lib/app'
 import social from '../lib/social-graph'
 import u from '../lib/util'
@@ -60,7 +60,7 @@ class UserListItems extends React.Component {
       {this.props.users.filter(isSelf).filter(isSearchMatch).map(renderUser)}
       {this.props.users.filter(isFollowed).filter(isSearchMatch).map(renderUser)}
       {this.props.users.filter(isOther).filter(isSearchMatch).map(renderUser)} 
-      <HelpCards.ContactsTips />
+      <ContactsTips />
     </div>
   }
 }
