@@ -154,7 +154,7 @@ function createRenderer (graph, el) {
     const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
     const isLinkingUser = fromNode.data.isUser || toNode.data.isUser 
     // CHECK:
-    const isConnected = isLinkingUser && (fromNode.data.isConnected || toNode.data.isConnected)
+    const isConnected = isLinkingUser && linkUI.data.isConnected
 
     let linkClass = new Array
     if (isLinkingUser) linkClass.push('is-linking-user')
@@ -162,6 +162,7 @@ function createRenderer (graph, el) {
     if (involvesRelayPeer) linkClass.push('involves-relay-peer')
 
     return ngraphSvg.svg("line", {
+      //id: fromNode.id+toNode.id,
       class: linkClass.join(' ')
     })
   })
@@ -204,33 +205,26 @@ function updateGraph (graph, peers, contactedPeerIds) {
 
   //get and update OR create each peer node
   peers.forEach( function(peer) {
-    let node = graph.getNode(peer.id)
     const isRelayPeer = remote.indexOf(peer.id) != -1
     const isLocalPeer = local.indexOf(peer.id) != -1
     const isConnectedPeer = connected.indexOf(peer.id) != -1
 
-    // Might need to remove node to reset rendering?
-    if (node && !node.data.isRelayPeer && isRelayPeer) { 
+    let node = graph.getNode(peer.id)
+    // if there's a node with a different RelayPeer setting, wipe the node for re-addition
+    if (node && (node.data.isRelayPeer != isRelayPeer)) { 
       graph.removeNode(node.data.id)
       node = undefined
     }
     
-   //TODO tidy this up if removeNode is only way to update rendering of a node
-    if (node) {
-      if (!node.data.isRelayPeer && isRelayPeer) { 
-        node.data.isRelayPeer = isRelayPeer
-      }
-    } else {
-      graph.addNode(peer.id, {
-        id: peer.id,
-        name: peer.name,
-        isUser: peer.isUser,
-        isLAN: peer.isLAN,
-        isRelayPeer: isRelayPeer,
-        isLocalPeer: isLocalPeer,
-        isConnectedPeer: isConnectedPeer
-      })
-    }
+    graph.addNode(peer.id, {
+      id: peer.id,
+      name: peer.name,
+      isUser: peer.isUser,
+      isLAN: peer.isLAN,
+      isRelayPeer: isRelayPeer,
+      isLocalPeer: isLocalPeer,
+      isConnectedPeer: isConnectedPeer
+    })
 
   })
 
@@ -238,19 +232,34 @@ function updateGraph (graph, peers, contactedPeerIds) {
   //TODO re-write and get newly calculated graph node data ^
   peers.forEach( function(peer) {
     peers.forEach( function(otherPeer) {
+      if (peer === otherPeer) return
+
       const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
       const isConnected = connected.indexOf(peer.id) != -1 || connected.indexOf(otherPeer.id) != -1
 
-      if (peer === otherPeer) return
-      // if neither node is a direct peer of mine (in this session), don't add this link
-      if (!involvesRelayPeer) return
-      // if link already exists, don't add again
-      if (graph.getLink(peer.id, otherPeer.id)) return
+      // if neither node is a relay nor connected peer of mine (in this session), don't add this link
+      if (!involvesRelayPeer && !isConnected) return
 
+      const link = graph.getLink(peer.id, otherPeer.id)
+      if (link) {
+        // if link connection has changed, wipe link
+        if (link.data.isConnected != isConnected) {
+          graph.removeLink(link)
+          console.log('wiped link!')
+        } else {
+          // otherwise skip out (don't redraw link)
+          return
+        }
+      }
+
+      // don't add link if reverse link already exists
+      if (graph.getLink(otherPeer.id, peer.id)) return
 
       //draw one edge per connection.   determine nature later?
       if (social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)) {
-        graph.addLink(peer.id, otherPeer.id)
+        graph.addLink(peer.id, otherPeer.id, {
+          isConnected: isConnected
+        })
       }
     })
   })
