@@ -87,6 +87,7 @@ export class TopicList extends React.Component {
       { pinnedTopics.map(renderTopic) }
       { pinnedTopics.length && unpinnedTopics.length ? <hr/> : '' }
       { unpinnedTopics.map(renderTopic) }
+      <hr/>
       <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>
         <p><small>{"Topics are channels for conversations."}</small></p>
         <p>
