@@ -6,8 +6,8 @@ import app from '../lib/app'
 
 export const ALL_TOPICS = Symbol('all')
 
-function cls (selected) {
-  return classNames({ 'topic-list-item': true, flex: true, selected: selected })
+function cls (selected, hasNew) {
+  return classNames({ 'topic-list-item': true, flex: true, selected: selected, unread: hasNew })
 }
 
 class TopicListItem extends React.Component {
@@ -24,8 +24,8 @@ class TopicListItem extends React.Component {
   }
   render() {
     const topic = this.props.topic
-    const onSelect = () => this.props.onSelect(this.props.topic)
-    return <div className={cls(this.props.selected)} onClick={onSelect}>
+    const onSelect = () => this.props.onSelect(topic)
+    return <div className={cls(this.props.selected, topic.hasNew)} onClick={onSelect}>
       <div className="flex-fill">{ topic.topic }</div>
       <div className="ctrls">
         <a className={classNames({ pin: true, pinned: topic.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
