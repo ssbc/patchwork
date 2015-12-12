@@ -121,7 +121,7 @@ export default class Layout extends React.Component {
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
-          <NavToggle to="topics" icon="commenting-o" />
+          <NavToggle to="topics" icon="hashtag" />
           <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
           <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>

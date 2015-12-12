@@ -242,7 +242,7 @@ export default class Card extends React.Component {
             <UserLink id={msg.value.author} />{' '}
             {msg.plaintext ? '' : <i className="fa fa-lock"/>}{' '}
             {msg.mentionsUser ? <i className="fa fa-at"/> : ''}{' '}
-            {topic ? <span><i className="fa fa-commenting-o"/> <Link to={`/topic/${topic}`}>{topic}</Link></span> : ''}
+            {topic ? <span className="topic">in <Link to={`/topic/${topic}`}>#{topic}</Link></span> : ''}
           </div>
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }

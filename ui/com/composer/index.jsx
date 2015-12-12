@@ -267,7 +267,7 @@ export default class Composer extends React.Component {
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
       { topic ? 
-        <div className="composer-topic"><i className="fa fa-commenting-o" /> {topic}</div>
+        <div className="composer-topic">#{topic}</div>
         : '' }
       <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">
