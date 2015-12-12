@@ -28,7 +28,9 @@ function peerSorter (a, b) {
 }
 
 function isLAN (peer) {
-  return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
+  // TODO this looks like a typo? 
+  //return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
+  return ip.isPrivate(peer.host) || ip.isLoopback(peer.host)
 }
 
 function isNotLAN (peer) {
@@ -45,9 +47,11 @@ class PeerGraph extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      graph: peersToGraph(props.peersForGraph, props.relayPeerIds),
-      relayPeerIds: props.relayPeerIds
+      graph: peersToGraph(props.peersForGraph, props.contactedPeerIds),
+      contactedPeerIds: props.contactedPeerIds
     }
+    this.onSvgRootMouseover = null
+    this.onSvgRootMouseout = null
   }
 
   componentDidMount () {
@@ -55,10 +59,12 @@ class PeerGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    this.state.graph = updateGraph(this.state.graph, nextProps.peersForGraph, nextProps.relayPeerIds)
+    this.state.graph = updateGraph(this.state, nextProps.peersForGraph, nextProps.contactedPeerIds)
   }
 
   componentWillUnmount () {
+    this.state.renderer.svgRoot.removeEventListener('mouseover', this.onSvgRootMouseover)
+    this.state.renderer.svgRoot.removeEventListener('mouseout', this.onSvgRootMouseout)
     this.state.renderer.dispose()
   }
 
@@ -68,25 +74,25 @@ class PeerGraph extends React.Component {
 
     renderer.run()
 
-    renderer.svgRoot.addEventListener('mouseover', function(ev) { 
+    renderer.svgRoot.addEventListener('mouseover', (this.onSvgRootMouseover = function(ev) { 
       if (ev.target.nodeName == "circle") {
         const name = ev.target.getAttribute('text')
-        const peerId = ev.target.getAttribute('peerId')
+        const id = ev.target.getAttribute('id')
 
         document.querySelector("svg g text").innerHTML = name
-        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(peerId))
+        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(id))
       }
 
       ev.stopPropagation()
-    })
-    renderer.svgRoot.addEventListener('mouseout', function(ev) { 
+    }))
+    renderer.svgRoot.addEventListener('mouseout', (this.onSvgRootMouseout = function(ev) { 
       if (ev.target.nodeName == "circle") {
         document.querySelector("svg g text").innerHTML = ''
         document.querySelector("svg g image").setAttribute('xlink:href', '')
       }
 
       ev.stopPropagation()
-    })
+    }))
 
 
     this.setState({
@@ -126,6 +132,7 @@ function createRenderer (graph, el) {
   }).node( function nodeBuilder(node) {
     const isFriend = social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)
     const isRelayPeer = node.data.isRelayPeer
+    const isConnectedPeer = node.data.isConnectedPeer
 
     let radius = 5
     let nodeClass = new Array
@@ -135,32 +142,40 @@ function createRenderer (graph, el) {
       nodeClass.push('is-user')
     }
     if (isFriend) nodeClass.push('is-friend')
-    if (node.data.isConnected) nodeClass.push('is-connected')
+    if (isConnectedPeer) nodeClass.push('is-connected')
     if (isRelayPeer) radius = 10
 
-    return ngraphSvg.svg("circle", {
+    const circle = ngraphSvg.svg("circle", {
       r: radius,
       cx: 2*radius,
       cy: 2*radius,
       class: nodeClass.join(' '),
-      peerId: node.data.id,
+      id: node.data.id,
       text: node.data ? node.data.name : undefined
     })
+    const link = ngraphSvg.svg("a", { link: '#/profile/'+encodeURIComponent(node.data.id) })
+    link.append(circle)
+
+    return link
   }).placeNode( function nodePositionCallback(nodeUI, pos) {
-    nodeUI.attr("cx", pos.x).attr("cy", pos.y)
+    // place the childof the link (which is the circle)
+    nodeUI.children[0].attr("cx", pos.x).attr("cy", pos.y)
   }).link( function linkBuilder(linkUI, pos) {
     const fromNode = graph.getNode(linkUI.fromId)
     const toNode = graph.getNode(linkUI.toId)
 
-    //link is from or to a 'pub'
+    //link is from or to a 'relayPeer'
     const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
-    const isLinkingUser = linkUI.toId === app.user.id || linkUI.fromId === app.user.id
+    const isLinkingUser = fromNode.data.isUser || toNode.data.isUser 
+    const isConnected = isLinkingUser && linkUI.data.isConnected
 
     let linkClass = new Array
     if (isLinkingUser) linkClass.push('is-linking-user')
+    if (isConnected) linkClass.push('is-connected')
     if (involvesRelayPeer) linkClass.push('involves-relay-peer')
 
     return ngraphSvg.svg("line", {
+      id: fromNode.id + toNode.id,
       class: linkClass.join(' ')
     })
   })
@@ -187,63 +202,94 @@ function createRenderer (graph, el) {
 }
 
 
-function peersToGraph (peers, relayPeerIds) {
+function peersToGraph (peers, contactedPeerIds) {
   let graph = ngraphGraph()
 
-  if (!peers) return graph
+  if (!peers || !contactedPeerIds) return graph
 
-  return updateGraph(graph, peers, relayPeerIds)
+  return updateGraph(state, peers, contactedPeerIds)
 }
 
-function updateGraph (graph, peers, relayPeerIds) {
-  if (!peers) return graph
+function toggleClass(classes, className) {
+  if ( new RegExp(className).test(classes) ) { 
+    return classes.replace(className, '')
+  } else { 
+    return classes + ' ' + className
+  }
+}
+
+function updateGraph (state, peers, contactedPeerIds) {
+  let graph = state.graph
+  const renderer = state.renderer
+
+  if (!peers || !contactedPeerIds) return graph
+  const remote = contactedPeerIds.remote
+  const local = contactedPeerIds.local
+  const connected = contactedPeerIds.connected
 
   //get and update OR create each peer node
   peers.forEach( function(peer) {
-    let node = graph.getNode(peer.id)
-    const isRelayPeer = (relayPeerIds && relayPeerIds.indexOf(peer.id) != -1) ? true : false
+    const isRelayPeer = remote.indexOf(peer.id) != -1
+    const isLocalPeer = local.indexOf(peer.id) != -1
+    const isConnectedPeer = connected.indexOf(peer.id) != -1
 
-    // Might need to remove node to reset rendering?
-    if (node && !node.data.isRelayPeer && isRelayPeer) { 
-      graph.removeNode(node.data.id)
-      node = undefined
-    }
-    
-   //TODO tidy this up if removeNode is only way to update rendering of a node
+    let node = graph.getNode(peer.id)
     if (node) {
-      if (!node.data.isRelayPeer && isRelayPeer) { 
-        node.data.isRelayPeer = isRelayPeer
-      }
+      if (node.data.isConnectedPeer != isConnectedPeer) { //update node if connected-status has changed
+        const svgNode = state.renderer.svgRoot.getElementById(node.data.id)
+        ngraphSvg.svg(svgNode, { class: toggleClass(svgNode.getAttribute('class'), 'is-connected') })
+      } 
+      //else if (node.data.isRelayPeer != isRelayPeer) {   //update node if relay-status has changed
+        //const svgNode = state.renderer.svgRoot.getElementById(node.data.id)
+        //ngraphSvg.svg(svgNode, { class: toggleClass(svgNode.getAttribute('class'), 'relay-peer') })
+      //}
+      
     } else {
-      graph.addNode(peer.id, {
+      graph.addNode( peer.id , {
         id: peer.id,
         name: peer.name,
-        isLAN: peer.isLAN,
         isUser: peer.isUser,
-        isRelayPeer: isRelayPeer
+        isLAN: peer.isLAN,
+        isRelayPeer: isRelayPeer,
+        isLocalPeer: isLocalPeer,
+        isConnectedPeer: isConnectedPeer
       })
     }
-
   })
 
   //add links for each peer
   peers.forEach( function(peer) {
     peers.forEach( function(otherPeer) {
-      const involvesRelayPeer = (relayPeerIds && (relayPeerIds.indexOf(peer.id) != -1 || relayPeerIds.indexOf(peer.id) != -1)) ? true : false
-
       if (peer === otherPeer) return
-      // if neither node is a direct peer of mine (in this session), don't add this link
-      if (!involvesRelayPeer) return
-      // if link already exists, don't add again
-      if (graph.getLink(peer.id, otherPeer.id)) return
+      // skip if reverse link already exists
+      //if (graph.getLink(otherPeer.id, peer.id)) return
 
+      const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
+      const isConnected = (connected.indexOf(peer.id) != -1 && otherPeer.id == app.user.id) || 
+                          (connected.indexOf(otherPeer.id) != -1 && peer.id == app.user.id)
 
-      //draw one edge per connection.   determine nature later?
-      if (social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)) {
-        graph.addLink(peer.id, otherPeer.id)
+      const areFriends = social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)
+
+      const edge = graph.getLink(peer.id, otherPeer.id)
+      if (edge) {
+        if (edge.data.isConnected != isConnected) { // update edge if connection has changed
+          //graph.removeLink(edge)
+          const svgEdge = state.renderer.svgRoot.getElementById(peer.id + otherPeer.id)
+          ngraphSvg.svg(svgEdge, { class: toggleClass(svgEdge.getAttribute('class'), 'is-connected') })
+        } 
+         
+        return
       }
+
+      // skip if not (connected OR (are friends with each other AND one is a relay))
+      if (!(isConnected || (areFriends && involvesRelayPeer) )) return
+
+      graph.addLink(peer.id, otherPeer.id, {
+        isConnected: isConnected
+      })
     })
   })
+
   
   //add empty info box
   return graph
@@ -303,7 +349,7 @@ export default class Sync extends React.Component {
       peers.sort(peerSorter)
       this.setState({
         peers: peers,
-        relayPeerIds: u.getRelayPeerIds(peers),
+        contactedPeerIds: u.getContactedPeerIds(peers),
         stats: u.getPubStats(peers)
       })
     })
@@ -360,9 +406,10 @@ export default class Sync extends React.Component {
       peers.push(e.peer)
       peers.sort(peerSorter)
     }
+
     this.setState({
       peers: peers,
-      relayPeerIds: u.getRelayPeerIds(peers),
+      contactedPeerIds: u.getContactedPeerIds(peers),
       stats: u.getPubStats(peers)
     })
   }
@@ -381,7 +428,7 @@ export default class Sync extends React.Component {
     if (i !== peers.length) {
       this.setState({
         peers: peers,
-        relayPeerIds: u.getRelayPeerIds(peers),
+        contactedPeerIds: u.getContactedPeerIds(peers),
         stats: u.getPubStats(peers)
       })
     }
@@ -417,7 +464,7 @@ export default class Sync extends React.Component {
       </div>
 
       <div className='peer-status-group'>
-        <PeerGraph peersForGraph={this.state.peersForGraph} relayPeerIds={this.state.relayPeerIds} />
+        <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
       </div>
 
       <div className='peer-status-group'>
