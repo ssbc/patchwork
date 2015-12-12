@@ -15,9 +15,9 @@ import Issues from './com/issues'
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
 const LEFT_NAVS = {
-  topics: Topics
 }
 const RIGHT_NAVS = {
+  topics: Topics,
   notifications: Notifications,
   bookmarks: Bookmarks
 }
@@ -41,7 +41,7 @@ export default class Layout extends React.Component {
   buildState() {
     // copy over app state
     return {
-      leftNav: (this.state) ? this.state.leftNav : 'topics',
+      leftNav: (this.state) ? this.state.leftNav : false,
       rightNav: (this.state) ? this.state.rightNav : false,
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
@@ -121,6 +121,7 @@ export default class Layout extends React.Component {
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
+          <NavToggle to="topics" icon="commenting-o" />
           <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
           <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
