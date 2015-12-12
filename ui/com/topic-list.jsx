@@ -82,7 +82,7 @@ export class TopicList extends React.Component {
           <input ref="searchInput" type="text" placeholder="Choose a Topic" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
-      <div className={cls(selected === ALL_TOPICS)} onClick={()=>this.props.onSelect(false)}>All Topics</div>
+      <div className={cls(selected === ALL_TOPICS)} onClick={()=>this.props.onSelect(false)} style={{paddingBottom: 0}}>All Topics</div>
       <hr/>
       { pinnedTopics.map(renderTopic) }
       { pinnedTopics.length && unpinnedTopics.length ? <hr/> : '' }
