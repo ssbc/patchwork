@@ -19,7 +19,7 @@ export default class Topics extends React.Component {
   render() {
     const path = this.props.location.pathname
     const selectedTopic = (path.indexOf('/topic/') === 0)
-      ? path.slice('/topic/'.length)
+      ? decodeURIComponent(path.slice('/topic/'.length))
       : path === '/'
       ? ALL_TOPICS
       : false
