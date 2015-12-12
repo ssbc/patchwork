@@ -50,6 +50,8 @@ class PeerGraph extends React.Component {
       graph: peersToGraph(props.peersForGraph, props.contactedPeerIds),
       contactedPeerIds: props.contactedPeerIds
     }
+    this.onSvgRootMouseover = null
+    this.onSvgRootMouseout = null
   }
 
   componentDidMount () {
@@ -61,6 +63,8 @@ class PeerGraph extends React.Component {
   }
 
   componentWillUnmount () {
+    this.state.renderer.svgRoot.removeEventListener('mouseover', this.onSvgRootMouseover)
+    this.state.renderer.svgRoot.removeEventListener('mouseout', this.onSvgRootMouseout)
     this.state.renderer.dispose()
   }
 
@@ -70,7 +74,7 @@ class PeerGraph extends React.Component {
 
     renderer.run()
 
-    renderer.svgRoot.addEventListener('mouseover', function(ev) { 
+    renderer.svgRoot.addEventListener('mouseover', (this.onSvgRootMouseover = function(ev) { 
       if (ev.target.nodeName == "circle") {
         const name = ev.target.getAttribute('text')
         const id = ev.target.getAttribute('id')
@@ -80,15 +84,15 @@ class PeerGraph extends React.Component {
       }
 
       ev.stopPropagation()
-    })
-    renderer.svgRoot.addEventListener('mouseout', function(ev) { 
+    }))
+    renderer.svgRoot.addEventListener('mouseout', (this.onSvgRootMouseout = function(ev) { 
       if (ev.target.nodeName == "circle") {
         document.querySelector("svg g text").innerHTML = ''
         document.querySelector("svg g image").setAttribute('xlink:href', '')
       }
 
       ev.stopPropagation()
-    })
+    }))
 
 
     this.setState({
@@ -145,8 +149,7 @@ function createRenderer (graph, el) {
       id: node.data.id,
       text: node.data ? node.data.name : undefined
     })
-    const link = ngraphSvg.svg("a")
-    //const link = ngraphSvg.svg("a", { link: '#/profile/'+encodeURIComponent(node.data.id) })
+    const link = ngraphSvg.svg("a", { link: '#/profile/'+encodeURIComponent(node.data.id) })
     link.append(circle)
 
     return link
