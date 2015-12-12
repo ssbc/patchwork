@@ -65,8 +65,17 @@ export class TopicList extends React.Component {
   render() {
     const selected = this.props.selected
     const search = this.state.searchText
-    const renderTopic = (topic, isNew) => <TopicListItem key={topic.topic} topic={topic} isNew={isNew===true} selected={topic.topic === selected} onSelect={this.props.onSelect} />
+    
+    // predicates
     const isPartialMatch = topic => ((this.state.searchQuery) ? this.state.searchQuery.test(topic.topic) : true)
+    const isPinned = b => topic => (!!topic.pinned == b)
+
+    // filtered topics
+    const pinnedTopics   = this.props.topics.filter(isPinned(true)).filter(isPartialMatch)
+    const unpinnedTopics = this.props.topics.filter(isPinned(false)).filter(isPartialMatch)
+
+    // render
+    const renderTopic = topic => <TopicListItem key={topic.topic} topic={topic} selected={topic.topic === selected} onSelect={this.props.onSelect} />
     return <div className="topic-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="topic-list-ctrls">
         <div className="search">
@@ -74,7 +83,10 @@ export class TopicList extends React.Component {
         </div>
       </div>
       <div className={cls(selected === ALL_TOPICS)} onClick={()=>this.props.onSelect(false)}>All Topics</div>
-      { this.props.topics.filter(isPartialMatch).map(renderTopic) }
+      <hr/>
+      { pinnedTopics.map(renderTopic) }
+      { pinnedTopics.length && unpinnedTopics.length ? <hr/> : '' }
+      { unpinnedTopics.map(renderTopic) }
       <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>
         <p><small>{"Topics are channels for conversations."}</small></p>
         <p>
