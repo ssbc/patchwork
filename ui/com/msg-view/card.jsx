@@ -218,7 +218,7 @@ export default class Card extends React.Component {
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
     const isViewingRaw = this.state.isViewingRaw
-    const topic = msg && msg.value && msg.value.content && msg.value.content.topic
+    const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
@@ -242,7 +242,7 @@ export default class Card extends React.Component {
             <UserLink id={msg.value.author} />{' '}
             {msg.plaintext ? '' : <i className="fa fa-lock"/>}{' '}
             {msg.mentionsUser ? <i className="fa fa-at"/> : ''}{' '}
-            {topic ? <span className="topic">in <Link to={`/topic/${topic}`}>#{topic}</Link></span> : ''}
+            {channel ? <span className="channel">in <Link to={`/channel/${channel}`}>#{channel}</Link></span> : ''}
           </div>
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }

@@ -6,7 +6,7 @@ module.exports = {
   createInboxStream: 'source',
   createBookmarkStream: 'source',
   createNotificationsStream: 'source',
-  createTopicStream: 'source',
+  createChannelStream: 'source',
 
   markRead: 'async',
   markUnread: 'async',
@@ -18,10 +18,10 @@ module.exports = {
   toggleBookmark: 'async',
   isBookmarked: 'async',
 
-  getTopics: 'async',
-  pinTopic: 'async',
-  unpinTopic: 'async',
-  toggleTopicPinned: 'async',
+  getChannels: 'async',
+  pinChannel: 'async',
+  unpinChannel: 'async',
+  toggleChannelPinned: 'async',
 
   addFileToBlobs: 'async',
   saveBlobToFile: 'async',

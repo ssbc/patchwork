@@ -52,7 +52,7 @@ module.exports = extend(new Emitter(), {
   // application state, fetched every refresh
   actionItems: {},
   indexCounts: {},
-  topics: [], // array of { topic: str, pinned: bool, lastUpdated: ts, hasNew: bool }
+  channels: [], // array of { name: str, pinned: bool, lastUpdated: ts, hasNew: bool }
   user: {
     id: null,
     profile: {},
@@ -87,25 +87,25 @@ function addIssue (isUrgent, title, err, extraIssueInfo) {
   app.emit('update:issues')
 }
 
-function updateTopics (topic, values) {
+function updateChannels (name, values) {
   // upsert
   var i
-  for (i = 0; i < app.topics.length; i++) {
-    if (app.topics[i].topic === topic) {
-      // immutable update - create a new object, so shouldUpdate works nicely in the topics list com
-      app.topics[i] = Object.assign({}, app.topics[i], values)
+  for (i = 0; i < app.channels.length; i++) {
+    if (app.channels[i].name === name) {
+      // immutable update - create a new object, so shouldUpdate works nicely in the channels list com
+      app.channels[i] = Object.assign({}, app.channels[i], values)
       break
     }
   }
-  if (i === app.topics.length)
-    app.topics.push(Object.assign({ topic: topic }, values))
+  if (i === app.channels.length)
+    app.channels.push(Object.assign({ name: name }, values))
 
   // sort
-  sortTopics()
+  sortChannels()
 }
 
-function sortTopics () {
-  app.topics.sort(function (a, b) {
+function sortChannels () {
+  app.channels.sort(function (a, b) {
     // put pinned at top
     if (a.pinned !== b.pinned) {
       if (a.pinned) return -1
@@ -121,17 +121,17 @@ function onPatchworkEvent (e) {
     for (var k in e.counts)
       app.indexCounts[k] = e.counts[k]
     app.emit('update:indexCounts')
-    if (e.index.indexOf('topic-') === 0) {
-      updateTopics(e.index.slice(6), { lastUpdated: Date.now() }) // TODO hasNew
-      app.emit('update:topics')      
+    if (e.index.indexOf('channel-') === 0) {
+      updateChannels(e.index.slice('channel-'.length), { lastUpdated: Date.now() }) // TODO hasNew
+      app.emit('update:channels')      
     }
   }
   else if (e.type == 'isread') {
     app.emit('update:isread', { key: e.key, value: e.value })
   }
-  else if (e.type == 'topicpinned') {
-    updateTopics(e.topic, { pinned: e.value })
-    app.emit('update:topics')
+  else if (e.type == 'channelpinned') {
+    updateChannels(e.channel, { pinned: e.value })
+    app.emit('update:channels')
   }
 }
 
@@ -160,8 +160,8 @@ function fetchLatestState (cb) {
   app.ssb.patchwork.getActionItems(done())
   app.ssb.patchwork.getIndexCounts(done())
   app.ssb.gossip.peers(done())
-  if (!app.topics.length)
-    app.ssb.patchwork.getTopics(done())
+  if (!app.channels.length)
+    app.ssb.patchwork.getChannels(done())
   done(function (err, data) {
     if (err) throw err.message
     app.user.id         = data[0].id
@@ -171,8 +171,8 @@ function fetchLatestState (cb) {
     app.indexCounts     = data[4]
     app.peers           = data[5]
     if (data[6]) {
-      app.topics        = data[6]
-      sortTopics()
+      app.channels        = data[6]
+      sortChannels()
     }
     app.isWifiMode      = require('./util').getPubStats(app.peers).hasSyncIssue
     app.user.profile    = app.users.profiles[app.user.id]

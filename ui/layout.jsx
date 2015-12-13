@@ -5,7 +5,7 @@ import ssbref from 'ssb-ref'
 import app from './lib/app'
 import Notifications from './com/msg-list/notifications'
 import Bookmarks from './com/msg-list/bookmarks'
-import Topics from './views/topics'
+import Channels from './views/channels'
 import ModalFlow from './com/modals/flow'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
@@ -31,24 +31,24 @@ export default class Layout extends React.Component {
     app.on('update:isWifiMode', refresh)
     app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
 
-    // listen to signals to open or close the topics bar
+    // listen to signals to open or close the channels bar
     // this is used by navigation events
-    app.on('layout:toggleTopics', isOpen => this.setState({ topicsIsOpen: isOpen }))
+    app.on('layout:toggleChannels', isOpen => this.setState({ channelsIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
     // update state on view changes
     app.fetchLatestState()
   }
-  getInitialTopicState() {
+  getInitialChannelState() {
     // used on program load
-    // open topics if we're on the home or a topics page
+    // open channels if we're on the home or a channels page
     const location = this.props.location.pathname
-    return (location == '/' || location.indexOf('/topic/') === 0)
+    return (location == '/' || location.indexOf('/channel/') === 0)
   }
   buildState() {
     // copy over app state
     return {
-      topicsIsOpen: (this.state) ? this.state.topicsIsOpen : this.getInitialTopicState(),
+      channelsIsOpen: (this.state) ? this.state.channelsIsOpen : this.getInitialChannelState(),
       rightNav: (this.state) ? this.state.rightNav : 'notifications',
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
@@ -96,7 +96,7 @@ export default class Layout extends React.Component {
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
     const onToggleRightNav = (id) => () => { this.toggleRightNav(id) }
-    const LeftNavView = this.state.topicsIsOpen ? Topics : null
+    const LeftNavView = this.state.channelsIsOpen ? Channels : null
     const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
 
     const NavLink = (props) => {

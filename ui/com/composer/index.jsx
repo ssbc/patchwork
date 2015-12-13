@@ -76,14 +76,14 @@ export default class Composer extends React.Component {
     }
   }
 
-  hasTopic() {
-    return !!this.getTopic()
+  hasChannel() {
+    return !!this.getChannel()
   }
 
-  getTopic() {
-    const topic = (this.props.thread) ? this.props.thread.value.content.topic : this.props.topic
-    if (typeof topic === 'string')
-      return topic.trim()
+  getChannel() {
+    const channel = (this.props.thread) ? this.props.thread.value.content.channel : this.props.channel
+    if (typeof channel === 'string')
+      return channel.trim()
     return false
   }
 
@@ -229,8 +229,8 @@ export default class Composer extends React.Component {
 
       // publish
       var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
-      if (this.hasTopic())
-        post.topic = this.getTopic()
+      if (this.hasChannel())
+        post.channel = this.getChannel()
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
@@ -254,7 +254,7 @@ export default class Composer extends React.Component {
   }
 
   render() {
-    const topic = this.getTopic()
+    const channel = this.getChannel()
     const setPreviewing = b => () => this.setState({ isPreviewing: b })
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const Preview = (props) => {
@@ -266,8 +266,8 @@ export default class Composer extends React.Component {
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      { topic ? 
-        <div className="composer-topic">#{topic}</div>
+      { channel ? 
+        <div className="composer-channel">#{channel}</div>
         : '' }
       <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-content">

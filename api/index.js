@@ -24,7 +24,7 @@ exports.init = function (sbot, opts) {
   var db = {
     isread: patchworkdb.sublevel('isread'),
     bookmarked: patchworkdb.sublevel('bookmarked'),
-    topicpinned: patchworkdb.sublevel('topicpinned')
+    channelpinned: patchworkdb.sublevel('channelpinned')
   }
   var state = {
     // indexes (lists of {key:, ts:})
@@ -33,7 +33,7 @@ exports.init = function (sbot, opts) {
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
     notifications: u.index('notifications'),
-    // other indexes: topic-* are created as needed
+    // other indexes: channel-* are created as needed
 
     // views
     profiles: {},
@@ -86,13 +86,13 @@ exports.init = function (sbot, opts) {
     )
   )
 
-  // load topicpins into indexes
+  // load channelpins into indexes
   state.pinc()
   pull(
-    pl.read(db.topicpinned, { keys: true, values: true }),
+    pl.read(db.channelpinned, { keys: true, values: true }),
     pull.drain(function (pin) {
       if (typeof pin.key === 'string') {
-        var index = getTopicIndex(pin.key)
+        var index = getChannelIndex(pin.key)
         index.pinned = pin.value
       }
     },
@@ -157,7 +157,7 @@ exports.init = function (sbot, opts) {
         notificationsUnread: state.notifications.countUntouched()
       }
       for (var k in state) {
-        if (k.indexOf('topic-') === 0)
+        if (k.indexOf('channel-') === 0)
           counts[k] = state[k].rows.length
       }
       cb(null, counts)
@@ -168,10 +168,10 @@ exports.init = function (sbot, opts) {
   api.createInboxStream = indexStreamFn(state.inbox)
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
   api.createNotificationsStream = indexStreamFn(state.notifications)
-  api.createTopicStream = function (topic, opts) {
-    if (typeof topic !== 'string' || !topic.trim())
-      return cb(new Error('Invalid topic'))
-    var index = getTopicIndex(topic)
+  api.createChannelStream = function (channel, opts) {
+    if (typeof channel !== 'string' || !channel.trim())
+      return cb(new Error('Invalid channel'))
+    var index = getChannelIndex(channel)
     return indexStreamFn(index)(opts)
   }
 
@@ -306,49 +306,49 @@ exports.init = function (sbot, opts) {
     })
   }
 
-  function getTopicIndex (topic) {
-    var k = 'topic-'+topic
+  function getChannelIndex (channel) {
+    var k = 'channel-'+channel
     var index = state[k]
     if (!index)
       index = state[k] = u.index(k)
     return index
   }
-  api.getTopics = function (cb) {
+  api.getChannels = function (cb) {
     awaitSync(function () {
-      var topics = []
+      var channels = []
       for (var k in state) {
-        if (k.indexOf('topic-') === 0) {
+        if (k.indexOf('channel-') === 0) {
           var lastUpdated = (state[k].rows[0]) ? state[k].rows[0].ts : 0
-          topics.push({
-            topic: k.slice(6),
+          channels.push({
+            name: k.slice('channel-'.length),
             lastUpdated: lastUpdated,
             pinned: state[k].pinned
           })
         }
       }
-      cb(null, topics)
+      cb(null, channels)
     })
   }
-  api.pinTopic = function (topic, cb) {
-    var index = getTopicIndex(topic)
+  api.pinChannel = function (channel, cb) {
+    var index = getChannelIndex(channel)
     index.pinned = true
-    db.topicpinned.put(topic, 1, cb)
-    emit('topicpinned', { topic: topic, value: true })
+    db.channelpinned.put(channel, 1, cb)
+    emit('channelpinned', { channel: channel, value: true })
   }
-  api.unpinTopic = function (topic, cb) {
-    var index = getTopicIndex(topic)
+  api.unpinChannel = function (channel, cb) {
+    var index = getChannelIndex(channel)
     index.pinned = false
-    db.topicpinned.del(topic, cb) 
-    emit('topicpinned', { topic: topic, value: false })
+    db.channelpinned.del(channel, cb) 
+    emit('channelpinned', { channel: channel, value: false })
   }
-  api.toggleTopicPinned = function (topic, cb) {
-    var index = getTopicIndex(topic)
+  api.toggleChannelPinned = function (channel, cb) {
+    var index = getChannelIndex(channel)
     if (index.pinned) {
-      api.unpinTopic(topic, function (err) {
+      api.unpinChannel(channel, function (err) {
         cb(err, true)
       })
     } else {
-      api.pinTopic(topic, function (err) {
+      api.pinChannel(channel, function (err) {
         cb(err, false)
       })
     }

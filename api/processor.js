@@ -26,14 +26,14 @@ module.exports = function (sbot, db, state, emit) {
         }
       }
 
-      if (c.topic && typeof c.topic === 'string') {
-        // topics index: add root posts / update for replies
-        var indexName = 'topic-'+c.topic
+      if (c.channel && typeof c.channel === 'string') {
+        // channels index: add root posts / update for replies
+        var indexName = 'channel-'+c.channel
         var index = state[indexName] = (state[indexName] || u.index(indexName))
         if (root) {
           // reply
-          var topicRow = index.find(root.link)
-          if (topicRow) {
+          var channelRow = index.find(root.link)
+          if (channelRow) {
             index.sortedUpsert(msg.value.timestamp, root.link)
             emit('index-change', { index: indexName })            
           }
