@@ -14,10 +14,7 @@ import Issues from './com/issues'
 
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
-const LEFT_NAVS = {
-}
 const RIGHT_NAVS = {
-  topics: Topics,
   notifications: Notifications,
   bookmarks: Bookmarks
 }
@@ -32,17 +29,27 @@ export default class Layout extends React.Component {
     app.on('update:all', refresh)
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
-    app.on('modal:setup', (isOpen) => this.setState({ setupIsOpen: isOpen }))
+    app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
+
+    // listen to signals to open or close the topics bar
+    // this is used by navigation events
+    app.on('layout:toggleTopics', isOpen => this.setState({ topicsIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
     // update state on view changes
     app.fetchLatestState()
   }
+  getInitialTopicState() {
+    // used on program load
+    // open topics if we're on the home or a topics page
+    const location = this.props.location.pathname
+    return (location == '/' || location.indexOf('/topic/') === 0)
+  }
   buildState() {
     // copy over app state
     return {
-      leftNav: (this.state) ? this.state.leftNav : false,
-      rightNav: (this.state) ? this.state.rightNav : 'topics',
+      topicsIsOpen: (this.state) ? this.state.topicsIsOpen : this.getInitialTopicState(),
+      rightNav: (this.state) ? this.state.rightNav : 'notifications',
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
       user: app.user,
@@ -89,8 +96,7 @@ export default class Layout extends React.Component {
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
     const onToggleRightNav = (id) => () => { this.toggleRightNav(id) }
-    const composing = this.state.isComposerOpen
-    const LeftNavView = (this.state.leftNav) ? LEFT_NAVS[this.state.leftNav] : null
+    const LeftNavView = this.state.topicsIsOpen ? Topics : null
     const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
 
     const NavLink = (props) => {
@@ -121,7 +127,6 @@ export default class Layout extends React.Component {
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
-          <NavToggle to="topics" icon="hashtag" />
           <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
           <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>

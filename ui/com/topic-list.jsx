@@ -83,9 +83,8 @@ export class TopicList extends React.Component {
         </div>
       </div>
       <div className={cls(selected === ALL_TOPICS)} onClick={()=>this.props.onSelect(false)} style={{paddingBottom: 0}}>All Topics</div>
-      <hr/>
       { pinnedTopics.map(renderTopic) }
-      { pinnedTopics.length && unpinnedTopics.length ? <hr/> : '' }
+      { unpinnedTopics.length ? <hr/> : '' }
       { unpinnedTopics.map(renderTopic) }
       <hr/>
       <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>

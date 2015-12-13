@@ -25,22 +25,28 @@ function beforeNavigation (nextState) {
     window.history.replaceState({ vfScrollTops: vfScrollTops }, '')
   }
 }
-
 app.history.listenBefore(beforeNavigation)
+
+// open/close topics column on navigation events
+// this allows us to keep topics open on the message page if the last page was the feed ...
+// ... and also to keep topics closed on the message page if the last page was anywhere else
+const openTopics = () => app.emit('layout:toggleTopics', true)
+const closeTopics = () => app.emit('layout:toggleTopics', false)
+
 export default (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={NewsFeed} />
-      <Route path="topic/:topic" component={NewsFeed} />
+      <IndexRoute component={NewsFeed} onEnter={openTopics} />
+      <Route path="topic/:topic" component={NewsFeed} onEnter={openTopics} />
+      <Route path="inbox" component={Inbox} onEnter={closeTopics} />
+      <Route path="data" component={Data} onEnter={closeTopics} />
+      <Route path="profile" component={Profile} onEnter={closeTopics} />
+      <Route path="profile/:id" component={Profile} onEnter={closeTopics} />
       <Route path="msg/:id" component={Msg} />
-      <Route path="inbox" component={Inbox} />
-      <Route path="data" component={Data} />
-      <Route path="profile" component={Profile} />
-      <Route path="profile/:id" component={Profile} />
       <Route path="webview/:id" component={WebView} />
-      <Route path="sync" component={Sync} />
-      <Route path="help/:section" component={Help} />
-      <Route path="search/:query" component={Search} />
+      <Route path="sync" component={Sync} onEnter={closeTopics} />
+      <Route path="help/:section" component={Help} onEnter={closeTopics} />
+      <Route path="search/:query" component={Search} onEnter={closeTopics} />
     </Route>
   </Router>
 )
