@@ -39,7 +39,7 @@ export default class Summary extends React.Component {
         </div>
         <div className="body">
           <div className="body-line"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
-          { lastMsg && lastMsg !== msg ?
+          { !this.props.noReply && lastMsg && lastMsg !== msg ?
             <div className="body-line"><Content msg={lastMsg} /></div> :
             '' }
         </div>

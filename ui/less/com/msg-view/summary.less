@@ -40,7 +40,6 @@
     }
   }
   .body {
-    max-height: 36px;
     overflow: hidden;
     color: @dark-gray3;
     font-weight: 300;
@@ -48,10 +47,12 @@
     line-height: 1.2;
 
     .body-line {
-      white-space: pre;
       overflow: hidden;
       text-overflow: ellipsis;
-      &:last-child {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      &:nth-child(2) {
         color: gray;
         font-weight: 100;
       }
