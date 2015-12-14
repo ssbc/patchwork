@@ -5,9 +5,9 @@
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
-    margin-bottom: 1px;
     transition: background 0.2s;
     border: 0;
+    border-bottom: 1px solid #ccc;
     background: #fdfdfd;
     &:focus {
       outline: 0;
@@ -17,7 +17,7 @@
 }
 
 .user-list-items {
-  flex: 0 0 220px;
+  flex: 0 0 250px;
   border-right: 1px solid #ccc;
   h3 {
     border-bottom: 1px solid #ddd;
@@ -49,7 +49,20 @@
   padding: 10px;
   overflow: hidden;
   background: #fff;
-  margin-bottom: 1px;
+  border-bottom: 1px solid #ccc;
+
+  .user-pic {
+    // this is a bit lazy, but it works
+    width: 68px;
+    float: left;
+    img {
+      width: 68px;
+      height: 68px;
+      position: relative;
+      top: -10px;
+      left: -10px;
+    }
+  }
 
   .header {
     display: flex;
