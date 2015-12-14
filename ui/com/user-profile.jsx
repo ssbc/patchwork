@@ -47,7 +47,10 @@ export default class UserProfile extends React.Component {
     const tabs = this.getTabs()
     const currentTab = tabs[this.state.currentTabIndex] || tabs[0]
     const Hero = (props) => {
-      return <UserInfoHeader key={this.props.pid} pid={this.props.pid} tabs={tabs} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} />
+      return <div>
+        <UserInfoHeader key={this.props.pid} pid={this.props.pid} tabs={tabs} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} />
+        <h2 style={{fontWeight: 300, textAlign: 'center', margin: 0, color: 'gray', paddingRight: 10}}>{currentTab.label}</h2>
+      </div>
     }
 
     if (currentTab === VIEW_ABOUT) {
@@ -99,7 +102,8 @@ export default class UserProfile extends React.Component {
         : () => true // allow all
     const composerProps = (isSelf)
       ? { isPublic: true, placeholder: 'Write a new public post', onSend: this.onSend.bind(this) }
-      : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private post to '+name, onSend: this.onSend.bind(this) }
+      : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private message to '+name, onSend: this.onSend.bind(this) }
+    const ListItem = (currentTab === VIEW_PMS) ? Oneline : Card
   
     // MsgList must have refreshOnReply
     // - Why: in other TABS, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
@@ -110,9 +114,9 @@ export default class UserProfile extends React.Component {
         key={currentTab.label}
         threads
         dateDividers
-        composer composerProps={composerProps}
+        composer={(currentTab === VIEW_PMS) || (isSelf && currentTab === VIEW_POSTS)} composerProps={composerProps}
         forceRaw={forceRaw}
-        ListItem={Card}
+        ListItem={ListItem}
         Hero={Hero}
         source={feed}
         cursor={cursor}
