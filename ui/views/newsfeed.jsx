@@ -89,7 +89,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       <MsgList
         ref="list"
         threads
-        composer composerProps={{isPublic: true, placeholder: 'Write a new public post'}}
+        composer composerProps={{placeholder: 'Write a new post'}}
         queueNewMsgs={queueNewMsgs}
         dateDividers
         filter={filter}
