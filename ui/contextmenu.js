@@ -89,6 +89,26 @@ var linkMenuItems = [
   },
 ]
 
+var texteditMenuItems = [
+  {label: 'Cut', role: 'cut'},
+  {label: 'Copy', role: 'copy'},
+  {label: 'Paste', role: 'paste'},
+  {label: 'Delete', click: function (item) {
+    document.execCommand('delete')
+  }},
+  {type: 'separator'},
+  {label: 'Select All', role: 'selectall'},
+]
+
+var texteditMenuItemsNoSelection = [
+  {label: 'Cut', role: 'cut', enabled: false},
+  {label: 'Copy', role: 'copy', enabled: false},
+  {label: 'Paste', role: 'paste'},
+  {label: 'Delete', enabled: false},
+  {type: 'separator'},
+  {label: 'Select All', role: 'selectall'},
+]
+
 function appendMenuItemGroup(menu, items) {
   if (menu.items.length) {
     menu.append(new MenuItem({
@@ -112,8 +132,17 @@ function createMenu(el) {
   var menu = new Menu()
   currentEl = el
 
-  if (el.nodeName == 'IMG') {
-    appendMenuItemGroup(menu, imgMenuItems)
+  switch (el.nodeName) {
+    case 'IMG':
+      appendMenuItemGroup(menu, imgMenuItems)
+      break
+    case 'INPUT':
+    case 'TEXTAREA':
+      if (el.selectionEnd == el.selectionStart)
+        appendMenuItemGroup(menu, texteditMenuItemsNoSelection)
+      else
+        appendMenuItemGroup(menu, texteditMenuItems)
+      break
   }
 
   var link = getContainingLink(el)
