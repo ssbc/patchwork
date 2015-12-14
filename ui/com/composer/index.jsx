@@ -45,12 +45,12 @@ export default class Composer extends React.Component {
 
     // thread info
     let recps = []
-    this.isPublic = this.props.isPublic
     this.threadRoot = null
     this.threadBranch = null
+    var isPublic = true
     if (this.props.thread) {
       // public thread?
-      this.isPublic = isThreadPublic(this.props.thread)
+      isPublic = isThreadPublic(this.props.thread)
 
       // root and branch links
       this.threadRoot = getThreadRoot(this.props.thread)
@@ -66,6 +66,7 @@ export default class Composer extends React.Component {
 
     // setup state (pulling from thread)
     this.state = {
+      isPublic: isPublic,
       isPreviewing: false,
       isSending: false,
       isReply: !!this.props.thread,
@@ -201,7 +202,7 @@ export default class Composer extends React.Component {
       }
 
       let recps = null, recpLinks = null
-      if (!this.isPublic) {
+      if (!this.state.isPublic) {
         // setup recipients
         recps = this.state.recps
 
@@ -240,7 +241,17 @@ export default class Composer extends React.Component {
     })
   }
 
+  focusRecps() {
+    if (!this.state.isPublic)
+      this.refs.recps.focus()
+  }
+
   render() {
+    const isPublicIsReadOnly = this.state.isReply
+    const toggleIsPublic = () => {
+      if (!isPublicIsReadOnly)
+        this.setState({ isPublic: !this.state.isPublic }, this.focusRecps.bind(this))
+    }
     const setPreviewing = b => () => this.setState({ isPreviewing: b })
     const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
     const Preview = (props) => {
@@ -250,26 +261,33 @@ export default class Composer extends React.Component {
     }
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)}d  />
-      <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
+      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
       <div className="composer-content">
         <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
       </div>
+      <ComposerRecps ref="recps" isPublic={this.state.isPublic} isReadOnly={isPublicIsReadOnly} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
       <div className="composer-ctrls flex">
         <div className="flex-fill">
-          { !this.isPublic ?
+          { !this.state.isPublic ?
             (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work yet in private messages. Sorry!</em> : '') :
             (this.state.isAddingFiles ?
               <em>Adding...</em> :
               <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
         </div>
+        { isPublicIsReadOnly
+          ? ''
+          : <div>
+            <a className="btn" onClick={toggleIsPublic}>
+              { this.state.isPublic ? 'Encrypt' : 'Unencrypt' }
+            </a>
+          </div> }
         <div>
           <a className="btn" onClick={setPreviewing(true)}>Preview</a>
         </div>
         <div>
           { (!this.canSend() || this.state.isSending) ?
             <a className="btn disabled">Send</a> :
-            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={ this.state.isPublic ? "fa fa-users" : "fa fa-lock" }/> Send</a> }
         </div>
       </div>
     </div>

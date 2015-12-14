@@ -89,7 +89,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
         threads
         dateDividers
         queueNewMsgs={queueNewMsgs}
-        composer composerProps={{placeholder: 'Write a new private message'}}
+        composer composerProps={{placeholder: 'Write a new post'}}
         filter={filter}
         Toolbar={Toolbar}
         ListItem={ListItem}

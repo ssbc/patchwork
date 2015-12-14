@@ -38,6 +38,10 @@ export class ComposerRecps extends React.Component {
     input.addEventListener('suggestselect', this.onSuggestSelect.bind(this))
   }
 
+  focus() {
+    this.refs.input.focus()
+  }
+
   onChange(e) {
     this.setState({ inputText: e.target.value })
   }
