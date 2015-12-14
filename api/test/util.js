@@ -50,3 +50,14 @@ exports.makeusers = function (sbot, desc, cb) {
     else cb(null, users, msgs)
   })
 }
+
+exports.customTimeCreateMsg = function (keys, timestamp, content) {
+  return ssbkeys.signObj(keys, {
+    previous: null,
+    author: keys.id,
+    sequence: 1,
+    timestamp: timestamp,
+    hash: 'sha256',
+    content: content,
+  })
+}
