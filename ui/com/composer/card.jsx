@@ -12,7 +12,10 @@ export default class ComposerCard extends React.Component {
   onClick() {
     this.setState({ isOpen: true }, () => {
       // focus the textarea
-      this.refs.container.querySelector('input[type=text], textarea').focus()
+      if (this.props.recps) // if recps are provided, focus straight onto the textarea
+        this.refs.container.querySelector('textarea').focus()
+      else
+        this.refs.container.querySelector('input[type=text], textarea').focus()
     })
   }
   onSend() {

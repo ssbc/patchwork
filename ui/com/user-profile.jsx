@@ -6,6 +6,7 @@ import Oneline from './msg-view/oneline'
 import { VerticalFilledContainer } from './index'
 import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } from './user-info'
 import app from '../lib/app'
+import u from '../lib/util'
 
 const TABS = [
   { label: 'Posts' },
@@ -53,7 +54,8 @@ export default class UserProfile extends React.Component {
     }
 
     // normal msg-list render
-    const ListItem = Card
+    const name = u.getName(this.props.pid)
+    const isSelf = this.props.pid == app.user.id
     const feed = (opts) => {
       opts = opts || {}
       opts.id = this.props.pid
@@ -74,6 +76,9 @@ export default class UserProfile extends React.Component {
           return true
       }
       : () => true // allow all
+    const composerProps = (isSelf)
+      ? { isPublic: true, placeholder: 'Write a new public post' }
+      : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private post to '+name }
   
     // MsgList must have refreshOnReply
     // - Why: in other TABS, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
@@ -83,8 +88,9 @@ export default class UserProfile extends React.Component {
         key={currentTab.label}
         threads
         dateDividers
+        composer composerProps={composerProps}
         forceRaw={forceRaw}
-        ListItem={ListItem}
+        ListItem={Card}
         Hero={Hero}
         source={feed}
         cursor={cursor}
