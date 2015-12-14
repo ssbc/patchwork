@@ -25,7 +25,7 @@ tape('newsfeed index includes all public posts', function (t) {
 
         pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
           if (err) throw err
-          t.equal(msgs.length, 2)
+          t.equal(msgs.length, 3)
           t.end()
           sbot.close()
         }))
@@ -55,14 +55,15 @@ tape('newsfeed index does not update the root message for replies', function (t)
           t.equal(msgs[0].key, msg2.key)
           t.equal(msgs[1].key, msg1.key)
 
-          users.charlie.add({ type: 'post', text: 'reply from charlie', root: msg1.key, branch: msg1.key }, function (err) {
+          users.charlie.add({ type: 'post', text: 'reply from charlie', root: msg1.key, branch: msg1.key }, function (err, msg3) {
             if (err) throw err
 
             pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
               if (err) throw err
-              t.equal(msgs.length, 2)
-              t.equal(msgs[0].key, msg2.key) // order of msgs was retained
-              t.equal(msgs[1].key, msg1.key)
+              t.equal(msgs.length, 3)
+              t.equal(msgs[0].key, msg3.key)
+              t.equal(msgs[1].key, msg2.key)
+              t.equal(msgs[2].key, msg1.key)
               t.end()
               sbot.close()
             }))

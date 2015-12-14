@@ -14,19 +14,10 @@ module.exports = function (sbot, db, state, emit) {
       var mentions = mlib.links(c.mentions)
 
       // newsfeed index: add public posts
-      if (!root && recps.length === 0) {
-        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+      if (recps.length === 0) {
+        var newsfeedRow = state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+        newsfeedRow.root = root
         emit('index-change', { index: 'newsfeed' })
-      }
-
-      // newsfeed index: update for replies
-      var newsfeedRow
-      if (root) {
-        newsfeedRow = state.newsfeed.find(root.link)
-        if (newsfeedRow) {
-          state.newsfeed.sortedUpsert(msg.value.timestamp, root.link)
-          emit('index-change', { index: 'newsfeed' })
-        }
       }
 
       // bookmarks index: update for replies
