@@ -13,11 +13,11 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const LISTITEMS = [
-  { label: <i className="fa fa-picture-o" />, Component: Card },
-  { label: <i className="fa fa-th-list" />, Component: Oneline }
+  { label: <span><i className="fa fa-th-list" /> Discussions</span>, Component: Oneline },
+  { label: <span><i className="fa fa-picture-o" /> Live Stream</span>, Component: Card }
 ]
-const LISTITEM_CARD = LISTITEMS[0]
-const LISTITEM_ONELINE = LISTITEMS[1]
+const LISTITEM_ONELINE = LISTITEMS[0]
+const LISTITEM_CARD = LISTITEMS[1]
 
 function followedOnlyFilter (msg) {
   return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
@@ -52,7 +52,9 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
 
   onSelectListItem(listItem) {
-    this.setState({ listItemIndex: LISTITEMS.indexOf(listItem) })
+    this.setState({ listItemIndex: LISTITEMS.indexOf(listItem) }, () => {
+      this.refs.list.reload()
+    })
   }
 
   onToggleFollowedOnly(b) {
@@ -61,8 +63,12 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     })
   }
 
+  getListItem() {
+    return LISTITEMS[this.state.listItemIndex]
+  }
+
   render() {
-    const listItem = LISTITEMS[this.state.listItemIndex]
+    const listItem = this.getListItem()
     const ListItem = listItem.Component
     const queueNewMsgs = (listItem == LISTITEM_CARD) // only queue new messages for cards
     const Toolbar = (props) => {
@@ -78,6 +84,11 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         <span className="divider" />
         <Tabs options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} />
       </div>
+    }
+    const source = (opts) => {
+      opts = opts || {}
+      opts.includeReplies = (this.getListItem() === LISTITEM_CARD) // include replies in card mode
+      return app.ssb.patchwork.createNewsfeedStream(opts)
     }
     const filter = msg => {
       if (this.state.isFollowedOnly)
@@ -98,7 +109,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your newsfeed is empty."
         append={this.helpCards.bind(this)}
-        source={app.ssb.patchwork.createNewsfeedStream}
+        source={source}
         cursor={this.cursor} />
     </div>
   }

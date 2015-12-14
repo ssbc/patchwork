@@ -4,7 +4,7 @@ var ssbkeys = require('ssb-keys')
 var pull    = require('pull-stream')
 var u       = require('./util')
 
-tape('newsfeed index includes all public posts', function (t) {
+tape('newsfeed index includes all public root posts but no replies, by default', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
     alice: {},
@@ -34,7 +34,38 @@ tape('newsfeed index includes all public posts', function (t) {
   })
 })
 
-tape('newsfeed index updates the root message for replies', function (t) {
+
+tape('newsfeed index includes all public posts and replies with includeReplies: true', function (t) {
+  var sbot = u.newserver()
+  u.makeusers(sbot, {
+    alice: {},
+    bob: {},
+    charlie: {}
+  }, function (err, users) {
+    if (err) throw err
+
+    users.alice.add({ type: 'post', text: 'hello from alice' }, function (err, msg) { // included
+      if (err) throw err
+
+      var done = multicb()
+      users.bob.add({ type: 'post', text: 'hello from bob' }, done()) // included
+      users.bob.add(ssbkeys.box({ type: 'post', text: 'secret hello from bob', recps: [users.alice.id, users.bob.id] }, [users.alice.keys, users.bob.keys]), done()) // not included
+      users.charlie.add({ type: 'post', text: 'reply from charlie', root: msg.key, branch: msg.key }, done()) // not included
+      done(function (err) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createNewsfeedStream({ includeReplies: true }), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 3)
+          t.end()
+          sbot.close()
+        }))
+      })
+    })
+  })
+})
+
+tape('newsfeed index does not update the root message for replies', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
     alice: {},
@@ -49,20 +80,21 @@ tape('newsfeed index updates the root message for replies', function (t) {
       users.bob.add({ type: 'post', text: 'hello from bob' }, function (err, msg2) {
         if (err) throw err
 
-        pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
+        pull(sbot.patchwork.createNewsfeedStream({includeReplies: true}), pull.collect(function (err, msgs) {
           if (err) throw err
           t.equal(msgs.length, 2)
           t.equal(msgs[0].key, msg2.key)
           t.equal(msgs[1].key, msg1.key)
 
-          users.charlie.add({ type: 'post', text: 'reply from charlie', root: msg1.key, branch: msg1.key }, function (err) {
+          users.charlie.add({ type: 'post', text: 'reply from charlie', root: msg1.key, branch: msg1.key }, function (err, msg3) {
             if (err) throw err
 
-            pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
+            pull(sbot.patchwork.createNewsfeedStream({includeReplies: true}), pull.collect(function (err, msgs) {
               if (err) throw err
-              t.equal(msgs.length, 2)
-              t.equal(msgs[0].key, msg1.key) // order of msgs was reversed
+              t.equal(msgs.length, 3)
+              t.equal(msgs[0].key, msg3.key)
               t.equal(msgs[1].key, msg2.key)
+              t.equal(msgs[2].key, msg1.key)
               t.end()
               sbot.close()
             }))
