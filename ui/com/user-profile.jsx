@@ -33,6 +33,10 @@ export default class UserProfile extends React.Component {
     this.setState({ currentTabIndex: tabs.indexOf(tab) })
   }
 
+  onSend() {
+    this.refs.list.reload()
+  }
+
   render() {
     // HACK
     // there's too much built into the MsgList component, but I dont have time to refactor
@@ -94,14 +98,15 @@ export default class UserProfile extends React.Component {
         }
         : () => true // allow all
     const composerProps = (isSelf)
-      ? { isPublic: true, placeholder: 'Write a new public post' }
-      : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private post to '+name }
+      ? { isPublic: true, placeholder: 'Write a new public post', onSend: this.onSend.bind(this) }
+      : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private post to '+name, onSend: this.onSend.bind(this) }
   
     // MsgList must have refreshOnReply
     // - Why: in other TABS, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
     return <div className="user-profile" key={this.props.pid}>
       <MsgList
+        ref="list"
         key={currentTab.label}
         threads
         dateDividers

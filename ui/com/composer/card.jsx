@@ -18,8 +18,10 @@ export default class ComposerCard extends React.Component {
         this.refs.container.querySelector('input[type=text], textarea').focus()
     })
   }
-  onSend() {
+  onSend(msg) {
     this.setState({ isOpen: false })
+    if (this.props.onSend)
+      this.props.onSend(msg)
   }
   render() {
     return <div ref="container" className={'composer-card '+(this.state.isOpen?'open':'')}>
