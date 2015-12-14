@@ -3,12 +3,18 @@ var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
 var pullipc    = require('pull-ipc')
 var remote     = require('remote')
+var webFrame   = require('web-frame')
 
 var clientApiManifest = {
   navigate: 'async',
   contextualToggleDevTools: 'async',
-  triggerFind: 'async'
+  triggerFind: 'async',
+  zoomIn: 'async',
+  zoomOut: 'async',
+  zoomReset: 'async'
 }
+
+var zoomStep = 0.5;
 
 var clientApi = {
   navigate: function (path, cb) {
@@ -21,6 +27,18 @@ var clientApi = {
   },
   triggerFind: function (cb) {
     // ui.triggerFind() :TODO:
+    cb()
+  },
+  zoomIn: function (cb) {
+    webFrame.setZoomLevel(webFrame.getZoomLevel() + zoomStep)
+    cb()
+  },
+  zoomOut: function (cb) {
+    webFrame.setZoomLevel(webFrame.getZoomLevel() - zoomStep)
+    cb()
+  },
+  zoomReset: function (cb) {
+    webFrame.setZoomLevel(0)
     cb()
   }
 }

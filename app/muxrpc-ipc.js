@@ -6,7 +6,10 @@ var pullipc    = require('pull-ipc')
 var clientApi = {
   navigate: 'async',
   contextualToggleDevTools: 'async',
-  triggerFind: 'async'
+  triggerFind: 'async',
+  zoomIn: 'async',
+  zoomOut: 'async',
+  zoomReset: 'async'
 }
 
 module.exports = function (window, sbot, params) {

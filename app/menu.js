@@ -95,6 +95,30 @@ module.exports = function (window) {
       label: 'View',
       submenu: [
         {
+          label: 'Zoom In',
+          accelerator: 'CmdOrCtrl+=',
+          click: function () {
+            window.rpc.zoomIn()
+          }
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CmdOrCtrl+-',
+          click: function () {
+            window.rpc.zoomOut()
+          }
+        },
+        {
+          label: 'Normal Size',
+          accelerator: 'CmdOrCtrl+0',
+          click: function () {
+            window.rpc.zoomReset()
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Reload',
           accelerator: 'CmdOrCtrl+R',
           click: function() { 
