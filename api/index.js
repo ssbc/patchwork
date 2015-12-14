@@ -144,18 +144,15 @@ exports.init = function (sbot, opts) {
     })
   }
 
-  api.createNewsfeedStream = indexStreamFn(state.newsfeed, function (row) { 
-    return row.key
+  api.createNewsfeedStream = indexStreamFn(state.newsfeed, function (opts, row) { 
+    // Filter out replies if `includeReplies` is not specified
+    if (!o(opts, 'includeReplies') && row.root)
+      return false
+    return true
   })
-  api.createInboxStream = indexStreamFn(state.inbox, function (row) { 
-    return row.key
-  })
-  api.createBookmarkStream = indexStreamFn(state.bookmarks, function (row) { 
-    return row.key
-  })
-  api.createNotificationsStream = indexStreamFn(state.notifications, function (row) { 
-    return row.key
-  })
+  api.createInboxStream = indexStreamFn(state.inbox)
+  api.createBookmarkStream = indexStreamFn(state.bookmarks)
+  api.createNotificationsStream = indexStreamFn(state.notifications)
 
   function indexMarkRead (indexname, key, keyname) {
     if (Array.isArray(key)) {
@@ -420,7 +417,7 @@ exports.init = function (sbot, opts) {
   }
 
   // helper to get messages from an index
-  function indexStreamFn (index, getkey) {
+  function indexStreamFn (index, filter, getkey) {
     return function (opts) {
       var lastAccessed = index.lastAccessed
       index.touch()
@@ -450,6 +447,14 @@ exports.init = function (sbot, opts) {
         }
       }
 
+      var pullFilter
+      if (filter) {
+        pullFilter = pull.filter(function (row) {
+          return filter(opts, row)
+        })
+      }
+
+
       // helper to fetch rows
       function fetch (row, cb) {
         if (threads) {
@@ -474,7 +479,7 @@ exports.init = function (sbot, opts) {
 
       // readstream
       var readPush = pushable()
-      var read = pull(readPush, paramap(fetch))
+      var read = pull(readPush, pullFilter, paramap(fetch))
 
       // await sync, then emit the reads
       awaitSync(function () {
@@ -510,7 +515,7 @@ exports.init = function (sbot, opts) {
         index.on('add', onadd)
         var livePush = pushable(function () { index.removeListener('add', onadd) })
         function onadd (row) { livePush.push(lookup(row)) }
-        var live = pull(livePush, paramap(fetch))
+        var live = pull(livePush, pullFilter, paramap(fetch))
         return cat([read, live])
       }
       return read
