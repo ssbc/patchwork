@@ -1,6 +1,8 @@
 var Menu = require('menu')
 var dialog = require('dialog')
 
+var isMac = (process.platform == 'darwin');
+
 module.exports = function (window) {
   var template = [
     {
@@ -9,7 +11,8 @@ module.exports = function (window) {
         {
           label: 'About Patchwork',
           selector: 'orderFrontStandardAboutPanel:'
-        },
+        }
+      ].concat(isMac ? [
         {
           type: 'separator'
         },
@@ -26,59 +29,62 @@ module.exports = function (window) {
         {
           label: 'Show All',
           selector: 'unhideAllApplications:'
-        },
+        }
+      ] : [], [
         {
           type: 'separator'
         },
         {
           label: 'Quit',
-          accelerator: 'Command+Q',
-          selector: 'terminate:'
+          accelerator: 'CmdOrCtrl+Q',
+          click: function () {
+            require('app').quit()
+          }
         }
-      ]
+      ])
     },
     {
       label: 'Edit',
       submenu: [
         {
           label: 'Undo',
-          accelerator: 'Command+Z',
-          selector: 'undo:'
+          accelerator: 'CmdOrCtrl+Z',
+          role: 'undo'
         },
         {
           label: 'Redo',
-          accelerator: 'Shift+Command+Z',
-          selector: 'redo:'
+          accelerator: 'Shift+CmdOrCtrl+Z',
+          role: 'redo'
         },
         {
           type: 'separator'
         },
         {
           label: 'Cut',
-          accelerator: 'Command+X',
-          selector: 'cut:'
+          accelerator: 'CmdOrCtrl+X',
+          role: 'cut'
         },
         {
           label: 'Copy',
-          accelerator: 'Command+C',
-          selector: 'copy:'
+          accelerator: 'CmdOrCtrl+C',
+          role: 'copy'
         },
         {
           label: 'Paste',
-          accelerator: 'Command+V',
-          selector: 'paste:'
+          accelerator: 'CmdOrCtrl+V',
+          role: 'paste'
         },
         {
           label: 'Select All',
-          accelerator: 'Command+A',
-          selector: 'selectAll:'
+          accelerator: 'CmdOrCtrl+A',
+          role: 'selectall'
         },
         {
           type: 'separator'
         },
         {
           label: 'Find',
-          accelerator: 'Command+F',
+          accelerator: 'CmdOrCtrl+F',
           click: function () {
             window.rpc.triggerFind()
           }
@@ -90,7 +96,7 @@ module.exports = function (window) {
       submenu: [
         {
           label: 'Reload',
-          accelerator: 'Command+R',
+          accelerator: 'CmdOrCtrl+R',
           click: function() { 
             window.resetRpc()
             window.reload()
@@ -98,7 +104,7 @@ module.exports = function (window) {
         },
         {
           label: 'Toggle DevTools',
-          accelerator: 'Alt+Command+I',
+          accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
           click: function() { 
             window.toggleDevTools()
             // window.rpc.contextualToggleDevTools()
@@ -126,9 +132,10 @@ module.exports = function (window) {
       submenu: [
         {
           label: 'Minimize',
-          accelerator: 'Command+M',
-          selector: 'performMiniaturize:'
-        },
+          accelerator: 'CmdOrCtrl+M',
+          role: 'minimize'
+        }
+      ].concat(isMac ? [
         {
           type: 'separator'
         },
@@ -136,7 +143,7 @@ module.exports = function (window) {
           label: 'Bring All to Front',
           selector: 'arrangeInFront:'
         }
-      ]
+      ] : [])
     }
   ]
 
