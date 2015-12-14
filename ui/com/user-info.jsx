@@ -131,7 +131,10 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       </div>
       <div className="facts">
         <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
-        <h1>{this.state.name}</h1>
+        <div className="flex" style={{alignItems: 'center'}}>
+          <h1 style={{marginRight: 5}}>{this.state.name}</h1> 
+          <ModalBtn Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
+        </div>
         <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
@@ -145,7 +148,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
                     <span><i className="fa fa-user-times" /> Unfollow</span> :
                     <span><i className="fa fa-user-plus" /> Follow</span> }
                 </a> }
-              <ModalBtn className="btn" Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" /> Rename</ModalBtn>
               { (this.state.hasBlocked) ?
                 <a className="btn" onClick={this.on.unflag}><i className="fa fa-times" /> Unflag</a> :
                 <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.on.flag}><i className="fa fa-flag" /> Flag</DropdownBtn>  }
