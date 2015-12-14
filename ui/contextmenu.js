@@ -3,6 +3,7 @@ var Menu = remote.require('menu')
 var MenuItem = remote.require('menu-item')
 var dialog = remote.require('dialog')
 var clipboard = require('clipboard')
+var ssbref = require('ssb-ref')
 var app = require('./lib/app')
 var fs = remote.require('fs')
 var http = remote.require('http')
@@ -22,8 +23,13 @@ var imgMenuItems = [
     label: 'Save Image As',
     click: function (item, mainWindow) {
       var img = currentEl
+      var name = img.alt || img.src
+      var m = /^http:\/\/localhost:7777\/.*\&name=([^&]*)/.exec(img.src)
+      if (m)
+        name = m[1]
+
       dialog.showSaveDialog({
-        defaultPath: img.src
+        defaultPath: name
       }, function (fileName) {
         if (fileName) {
           http.request(img.src, function (res) {
@@ -42,7 +48,11 @@ var imgMenuItems = [
   {
     label: 'Copy Image Location',
     click: function (item) {
-      clipboard.writeText(currentEl.src)
+      var link = currentEl.src
+      var m = /^http:\/\/localhost:7777\/([^?]*)/.exec(link)
+      if (m && ssbref.isLink(m[1]))
+        link = m[1]
+      clipboard.writeText(link)
     }
   }
 ]
@@ -67,7 +77,14 @@ var linkMenuItems = [
   {
     label: 'Copy Link Location',
     click: function () {
-      clipboard.writeText(currentLink.getAttribute('href'))
+      var href = currentLink.getAttribute('href')
+      var m = /^#\/[^\/]*\/(.*)/.exec(href)
+      if (m) {
+        var link = decodeURIComponent(m[1])
+        if (ssbref.isLink(link))
+          href = link
+      }
+      clipboard.writeText(href)
     }
   },
 ]
