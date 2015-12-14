@@ -1,7 +1,7 @@
 var Menu = require('menu')
 var dialog = require('dialog')
 
-var isMac = (process.platform == 'darwin');
+var isMac = (process.platform == 'darwin')
 
 module.exports = function (window) {
   var template = [

@@ -8,8 +8,8 @@ var fs = remote.require('fs')
 var http = remote.require('http')
 
 /* using globals because putting properties on the menu didn't seem to work */
-var currentEl;
-var currentLink;
+var currentEl
+var currentLink
 
 var imgMenuItems = [
   /*
@@ -21,16 +21,16 @@ var imgMenuItems = [
   {
     label: 'Save Image As',
     click: function (item, mainWindow) {
-      var img = currentEl;
+      var img = currentEl
       dialog.showSaveDialog({
         defaultPath: img.src
       }, function (fileName) {
         if (fileName) {
           http.request(img.src, function (res) {
-            res.pipe(fs.createWriteStream(fileName));
+            res.pipe(fs.createWriteStream(fileName))
           }).end()
         }
-      });
+      })
     }
   },
   /*
@@ -79,29 +79,29 @@ function appendMenuItemGroup(menu, items) {
     }))
   }
   for (var i = 0; i < items.length; i++) {
-    menu.append(new MenuItem(items[i]));
+    menu.append(new MenuItem(items[i]))
   }
 }
 
 function getContainingLink(el) {
   while (el) {
     if (el.nodeName == 'A' && el.href)
-      return el;
-    el = el.parentNode;
+      return el
+    el = el.parentNode
   }
 }
 
 function createMenu(el) {
   var menu = new Menu()
-  currentEl = el;
+  currentEl = el
 
   if (el.nodeName == 'IMG') {
     appendMenuItemGroup(menu, imgMenuItems)
   }
 
-  var link = getContainingLink(el);
+  var link = getContainingLink(el)
   if (link) {
-    currentLink = link;
+    currentLink = link
     appendMenuItemGroup(menu, linkMenuItems)
   }
 
