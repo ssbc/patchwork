@@ -117,13 +117,25 @@
     }
     .read-more {
       display: block;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 10%, #ffffff 70%);
+      background: #fff;
       position: absolute;
       bottom: 0;
       width: 100%;
-      padding-top: 70px;
+      padding-top: 5px;
       color: blue;
       cursor: pointer;
+      border-top: 1px solid #ccc;
+      &:before {
+        // put some white space above the border
+        content: '';
+        width: 100%;
+        display: block;
+        background: #fff;
+        left: 0;
+        position: absolute;
+        top: -11px;
+        height: 10px;
+      }
     }
   }
 
