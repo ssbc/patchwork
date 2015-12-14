@@ -51,6 +51,7 @@ export class ChannelList extends React.Component {
       e.stopPropagation()
       if (this.state.searchText.trim())
         this.props.onSelect({ name: this.state.searchText })
+      this.onClearSearch()
     }
   }
 
@@ -60,6 +61,7 @@ export class ChannelList extends React.Component {
 
   onClickCreate() {
     this.props.onSelect({ name: this.state.searchText })
+    this.onClearSearch()
   }
 
   render() {
@@ -68,6 +70,7 @@ export class ChannelList extends React.Component {
     
     // predicates
     const isPartialMatch = channel => ((this.state.searchQuery) ? this.state.searchQuery.test(channel.name) : true)
+    const isExactMatch   = channel => ((this.state.searchText)  ? this.state.searchText === channel.name : false)
     const isPinned = b => channel => (!!channel.pinned == b)
 
     // filtered channels
@@ -75,11 +78,12 @@ export class ChannelList extends React.Component {
     const unpinnedChannels = this.props.channels.filter(isPinned(false)).filter(isPartialMatch)
 
     // render
+    const hasExactMatch = this.props.channels.filter(isExactMatch).length > 0
     const renderChannel = channel => <ChannelListItem key={channel.name} channel={channel} selected={channel.name === selected} onSelect={this.props.onSelect} />
     return <div className="channel-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="channel-list-ctrls">
         <div className="search">
-          <input ref="searchInput" type="text" placeholder="Choose a Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
+          <input ref="searchInput" type="text" placeholder="Create a Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
       <div className={cls(selected === ALL_CHANNELS)} onClick={()=>this.props.onSelect(false)} style={{paddingBottom: 0}}>All Channels</div>
@@ -91,7 +95,7 @@ export class ChannelList extends React.Component {
         <p><small>Channels are topical filters for conversations.</small></p>
         <p>
           { search
-            ? <small><a onClick={this.onClickCreate.bind(this)}>Open "{search}"</a> | </small>
+            ? <small><a onClick={this.onClickCreate.bind(this)}>{ hasExactMatch ? 'Open' : 'Create' } "{search}"</a> | </small>
             : '' }
           { search
             ? <small><a onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
