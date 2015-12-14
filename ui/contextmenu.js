@@ -89,6 +89,10 @@ var linkMenuItems = [
   },
 ]
 
+var textSelectionMenuItems = [
+  {label: 'Copy', role: 'copy'}
+]
+
 var texteditMenuItems = [
   {label: 'Cut', role: 'cut'},
   {label: 'Copy', role: 'copy'},
@@ -130,6 +134,7 @@ function getContainingLink(el) {
 
 function createMenu(el) {
   var menu = new Menu()
+  var link = getContainingLink(el)
   currentEl = el
 
   switch (el.nodeName) {
@@ -143,9 +148,12 @@ function createMenu(el) {
       else
         appendMenuItemGroup(menu, texteditMenuItems)
       break
+    default:
+      if (!link && document.getSelection().type == 'Range')
+        appendMenuItemGroup(menu, textSelectionMenuItems)
+      break
   }
 
-  var link = getContainingLink(el)
   if (link) {
     currentLink = link
     appendMenuItemGroup(menu, linkMenuItems)
