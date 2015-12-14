@@ -34,7 +34,7 @@ tape('newsfeed index includes all public posts', function (t) {
   })
 })
 
-tape('newsfeed index updates the root message for replies', function (t) {
+tape('newsfeed index does not update the root message for replies', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {
     alice: {},
@@ -61,8 +61,8 @@ tape('newsfeed index updates the root message for replies', function (t) {
             pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
               if (err) throw err
               t.equal(msgs.length, 2)
-              t.equal(msgs[0].key, msg1.key) // order of msgs was reversed
-              t.equal(msgs[1].key, msg2.key)
+              t.equal(msgs[0].key, msg2.key) // order of msgs was retained
+              t.equal(msgs[1].key, msg1.key)
               t.end()
               sbot.close()
             }))
