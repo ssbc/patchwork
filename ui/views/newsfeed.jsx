@@ -37,14 +37,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return [msg.value.timestamp, msg.value.author]
   }
 
-  helpCards() {
-    return <div className="cards-flow">
-      <HelpCards.NewsFeed />
-      <HelpCards.Pubs />
-      <HelpCards.FindingUsers />
-    </div>
-  }
-
   onToggleToolbar() {
     this.setState({ isToolbarOpen: !this.state.isToolbarOpen }, () => {
       this.refs.list.calcContainerHeight()
@@ -103,7 +95,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         ListItem={ListItem}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}
-        append={this.helpCards.bind(this)}
         source={source}
         cursor={this.cursor} />
     </div>
