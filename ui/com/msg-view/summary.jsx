@@ -2,7 +2,7 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import { UserLinks, NiceDate } from '../index'
+import { UserLink, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import u from '../../lib/util'
@@ -14,9 +14,6 @@ export default class Summary extends React.Component {
 
   render() {
     let msg = this.props.msg
-    let recps = mlib.links(msg.value.content.recps, 'feed').map(link => link.link).filter(id => id !== app.user.id)
-    if (recps.length === 0)
-      recps = [msg.value.author]
     let lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+replies+')'
@@ -32,7 +29,7 @@ export default class Summary extends React.Component {
       <div className="content">
         <div className="header">
           <div className="header-left">
-            { msg.plaintext ? '' : <i className="fa fa-lock"/> } <UserLinks ids={recps} />{' '}
+            { msg.plaintext ? '' : <i className="fa fa-lock"/> } <UserLink id={msg.value.author} />{' '}
             {replies} {msg.mentionsUser ? <i className="fa fa-at"/> : ''}
           </div>
           <div className="header-right"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>

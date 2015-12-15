@@ -3,7 +3,7 @@ import React from 'react'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import MsgList from '../com/msg-list'
-import Oneline from '../com/msg-view/oneline'
+import Summary from '../com/msg-view/summary'
 import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 
@@ -35,7 +35,7 @@ export default class Inbox extends React.Component {
         threads
         dateDividers
         composer composerProps={{placeholder: 'Write a new private message'}}
-        ListItem={Oneline}
+        ListItem={Summary}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         append={this.helpCards.bind(this)}
