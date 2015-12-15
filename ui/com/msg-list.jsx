@@ -45,7 +45,8 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
+        app.emit('open:msg', msg.key)
+        // app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB

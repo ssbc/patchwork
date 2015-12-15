@@ -5,6 +5,7 @@ import ssbref from 'ssb-ref'
 import app from './lib/app'
 import Notifications from './com/msg-list/notifications'
 import Bookmarks from './com/msg-list/bookmarks'
+import Msg from './views/msg'
 import ModalFlow from './com/modals/flow'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
@@ -15,7 +16,8 @@ const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, 
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
 const RIGHT_NAVS = {
   notifications: Notifications,
-  bookmarks: Bookmarks
+  bookmarks: Bookmarks,
+  msg: Msg
 }
 
 export default class Layout extends React.Component {
@@ -29,6 +31,7 @@ export default class Layout extends React.Component {
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
     app.on('modal:setup', (isOpen) => this.setState({ setupIsOpen: isOpen }))
+    app.on('open:msg', this.onOpenMsg.bind(this))
   }
   componentWillReceiveProps() {
     // update state on view changes
@@ -38,6 +41,7 @@ export default class Layout extends React.Component {
     // copy over app state
     return {
       rightNav: (this.state) ? this.state.rightNav : false,
+      rightNavProps: (this.state) ? this.state.rightNavProps : {},
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
       user: app.user,
@@ -50,9 +54,19 @@ export default class Layout extends React.Component {
 
   toggleRightNav(id) {
     if (this.state.rightNav == id)
-      this.setState({ rightNav: false })
+      this.setState({ rightNav: false, rightNavProps: {} })
     else
       this.setState({ rightNav: id })
+  }
+
+  onOpenMsg(key) {
+    if (this.state.rightNav == 'msg') {
+      // if the message rightnav is open, update to that
+      this.setState({ rightNavProps: { params: { id: key } } })
+    } else {
+      // otherwise, navigate
+      app.history.pushState(null, '/msg/' + encodeURIComponent(key))
+    }
   }
 
   onClickBack() {
@@ -115,13 +129,14 @@ export default class Layout extends React.Component {
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
+          <NavToggle to="msg" icon="envelope-o" count={this.state.indexCounts.bookmarksUnread} />
           <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
           <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
       </div>
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>
-        { (RightNavView) ? <div id="rightnav"><RightNavView /></div> : '' }
+        { (RightNavView) ? <div id="rightnav"><RightNavView {...this.state.rightNavProps} /></div> : '' }
       </div>
     </div>
   }
