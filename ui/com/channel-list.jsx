@@ -83,7 +83,7 @@ export class ChannelList extends React.Component {
     return <div className="channel-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="channel-list-ctrls">
         <div className="search">
-          <input ref="searchInput" type="text" placeholder="Create a Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
+          <input ref="searchInput" type="text" placeholder="New Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
       <div className={cls(selected === ALL_CHANNELS)} onClick={()=>this.props.onSelect(false)} style={{paddingBottom: 0}}>All Channels</div>
