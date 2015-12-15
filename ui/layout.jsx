@@ -126,12 +126,13 @@ export default class Layout extends React.Component {
             <NavLink to="/sync" icon={isWifiMode?'wifi':'globe'} label='Network' />
             <Issues />
           </div>
+          <div className="divider" />
+          <NavToggle to="msg" icon="envelope" count={this.state.indexCounts.bookmarksUnread} />
+          <NavToggle to="bookmarks" icon="bookmark" count={this.state.indexCounts.bookmarksUnread} />
+          <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
-          <NavToggle to="msg" icon="envelope-o" count={this.state.indexCounts.bookmarksUnread} />
-          <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
-          <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
       </div>
       <div className="layout-columns">
