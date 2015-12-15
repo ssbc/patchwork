@@ -1,10 +1,17 @@
-#newsfeed .msg-list-items .toolbar {
-  padding: 5px;
-  background: none;
-  border: 0;
-  &.floating {
-    position: static;
-    width: 0; height: 0;
-    float: left;
+#newsfeed {
+  .msg-list-items .toolbar {
+    padding: 5px;
+    background: none;
+    border: 0;
+    &.floating {
+      position: static;
+      width: 0; height: 0;
+      float: left;
+    }
+  }
+
+  .msg-view.summary {
+    margin: 10px auto;
+    max-width: 640px;
   }
 }
