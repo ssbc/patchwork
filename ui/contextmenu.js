@@ -4,7 +4,6 @@ var MenuItem = remote.require('menu-item')
 var dialog = remote.require('dialog')
 var clipboard = require('clipboard')
 var ssbref = require('ssb-ref')
-var app = require('./lib/app')
 var fs = remote.require('fs')
 var http = remote.require('http')
 
@@ -13,12 +12,6 @@ var currentEl
 var currentLink
 
 var imgMenuItems = [
-  /*
-  {
-    label: 'Open Image in New Window',
-    click: function () { }
-  },
-  */
   {
     label: 'Save Image As',
     click: function (item, mainWindow) {
@@ -64,16 +57,6 @@ var linkMenuItems = [
       currentLink.click()
     }
   },
-  /*
-  {
-    label: 'Open Link in New Window',
-    click: function () { }
-  },
-  {
-    label: 'Download Linked Message',
-    click: function () { }
-  },
-  */
   {
     label: 'Copy Link Location',
     click: function () {
