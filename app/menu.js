@@ -8,11 +8,11 @@ module.exports = function (window) {
     {
       label: 'Patchwork',
       submenu: [
+      ].concat(isMac ? [
         {
           label: 'About Patchwork',
           selector: 'orderFrontStandardAboutPanel:'
-        }
-      ].concat(isMac ? [
+        },
         {
           type: 'separator'
         },
@@ -29,11 +29,11 @@ module.exports = function (window) {
         {
           label: 'Show All',
           selector: 'unhideAllApplications:'
-        }
-      ] : [], [
+        },
         {
           type: 'separator'
         },
+      ] : [], [
         {
           label: 'Quit',
           accelerator: 'CmdOrCtrl+Q',
