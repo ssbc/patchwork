@@ -1,3 +1,5 @@
+logLicense() // per the GPL's recommendation, let ppl know the license
+
 var app  = require('app')
 var Menu = require('menu')
 var path = require('path')
@@ -59,3 +61,10 @@ app.on('ready', function () {
   // }]))
 
 });
+
+function logLicense () {
+  console.log('Patchwork - Copyright (C) 2015 - Secure Scuttlebut Consortium')
+  console.log('This program comes with ABSOLUTELY NO WARRANTY.')
+  console.log('This is free software, and you are welcome to redistribute it under certain conditions (GPL-3.0).')
+  console.log('')
+}

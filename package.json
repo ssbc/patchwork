@@ -25,7 +25,7 @@
     "prepublish": "npm run build:ui"
   },
   "author": "Paul Frazee <pfrazee@gmail.com>",
-  "license": "?",
+  "license": "GPL-3.0",
   "devDependencies": {
     "electron-builder": "^2.0.0",
     "electron-packager": "^4.1.3",
