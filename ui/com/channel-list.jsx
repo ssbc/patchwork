@@ -26,7 +26,7 @@ class ChannelListItem extends React.Component {
     const channel = this.props.channel
     const onSelect = () => this.props.onSelect(channel)
     return <div className={cls(this.props.selected, channel.hasNew)} onClick={onSelect}>
-      <div className="flex-fill">#{ channel.name }</div>
+      <div className="flex-fill"><i className="fa fa-hashtag" /> { channel.name }</div>
       <div className="ctrls">
         <a className={classNames({ pin: true, pinned: channel.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
       </div>
@@ -86,9 +86,9 @@ export class ChannelList extends React.Component {
           <input ref="searchInput" type="text" placeholder="New Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
-      <div className={cls(selected === ALL_CHANNELS)} onClick={()=>this.props.onSelect(false)} style={{paddingBottom: 0}}>All Channels</div>
+      { pinnedChannels.length ? <div className="channel-list-heading">Pinned</div> : '' }
       { pinnedChannels.map(renderChannel) }
-      { unpinnedChannels.length ? <hr/> : '' }
+      { unpinnedChannels.length ? <div className="channel-list-heading">Unpinned</div> : '' }
       { unpinnedChannels.map(renderChannel) }
       <hr/>
       <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>

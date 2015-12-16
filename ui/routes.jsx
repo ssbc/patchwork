@@ -7,6 +7,7 @@ import NewsFeed from './views/newsfeed'
 import Inbox from './views/inbox'
 import Data from './views/data'
 import Msg from './views/msg'
+import Channels from './views/channels'
 import Profile from './views/profile'
 import WebView from './views/webview'
 import Sync from './views/sync'
@@ -32,7 +33,7 @@ export default (
     <Route path="/" component={Layout}>
       <IndexRoute component={NewsFeed} />
       <Route path="newsfeed/channel/:channel" component={NewsFeed} />
-      <Route path="newsfeed/filter/:filter" component={NewsFeed} />
+      <Route path="channels" component={Channels} />
       <Route path="inbox" component={Inbox} />
       <Route path="data" component={Data} />
       <Route path="profile" component={Profile} />

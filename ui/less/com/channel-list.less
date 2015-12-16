@@ -1,24 +1,33 @@
 .channel-list {
+  .elevation-card;
+  background: #fff;
+  padding: 10px;
+
   .search {
-    border-bottom: 1px solid #ddd;
     input {
-      width: 100%;
+      width: 278px;
       color: gray;
-      border: 0;
       padding: 9px;
       &:focus {
         outline: 0;
       }
     }
   }
+  .channel-list-heading {
+    margin: 15px 0 5px 10px;
+    font-weight: bold;
+    color: gray;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
   .channel-list-item {
     cursor: pointer;
-    color: gray;
-    font-weight: 300;
+    color: #555;
     margin: 8px 10px;
 
     &.unread {
       color: #E8A541;
+      text-decoration: underline;
     }
     &.selected {
       color: #4597F1;
