@@ -100,6 +100,41 @@ tape('newsfeed index includes encrypted messages', function (t) {
   })
 })
 
+tape('newsfeed correctly orders despite bad timestamps', function (t) {
+  var sbot = u.newserver()
+  var users = {
+    alice: ssbkeys.generate(),
+    bob: ssbkeys.generate(),
+    charlie: ssbkeys.generate()
+  }
+
+  // TS ahead by 2 hours
+  sbot.add(u.customTimeCreateMsg(users.alice, Date.now() + 1000*60*60*2, { type: 'post', text: 'a' }), function (err, msgA) {
+    if (err) throw err
+
+    // TS ahead by an hour
+    sbot.add(u.customTimeCreateMsg(users.bob, Date.now() + 1000*60*60, { type: 'post', text: 'b' }), function (err, msgB) {
+      if (err) throw err
+
+      // TS correct
+      sbot.add(u.customTimeCreateMsg(users.charlie, Date.now(), { type: 'post', text: 'c' }), function (err, msgC) {
+        if (err) throw err
+
+        pull(sbot.patchwork.createNewsfeedStream(), pull.collect(function (err, msgs) {
+          if (err) throw err
+          t.equal(msgs.length, 3)
+          // still ordered by most-recent-additions first
+          t.equal(msgs[0].key, msgC.key)
+          t.equal(msgs[1].key, msgB.key)
+          t.equal(msgs[2].key, msgA.key)
+          t.end()
+          sbot.close()
+        }))
+      })
+    })
+  })
+})
+
 tape('inbox index doesnt include public threads', function (t) {
   var sbot = u.newserver()
   u.makeusers(sbot, {

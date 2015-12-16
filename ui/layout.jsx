@@ -5,7 +5,6 @@ import ssbref from 'ssb-ref'
 import app from './lib/app'
 import Notifications from './com/msg-list/notifications'
 import Bookmarks from './com/msg-list/bookmarks'
-import Channels from './views/channels'
 import ModalFlow from './com/modals/flow'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
@@ -30,26 +29,16 @@ export default class Layout extends React.Component {
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
     app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
-
-    // listen to signals to open or close the channels bar
-    // this is used by navigation events
-    app.on('layout:toggleChannels', isOpen => this.setState({ channelsIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
     // update state on view changes
     app.fetchLatestState()
   }
-  getInitialChannelState() {
-    // used on program load
-    // open channels if we're on the home or a channels page
-    const location = this.props.location.pathname
-    return (location == '/' || location.indexOf('/channel/') === 0)
-  }
   buildState() {
     // copy over app state
     return {
-      channelsIsOpen: (this.state) ? this.state.channelsIsOpen : this.getInitialChannelState(),
-      rightNav: (this.state) ? this.state.rightNav : 'notifications',
+      rightNav: (this.state) ? this.state.rightNav : false,
+      rightNavProps: (this.state) ? this.state.rightNavProps : {},
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
       user: app.user,
@@ -62,7 +51,7 @@ export default class Layout extends React.Component {
 
   toggleRightNav(id) {
     if (this.state.rightNav == id)
-      this.setState({ rightNav: false })
+      this.setState({ rightNav: false, rightNavProps: {} })
     else
       this.setState({ rightNav: id })
   }
@@ -96,11 +85,10 @@ export default class Layout extends React.Component {
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
     const onToggleRightNav = (id) => () => { this.toggleRightNav(id) }
-    const LeftNavView = this.state.channelsIsOpen ? Channels : null
     const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
 
     const NavLink = (props) => {
-      const selected = (props.to === location)
+      const selected = props.selected || (props.to === location)
       const cls = 'ctrl '+(selected?'selected':'')
       const count = props.count ? <div className="count">{props.count}</div> : ''
       return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
@@ -118,23 +106,23 @@ export default class Layout extends React.Component {
         <div className="flex-fill">
           <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
           <div className="nav">
-            <NavLink to="/" icon="newspaper-o" label="Feed" />
+            <NavLink to="/" selected={location === '/' || location.indexOf('/newsfeed/') === 0} icon="newspaper-o" label="Feed" />
             <NavLink to="/inbox" icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
             <NavLink to="/profile" icon="users" label="Contacts" />
             <NavLink to="/sync" icon={isWifiMode?'wifi':'globe'} label='Network' />
             <Issues />
           </div>
+          <div className="divider" />
+          <NavToggle to="bookmarks" icon="bookmark" count={this.state.indexCounts.bookmarksUnread} />
+          <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
-          <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
-          <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
       </div>
       <div className="layout-columns">
-        { (LeftNavView) ? <div id="leftnav"><LeftNavView location={this.props.location} /></div> : '' }
         <div id="mainview">{this.props.children}</div>
-        { (RightNavView) ? <div id="rightnav"><RightNavView location={this.props.location} /></div> : '' }
+        { (RightNavView) ? <div id="rightnav"><RightNavView location={this.props.location} {...this.state.rightNavProps} /></div> : '' }
       </div>
     </div>
   }

@@ -14,6 +14,7 @@ window.app = require('./lib/app')
 
 // toplevel events
 window.addEventListener('error', onError)
+window.addEventListener('contextmenu', require('./contextmenu'))
 
 // render
 app.fetchLatestState(function () {

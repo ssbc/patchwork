@@ -46,7 +46,10 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
+        if (this.props.openMsgEvent)
+          app.emit('open:msg', msg.key)
+        else
+          app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB
@@ -335,6 +338,7 @@ export default class MsgList extends React.Component {
 
   render() {
     const Hero = this.props.Hero
+    const LeftNav = this.props.LeftNav
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
@@ -355,42 +359,47 @@ export default class MsgList extends React.Component {
           infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
-          isInfiniteLoading={this.state.isLoading} >
-          { Hero ? <Hero/> : '' }
-          { nQueued ?
-            <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
-            : '' }
-          { this.props.composer ? <ComposerCard {...this.props.composerProps} /> : '' }
-          { this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
-          { isEmpty ?
-            <div className="empty-msg">
-              { (this.props.emptyMsg || 'No messages.') }
-            </div>
-            :
-            <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-              { this.state.msgs.map((m, i) => {
-                // render item
-                const item = <ListItem
-                  key={m.key}
-                  msg={m}
-                  {...this.handlers}
-                  {...this.props.listItemProps}
-                  selected={selectedKey === m.key}
-                  forceRaw={this.props.forceRaw} />
+          isInfiniteLoading={this.state.isLoading}>
+          <div className="flex">
+            { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
+            <div className="flex-fill">
+              { Hero ? <Hero/> : '' }
+              { nQueued ?
+                <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
+                : '' }
+              { this.props.composer ? <ComposerCard {...this.props.composerProps} /> : '' }
+              { this.state.msgs.length === 0 && this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
+              { isEmpty ?
+                <div className="empty-msg">
+                  { (this.props.emptyMsg || 'No messages.') }
+                </div>
+                :
+                <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+                  { this.state.msgs.map((m, i) => {
+                    // render item
+                    const item = <ListItem
+                      key={m.key}
+                      msg={m}
+                      {...this.handlers}
+                      {...this.props.listItemProps}
+                      selected={selectedKey === m.key}
+                      forceRaw={this.props.forceRaw} />
 
-                // render a date divider if this post is from a different day than the last
-                const oldLastDate = lastDate
-                const lastPost = threadlib.getLastThreadPost(m)
-                lastDate = moment(lastPost.value.timestamp)
-                if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-                  let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                  return <div key={m.key}><hr className="msgs-divider" data-label={label} />{item}</div>
-                }
-                return item
-              }) }
-            </ReactCSSTransitionGroup>
-          }
-          {append}
+                    // render a date divider if this post is from a different day than the last
+                    const oldLastDate = lastDate
+                    const lastPost = threadlib.getLastThreadPost(m)
+                    lastDate = moment(lastPost.value.timestamp)
+                    if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
+                      let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+                      return <div key={m.key}><hr className="msgs-divider" data-label={label} />{item}</div>
+                    }
+                    return item
+                  }) }
+                </ReactCSSTransitionGroup>
+              }
+              {append}
+            </div>
+          </div>
         </Infinite>
       </div>
     </div>

@@ -27,26 +27,21 @@ function beforeNavigation (nextState) {
 }
 app.history.listenBefore(beforeNavigation)
 
-// open/close channels column on navigation events
-// this allows us to keep channels open on the message page if the last page was the feed ...
-// ... and also to keep channels closed on the message page if the last page was anywhere else
-const openChannels = () => app.emit('layout:toggleChannels', true)
-const closeChannels = () => app.emit('layout:toggleChannels', false)
-
 export default (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={NewsFeed} onEnter={openChannels} />
-      <Route path="channel/:channel" component={NewsFeed} onEnter={openChannels} />
-      <Route path="inbox" component={Inbox} onEnter={closeChannels} />
-      <Route path="data" component={Data} onEnter={closeChannels} />
-      <Route path="profile" component={Profile} onEnter={closeChannels} />
-      <Route path="profile/:id" component={Profile} onEnter={closeChannels} />
+      <IndexRoute component={NewsFeed} />
+      <Route path="newsfeed/channel/:channel" component={NewsFeed} />
+      <Route path="newsfeed/filter/:filter" component={NewsFeed} />
+      <Route path="inbox" component={Inbox} />
+      <Route path="data" component={Data} />
+      <Route path="profile" component={Profile} />
+      <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
       <Route path="webview/:id" component={WebView} />
-      <Route path="sync" component={Sync} onEnter={closeChannels} />
-      <Route path="help/:section" component={Help} onEnter={closeChannels} />
-      <Route path="search/:query" component={Search} onEnter={closeChannels} />
+      <Route path="sync" component={Sync} />
+      <Route path="help/:section" component={Help} />
+      <Route path="search/:query" component={Search} />
     </Route>
   </Router>
 )

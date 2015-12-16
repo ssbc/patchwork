@@ -44,7 +44,7 @@ export default class Composer extends React.Component {
     super(props)
 
     // thread info
-    let recps = []
+    let recps = this.props.recps || []
     this.isPublic = this.props.isPublic
     this.threadRoot = null
     this.threadBranch = null

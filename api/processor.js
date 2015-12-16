@@ -15,13 +15,13 @@ module.exports = function (sbot, db, state, emit) {
 
       // newsfeed index: add public posts / update for replies
       if (!root && recps.length === 0) {
-        state.newsfeed.sortedUpsert(msg.value.timestamp, msg.key)
+        state.newsfeed.sortedUpsert(ts(msg), msg.key)
         emit('index-change', { index: 'newsfeed' })
       }
       else if (root) {
         var newsfeedRow = state.newsfeed.find(root.link)
         if (newsfeedRow) {
-          state.newsfeed.sortedUpsert(msg.value.timestamp, root.link)
+          state.newsfeed.sortedUpsert(ts(msg), root.link)
           emit('index-change', { index: 'newsfeed' })
         }
       }
@@ -49,7 +49,7 @@ module.exports = function (sbot, db, state, emit) {
       if (root) {
         bookmarkRow = state.bookmarks.find(root.link)
         if (bookmarkRow) {
-          state.bookmarks.sortedUpsert(msg.value.timestamp, root.link)
+          state.bookmarks.sortedUpsert(ts(msg), root.link)
           emit('index-change', { index: 'bookmarks' })
           attachChildIsRead(bookmarkRow, msg.key)
         }
@@ -60,7 +60,7 @@ module.exports = function (sbot, db, state, emit) {
       if (root) {
         inboxRow = state.inbox.find(root.link)
         if (inboxRow) {
-          state.inbox.sortedUpsert(msg.value.timestamp, root.link)
+          state.inbox.sortedUpsert(ts(msg), root.link)
           emit('index-change', { index: 'inbox' })
           attachChildIsRead(inboxRow, msg.key)
         }
@@ -69,7 +69,7 @@ module.exports = function (sbot, db, state, emit) {
       // inbox index: add msgs addressed to the user
       if (!inboxRow) { // dont bother if already updated inbox for this msg
         if (findLink(recps, sbot.id)) {
-          inboxRow = state.inbox.sortedUpsert(msg.value.timestamp, root ? root.link : msg.key)
+          inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
           emit('index-change', { index: 'inbox' })
           attachChildIsRead(inboxRow, msg.key)          
         }
@@ -77,7 +77,7 @@ module.exports = function (sbot, db, state, emit) {
 
       // notifications index: add msgs that mention the user
       if (findLink(mentions, sbot.id)) {
-        var notificationsRow = state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+        var notificationsRow = state.notifications.sortedUpsert(ts(msg), msg.key)
         emit('index-change', { index: 'notifications' })
         attachIsRead(notificationsRow)   
       }
@@ -92,7 +92,7 @@ module.exports = function (sbot, db, state, emit) {
 
         // notifications indexes: add follows or blocks
         if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+          state.notifications.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'notifications' })
         }
       })
@@ -111,7 +111,7 @@ module.exports = function (sbot, db, state, emit) {
       // notifications index: add votes on your messages
       var msgLink = mlib.link(msg.value.content.vote, 'msg')
       if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
-        state.notifications.sortedUpsert(msg.value.timestamp, msg.key)
+        state.notifications.sortedUpsert(ts(msg), msg.key)
         emit('index-change', { index: 'notifications' })
       }
 
@@ -323,13 +323,20 @@ module.exports = function (sbot, db, state, emit) {
     }
   }
 
+  // helper to get the most reliable timestamp for a message
+  // - stops somebody from boosting their ranking (accidentally, maliciously) with a future TS
+  // - applies only when ordering by most-recent
+  function ts (msg) {
+    return Math.min(msg.received, msg.value.timestamp)
+  }
+
   // exported api
 
   function fn (logkey) {
     state.pinc()
     var key = logkey.value
     sbot.get(logkey.value, function (err, value) {
-      var msg = { key: key, value: value }
+      var msg = { key: key, value: value, received: logkey.key }
       try {
         // encrypted? try to decrypt
         if (typeof value.content == 'string' && value.content.slice(-4) == '.box') {

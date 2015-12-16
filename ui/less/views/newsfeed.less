@@ -1,0 +1,50 @@
+#newsfeed {
+  display: flex;
+
+  .newsfeed-nav {
+    flex: 0 0 175px;
+    
+    .newsfeed-nav-heading {
+      margin: 15px 0 5px 10px;
+      font-weight: bold;
+      color: gray;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .newsfeed-nav-link {
+      margin: 5px 0 5px 10px;
+      a {
+        color: #555;
+        &.selected {
+          color: #006EFF;
+        }
+      }
+      i { 
+        width: 20px;
+        text-align: center;
+      }
+    }
+  }
+
+  .msg-list {
+    flex: 1;
+  }
+  .msg-thread {
+    border-left: 1px solid #ccc;
+    flex: 0 0 680px;
+  }
+
+  .msg-list-items .toolbar {
+    &.floating {
+      position: static;
+      width: 0; height: 0;
+      float: left;
+    }
+  }
+
+  .msg-view.summary {
+    margin: 5px auto;
+    max-width: 640px;
+  }
+}

@@ -49,7 +49,7 @@ export default class PubInvite extends React.Component {
     cb({ code: this.state.code })
   }
 
-  submit() {
+  submit(cb) {
     this.getValues(values => {
       let code = values.code || ''
       this.setState({ isProcessing: true, error: false, info: false })
@@ -67,7 +67,7 @@ export default class PubInvite extends React.Component {
 
       // use the invite
       this.setState({ info: 'Contacting server with invite code, this may take a few moments...' })
-      app.ssb.invite.accept(code, (err) => {
+      app.ssb.invite.accept(code, err => {
         if (err) {
           console.error(err)
           return this.setState({ isProcessing: false, info: false, error: err })

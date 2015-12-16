@@ -1,30 +1,18 @@
 #rightnav {
-  background: #fff;
-  width: 300px;
   border-left: 1px solid #ccc;
-  .toolbar .tabs {
-    display: flex;
-    a {
-      flex: 1;
-      text-align: center;
+  .bookmarks, .notifications {
+    width: 350px;
+  }
+  .toolbar {
+    .tabs {
+      display: flex;
+      a {
+        flex: 1;
+        text-align: center;
+      }
     }
   }
-  .msg-view.oneline {
-    border-bottom: 1px solid #ccc;
-    &.unread {
-      background: #EAF2FB;
-    }
-  }
-  .msg-view.notification {
-    &.new {
-      background: #EAF2FB;
-      &:before {
-        content: "\f0da";
-        top: 30px;
-        position: relative;
-        width: 12px;
-        font: normal normal normal 14px/1 FontAwesome;
-      }    
-    }
+  .msg-view.summary .body .body-line {
+    -webkit-line-clamp: 3;
   }
 }

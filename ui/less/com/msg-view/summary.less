@@ -1,14 +1,11 @@
 .msg-view.summary {
+  .elevation-card;
   display: flex;
   padding: 10px;
   overflow: hidden;
-  max-width: 680px;
-  margin: 0 auto;
+  background: #fff;
   border-bottom: 1px solid #ddd;
-
-  &:hover {
-    background: #fafafa;
-  }
+  border-left: 4px solid #ccc;
 
   .ctrls {
     flex: 0 0 24px;
@@ -31,27 +28,33 @@
     color: @gray1;
     .header-left {
       flex: 1;
+      font-size: 21px;
+      font-weight: 300;
     }
     .header-right {
       font-weight: 300;
+    }
+    i {
+      color: @dark-gray3;
     }
     a {
       color: @dark-gray2;
     }
   }
   .body {
-    max-height: 36px;
     overflow: hidden;
     color: @dark-gray3;
     font-weight: 300;
     font-family: Helvetica;
-    line-height: 1.2;
+    line-height: 1.4;
 
     .body-line {
-      white-space: pre;
       overflow: hidden;
       text-overflow: ellipsis;
-      &:last-child {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      &:nth-child(2) {
         color: gray;
         font-weight: 100;
       }
@@ -59,16 +62,17 @@
   }
 
   &.unread {
-    background: @white3;
+    background: #fff;
+    border-left: 4px solid #006EFF;
     .header-left, .header-right {
-      font-weight: bold;
       color: @dark-gray2;
-    }
-    i {
-      color: @dark-gray3;
     }
     .body {
       font-weight: 500;
+      .body-line:first-child {
+        color: #006EFF;
+        font-weight: bold;
+      }
     }
   }
 
@@ -90,5 +94,9 @@
       color: @white2;
       background: rgba(255,255,255,0.25);
     }
+  }
+  &:hover {
+    background: #fafafa;
+    cursor: pointer;
   }
 }

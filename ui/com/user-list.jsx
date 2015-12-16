@@ -2,8 +2,8 @@
 import pull from 'pull-stream'
 import React from 'react'
 import UserProfile from './user-profile'
-import { verticalFilled, VerticalFilledContainer, UserLink } from './index'
 import { ContactsTips } from './help/cards'
+import { verticalFilled, VerticalFilledContainer, UserLink, UserPic } from './index'
 import app from '../lib/app'
 import social from '../lib/social-graph'
 import u from '../lib/util'
@@ -18,6 +18,7 @@ class UserListItem extends React.Component {
   render() {
     let user = this.props.user
     return <div className={'user-list-item unread summary'+(this.props.selected ? ' selected' : '')} onClick={this.onClick.bind(this)}>
+      <UserPic id={user.id} />
       <div className="header">
         <div className="header-left"><UserLink id={user.id} /></div>
         <div className="header-right">
