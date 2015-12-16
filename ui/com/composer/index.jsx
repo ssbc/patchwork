@@ -228,9 +228,7 @@ export default class Composer extends React.Component {
       }
 
       // publish
-      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks)
-      if (this.hasChannel())
-        post.channel = this.getChannel()
+      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks, this.getChannel())
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
