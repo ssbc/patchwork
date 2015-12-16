@@ -16,7 +16,7 @@ export default class Summary extends React.Component {
     let msg = this.props.msg
     let lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
     var replies = countReplies(msg)
-    replies = (replies === 0) ? '' : '('+replies+')'
+    replies = (replies === 0) ? '' : '('+(replies+1)+')'
     return <div className={'msg-view summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
       { this.props.ctrls ?
         <div className="ctrls">

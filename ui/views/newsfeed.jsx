@@ -115,6 +115,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         composer composerProps={{isPublic: true, placeholder: 'Write a new public post'}}
         queueNewMsgs
         dateDividers
+        openMsgEvent
         filter={filter}
         Hero={Hero}
         ListItem={ListItem}
