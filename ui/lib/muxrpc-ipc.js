@@ -15,6 +15,7 @@ function getApp() {
 var clientApiManifest = {
   navigate: 'async',
   navigateHistory: 'async',
+  navigateToggle: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
   focusSearch: 'async',
@@ -32,6 +33,10 @@ var clientApi = {
   },
   navigateHistory: function (direction, cb) {
     window.history.go(direction)
+    cb()
+  },
+  navigateToggle: function (id, cb) {
+    getApp().emit('toggle:rightnav', id)
     cb()
   },
   contextualToggleDevTools: function (cb) {

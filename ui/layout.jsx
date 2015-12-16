@@ -29,6 +29,7 @@ export default class Layout extends React.Component {
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
     app.on('focus:search', this.focusSearch.bind(this))
+    app.on('toggle:rightnav', this.toggleRightNav.bind(this))
     app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
   }
   componentWillReceiveProps() {

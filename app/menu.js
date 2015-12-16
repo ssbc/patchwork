@@ -119,6 +119,23 @@ module.exports = function (window) {
           type: 'separator'
         },
         {
+          label: 'Toggle Bookmarks',
+          accelerator: 'CmdOrCtrl+Shift+B',
+          click: function() {
+            window.rpc.navigateToggle('bookmarks')
+          }
+        },
+        {
+          label: 'Toggle Notifications',
+          accelerator: 'CmdOrCtrl+Shift+N',
+          click: function() {
+            window.rpc.navigateToggle('notifications')
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Toggle DevTools',
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
           click: function() { 
