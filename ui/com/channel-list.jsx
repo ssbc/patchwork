@@ -59,9 +59,19 @@ export class ChannelList extends React.Component {
     this.setState({ searchText: '', searchQuery: false })    
   }
 
-  onClickCreate() {
+  onClickOpen() {
     this.props.onSelect({ name: this.state.searchText })
     this.onClearSearch()
+  }
+
+  onClickCreate() {
+    // Pin, then open
+    app.ssb.patchwork.pinChannel(this.state.searchText, err => {
+      if (err)
+        return app.issue('Failed to create channel', err)
+      this.props.onSelect({ name: this.state.searchText })
+      this.onClearSearch()
+    })
   }
 
   render() {
@@ -95,7 +105,9 @@ export class ChannelList extends React.Component {
         <p><small>Channels are topical filters for conversations.</small></p>
         <p>
           { search
-            ? <small><a onClick={this.onClickCreate.bind(this)}>{ hasExactMatch ? 'Open' : 'Create' } "{search}"</a> | </small>
+            ? (hasExactMatch
+              ? <small><a onClick={this.onClickOpen.bind(this)}>Open "{search}"</a> | </small>
+              : <small><a onClick={this.onClickCreate.bind(this)}>Create "{search}"</a> | </small>)
             : '' }
           { search
             ? <small><a onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
