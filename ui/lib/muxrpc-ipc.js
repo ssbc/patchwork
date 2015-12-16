@@ -14,7 +14,17 @@ var clientApiManifest = {
   zoomReset: 'async'
 }
 
-var zoomStep = 0.5;
+var zoomStep = 0.5
+var zoom = +localStorage.zoom || 0
+if (zoom) {
+  webFrame.setZoomLevel(zoom)
+}
+
+function setZoom(z) {
+  zoom = z
+  webFrame.setZoomLevel(zoom)
+  localStorage.zoom = z
+}
 
 var clientApi = {
   navigate: function (path, cb) {
@@ -30,15 +40,15 @@ var clientApi = {
     cb()
   },
   zoomIn: function (cb) {
-    webFrame.setZoomLevel(webFrame.getZoomLevel() + zoomStep)
+    setZoom(zoom + zoomStep)
     cb()
   },
   zoomOut: function (cb) {
-    webFrame.setZoomLevel(webFrame.getZoomLevel() - zoomStep)
+    setZoom(zoom - zoomStep)
     cb()
   },
   zoomReset: function (cb) {
-    webFrame.setZoomLevel(0)
+    setZoom(0)
     cb()
   }
 }
