@@ -5,6 +5,7 @@ var pullipc    = require('pull-ipc')
 
 var clientApi = {
   navigate: 'async',
+  navigateHistory: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
   zoomIn: 'async',

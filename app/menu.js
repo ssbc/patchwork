@@ -119,34 +119,76 @@ module.exports = function (window) {
           type: 'separator'
         },
         {
-          label: 'Reload',
-          accelerator: 'CmdOrCtrl+R',
-          click: function() { 
-            window.resetRpc()
-            window.reload()
-          }
-        },
-        {
           label: 'Toggle DevTools',
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
           click: function() { 
             window.toggleDevTools()
             // window.rpc.contextualToggleDevTools()
           }
+        }
+      ]
+    },
+    {
+      label: 'Go',
+      submenu: [
+        {
+          label: 'Back',
+          accelerator: 'Alt+Left',
+          click: function() {
+            window.rpc.navigateHistory(-1)
+          }
+        },
+        {
+          label: 'Forward',
+          accelerator: 'Alt+Right',
+          click: function() {
+            window.rpc.navigateHistory(1)
+          }
+        },
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: function() {
+            window.resetRpc()
+            window.reload()
+          }
         },
         {
           type: 'separator'
         },
         {
-          label: 'Data Log',
+          label: 'Feed',
+          accelerator: 'CmdOrCtrl+1',
           click: function () {
-            window.rpc.navigate('/data')
+            window.rpc.navigate('/')
+          }
+        },
+        {
+          label: 'Inbox',
+          accelerator: 'CmdOrCtrl+2',
+          click: function () {
+            window.rpc.navigate('/inbox')
+          }
+        },
+        {
+          label: 'Contacts',
+          accelerator: 'CmdOrCtrl+3',
+          click: function () {
+            window.rpc.navigate('/profile')
           }
         },
         {
           label: 'Network Status',
+          accelerator: 'CmdOrCtrl+4',
           click: function () {
             window.rpc.navigate('/sync')
+          }
+        },
+        {
+          label: 'Data Log',
+          accelerator: 'CmdOrCtrl+5',
+          click: function () {
+            window.rpc.navigate('/data')
           }
         }
       ]

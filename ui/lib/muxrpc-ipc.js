@@ -7,6 +7,7 @@ var webFrame   = require('web-frame')
 
 var clientApiManifest = {
   navigate: 'async',
+  navigateHistory: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
   zoomIn: 'async',
@@ -19,6 +20,10 @@ var zoomStep = 0.5;
 var clientApi = {
   navigate: function (path, cb) {
     window.location.hash = '#'+path
+    cb()
+  },
+  navigateHistory: function (direction, cb) {
+    window.history.go(direction)
     cb()
   },
   contextualToggleDevTools: function (cb) {
