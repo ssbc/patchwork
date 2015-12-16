@@ -30,7 +30,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       isToolbarOpen: true,
       listItemIndex: 0,
       isFollowedOnly: false,
-      isUsingThreadPanel: true,
+      isUsingThreadPanel: false,
       currentThreadKey: null
     })
 
