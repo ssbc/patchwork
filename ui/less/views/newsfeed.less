@@ -1,8 +1,14 @@
 #newsfeed {
+  display: flex;
+
+  .msg-list {
+    flex: 1;
+  }
+  .msg-thread {
+    flex: 0 0 680px;
+  }
+
   .msg-list-items .toolbar {
-    padding: 5px;
-    background: none;
-    border: 0;
     &.floating {
       position: static;
       width: 0; height: 0;

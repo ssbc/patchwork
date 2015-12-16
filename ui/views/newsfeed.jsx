@@ -8,6 +8,7 @@ import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
 import Summary from '../com/msg-view/summary'
+import Thread from '../com/msg-thread'
 import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 import social from '../lib/social-graph'
@@ -28,8 +29,24 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     super(props, 'newsfeedState', {
       isToolbarOpen: true,
       listItemIndex: 0,
-      isFollowedOnly: false
+      isFollowedOnly: false,
+      isUsingThreadPanel: true,
+      currentThreadKey: null
     })
+
+    this.onOpenMsg = key => {
+      if (this.state.isUsingThreadPanel) {
+        // show in the panel
+        this.setState({ currentThreadKey: key })
+      } else {
+        // navigate
+        app.history.pushState(null, '/msg/' + encodeURIComponent(key))
+      }      
+    }
+    app.on('open:msg', this.onOpenMsg)
+  }
+  componentWillUnmount() {
+    app.removeListener('open:msg', this.onOpenMsg)
   }
 
   cursor (msg) {
@@ -61,6 +78,10 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     })
   }
 
+  onToggleThreadPanel(b) {
+    this.setState({ isUsingThreadPanel: b })
+  }
+
   render() {
     const listItem = LISTITEMS[this.state.listItemIndex]
     const ListItem = listItem.Component
@@ -75,6 +96,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         <span className="divider" />
         <Dipswitch label={this.state.isFollowedOnly?"Followed Only":"All Users"} checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} />
         <span className="divider" />
+        <Dipswitch label={this.state.isUsingThreadPanel?"Preview Threads":"Navigate to Threads"} checked={this.state.isUsingThreadPanel} onToggle={this.onToggleThreadPanel.bind(this)} />
+        <span className="divider" />
         <Tabs options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} />
       </div>
     }
@@ -84,6 +107,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
+    const thread = this.state.currentThreadKey
     return <div id="newsfeed">
       <MsgList
         ref="list"
@@ -99,6 +123,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         append={this.helpCards.bind(this)}
         source={app.ssb.patchwork.createNewsfeedStream}
         cursor={this.cursor} />
+      { this.state.isUsingThreadPanel && this.state.currentThreadKey ? <Thread key={thread} id={thread} closeBtn live /> : '' }
     </div>
   }
 }
