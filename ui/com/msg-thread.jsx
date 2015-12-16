@@ -196,10 +196,15 @@ export default class Thread extends React.Component {
   openMsg(id) {
     app.history.pushState(null, '/msg/'+encodeURIComponent(id))
   }
+
   onSelectRoot() {
     let thread = this.state.thread
     let threadRoot = mlib.link(thread.value.content.root, 'msg')
     this.openMsg(threadRoot.link)
+  }
+
+  onCloseMsg() {
+    app.emit('open:msg', null)
   }
 
   render() {
@@ -208,6 +213,9 @@ export default class Thread extends React.Component {
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     return <div className="msg-thread">
       <div className="toolbar flex">
+        { this.props.closeBtn ?
+          <a className="btn" onClick={this.onCloseMsg.bind(this)}><i className="fa fa-times"/> Close</a>
+          : '' }
         { threadRoot ?
           <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
           : '' }

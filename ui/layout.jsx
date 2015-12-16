@@ -38,6 +38,7 @@ export default class Layout extends React.Component {
     // copy over app state
     return {
       rightNav: (this.state) ? this.state.rightNav : false,
+      rightNavProps: (this.state) ? this.state.rightNavProps : {},
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
       user: app.user,
@@ -50,7 +51,7 @@ export default class Layout extends React.Component {
 
   toggleRightNav(id) {
     if (this.state.rightNav == id)
-      this.setState({ rightNav: false })
+      this.setState({ rightNav: false, rightNavProps: {} })
     else
       this.setState({ rightNav: id })
   }
@@ -112,16 +113,17 @@ export default class Layout extends React.Component {
             <NavLink to="/sync" icon={isWifiMode?'wifi':'globe'} label='Network' />
             <Issues />
           </div>
+          <div className="divider" />
+          <NavToggle to="bookmarks" icon="bookmark" count={this.state.indexCounts.bookmarksUnread} />
+          <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
         </div>
         <div>
           <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
-          <NavToggle to="bookmarks" icon="bookmark-o" count={this.state.indexCounts.bookmarksUnread} />
-          <NavToggle to="notifications" icon="bell-o" count={this.state.indexCounts.notificationsUnread} />
         </div>
       </div>
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>
-        { (RightNavView) ? <div id="rightnav"><RightNavView /></div> : '' }
+        { (RightNavView) ? <div id="rightnav"><RightNavView {...this.state.rightNavProps} /></div> : '' }
       </div>
     </div>
   }

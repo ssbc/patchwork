@@ -1,12 +1,21 @@
 #rightnav {
-  background: #fafafa;
-  width: 350px;
-  border-left: 1px solid #ccc;
-  .toolbar .tabs {
-    display: flex;
-    a {
-      flex: 1;
-      text-align: center;
+    border-left: 1px solid #ccc;
+  .bookmarks, .notifications {
+    width: 350px;
+  }
+  #msg {
+    width: 680px;
+  }
+  .toolbar {
+    .tabs {
+      display: flex;
+      a {
+        flex: 1;
+        text-align: center;
+      }
     }
+  }
+  .msg-view.summary .body .body-line {
+    -webkit-line-clamp: 3;
   }
 }
