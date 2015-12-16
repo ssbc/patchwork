@@ -87,13 +87,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return [msg.value.timestamp, msg.value.author]
   }
 
-  onSelectChannel(channel) {
-    if (!channel)
-      app.history.pushState(null, '/')
-    else
-      app.history.pushState(null, '/channel/' + encodeURIComponent(channel.name))
-  }
-
   onToggleToolbar() {
     this.setState({ isToolbarOpen: !this.state.isToolbarOpen }, () => {
       this.refs.list.calcContainerHeight()
