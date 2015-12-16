@@ -4,12 +4,20 @@ var pull       = require('pull-stream')
 var pullipc    = require('pull-ipc')
 var remote     = require('remote')
 var webFrame   = require('web-frame')
+var app
+
+function getApp() {
+  if (!app)
+    app = require('./app')
+  return app
+}
 
 var clientApiManifest = {
   navigate: 'async',
   navigateHistory: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
+  focusSearch: 'async',
   zoomIn: 'async',
   zoomOut: 'async',
   zoomReset: 'async'
@@ -32,6 +40,10 @@ var clientApi = {
   },
   triggerFind: function (cb) {
     // ui.triggerFind() :TODO:
+    cb()
+  },
+  focusSearch: function (cb) {
+    getApp().emit('focus:search')
     cb()
   },
   zoomIn: function (cb) {

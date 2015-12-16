@@ -8,6 +8,7 @@ var clientApi = {
   navigateHistory: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
+  focusSearch: 'async',
   zoomIn: 'async',
   zoomOut: 'async',
   zoomReset: 'async'

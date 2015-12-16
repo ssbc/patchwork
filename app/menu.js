@@ -190,6 +190,16 @@ module.exports = function (window) {
           click: function () {
             window.rpc.navigate('/data')
           }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Search',
+          accelerator: 'CmdOrCtrl+K',
+          click: function () {
+            window.rpc.focusSearch()
+          }
         }
       ]
     },
