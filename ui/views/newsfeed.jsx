@@ -62,7 +62,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     super(props, 'newsfeedState', {
       isToolbarOpen: true,
       listItemIndex: 0,
-      isFollowedOnly: false,
+      isFollowedOnly: true,
       isUsingThreadPanel: false,
       currentThreadKey: null
     })
