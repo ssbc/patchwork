@@ -4,11 +4,21 @@ var pull       = require('pull-stream')
 var pullipc    = require('pull-ipc')
 var remote     = require('remote')
 var webFrame   = require('web-frame')
+var app
+
+function getApp() {
+  if (!app)
+    app = require('./app')
+  return app
+}
 
 var clientApiManifest = {
   navigate: 'async',
+  navigateHistory: 'async',
+  navigateToggle: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
+  focusSearch: 'async',
   zoomIn: 'async',
   zoomOut: 'async',
   zoomReset: 'async'
@@ -31,12 +41,24 @@ var clientApi = {
     window.location.hash = '#'+path
     cb()
   },
+  navigateHistory: function (direction, cb) {
+    window.history.go(direction)
+    cb()
+  },
+  navigateToggle: function (id, cb) {
+    getApp().emit('toggle:rightnav', id)
+    cb()
+  },
   contextualToggleDevTools: function (cb) {
     remote.getCurrentWindow().toggleDevTools()
     cb()
   },
   triggerFind: function (cb) {
     // ui.triggerFind() :TODO:
+    cb()
+  },
+  focusSearch: function (cb) {
+    getApp().emit('focus:search')
     cb()
   },
   zoomIn: function (cb) {

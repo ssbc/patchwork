@@ -28,6 +28,8 @@ export default class Layout extends React.Component {
     app.on('update:all', refresh)
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
+    app.on('focus:search', this.focusSearch.bind(this))
+    app.on('toggle:rightnav', this.toggleRightNav.bind(this))
     app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
   }
   componentWillReceiveProps() {
@@ -54,6 +56,10 @@ export default class Layout extends React.Component {
       this.setState({ rightNav: false, rightNavProps: {} })
     else
       this.setState({ rightNav: id })
+  }
+
+  focusSearch() {
+     this.refs.search.focus()
   }
 
   onClickBack() {
@@ -117,7 +123,7 @@ export default class Layout extends React.Component {
           <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
         </div>
         <div>
-          <div className="search"><i className="fa fa-search" /><input onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
+          <div className="search"><i className="fa fa-search" /><input ref="search" onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
         </div>
       </div>
       <div className="layout-columns">
