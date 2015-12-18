@@ -33,6 +33,7 @@ export default class Inbox extends React.Component {
       return <div className="hero">
         <h1>Inbox</h1>
         <div>Private, encrypted messages.</div>
+        <hr className="labeled" data-label="compose" />
       </div>
     }
 

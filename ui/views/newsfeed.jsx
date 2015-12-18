@@ -129,6 +129,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         <h1>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' } {btn}</h1>
         <div>Public messages by everyone { this.state.isFollowedOnly ? 'that you follow' : 'in your network' }.</div>
         {toolbar}
+        <hr className="labeled" data-label="compose" />
       </div>
     }
     const source = (opts) => {

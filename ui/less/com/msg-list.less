@@ -4,23 +4,6 @@
     color: gray;
     text-align: center;
   }
-  hr {
-    border-bottom: 1px solid #ccc;
-    position: relative;
-    margin: 16px 0;
-
-    &:after {
-      content: attr(data-label);
-      position: absolute;
-      left: 50%;
-      top: -12px;
-      background: #eee;
-      color: #999;
-      padding: 0 4px 0 6px;
-      transform: translateX(-50%);
-      font-weight: 300;
-    }
-  }
   :first-child > hr {
     margin-top: 20px; // add top margin when the divider is the first item in the list
   }
