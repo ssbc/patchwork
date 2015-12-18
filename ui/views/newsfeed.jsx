@@ -123,7 +123,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         </div>
         btn = <small><a onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-check" /> Done</a></small>
       } else {
-        btn = <small><a onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-wrench" /> Configure</a></small>
+        btn = <small><a onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-cog" /></a></small>
       }
       return <div className="hero">
         <h1>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' } {btn}</h1>
