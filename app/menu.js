@@ -8,11 +8,11 @@ module.exports = function (window) {
     {
       label: 'Patchwork',
       submenu: [
+      ].concat(isMac ? [
         {
           label: 'About Patchwork',
           selector: 'orderFrontStandardAboutPanel:'
-        }
-      ].concat(isMac ? [
+        },
         {
           type: 'separator'
         },
@@ -29,11 +29,11 @@ module.exports = function (window) {
         {
           label: 'Show All',
           selector: 'unhideAllApplications:'
-        }
-      ] : [], [
+        },
         {
           type: 'separator'
         },
+      ] : [], [
         {
           label: 'Quit',
           accelerator: 'CmdOrCtrl+Q',
@@ -119,12 +119,21 @@ module.exports = function (window) {
           type: 'separator'
         },
         {
-          label: 'Reload',
-          accelerator: 'CmdOrCtrl+R',
-          click: function() { 
-            window.resetRpc()
-            window.reload()
+          label: 'Toggle Bookmarks',
+          accelerator: 'CmdOrCtrl+Shift+B',
+          click: function() {
+            window.rpc.navigateToggle('bookmarks')
           }
+        },
+        {
+          label: 'Toggle Notifications',
+          accelerator: 'CmdOrCtrl+Shift+N',
+          click: function() {
+            window.rpc.navigateToggle('notifications')
+          }
+        },
+        {
+          type: 'separator'
         },
         {
           label: 'Toggle DevTools',
@@ -133,33 +142,92 @@ module.exports = function (window) {
             window.toggleDevTools()
             // window.rpc.contextualToggleDevTools()
           }
+        }
+      ]
+    },
+    {
+      label: 'Go',
+      submenu: [
+        {
+          label: 'Back',
+          accelerator: 'Alt+Left',
+          click: function() {
+            window.rpc.navigateHistory(-1)
+          }
+        },
+        {
+          label: 'Forward',
+          accelerator: 'Alt+Right',
+          click: function() {
+            window.rpc.navigateHistory(1)
+          }
+        },
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: function() {
+            window.resetRpc()
+            window.reload()
+          }
         },
         {
           type: 'separator'
         },
         {
+          label: 'Feed',
+          accelerator: 'CmdOrCtrl+1',
+          click: function () {
+            window.rpc.navigate('/')
+          }
+        },
+        {
+          label: 'Inbox',
+          accelerator: 'CmdOrCtrl+2',
+          click: function () {
+            window.rpc.navigate('/inbox')
+          }
+        },
+        {
+          label: 'Contacts',
+          accelerator: 'CmdOrCtrl+3',
+          click: function () {
+            window.rpc.navigate('/profile')
+          }
+        },
+        {
+          label: 'Network Status',
+          accelerator: 'CmdOrCtrl+4',
+          click: function () {
+            window.rpc.navigate('/sync')
+          }
+        },
+        {
           label: 'Data Log',
+          accelerator: 'CmdOrCtrl+5',
           click: function () {
             window.rpc.navigate('/data')
           }
         },
         {
-          label: 'Network Status',
+          type: 'separator'
+        },
+        {
+          label: 'Search',
+          accelerator: 'CmdOrCtrl+K',
           click: function () {
-            window.rpc.navigate('/sync')
+            window.rpc.focusSearch()
           }
         }
       ]
     },
-    {
+    isMac ? {
       label: 'Window',
       submenu: [
         {
           label: 'Minimize',
           accelerator: 'CmdOrCtrl+M',
           role: 'minimize'
-        }
-      ].concat(isMac ? [
+        },
         {
           type: 'separator'
         },
@@ -167,8 +235,8 @@ module.exports = function (window) {
           label: 'Bring All to Front',
           selector: 'arrangeInFront:'
         }
-      ] : [])
-    }
+      ]
+    } : {}
   ]
 
   menu = Menu.buildFromTemplate(template)
