@@ -220,15 +220,14 @@ module.exports = function (window) {
         }
       ]
     },
-    {
+    isMac ? {
       label: 'Window',
       submenu: [
         {
           label: 'Minimize',
           accelerator: 'CmdOrCtrl+M',
           role: 'minimize'
-        }
-      ].concat(isMac ? [
+        },
         {
           type: 'separator'
         },
@@ -236,8 +235,8 @@ module.exports = function (window) {
           label: 'Bring All to Front',
           selector: 'arrangeInFront:'
         }
-      ] : [])
-    }
+      ]
+    } : {}
   ]
 
   menu = Menu.buildFromTemplate(template)
