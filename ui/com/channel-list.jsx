@@ -93,6 +93,7 @@ export class ChannelList extends React.Component {
     return <div className="channel-list" style={{height: this.props.height, overflow: 'auto'}}>
       <div className="channel-list-ctrls">
         <div className="search">
+          <i className="fa fa-hashtag" />
           <input ref="searchInput" type="text" placeholder="New Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
@@ -106,8 +107,8 @@ export class ChannelList extends React.Component {
         <p>
           { search
             ? (hasExactMatch
-              ? <small><a onClick={this.onClickOpen.bind(this)}>Open "{search}"</a> | </small>
-              : <small><a onClick={this.onClickCreate.bind(this)}>Create "{search}"</a> | </small>)
+              ? <small><a onClick={this.onClickOpen.bind(this)}>Open "#{search}"</a> | </small>
+              : <small><a onClick={this.onClickCreate.bind(this)}>Create "#{search}"</a> | </small>)
             : '' }
           { search
             ? <small><a onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
