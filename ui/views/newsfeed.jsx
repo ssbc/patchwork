@@ -112,21 +112,24 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     const listItem = LISTITEMS[this.state.listItemIndex]
     const ListItem = listItem.Component
     const Hero = (props) => {
+      var toolbar, btn
       if (this.state.isToolbarOpen) {
-        return <div className="toolbar">
-          <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-check" /> Done</a>
-          <span className="divider" />
+        toolbar = <div className="toolbar">
           <Dipswitch label={this.state.isFollowedOnly?"Followed Only":"All Users"} checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} />
           <span className="divider" />
           <Dipswitch label={this.state.isUsingThreadPanel?"Preview Threads":"Navigate to Threads"} checked={this.state.isUsingThreadPanel} onToggle={this.onToggleThreadPanel.bind(this)} />
           <span className="divider" />
           <Tabs options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} />
         </div>
+        btn = <small><a onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-check" /> Done</a></small>
       } else {
-        return <div className="toolbar floating">
-          <a className="btn" onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-wrench" /></a>
-        </div>
+        btn = <small><a onClick={this.onToggleToolbar.bind(this)}><i className="fa fa-wrench" /> Configure</a></small>
       }
+      return <div className="hero">
+        <h1>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' } {btn}</h1>
+        <div>Public messages by everyone { this.state.isFollowedOnly ? 'that you follow' : 'in your network' }.</div>
+        {toolbar}
+      </div>
     }
     const source = (opts) => {
       if (channel) 

@@ -29,6 +29,13 @@ export default class Inbox extends React.Component {
   }
 
   render() {
+    const Hero = props => {
+      return <div className="hero">
+        <h1>Inbox</h1>
+        <div>Private, encrypted messages.</div>
+      </div>
+    }
+
     return <div id="inbox">
       <MsgList
         ref="list"
@@ -36,6 +43,7 @@ export default class Inbox extends React.Component {
         dateDividers
         composer composerProps={{placeholder: 'Write a new private message'}}
         ListItem={Summary}
+        Hero={Hero}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         append={this.helpCards.bind(this)}
