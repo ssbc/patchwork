@@ -30,8 +30,11 @@ export default class Layout extends React.Component {
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
     app.on('focus:search', this.focusSearch.bind(this))
+    app.on('focus:find', this.focusFind.bind(this))
     app.on('toggle:rightnav', this.toggleRightNav.bind(this))
     app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
+    app.on('find:next', this.doFind.bind(this, true))
+    app.on('find:previous', this.doFind.bind(this, false))
   }
   componentWillReceiveProps() {
     // update state on view changes
@@ -61,6 +64,14 @@ export default class Layout extends React.Component {
 
   focusSearch() {
      this.refs.search.focus()
+  }
+
+  focusFind() {
+    this.refs.find.focus()
+  }
+
+  doFind(forward) {
+    this.refs.find.search(forward)
   }
 
   onClickBack() {
@@ -131,7 +142,7 @@ export default class Layout extends React.Component {
         <div id="mainview">{this.props.children}</div>
         { (RightNavView) ? <div id="rightnav"><RightNavView location={this.props.location} {...this.state.rightNavProps} /></div> : '' }
       </div>
-      <FindBar for="mainview" />
+      <FindBar ref="find" for="mainview" />
     </div>
   }
 }

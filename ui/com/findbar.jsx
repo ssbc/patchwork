@@ -1,7 +1,6 @@
 'use babel'
 import React from 'react'
 import Modal from 'react-modal'
-import app from '../lib/app'
 import TextNodeSearcher from 'text-node-searcher'
 
 export default class FindBar extends React.Component {
@@ -11,27 +10,18 @@ export default class FindBar extends React.Component {
     this.state = {
       isVisible: false
     }
-    this.onAppFocusFind = () => {
-      this.setState({ isVisible: true })
-      const input = this.refs.input
-      input.focus()
-      input.selectionStart = 0
-      input.selectionEnd = input.value.length
-    }
-    this.onAppFindNext = this.search.bind(this, true)
-    this.onAppFindPrevious = this.search.bind(this, false)
   }
 
   componentDidMount() {
     this.searcher.container = document.getElementById(this.props.for)
-    app.on('focus:find', this.onAppFocusFind)
-    app.on('find:next', this.onAppFindNext)
-    app.on('find:previous', this.onAppFindPrevious)
   }
-  componentWillUnmount() {
-    app.removeListener('focus:find', this.onAppFocusFind)
-    app.removeListener('find:next', this.onAppFindNext)
-    app.removeListener('find:previous', this.onAppFindPrevious)
+
+  focus() {
+    this.setState({ isVisible: true })
+    const input = this.refs.input
+    input.focus()
+    input.selectionStart = 0
+    input.selectionEnd = input.value.length
   }
 
   onFindKeyDown(e) {
