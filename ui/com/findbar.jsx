@@ -49,12 +49,17 @@ export default class FindBar extends React.Component {
     else
       this.searcher.selectPrevious();
 
-    // make room for the find bar
+    // scroll search result out of the way of the findbar and toolbar
     var textNode = window.getSelection().anchorNode;
     if (textNode) {
+      var topMargin = 140; // including toolbar
+      var bottomMargin = 100;
+      var rect = textNode.parentNode.getBoundingClientRect();
+      if (rect.top < topMargin)
+        return;
+
       for (var node = textNode.parentNode; node; node = node.parentNode) {
         if (node.style && node.style.overflow == 'auto') {
-          var bottomMargin = 100;
           node.scrollTop += this.refs.bar.offsetHeight + bottomMargin;
           return;
         }
