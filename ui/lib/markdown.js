@@ -52,9 +52,11 @@ blockRenderer.urltransform = function (url) {
 blockRenderer.link = function(href, title, text) {
   href = this.urltransform(href)
   var out
-  if (href !== false)
+  if (href !== false) {
+    if (title || text)
+      href += '?name='+encodeURIComponent(title || text)
     out = '<a href="' + href + '"';
-  else
+  } else
     out = '<a class="bad"'
   if (title) {
     out += ' title="' + title + '"';

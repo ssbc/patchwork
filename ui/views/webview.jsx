@@ -7,11 +7,11 @@ import u from '../lib/util'
 
 var WebViewVertical = verticalFilled(WebView)
 
-export default class Msg extends React.Component {
+export default class WebViewView extends React.Component {
   render() {
     var param = decodeURIComponent(this.props.params.id)
     var port = (ssbref.isLink(param)) ? 7777 : 7778
-    var url = 'http://localhost:' + port + '/' + param
+    var url = 'http://localhost:' + port + '/' + param + this.props.location.search
 
     return <div className="webview">
       <WebViewVertical url={url} />
