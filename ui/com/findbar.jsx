@@ -2,14 +2,21 @@
 import React from 'react'
 import Modal from 'react-modal'
 import TextNodeSearcher from 'text-node-searcher'
+import u from '../lib/util'
 
 export default class FindBar extends React.Component {
   constructor(props) {
     super(props)
-    this.searcher = new TextNodeSearcher()
+    this.searcher = new TextNodeSearcher({
+      highlightTagName: 'highlight'
+    })
     this.state = {
       isVisible: false
     }
+    this.highlightDebounced = u.debounce(() => {
+      this.searcher.setQuery(this.refs.input.value)
+      this.searcher.highlight()
+    }, 75)
   }
 
   componentDidMount() {
@@ -28,12 +35,15 @@ export default class FindBar extends React.Component {
     if (e.keyCode == 13) { // enter
       this.search(!e.shiftKey)
     } else if (e.keyCode == 27) { // escape
-      this.setState({ isVisible: false })
+      this.close();
+    } else {
+      this.highlightDebounced()
     }
   }
 
   search(forward) {
     this.searcher.setQuery(this.refs.input.value)
+    this.searcher.highlight();
     if (forward)
       this.searcher.selectNext();
     else
@@ -52,8 +62,9 @@ export default class FindBar extends React.Component {
     }
   }
 
-  onCloseClick(e) {
+  close() {
     this.setState({ isVisible: false })
+    this.searcher.unhighlight();
   }
 
   render() {
@@ -61,7 +72,7 @@ export default class FindBar extends React.Component {
       <div className="search"><i className="fa fa-search" /><input ref="input" placeholder="Find" onKeyDown={this.onFindKeyDown.bind(this)} /></div>
       <a className="btn" onClick={this.search.bind(this, false)}><i className="fa fa-angle-up" /></a>
       <a className="btn" onClick={this.search.bind(this, true)}><i className="fa fa-angle-down" /></a>
-      <a className="btn close" onClick={this.onCloseClick.bind(this)}>&times;</a>
+      <a className="btn close" onClick={this.close.bind(this)}>&times;</a>
     </div>
   }
 }
