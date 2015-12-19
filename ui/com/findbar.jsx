@@ -35,7 +35,7 @@ export default class FindBar extends React.Component {
     if (e.keyCode == 13) { // enter
       this.search(!e.shiftKey)
     } else if (e.keyCode == 27) { // escape
-      this.close();
+      this.close()
     } else {
       this.highlightDebounced()
     }
@@ -43,25 +43,25 @@ export default class FindBar extends React.Component {
 
   search(forward) {
     this.searcher.setQuery(this.refs.input.value)
-    this.searcher.highlight();
+    this.searcher.highlight()
     if (forward)
-      this.searcher.selectNext();
+      this.searcher.selectNext()
     else
-      this.searcher.selectPrevious();
+      this.searcher.selectPrevious()
 
     // scroll search result out of the way of the findbar and toolbar
-    var textNode = window.getSelection().anchorNode;
+    var textNode = window.getSelection().anchorNode
     if (textNode) {
       var topMargin = 140; // including toolbar
-      var bottomMargin = 100;
-      var rect = textNode.parentNode.getBoundingClientRect();
+      var bottomMargin = 100
+      var rect = textNode.parentNode.getBoundingClientRect()
       if (rect.top < topMargin)
-        return;
+        return
 
       for (var node = textNode.parentNode; node; node = node.parentNode) {
         if (node.style && node.style.overflow == 'auto') {
-          node.scrollTop += this.refs.bar.offsetHeight + bottomMargin;
-          return;
+          node.scrollTop += this.refs.bar.offsetHeight + bottomMargin
+          return
         }
       }
     }
@@ -69,7 +69,7 @@ export default class FindBar extends React.Component {
 
   close() {
     this.setState({ isVisible: false })
-    this.searcher.unhighlight();
+    this.searcher.unhighlight()
   }
 
   render() {
