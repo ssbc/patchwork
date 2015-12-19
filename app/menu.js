@@ -83,10 +83,24 @@ module.exports = function (window) {
           type: 'separator'
         },
         {
-          label: 'Find',
+          label: 'Find...',
           accelerator: 'CmdOrCtrl+F',
           click: function () {
             window.rpc.triggerFind()
+          }
+        },
+        {
+          label: 'Find Previous',
+          accelerator: 'CmdOrCtrl+Shift+G',
+          click: function () {
+            window.rpc.findPrevious()
+          }
+        },
+        {
+          label: 'Find Next',
+          accelerator: 'CmdOrCtrl+G',
+          click: function () {
+            window.rpc.findNext()
           }
         }
       ]
