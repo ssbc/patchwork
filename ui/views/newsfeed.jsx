@@ -201,7 +201,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}
         source={source}
-        cursor={this.cursor} />
+        cursor={cursor} />
       { this.state.isUsingThreadPanel && this.state.currentThreadKey ? <Thread key={thread} id={thread} closeBtn live /> : '' }
     </div>
   }
