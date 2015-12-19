@@ -42,6 +42,18 @@ export default class FindBar extends React.Component {
       this.searcher.selectNext();
     else
       this.searcher.selectPrevious();
+
+    // make room for the find bar
+    var textNode = window.getSelection().anchorNode;
+    if (textNode) {
+      for (var node = textNode.parentNode; node; node = node.parentNode) {
+        if (node.style && node.style.overflow == 'auto') {
+          var bottomMargin = 100;
+          node.scrollTop += this.refs.bar.offsetHeight + bottomMargin;
+          return;
+        }
+      }
+    }
   }
 
   onCloseClick(e) {
@@ -49,7 +61,7 @@ export default class FindBar extends React.Component {
   }
 
   render() {
-    return <div className={'findbar '+(this.state.isVisible?'':'hidden')}>
+    return <div ref="bar" className={'findbar '+(this.state.isVisible?'':'hidden')}>
       <div className="search"><i className="fa fa-search" /><input ref="input" placeholder="Find" onKeyDown={this.onFindKeyDown.bind(this)} /></div>
       <a className="btn" onClick={this.search.bind(this, false)}><i className="fa fa-angle-up" /></a>
       <a className="btn" onClick={this.search.bind(this, true)}><i className="fa fa-angle-down" /></a>
