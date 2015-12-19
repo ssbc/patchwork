@@ -54,7 +54,7 @@ var clientApi = {
     cb()
   },
   triggerFind: function (cb) {
-    // ui.triggerFind() :TODO:
+    getApp().emit('focus:find')
     cb()
   },
   focusSearch: function (cb) {

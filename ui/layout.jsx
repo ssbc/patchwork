@@ -10,6 +10,7 @@ import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
 import Issues from './com/issues'
+import FindBar from './com/findbar'
 
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
@@ -130,6 +131,7 @@ export default class Layout extends React.Component {
         <div id="mainview">{this.props.children}</div>
         { (RightNavView) ? <div id="rightnav"><RightNavView location={this.props.location} {...this.state.rightNavProps} /></div> : '' }
       </div>
+      <FindBar for="mainview" />
     </div>
   }
 }
