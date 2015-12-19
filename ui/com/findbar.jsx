@@ -51,9 +51,9 @@ export default class FindBar extends React.Component {
   render() {
     return <div className={'findbar '+(this.state.isVisible?'':'hidden')}>
       <div className="search"><i className="fa fa-search" /><input ref="input" placeholder="Find" onKeyDown={this.onFindKeyDown.bind(this)} /></div>
-      <button onClick={this.search.bind(this, false)}><i className="fa fa-angle-up" /></button>
-      <button onClick={this.search.bind(this, true)}><i className="fa fa-angle-down" /></button>
-      <button className="close" onClick={this.onCloseClick.bind(this)}>&times;</button>
+      <a className="btn" onClick={this.search.bind(this, false)}><i className="fa fa-angle-up" /></a>
+      <a className="btn" onClick={this.search.bind(this, true)}><i className="fa fa-angle-down" /></a>
+      <a className="btn close" onClick={this.onCloseClick.bind(this)}>&times;</a>
     </div>
   }
 }
