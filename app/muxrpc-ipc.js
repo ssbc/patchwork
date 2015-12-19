@@ -9,6 +9,8 @@ var clientApi = {
   navigateToggle: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
+  findNext: 'async',
+  findPrevious: 'async',
   focusSearch: 'async',
   zoomIn: 'async',
   zoomOut: 'async',

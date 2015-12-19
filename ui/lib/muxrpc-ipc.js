@@ -18,6 +18,8 @@ var clientApiManifest = {
   navigateToggle: 'async',
   contextualToggleDevTools: 'async',
   triggerFind: 'async',
+  findNext: 'async',
+  findPrevious: 'async',
   focusSearch: 'async',
   zoomIn: 'async',
   zoomOut: 'async',
@@ -55,6 +57,14 @@ var clientApi = {
   },
   triggerFind: function (cb) {
     getApp().emit('focus:find')
+    cb()
+  },
+  findNext: function (cb) {
+    getApp().emit('find:next')
+    cb()
+  },
+  findPrevious: function (cb) {
+    getApp().emit('find:previous')
     cb()
   },
   focusSearch: function (cb) {

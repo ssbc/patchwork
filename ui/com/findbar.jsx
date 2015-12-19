@@ -18,14 +18,20 @@ export default class FindBar extends React.Component {
       input.selectionStart = 0
       input.selectionEnd = input.value.length
     }
+    this.onAppFindNext = this.search.bind(this, true)
+    this.onAppFindPrevious = this.search.bind(this, false)
   }
 
   componentDidMount() {
     this.searcher.container = document.getElementById(this.props.for)
     app.on('focus:find', this.onAppFocusFind)
+    app.on('find:next', this.onAppFindNext)
+    app.on('find:previous', this.onAppFindPrevious)
   }
   componentWillUnmount() {
     app.removeListener('focus:find', this.onAppFocusFind)
+    app.removeListener('find:next', this.onAppFindNext)
+    app.removeListener('find:previous', this.onAppFindPrevious)
   }
 
   onFindKeyDown(e) {
