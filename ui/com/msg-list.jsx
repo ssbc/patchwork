@@ -193,6 +193,7 @@ export default class MsgList extends React.Component {
     let opts = (typeof this.props.live == 'object') ? this.props.live : {}
     opts.threads = true
     opts.live = true
+    opts.old = false
     this.liveStream = source(opts)
     pull(
       this.liveStream,
