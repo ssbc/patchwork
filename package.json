@@ -82,6 +82,7 @@
     "ssb-msg-schemas": "~6.1.0",
     "ssb-msgs": "~5.2.0",
     "ssb-ref": "~2.2.0",
+    "ssb-search": "0.0.1",
     "stack": "^0.1.0",
     "stream-to-pull-stream": "^1.6.1",
     "suggest-box": "~1.1.6",
