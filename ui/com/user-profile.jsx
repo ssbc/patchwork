@@ -77,11 +77,11 @@ export default class UserProfile extends React.Component {
       }
     const cursor = (msg) => {
       if (msg)
-        return msg.value.sequence
+        return (currentTab === VIEW_PMS) ? [msg.value.timestamp, msg.value.author] : msg.value.sequence
     }
     const forceRaw = (currentTab === VIEW_DATA)
     const filter = (currentTab === VIEW_PMS)
-      ? (msg) => {      
+      ? (msg) => {
         // private posts with this author
         var c = msg.value.content
         if (msg.plaintext)
