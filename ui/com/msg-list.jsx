@@ -340,6 +340,7 @@ export default class MsgList extends React.Component {
   render() {
     const Hero = this.props.Hero
     const LeftNav = this.props.LeftNav
+    const RightNav = this.props.RightNav
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
@@ -400,6 +401,7 @@ export default class MsgList extends React.Component {
               }
               {append}
             </div>
+            { RightNav ? <RightNav {...this.props.rightNavProps} /> : '' }
           </div>
         </Infinite>
       </div>

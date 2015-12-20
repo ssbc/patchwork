@@ -17,26 +17,14 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const LISTITEMS = [
-  { label: <i className="fa fa-picture-o" />, Component: Card },
-  { label: <i className="fa fa-th-list" />, Component: Summary }
+  { label: <span>Feed-style</span>, Component: Card },
+  { label: <span>Inbox-style</span>, Component: Summary }
 ]
 const LISTITEM_CARD = LISTITEMS[0]
 const LISTITEM_ONELINE = LISTITEMS[1]
 
-function followedOnlyFilter (msg) {
-  return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
-}
-
-function findChannelData (channels, name) {
-  for (var i=0; i < channels.length; i++) {
-    if (channels[i].name === name)
-      return channels[i]
-  }
-  return null
-}
-
 // lefthand nav helper component
-class Nav extends React.Component {
+class LeftNav extends React.Component {
   render() {
     // predicates
     const isPinned = b => channel => (!!channel.pinned == b)
@@ -47,15 +35,15 @@ class Nav extends React.Component {
 
     // render
     const NavHeading = props => {
-      return <div className="newsfeed-nav-heading">{props.children}</div>
+      return <div className="newsfeed-leftnav-heading">{props.children}</div>
     }
     const NavLink = props => {
-      return <div className="newsfeed-nav-link">
+      return <div className="newsfeed-leftnav-link">
         <Link to={props.to} className={this.props.location.pathname === props.to ? 'selected' : ''}>{props.children}</Link>
       </div>
     }
     const renderChannel = c => <NavLink to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
-    return <div className="newsfeed-nav">
+    return <div className="newsfeed-leftnav">
       <NavLink to="/"><i className="fa fa-newspaper-o" /> Feed</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Inbox</NavLink>
       { pinnedChannels.length ? <NavHeading>Pinned Channels</NavHeading> : '' }
@@ -67,6 +55,7 @@ class Nav extends React.Component {
   }
 }
 
+// newsfeed view
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'newsfeedState', {
@@ -129,44 +118,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     const channelData = channel && findChannelData(this.state.channels, channel)
     const listItem = LISTITEMS[this.state.listItemIndex]
     const ListItem = listItem.Component
-    const Hero = (props) => {
-      // render channel pin buttons
-      var pinBtn, pinToolbarBtn
-      if (channel) {
-        const isPinned = channelData && channelData.pinned
-        if (isPinned) {
-          pinBtn = <a className="selected" title="Pinned" onClick={this.onTogglePinned.bind(this, false)}><i className="fa fa-thumb-tack" /></a>
-          pinToolbarBtn = <Dipswitch label="Pinned Channel" checked={true} onToggle={this.onTogglePinned.bind(this)} />
-        } else {
-          pinBtn = <a title="Pin" onClick={this.onTogglePinned.bind(this, true)}><i className="fa fa-thumb-tack" /></a>
-          pinToolbarBtn = <Dipswitch label="Pin Channel" checked={false} onToggle={this.onTogglePinned.bind(this)} />
-        }
-      }
-
-      // render toolbar
-      var toolbar, toolbarBtn
-      if (this.state.isToolbarOpen) {
-        toolbar = <div className="toolbar">
-          <Dipswitch label={this.state.isFollowedOnly?"Followed Only":"All Users"} checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} />
-          <span className="divider" />
-          <Dipswitch label={this.state.isUsingThreadPanel?"Preview Threads":"Navigate to Threads"} checked={this.state.isUsingThreadPanel} onToggle={this.onToggleThreadPanel.bind(this)} />
-          <span className="divider" />
-          <Tabs options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} />
-          { (channel) ? <span className="divider" /> : ''}
-          { pinToolbarBtn }
-        </div>
-        toolbarBtn = <a className="selected" onClick={this.onToggleToolbar.bind(this, false)}><i className="fa fa-cog" /></a>
-      } else 
-        toolbarBtn = <a onClick={this.onToggleToolbar.bind(this, true)}><i className="fa fa-cog" /></a>
-
-      // render hero
-      return <div className="hero">
-        <h1>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' } <small>{pinBtn} {toolbarBtn}</small></h1>
-        <div>Public messages by everyone { this.state.isFollowedOnly ? 'that you follow' : 'in your network' }.</div>
-        {toolbar}
-        <hr className="labeled" data-label="compose" />
-      </div>
-    }
 
     // msg-list params
     const cursor = msg => {
@@ -184,8 +135,32 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
-    // render all
-    const thread = this.state.currentThreadKey
+    // render right nav
+    const RightNav = (props) => {    
+      const isPinned = channelData && channelData.pinned
+      const Ctrl = props => {
+        return <div className="ctrl"><label><i className={'fa fa-'+props.icon} /> {props.label}</label>{props.children}</div>
+      }
+      return <div className="newsfeed-rightnav">
+        <hr className="labeled" data-label="about" />
+        <div className="about">
+          <div><strong>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' }</strong></div>
+          <div>Public messages by everyone { this.state.isFollowedOnly ? 'that you follow' : 'in your network' }.</div>
+        </div>
+        <hr className="labeled" data-label="config" />
+        <div className="config">
+          { channel
+            ? <Ctrl icon="thumb-tack" label="Pin Channel:"><Dipswitch label={isPinned?"Yes":"No"} checked={isPinned} onToggle={this.onTogglePinned.bind(this)} /></Ctrl>
+            : '' }
+          <Ctrl icon="user" label="Show:"><Dipswitch label={this.state.isFollowedOnly?"Followed Only":"All Users"} checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} /></Ctrl>
+          <Ctrl icon="hand-pointer-o" label="On Click:"><Dipswitch label={this.state.isUsingThreadPanel?"Preview Threads":"Open Threads"} checked={this.state.isUsingThreadPanel} onToggle={this.onToggleThreadPanel.bind(this)} /></Ctrl>
+          <Ctrl icon="th-list" label="View Mode:"><Tabs vertical options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} /></Ctrl>
+        </div>
+      </div>
+    }
+
+    // render content
+    const thread = this.state.isUsingThreadPanel && this.state.currentThreadKey
     return <div id="newsfeed" key={channel||'*'}>
       <MsgList
         ref="list"
@@ -195,14 +170,28 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         dateDividers
         openMsgEvent
         filter={filter}
-        Hero={Hero}
-        LeftNav={Nav} leftNavProps={{ location: this.props.location, channels: this.state.channels }}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location, channels: this.state.channels }}
+        RightNav={thread ? undefined : RightNav}
         ListItem={ListItem}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}
         source={source}
         cursor={cursor} />
-      { this.state.isUsingThreadPanel && this.state.currentThreadKey ? <Thread key={thread} id={thread} closeBtn live /> : '' }
+      { thread
+        ? <Thread key={thread} id={thread} closeBtn live />
+        : '' }
     </div>
   }
+}
+
+function followedOnlyFilter (msg) {
+  return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
+}
+
+function findChannelData (channels, name) {
+  for (var i=0; i < channels.length; i++) {
+    if (channels[i].name === name)
+      return channels[i]
+  }
+  return null
 }
