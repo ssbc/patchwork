@@ -245,7 +245,7 @@ export default class MsgList extends React.Component {
 
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
-    if (this.props.threads && !('related' in msg)) {
+    if (this.props.threads && msg.value && !('related' in msg)) {
       threadlib.getPostSummary(app.ssb, msg.key, cb)
     } else
       cb(null, msg) // noop
@@ -378,6 +378,10 @@ export default class MsgList extends React.Component {
                 :
                 <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
                   { this.state.msgs.map((m, i) => {
+                    // missing value?
+                    if (!m.value)
+                      return <span key={m.key} /> // dont render
+
                     // render item
                     const item = <ListItem
                       key={m.key}
