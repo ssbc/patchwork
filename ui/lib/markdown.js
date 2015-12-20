@@ -53,7 +53,7 @@ blockRenderer.link = function(href, title, text) {
   href = this.urltransform(href)
   var out
   if (href !== false) {
-    if (title || text)
+    if (href.indexOf('#/webview/') === 0 && (title || text)) // add ?name param if this is a link to a blob
       href += '?name='+encodeURIComponent(title || text)
     out = '<a href="' + href + '"';
   } else
