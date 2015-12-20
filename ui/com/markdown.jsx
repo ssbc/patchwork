@@ -8,7 +8,7 @@ export class Block extends React.Component {
     this.drops = Array.from(this.refs.md.querySelectorAll('a')).map(linkEl => {
       return new Drop({
         target: linkEl,
-        content: linkEl.getAttribute('href'),
+        content: markdown.getLinkTooltip, //linkEl.getAttribute('href'),
         openOn: 'hover',
         hoverOpenDelay: 250,
         classes: 'drop-theme-tooltip drop-theme-arrows',
