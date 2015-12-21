@@ -377,7 +377,7 @@ export default class MsgList extends React.Component {
                   { (this.props.emptyMsg || 'No messages.') }
                 </div>
                 :
-                <ResponsiveElement widthStep={200}>
+                <ResponsiveElement widthStep={250}>
                   <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
                     { this.state.msgs.map((m, i) => {
                       // missing value?

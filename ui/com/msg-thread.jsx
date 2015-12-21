@@ -228,7 +228,7 @@ export default class Thread extends React.Component {
           : '' }
       </div>
       <VerticalFilledContainer id="msg-thread-vertical">
-        <ResponsiveElement widthStep={200}>
+        <ResponsiveElement widthStep={250}>
           <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
               { this.state.msgs.map((msg, i) => {
                 const isFirst = (i === 0)
