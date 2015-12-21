@@ -1,24 +1,22 @@
 .msg-view.summary {
-  .elevation-card;
   display: flex;
-  padding: 10px;
   overflow: hidden;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-  border-left: 4px solid #ccc;
 
-  .ctrls {
-    flex: 0 0 24px;
-    padding: 2px 0 0 3px;
-    .fa-bookmark-o {
-      color: gray;
-    }
-    .fa-bookmark {
-      color: #EFBD32;
+  .left-meta {
+    flex: 0 0 56px;
+    padding: 2px 0 0;
+    img {
+      width: 50px;
+      border-radius: 3px;
     }
   }
   .content {
     flex: 1;
+    .elevation-card;
+    padding: 10px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    border-left: 4px solid #ccc;
   }
 
   .header {
@@ -69,8 +67,9 @@
   }
 
   &.unread {
-    background: #fff;
-    border-left: 4px solid #006EFF;
+    .content {
+      border-left: 4px solid #006EFF;
+    }
     .header-left, .header-right {
       color: @dark-gray2;
     }
@@ -102,7 +101,7 @@
       background: rgba(255,255,255,0.25);
     }
   }
-  &:hover {
+  &:hover .content {
     background: #fafafa;
     cursor: pointer;
   }

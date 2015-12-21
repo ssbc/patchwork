@@ -3,7 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import { UserLink, NiceDate } from '../index'
+import { UserPic, UserLink, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import u from '../../lib/util'
@@ -27,13 +27,9 @@ export default class Summary extends React.Component {
     var replies = countReplies(msg)
     replies = (replies === 0) ? '' : '('+(replies+1)+')'
     return <div className={'msg-view summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
-      { this.props.ctrls ?
-        <div className="ctrls">
-          <a onClick={(e)=>{e.stopPropagation(); this.props.onToggleBookmark(msg)}}>
-            { msg.isBookmarked ?
-              <i className="fa fa-bookmark" /> :
-              <i className="fa fa-bookmark-o" /> }
-          </a>
+      { this.props.userPic ?
+        <div className="left-meta">
+          <UserPic id={msg.value.author} />
         </div> : '' }
       <div className="content">
         <div className="header">

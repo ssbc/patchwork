@@ -43,7 +43,7 @@ export default class Inbox extends React.Component {
         threads
         dateDividers
         composer composerProps={{placeholder: 'Write a new private message'}}
-        ListItem={Summary}
+        ListItem={Summary} listItemProps={{ userPic: true }}
         Hero={Hero}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."

@@ -172,7 +172,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         filter={filter}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location, channels: this.state.channels }}
         RightNav={thread ? undefined : RightNav}
-        ListItem={ListItem}
+        ListItem={ListItem} listItemProps={{ userPic: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}
         source={source}
