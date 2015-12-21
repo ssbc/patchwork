@@ -13,6 +13,30 @@ module.exports = function (sbot, db, state, emit) {
       var recps = mlib.links(c.recps)
       var mentions = mlib.links(c.mentions)
 
+      function logerr (err) {
+        if (err)
+          console.log(err)
+      }
+      state.sqldb.run(
+        'INSERT INTO msg_meta (msgkey, recv_time, send_time, author, root_link, is_encrypted, channel) VALUES (?, ?, ?, ?, ?, ?, ?);',
+        [msg.key, msg.received, msg.value.timestamp, msg.value.author, (root ? root.link : null), msg.isEncrypted?1:0, c.channel||null],
+        logerr
+      )
+      recps.forEach(function (recp) {
+        state.sqldb.run(
+          'INSERT INTO msg_meta_recps (msgkey, recp_link) VALUES (?, ?);',
+          [msg.key, recp.link],
+          logerr
+        )
+      })
+      mentions.forEach(function (mention) {
+        state.sqldb.run(
+          'INSERT INTO msg_meta_mentions (msgkey, mention_link) VALUES (?, ?);',
+          [msg.key, mention.link],
+          logerr
+        )
+      })
+
       // newsfeed index: add public posts / update for replies
       if (!root && recps.length === 0) {
         state.newsfeed.sortedUpsert(ts(msg), msg.key)
@@ -339,6 +363,7 @@ module.exports = function (sbot, db, state, emit) {
       try {
         // encrypted? try to decrypt
         if (typeof value.content == 'string' && value.content.slice(-4) == '.box') {
+          msg.isEncrypted = true
           value.content = sbot.private.unbox(value.content)
           if (!value.content)
             return state.pdec()

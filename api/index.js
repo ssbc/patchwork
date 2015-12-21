@@ -1,4 +1,5 @@
 var fs          = require('fs')
+var sqlite3     = require('sqlite3')
 var pull        = require('pull-stream')
 var multicb     = require('multicb')
 var pl          = require('pull-level')
@@ -27,6 +28,8 @@ exports.init = function (sbot, opts) {
     channelpinned: patchworkdb.sublevel('channelpinned')
   }
   var state = {
+    sqldb: new sqlite3.Database(':memory:'),
+
     // indexes (lists of {key:, ts:})
     mymsgs: [],
     newsfeed: u.index('newsfeed'),
@@ -41,6 +44,31 @@ exports.init = function (sbot, opts) {
     ids: {}, // names -> ids
     actionItems: {}
   }
+
+  // state.sqldb.serialize() // TODO execute serially till parallel can be tested
+  var create = 'CREATE TABLE msg_meta ('
+    +'msgkey TEXT PRIMARY KEY, '
+    +'recv_time REAL, '
+    +'send_time REAL, '
+    +'author TEXT, '
+    +'root_link TEXT, '
+    +'is_encrypted INTEGER, '
+    +'channel TEXT'
+  +');'
+  console.log(create)
+  state.sqldb.run(create)
+  create = 'CREATE TABLE msg_meta_recps ('
+    +'msgkey TEXT,'
+    +'recp_link TEXT'
+  +');'
+  console.log(create)
+  state.sqldb.run(create)
+  create = 'CREATE TABLE msg_meta_mentions ('
+    +'msgkey TEXT,'
+    +'mention_link TEXT'
+  +');'
+  console.log(create)
+  state.sqldb.run(create)
 
   // track sync state
   // - processor does async processing for each message that comes in
@@ -111,6 +139,12 @@ exports.init = function (sbot, opts) {
     // when all current items finish, consider prehistory synced (and start emitting)
     awaitSync(function () { 
       console.log('Indexes generated')
+      state.sqldb.get('SELECT COUNT(msgkey) FROM msg_meta;', console.log.bind(console, 'total'))
+      state.sqldb.get('SELECT COUNT(msgkey) FROM msg_meta WHERE is_encrypted=1;', console.log.bind(console, 'encrypted'))
+      state.sqldb.get('SELECT COUNT(msgkey) FROM msg_meta WHERE author=?;', [sbot.id], console.log.bind(console, 'mine'))
+      state.sqldb.get('SELECT count(msg_meta.msgkey) FROM msg_meta LEFT OUTER JOIN msg_meta_recps ON msg_meta_recps.msgkey = msg_meta.msgkey WHERE msg_meta.root_link IS NULL AND msg_meta_recps.recp_link IS NULL;', console.log.bind(console, 'newsfeed'))
+      state.sqldb.get('SELECT count(msg_meta.msgkey) FROM msg_meta INNER JOIN msg_meta_recps ON msg_meta_recps.msgkey = msg_meta.msgkey WHERE msg_meta.root_link IS NULL AND msg_meta_recps.recp_link = ?;', [sbot.id], console.log.bind(console, 'inbox'))
+      state.sqldb.all('SELECT channel, COUNT(msgkey) FROM msg_meta GROUP BY channel;', console.log.bind(console, 'by_channel'))
       isHistorySynced = true
     })
     // release
@@ -150,6 +184,7 @@ exports.init = function (sbot, opts) {
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       var counts = {
+        newsfeed: state.newsfeed.rows.length,
         inbox: state.inbox.rows.length,
         inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         bookmarks: state.bookmarks.rows.length,
