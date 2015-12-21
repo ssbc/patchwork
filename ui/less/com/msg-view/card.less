@@ -4,6 +4,8 @@
   margin: 10px auto;
 
   .left-meta {
+    display: none; // responsive-element, must have enough space to render
+
     flex: 0 0 74px;
     padding: 2px 0 0;
     img {
@@ -155,6 +157,13 @@
     .read-more {
       display: none;
     }
+  }
+}
+
+// responsive-element query
+.width-gt400 {
+  .msg-view.card-post .left-meta {
+    display: block;
   }
 }
 
