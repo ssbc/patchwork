@@ -3,6 +3,9 @@
   .items {
     position: relative;
     padding: 0 5px 100px;
+    .msg-view.card-post .left-meta {
+      display: none;
+    }
   }
   .container {
     max-width: 660px;
@@ -17,6 +20,9 @@
   }
   // responsive-element query
   .width-gt500 {
+    .items .msg-view.card-post .left-meta {
+      display: block;
+    }
     .composer {
       margin: 0 0 0 74px;
     }
