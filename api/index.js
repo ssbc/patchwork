@@ -45,27 +45,71 @@ exports.init = function (sbot, opts) {
     actionItems: {}
   }
 
-  // state.sqldb.serialize() // TODO execute serially till parallel can be tested
-  var create = 'CREATE TABLE msg_meta ('
-    +'msgkey TEXT PRIMARY KEY, '
-    +'recv_time REAL, '
+  //
+  // sql indexes
+  //
+  // TODO create sql indexes
+
+  // common message data
+  var create = 'CREATE TABLE msgs ('
+    +'key BLOB PRIMARY KEY, '
+    +'author BLOB, '
     +'send_time REAL, '
-    +'author TEXT, '
-    +'root_link TEXT, '
+    +'recv_time REAL, '
     +'is_encrypted INTEGER, '
-    +'channel TEXT'
+    +'content_type TEXT'
   +');'
   console.log(create)
   state.sqldb.run(create)
-  create = 'CREATE TABLE msg_meta_recps ('
-    +'msgkey TEXT,'
-    +'recp_link TEXT'
+
+  // all message links
+  create = 'CREATE TABLE msg_links ('
+    +'rel TEXT, '
+    +'src_key BLOB, ' // message containing the link
+    +'src_author BLOB, ' // author that published the link
+    +'dst_key BLOB, ' // link target
+    +'dst_type TEXT' // what type of object is the dst? feed, msg, or blob
   +');'
   console.log(create)
   state.sqldb.run(create)
-  create = 'CREATE TABLE msg_meta_mentions ('
-    +'msgkey TEXT,'
-    +'mention_link TEXT'
+
+  // post messages
+  create = 'CREATE TABLE post_msgs ('
+    +'msg_key BLOB PRIMARY KEY, '
+    +'channel TEXT, '
+    +'text TEXT, ' // post content
+    +'root_msg_key BLOB, ' // in threads, the root link (optional)
+    +'branch_msg_key BLOB' // in threads, the branch link (optional)
+  +');'
+  console.log(create)
+  state.sqldb.run(create)
+
+  // computed votes
+  create = 'CREATE TABLE votes ('
+    +'key BLOB PRIMARY KEY, ' // a computed key, (author+dst_key), to uniquely identify the vote
+    +'dst_key BLOB, ' // object this vote is for
+    +'dst_type TEXT, ' // what type of object is the dst? feed, msg, or blob
+    +'author BLOB, ' // author of this vote
+    +'vote INTEGER, ' // -1, 0, 1
+    +'reason TEXT' // optional explanation for the vote
+  +');'
+  console.log(create)
+  state.sqldb.run(create)
+
+  // computed profiles on ssb objects (feeds, msgs, and blobs)
+  // NOTE: these are "subjective" profiles, meaning this is the profile 'as claimed by $author'
+  create = 'CREATE TABLE profiles ('
+    // meta:
+    +'key BLOB PRIMARY KEY, ' // a computed key, (author+dst_key), to uniquely identify the profile
+    +'dst_key BLOB, ' // object this profile is about
+    +'dst_type TEXT, ' // what type of object is the dst? feed, msg, or blob
+    +'author BLOB, ' // author of this profile
+
+    // data:
+    +'name TEXT, '
+    +'image_key BLOB, '
+    +'is_author_following INTEGER, '
+    +'is_author_blocking INTEGER'
   +');'
   console.log(create)
   state.sqldb.run(create)
@@ -139,12 +183,25 @@ exports.init = function (sbot, opts) {
     // when all current items finish, consider prehistory synced (and start emitting)
     awaitSync(function () { 
       console.log('Indexes generated')
-      state.sqldb.get('SELECT COUNT(msgkey) FROM msg_meta;', console.log.bind(console, 'total'))
-      state.sqldb.get('SELECT COUNT(msgkey) FROM msg_meta WHERE is_encrypted=1;', console.log.bind(console, 'encrypted'))
-      state.sqldb.get('SELECT COUNT(msgkey) FROM msg_meta WHERE author=?;', [sbot.id], console.log.bind(console, 'mine'))
-      state.sqldb.get('SELECT count(msg_meta.msgkey) FROM msg_meta LEFT OUTER JOIN msg_meta_recps ON msg_meta_recps.msgkey = msg_meta.msgkey WHERE msg_meta.root_link IS NULL AND msg_meta_recps.recp_link IS NULL;', console.log.bind(console, 'newsfeed'))
-      state.sqldb.get('SELECT count(msg_meta.msgkey) FROM msg_meta INNER JOIN msg_meta_recps ON msg_meta_recps.msgkey = msg_meta.msgkey WHERE msg_meta.root_link IS NULL AND msg_meta_recps.recp_link = ?;', [sbot.id], console.log.bind(console, 'inbox'))
-      state.sqldb.all('SELECT channel, COUNT(msgkey) FROM msg_meta GROUP BY channel;', console.log.bind(console, 'by_channel'))
+      state.sqldb.get('SELECT COUNT(msg_key) FROM post_msgs;', console.log.bind(console, 'total posts'))
+      state.sqldb.get('SELECT COUNT(key) FROM msgs WHERE content_type="post" AND is_encrypted=1;', console.log.bind(console, 'encrypted posts'))
+      state.sqldb.get('SELECT COUNT(key) FROM msgs WHERE content_type="post" AND author=?;', [sbot.id], console.log.bind(console, 'my posts'))
+      state.sqldb.get(
+        'SELECT COUNT(post_msgs.msg_key) FROM post_msgs'
+          +' LEFT OUTER JOIN msg_links ON msg_links.src_key = post_msgs.msg_key AND msg_links.rel = "recps"'
+          +' WHERE post_msgs.root_msg_key IS NULL'
+            +' AND msg_links.dst_key IS NULL;', console.log.bind(console, 'newsfeed'))
+      state.sqldb.all(
+        'SELECT channel, COUNT(post_msgs.msg_key) FROM post_msgs'
+          +' LEFT OUTER JOIN msg_links ON msg_links.src_key = post_msgs.msg_key AND msg_links.rel = "recps"'
+          +' WHERE post_msgs.root_msg_key IS NULL'
+            +' AND msg_links.dst_key IS NULL'
+          +' GROUP BY post_msgs.channel', console.log.bind(console, 'by_channel'))
+      state.sqldb.get(
+        'SELECT COUNT(post_msgs.msg_key) FROM post_msgs'
+          +' INNER JOIN msg_links ON post_msgs.msg_key = msg_links.src_key AND msg_links.rel = "recps"'
+          +' WHERE post_msgs.root_msg_key IS NULL AND msg_links.dst_key = ?;', [sbot.id], console.log.bind(console, 'inbox'))
+      state.sqldb.all('SELECT name, image_key FROM profiles WHERE dst_key=author;', console.log.bind(console, 'profiles'))
       isHistorySynced = true
     })
     // release
