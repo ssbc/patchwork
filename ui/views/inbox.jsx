@@ -33,7 +33,6 @@ export default class Inbox extends React.Component {
       return <div className="hero">
         <h1>Inbox</h1>
         <div>Private, encrypted messages.</div>
-        <hr className="labeled" data-label="compose" />
       </div>
     }
 
@@ -43,7 +42,7 @@ export default class Inbox extends React.Component {
         threads
         dateDividers
         composer composerProps={{placeholder: 'Write a new private message'}}
-        ListItem={Summary}
+        ListItem={Summary} listItemProps={{ userPic: true }}
         Hero={Hero}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."

@@ -5,6 +5,7 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
 import { VerticalFilledContainer } from './index'
+import ResponsiveElement from './responsive-element'
 import Card from './msg-view/card'
 import { isaReplyTo, relationsTo } from '../lib/msg-relation'
 import Composer from './composer'
@@ -227,23 +228,25 @@ export default class Thread extends React.Component {
           : '' }
       </div>
       <VerticalFilledContainer id="msg-thread-vertical">
-        <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-            { this.state.msgs.map((msg, i) => {
-              const isFirst = (i === 0)
-              return <Card
-                key={msg.key}
-                msg={msg}
-                noReplies
-                noBookmark
-                forceRaw={this.props.forceRaw}
-                forceOpen={isFirst}
-                onSelect={()=>this.openMsg(msg.key)}
-                onToggleStar={()=>this.onToggleStar(msg)}
-                onFlag={(msg, reason)=>this.onFlag(msg, reason)}
-                onToggleBookmark={()=>this.onToggleBookmark(msg)} />
-            }) }
-            { thread ? <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div> : '' }
-        </ReactCSSTransitionGroup>
+        <ResponsiveElement widthStep={250}>
+          <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+              { this.state.msgs.map((msg, i) => {
+                const isFirst = (i === 0)
+                return <Card
+                  key={msg.key}
+                  msg={msg}
+                  noReplies
+                  noBookmark
+                  forceRaw={this.props.forceRaw}
+                  forceOpen={isFirst}
+                  onSelect={()=>this.openMsg(msg.key)}
+                  onToggleStar={()=>this.onToggleStar(msg)}
+                  onFlag={(msg, reason)=>this.onFlag(msg, reason)}
+                  onToggleBookmark={()=>this.onToggleBookmark(msg)} />
+              }) }
+              { thread ? <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div> : '' }
+          </ReactCSSTransitionGroup>
+        </ResponsiveElement>
       </VerticalFilledContainer>
     </div>
   }
