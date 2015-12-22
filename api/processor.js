@@ -26,30 +26,33 @@ module.exports = function (sbot, db, state, emit) {
 
   function sqlRun (query, values) {
     state.pinc()
-    state.sqldb.run(query, values, sqlAndDone)
+    if (query.run)
+      query.run(values, sqlAndDone)
+    else
+      state.sqldb.run(query, values, sqlAndDone)
   }
   function sqlAndDone (err) {
     state.pdec()
     if (err)
       console.log(err)
   }
-  function processSql (msg) {
 
-    // TODO use prepared statements
-    // TODO serial/parallel? it seems pretty sure that the vote and profile tables need to be serial ...
-    // ... because the data is computed by taking the last value published by that author ...
-    // ... but serial mode is REALLY slow !!
+  var msgsPrepared = state.sqldb.prepare('INSERT INTO msgs (key, author, recv_time, send_time, is_encrypted, content_type) VALUES (?, ?, ?, ?, ?, ?);')
+  var linksPrepared = state.sqldb.prepare('INSERT INTO msg_links (rel, src_key, src_author, dst_key, dst_type) VALUES (?, ?, ?, ?, ?);')
+  var postsPrepared = state.sqldb.prepare('INSERT INTO post_msgs (msg_key, channel, text, root_msg_key, branch_msg_key) VALUES (?, ?, ?, ?, ?);')
+  var votesPrepared = state.sqldb.prepare('INSERT OR REPLACE INTO votes (key, dst_key, dst_type, author, vote, reason) VALUES (?, ?, ?, ?, ?, ?);')
+  function processSql (msg) {
 
     // common tables
     // messages
     sqlRun(
-      'INSERT INTO msgs (key, author, recv_time, send_time, is_encrypted, content_type) VALUES (?, ?, ?, ?, ?, ?);',
+      msgsPrepared,
       [msg.key, msg.value.author, msg.received, msg.value.timestamp, +msg.isEncrypted, toString(msg.value.content.type)]
     )
     // links
     mlib.indexLinks(msg, function (obj, rel) {
       sqlRun(
-        'INSERT INTO msg_links (rel, src_key, src_author, dst_key, dst_type) VALUES (?, ?, ?, ?, ?);',
+        linksPrepared,
         [rel, msg.key, msg.value.author, obj.link, ssbref.type(obj.link)]
       )
     })
@@ -61,19 +64,18 @@ module.exports = function (sbot, db, state, emit) {
       var root = mlib.link(c.root, 'msg')
       var branch = mlib.link(c.branch, 'msg')
       sqlRun(
-        'INSERT INTO post_msgs (msg_key, channel, text, root_msg_key, branch_msg_key) VALUES (?, ?, ?, ?, ?);',
+        postsPrepared,
         [msg.key, toString(c.channel), toString(c.text), toLinkKey(root), toLinkKey(branch)]
       )
     }
     // votes
-    // TODO serial/parallel?
     if (c.type === 'vote') {
       var vote = mlib.link(c.vote)
       if (vote && (typeof vote.value === 'number')) {
         var dst_key = vote.link
         var value = vote.value
         sqlRun(
-          'INSERT OR REPLACE INTO votes (key, dst_key, dst_type, author, vote, reason) VALUES (?, ?, ?, ?, ?, ?);',
+          votesPrepared,
           [msg.value.author+dst_key, dst_key, ssbref.type(dst_key), msg.value.author, toVoteValue(vote.value), toString(vote.reason)]
         )
       }
@@ -81,8 +83,6 @@ module.exports = function (sbot, db, state, emit) {
     // profiles
     if (c.type == 'about' || c.type == 'contact') {
       // upsert pattern from https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace/7353236#7353236
-      // execute these commands serially, as the update must come after the insert
-      // state.sqldb.serialize(function () { TODO seriali/parallel?
       ;(function () {
         var key
         var dst_key
