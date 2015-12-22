@@ -46,73 +46,100 @@ exports.init = function (sbot, opts) {
   }
 
   //
-  // sql indexes
+  // sql tables
   //
   // TODO create sql indexes
 
-  // common message data
-  var create = 'CREATE TABLE msgs ('
-    +'key BLOB PRIMARY KEY, '
-    +'author BLOB, '
-    +'send_time REAL, '
-    +'recv_time REAL, '
-    +'is_encrypted INTEGER, '
-    +'content_type TEXT'
-  +');'
-  console.log(create)
-  state.sqldb.run(create)
+  state.sqldb.serialize(function () {
 
-  // all message links
-  create = 'CREATE TABLE msg_links ('
-    +'rel TEXT, '
-    +'src_key BLOB, ' // message containing the link
-    +'src_author BLOB, ' // author that published the link
-    +'dst_key BLOB, ' // link target
-    +'dst_type TEXT' // what type of object is the dst? feed, msg, or blob
-  +');'
-  console.log(create)
-  state.sqldb.run(create)
+    // all common message data
+    var create = 'CREATE TABLE msgs ('
+      // log data
+      +'key BLOB PRIMARY KEY, '
+      +'author BLOB, '
+      +'send_time REAL, '
+      +'recv_time REAL, '
+      +'is_encrypted INTEGER, '
+      +'content_type TEXT'
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
 
-  // post messages
-  create = 'CREATE TABLE post_msgs ('
-    +'msg_key BLOB PRIMARY KEY, '
-    +'channel TEXT, '
-    +'text TEXT, ' // post content
-    +'root_msg_key BLOB, ' // in threads, the root link (optional)
-    +'branch_msg_key BLOB' // in threads, the branch link (optional)
-  +');'
-  console.log(create)
-  state.sqldb.run(create)
+    // all message links
+    create = 'CREATE TABLE msg_links ('
+      +'rel TEXT, '
+      +'src_key BLOB, ' // message containing the link
+      +'src_author BLOB, ' // author that published the link
+      +'dst_key BLOB, ' // link target
+      +'dst_type TEXT' // what type of object is the dst? feed, msg, or blob
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
 
-  // computed votes
-  create = 'CREATE TABLE votes ('
-    +'key BLOB PRIMARY KEY, ' // a computed key, (author+dst_key), to uniquely identify the vote
-    +'dst_key BLOB, ' // object this vote is for
-    +'dst_type TEXT, ' // what type of object is the dst? feed, msg, or blob
-    +'author BLOB, ' // author of this vote
-    +'vote INTEGER, ' // -1, 0, 1
-    +'reason TEXT' // optional explanation for the vote
-  +');'
-  console.log(create)
-  state.sqldb.run(create)
+    // local state meta: is bookmarked
+    var create = 'CREATE TABLE msg_bookmarks ('
+      +'msg_key BLOB PRIMARY KEY, '
+      +'is_bookmarked INTEGER'
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
 
-  // computed profiles on ssb objects (feeds, msgs, and blobs)
-  // NOTE: these are "subjective" profiles, meaning this is the profile 'as claimed by $author'
-  create = 'CREATE TABLE profiles ('
-    // meta:
-    +'key BLOB PRIMARY KEY, ' // a computed key, (author+dst_key), to uniquely identify the profile
-    +'dst_key BLOB, ' // object this profile is about
-    +'dst_type TEXT, ' // what type of object is the dst? feed, msg, or blob
-    +'author BLOB, ' // author of this profile
+    // local state meta: is read
+    var create = 'CREATE TABLE msg_isreads ('
+      +'msg_key BLOB PRIMARY KEY, '
+      +'is_read INTEGER'
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
 
-    // data:
-    +'name TEXT, '
-    +'image_key BLOB, '
-    +'is_author_following INTEGER, '
-    +'is_author_blocking INTEGER'
-  +');'
-  console.log(create)
-  state.sqldb.run(create)
+    // post messages
+    create = 'CREATE TABLE post_msgs ('
+      // meta
+      +'msg_key BLOB PRIMARY KEY, '
+
+      // log data
+      +'channel TEXT, '
+      +'text TEXT, ' // post content
+      +'root_msg_key BLOB, ' // in threads, the root link (optional)
+      +'branch_msg_key BLOB' // in threads, the branch link (optional)
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
+
+    // computed votes
+    create = 'CREATE TABLE votes ('
+      // meta
+      +'key BLOB PRIMARY KEY, ' // a computed key, (author+dst_key), to uniquely identify the vote
+      +'dst_key BLOB, ' // object this vote is for
+      +'dst_type TEXT, ' // what type of object is the dst? feed, msg, or blob
+      +'author BLOB, ' // author of this vote
+
+      // data
+      +'vote INTEGER, ' // -1, 0, 1
+      +'reason TEXT' // optional explanation for the vote
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
+
+    // computed profiles on ssb objects (feeds, msgs, and blobs)
+    // NOTE: these are "subjective" profiles, meaning this is the profile 'as claimed by $author'
+    create = 'CREATE TABLE profiles ('
+      // meta
+      +'key BLOB PRIMARY KEY, ' // a computed key, (author+dst_key), to uniquely identify the profile
+      +'dst_key BLOB, ' // object this profile is about
+      +'dst_type TEXT, ' // what type of object is the dst? feed, msg, or blob
+      +'author BLOB, ' // author of this profile
+
+      // data
+      +'name TEXT, '
+      +'image_key BLOB, '
+      +'is_author_following INTEGER, '
+      +'is_author_blocking INTEGER'
+    +');'
+    console.log(create)
+    state.sqldb.run(create)
+    
+  })
 
   // track sync state
   // - processor does async processing for each message that comes in
@@ -142,9 +169,10 @@ exports.init = function (sbot, opts) {
       var obj = { key: key, value: null, isread: false }
       db.isread.get(key, function (err, isread) { obj.isread = isread; done() })
       sbot.get(key, function (err, value) { obj.value = value; done() })
+      state.sqldb.run('INSERT INTO msg_bookmarks (msg_key, is_bookmarked) VALUES (?, ?);', [key, 1], done)
       var n=0;
       function done() {
-        if (++n == 2) cb(null, obj)
+        if (++n == 3) cb(null, obj)
       }
     }),
     pull.drain(
@@ -156,6 +184,16 @@ exports.init = function (sbot, opts) {
       },
       function () { state.pdec() }
     )
+  )
+
+  // load isread into an index
+  state.pinc()
+  pull(
+    pl.read(db.isread, { keys: true, values: true }),
+    pull.asyncMap(function (kv, cb) {
+      state.sqldb.run('INSERT INTO msg_isreads (msg_key, is_read) VALUES (?, ?);', [kv.key, +kv.value], cb)
+    }),
+    pull.onEnd(function () { state.pdec() })
   )
 
   // load channelpins into indexes
@@ -201,6 +239,15 @@ exports.init = function (sbot, opts) {
         'SELECT COUNT(post_msgs.msg_key) FROM post_msgs'
           +' INNER JOIN msg_links ON post_msgs.msg_key = msg_links.src_key AND msg_links.rel = "recps"'
           +' WHERE post_msgs.root_msg_key IS NULL AND msg_links.dst_key = ?;', [sbot.id], console.log.bind(console, 'inbox'))
+      state.sqldb.get(
+        'SELECT COUNT(post_msgs.msg_key) FROM post_msgs'
+          +' INNER JOIN msg_links ON post_msgs.msg_key = msg_links.src_key AND msg_links.rel = "recps"'
+          +' LEFT JOIN msg_isreads ON msg_isreads.msg_key = post_msgs.msg_key'
+          +' WHERE post_msgs.root_msg_key IS NULL AND msg_links.dst_key = ? AND (msg_isreads.is_read IS NULL OR msg_isreads.is_read = 0);', [sbot.id], console.log.bind(console, 'inbox_unread'))
+      state.sqldb.get(
+        'SELECT COUNT(post_msgs.msg_key) FROM post_msgs'
+          +' LEFT JOIN msg_bookmarks ON msg_bookmarks.msg_key = post_msgs.msg_key'
+          +' WHERE post_msgs.root_msg_key IS NULL AND msg_bookmarks.is_bookmarked = 1;', console.log.bind(console, 'bookmarks'))
       state.sqldb.all('SELECT name, image_key FROM profiles WHERE dst_key=author;', console.log.bind(console, 'profiles'))
       isHistorySynced = true
     })

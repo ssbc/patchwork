@@ -4,10 +4,6 @@ var u = require('./util')
 
 module.exports = function (sbot, db, state, emit) {
 
-  function logerr (err) {
-    if (err)
-      console.log(err)
-  }
   // conversion helpers
   function toBool (v) {
     if (typeof v == 'undefined')
@@ -27,6 +23,16 @@ module.exports = function (sbot, db, state, emit) {
     if (v > 0) return 1
     return -1
   }
+
+  function sqlRun (query, values) {
+    state.pinc()
+    state.sqldb.run(query, values, sqlAndDone)
+  }
+  function sqlAndDone (err) {
+    state.pdec()
+    if (err)
+      console.log(err)
+  }
   function processSql (msg) {
 
     // TODO use prepared statements
@@ -36,17 +42,15 @@ module.exports = function (sbot, db, state, emit) {
 
     // common tables
     // messages
-    state.sqldb.run(
+    sqlRun(
       'INSERT INTO msgs (key, author, recv_time, send_time, is_encrypted, content_type) VALUES (?, ?, ?, ?, ?, ?);',
-      [msg.key, msg.value.author, msg.received, msg.value.timestamp, +msg.isEncrypted, toString(msg.value.content.type)],
-      logerr
+      [msg.key, msg.value.author, msg.received, msg.value.timestamp, +msg.isEncrypted, toString(msg.value.content.type)]
     )
     // links
     mlib.indexLinks(msg, function (obj, rel) {
-      state.sqldb.run(
+      sqlRun(
         'INSERT INTO msg_links (rel, src_key, src_author, dst_key, dst_type) VALUES (?, ?, ?, ?, ?);',
-        [rel, msg.key, msg.value.author, obj.link, ssbref.type(obj.link)],
-        logerr
+        [rel, msg.key, msg.value.author, obj.link, ssbref.type(obj.link)]
       )
     })
 
@@ -56,10 +60,9 @@ module.exports = function (sbot, db, state, emit) {
     if (c.type === 'post') {
       var root = mlib.link(c.root, 'msg')
       var branch = mlib.link(c.branch, 'msg')
-      state.sqldb.run(
+      sqlRun(
         'INSERT INTO post_msgs (msg_key, channel, text, root_msg_key, branch_msg_key) VALUES (?, ?, ?, ?, ?);',
-        [msg.key, toString(c.channel), toString(c.text), toLinkKey(root), toLinkKey(branch)],
-        logerr
+        [msg.key, toString(c.channel), toString(c.text), toLinkKey(root), toLinkKey(branch)]
       )
     }
     // votes
@@ -69,10 +72,9 @@ module.exports = function (sbot, db, state, emit) {
       if (vote && (typeof vote.value === 'number')) {
         var dst_key = vote.link
         var value = vote.value
-        state.sqldb.run(
+        sqlRun(
           'INSERT OR REPLACE INTO votes (key, dst_key, dst_type, author, vote, reason) VALUES (?, ?, ?, ?, ?, ?);',
-          [msg.value.author+dst_key, dst_key, ssbref.type(dst_key), msg.value.author, toVoteValue(vote.value), toString(vote.reason)],
-          logerr
+          [msg.value.author+dst_key, dst_key, ssbref.type(dst_key), msg.value.author, toVoteValue(vote.value), toString(vote.reason)]
         )
       }
     }
@@ -125,15 +127,13 @@ module.exports = function (sbot, db, state, emit) {
         var changeKeysList = changeKeys.join(', ')
         var changeKeysPlaceholders = changeKeys.map(function (k) { return '?' }).join(', ')
         var changeKeysSets = changeKeys.map(function (k) { return k+'=?' }).join(', ')
-        state.sqldb.run(
+        sqlRun(
           'INSERT OR IGNORE INTO profiles (key, dst_key, dst_type, author, '+changeKeysList+') VALUES (?, ?, ?, ?, '+changeKeysPlaceholders+');',
-          [key, dst_key, ssbref.type(dst_key), msg.value.author].concat(changeValues),
-          logerr
+          [key, dst_key, ssbref.type(dst_key), msg.value.author].concat(changeValues)
         )
-        state.sqldb.run(
+        sqlRun(
           'UPDATE profiles SET '+changeKeysSets+' WHERE changes()=0 AND key=?;',
-          changeValues.concat([key]),
-          logerr
+          changeValues.concat([key])
         )
       })()
     }
