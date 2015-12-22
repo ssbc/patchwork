@@ -16,7 +16,7 @@ Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're 
 
 ## Install
 
-Install node v4.2 (you might like to use [nvm](https://github.com/creationix/nvm)).
+Install node v5 (you might like to use [nvm](https://github.com/creationix/nvm)).
 
 ``` bash
 npm install ssb-patchwork -g
