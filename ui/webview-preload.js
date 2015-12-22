@@ -1,4 +1,4 @@
-var ipc      = require('ipc')
+var ipc      = require('electron').ipcMain
 var muxrpc   = require('muxrpc')
 var pull     = require('pull-stream')
 var pushable = require('pull-pushable')
