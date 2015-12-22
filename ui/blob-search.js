@@ -1,5 +1,5 @@
 'use strict'
-var ipc       = require('ipc')
+var ipc       = require('electron').ipcMain
 var SSBClient = require('./lib/muxrpc-ipc')
 
 var ssb = SSBClient()
