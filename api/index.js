@@ -28,7 +28,8 @@ exports.init = function (sbot, opts) {
     channelpinned: patchworkdb.sublevel('channelpinned')
   }
   var state = {
-    sqldb: new sqlite3.Database(':memory:'),//'/Users/paulfrazee/tmp/testdb1.sqlite'),
+    sqldb: new sqlite3.Database(':memory:'),
+    DEBUG_NUM_INSERTS: 0,
 
     // indexes (lists of {key:, ts:})
     mymsgs: [],
@@ -50,7 +51,12 @@ exports.init = function (sbot, opts) {
   //
   // TODO create sql indexes
 
-  state.sqldb.serialize() // need to execute serially for safety
+  var DEBUG_START = Date.now()
+  state.sqldb.serialize()
+  // two possible, but slightly danger performance-optimizations we have available:
+  state.sqldb.run('PRAGMA synchronous = OFF;')
+  state.sqldb.run('PRAGMA journal_mode = MEMORY;')
+  state.sqldb.run('BEGIN TRANSACTION;') // begin a history-playback transaction
 
   // all common message data
   var create = 'CREATE TABLE msgs ('
@@ -160,6 +166,7 @@ exports.init = function (sbot, opts) {
   }
 
   // load bookmarks into an index
+  var bookmarksPrepared = state.sqldb.prepare('INSERT INTO msg_bookmarks (msg_key, is_bookmarked) VALUES (?, ?);')
   state.pinc()
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
@@ -167,7 +174,8 @@ exports.init = function (sbot, opts) {
       var obj = { key: key, value: null, isread: false }
       db.isread.get(key, function (err, isread) { obj.isread = isread; done() })
       sbot.get(key, function (err, value) { obj.value = value; done() })
-      state.sqldb.run('INSERT INTO msg_bookmarks (msg_key, is_bookmarked) VALUES (?, ?);', [key, 1], done)
+      bookmarksPrepared.run([key, 1], done)
+      state.DEBUG_NUM_INSERTS++
       var n=0;
       function done() {
         if (++n == 3) cb(null, obj)
@@ -185,11 +193,13 @@ exports.init = function (sbot, opts) {
   )
 
   // load isread into an index
+  var isreadsPrepared = state.sqldb.prepare('INSERT INTO msg_isreads (msg_key, is_read) VALUES (?, ?);')
   state.pinc()
   pull(
     pl.read(db.isread, { keys: true, values: true }),
     pull.asyncMap(function (kv, cb) {
-      state.sqldb.run('INSERT INTO msg_isreads (msg_key, is_read) VALUES (?, ?);', [kv.key, +kv.value], cb)
+      state.DEBUG_NUM_INSERTS++
+      isreadsPrepared.run([kv.key, +kv.value], cb)
     }),
     pull.onEnd(function () { state.pdec() })
   )
@@ -218,7 +228,8 @@ exports.init = function (sbot, opts) {
     console.log('Log history read...')
     // when all current items finish, consider prehistory synced (and start emitting)
     awaitSync(function () { 
-      console.log('Indexes generated')
+      state.sqldb.run('COMMIT TRANSACTION;') // complete the history replay transaction
+      console.log('Indexes generated', (Date.now() - DEBUG_START) / 1e3, 'seconds to do', state.DEBUG_NUM_INSERTS, 'inserts')
       state.sqldb.get('SELECT COUNT(msg_key) FROM post_msgs;', console.log.bind(console, 'total posts'))
       state.sqldb.get('SELECT COUNT(key) FROM msgs WHERE content_type="post" AND is_encrypted=1;', console.log.bind(console, 'encrypted posts'))
       state.sqldb.get('SELECT COUNT(key) FROM msgs WHERE content_type="post" AND author=?;', [sbot.id], console.log.bind(console, 'my posts'))

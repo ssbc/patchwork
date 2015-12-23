@@ -25,6 +25,7 @@ module.exports = function (sbot, db, state, emit) {
   }
 
   function sqlRun (query, values) {
+    state.DEBUG_NUM_INSERTS++
     state.pinc()
     if (query.run)
       query.run(values, sqlAndDone)
@@ -83,7 +84,7 @@ module.exports = function (sbot, db, state, emit) {
     // profiles
     if (c.type == 'about' || c.type == 'contact') {
       // upsert pattern from https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace/7353236#7353236
-      ;(function () {
+      // state.sqldb.serialize(function () {
         var key
         var dst_key
         var changeKeys = [], changeValues = [] // changes to affect
@@ -127,6 +128,7 @@ module.exports = function (sbot, db, state, emit) {
         var changeKeysList = changeKeys.join(', ')
         var changeKeysPlaceholders = changeKeys.map(function (k) { return '?' }).join(', ')
         var changeKeysSets = changeKeys.map(function (k) { return k+'=?' }).join(', ')
+        state.DEBUG_NUM_INSERTS++
         sqlRun(
           'INSERT OR IGNORE INTO profiles (key, dst_key, dst_type, author, '+changeKeysList+') VALUES (?, ?, ?, ?, '+changeKeysPlaceholders+');',
           [key, dst_key, ssbref.type(dst_key), msg.value.author].concat(changeValues)
@@ -135,7 +137,7 @@ module.exports = function (sbot, db, state, emit) {
           'UPDATE profiles SET '+changeKeysSets+' WHERE changes()=0 AND key=?;',
           changeValues.concat([key])
         )
-      })()
+      // })
     }
   }
 
