@@ -58,7 +58,7 @@ export class Pubs extends React.Component {
       <h2>{"You're in WiFi mode."}</h2>
       <p>To reach the global network, you need to be followed by a Public Peer.</p>
       <div className="card-well">
-        <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
+        <ModalBtn className="btn fullheight" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
       </div>
     </div>
   }

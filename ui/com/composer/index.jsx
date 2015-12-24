@@ -263,7 +263,7 @@ export default class Composer extends React.Component {
     const sendIcon = (this.isPublic) ? 'users' : 'lock'
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
+      <Modal className="fullheight" Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
       { channel ? 
         <div className="composer-channel">#{channel}</div>
         : '' }
