@@ -1,7 +1,145 @@
 var mlib = require('ssb-msgs')
+var ssbref = require('ssb-ref')
 var u = require('./util')
 
 module.exports = function (sbot, db, state, emit) {
+
+  // conversion helpers
+  function toBool (v) {
+    if (typeof v == 'undefined')
+      return null
+    return !!v
+  }
+  function toString (v) {
+    if (typeof v == 'string')
+      return v
+    return null
+  }
+  function toLinkKey (v) {
+    return (v) ? v.link : null
+  }
+  function toVoteValue (v) {
+    if (v ==  0) return 0
+    if (v > 0) return 1
+    return -1
+  }
+
+  function sqlRun (query, values) {
+    state.DEBUG_NUM_INSERTS++
+    state.pinc()
+    if (query.run)
+      query.run(values, sqlAndDone)
+    else
+      state.sqldb.run(query, values, sqlAndDone)
+  }
+  function sqlAndDone (err) {
+    state.pdec()
+    if (err)
+      console.log(err)
+  }
+
+  var msgsPrepared = state.sqldb.prepare('INSERT INTO msgs (key, author, recv_time, send_time, is_encrypted, content_type) VALUES (?, ?, ?, ?, ?, ?);')
+  var linksPrepared = state.sqldb.prepare('INSERT INTO msg_links (rel, src_key, src_author, dst_key, dst_type) VALUES (?, ?, ?, ?, ?);')
+  var postsPrepared = state.sqldb.prepare('INSERT INTO post_msgs (msg_key, channel, text, root_msg_key, branch_msg_key) VALUES (?, ?, ?, ?, ?);')
+  var votesPrepared = state.sqldb.prepare('INSERT OR REPLACE INTO votes (key, dst_key, dst_type, author, vote, reason) VALUES (?, ?, ?, ?, ?, ?);')
+  function processSql (msg) {
+
+    // common tables
+    // messages
+    sqlRun(
+      msgsPrepared,
+      [msg.key, msg.value.author, msg.received, msg.value.timestamp, +msg.isEncrypted, toString(msg.value.content.type)]
+    )
+    // links
+    mlib.indexLinks(msg, function (obj, rel) {
+      sqlRun(
+        linksPrepared,
+        [rel, msg.key, msg.value.author, obj.link, ssbref.type(obj.link)]
+      )
+    })
+
+    // patchwork message-type tables
+    var c = msg.value.content
+    // posts
+    if (c.type === 'post') {
+      var root = mlib.link(c.root, 'msg')
+      var branch = mlib.link(c.branch, 'msg')
+      sqlRun(
+        postsPrepared,
+        [msg.key, toString(c.channel), toString(c.text), toLinkKey(root), toLinkKey(branch)]
+      )
+    }
+    // votes
+    if (c.type === 'vote') {
+      var vote = mlib.link(c.vote)
+      if (vote && (typeof vote.value === 'number')) {
+        var dst_key = vote.link
+        var value = vote.value
+        sqlRun(
+          votesPrepared,
+          [msg.value.author+dst_key, dst_key, ssbref.type(dst_key), msg.value.author, toVoteValue(vote.value), toString(vote.reason)]
+        )
+      }
+    }
+    // profiles
+    if (c.type == 'about' || c.type == 'contact') {
+      // upsert pattern from https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace/7353236#7353236
+      // state.sqldb.serialize(function () {
+        var key
+        var dst_key
+        var changeKeys = [], changeValues = [] // changes to affect
+
+        // fetch link, abort if missing
+        dst_key = toLinkKey(mlib.link(c[c.type]))
+        if (!dst_key)
+          return
+        key = msg.value.author+dst_key
+
+        // collect changes
+        if (c.type == 'about') {
+          var name = toString(c.name)
+          var image_key = toLinkKey(mlib.link(c.image, 'blob'))
+          if (name) {
+            changeKeys.push('name')
+            changeValues.push(name)
+          }
+          if (image_key) {
+            changeKeys.push('image_key')
+            changeValues.push(image_key)
+          }
+        }
+        if (c.type == 'contact') {
+          var following = toBool(c.following)
+          var blocking = toBool(c.blocking)
+          if (following !== null) {
+            changeKeys.push('is_author_following')
+            changeValues.push(following)
+          }
+          if (blocking !== null) {
+            changeKeys.push('is_author_blocking')
+            changeValues.push(blocking)
+          }
+        }
+
+        // abort if there are no changes we're interested in
+        if (changeKeys.length === 0)
+          return
+
+        var changeKeysList = changeKeys.join(', ')
+        var changeKeysPlaceholders = changeKeys.map(function (k) { return '?' }).join(', ')
+        var changeKeysSets = changeKeys.map(function (k) { return k+'=?' }).join(', ')
+        state.DEBUG_NUM_INSERTS++
+        sqlRun(
+          'INSERT OR IGNORE INTO profiles (key, dst_key, dst_type, author, '+changeKeysList+') VALUES (?, ?, ?, ?, '+changeKeysPlaceholders+');',
+          [key, dst_key, ssbref.type(dst_key), msg.value.author].concat(changeValues)
+        )
+        sqlRun(
+          'UPDATE profiles SET '+changeKeysSets+' WHERE changes()=0 AND key=?;',
+          changeValues.concat([key])
+        )
+      // })
+    }
+  }
 
   var processors = {
     post: function (msg) {
@@ -335,14 +473,17 @@ module.exports = function (sbot, db, state, emit) {
     state.pinc()
     var key = logkey.value
     sbot.get(logkey.value, function (err, value) {
-      var msg = { key: key, value: value, received: logkey.key }
+      var msg = { key: key, value: value, received: logkey.key, isEncrypted: false }
       try {
         // encrypted? try to decrypt
         if (typeof value.content == 'string' && value.content.slice(-4) == '.box') {
+          msg.isEncrypted = true
           value.content = sbot.private.unbox(value.content)
           if (!value.content)
             return state.pdec()
         }
+
+        processSql(msg)
 
         // collect keys of user's messages
         if (msg.value.author === sbot.id)
