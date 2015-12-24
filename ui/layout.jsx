@@ -96,7 +96,7 @@ export default class Layout extends React.Component {
     }
 
     return <div className="layout-rows">
-      <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <ModalFlow fullpage labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar titlebar flex">
         <div>
           { isElectron

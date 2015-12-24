@@ -17,6 +17,8 @@
     &:before {
       content: counter(step);
       counter-increment: step;
+      position: relative;
+      z-index: 2;
       text-align: center;
       width: 20px;
       line-height: 20px;
@@ -35,7 +37,7 @@
       position: absolute;
       left: -50%;
       top: 9px;
-      z-index: -1;
+      z-index: 1;
 
       background: linear-gradient(to right, #ddd 50%, #4DA1FF 50%);
       background-size: 200% 100%;

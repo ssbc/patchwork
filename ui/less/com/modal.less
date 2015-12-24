@@ -28,8 +28,23 @@
     outline: none;
     padding: 0;
   }
+
   &.fullheight .modal-inner {
     bottom: 40px;  
+  }
+
+  &.fullpage {
+    background: #fff;
+    overflow: auto;
+    .modal-inner {
+      position: relative;
+      top: 0;
+      left: 0;
+      margin: 40px auto;
+      max-height: none;
+      transform: none;
+      box-shadow: none;
+    }
   }
 
   .modal-content {
