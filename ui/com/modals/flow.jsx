@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import cls from 'classNames'
 import SteppedProgressBar from '../stepped-progress-bar'
 import app from '../../lib/app'
 
@@ -69,7 +70,7 @@ export default class ModalFlow extends React.Component {
     const setIsValid = isValid => { this.setState({ isValid: isValid }) }
     const setIsReady = isReady => { this.setState({ isReady: isReady }) }
 
-    return <div className={'modal modal-flow '+(this.props.fullheight?'fullheight':'')}>
+    return <div className={cls({modal: true, 'modal-flow': true, fullheight: this.props.fullheight, fullpage: this.props.fullpage })}>
       <div className="modal-inner">
         <div className="modal-content">
           <StepCom ref="step" setIsReady={setIsReady} setIsValid={setIsValid} setHelpText={setHelpText} gotoNextStep={this.gotoNextStep.bind(this)} />
