@@ -10,7 +10,11 @@ import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
 import FindBar from './com/findbar'
 
-const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
+const SETUP_LABELS = [
+  <span><i className="fa fa-user"/><br/><small>Profile</small></span>,
+  <span><i className="fa fa-wifi"/><br/><small>Wifi</small></span>,
+  <span><i className="fa fa-cloud"/><br/><small>Global</small></span>
+]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
 const RIGHT_NAVS = {
   notifications: Notifications
