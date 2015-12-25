@@ -106,12 +106,12 @@ export default class ProfileSetup extends React.Component {
     const currentName = getCurrentName()
     const currentImg = getCurrentImg()
     return <div>
-      <h1>{(currentName) ? rainbow('Edit Profile') : <span>Welcome to {rainbow('Patchwork')}</span>}</h1>
+      <h1><span>What would you like to be {rainbow('called')}?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
           <div>
             <label>
-              <span>Name</span>
+              <span>Nickname</span>
               <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} />
               { this.state.error ? <p className="error">{this.state.error}</p> : '' }
             </label>
