@@ -11,6 +11,7 @@ import { Inline as MdInline } from '../markdown'
 import Modal from '../modals/single'
 import FlagMsgForm from '../forms/flag-msg'
 import { countReplies } from '../../lib/msg-relation'
+import { Editor } from '../composer/index'
 import DropdownBtn from '../dropdown'
 import u from '../../lib/util'
 import app from '../../lib/app'
@@ -64,6 +65,7 @@ export default class Card extends React.Component {
       isOversized: false,
       isExpanded: false,
       isViewingRaw: false,
+      isEditing: false,
       subject: null,
       isFlagModalOpen: false
     }
@@ -95,6 +97,13 @@ export default class Card extends React.Component {
       this.props.onFlag(this.props.msg, 'unflag')
     else if (choice === 'toggle-raw')
       this.setState({ isViewingRaw: !this.state.isViewingRaw })
+    else if (choice === 'edit-post') {
+      this.setState({ isEditing: !this.state.isEditing })
+    }
+  }
+
+  onCancelEdit() {
+    this.setState({ isEditing: !this.state.isEditing });
   }
 
   copyLink() {
@@ -143,10 +152,15 @@ export default class Card extends React.Component {
       return this.renderLink(msg)
     if (msg.isMention)
       return this.renderMention(msg)
+
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
     const isDownvoted = downvoters.indexOf(app.user.id) !== -1
+
+    if (this.state.isEditing)
+      return this.renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted);
+
     if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
       return this.renderMuted(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
@@ -206,6 +220,7 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
+      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span> },
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ?
@@ -255,5 +270,66 @@ export default class Card extends React.Component {
       </div>
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
     </div>
+  }
+
+  renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
+    const replies = countReplies(msg);
+    const unreadReplies = countReplies(msg, m => !m.isRead);
+    const isViewingRaw = this.state.isViewingRaw;
+    const channel = msg && msg.value && msg.value.content && msg.value.content.channel;
+
+    const dropdownOpts = [
+      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Cancel Editing</span> },
+      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+      { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
+      (isDownvoted) ? 
+      { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
+      { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
+    ];
+
+    const oversizedCls = (this.state.isOversized?'oversized':'');
+    const expandedCls  = (this.state.isExpanded?'expanded':'');
+    const newCls       = (msg.isNew?'new':'');
+    return <div className={`msg-view card-post ${oversizedCls} ${expandedCls} ${newCls}`}>
+      <div className="left-meta">
+        <UserPic id={msg.value.author} />
+        <div><a onClick={this.onSelect.bind(this)}><NiceDate ts={msg.value.timestamp} /></a></div>
+      </div>
+      <div className="content">
+        <div className="header">
+          <div className="header-left">
+            <UserLink id={msg.value.author} />{' '}
+            {msg.plaintext ? '' : <i className="fa fa-lock"/>}{' '}
+            {msg.mentionsUser ? <i className="fa fa-at"/> : ''}{' '}
+            {channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
+          </div>
+          <div className="header-right">
+            { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
+            { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
+            <button onClick={this.onCancelEdit.bind(this)}><i className="fa fa-remove-h" /></button>
+          </div>
+        </div>
+        <div className="body" ref="body">
+          { /* <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> */ }
+          <Editor isEditing="true" editingContent={msg.value.content.text} />
+          
+        </div>
+        <div className="ctrls">
+          { replies && !this.props.noReplies ?
+            <div>
+              <a onClick={this.onSelect.bind(this)}>
+                {replies === 1 ? '1 reply ' : (replies + ' replies ')}
+                { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
+              </a>
+            </div> : '' }
+            { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
+            { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
+            { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
+            <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
+            { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
+        </div>
+      </div>
+      <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
+      </div>
   }
 }
