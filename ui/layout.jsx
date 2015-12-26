@@ -9,15 +9,17 @@ import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
+import Friends from './com/forms/friends'
+import Issues from './com/issues'
 import FindBar from './com/findbar'
 
 const SETUP_LABELS = [
-  <span><i className="fa fa-hand-peace-o"/><br/><small>Welcome</small></span>,
-  <span><i className="fa fa-user"/><br/><small>Profile</small></span>,
-  <span><i className="fa fa-wifi"/><br/><small>Wifi</small></span>,
-  <span><i className="fa fa-cloud"/><br/><small>Global</small></span>
+  <span><i className="fa fa-power-off"/><br/><small>Welcome</small></span>,
+  <span><i className="fa fa-pencil"/><br/><small>Nickname</small></span>,
+  <span><i className="fa fa-photo"/><br/><small>Photo</small></span>,
+  <span><i className="fa fa-check-square"/><br/><small>Start</small></span>
 ]
-const SETUP_FORMS = [Welcome, ProfileSetup, FollowNearby, PubInvite]
+const SETUP_FORMS = [Welcome, ProfileSetup, FollowNearby, Friends]
 const RIGHT_NAVS = {
   notifications: Notifications
 }
