@@ -91,13 +91,15 @@ export default class Card extends React.Component {
 
   onSelectDropdown(choice) {
     if (choice === 'copy-link')
-      this.copyLink()
+      this.copyLink();
     else if (choice === 'flag')
-      this.setState({ isFlagModalOpen: true })
+      this.setState({ isFlagModalOpen: true });
     else if (choice === 'unflag')
-      this.props.onFlag(this.props.msg, 'unflag')
+      this.props.onFlag(this.props.msg, 'unflag');
     else if (choice === 'toggle-raw')
-      this.setState({ isViewingRaw: !this.state.isViewingRaw })
+      this.setState({ isViewingRaw: !this.state.isViewingRaw });
+    else if (choice === 'edit-post')
+      console.log("trying to edit post");
   }
 
   copyLink() {
@@ -221,6 +223,7 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
+      { value: 'edit-post',  label: <span><i className="fa fa-edit-post" /> Edit/Delete Post</span> },
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ? 
