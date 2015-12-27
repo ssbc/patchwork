@@ -3,8 +3,6 @@ import React from 'react'
 import { Link } from 'react-router'
 import ssbref from 'ssb-ref'
 import app from './lib/app'
-import Notifications from './com/msg-list/notifications'
-import Bookmarks from './com/msg-list/bookmarks'
 import ModalFlow from './com/modals/flow'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
@@ -15,8 +13,6 @@ import FindBar from './com/findbar'
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
 const RIGHT_NAVS = {
-  notifications: Notifications,
-  bookmarks: Bookmarks
 }
 
 export default class Layout extends React.Component {
@@ -107,13 +103,13 @@ export default class Layout extends React.Component {
 
     const NavLink = (props) => {
       const selected = props.selected || (props.to === location)
-      const cls = 'ctrl '+(selected?'selected':'')
+      const cls = (props.className||'')+' ctrl '+(selected?'selected':'')
       const count = props.count ? <div className="count">{props.count}</div> : ''
       return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
     }
     const NavToggle = (props) => {
       const selected = (props.to === this.state.rightNav)
-      const cls = 'ctrl '+(selected?'selected':'')
+      const cls = (props.className||'')+' ctrl '+(selected?'selected':'')
       const count = props.count ? <div className="count">{props.count}</div> : ''
       return <a className={cls} onClick={onToggleRightNav(props.to)}><i className={'fa fa-'+props.icon} /> {count}</a>
     }
@@ -121,21 +117,12 @@ export default class Layout extends React.Component {
     return <div className="layout-rows">
       <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar titlebar flex">
-        <div className="flex-fill">
-          <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
-          <div className="nav">
-            <NavLink to="/" selected={location === '/' || location.indexOf('/newsfeed/') === 0} icon="newspaper-o" label="Feed" />
-            <NavLink to="/inbox" icon="inbox" label="Inbox" count={this.state.indexCounts.inboxUnread} />
-            <NavLink to="/profile" icon="users" label="Contacts" />
-            <NavLink to="/sync" icon={isWifiMode?'wifi':'globe'} label='Network' />
-            <Issues />
-          </div>
-          <div className="divider" />
-          <NavToggle to="bookmarks" icon="bookmark" count={this.state.indexCounts.bookmarksUnread} />
-          <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
-        </div>
         <div>
-          <div className="search"><i className="fa fa-search" /><input ref="search" onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
+          <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
+          <NavLink className="home" to="/" selected={location === '/' || location.indexOf('/newsfeed/') === 0} icon="home" />
+        </div>
+        <div className="flex-fill">
+          <div className="search"><i className="fa fa-search" /><input ref="search" placeholder="Search for people or content" onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
         </div>
       </div>
       <div className="layout-columns">

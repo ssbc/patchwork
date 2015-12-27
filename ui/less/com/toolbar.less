@@ -65,27 +65,12 @@
       font-weight: normal;
     }
   }
-  .back {
-    width: 50px;
+  .back, .home {
+    width: 40px;
     padding: 0;
-  }
-  .nav {
-    display: inline-block;
-    .ctrl i {
-      display: none;
-      padding: 0 8px;
-    }
-    .ctrl .label {
-      padding: 0 4px;
-    }
-    @media (max-width: 960px) {
-      .ctrl i {
-        display: inline;
-      }
-      .ctrl .label {
-        display: none;
-      }
-    }
+    font-size: 23px;
+    position: relative;
+    top: -1px;
   }
 
   .dipswitch {
@@ -96,22 +81,23 @@
   }
 
   .search {
-    display: inline-block;
     position: relative;
-    padding-right: 5px;
+    padding: 0 12px 0 34px;
 
     i {
       position: absolute;
       top: 5px;
       left: 10px;
-      color: #999;
+      color: gray;
+      font-size: 18px;
     }
     input {
+      width: 100%;
       color: gray;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      padding: 3px 0 3px 30px;
-      width: 200px;
+      padding: 0;
+      border: 0;
+      font-size: 18px;
+      margin-top: 2px;
 
       &:focus {
         outline: 0;
