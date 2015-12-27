@@ -1,44 +1,5 @@
 #newsfeed {
   display: flex;
-  
-  .newsfeed-rightnav {
-    flex: 0 0 175px;
-    font-weight: 300;
-    color: #555;
-      padding: 0 10px;
-
-    .about {
-      margin-bottom: 30px;
-    }
-    .config {
-      .ctrl {
-        margin-bottom: 10px;
-        label {
-          display: block;
-          font-weight: bold;
-          font-size: 12px;
-          color: gray;
-          transition: color 0.2s;
-        }
-        a {
-          color: gray;
-          transition: color 0.2s;
-        }
-      }
-      &:hover {
-        .ctrl {
-          label, a {
-            color: #555;
-          }
-        }
-      }
-    }
-  }
-  @media (min-width: 1100px) {
-    .newsfeed-rightnav {
-      flex: 0 0 220px;
-    }
-  }
 
   .msg-list {
     flex: 1.2;

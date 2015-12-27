@@ -40,7 +40,6 @@ export default class Notifications extends React.Component {
       <MsgList
         ref="list"
         ListItem={Notification}
-        Toolbar={Toolbar}
         filter={this.state.filter.fn}
         emptyMsg="No notifications."
         source={app.ssb.patchwork.createNotificationsStream}

@@ -38,7 +38,6 @@ export default class LeftNav extends React.Component {
       <NavLink to="/"><i className="fa fa-newspaper-o" /> Feed</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Inbox</NavLink>
       <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks</NavLink>
-      <NavLink to="/notifications"><i className="fa fa-bell" /> Notifications</NavLink>
       <NavLink to="/sync"><i className="fa fa-users" /> Friends</NavLink>
       <NavHeading>Channels</NavHeading>
       { pinnedChannels.map(renderChannel) }

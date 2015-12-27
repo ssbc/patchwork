@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import ssbref from 'ssb-ref'
 import app from './lib/app'
 import ModalFlow from './com/modals/flow'
+import Notifications from './com/msg-list/notifications'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
@@ -13,6 +14,7 @@ import FindBar from './com/findbar'
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
 const RIGHT_NAVS = {
+  notifications: Notifications
 }
 
 export default class Layout extends React.Component {
@@ -39,7 +41,7 @@ export default class Layout extends React.Component {
   buildState() {
     // copy over app state
     return {
-      rightNav: (this.state) ? this.state.rightNav : false,
+      rightNav: (this.state) ? this.state.rightNav : 'notifications',
       rightNavProps: (this.state) ? this.state.rightNavProps : {},
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
