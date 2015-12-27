@@ -293,7 +293,7 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel;
 
     const dropdownOpts = [
-      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span> },
+      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Cancel Editing</span> },
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ? 
