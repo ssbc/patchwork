@@ -13,6 +13,8 @@ import mentionslib from '../../lib/mentions'
 import app from '../../lib/app'
 import u from '../../lib/util'
 import social from '../../lib/social-graph'
+import ProfileName from './forms/profile-name'
+import ProfileImage from './forms/profile-image'
 
 const FLAG_DROPDOWN = [
   { value: 'spam',  label: <span><i className="fa fa-flag" /> Spammer</span> },
@@ -116,7 +118,10 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
-            <ModalBtn className="btn fullheight" Form={ProfileSetup} fullheight nextLabel="Publish"><i className="fa fa-wrench" /> Edit Profile</ModalBtn> :
+            <span className="btn-group">
+              <ModalBtn className="btn" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
+              <ModalBtn className="btn" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
+            </span> :
             <span className="btn-group">
               { (this.state.hasBlocked) ?
                 <span className="btn disabled">Blocked</span> :

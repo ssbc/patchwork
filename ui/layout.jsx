@@ -9,6 +9,8 @@ import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
+import ProfileName from './com/forms/profile-name'
+import ProfileImage from './com/forms/profile-image'
 import Friends from './com/forms/friends'
 import Issues from './com/issues'
 import FindBar from './com/findbar'
@@ -19,7 +21,7 @@ const SETUP_LABELS = [
   <span><i className="fa fa-photo"/><br/><small>Photo</small></span>,
   <span><i className="fa fa-check-square"/><br/><small>Start</small></span>
 ]
-const SETUP_FORMS = [Welcome, ProfileSetup, FollowNearby, Friends]
+const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, Friends]
 const RIGHT_NAVS = {
   notifications: Notifications
 }
