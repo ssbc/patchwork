@@ -20,8 +20,7 @@ export default class WelcomePage extends React.Component {
     }
     return <div className="text-center" style={verticalCenteringStyles}>
       <h1>Welcome to {rainbow('Patchwork')}</h1>
-      <h3>{"Let's"} create your avatar.</h3>
-      {''/*<h3>Reach the world</h3>*/}
+      <h3>{"Let's"} set up your device.</h3>
     </div>
   }
 }
