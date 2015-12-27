@@ -1,10 +1,10 @@
 'use babel'
 import React from 'react'
-import { Link } from 'react-router'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import cls from 'classnames'
 import { LocalStoragePersistedComponent } from '../com'
+import LeftNav from '../com/leftnav'
 import Dipswitch from '../com/form-elements/dipswitch'
 import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
@@ -23,38 +23,6 @@ const LISTITEMS = [
 const LISTITEM_CARD = LISTITEMS[0]
 const LISTITEM_ONELINE = LISTITEMS[1]
 
-// lefthand nav helper component
-class LeftNav extends React.Component {
-  render() {
-    // predicates
-    const isPinned = b => channel => (!!channel.pinned == b)
-    
-    // lists
-    const pinnedChannels = this.props.channels.filter(isPinned(true))
-    const unpinnedChannels = this.props.channels.filter(isPinned(false)).slice(0, 10)
-
-    // render
-    const NavHeading = props => {
-      return <div className="newsfeed-leftnav-heading">{props.children}</div>
-    }
-    const NavLink = props => {
-      return <div className="newsfeed-leftnav-link">
-        <Link to={props.to} className={this.props.location.pathname === props.to ? 'selected' : ''}>{props.children}</Link>
-      </div>
-    }
-    const renderChannel = c => <NavLink to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
-    return <div className="newsfeed-leftnav">
-      <NavLink to="/"><i className="fa fa-newspaper-o" /> Feed</NavLink>
-      <NavLink to="/inbox"><i className="fa fa-inbox" /> Inbox</NavLink>
-      { pinnedChannels.length ? <NavHeading>Pinned Channels</NavHeading> : '' }
-      { pinnedChannels.map(renderChannel) }
-      { unpinnedChannels.length ? <NavHeading>Active Channels</NavHeading> : '' }
-      { unpinnedChannels.map(renderChannel) }
-      <NavLink to="/channels">Find more...</NavLink>
-    </div>
-  }
-}
-
 // newsfeed view
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
@@ -65,10 +33,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       isUsingThreadPanel: false,
       currentThreadKey: null
     })
-
-    // watch for updates to the channels
-    this.state.channels = app.channels || []
-    app.on('update:channels', (this.onUpdateChannels = () => this.setState({ channels: app.channels })))
 
     // watch for open:msg events
     app.on('open:msg', (this.onOpenMsg = key => {
@@ -82,7 +46,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     }))
   }
   componentWillUnmount() {
-    app.removeListener('update:channels', this.onUpdateChannels)
     app.removeListener('open:msg', this.onOpenMsg)
   }
 
@@ -115,7 +78,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
   render() {
     const channel = this.props.params.channel
-    const channelData = channel && findChannelData(this.state.channels, channel)
+    const channelData = channel && findChannelData(app.channels, channel)
     const listItem = LISTITEMS[this.state.listItemIndex]
     const ListItem = listItem.Component
 
@@ -170,7 +133,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         dateDividers
         openMsgEvent
         filter={filter}
-        LeftNav={LeftNav} leftNavProps={{ location: this.props.location, channels: this.state.channels }}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={thread ? undefined : RightNav}
         ListItem={ListItem} listItemProps={{ userPic: true }}
         live={{ gt: [Date.now(), null] }}
