@@ -268,7 +268,7 @@ export class Editor extends React.Component {
           <div className="composer-channel">#{channel}</div>
           : '' }
           <div className="composer-content">
-            <ComposerTextarea ref="textarea" value={this.props.editingContent} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
+            <ComposerTextarea ref="textarea" defaultValue={this.props.editingContent} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
           </div>
           <div className="composer-ctrls flex">
             <div className="flex-fill">
