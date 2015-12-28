@@ -8,7 +8,7 @@ import LeftNav from '../com/leftnav'
 import Dipswitch from '../com/form-elements/dipswitch'
 import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
-import Card from '../com/msg-view/card'
+import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import Thread from '../com/msg-thread'
 import { ALL_CHANNELS, ChannelList } from '../com/channel-list'
@@ -17,8 +17,8 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const LISTITEMS = [
-  { label: <span>Feed-style</span>, Component: Card },
-  { label: <span>Inbox-style</span>, Component: Summary }
+  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
+  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
 ]
 const LISTITEM_CARD = LISTITEMS[0]
 const LISTITEM_ONELINE = LISTITEMS[1]
@@ -27,11 +27,7 @@ const LISTITEM_ONELINE = LISTITEMS[1]
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'newsfeedState', {
-      isToolbarOpen: true,
-      listItemIndex: 0,
-      isFollowedOnly: true,
-      isUsingThreadPanel: false,
-      currentThreadKey: null
+      currentMsgView: 0
     })
     this.state.channels = app.channels || []
 
@@ -56,21 +52,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
 
   // ui event handlers
-  onToggleToolbar(b) {
-    this.setState({ isToolbarOpen: b }, () => {
-      this.refs.list.calcContainerHeight()
-    })
-  }
-  onSelectListItem(listItem) {
-    this.setState({ listItemIndex: LISTITEMS.indexOf(listItem) })
-  }
-  onToggleFollowedOnly(b) {
-    this.setState({ isFollowedOnly: b }, () => {
-      this.refs.list.reload()
-    })
-  }
-  onToggleThreadPanel(b) {
-    this.setState({ isUsingThreadPanel: b })
+  onToggleMsgView() {
+    this.setState({ currentMsgView: +(!this.state.currentMsgView) })
   }
   onTogglePinned() {
     const channel = this.props.params.channel
@@ -81,14 +64,18 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         app.issue('Failed to pin channel', err)
     })
   }
-  onNewPost() {
 
+  onNewPost() {
+    alert('todo')
+  }
+  onMarkAllRead() {
+    alert('todo')    
   }
 
   render() {
     const channel = this.props.params.channel
     const channelData = channel && findChannelData(app.channels, channel)
-    const listItem = LISTITEMS[1]//this.state.listItemIndex]
+    const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
 
     // msg-list params
@@ -111,6 +98,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       const isPinned = channelData && channelData.pinned
       return <LeftNav location={this.props.location} title={channel?('#'+channel):false}>
         <div className="leftnav-link"><a onClick={this.onNewPost.bind(this)}><i className="fa fa-envelope-o" /> New Public Post</a></div>
+        <div className="leftnav-link"><a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a></div>
+        <div className="leftnav-link"><a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a></div>
         { channel
           ? <div className="leftnav-link">
             <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>

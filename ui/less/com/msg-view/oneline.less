@@ -4,21 +4,9 @@
   padding: 8px 6px 6px;
   overflow: hidden;
   color: #555;
+  border-bottom: 1px solid #ddd;
 
-  .bookmark {
-    flex: 0 0 24px;
-    padding: 3px 0 0 0;
-    text-align: right;
-    font-size: 21px;
-    .fa-bookmark-o {
-      color: gray;
-    }
-    .fa-bookmark {
-      color: #EFBD32;
-    }
-  }
   .type {
-    flex: 0 0 14px;
     padding: 3px 0 0 0;
     font-size: 21px;
     text-align: right;
@@ -60,21 +48,20 @@
   }
 
   &.unread {
+    border-left: 4px solid #006EFF;
     background: #fff;
-    .elevation-card;
     .replies {
       font-weight: bold;
     }
-    &:before {
-      content: "\f0a4";
-      top: 10px;
-      position: relative;
-      width: 23px;
-      font: normal normal normal 14px/1 FontAwesome;
+    .content {
+      font-weight: bold;
     }
   }
   
   &:hover {
     background: #fafafa;
   }
+}
+.divider-spot .msg-view.oneline {
+  border-top: 1px solid #ddd;  
 }

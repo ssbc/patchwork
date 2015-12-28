@@ -350,7 +350,7 @@ export default class MsgList extends React.Component {
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
     const endOfToday = moment().endOf('day')
-    var lastDate = moment().startOf('day').add(1, 'day')
+    var lastDate = moment().startOf('day')
     return <div className="msg-list">
       <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
@@ -365,7 +365,7 @@ export default class MsgList extends React.Component {
           isInfiniteLoading={this.state.isLoading}>
           <div className="flex">
             { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
-            <div className="flex-fill" style={{paddingRight: '5px'}}>
+            <div className="flex-fill" style={{padding: '5px'}}>
               { Hero ? <Hero/> : '' }
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
@@ -399,7 +399,7 @@ export default class MsgList extends React.Component {
                       lastDate = moment(lastPost.value.timestamp)
                       if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
                         let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                        return <div key={m.key}><hr className="labeled" data-label={label} />{item}</div>
+                        return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
                       }
                       return item
                     }) }

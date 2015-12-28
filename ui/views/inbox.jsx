@@ -2,17 +2,24 @@
 import React from 'react'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
+import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import MsgList from '../com/msg-list'
+import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
-import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 
-export default class Inbox extends React.Component {
+const LISTITEMS = [
+  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
+  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
+]
+const LISTITEM_CARD = LISTITEMS[0]
+const LISTITEM_ONELINE = LISTITEMS[1]
+
+export default class Inbox extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'inboxState', {
-      isToolbarOpen: true,
-      isUnreadOnly: false
+      currentMsgView: 0
     })
   }
 
@@ -21,22 +28,25 @@ export default class Inbox extends React.Component {
       return [msg.value.timestamp, msg.value.author]
   }
 
-  helpCards() {
-    return <div className="cards-flow">
-      <HelpCards.Inbox />
-      <HelpCards.Pubs />
-      <HelpCards.FindingUsers />
-    </div>
+  onToggleMsgView() {
+    this.setState({ currentMsgView: +(!this.state.currentMsgView) })
   }
 
   onNewPost() {
-
+    alert('todo')
+  }
+  onMarkAllRead() {
+    alert('todo')    
   }
 
   render() {
+    const listItem = LISTITEMS[this.state.currentMsgView]
+    const ListItem = listItem.Component
     const InboxLeftNav = props => {    
       return <LeftNav location={this.props.location}>
         <div className="leftnav-link"><a onClick={this.onNewPost.bind(this)}><i className="fa fa-envelope-o" /> New Private Post</a></div>
+        <div className="leftnav-link"><a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a></div>
+        <div className="leftnav-link"><a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a></div>
       </LeftNav>
     }
     // composer composerProps={{placeholder: 'Write a new private message'}}
@@ -45,11 +55,10 @@ export default class Inbox extends React.Component {
         ref="list"
         threads
         dateDividers
-        ListItem={Summary} listItemProps={{ userPic: true }}
+        ListItem={ListItem} listItemProps={{ userPic: true }}
         LeftNav={InboxLeftNav}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
-        append={this.helpCards.bind(this)}
         source={app.ssb.patchwork.createInboxStream}
         cursor={this.cursor} />
     </div>
