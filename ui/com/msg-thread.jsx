@@ -223,7 +223,6 @@ export default class Thread extends React.Component {
             ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
             : <ResponsiveElement widthStep={250}>
                 <div className="flex light-toolbar">
-                  <div className="flex-fill"/>
                   { threadRoot
                     ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
                     : '' }
