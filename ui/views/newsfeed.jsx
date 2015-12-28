@@ -91,16 +91,17 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
-    const NewsfeedLeftNav = props => {    
+    const Toolbar = props => {    
       const isPinned = channelData && channelData.pinned
-      return <LeftNav location={this.props.location} title={channel?('#'+channel):'Public Posts'}>
-        <div className="leftnav-link"><a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a></div>
-        <div className="leftnav-link"><a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a></div>
+      return <div className="flex light-toolbar">
+        <a onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose Public Message</a>
+        <div className="flex-fill"/>
         { channel
-          ? <div className="leftnav-link">
-            <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
-          </div> : '' }
-      </LeftNav>
+          ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
+          : '' }
+        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
+      </div>
     }
 
     // render content
@@ -113,7 +114,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         dateDividers
         openMsgEvent
         filter={filter}
-        LeftNav={NewsfeedLeftNav}
+        Hero={Toolbar}
+        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         ListItem={ListItem} listItemProps={{ userPic: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}

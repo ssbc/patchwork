@@ -43,7 +43,6 @@ export default class LeftNav extends React.Component {
     }
     const renderChannel = c => <NavLink key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
     return <div className="leftnav">
-      <NavHeading>Pages</NavHeading>
       <NavLink to="/"><i className="fa fa-bullhorn" /> Public</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
       <NavLink to="/notifications"><i className="fa fa-bell" /> Notifications ({this.state.indexCounts.notificationsUnread})</NavLink>

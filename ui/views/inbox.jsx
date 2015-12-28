@@ -39,20 +39,25 @@ export default class Inbox extends LocalStoragePersistedComponent {
   render() {
     const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
-    const InboxLeftNav = props => {    
-      return <LeftNav location={this.props.location} title="Private Posts">
-        <div className="leftnav-link"><a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a></div>
-        <div className="leftnav-link"><a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a></div>
-      </LeftNav>
+
+    const Toolbar = props => {    
+      return <div className="flex light-toolbar">
+        <a onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose Private Message</a>
+        <div className="flex-fill"/>
+        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
+      </div>
     }
+
     // composer composerProps={{placeholder: 'Write a new private message'}}
     return <div id="inbox">
       <MsgList
         ref="list"
         threads
         dateDividers
+        Hero={Toolbar}
         ListItem={ListItem} listItemProps={{ userPic: true }}
-        LeftNav={InboxLeftNav}
+        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}

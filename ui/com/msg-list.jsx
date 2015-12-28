@@ -350,7 +350,7 @@ export default class MsgList extends React.Component {
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
     const endOfToday = moment().endOf('day')
-    var lastDate = moment().startOf('day')
+    var lastDate = moment().startOf('day').add(1, 'day')
     return <div className="msg-list">
       <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
