@@ -4,6 +4,8 @@ import ssbref from 'ssb-ref'
 import app from './app'
 import u from './util'
 
+const MAX_CHANNEL_RESULTS = 4
+
 export function getResults (query) {
   var results = []
 
@@ -17,41 +19,43 @@ export function getResults (query) {
     return results
   }
 
-  // builtin pages
-  // TODO
-
-  // channels
-  if (query.charAt(0) == '#')
-    results = results.concat(searchChannels(query))
-
-  // known users
-  // TODO
-
   // general results
   results = results.concat([
     { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) },
     { icon: 'user', label: `Search people for "${query}"`, fn: doSearch({ type: 'users' }) }
   ])
+
+  // builtin pages
+  // TODO
+
+  // known users
+  // TODO
+
+  // channels
+  results = results.concat(getChannelResults(query))
+
   return results
 }
 
-function searchChannels (query) {
+function getChannelResults (query) {
   if (query.charAt(0) == '#') // strip off the pound
     query = query.slice(1)
   query = query.toLowerCase()
 
   var hasExact = false
-  var results = app.channels
-    .filter(ch => ch.name.toLowerCase().indexOf(query) !== -1)
-    .map(ch => {
+  var results = []
+  for (var i=0; i < app.channels.length && results.length < MAX_CHANNEL_RESULTS; i++) {
+    var ch = app.channels[i]
+    if (ch.name.toLowerCase().indexOf(query) !== -1) {
       if (!hasExact)
-        hasExact = ch.name == query
-      return {
+        hasExact = (ch.name == query)
+      results.push({
         icon: 'hashtag',
         label: <span>Open channel #{ch.name}</span>,
         fn: openChannel(ch.name)
-      }
-    })
+      })
+    }
+  }
   if (!hasExact)
     results.push({ icon: 'hashtag', label: `Open channel #${query}`, fn: openChannel(query) })
   return results
