@@ -41,16 +41,16 @@ export default class LeftNav extends React.Component {
         <Link to={props.to} className={pathname === props.to ? 'selected' : ''}>{props.children}</Link>
       </div>
     }
-    const renderChannel = c => <NavLink to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
+    const renderChannel = c => <NavLink key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
     return <div className="leftnav">
-      { this.props.children ? <NavHeading>This Page</NavHeading> : '' }
-      { this.props.children }
       <NavHeading>Pages</NavHeading>
       <NavLink to="/"><i className="fa fa-bullhorn" /> Public</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
       <NavLink to="/notifications"><i className="fa fa-bell" /> Notifications ({this.state.indexCounts.notificationsUnread})</NavLink>
       <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</NavLink>
       <NavLink to="/sync"><i className="fa fa-users" /> Friends</NavLink>
+      { this.props.children ? <NavHeading>{this.props.title||'This Page'}</NavHeading> : '' }
+      { this.props.children }
       <NavHeading>Channels</NavHeading>
       { pinnedChannels.map(renderChannel) }
       <NavLink to="/channels">Find more...</NavLink>

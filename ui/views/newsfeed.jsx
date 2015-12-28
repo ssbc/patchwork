@@ -33,6 +33,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       isUsingThreadPanel: false,
       currentThreadKey: null
     })
+    this.state.channels = app.channels || []
 
     // watch for open:msg events
     app.on('open:msg', (this.onOpenMsg = key => {
@@ -44,8 +45,13 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         app.history.pushState(null, '/msg/' + encodeURIComponent(key))
       }      
     }))
+    this.refresh = () => {
+      this.setState({ channels: app.channels })
+    }
+    app.on('update:channels', this.refresh)
   }
   componentWillUnmount() {
+    app.removeListener('update:channels', this.refresh)
     app.removeListener('open:msg', this.onOpenMsg)
   }
 
@@ -75,6 +81,9 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         app.issue('Failed to pin channel', err)
     })
   }
+  onNewPost() {
+
+  }
 
   render() {
     const channel = this.props.params.channel
@@ -98,28 +107,15 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
-    // render right nav
-    const RightNav = (props) => {    
+    const NewsfeedLeftNav = props => {    
       const isPinned = channelData && channelData.pinned
-      const Ctrl = props => {
-        return <div className="ctrl"><label><i className={'fa fa-'+props.icon} /> {props.label}</label>{props.children}</div>
-      }
-      return <div className="newsfeed-rightnav">
-        <hr className="labeled" data-label="about" />
-        <div className="about">
-          <div><strong>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' }</strong></div>
-          <div>Public messages by everyone { this.state.isFollowedOnly ? 'that you follow' : 'in your network' }.</div>
-        </div>
-        <hr className="labeled" data-label="config" />
-        <div className="config">
-          { channel
-            ? <Ctrl icon="thumb-tack" label="Pin Channel:"><Dipswitch label={isPinned?"Yes":"No"} checked={isPinned} onToggle={this.onTogglePinned.bind(this)} /></Ctrl>
-            : '' }
-          <Ctrl icon="user" label="Show:"><Dipswitch label={this.state.isFollowedOnly?"Followed Only":"All Users"} checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} /></Ctrl>
-          <Ctrl icon="hand-pointer-o" label="On Click:"><Dipswitch label={this.state.isUsingThreadPanel?"Preview Threads":"Open Threads"} checked={this.state.isUsingThreadPanel} onToggle={this.onToggleThreadPanel.bind(this)} /></Ctrl>
-          <Ctrl icon="th-list" label="View Mode:"><Tabs vertical options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} /></Ctrl>
-        </div>
-      </div>
+      return <LeftNav location={this.props.location} title={channel?('#'+channel):false}>
+        <div className="leftnav-link"><a onClick={this.onNewPost.bind(this)}><i className="fa fa-envelope-o" /> New Public Post</a></div>
+        { channel
+          ? <div className="leftnav-link">
+            <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
+          </div> : '' }
+      </LeftNav>
     }
 
     // render content
@@ -132,7 +128,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         dateDividers
         openMsgEvent
         filter={filter}
-        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        LeftNav={NewsfeedLeftNav}
         ListItem={ListItem} listItemProps={{ userPic: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}

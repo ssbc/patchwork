@@ -29,7 +29,16 @@ export default class Inbox extends React.Component {
     </div>
   }
 
+  onNewPost() {
+
+  }
+
   render() {
+    const InboxLeftNav = props => {    
+      return <LeftNav location={this.props.location}>
+        <div className="leftnav-link"><a onClick={this.onNewPost.bind(this)}><i className="fa fa-envelope-o" /> New Private Post</a></div>
+      </LeftNav>
+    }
     // composer composerProps={{placeholder: 'Write a new private message'}}
     return <div id="inbox">
       <MsgList
@@ -37,7 +46,7 @@ export default class Inbox extends React.Component {
         threads
         dateDividers
         ListItem={Summary} listItemProps={{ userPic: true }}
-        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        LeftNav={InboxLeftNav}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         append={this.helpCards.bind(this)}

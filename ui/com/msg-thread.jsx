@@ -217,7 +217,7 @@ export default class Thread extends React.Component {
     const authorName = thread && u.getName(thread.value.author)
     return <div className="msg-thread">
       <VerticalFilledContainer id="msg-thread-vertical" className="flex">
-        <LeftNav location={this.props.location}>
+        <LeftNav location={this.props.location} title="This Post">
           { threadRoot
             ? <div className="leftnav-link"><a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a></div>
             : '' }
