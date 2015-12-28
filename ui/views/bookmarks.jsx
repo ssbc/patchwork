@@ -7,7 +7,7 @@ import MsgList from '../com/msg-list'
 import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
 
-export default class Inbox extends React.Component {
+export default class Bookmarks extends React.Component {
   cursor (msg) {
     if (msg)
       return [msg.value.timestamp, msg.value.author]
