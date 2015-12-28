@@ -7,14 +7,20 @@ export default class LeftNav extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      indexCounts: app.indexCounts,
       channels: app.channels || []
     }
 
-    // watch for updates to the channels
-    app.on('update:channels', (this.onUpdateChannels = () => this.setState({ channels: app.channels })))
+    // watch for updates to global state
+    this.refresh = () => {
+      this.setState({ channels: app.channels, indexCounts: app.indexCounts })
+    }
+    app.on('update:channels', this.refresh)
+    app.on('update:indexCounts', this.refresh)
   }
   componentWillUnmount() {
-    app.removeListener('update:channels', this.onUpdateChannels)
+    app.removeListener('update:channels', this.refresh)
+    app.removeListener('update:indexCounts', this.refresh)
   }
 
   render() {
@@ -36,8 +42,8 @@ export default class LeftNav extends React.Component {
     const renderChannel = c => <NavLink to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
     return <div className="leftnav">
       <NavLink to="/"><i className="fa fa-newspaper-o" /> Feed</NavLink>
-      <NavLink to="/inbox"><i className="fa fa-inbox" /> Inbox</NavLink>
-      <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks</NavLink>
+      <NavLink to="/inbox"><i className="fa fa-inbox" /> Inbox ({this.state.indexCounts.inboxUnread})</NavLink>
+      <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks ({this.state.indexCounts.bookmarksUnread})</NavLink>
       <NavLink to="/sync"><i className="fa fa-users" /> Friends</NavLink>
       <NavHeading>Channels</NavHeading>
       { pinnedChannels.map(renderChannel) }
