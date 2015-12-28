@@ -41,7 +41,7 @@ class SearchResults extends React.Component {
 
   render() {
     const Result = props => {
-      return <div className={cls({ selected: this.state.selected === props.index })} onMouseOver={this.onMouseOverResult.bind(this, props.index)}>
+      return <div className={cls({ selected: this.state.selected === props.index })} onMouseOver={this.onMouseOverResult.bind(this, props.index)} onClick={this.props.onClickResult}>
         <i className={'fa fa-'+props.icon} /> {props.label}
       </div>
     }
@@ -109,7 +109,7 @@ export default class SearchPalette extends React.Component {
         value={this.state.query}
         onChange={this.onChange.bind(this)}
         onKeyDown={this.onKeyDown.bind(this)} />
-      { hasQuery ? <SearchResults ref="results" query={this.state.query} results={this.state.results} /> : '' }
+      { hasQuery ? <SearchResults ref="results" query={this.state.query} results={this.state.results} onClickResult={this.onSearch.bind(this)} /> : '' }
     </div>
   }
 }
