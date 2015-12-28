@@ -10,7 +10,7 @@ import app from '../lib/app'
 export default class Bookmarks extends React.Component {
   cursor (msg) {
     if (msg)
-      return [msg.value.timestamp, msg.value.author]
+      return [msg.ts, false]
   }
 
   render() {
