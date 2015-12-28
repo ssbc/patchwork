@@ -103,6 +103,9 @@ export default class Layout extends React.Component {
           <NavLink className="home" to="/" selected={location === '/' || location.indexOf('/newsfeed/') === 0} icon="home" />
         </div>
         <div className="flex-fill"><SearchPalette/></div>
+        <div>
+          <a className="btn" onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose</a>
+        </div>
       </div>
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>

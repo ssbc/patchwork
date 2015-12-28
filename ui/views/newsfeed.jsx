@@ -65,9 +65,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     })
   }
 
-  onNewPost() {
-    alert('todo')
-  }
   onMarkAllRead() {
     alert('todo')    
   }
@@ -96,8 +93,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
     const NewsfeedLeftNav = props => {    
       const isPinned = channelData && channelData.pinned
-      return <LeftNav location={this.props.location} title={channel?('#'+channel):false}>
-        <div className="leftnav-link"><a onClick={this.onNewPost.bind(this)}><i className="fa fa-envelope-o" /> New Public Post</a></div>
+      return <LeftNav location={this.props.location} title={channel?('#'+channel):'Public Posts'}>
         <div className="leftnav-link"><a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a></div>
         <div className="leftnav-link"><a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a></div>
         { channel

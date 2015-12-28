@@ -32,9 +32,6 @@ export default class Inbox extends LocalStoragePersistedComponent {
     this.setState({ currentMsgView: +(!this.state.currentMsgView) })
   }
 
-  onNewPost() {
-    alert('todo')
-  }
   onMarkAllRead() {
     alert('todo')    
   }
@@ -43,8 +40,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
     const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
     const InboxLeftNav = props => {    
-      return <LeftNav location={this.props.location}>
-        <div className="leftnav-link"><a onClick={this.onNewPost.bind(this)}><i className="fa fa-envelope-o" /> New Private Post</a></div>
+      return <LeftNav location={this.props.location} title="Private Posts">
         <div className="leftnav-link"><a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a></div>
         <div className="leftnav-link"><a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a></div>
       </LeftNav>
