@@ -42,7 +42,7 @@ export default class Bookmarks extends LocalStoragePersistedComponent {
 
     const Toolbar = props => {    
       return <div className="flex light-toolbar">
-        <a onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose Private Message</a>
+        <a onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose Public Message</a>
         <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>

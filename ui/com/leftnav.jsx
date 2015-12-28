@@ -45,7 +45,6 @@ export default class LeftNav extends React.Component {
     return <div className="leftnav">
       <NavLink to="/"><i className="fa fa-bullhorn" /> Public</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
-      <NavLink to="/notifications"><i className="fa fa-bell" /> Notifications ({this.state.indexCounts.notificationsUnread})</NavLink>
       <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</NavLink>
       <NavLink to="/sync"><i className="fa fa-users" /> Friends</NavLink>
       { this.props.children ? <NavHeading>{this.props.title||'This Page'}</NavHeading> : '' }
