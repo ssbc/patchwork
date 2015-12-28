@@ -217,21 +217,23 @@ export default class Thread extends React.Component {
     const authorName = thread && u.getName(thread.value.author)
     return <div className="msg-thread">
       <VerticalFilledContainer id="msg-thread-vertical" className="flex">
-        <LeftNav location={this.props.location} title="This Post">
-          { threadRoot
-            ? <div className="leftnav-link"><a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a></div>
-            : '' }
-          { !threadRoot && thread
-            ? <div className="leftnav-link"><BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} /></div>
-            : '' }
-          { thread
-            ? <div className="leftnav-link"><UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} /></div>
-            : '' }
-        </LeftNav>
-        <div className="flex-fill">
+        <LeftNav location={this.props.location} />
+        <div className="flex-fill" style={{padding: 5}}>
           { !thread
             ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
             : <ResponsiveElement widthStep={250}>
+                <div className="flex light-toolbar">
+                  <div className="flex-fill"/>
+                  { threadRoot
+                    ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
+                    : '' }
+                  { !threadRoot && thread
+                    ? <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+                    : '' }
+                  { thread
+                    ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
+                    : '' }
+                </div>
                 <hr className="labeled" data-label={`${publicOrPrivate} post by ${authorName}`} />
                 <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
                   { this.state.msgs.map((msg, i) => {
