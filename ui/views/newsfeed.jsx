@@ -79,7 +79,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   render() {
     const channel = this.props.params.channel
     const channelData = channel && findChannelData(app.channels, channel)
-    const listItem = LISTITEMS[this.state.listItemIndex]
+    const listItem = LISTITEMS[1]//this.state.listItemIndex]
     const ListItem = listItem.Component
 
     // msg-list params
@@ -129,7 +129,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         ref="list"
         threads
         composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}
-        queueNewMsgs
         dateDividers
         openMsgEvent
         filter={filter}
