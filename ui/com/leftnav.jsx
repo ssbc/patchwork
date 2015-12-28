@@ -24,6 +24,8 @@ export default class LeftNav extends React.Component {
   }
 
   render() {
+    const pathname = this.props.location && this.props.location.pathname
+
     // predicates
     const isPinned = b => channel => (!!channel.pinned == b)
     
@@ -36,11 +38,14 @@ export default class LeftNav extends React.Component {
     }
     const NavLink = props => {
       return <div className="leftnav-link">
-        <Link to={props.to} className={this.props.location.pathname === props.to ? 'selected' : ''}>{props.children}</Link>
+        <Link to={props.to} className={pathname === props.to ? 'selected' : ''}>{props.children}</Link>
       </div>
     }
     const renderChannel = c => <NavLink to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
     return <div className="leftnav">
+      { this.props.children ? <NavHeading>This Page</NavHeading> : '' }
+      { this.props.children }
+      <NavHeading>Pages</NavHeading>
       <NavLink to="/"><i className="fa fa-bullhorn" /> Public</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
       <NavLink to="/notifications"><i className="fa fa-bell" /> Notifications ({this.state.indexCounts.notificationsUnread})</NavLink>

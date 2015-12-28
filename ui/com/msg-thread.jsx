@@ -5,6 +5,7 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
 import { VerticalFilledContainer } from './index'
+import LeftNav from './leftnav'
 import ResponsiveElement from './responsive-element'
 import Card from './msg-view/card'
 import { isaReplyTo, relationsTo } from '../lib/msg-relation'
@@ -16,8 +17,8 @@ class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
     const title = 'Bookmark'+(b?'ed':'')
-    return <a className={'btn '+(b?' selected':'')} onClick={this.props.onClick} title={title}>
-        <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title} Thread
+    return <a className={(b?' selected':'')} onClick={this.props.onClick} title={title}>
+        <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title}
     </a>
   }
 }
@@ -27,8 +28,8 @@ class UnreadBtn extends React.Component {
     const b = this.props.isUnread
     const title = (b?'Mark Read':'Mark Unread')
     const icon = 'fa fa-'+(b?'square-o':'check-square-o')
-    return <a className="btn" onClick={this.props.onClick} title={title}>
-      <i className={icon} /> Read
+    return <a onClick={this.props.onClick} title={title}>
+      <i className={icon} /> {title}
     </a>
   }
 }
@@ -212,41 +213,46 @@ export default class Thread extends React.Component {
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
+    const publicOrPrivate = (thread && thread.plaintext) ? 'Public' : 'Private'
+    const authorName = thread && u.getName(thread.value.author)
     return <div className="msg-thread">
-      <div className="toolbar flex">
-        { this.props.closeBtn ?
-          <a className="btn" onClick={this.onCloseMsg.bind(this)}><i className="fa fa-times"/> Close</a>
-          : '' }
-        { threadRoot ?
-          <a className="btn" onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
-          : '' }
-        { !threadRoot && thread ?
-          <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
-          : '' }
-        { canMarkUnread ?
-          <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
-          : '' }
-      </div>
-      <VerticalFilledContainer id="msg-thread-vertical">
-        <ResponsiveElement widthStep={250}>
-          <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-              { this.state.msgs.map((msg, i) => {
-                const isFirst = (i === 0)
-                return <Card
-                  key={msg.key}
-                  msg={msg}
-                  noReplies
-                  noBookmark
-                  forceRaw={this.props.forceRaw}
-                  forceOpen={isFirst}
-                  onSelect={()=>this.openMsg(msg.key)}
-                  onToggleStar={()=>this.onToggleStar(msg)}
-                  onFlag={(msg, reason)=>this.onFlag(msg, reason)}
-                  onToggleBookmark={()=>this.onToggleBookmark(msg)} />
-              }) }
-              { thread ? <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div> : '' }
-          </ReactCSSTransitionGroup>
-        </ResponsiveElement>
+      <VerticalFilledContainer id="msg-thread-vertical" className="flex">
+        <LeftNav location={this.props.location}>
+          { threadRoot
+            ? <div className="leftnav-link"><a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a></div>
+            : '' }
+          { !threadRoot && thread
+            ? <div className="leftnav-link"><BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} /></div>
+            : '' }
+          { thread
+            ? <div className="leftnav-link"><UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} /></div>
+            : '' }
+        </LeftNav>
+        <div className="flex-fill">
+          { !thread
+            ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
+            : <ResponsiveElement widthStep={250}>
+                <hr className="labeled" data-label={`${publicOrPrivate} post by ${authorName}`} />
+                <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+                  { this.state.msgs.map((msg, i) => {
+                    const isFirst = (i === 0)
+                    return <Card
+                      key={msg.key}
+                      msg={msg}
+                      noReplies
+                      noBookmark
+                      forceRaw={this.props.forceRaw}
+                      forceOpen={isFirst}
+                      onSelect={()=>this.openMsg(msg.key)}
+                      onToggleStar={()=>this.onToggleStar(msg)}
+                      onFlag={(msg, reason)=>this.onFlag(msg, reason)}
+                      onToggleBookmark={()=>this.onToggleBookmark(msg)} />
+                  }) }
+                  <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
+                </ReactCSSTransitionGroup>
+              </ResponsiveElement>
+          }
+        </div>
       </VerticalFilledContainer>
     </div>
   }

@@ -30,12 +30,12 @@ export default class Inbox extends React.Component {
   }
 
   render() {
+    // composer composerProps={{placeholder: 'Write a new private message'}}
     return <div id="inbox">
       <MsgList
         ref="list"
         threads
         dateDividers
-        composer composerProps={{placeholder: 'Write a new private message'}}
         ListItem={Summary} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         live={{ gt: [Date.now(), null] }}

@@ -124,11 +124,11 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
     // render content
     const thread = this.state.isUsingThreadPanel && this.state.currentThreadKey
+    // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}    
     return <div id="newsfeed" key={channel||'*'}>
       <MsgList
         ref="list"
         threads
-        composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}
         dateDividers
         openMsgEvent
         filter={filter}
