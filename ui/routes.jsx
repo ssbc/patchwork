@@ -5,6 +5,7 @@ import app from './lib/app'
 import Layout from './layout'
 import NewsFeed from './views/newsfeed'
 import Inbox from './views/inbox'
+import Notifications from './views/notifications'
 import Bookmarks from './views/bookmarks'
 import Data from './views/data'
 import Msg from './views/msg'
@@ -36,6 +37,7 @@ export default (
       <Route path="newsfeed/channel/:channel" component={NewsFeed} />
       <Route path="channels" component={Channels} />
       <Route path="inbox" component={Inbox} />
+      <Route path="notifications" component={Notifications} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
       <Route path="profile" component={Profile} />

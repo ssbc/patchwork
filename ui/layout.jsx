@@ -1,13 +1,13 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import ssbref from 'ssb-ref'
 import app from './lib/app'
 import ModalFlow from './com/modals/flow'
 import Notifications from './com/msg-list/notifications'
 import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
+import SearchPalette from './com/search-palette'
 import Issues from './com/issues'
 import FindBar from './com/findbar'
 
@@ -41,7 +41,7 @@ export default class Layout extends React.Component {
   buildState() {
     // copy over app state
     return {
-      rightNav: (this.state) ? this.state.rightNav : 'notifications',
+      rightNav: (this.state) ? this.state.rightNav : false,
       rightNavProps: (this.state) ? this.state.rightNavProps : {},
       isWifiMode: app.isWifiMode,
       indexCounts: app.indexCounts||{},
@@ -76,27 +76,6 @@ export default class Layout extends React.Component {
     window.history.back()
   }
 
-  onSearchKeyDown(e) {
-    if (e.keyCode == 13) { // on enter
-      var query = e.target.value
-      if (query && query.trim()) {
-        if (ssbref.isLink(query)) {
-          // a link, lookup
-          if (ssbref.isFeedId(query)) {
-            app.history.pushState(null, '/profile/'+encodeURIComponent(query))
-          } else if (ssbref.isMsgId(query)) {
-            app.history.pushState(null, '/msg/'+encodeURIComponent(query))
-          } else if (ssbref.isBlobId(query)) {
-            app.history.pushState(null, '/webview/'+encodeURIComponent(query))            
-          }
-        } else {
-          // text query
-          app.history.pushState(null, '/search/'+encodeURIComponent(query))
-        }
-      }
-    }
-  }
-
   render() {
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
@@ -123,9 +102,7 @@ export default class Layout extends React.Component {
           <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
           <NavLink className="home" to="/" selected={location === '/' || location.indexOf('/newsfeed/') === 0} icon="home" />
         </div>
-        <div className="flex-fill">
-          <div className="search"><i className="fa fa-search" /><input ref="search" placeholder="Search for people or content" onKeyDown={this.onSearchKeyDown.bind(this)} /></div>
-        </div>
+        <div className="flex-fill"><SearchPalette/></div>
       </div>
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>
