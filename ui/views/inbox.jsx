@@ -18,7 +18,7 @@ const LISTITEM_ONELINE = LISTITEMS[1]
 
 export default class Inbox extends LocalStoragePersistedComponent {
   constructor(props) {
-    super(props, 'inboxState', {
+    super(props, 'msgList', {
       currentMsgView: 0
     })
   }

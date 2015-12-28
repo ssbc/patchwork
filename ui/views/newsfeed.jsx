@@ -26,7 +26,7 @@ const LISTITEM_ONELINE = LISTITEMS[1]
 // newsfeed view
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
-    super(props, 'newsfeedState', {
+    super(props, 'msgList', {
       currentMsgView: 0
     })
     this.state.channels = app.channels || []
