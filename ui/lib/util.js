@@ -58,6 +58,22 @@ exports.getName = function (id) {
   return app.users.names[id] || exports.shortString(id, 6)
 }
 
+exports.lastMessageFromUser = function (id, callback) {
+  let opts = {
+    id: id,
+    reverse: true
+  }
+  pull(
+    app.ssb.createUserStream(opts),
+    pull.take(1),
+    pull.collect( (err, msgs)=> {
+      if (err) throw err
+
+      callback(null, msgs[0])
+    })
+  )
+}
+
 exports.profilePicUrl = function (id) {
   var url = './img/default-prof-pic.png'
   var profile = app.users.profiles[id]
