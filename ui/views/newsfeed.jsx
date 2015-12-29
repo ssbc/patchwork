@@ -5,9 +5,10 @@ import mlib from 'ssb-msgs'
 import cls from 'classnames'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
-import Dipswitch from '../com/form-elements/dipswitch'
+import DropdownBtn from '../com/dropdown'
 import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
+import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import Thread from '../com/msg-thread'
@@ -17,6 +18,7 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const LISTITEMS = [
+  { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
   { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
   { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
 ]
@@ -52,8 +54,9 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
 
   // ui event handlers
-  onToggleMsgView() {
-    this.setState({ currentMsgView: +(!this.state.currentMsgView) })
+  onSelectMsgView(v, index) {
+    console.log(v, index)
+    this.setState({ currentMsgView: index })
   }
   onTogglePinned() {
     const channel = this.props.params.channel
@@ -100,7 +103,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
+        <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
 
