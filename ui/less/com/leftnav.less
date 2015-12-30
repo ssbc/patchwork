@@ -10,11 +10,29 @@
   }
 
   .leftnav-link {
-    margin: 5px 0 5px 10px;
+    border-left: 5px solid transparent;
+    padding: 5px 0 5px 10px;
     a {
       color: #555;
-      &.selected {
-        color: #006EFF;
+    }
+    &.selected {
+      border-color: #1a86ff;
+      a {
+        color: #1a86ff;
+      }
+    }
+    &.compose-btn {
+      padding: 15px 0 15px 10px;
+      a {
+        background: linear-gradient(to bottom, #4da1ff, #4F9BEF);
+        color: white;
+        padding: 5px 30px 6px 26px;
+        border-radius: 3px;
+
+        &:hover {
+          background: darken(#4da1ff, 5%);
+          text-decoration: none;
+        }
       }
     }
     i { 

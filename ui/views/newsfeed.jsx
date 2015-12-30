@@ -55,7 +55,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
   // ui event handlers
   onSelectMsgView(v, index) {
-    console.log(v, index)
     this.setState({ currentMsgView: index })
   }
   onTogglePinned() {
@@ -97,7 +96,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     const Toolbar = props => {    
       const isPinned = channelData && channelData.pinned
       return <div className="flex light-toolbar">
-        <a onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose Public Message</a>
         <div className="flex-fill"/>
         { channel
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>

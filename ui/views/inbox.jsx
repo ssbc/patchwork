@@ -45,7 +45,6 @@ export default class Inbox extends LocalStoragePersistedComponent {
 
     const Toolbar = props => {    
       return <div className="flex light-toolbar">
-        <a onClick={()=>alert('todo')}><i className="fa fa-envelope-o" /> Compose Private Message</a>
         <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>

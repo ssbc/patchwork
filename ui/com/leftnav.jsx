@@ -37,12 +37,13 @@ export default class LeftNav extends React.Component {
       return <div className="leftnav-heading">{props.children}</div>
     }
     const NavLink = props => {
-      return <div className="leftnav-link">
-        <Link to={props.to} className={pathname === props.to ? 'selected' : ''}>{props.children}</Link>
+      return <div className={'leftnav-link '+(props.className||'')+(pathname === props.to ? ' selected' : '')}>
+        <Link to={props.to}>{props.children}</Link>
       </div>
     }
     const renderChannel = c => <NavLink key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
     return <div className="leftnav">
+      <NavLink className="compose-btn" to="/composer">Compose</NavLink>
       <NavLink to="/"><i className="fa fa-bullhorn" /> Public</NavLink>
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
       <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</NavLink>

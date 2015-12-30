@@ -83,7 +83,7 @@ export default class Layout extends React.Component {
     const RightNavView = (this.state.rightNav) ? RIGHT_NAVS[this.state.rightNav] : null
 
     const NavLink = (props) => {
-      const selected = props.selected || (props.to === location)
+      const selected = false //props.selected || (props.to === location)
       const cls = (props.className||'')+' ctrl '+(selected?'selected':'')
       const count = props.count ? <div className="count">{props.count}</div> : ''
       return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
@@ -100,7 +100,7 @@ export default class Layout extends React.Component {
       <div className="toolbar titlebar flex">
         <div>
           <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
-          <NavLink className="home" to="/" selected={location === '/' || location.indexOf('/newsfeed/') === 0} icon="home" />
+          <NavLink className="home" to="/" icon="home" />
         </div>
         <div className="flex-fill"><SearchPalette/></div>
         <div>
