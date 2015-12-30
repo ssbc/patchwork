@@ -4,7 +4,7 @@ import ssbref from 'ssb-ref'
 import app from './app'
 import u from './util'
 
-const MAX_CHANNEL_RESULTS = 4
+const MAX_CHANNEL_RESULTS = 3
 
 export function getResults (query) {
   var results = []
