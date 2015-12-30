@@ -57,10 +57,10 @@ module.exports = function (window) {
           label: 'Show All',
           selector: 'unhideAllApplications:'
         },
+      ] : [], [
         {
           type: 'separator'
         },
-      ] : [], [
         {
           label: 'Quit',
           accelerator: 'CmdOrCtrl+Q',
