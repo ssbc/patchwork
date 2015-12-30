@@ -1,18 +1,45 @@
 var Menu = require('menu')
 var dialog = require('dialog')
+var pkg = require('../package')
 
 var isMac = (process.platform == 'darwin')
+
+function showAbout(win) {
+  dialog.showMessageBox(win, {
+    title: 'About Patchwork',
+    buttons: ['Close', 'License'],
+    type: 'info',
+    icon: 'assets/icon.png',
+    message: pkg.name + ' v' + pkg.version,
+    detail: pkg.description + '\n\n' +
+      'Copyright © 2015-2016 Secure Scuttlebutt Consortium'
+  }, function (btn) {
+    if (btn == 1)
+      showLicense(win)
+  })
+}
+
+function showLicense(win) {
+  dialog.showMessageBox(win, {
+    title: 'License',
+    buttons: ['Close'],
+    message: pkg.license,
+    detail: 'This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.'
+  })
+}
 
 module.exports = function (window) {
   var template = [
     {
       label: 'Patchwork',
       submenu: [
-      ].concat(isMac ? [
         {
           label: 'About Patchwork',
-          selector: 'orderFrontStandardAboutPanel:'
+          click: function (item, win) {
+            showAbout(win)
+          }
         },
+      ].concat(isMac ? [
         {
           type: 'separator'
         },
