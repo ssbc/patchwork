@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import { Link } from 'react-router'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import cls from 'classnames'
@@ -96,10 +97,13 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     const Toolbar = props => {    
       const isPinned = channelData && channelData.pinned
       return <div className="flex light-toolbar">
-        <div className="flex-fill"/>
+        { channel
+          ? <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link>
+          : '' }
         { channel
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
+        <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
