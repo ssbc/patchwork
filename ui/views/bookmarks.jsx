@@ -19,7 +19,7 @@ const LISTITEMS = [
 const LISTITEM_CARD = LISTITEMS[0]
 const LISTITEM_ONELINE = LISTITEMS[1]
 
-export default class Inbox extends LocalStoragePersistedComponent {
+export default class Bookmarks extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'msgList', {
       currentMsgView: 0
@@ -28,7 +28,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
 
   cursor (msg) {
     if (msg)
-      return [msg.value.timestamp, msg.value.author]
+      return [msg.ts, false]
   }
 
   onSelectMsgView(v, index) {
@@ -51,18 +51,17 @@ export default class Inbox extends LocalStoragePersistedComponent {
       </div>
     }
 
-    // composer composerProps={{placeholder: 'Write a new private message'}}
-    return <div id="inbox">
+    return <div id="bookmarks">
       <MsgList
         ref="list"
         threads
         dateDividers
         Hero={Toolbar}
         ListItem={ListItem} listItemProps={{ userPic: true }}
-        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Your inbox is empty."
-        source={app.ssb.patchwork.createInboxStream}
+        emptyMsg="Your bookmarks view is empty."
+        source={app.ssb.patchwork.createBookmarkStream}
         cursor={this.cursor} />
     </div>
   }

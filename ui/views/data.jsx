@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import MsgList from '../com/msg-list'
-import Card from '../com/msg-view/card'
+import Oneline from '../com/msg-view/oneline'
 import app from '../lib/app'
 
 export default class Data extends React.Component {
@@ -9,6 +9,6 @@ export default class Data extends React.Component {
     const source = opts => {
       return app.ssb.createLogStream(opts)
     }
-    return <div id="data"><MsgList ListItem={Card} source={source} live={{ gt: Date.now() }} /></div>
+    return <div id="data"><MsgList ListItem={Oneline} listItemProps={{noReplies: true}} source={source} live={{ gt: Date.now() }} /></div>
   }
 }
