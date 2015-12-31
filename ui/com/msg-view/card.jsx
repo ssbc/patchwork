@@ -29,6 +29,10 @@ function userIsTrusted (userId) {
   return userId === app.user.id || social.follows(app.user.id, userId)
 }
 
+function isRevision(msg) {
+  return msg.value.content.type === 'post-edit'
+}
+
 class BookmarkBtn extends React.Component {
   onClick(e) {
     e.stopPropagation()
@@ -161,7 +165,10 @@ export default class Card extends React.Component {
     if (this.state.isEditing)
       return this.renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted);
 
-    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
+    if ((msg.value.content.type == 'post' ||
+         msg.value.content.type == 'post-edit') &&
+        downvoters.length > upvoters.length &&
+        !this.state.isExpanded)
       return this.renderMuted(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
@@ -202,6 +209,17 @@ export default class Card extends React.Component {
     </div>
   }
 
+  renderRevisionInfo(msg) {
+    if (isRevision(msg)) {
+      return (
+        <div key={msg.key + "rev-ctrls"}>
+          <a href="#">Revised <NiceDate ts={msg.value.timestamp} /></a>
+        </div>)
+    } else {
+      return null
+    }
+  }
+
   renderMuted(msg) {
     const text = msg.value.content.text
     return <div className={'msg-view card-muted'}>
@@ -220,13 +238,18 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
-      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span> },
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ?
         { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
         { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
+
+    if (app.user.id === msg.value.author)
+      dropdownOpts.unshift({ value: 'edit-post',
+                             label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span>
+      });
+
 
     const oversizedCls = (this.state.isOversized?'oversized':'')
     const expandedCls  = (this.state.isExpanded?'expanded':'')
@@ -264,6 +287,7 @@ export default class Card extends React.Component {
           { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
           { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
+          <div>{this.renderRevisionInfo(msg)}</div>
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
           { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
@@ -325,6 +349,7 @@ export default class Card extends React.Component {
             { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
             { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
             { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
+            <div>{this.renderRevisionInfo(msg)}</div>
             <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
             { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
