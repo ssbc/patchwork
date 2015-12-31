@@ -84,6 +84,7 @@
     "stack": "^0.1.0",
     "stream-to-pull-stream": "^1.6.1",
     "suggest-box": "~1.1.6",
+    "tether-drop": "^1.4.1",
     "text-node-searcher": "~1.1.0",
     "xtend": "^4.0.0"
   },

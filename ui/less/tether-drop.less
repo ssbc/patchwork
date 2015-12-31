@@ -1,0 +1,208 @@
+
+.drop-element, .drop-element:after, .drop-element:before, .drop-element *, .drop-element *:after, .drop-element *:before {
+  box-sizing: border-box;
+}
+
+.drop-element {
+  position: absolute;
+  display: none;
+
+  &.drop-open {
+    display: block;
+  }
+}
+
+@arrowSize: 8px;
+@arrowBackgroundColor: #ccc;
+@arrowColor: inherit;
+
+.drop-element.drop-theme-arrows {
+  max-width: 100%;
+  max-height: 100%;
+
+  .drop-content {
+      border-radius: 5px;
+      position: relative;
+      font-family: inherit;
+      background: @arrowBackgroundColor;
+      color: @arrowColor;
+      padding: 1em;
+      font-size: 1.1em;
+      line-height: 1.5em;
+
+      transform: translateZ(0);
+      drop-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+
+      &:before {
+          content: "";
+          display: block;
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-color: transparent;
+          border-width: @arrowSize;
+          border-style: solid;
+          pointer-events: none;
+      }
+  }
+
+  // Centers and middles
+
+  &.drop-element-attached-bottom.drop-element-attached-center .drop-content {
+      margin-bottom: @arrowSize;
+
+      &:before {
+          top: 100%;
+          left: 50%;
+          margin-left: - @arrowSize;
+          border-top-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-top.drop-element-attached-center .drop-content {
+      margin-top: @arrowSize;
+
+      &:before {
+          bottom: 100%;
+          left: 50%;
+          margin-left: -1 * @arrowSize;
+          border-bottom-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-right.drop-element-attached-middle .drop-content {
+      margin-right: @arrowSize;
+
+      &:before {
+          left: 100%;
+          top: 50%;
+          margin-top: - @arrowSize;
+          border-left-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-left.drop-element-attached-middle .drop-content {
+      margin-left: @arrowSize;
+
+      &:before {
+          right: 100%;
+          top: 50%;
+          margin-top: - @arrowSize;
+          border-right-color: @arrowBackgroundColor;
+      }
+  }
+
+  // Top and bottom corners
+
+  &.drop-element-attached-top.drop-element-attached-left.drop-target-attached-bottom .drop-content {
+      margin-top: @arrowSize;
+
+      &:before {
+          bottom: 100%;
+          left: @arrowSize;
+          border-bottom-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-top.drop-element-attached-right.drop-target-attached-bottom .drop-content {
+      margin-top: @arrowSize;
+
+      &:before {
+          bottom: 100%;
+          right: @arrowSize;
+          border-bottom-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-bottom.drop-element-attached-left.drop-target-attached-top .drop-content {
+      margin-bottom: @arrowSize;
+
+      &:before {
+          top: 100%;
+          left: @arrowSize;
+          border-top-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-bottom.drop-element-attached-right.drop-target-attached-top .drop-content {
+      margin-bottom: @arrowSize;
+
+      &:before {
+          top: 100%;
+          right: @arrowSize;
+          border-top-color: @arrowBackgroundColor;
+      }
+  }
+
+  // Side corners
+
+  &.drop-element-attached-top.drop-element-attached-right.drop-target-attached-left .drop-content {
+      margin-right: @arrowSize;
+
+      &:before {
+          top: @arrowSize;
+          left: 100%;
+          border-left-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-top.drop-element-attached-left.drop-target-attached-right .drop-content {
+      margin-left: @arrowSize;
+
+      &:before {
+          top: @arrowSize;
+          right: 100%;
+          border-right-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-bottom.drop-element-attached-right.drop-target-attached-left .drop-content {
+      margin-right: @arrowSize;
+
+      &:before {
+          bottom: @arrowSize;
+          left: 100%;
+          border-left-color: @arrowBackgroundColor;
+      }
+  }
+
+  &.drop-element-attached-bottom.drop-element-attached-left.drop-target-attached-right .drop-content {
+      margin-left: @arrowSize;
+
+      &:before {
+          bottom: @arrowSize;
+          right: 100%;
+          border-right-color: @arrowBackgroundColor;
+      }
+  }
+}
+
+@tooltipBackgroundColor: #fff;
+@tooltipBorderColor: #bbb;
+@tooltipColor: #555;
+
+.drop-element.drop-theme-tooltip {
+  max-width: 400px;
+  pointer-events: none;
+  word-break: break-all;
+  opacity: 0;
+  transition: opacity 150ms;
+  font-family: @interface-font;
+
+  .drop-content {
+    background: @tooltipBackgroundColor;
+    border: 1px solid @tooltipBorderColor;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    padding: 10px 14px;
+    line-height: 18px;
+    font-size: 16px;
+    color: @tooltipColor;
+  }
+  &.drop-open-transitionend {
+    display: block;
+  }
+  &.drop-after-open {
+    opacity: 1;
+  }
+}
