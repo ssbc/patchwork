@@ -8,7 +8,6 @@ import ProfileSetup from './com/forms/profile-setup'
 import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
-import Issues from './com/issues'
 import FindBar from './com/findbar'
 
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]

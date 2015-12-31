@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import Issues from './issues'
 import app from '../lib/app'
 
 export default class LeftNav extends React.Component {
@@ -48,6 +49,7 @@ export default class LeftNav extends React.Component {
       <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
       <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</NavLink>
       <NavLink to="/sync"><i className="fa fa-users" /> People</NavLink>
+      <Issues/>
       { this.props.children ? <NavHeading>{this.props.title||'This Page'}</NavHeading> : '' }
       { this.props.children }
       <NavHeading>Channels</NavHeading>
