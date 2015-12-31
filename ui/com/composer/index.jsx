@@ -318,22 +318,38 @@ export default class Composer extends React.Component {
       return <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a>
     }
 
-    return <div className="composer">
-      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      <div className="composer-ctrls flex">
+    var toolbarTop, toolbarBottom
+    if (vertical) {
+      toolbarTop = <div>
+        <div className="composer-ctrls flex">
+          <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+          <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+          <div className="flex-fill" />
+          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+          <SendBtn canSend={this.canSend() && !this.state.isSending} />
+        </div>
+        { this.isPublic()
+          ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
+          : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
+      </div>
+    } else {
+      toolbarBottom = <div className="composer-ctrls flex" style={{ borderBottomColor: '#ccc', borderTop: 0 }}>
         <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
         <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
         <div className="flex-fill" />
         <a className="btn" onClick={setPreviewing(true)}>Preview</a>
         <SendBtn canSend={this.canSend() && !this.state.isSending} />
-      </div>
-      { this.isPublic()
-        ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
-        : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
+      </div>      
+    }
+
+    return <div className="composer">
+      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
+      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
+      { toolbarTop }
       <div className="composer-content">
         <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={this.isReply() ? 'Write a reply' : (this.props.placeholder||'Write your message here')} />
       </div>
+      { toolbarBottom }
     </div>
   }
 }
