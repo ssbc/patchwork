@@ -101,9 +101,12 @@ export default class Card extends React.Component {
     else if (choice === 'toggle-raw')
       this.setState({ isViewingRaw: !this.state.isViewingRaw });
     else if (choice === 'edit-post') {
-      console.log("trying to edit post");
       this.setState({ isEditing: !this.state.isEditing });
     }
+  }
+
+  onCancelEdit() {
+    this.setState({ isEditing: !this.state.isEditing });
   }
 
   copyLink() {
@@ -292,15 +295,6 @@ export default class Card extends React.Component {
     const isViewingRaw = this.state.isViewingRaw;
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel;
 
-    const dropdownOpts = [
-      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Cancel Editing</span> },
-      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
-      { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
-      (isDownvoted) ? 
-      { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
-      { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
-    ];
-
     const oversizedCls = (this.state.isOversized?'oversized':'');
     const expandedCls  = (this.state.isExpanded?'expanded':'');
     const newCls       = (msg.isNew?'new':'');
@@ -320,7 +314,7 @@ export default class Card extends React.Component {
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
+    <button onClick={this.onCancelEdit.bind(this)}><i className="fa fa-remove-h" /></button>
           </div>
         </div>
         <div className="body" ref="body">
