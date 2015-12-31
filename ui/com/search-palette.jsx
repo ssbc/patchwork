@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import cls from 'classNames'
+import cls from 'classnames'
 import { getResults } from '../lib/search'
 
 const KEYCODE_UP = 38
