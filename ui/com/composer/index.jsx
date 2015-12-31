@@ -227,27 +227,30 @@ export class Editor extends React.Component {
             })
         }
 
-        // publish
-        var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks, this.getChannel())
+        // publish edit
+        var post = schemas.postEdit(text, mentions, msg.key)
           let published = (err, msg) => {
             this.setState({ isSending: false })
-              if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
+              if (err) app.issue('Error While Editing', err, 'This error occurred while trying to edit an existing post.')
               else {
                 // reset form
-                this.setState({ text: '', isPreviewing: false })
+                this.setState({ text: '', isPreviewing: false });
 
-                  // mark read (include the thread root because the api will automatically mark the root unread on new reply)
-                  app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key)
+                // mark read (include the thread root because the api will automatically mark the root unread on new reply)
+                app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key);
 
-                  // call handler
-                  if (this.props.onSend)
-                  this.props.onSend(msg)
+                // call handler
+                if (this.props.onSend)
+                  this.props.onSend(msg);
               }
           }
-        if (recps)
-          app.ssb.private.publish(post, recps, published)
-          else
-          app.ssb.publish(post, published)
+        if (recps) {
+          app.ssb.private.publish(post, recps, published);
+        }
+        else {
+          console.log("publishing edit");
+          app.ssb.publish(post, published);
+        }
       })
   }
 
@@ -536,7 +539,7 @@ export default class Composer extends React.Component {
         </div>
         <div>
           { (!this.canSend() || this.state.isSending) ?
-            <a className="btn disabled">Submit Edit</a> :
+            <a className="btn disabled"> Send</a> :
             <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a> }
         </div>
       </div>

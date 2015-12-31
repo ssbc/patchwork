@@ -159,7 +159,6 @@ export default class Card extends React.Component {
   }
 
   render() {
-    console.log('msg render called');
 
     const msg = this.props.msg
     if (msg.isNotFound)
@@ -314,12 +313,11 @@ export default class Card extends React.Component {
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-    <button onClick={this.onCancelEdit.bind(this)}><i className="fa fa-remove-h" /></button>
+            <button onClick={this.onCancelEdit.bind(this)}><i className="fa fa-remove-h" /></button>
           </div>
         </div>
         <div className="body" ref="body">
-          { /* <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> */ }
-          <Editor isEditing="true" editingContent={msg.value.content.text} />
+          <Editor {...this.props} isEditing="true" editingContent={msg.value.content.text} onSubmit={this.onCancelEdit.bind(this)}/>
           
         </div>
         <div className="ctrls">
