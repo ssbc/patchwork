@@ -71,7 +71,7 @@ var ServeApp = exports.ServeApp = function (sbot, opts) {
     var filepath = path.join(opts.uiPath, pathname)
     console.log('GET', filepath)
     fs.stat(filepath, function (err, stat) {
-      if(err) return respond(res, 404, 'File not found')
+      if(err) return next()
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
       respondSource(
         res,
