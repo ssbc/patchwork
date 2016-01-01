@@ -15,7 +15,8 @@ window.addEventListener('error', onError)
 
 // render
 app.fetchLatestState(function () {
-  ReactDOM.render(require('./routes.jsx'), document.body.querySelector('div'))
+  var routes = require('./routes.jsx')
+  ReactDOM.render(routes.routes, document.body.querySelector('div'))
   window.removeEventListener('error', window.loadErrorHandler)
 })
 

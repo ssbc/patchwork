@@ -12,7 +12,8 @@ refresh because  its  commonly  needed during rendering.
 var POLL_PEER_INTERVAL = 5e3 // every 5 seconds
 
 var multicb   = require('multicb')
-var SSBClient = require('./muxrpc-ipc')
+var pull      = require('pull-stream')
+var SSBClient = require('./ws-client')
 var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')

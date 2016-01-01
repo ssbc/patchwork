@@ -1,4 +1,3 @@
-var browserify = require('browserify')
 var browserifyInc = require('browserify-incremental')
 var babelify = require('babelify')
 var fs = require('fs')

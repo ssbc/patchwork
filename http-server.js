@@ -50,6 +50,7 @@ var CSP = exports.CSP = function (origin) {
   return function (req, res, next) {
     res.setHeader('Content-Security-Policy', 
       "default-src "+origin+" 'unsafe-inline' 'unsafe-eval' data:; "+
+      "connect-src "+origin+" ws://localhost:7778; "+
       "object-src 'none'; "+
       "frame-src 'none'; "+
       "sandbox allow-same-origin allow-scripts"

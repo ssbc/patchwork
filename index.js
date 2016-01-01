@@ -29,7 +29,9 @@ fs.writeFileSync(
   JSON.stringify(sbot.getManifest(), null, 2)
 )
 
-// setup http server
+// setup server
 var http = require('http')
 var httpStack = require('./http-server')
 http.createServer(httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') })).listen(7777)
+var ws = require('pull-ws-server')
+ws.createServer(require('./ws-server')(sbot)).listen(7778)
