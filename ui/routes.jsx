@@ -30,8 +30,7 @@ function beforeNavigation (nextState) {
 }
 app.history.listenBefore(beforeNavigation)
 
-export default (
-  <Router history={app.history}>
+var routes = (<Router history={app.history}>
     <Route path="/" component={Layout}>
       <IndexRoute component={NewsFeed} />
       <Route path="newsfeed/channel/:channel" component={NewsFeed} />
@@ -50,3 +49,4 @@ export default (
     </Route>
   </Router>
 )
+export default routes

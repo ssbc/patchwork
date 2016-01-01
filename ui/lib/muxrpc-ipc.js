@@ -1,4 +1,11 @@
-var ipc        = require('ipc')
+
+module.exports = function () {
+  throw "TODO - reenable RPC"
+}
+
+// REPLACEME
+
+/*var ipc        = require('ipc')
 var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
 var pullipc    = require('pull-ipc')
@@ -102,4 +109,4 @@ module.exports = function () {
   pull(ipcStream, rpcStream, ipcStream)
 
   return ssb
-}
+}*/

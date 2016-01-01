@@ -3,7 +3,7 @@ import React from 'react'
 import {Link} from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import clipboard from 'clipboard'
+// import clipboard from 'clipboard' REPLACEME
 import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
@@ -101,14 +101,16 @@ export default class Card extends React.Component {
   }
 
   copyLink() {
-    clipboard.writeText(this.props.msg.key)
+    // REPLACEME
+    alert('TODO replaceme')
+    /*clipboard.writeText(this.props.msg.key)
     this.setState({ wasLinkCopied: true })
     if (this.timeout)
       clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.setState({ wasLinkCopied: false })
       this.timeout = null
-    }, 3e3)
+    }, 3e3)*/
   }
 
   componentDidMount() {

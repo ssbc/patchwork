@@ -4,6 +4,7 @@ var cat    = require('pull-cat')
 var ident  = require('pull-identify-filetype')
 var mime   = require('mime-types')
 var URL    = require('url')
+var path   = require('path')
 var fs     = require('fs')
 var refs   = require('ssb-ref')
 var Stack  = require('stack')
@@ -51,9 +52,32 @@ var CSP = exports.CSP = function (origin) {
       "default-src "+origin+" 'unsafe-inline' 'unsafe-eval' data:; "+
       "object-src 'none'; "+
       "frame-src 'none'; "+
-      "sandbox"
+      "sandbox allow-same-origin allow-scripts"
     )
     next()
+  }
+}
+
+var ServeApp = exports.ServeApp = function (sbot, opts) {
+  if (!opts || !opts.uiPath)
+    throw "opts.uiPath is required"
+  return function (req, res, next) {
+    var parsed = URL.parse(req.url, true)
+    var pathname = parsed.pathname
+    if (pathname == '/')
+      pathname = 'main.html'
+
+    var filepath = path.join(opts.uiPath, pathname)
+    console.log('GET', filepath)
+    fs.stat(filepath, function (err, stat) {
+      if(err) return respond(res, 404, 'File not found')
+      if(!stat.isFile()) return respond(res, 403, 'May only load files')
+      respondSource(
+        res,
+        toPull.source(fs.createReadStream(filepath)),
+        false
+      )
+    })
   }
 }
 
@@ -102,5 +126,14 @@ exports.FileStack = function (opts) {
     Localhost(),
     CSP('http://localhost:7777'),
     ServeFiles()
+  )
+}
+
+exports.AppStack = function (sbot, opts) {
+  return Stack(
+    Localhost(),
+    CSP('http://localhost:7777'),
+    ServeApp(sbot, opts),
+    ServeBlobs(sbot)
   )
 }

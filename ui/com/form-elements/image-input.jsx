@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import NativeImage from 'native-image'
+// import NativeImage from 'native-image' REPLACEME
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
 import app from '../../lib/app'
@@ -79,9 +79,10 @@ export default class ImageInput extends React.Component {
   onFileChosen(e) {
     this.setState({ editorMsg: 'loading...', hasImg: true })
 
+    // REPLACEME
     // give the html renderer a turn before loading the image
     // if the image is large, it'll block for a sec, and we want to render "loading..." first
-    setTimeout(() => {
+    /*setTimeout(() => {
       const file = this.refs.fileInput.files[0]
       if (!file)
         return
@@ -106,7 +107,7 @@ export default class ImageInput extends React.Component {
         minzoom: CANVAS_SIZE/smallest,
       })
       this.drawCanvas()
-    }, 100)
+    }, 100)*/
   }
 
   onCanvasMouseDown (e) {
@@ -202,8 +203,9 @@ export default class ImageInput extends React.Component {
   }
 
   static canvasToPng(canvas) {
-    var dataUrl = canvas.toDataURL('image/png')
-    return NativeImage.createFromDataUrl(dataUrl).toPng()
+    return null // REPLACEME
+    // var dataUrl = canvas.toDataURL('image/png')
+    // return NativeImage.createFromDataUrl(dataUrl).toPng()
   }
 
   static uploadCanvasToBlobstore(canvas, cb) {

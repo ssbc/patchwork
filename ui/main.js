@@ -1,8 +1,5 @@
 'use strict'
 
-// install babel hooks
-require('babel/register')
-
 var pull     = require('pull-stream')
 var ReactDOM = require('react-dom')
 
@@ -14,7 +11,7 @@ window.app = require('./lib/app')
 
 // toplevel events
 window.addEventListener('error', onError)
-window.addEventListener('contextmenu', require('./contextmenu'))
+// window.addEventListener('contextmenu', require('./contextmenu')) DEPRECATED
 
 // render
 app.fetchLatestState(function () {
