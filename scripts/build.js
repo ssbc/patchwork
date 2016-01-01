@@ -1,10 +1,12 @@
 var browserify = require('browserify')
+var browserifyInc = require('browserify-incremental')
 var babelify = require('babelify')
 var fs = require('fs')
 var path = require('path')
 
-browserify({
+browserifyInc({
     extensions: ['.js', '.jsx'],
+    cacheFile: './browserify-cache.json'
   })
   .require(path.basename(process.argv[2]), {
     entry: true,  

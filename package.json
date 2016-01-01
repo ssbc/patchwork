@@ -23,6 +23,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
+    "browserify-incremental": "^3.0.1",
     "less": "~1.7.5",
     "osenv": "~0.1.0",
     "rimraf": "~2.2.8",
@@ -78,6 +79,7 @@
     "suggest-box": "~1.1.6",
     "text-node-searcher": "~1.1.0",
     "websocket-pull-stream": "^2.0.12",
+    "ws": "^1.0.0",
     "xtend": "^4.0.0"
   },
   "bin": {
