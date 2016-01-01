@@ -71,10 +71,6 @@ export default class Layout extends React.Component {
     this.refs.find.search(forward)
   }
 
-  onClickBack() {
-    window.history.back()
-  }
-
   render() {
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
@@ -98,7 +94,6 @@ export default class Layout extends React.Component {
       <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar titlebar flex">
         <div>
-          <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
           <NavLink className="home" to="/" icon="home" />
         </div>
         <div className="flex-fill"><SearchPalette/></div>
