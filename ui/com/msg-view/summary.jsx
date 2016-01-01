@@ -11,7 +11,8 @@ import u from '../../lib/util'
 export default class Summary extends React.Component {
   onClick(e) {
     // make sure the user didnt click on a link
-    for (var i=0; i < e.nativeEvent.path.length; i++) {
+    var pathLen = e.nativeEvent.path ? e.nativeEvent.path.length : 0
+    for (var i=0; i < pathLen; i++) {
       if (e.nativeEvent.path[i] === e.currentTarget)
         break // found the msg-view top without finding any anchors, good to go
       if (e.nativeEvent.path[i].tagName === 'A')

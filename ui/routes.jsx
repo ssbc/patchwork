@@ -18,7 +18,7 @@ function beforeNavigation (nextState) {
   if (nextState.action === 'PUSH') { // only on new navs, not on back-btn-driven navs
     // capture scroll position of all vertical-filled components
     var vfScrollTops = {}
-    var vfEls = Array.from(document.querySelectorAll('.vertical-filled'))
+    var vfEls = [].slice.call(document.querySelectorAll('.vertical-filled'))
     vfEls.forEach(el => {
       if (el.id)
         vfScrollTops[el.id] = el.scrollTop
