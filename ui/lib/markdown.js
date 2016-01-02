@@ -85,27 +85,30 @@ blockRenderer.image  = function (href, title, text) {
 
 // inline renderer just spits out the text of links and images
 inlineRenderer.urltransform = function (url) { return false }
-inlineRenderer.link = function (href, title, text) { return unquote(text) }
-inlineRenderer.image  = function (href, title, text) { return unquote(text) }
-inlineRenderer.code = function(code, lang, escaped) { return unquote(code) }
-inlineRenderer.blockquote = function(quote) { return unquote(quote) }
+inlineRenderer.link = function (href, title, text) { return sanitize(unquote(text)) }
+inlineRenderer.image  = function (href, title, text) { return sanitize(unquote(text)) }
+inlineRenderer.code = function(code, lang, escaped) { return sanitize(unquote(code)) }
+inlineRenderer.blockquote = function(quote) { return sanitize(unquote(quote)) }
 inlineRenderer.html = function(html) { return false }
-inlineRenderer.heading = function(text, level, raw) { return '<strong>'+unquote(text)+'</strong> ' }
+inlineRenderer.heading = function(text, level, raw) { return '<strong>'+sanitize(unquote(text))+'</strong> ' }
 inlineRenderer.hr = function() { return ' --- ' }
 inlineRenderer.br = function() { return ' ' }
-inlineRenderer.list = function(body, ordered) { return unquote(body) }
-inlineRenderer.listitem = function(text) { return '- '+unquote(text) }
-inlineRenderer.paragraph = function(text) { return unquote(text)+' ' }
-inlineRenderer.table = function(header, body) { return unquote(header + ' ' + body) }
-inlineRenderer.tablerow = function(content) { return unquote(content) }
-inlineRenderer.tablecell = function(content, flags) { return unquote(content) }
-inlineRenderer.strong = function(text) { return '<strong>'+unquote(text)+'</strong>' }
-inlineRenderer.em = function(text) { return unquote(text) }
-inlineRenderer.codespan = function(text) { return unquote(text) }
-inlineRenderer.del = function(text) { return unquote(text) }
-inlineRenderer.mention = function(preceding, id) { return unquote((preceding||'') + id) }
+inlineRenderer.list = function(body, ordered) { return sanitize(unquote(body)) }
+inlineRenderer.listitem = function(text) { return '- '+sanitize(unquote(text)) }
+inlineRenderer.paragraph = function(text) { return sanitize(unquote(text))+' ' }
+inlineRenderer.table = function(header, body) { return sanitize(unquote(header + ' ' + body)) }
+inlineRenderer.tablerow = function(content) { return sanitize(unquote(content)) }
+inlineRenderer.tablecell = function(content, flags) { return sanitize(unquote(content)) }
+inlineRenderer.strong = function(text) { return '<strong>'+sanitize(unquote(text))+'</strong>' }
+inlineRenderer.em = function(text) { return sanitize(unquote(text)) }
+inlineRenderer.codespan = function(text) { return sanitize(unquote(text)) }
+inlineRenderer.del = function(text) { return sanitize(unquote(text)) }
+inlineRenderer.mention = function(preceding, id) { return sanitize(unquote((preceding||'') + id)) }
 function unquote (text) {
   return text.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, '\'')
+}
+function sanitize (text) {
+  return text.replace(/</g, '&lt;').replace(/>/, '&gt;')
 }
 
 marked.setOptions({
