@@ -13,37 +13,45 @@ blockRenderer.urltransform = function (url) {
   var hasSigil = (c == '@' || c == '&' || c == '%')
 
   if (this.options.sanitize && !hasSigil) {
+    // sanitize - only allow ssb refs or http/s links
     try {
-      var prot = decodeURIComponent(unescape(url))
-        .replace(/[^\w:]/g, '')
-        .toLowerCase();
+      var prot = decodeURIComponent(unescape(url.replace(/[^\w:]/g, ''))).toLowerCase();
     } catch (e) {
       return false;
     }
-    if (prot.indexOf('javascript:') === 0) {
+    if (prot.indexOf('http:') !== 0 && prot.indexOf('https:') !== 0) {
       return false;
     }
   }
 
-  var islink = ssbref.isLink(url)
-  if (hasSigil && !islink && this.options.mentionNames) {
-    // do a name lookup
+  // is this an ssb ref, or perhaps a ref within an HTTP url?
+  var isSsbRef = ssbref.isLink(url)
+  if (!isSsbRef) {
+    // check if there's a ref inside somewhere
+    var ref = ssbref.extract(url)
+    if (ref) {
+      url = ref
+      isSsbRef = true
+    }
+  }
+
+  // is this an @username mention?
+  if (hasSigil && !isSsbRef && this.options.mentionNames) {
+    // try a name lookup
     url = this.options.mentionNames[url.slice(1)]
     if (!url)
       return false
-    islink = true
+    isSsbRef = true
   }
 
-  if (islink) {
+  // use our own link if this is an ssb ref
+  if (isSsbRef) {
     if (ssbref.isFeedId(url))
       return '#/profile/'+encodeURIComponent(url)
     else if (ssbref.isMsgId(url))
       return '#/msg/'+encodeURIComponent(url)
     else if (ssbref.isBlobId(url))
       return '/'+encodeURIComponent(url)
-  }
-  else if (url.indexOf('http') !== 0) {
-    return false;
   }
   return url
 }
