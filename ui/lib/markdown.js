@@ -40,7 +40,7 @@ blockRenderer.urltransform = function (url) {
     else if (ssbref.isMsgId(url))
       return '#/msg/'+encodeURIComponent(url)
     else if (ssbref.isBlobId(url))
-      return '#/webview/'+encodeURIComponent(url)
+      return '/'+encodeURIComponent(url)
   }
   else if (url.indexOf('http') !== 0) {
     return false;
@@ -53,7 +53,7 @@ blockRenderer.link = function(href, title, text) {
   href = this.urltransform(href)
   var out
   if (href !== false) {
-    if (href.indexOf('#/webview/') === 0 && (title || text)) // add ?name param if this is a link to a blob
+    if ((href.indexOf('/%26') === 0 || href.indexOf('/&') === 0) && (title || text)) // add ?name param if this is a link to a blob
       href += '?name='+encodeURIComponent(title || text)
     out = '<a href="' + href + '"';
   } else
@@ -73,11 +73,11 @@ blockRenderer.link = function(href, title, text) {
 blockRenderer.image  = function (href, title, text) {
   href = href.replace(/^&amp;/, '&')
   if (ssbref.isLink(href)) {
-    var out = '<a href="#/webview/' + encodeURIComponent(href) + '"><img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
+    var out = '<img src="http://localhost:7777/' + href + '?fallback=img" alt="' + text + '"'
     if (title) {
       out += ' title="' + title + '"'
     }
-    out += '></a>'
+    out += '>'
     return out
   }
   return text

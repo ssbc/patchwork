@@ -11,7 +11,6 @@ import Msg from './views/msg'
 import Composer from './views/composer'
 import Channels from './views/channels'
 import Profile from './views/profile'
-import WebView from './views/webview'
 import Sync from './views/sync'
 import Help from './views/help'
 import Search from './views/search'
@@ -43,7 +42,6 @@ export var routes = (
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
       <Route path="composer" component={Composer} />
-      <Route path="webview/:id" component={WebView} />
       <Route path="sync" component={Sync} />
       <Route path="help/:section" component={Help} />
       <Route path="search/:query" component={Search} />

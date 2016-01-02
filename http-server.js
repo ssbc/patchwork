@@ -85,7 +85,7 @@ var ServeApp = exports.ServeApp = function (sbot, opts) {
 var ServeBlobs = exports.ServeBlobs = function (sbot) {
   return function (req, res, next) {
     var parsed = URL.parse(req.url, true)
-    var hash = parsed.pathname.slice(1)
+    var hash = decodeURIComponent(parsed.pathname.slice(1))
     sbot.blobs.want(hash, function(err, has) {
       if (!has) return respond(res, 404, 'File not found')
 
