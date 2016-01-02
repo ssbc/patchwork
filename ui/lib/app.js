@@ -33,7 +33,7 @@ module.exports = extend(new Emitter(), {
   fetchLatestState: fetchLatestState,
 
   // ui data
-  history: createHashHistory(),
+  history: createHashHistory({ queryKey: false }),
   isComposerOpen: false,
   suggestOptions: { 
     ':': Object.keys(emojis).map(function (emoji) {
