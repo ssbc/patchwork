@@ -10,6 +10,15 @@ var refs   = require('ssb-ref')
 var Stack  = require('stack')
 var ip     = require('ip')
 
+var AppCSP =
+  "default-src 'self'; "+
+  "connect-src 'self' ws://localhost:7778; "+
+  "object-src 'none'; "+
+  "frame-src 'none'; "+
+  "style-src 'self' 'unsafe-inline'; "+
+  "sandbox allow-same-origin allow-scripts"
+var BlobCSP = "default-src none; sandbox"
+
 function respond (res, status, message) {
   res.writeHead(status)
   res.end(message)
@@ -38,23 +47,10 @@ function respondSource (res, source, wrap) {
   }
 }
 
-var Localhost = exports.Localhost = function () {
+var LocalhostOnly = exports.LocalhostOnly = function () {
   return function (req, res, next) {
     if (!ip.isLoopback(req.socket.remoteAddress))
       return respond(res, 403, 'Remote access forbidden')
-    next()
-  }
-}
-
-var CSP = exports.CSP = function (origin) {
-  return function (req, res, next) {
-    res.setHeader('Content-Security-Policy', 
-      "default-src "+origin+" 'unsafe-inline' 'unsafe-eval' data:; "+
-      "connect-src "+origin+" ws://localhost:7778; "+
-      "object-src 'none'; "+
-      "frame-src 'none'; "+
-      "sandbox allow-same-origin allow-scripts"
-    )
     next()
   }
 }
@@ -73,6 +69,12 @@ var ServeApp = exports.ServeApp = function (sbot, opts) {
     fs.stat(filepath, function (err, stat) {
       if(err) return next()
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
+
+      if (pathname == 'main.html')
+        res.setHeader('Content-Security-Policy', AppCSP) // only give the open perms to main.html
+      else
+        res.setHeader('Content-Security-Policy', BlobCSP)
+
       respondSource(
         res,
         toPull.source(fs.createReadStream(filepath)),
@@ -94,6 +96,7 @@ var ServeBlobs = exports.ServeBlobs = function (sbot) {
         res.setHeader('Content-Disposition', 'inline; filename='+encodeURIComponent(parsed.query.name))
 
       // serve
+      res.setHeader('Content-Security-Policy', BlobCSP)
       respondSource(res, sbot.blobs.get(hash), false)
     })
   }
@@ -104,7 +107,8 @@ var ServeFiles = exports.ServeFiles = function () {
     var parsed = URL.parse(req.url, true)
     fs.stat(parsed.pathname, function (err, stat) {
       if(err) return respond(res, 404, 'File not found')
-      if(!stat.isFile()) return respond(res, 403, 'May only load filess')
+      if(!stat.isFile()) return respond(res, 403, 'May only load files')
+      res.setHeader('Content-Security-Policy', BlobCSP)
       respondSource(
         res,
         toPull.source(fs.createReadStream(parsed.pathname)),
@@ -116,24 +120,21 @@ var ServeFiles = exports.ServeFiles = function () {
 
 exports.BlobStack = function (sbot, opts) {
   return Stack(
-    Localhost(),
-    CSP('http://localhost:7777'),
+    LocalhostOnly(),
     ServeBlobs(sbot)
   )
 }
 
 exports.FileStack = function (opts) {
   return Stack(
-    Localhost(),
-    CSP('http://localhost:7777'),
+    LocalhostOnly(),
     ServeFiles()
   )
 }
 
 exports.AppStack = function (sbot, opts) {
   return Stack(
-    Localhost(),
-    CSP('http://localhost:7777'),
+    LocalhostOnly(),
     ServeApp(sbot, opts),
     ServeBlobs(sbot)
   )
