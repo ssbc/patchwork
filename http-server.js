@@ -16,7 +16,7 @@ var AppCSP =
   "object-src 'none'; "+
   "frame-src 'none'; "+
   "style-src 'self' 'unsafe-inline'; "+
-  "sandbox allow-same-origin allow-scripts"
+  "sandbox allow-same-origin allow-scripts allow-top-navigation allow-popups"
 var BlobCSP = "default-src none; sandbox"
 
 function respond (res, status, message) {
