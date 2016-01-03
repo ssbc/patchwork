@@ -235,13 +235,18 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
-      { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span> },
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ? 
         { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
         { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
+
+    if (app.user.id === msg.value.author)
+      dropdownOpts.unshift({ value: 'edit-post',
+                             label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span>
+      });
+
 
     const oversizedCls = (this.state.isOversized?'oversized':'')
     const expandedCls  = (this.state.isExpanded?'expanded':'')
