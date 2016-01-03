@@ -193,8 +193,8 @@ export class Editor extends React.Component {
     var text = this.state.text
     if (!text.trim())
       return;
-
-    this.setState({ isSending: true })
+    
+    this.setState({ isSending: true, isEditing: false })
 
       // prep text
       mentionslib.extract(text, (err, mentions) => {
@@ -237,22 +237,22 @@ export class Editor extends React.Component {
         }
 
         // publish edit
-        var post = schemas.postEdit(text, mentions, msg.key)
-          let published = (err, msg) => {
-            this.setState({ isSending: false })
-              if (err) app.issue('Error While Editing', err, 'This error occurred while trying to edit an existing post.')
-              else {
-                // reset form
-                this.setState({ text: '', isPreviewing: false });
+        var post = schemas.postEdit(text, mentions, msg.key);
+        let published = (err, msg) => {
+          this.setState({ isSending: false })
+            if (err) app.issue('Error While Editing', err, 'This error occurred while trying to edit an existing post.')
+            else {
+              // reset form
+              this.setState({ text: '', isPreviewing: false });
 
-                // mark read (include the thread root because the api will automatically mark the root unread on new reply)
-                app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key);
+              // mark read (include the thread root because the api will automatically mark the root unread on new reply)
+              app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key);
 
-                // call handler
-                if (this.props.onSend)
-                  this.props.onSend(msg);
-              }
-          }
+              // call handler
+              if (this.props.onSend)
+                this.props.onSend(msg);
+            }
+        }
         if (recps) {
           app.ssb.private.publish(post, recps, published);
         }
@@ -264,9 +264,9 @@ export class Editor extends React.Component {
   }
 
   render() {
-    const channel = this.getChannel()
-      const setPreviewing = b => () => this.setState({ isPreviewing: b })
-      const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
+    const channel = this.getChannel();
+    const setPreviewing = b => () => this.setState({ isPreviewing: b });
+    const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed;
     const Preview = (props) => {
       return <div>
         <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
