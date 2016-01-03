@@ -72,7 +72,7 @@ export class Editor extends React.Component {
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
       addedFileMeta: {}, // map of file hash -> metadata
       recps: recps,
-      text: ''
+      text: null
     }
   }
 
@@ -176,14 +176,23 @@ export class Editor extends React.Component {
       }
   }
 
+  canDelete() {
+    // deletion condition is 0-length string like !canSend(), but also checks if
+    // there was originally text
+    return ((this.state.text !== null) &&
+            (this.state.text.length === 0) &&
+            (this.props.editingContent.length > 0));
+  }
+  
   canSend() {
-    return !!this.state.text.trim()
+    if (this.state.text === null) return false;
+    else return !!this.state.text.trim();
   }
 
   onSend() {
     var text = this.state.text
     if (!text.trim())
-      return
+      return;
 
     this.setState({ isSending: true })
 
@@ -271,7 +280,12 @@ export class Editor extends React.Component {
           <div className="composer-channel">#{channel}</div>
           : '' }
           <div className="composer-content">
-            <ComposerTextarea ref="textarea" defaultValue={this.props.editingContent} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
+            <ComposerTextarea ref="textarea" 
+                              defaultValue={this.props.editingContent}
+                              onChange={this.onChangeText.bind(this)}
+                              onSubmit={this.onSend.bind(this)}
+                              placeholder={!this.state.isReply ?
+                                           this.props.placeholder : 'Write a reply'} />
           </div>
           <div className="composer-ctrls flex">
             <div className="flex-fill">
@@ -285,9 +299,11 @@ export class Editor extends React.Component {
               <a className="btn" onClick={setPreviewing(true)}>Preview</a>
             </div>
             <div>
-              { (!this.canSend() || this.state.isSending) ?
-                <a className="btn disabled">Submit Edit</a> :
-                <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Submit Edit</a> }
+              { this.canDelete() ?
+                <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Delete Post</a> :
+                (!this.canSend() || this.state.isSending) ?
+                  <a className="btn disabled">Submit Edit</a> :
+                  <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Submit Edit</a> }
             </div>
           </div>
     </div>
