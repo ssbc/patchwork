@@ -296,6 +296,9 @@ export class Editor extends React.Component {
                  <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
             </div>
             <div>
+              <a className="btn" onClick={this.props.onCancel.bind(this)}>Cancel</a>
+            </div>
+            <div>
               <a className="btn" onClick={setPreviewing(true)}>Preview</a>
             </div>
             <div>

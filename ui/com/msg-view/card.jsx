@@ -318,11 +318,10 @@ export default class Card extends React.Component {
           <div className="header-right">
             { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <button onClick={this.onCancelEdit.bind(this)}><i className="fa fa-remove-h" /></button>
           </div>
         </div>
         <div className="body" ref="body">
-          <Editor {...this.props} isEditing="true" editingContent={msg.value.content.text} onSubmit={this.onCancelEdit.bind(this)}/>
+          <Editor {...this.props} isEditing="true" editingContent={msg.value.content.text} onSubmit={this.onCancelEdit.bind(this)} onCancel={this.onCancelEdit.bind(this)}/>
           
         </div>
         <div className="ctrls">
