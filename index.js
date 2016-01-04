@@ -46,15 +46,16 @@ var http = require('http')
 var https = require('https')
 var ws = require('pull-ws-server')
 var httpStack = require('./http-server')
-var serverFn = httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') }, configOracle)
+var httpServerFn = httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') }, configOracle)
+var wsServerFn = require('./ws-server')(sbot)
 
 if (configOracle.useTLS()) {
   var tlsOpts = configOracle.getTLS()
-  https.createServer(tlsOpts, serverFn).listen(7777)
-  ws.createServer(require('./ws-server')(sbot), tlsOpts).listen(7778)
+  https.createServer(tlsOpts, httpServerFn).listen(7777)
+  ws.createServer(tlsOpts, wsServerFn).listen(7778)
   console.log('Serving at https://localhost:7777')
 } else {
-  http.createServer(serverFn).listen(7777)
-  ws.createServer(require('./ws-server')(sbot)).listen(7778)
+  http.createServer(httpServerFn).listen(7777)
+  ws.createServer(wsServerFn).listen(7778)
   console.log('Serving at http://localhost:7777')
 }

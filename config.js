@@ -7,10 +7,10 @@ module.exports = function (conf) {
     },
     
     requiresPassword: function () {
-      return isString(conf.password)
+      return isString(conf.singleUserPassword)
     },
     checkPassword: function (str) {
-      return str === conf.password
+      return str === conf.singleUserPassword
     },
 
     useTLS: function () {
@@ -72,25 +72,25 @@ module.exports = function (conf) {
 
   // password config
   if (oracle.requiresPassword())
-    console.log('Config: Password - YES.')
+    console.log('[CFG] Password: YES.')
   else
-    console.log('Config: Password - NO.')
+    console.log('[CFG] Password: NO.')
 
   // TLS
   if (oracle.useTLS())
-    console.log('Config: TLS - YES.')
+    console.log('[CFG] TLS: YES.')
   else
-    console.log('Config: TLS - NO.')
+    console.log('[CFG] TLS: NO.')
 
   // allowRemoteAccess variations
   if (oracle.allowRemoteAccess()) {
-    console.log('Config: Remote Access - YES.')
+    console.log('[CFG] Remote Access: YES.')
     if (!oracle.requiresPassword())
       console.log('WARNING! Remote access is allowed, but no password is configured. This is not safe!')
     if (!oracle.useTLS())
       console.log('ERROR! Remote access is allowed, but no TLS security is configured. Other devices will be able to steal the password or inject attacks.')
   } else
-    console.log('Config: Remote Access - NO.')
+    console.log('[CFG] Remote Access: NO.')
 
   return oracle
 }
