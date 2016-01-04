@@ -13,6 +13,7 @@ var ip     = require('ip')
 var AppCSP =
   "default-src 'self'; "+
   "connect-src 'self' ws://localhost:7778; "+
+  "img-src 'self' data:; "+
   "object-src 'none'; "+
   "frame-src 'none'; "+
   "style-src 'self' 'unsafe-inline'; "+

@@ -366,11 +366,6 @@ exports.init = function (sbot, opts) {
       toPull.sink(fs.createWriteStream(path), cb)
     )
   }
-  function getImgDim (path) {
-    var NativeImage = require('native-image')
-    var ni = NativeImage.createFromPath(path)
-    return ni.getSize()
-  }
 
   var lookupcodeRegex = /(@[a-z0-9\/\+\=]+\.[a-z0-9]+)(?:\[via\])?(.+)?/i
   api.useLookupCode = function (code) {

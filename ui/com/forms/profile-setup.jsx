@@ -63,10 +63,12 @@ export default class ProfileSetup extends React.Component {
   getValues(cb) {
     const canvas = this.refs.imageInputContainer.querySelector('canvas')
     if (canvas) {
-      ImageInput.uploadCanvasToBlobstore(canvas, (err, hasher) => {
+      ImageInput.uploadCanvasToBlobstore(canvas, (err, res) => {
+        if (err)
+          return app.issue('Failed to save image', err, 'This occurred during profile setup')
         const imageLink = {
-          link: '&'+hasher.digest,
-          size: hasher.size,
+          link: res.hash,
+          size: res.size,
           type: 'image/png',
           width: 512,
           height: 512
