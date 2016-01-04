@@ -19,7 +19,7 @@ blockRenderer.urltransform = function (url) {
     } catch (e) {
       return false;
     }
-    if (prot.indexOf('http:') !== 0 && prot.indexOf('https:') !== 0) {
+    if (prot.indexOf('http:') !== 0 && prot.indexOf('https:') !== 0 && prot.indexOf('data:') !== 0) {
       return false;
     }
   }
