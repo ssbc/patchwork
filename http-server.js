@@ -10,15 +10,16 @@ var refs   = require('ssb-ref')
 var Stack  = require('stack')
 var ip     = require('ip')
 
-var AppCSP =
-  "default-src 'self'; "+
-  "connect-src 'self' ws://localhost:7778 wss://localhost:7778; "+
-  "img-src 'self' data:; "+
-  "object-src 'none'; "+
-  "frame-src 'none'; "+
-  "style-src 'self' 'unsafe-inline'; "+
-  "sandbox allow-same-origin allow-scripts allow-top-navigation allow-popups"
-var BlobCSP = "default-src none; sandbox"
+var AppCSP = function (config) {
+  return "default-src 'self'; "+
+    "connect-src 'self' ws://"+config.getHostname()+":7778 wss://"+config.getHostname()+":7778; "+
+    "img-src 'self' data:; "+
+    "object-src 'none'; "+
+    "frame-src 'none'; "+
+    "style-src 'self' 'unsafe-inline'; "+
+    "sandbox allow-same-origin allow-scripts allow-top-navigation allow-popups"
+}
+var BlobCSP = function () { return "default-src none; sandbox" }
 
 function respond (res, status, message) {
   res.writeHead(status)
@@ -84,7 +85,7 @@ var PasswordAccessControl = exports.DeviceAccessControl = function (config) {
   }
 }
 
-var ServeApp = exports.ServeApp = function (sbot, opts) {
+var ServeApp = exports.ServeApp = function (sbot, opts, config) {
   if (!opts || !opts.uiPath)
     throw "opts.uiPath is required"
   return function (req, res, next) {
@@ -99,9 +100,9 @@ var ServeApp = exports.ServeApp = function (sbot, opts) {
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
 
       if (pathname == 'main.html')
-        res.setHeader('Content-Security-Policy', AppCSP) // only give the open perms to main.html
+        res.setHeader('Content-Security-Policy', AppCSP(config)) // only give the open perms to main.html
       else
-        res.setHeader('Content-Security-Policy', BlobCSP)
+        res.setHeader('Content-Security-Policy', BlobCSP())
 
       respondSource(
         res,
@@ -124,7 +125,7 @@ var ServeBlobs = exports.ServeBlobs = function (sbot) {
         res.setHeader('Content-Disposition', 'inline; filename='+encodeURIComponent(parsed.query.name))
 
       // serve
-      res.setHeader('Content-Security-Policy', BlobCSP)
+      res.setHeader('Content-Security-Policy', BlobCSP())
       respondSource(res, sbot.blobs.get(hash), false)
     })
   }
@@ -136,7 +137,7 @@ var ServeFiles = exports.ServeFiles = function () {
     fs.stat(parsed.pathname, function (err, stat) {
       if(err) return respond(res, 404, 'File not found')
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
-      res.setHeader('Content-Security-Policy', BlobCSP)
+      res.setHeader('Content-Security-Policy', BlobCSP())
       respondSource(
         res,
         toPull.source(fs.createReadStream(parsed.pathname)),
@@ -167,7 +168,7 @@ exports.AppStack = function (sbot, opts, config) {
     Log(sbot),
     PasswordAccessControl(config),
     DeviceAccessControl(config),
-    ServeApp(sbot, opts),
+    ServeApp(sbot, opts, config),
     ServeBlobs(sbot)
   )
 }

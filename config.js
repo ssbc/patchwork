@@ -2,6 +2,10 @@ var fs = require('fs')
 module.exports = function (conf) {
   // ask the oracle thy question
   var oracle = {
+    getHostname: function () {
+      return conf.host || 'localhost'
+    },
+
     allowRemoteAccess: function () {
       return conf.allowRemoteAccess
     },
