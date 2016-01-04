@@ -8,7 +8,8 @@ module.exports = function () {
   var ssb = muxrpc(manifest, false, serialize)()
 
   // setup rpc stream over websockets
-  var stream = ws.connect('ws://localhost:7778')
+  var protocol = (window.location.protocol == 'https:') ? 'wss:' : 'ws:'
+  var stream = ws.connect(protocol+'//localhost:7778')
   pull(stream, ssb.createStream(), stream)
   return ssb
 }

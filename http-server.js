@@ -12,7 +12,7 @@ var ip     = require('ip')
 
 var AppCSP =
   "default-src 'self'; "+
-  "connect-src 'self' ws://localhost:7778; "+
+  "connect-src 'self' ws://localhost:7778 wss://localhost:7778; "+
   "img-src 'self' data:; "+
   "object-src 'none'; "+
   "frame-src 'none'; "+
@@ -55,11 +55,32 @@ var Log = exports.Log = function (sbot) {
   }
 }
 
-var LocalhostOnly = exports.LocalhostOnly = function () {
+var DeviceAccessControl = exports.DeviceAccessControl = function (config) {
   return function (req, res, next) {
-    if (!ip.isLoopback(req.socket.remoteAddress))
-      return respond(res, 403, 'Remote access forbidden')
-    next()
+    if (config.allowRemoteAccess())
+      return next() // remote & local access allowed
+    if (ip.isLoopback(req.socket.remoteAddress))
+      return next() // local access allowed
+    respond(res, 403, 'Remote access forbidden') // remote access disallowed
+  }
+}
+
+var PasswordAccessControl = exports.DeviceAccessControl = function (config) {
+  return function (req, res, next) {
+    if (!config.requiresPassword(config))
+      return next() // no password required
+
+    // check the password
+    var authMatch = /^Basic (.*)$/i.exec(req.headers.authorization)
+    if (authMatch) {
+      var password = (new Buffer(authMatch[1], 'base64').toString()).split(':')[1]
+      if (password && config.checkPassword(password))
+        return next() // password checks out
+    }
+
+    // deny
+    res.setHeader('WWW-Authenticate', 'Basic realm=Authorization Required')
+    respond(res, 401, 'Unauthorized')
   }
 }
 
@@ -128,7 +149,7 @@ var ServeFiles = exports.ServeFiles = function () {
 exports.BlobStack = function (sbot, opts) {
   return Stack(
     Log(sbot),
-    LocalhostOnly(),
+    DeviceAccessControl(),
     ServeBlobs(sbot)
   )
 }
@@ -136,15 +157,16 @@ exports.BlobStack = function (sbot, opts) {
 exports.FileStack = function (opts) {
   return Stack(
     Log(sbot),
-    LocalhostOnly(),
+    DeviceAccessControl(),
     ServeFiles()
   )
 }
 
-exports.AppStack = function (sbot, opts) {
+exports.AppStack = function (sbot, opts, config) {
   return Stack(
     Log(sbot),
-    LocalhostOnly(),
+    PasswordAccessControl(config),
+    DeviceAccessControl(config),
     ServeApp(sbot, opts),
     ServeBlobs(sbot)
   )

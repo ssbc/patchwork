@@ -7,6 +7,18 @@ if(config.keys.curve === 'k256')
   throw new Error('k256 curves are no longer supported,'+
                   'please delete' + path.join(config.path, 'secret'))
 
+// validate the config
+var configOracle = require('./config')(config)
+if (configOracle.hasError()) {
+  if (configOracle.allowUnsafe())
+    console.log('\nIgnoring unsafe configuration due to --unsafe flag.')
+  else {
+    console.log('\nAborted due to unsafe config. Run again with --unsafe to override.')
+    return
+  }
+}
+console.log('Starting...')
+
 // start sbot
 var sbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
@@ -31,7 +43,18 @@ fs.writeFileSync(
 
 // setup server
 var http = require('http')
-var httpStack = require('./http-server')
-http.createServer(httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') })).listen(7777)
+var https = require('https')
 var ws = require('pull-ws-server')
-ws.createServer(require('./ws-server')(sbot)).listen(7778)
+var httpStack = require('./http-server')
+var serverFn = httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') }, configOracle)
+
+if (configOracle.useTLS()) {
+  var tlsOpts = configOracle.getTLS()
+  https.createServer(tlsOpts, serverFn).listen(7777)
+  ws.createServer(require('./ws-server')(sbot), tlsOpts).listen(7778)
+  console.log('Serving at https://localhost:7777')
+} else {
+  http.createServer(serverFn).listen(7777)
+  ws.createServer(require('./ws-server')(sbot)).listen(7778)
+  console.log('Serving at http://localhost:7777')
+}

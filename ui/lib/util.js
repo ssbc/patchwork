@@ -69,7 +69,7 @@ exports.profilePicUrl = function (id) {
       link = profile.self.image
 
     if (link) {
-      url = 'http://localhost:7777/'+link.link
+      url = '/'+link.link
 
       // append the 'backup img' flag, so we always have an image
       url += '?fallback=img'

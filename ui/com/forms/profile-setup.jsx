@@ -116,7 +116,7 @@ export default class ProfileSetup extends React.Component {
               { this.state.error ? <p className="error">{this.state.error}</p> : '' }
             </label>
           </div>
-          <div ref="imageInputContainer"><ImageInput label="Image" current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} /></div>
+          <div ref="imageInputContainer"><ImageInput label="Image" current={(currentImg) ? ('/' + currentImg) : false} /></div>
         </fieldset>
       </form>
     </div>
