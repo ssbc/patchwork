@@ -48,6 +48,13 @@ function respondSource (res, source, wrap) {
   }
 }
 
+var Log = exports.Log = function (sbot) {
+  return function (req, res, next) {
+    sbot.emit('log:info', ['HTTP', null, req.method + ' ' + req.url])
+    next()
+  }
+}
+
 var LocalhostOnly = exports.LocalhostOnly = function () {
   return function (req, res, next) {
     if (!ip.isLoopback(req.socket.remoteAddress))
@@ -66,7 +73,6 @@ var ServeApp = exports.ServeApp = function (sbot, opts) {
       pathname = 'main.html'
 
     var filepath = path.join(opts.uiPath, pathname)
-    console.log('GET', filepath)
     fs.stat(filepath, function (err, stat) {
       if(err) return next()
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
@@ -121,6 +127,7 @@ var ServeFiles = exports.ServeFiles = function () {
 
 exports.BlobStack = function (sbot, opts) {
   return Stack(
+    Log(sbot),
     LocalhostOnly(),
     ServeBlobs(sbot)
   )
@@ -128,6 +135,7 @@ exports.BlobStack = function (sbot, opts) {
 
 exports.FileStack = function (opts) {
   return Stack(
+    Log(sbot),
     LocalhostOnly(),
     ServeFiles()
   )
@@ -135,6 +143,7 @@ exports.FileStack = function (opts) {
 
 exports.AppStack = function (sbot, opts) {
   return Stack(
+    Log(sbot),
     LocalhostOnly(),
     ServeApp(sbot, opts),
     ServeBlobs(sbot)
