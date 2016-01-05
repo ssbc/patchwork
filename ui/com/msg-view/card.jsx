@@ -3,7 +3,6 @@ import React from 'react'
 import {Link} from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-// import clipboard from 'clipboard' REPLACEME
 import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
@@ -66,10 +65,8 @@ export default class Card extends React.Component {
       isExpanded: false,
       isViewingRaw: false,
       subject: null,
-      wasLinkCopied: null, // used by the link-copy behavior to give confirmation
       isFlagModalOpen: false
     }
-    this.timeout = false // used by link-copy behavior to clear confirmation
   }
 
   onSelect() {
@@ -101,16 +98,7 @@ export default class Card extends React.Component {
   }
 
   copyLink() {
-    // REPLACEME
-    alert('TODO replaceme')
-    /*clipboard.writeText(this.props.msg.key)
-    this.setState({ wasLinkCopied: true })
-    if (this.timeout)
-      clearTimeout(this.timeout)
-    this.timeout = setTimeout(() => {
-      this.setState({ wasLinkCopied: false })
-      this.timeout = null
-    }, 3e3)*/
+    prompt('Here is the Message ID. Press cmd/ctrl+c to copy it.', this.props.msg.key)
   }
 
   componentDidMount() {
@@ -145,11 +133,6 @@ export default class Card extends React.Component {
         this.setState({ isOversized: true })
       }
     })
-  }
-
-  componentWillUnmount() {
-    if (this.timeout)
-      clearTimeout(this.timeout)
   }
 
   render() {
@@ -223,7 +206,7 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
-      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
       (isDownvoted) ? 
         { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
@@ -247,7 +230,6 @@ export default class Card extends React.Component {
             {channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
           </div>
           <div className="header-right">
-            { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
             <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
           </div>

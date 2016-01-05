@@ -17,7 +17,7 @@ var AppCSP = function (config) {
     "object-src 'none'; "+
     "frame-src 'none'; "+
     "style-src 'self' 'unsafe-inline'; "+
-    "sandbox allow-same-origin allow-scripts allow-top-navigation allow-popups"
+    "sandbox allow-modals allow-same-origin allow-scripts allow-top-navigation allow-popups"
 }
 var BlobCSP = function () { return "default-src none; sandbox" }
 

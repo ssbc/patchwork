@@ -11,7 +11,6 @@ window.app = require('./lib/app')
 
 // toplevel events
 window.addEventListener('error', onError)
-// window.addEventListener('contextmenu', require('./contextmenu')) DEPRECATED
 
 // render
 app.fetchLatestState(function () {

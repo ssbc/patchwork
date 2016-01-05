@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 // load config
 var path    = require('path')
 var ssbKeys = require('ssb-keys')
