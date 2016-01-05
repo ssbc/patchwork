@@ -5,7 +5,7 @@
     text-align: center;
   }
   :first-child > hr {
-    margin-top: 20px; // add top margin when the divider is the first item in the list
+    margin-top: 14px; // remove top margin when the divider is the first item in the list
   }
   .new-msg-queue {
     transition: background 0.2s;
@@ -32,6 +32,8 @@
     padding: 5px;
   }
   .msg-view.card-post {
+    position: relative;
+    left: -20px;
     margin: 10px auto;
   }
 }

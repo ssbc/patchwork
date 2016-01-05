@@ -31,7 +31,7 @@ export default class Notifications extends React.Component {
 
   render() {
     const Toolbar = (props) => {
-      return <div className="toolbar">
+      return <div className="light-toolbar">
         <Tabs options={FILTERS} selected={this.state.filter} onSelect={this.onSelectFilter.bind(this)} />
       </div>
     }
@@ -39,8 +39,8 @@ export default class Notifications extends React.Component {
     return <div className="notifications">
       <MsgList
         ref="list"
+        Hero={Toolbar}
         ListItem={Notification}
-        Toolbar={Toolbar}
         filter={this.state.filter.fn}
         emptyMsg="No notifications."
         source={app.ssb.patchwork.createNotificationsStream}
