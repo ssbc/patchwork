@@ -10,9 +10,22 @@ var refs   = require('ssb-ref')
 var Stack  = require('stack')
 var ip     = require('ip')
 
-var AppCSP = function (config) {
+var AppCSP = function (req, config) {
+  // hostname for the websocket connection:
+  // if it's a remote request, always use the configured hostname
+  // if it's local, choose from localhost or the configured hostname, based on which the client is using (as revealed by the host header)
+  var host
+  if (!ip.isLoopback(req.socket.remoteAddress))
+    host = config.getHostname()
+  else {
+    var requestHostname = req.headers.host.split(':')[0] // extract hostname (remove ':port')
+    host = (requestHostname == 'localhost' || requestHostname == config.getHostname())
+      ? requestHostname
+      : (config.getHostname() || 'localhost')
+  }  
+
   return "default-src 'self'; "+
-    "connect-src 'self' ws://"+config.getHostname()+":7778 wss://"+config.getHostname()+":7778; "+
+    "connect-src 'self' ws://"+host+":7778 wss://"+host+":7778; "+
     "img-src 'self' data:; "+
     "object-src 'none'; "+
     "frame-src 'none'; "+
@@ -100,7 +113,7 @@ var ServeApp = exports.ServeApp = function (sbot, opts, config) {
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
 
       if (pathname == 'main.html')
-        res.setHeader('Content-Security-Policy', AppCSP(config)) // only give the open perms to main.html
+        res.setHeader('Content-Security-Policy', AppCSP(req, config)) // only give the open perms to main.html
       else
         res.setHeader('Content-Security-Policy', BlobCSP())
 
