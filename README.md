@@ -16,27 +16,42 @@ Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're 
 
 ## Install  (current stable)
 
-Install node v5 (you might like to use [nvm](https://github.com/creationix/nvm)).
+This is the stable release. It will be the least likely to break.
+
+**Dependencies:**
+
+ - node v5.3.x (you might like to use [nvm](https://github.com/creationix/nvm))
+ - npm v3.5.x ([Instructions to update NPM when using NVM](#updating-npm))
+
+**Install:**
 
 ``` bash
 npm install ssb-patchwork -g
 ```
 
-Run Patchwork
+**Run:**
 
 ```bash
 patchwork
 ```
 
-## Install (bleeding edge)
+**Update:**
 
-Install npm vesion 3
-
-```bash 
-npm install -g npm@3
+``` bash
+npm install ssb-patchwork -g
 ```
 
-Clone and install Patchwork
+
+## Install (bleeding edge)
+
+This is the development version. It will contain updates not yet published on NPM.
+
+**Dependencies:**
+
+ - node v5.3.x (you might like to use [nvm](https://github.com/creationix/nvm))
+ - npm v3.5.x ([Instructions to update NPM when using NVM](#updating-npm))
+
+**Install:**
 
 ```bash
 git clone https://github.com/ssbc/patchwork.git
@@ -44,28 +59,34 @@ cd patchwork
 npm install
 ```
 
-Run Patchwork
+**Run:**
+
+From directory you cloned patchwork to:
 
 ```bash
-# from directory you cloned patchwork to
 npm start
 ```
 
-To bring in newest changes
+**Update:**
+
+From directory you cloned patchwork to:
 
 ```bash
-# from directory you cloned patchwork to
 git pull origin master
 npm install
-npm run build:ui
 ```
 
----
 
-If it's your first time running patchwork,
-follow the on screen instructions to start a new identity
-and join a pub server.
+## Updating NPM
 
+Some people experience installation issues when using the npm version packaged with node 5.3.0. We have found upgrading to npm 3.5.x solves these issues.
+
+If you are using nvm, you can update npm with the following steps:
+
+``` bash
+cd ~/.nvm/versions/node/v5.3.0/lib
+npm install npm
+```
 
 ## Docs
 
