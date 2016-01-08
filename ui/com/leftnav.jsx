@@ -24,6 +24,15 @@ export default class LeftNav extends React.Component {
     app.removeListener('update:indexCounts', this.refresh)
   }
 
+  static Heading (props) {
+    return <div className="leftnav-heading">{props.children}</div>
+  }
+  static Link (props) {
+    return <div className={'leftnav-link '+(props.className||'')+(props.pathname === props.to ? ' selected' : '')}>
+      <Link to={props.to}>{props.children}</Link>
+    </div>
+  }
+
   render() {
     const pathname = this.props.location && this.props.location.pathname
 
@@ -34,27 +43,18 @@ export default class LeftNav extends React.Component {
     const pinnedChannels = this.state.channels.filter(isPinned(true))
 
     // render
-    const NavHeading = props => {
-      return <div className="leftnav-heading">{props.children}</div>
-    }
-    const NavLink = props => {
-      return <div className={'leftnav-link '+(props.className||'')+(pathname === props.to ? ' selected' : '')}>
-        <Link to={props.to}>{props.children}</Link>
-      </div>
-    }
-    const renderChannel = c => <NavLink key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
+    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
     return <div className="leftnav">
-      <NavLink className="compose-btn" to="/composer">Compose</NavLink>
-      <NavLink to="/"><i className="fa fa-bullhorn" /> Public</NavLink>
-      <NavLink to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</NavLink>
-      <NavLink to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</NavLink>
-      <NavLink to="/sync"><i className="fa fa-users" /> People</NavLink>
+      <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/sync"><i className="fa fa-users" /> People</LeftNav.Link>
       <Issues/>
-      { this.props.children ? <NavHeading>{this.props.title||'This Page'}</NavHeading> : '' }
+      { this.props.children ? <LeftNav.Heading>{this.props.title||'This Page'}</LeftNav.Heading> : '' }
       { this.props.children }
-      <NavHeading>Channels</NavHeading>
+      <LeftNav.Heading>Channels</LeftNav.Heading>
       { pinnedChannels.map(renderChannel) }
-      <NavLink to="/channels">Find more...</NavLink>
+      <LeftNav.Link pathname={pathname} to="/channels">Find more...</LeftNav.Link>
     </div>
   }
 }
