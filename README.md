@@ -7,8 +7,8 @@
 It's better than email because:
 
  - Private messages are end-to-end encrypted, always.
- - Users have to follow each other to send messages, so you won't get spammed.
- - Messages can be public broadcasts; you'll only see replies by people in your network.
+ - You have to follow somebody to get messages from them, so you won't get spammed.
+ - Your mail can be public broadcasts or private, and you'll only see replies by people you follow.
  - The datastructure is a global mesh of append-only logs, which can support new types of data (not just "mail").
  - Users are not bound to one server/host (what we call "pubs") and do not have to trust the servers.
  - It's very easy to setup and maintain your own pub.
