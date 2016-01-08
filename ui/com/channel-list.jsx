@@ -90,7 +90,7 @@ export class ChannelList extends React.Component {
     // render
     const hasExactMatch = this.props.channels.filter(isExactMatch).length > 0
     const renderChannel = channel => <ChannelListItem key={channel.name} channel={channel} selected={channel.name === selected} onSelect={this.props.onSelect} />
-    return <div className="channel-list" style={{height: this.props.height, overflow: 'auto'}}>
+    return <div className="channel-list">
       <div className="channel-list-ctrls">
         <div className="search">
           <i className="fa fa-hashtag" />

@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import { ChannelList } from './channel-list'
 import Issues from './issues'
 import app from '../lib/app'
 
@@ -9,7 +10,8 @@ export default class LeftNav extends React.Component {
     super(props)
     this.state = {
       indexCounts: app.indexCounts,
-      channels: app.channels || []
+      channels: app.channels || [],
+      isChannelListOpen: false
     }
 
     // watch for updates to global state
@@ -18,10 +20,34 @@ export default class LeftNav extends React.Component {
     }
     app.on('update:channels', this.refresh)
     app.on('update:indexCounts', this.refresh)
+
+    // close channel popup on click outside of it
+    this.maybeCloseChannels = (e) => {
+      if (!this.state.isChannelListOpen)
+        return
+      // is the click within the channel list?
+      for (var i=0; i < e.path.length; i++) {
+        if (e.path[i].classList && e.path[i].classList.contains('channel-list'))
+          return // keep open
+      }
+      // close, this was a click out of the channel list
+      this.setState({ isChannelListOpen: false })
+    }
+    document.addEventListener('click', this.maybeCloseChannels)
   }
   componentWillUnmount() {
     app.removeListener('update:channels', this.refresh)
     app.removeListener('update:indexCounts', this.refresh)
+    document.removeEventListener('click', this.maybeCloseChannels)
+  }
+
+  onOpenChannelList(e) {
+    this.setState({ isChannelListOpen: true })
+    e.nativeEvent.stopImmediatePropagation()
+  }
+  onSelectChannel(channel) {
+    this.setState({ isChannelListOpen: false })
+    app.history.pushState(null, '/newsfeed/channel/' + encodeURIComponent(channel.name))
   }
 
   render() {
@@ -54,7 +80,11 @@ export default class LeftNav extends React.Component {
       { this.props.children }
       <NavHeading>Channels</NavHeading>
       { pinnedChannels.map(renderChannel) }
-      <NavLink to="/channels">Find more...</NavLink>
+      <div className="leftnav-link">
+        <a onClick={this.onOpenChannelList.bind(this)}>Find more...</a>
+        { this.state.isChannelListOpen ? <i className="fa fa-caret-left" style={{ color: 'gray' }} /> : '' }
+      </div>
+      { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
     </div>
   }
 }
