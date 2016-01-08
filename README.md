@@ -2,7 +2,7 @@
 
 ![screenshot](./screenshot.png)
 
-Patchwork is a decentralized messaging and sharing app.
+**Patchwork is a decentralized messaging and sharing app.**
 
 It's better than email because:
 
