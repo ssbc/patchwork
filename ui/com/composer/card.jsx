@@ -28,7 +28,7 @@ export default class ComposerCard extends React.Component {
       <div className="left-meta"><UserPic id={app.user.id} /></div>
       { this.state.isOpen ?
         <Composer {...this.props} onSend={this.onSend.bind(this)} /> :
-        <div className="composer placeholder" onClick={this.onClick.bind(this)}>{this.props.placeholder}</div> }
+        <div className="composer placeholder" onClick={this.onClick.bind(this)}>{this.props.placeholder||'Write your message here'}</div> }
     </div>
   }
 }

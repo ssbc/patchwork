@@ -99,7 +99,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return <div className="flex light-toolbar">
         { channel
           ? <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link>
-          : '' }
+          : <Link to="/"><i className="fa fa-bullhorn" /> Public Threads</Link> }
         { channel
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
@@ -118,6 +118,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         threads
         dateDividers
         openMsgEvent
+        composer composerProps={{ isPublic: true, channel: channel }}
         filter={filter}
         Hero={Toolbar}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}

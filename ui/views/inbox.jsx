@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import { Link } from 'react-router'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import { LocalStoragePersistedComponent } from '../com'
@@ -45,6 +46,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
 
     const Toolbar = props => {    
       return <div className="flex light-toolbar">
+        <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
         <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
@@ -57,6 +59,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
         ref="list"
         threads
         dateDividers
+        composer composerProps={{ isPublic: false }}
         Hero={Toolbar}
         ListItem={ListItem} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}

@@ -73,7 +73,7 @@ export default class Composer extends React.Component {
     this.state = {
       isPreviewing: false,
       isSending: false,
-      isPublic: false,
+      isPublic: this.props.isPublic || false,
       channel: this.props.channel,
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
       addedFileMeta: {}, // map of file hash -> metadata
@@ -304,7 +304,7 @@ export default class Composer extends React.Component {
       if (!props.isPublic) {
         if (props.isReply)
           return <span/>
-        return <a className="btn disabled"><i className="fa fa-paperclip" /> Attachments are not yet available in private messages</a>
+        return <a className="btn disabled"><i className="fa fa-paperclip" /> Attachments not available in PMs</a>
       }
       if (props.isAdding)
         return <a className="btn disabled"><i className="fa fa-paperclip" /> Adding...</a>
@@ -333,13 +333,20 @@ export default class Composer extends React.Component {
           : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
       </div>
     } else {
-      toolbarBottom = <div className="composer-ctrls flex" style={{ borderBottomColor: '#ccc', borderTop: 0 }}>
-        <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
-        <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
-        <div className="flex-fill" />
-        <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-        <SendBtn canSend={this.canSend() && !this.state.isSending} />
-      </div>      
+      toolbarBottom = <div>
+        <div className="composer-ctrls flex" style={{ borderBottomColor: '#ccc', borderTop: 0 }}>
+          <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+          <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+          <div className="flex-fill" />
+          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+          <SendBtn canSend={this.canSend() && !this.state.isSending} />
+        </div> 
+        { !this.isReply()
+          ? ( this.isPublic()
+            ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
+            : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> )
+          : '' }
+      </div>
     }
 
     return <div className="composer">
