@@ -2,16 +2,30 @@
 
 ![screenshot](./screenshot.png)
 
-Patchwork is a decentralized sharing app.
-It was built for friends of the SSB project, to test basic functions.
-We use it as a test-bed for features, and for our own daily messaging.
+Patchwork is a decentralized messaging and sharing app.
 
-Because SSB is a research project, **you'll need to contact an SSB team member (in #scuttlebutt on Freenode) to get onto the network!**
+It's better than email because:
+
+ - Private messages are end-to-end encrypted, always.
+ - Users have to follow each other to send messages, so you won't get spammed.
+ - Messages can be public broadcasts; you'll only see replies by people in your network.
+ - The datastructure is a global mesh of append-only logs, which can support new types of data (not just "mail").
+ - Users are not bound to one server/host (what we call "pubs") and do not have to trust the servers.
+ - It's very easy to setup and maintain your own pub.
+
+It's better than twitter and facebook because:
+
+ - Private messages are end-to-end encrypted, always.
+ - The software runs on your device, so there's nobody tracking your browsing.
+ - The application-code is FOSS, so you're free to fork or write new applications without a gatekeeper setting terms.
+ - Data is saved to your disk, and so the application works offline.
+ - You can sync directly with friends over the wifi. 
+
+
+Because we're still in development, **you'll need to contact an SSB team member (in #scuttlebutt on Freenode) to get onto the network!**
 That's our informal barrier to entry right now, since we're not prepared for lots of users yet.
 
-[![Hermies the Hermit Crab](https://avatars2.githubusercontent.com/u/10190339?v=3&s=200)](https://github.com/ssbc/scuttlebot)
-
-Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're running Patchwork, you don't need to run another scuttlebot server.
+Patchwork embeds the [Scuttlebot networked database](https://github.com/ssbc/scuttlebot), so if you're running Patchwork, you don't need to run another scuttlebot server.
 
 
 ## Install  (current stable)
