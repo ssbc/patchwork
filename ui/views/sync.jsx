@@ -9,6 +9,7 @@ import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
 import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
+import LeftNav from '../com/leftnav'
 import PubInvite from '../com/forms/pub-invite'
 import Modal from '../com/modals/single'
 import ModalBtn from '../com/modals/btn'
@@ -456,41 +457,44 @@ export default class Sync extends React.Component {
       filter((peer) => peer.connected).
       length
 
-    return <VerticalFilledContainer id="sync">
-      <div className="header">
-        <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
-        <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-        <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
-      </div>
-
-      <div className='peer-status-group'>
-        <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
-      </div>
-
-      <div className='peer-status-group'>
-        <div className="peer-status-group-header">
-          <h2><i className="fa fa-wifi" /> Local</h2>
-          { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
+    return <VerticalFilledContainer id="sync" className="flex">
+      <LeftNav location={this.props.location} />
+      <div className="flex-fill">
+        <div className="header">
+          <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
+          <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
+          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
         </div>
-        {
-          this.state.peers.filter(isLAN).
-            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
-        }
-      </div>
 
-      <div className='peer-status-group'>
-        <div className="peer-status-group-header">
-          <h2><i className="fa fa-globe" /> Public</h2>
-          <div className='explanatory-text'>Public Peers are just users with static addresses, which means they are easy to find. {"They're"} commonly servers which have been set up to share data.</div>
-          <div className='explanatory-text'>
-            <i className='fa fa-star' /> Is following you - they will replicate your data. <br />
-            <i className='fa fa-circle' /> Is not following you, but you might share data about mutual aquantances.
+        <div className='peer-status-group'>
+          <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
+        </div>
+
+        <div className='peer-status-group'>
+          <div className="peer-status-group-header">
+            <h2><i className="fa fa-wifi" /> Local</h2>
+            { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
           </div>
+          {
+            this.state.peers.filter(isLAN).
+              map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
+          }
         </div>
-        {
-          this.state.peers.filter(isNotLAN).
-            map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
-        }
+
+        <div className='peer-status-group'>
+          <div className="peer-status-group-header">
+            <h2><i className="fa fa-globe" /> Public</h2>
+            <div className='explanatory-text'>Public Peers are just users with static addresses, which means they are easy to find. {"They're"} commonly servers which have been set up to share data.</div>
+            <div className='explanatory-text'>
+              <i className='fa fa-star' /> Is following you - they will replicate your data. <br />
+              <i className='fa fa-circle' /> Is not following you, but you might share data about mutual aquantances.
+            </div>
+          </div>
+          {
+            this.state.peers.filter(isNotLAN).
+              map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
+          }
+        </div>
       </div>
     </VerticalFilledContainer>
   }

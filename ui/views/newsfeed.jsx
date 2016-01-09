@@ -5,10 +5,12 @@ import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import cls from 'classnames'
 import { LocalStoragePersistedComponent } from '../com'
-import Dipswitch from '../com/form-elements/dipswitch'
+import LeftNav from '../com/leftnav'
+import DropdownBtn from '../com/dropdown'
 import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
+import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import Thread from '../com/msg-thread'
 import { ALL_CHANNELS, ChannelList } from '../com/channel-list'
@@ -17,58 +19,20 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const LISTITEMS = [
-  { label: <span>Feed-style</span>, Component: Card },
-  { label: <span>Inbox-style</span>, Component: Summary }
+  { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
+  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
+  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
 ]
 const LISTITEM_CARD = LISTITEMS[0]
 const LISTITEM_ONELINE = LISTITEMS[1]
 
-// lefthand nav helper component
-class LeftNav extends React.Component {
-  render() {
-    // predicates
-    const isPinned = b => channel => (!!channel.pinned == b)
-    
-    // lists
-    const pinnedChannels = this.props.channels.filter(isPinned(true))
-    const unpinnedChannels = this.props.channels.filter(isPinned(false)).slice(0, 10)
-
-    // render
-    const NavHeading = props => {
-      return <div className="newsfeed-leftnav-heading">{props.children}</div>
-    }
-    const NavLink = props => {
-      return <div className="newsfeed-leftnav-link">
-        <Link to={props.to} className={this.props.location.pathname === props.to ? 'selected' : ''}>{props.children}</Link>
-      </div>
-    }
-    const renderChannel = c => <NavLink to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</NavLink>
-    return <div className="newsfeed-leftnav">
-      <NavLink to="/"><i className="fa fa-newspaper-o" /> Feed</NavLink>
-      <NavLink to="/inbox"><i className="fa fa-inbox" /> Inbox</NavLink>
-      { pinnedChannels.length ? <NavHeading>Pinned Channels</NavHeading> : '' }
-      { pinnedChannels.map(renderChannel) }
-      { unpinnedChannels.length ? <NavHeading>Active Channels</NavHeading> : '' }
-      { unpinnedChannels.map(renderChannel) }
-      <NavLink to="/channels">Find more...</NavLink>
-    </div>
-  }
-}
-
 // newsfeed view
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
-    super(props, 'newsfeedState', {
-      isToolbarOpen: true,
-      listItemIndex: 0,
-      isFollowedOnly: true,
-      isUsingThreadPanel: false,
-      currentThreadKey: null
+    super(props, 'msgList', {
+      currentMsgView: 0
     })
-
-    // watch for updates to the channels
     this.state.channels = app.channels || []
-    app.on('update:channels', (this.onUpdateChannels = () => this.setState({ channels: app.channels })))
 
     // watch for open:msg events
     app.on('open:msg', (this.onOpenMsg = key => {
@@ -80,28 +44,19 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         app.history.pushState(null, '/msg/' + encodeURIComponent(key))
       }      
     }))
+    this.refresh = () => {
+      this.setState({ channels: app.channels })
+    }
+    app.on('update:channels', this.refresh)
   }
   componentWillUnmount() {
-    app.removeListener('update:channels', this.onUpdateChannels)
+    app.removeListener('update:channels', this.refresh)
     app.removeListener('open:msg', this.onOpenMsg)
   }
 
   // ui event handlers
-  onToggleToolbar(b) {
-    this.setState({ isToolbarOpen: b }, () => {
-      this.refs.list.calcContainerHeight()
-    })
-  }
-  onSelectListItem(listItem) {
-    this.setState({ listItemIndex: LISTITEMS.indexOf(listItem) })
-  }
-  onToggleFollowedOnly(b) {
-    this.setState({ isFollowedOnly: b }, () => {
-      this.refs.list.reload()
-    })
-  }
-  onToggleThreadPanel(b) {
-    this.setState({ isUsingThreadPanel: b })
+  onSelectMsgView(v, index) {
+    this.setState({ currentMsgView: index })
   }
   onTogglePinned() {
     const channel = this.props.params.channel
@@ -113,10 +68,14 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     })
   }
 
+  onMarkAllRead() {
+    alert('todo')    
+  }
+
   render() {
     const channel = this.props.params.channel
-    const channelData = channel && findChannelData(this.state.channels, channel)
-    const listItem = LISTITEMS[this.state.listItemIndex]
+    const channelData = channel && findChannelData(app.channels, channel)
+    const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
 
     // msg-list params
@@ -135,43 +94,34 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
-    // render right nav
-    const RightNav = (props) => {    
+    const Toolbar = props => {    
       const isPinned = channelData && channelData.pinned
-      const Ctrl = props => {
-        return <div className="ctrl"><label><i className={'fa fa-'+props.icon} /> {props.label}</label>{props.children}</div>
-      }
-      return <div className="newsfeed-rightnav">
-        <hr className="labeled" data-label="about" />
-        <div className="about">
-          <div><strong>{ channel ? <span><i className="fa fa-hashtag" /> {channel}</span> : 'All' }</strong></div>
-          <div>Public messages by everyone { this.state.isFollowedOnly ? 'that you follow' : 'in your network' }.</div>
-        </div>
-        <hr className="labeled" data-label="config" />
-        <div className="config">
-          { channel
-            ? <Ctrl icon="thumb-tack" label="Pin Channel:"><Dipswitch label={isPinned?"Yes":"No"} checked={isPinned} onToggle={this.onTogglePinned.bind(this)} /></Ctrl>
-            : '' }
-          <Ctrl icon="user" label="Show:"><Dipswitch label={this.state.isFollowedOnly?"Followed Only":"All Users"} checked={this.state.isFollowedOnly} onToggle={this.onToggleFollowedOnly.bind(this)} /></Ctrl>
-          <Ctrl icon="hand-pointer-o" label="On Click:"><Dipswitch label={this.state.isUsingThreadPanel?"Preview Threads":"Open Threads"} checked={this.state.isUsingThreadPanel} onToggle={this.onToggleThreadPanel.bind(this)} /></Ctrl>
-          <Ctrl icon="th-list" label="View Mode:"><Tabs vertical options={LISTITEMS} selected={listItem} onSelect={this.onSelectListItem.bind(this)} /></Ctrl>
-        </div>
+      return <div className="flex light-toolbar">
+        { channel
+          ? <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link>
+          : <Link to="/"><i className="fa fa-bullhorn" /> Public Threads</Link> }
+        { channel
+          ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
+          : '' }
+        <div className="flex-fill"/>
+        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
 
     // render content
     const thread = this.state.isUsingThreadPanel && this.state.currentThreadKey
+    // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}    
     return <div id="newsfeed" key={channel||'*'}>
       <MsgList
         ref="list"
         threads
-        composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}
-        queueNewMsgs
         dateDividers
         openMsgEvent
+        composer composerProps={{ isPublic: true, channel: channel }}
         filter={filter}
-        LeftNav={LeftNav} leftNavProps={{ location: this.props.location, channels: this.state.channels }}
-        RightNav={thread ? undefined : RightNav}
+        Hero={Toolbar}
+        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         ListItem={ListItem} listItemProps={{ userPic: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}

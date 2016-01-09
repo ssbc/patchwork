@@ -6,6 +6,8 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import multicb from 'multicb'
+import DropdownBtn from '../dropdown'
+import ComposerChannel from './channel'
 import { RECP_LIMIT, ComposerRecps } from './recps'
 import Modal from '../modals/popup'
 import { Block as MarkdownBlock } from '../markdown'
@@ -14,6 +16,7 @@ import u from '../../lib/util'
 import app from '../../lib/app'
 import mentionslib from '../../lib/mentions'
 
+const TEXTAREA_VERTICAL_FILL_ADJUST = -5 // remove 5 px to account for padding
 const MarkdownBlockVerticalFilled = verticalFilled(MarkdownBlock)
 
 class ComposerTextareaFixed extends React.Component {
@@ -34,7 +37,7 @@ class ComposerTextareaFixed extends React.Component {
     }
   }
   render() {
-    return <textarea ref="textarea" {...this.props} onKeyDown={this.onKeyDown.bind(this)} style={{height: this.props.height, overflow: 'auto'}} />
+    return <textarea ref="textarea" {...this.props} onKeyDown={this.onKeyDown.bind(this)} style={{height: this.props.height+TEXTAREA_VERTICAL_FILL_ADJUST, overflow: 'auto'}} />
   }
 }
 const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed)
@@ -45,12 +48,14 @@ export default class Composer extends React.Component {
 
     // thread info
     let recps = this.props.recps || []
-    this.isPublic = this.props.isPublic
+    this.isThreadPublic = null
+    this.threadChannel = null
     this.threadRoot = null
     this.threadBranch = null
     if (this.props.thread) {
-      // public thread?
-      this.isPublic = isThreadPublic(this.props.thread)
+      // thread categorization
+      this.isThreadPublic = isThreadPublic(this.props.thread)
+      this.threadChannel = (this.props.thread.value.content.channel || '').trim()
 
       // root and branch links
       this.threadRoot = getThreadRoot(this.props.thread)
@@ -68,7 +73,8 @@ export default class Composer extends React.Component {
     this.state = {
       isPreviewing: false,
       isSending: false,
-      isReply: !!this.props.thread,
+      isPublic: this.props.isPublic || false,
+      channel: this.props.channel,
       hasAddedFiles: false, // used to display a warning if a file was added in public mode, then they switch to private
       addedFileMeta: {}, // map of file hash -> metadata
       recps: recps,
@@ -76,15 +82,20 @@ export default class Composer extends React.Component {
     }
   }
 
+  isReply() {
+    return !!this.props.thread
+  }
+
+  isPublic() {
+    return (this.isReply()) ? this.isThreadPublic : this.state.isPublic
+  }
+
   hasChannel() {
     return !!this.getChannel()
   }
 
   getChannel() {
-    const channel = (this.props.thread) ? this.props.thread.value.content.channel : this.props.channel
-    if (typeof channel === 'string')
-      return channel.trim()
-    return false
+    return (this.isReply()) ? this.threadChannel : this.state.channel
   }
 
   onChangeText(e) {
@@ -152,6 +163,18 @@ export default class Composer extends React.Component {
     filesInput.value = '' // clear file list
   }
 
+  onSelectPublic(isPublic) {
+    if (this.isReply())
+      return // cant change if a reply
+    this.setState({ isPublic: isPublic })
+  }
+
+  onChangeChannel(name) {
+    if (this.isReply())
+      return // cant change if a reply
+    this.setState({ channel: name })
+  }
+
   onAddRecp(id) {
     let recps = this.state.recps
 
@@ -211,8 +234,12 @@ export default class Composer extends React.Component {
         })
       }
 
+      let channel = this.getChannel()
       let recps = null, recpLinks = null
-      if (!this.isPublic) {
+      if (!this.isPublic()) {
+        // no channel on private msgs
+        channel = false
+
         // setup recipients
         recps = this.state.recps
 
@@ -228,7 +255,7 @@ export default class Composer extends React.Component {
       }
 
       // publish
-      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks, this.getChannel())
+      var post = schemas.post(text, this.threadRoot, this.threadBranch, mentions, recpLinks, channel)
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) app.issue('Error While Publishing', err, 'This error occurred while trying to publish a new post.')
@@ -252,42 +279,84 @@ export default class Composer extends React.Component {
   }
 
   render() {
+    const vertical = this.props.verticalFilled
     const channel = this.getChannel()
     const setPreviewing = b => () => this.setState({ isPreviewing: b })
-    const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
+    const ComposerTextarea = (vertical) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
+
     const Preview = (props) => {
       return <div>
         <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
       </div>
     }
-    const sendIcon = (this.isPublic) ? 'users' : 'lock'
+
+    const AudienceBtn = (props) => {
+      const opts = [
+        { label: <span><i className="fa fa-inbox"/> Private</span>, value: false },
+        { label: <span><i className="fa fa-bullhorn"/> Public</span>, value: true }
+      ]
+      if (!props.canChange)
+        return <a className="btn disabled">{opts[+props.isPublic].label}</a>
+      return <DropdownBtn className="btn" items={opts} onSelect={props.onSelect}>{opts[+props.isPublic].label} <i className="fa fa-caret-down" /></DropdownBtn>
+    }
+
+    const AttachBtn = (props) => {
+      if (!props.isPublic) {
+        if (props.isReply)
+          return <span/>
+        return <a className="btn disabled"><i className="fa fa-paperclip" /> Attachments not available in PMs</a>
+      }
+      if (props.isAdding)
+        return <a className="btn disabled"><i className="fa fa-paperclip" /> Adding...</a>
+      return <a className="btn" onClick={props.onAttach}><i className="fa fa-paperclip" /> Add an attachment</a>
+    }
+
+    const SendBtn = (props) => {
+      const sendIcon = (this.isPublic()) ? 'users' : 'lock'
+      if (!props.canSend)
+        return <a className="btn disabled">Send</a>
+      return <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a>
+    }
+
+    var toolbarTop, toolbarBottom
+    if (vertical) {
+      toolbarTop = <div>
+        <div className="composer-ctrls flex">
+          <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+          <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+          <div className="flex-fill" />
+          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+          <SendBtn canSend={this.canSend() && !this.state.isSending} />
+        </div>
+        { this.isPublic()
+          ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
+          : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
+      </div>
+    } else {
+      toolbarBottom = <div>
+        <div className="composer-ctrls flex" style={{ borderBottomColor: '#ccc', borderTop: 0 }}>
+          <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+          <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+          <div className="flex-fill" />
+          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+          <SendBtn canSend={this.canSend() && !this.state.isSending} />
+        </div> 
+        { !this.isReply()
+          ? ( this.isPublic()
+            ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
+            : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> )
+          : '' }
+      </div>
+    }
+
     return <div className="composer">
       <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
       <Modal className="fullheight" Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      { channel ? 
-        <div className="composer-channel">#{channel}</div>
-        : '' }
-      <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
+      { toolbarTop }
       <div className="composer-content">
-        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
+        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={this.isReply() ? 'Write a reply' : (this.props.placeholder||'Write your message here')} />
       </div>
-      <div className="composer-ctrls flex">
-        <div className="flex-fill">
-          { !this.isPublic ?
-            (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work yet in private messages. Sorry!</em> : '') :
-            (this.state.isAddingFiles ?
-              <em>Adding...</em> :
-              <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
-        </div>
-        <div>
-          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-        </div>
-        <div>
-          { (!this.canSend() || this.state.isSending) ?
-            <a className="btn disabled">Send</a> :
-            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a> }
-        </div>
-      </div>
+      { toolbarBottom }
     </div>
   }
 }

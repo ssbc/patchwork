@@ -1,6 +1,6 @@
 {
   "name": "ssb-patchwork",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "safe secure sharing",
   "main": "app/index.js",
   "repository": {
@@ -16,9 +16,9 @@
     "build": "npm run clean && npm run build:ui && npm run build:osx && npm run build:win",
     "build:ui": "mkdir -p ./ui/css && lessc ./ui/less/main.less ./ui/css/main.css",
     "build:icon": "./scripts/make-icns.sh assets/icon1024.png assets/osx/patchwork.icns",
-    "build:osx": "electron-packager ./ Patchwork --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.33.8 --icon=assets/osx/patchwork.icns",
-    "build:win": "electron-packager ./ Patchwork --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.33.8 --icon=assets/win/patchwork.ico",
-    "build:nix": "electron-packager ./ patchwork --out=dist/linux --platform=linux --arch=x64 --ignore=node_modules/electron* --version=0.33.8 --icon=assets/osx/patchwork.icns",
+    "build:osx": "electron-packager ./ Patchwork --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.36.1 --icon=assets/osx/patchwork.icns",
+    "build:win": "electron-packager ./ Patchwork --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.36.1 --icon=assets/win/patchwork.ico",
+    "build:nix": "electron-packager ./ patchwork --out=dist/linux --platform=linux --arch=x64 --ignore=node_modules/electron* --version=0.36.1 --icon=assets/osx/patchwork.icns",
     "pack": "npm run pack:osx && npm run pack:win",
     "pack:osx": "electron-builder \"dist/osx/Patchwork.app\" --platform=osx --out=\"dist/osx\" --config=packager.json",
     "pack:win": "electron-builder \"dist/win/Patchwork-win32\" --platform=win --out=\"dist/win\" --config=packager.json",
@@ -28,7 +28,7 @@
   "license": "?",
   "devDependencies": {
     "electron-builder": "^2.0.0",
-    "electron-packager": "^4.1.3",
+    "electron-packager": "^5.2.0",
     "less": "~1.7.5",
     "osenv": "~0.1.0",
     "rimraf": "~2.2.8",
