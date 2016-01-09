@@ -9,16 +9,12 @@ import DropdownBtn from '../com/dropdown'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
-import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
 
 const LISTITEMS = [
-  { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
-  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
-  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
+  { label: <span><i className="fa fa-list"/> View: Feed</span>, Component: Card },
+  { label: <span><i className="fa fa-list"/> View: Inbox</span>, Component: Oneline }
 ]
-const LISTITEM_CARD = LISTITEMS[0]
-const LISTITEM_ONELINE = LISTITEMS[1]
 
 export default class Inbox extends LocalStoragePersistedComponent {
   constructor(props) {
@@ -32,8 +28,8 @@ export default class Inbox extends LocalStoragePersistedComponent {
       return [msg.value.timestamp, msg.value.author]
   }
 
-  onSelectMsgView(v, index) {
-    this.setState({ currentMsgView: index })
+  onToggleMsgView() {
+    this.setState({ currentMsgView: +(!this.state.currentMsgView) })
   }
 
   onMarkAllRead() {
@@ -41,7 +37,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   render() {
-    const listItem = LISTITEMS[this.state.currentMsgView]
+    const listItem = LISTITEMS[this.state.currentMsgView] || LISTITEMS[0]
     const ListItem = listItem.Component
 
     const Toolbar = props => {    
@@ -49,7 +45,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
         <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
         <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
+        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
       </div>
     }
 

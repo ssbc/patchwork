@@ -11,7 +11,6 @@ import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
-import Summary from '../com/msg-view/summary'
 import Thread from '../com/msg-thread'
 import { ALL_CHANNELS, ChannelList } from '../com/channel-list'
 import * as HelpCards from '../com/help/cards'
@@ -19,12 +18,9 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 
 const LISTITEMS = [
-  { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
-  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
-  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
+  { label: <span><i className="fa fa-list"/> View: Feed</span>, Component: Card },
+  { label: <span><i className="fa fa-list"/> View: Inbox</span>, Component: Oneline }
 ]
-const LISTITEM_CARD = LISTITEMS[0]
-const LISTITEM_ONELINE = LISTITEMS[1]
 
 // newsfeed view
 export default class NewsFeed extends LocalStoragePersistedComponent {
@@ -55,8 +51,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
 
   // ui event handlers
-  onSelectMsgView(v, index) {
-    this.setState({ currentMsgView: index })
+  onToggleMsgView() {
+    this.setState({ currentMsgView: +(!this.state.currentMsgView) })
   }
   onTogglePinned() {
     const channel = this.props.params.channel
@@ -75,7 +71,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   render() {
     const channel = this.props.params.channel
     const channelData = channel && findChannelData(app.channels, channel)
-    const listItem = LISTITEMS[this.state.currentMsgView]
+    const listItem = LISTITEMS[this.state.currentMsgView] || LISTITEMS[0]
     const ListItem = listItem.Component
 
     // msg-list params
@@ -105,7 +101,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
           : '' }
         <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
+        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
       </div>
     }
 
