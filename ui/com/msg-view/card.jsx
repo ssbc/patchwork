@@ -321,7 +321,7 @@ export default class Card extends React.Component {
           </div>
         </div>
         <div className="body" ref="body">
-          <Editor {...this.props} isEditing="true" editingContent={msg.value.content.text} onSubmit={this.onCancelEdit.bind(this)} onCancel={this.onCancelEdit.bind(this)}/>
+          <Editor {...this.props} isEditing="true" editingContent={msg.value.content.text} onSend={this.onCancelEdit.bind(this)} onCancel={this.onCancelEdit.bind(this)}/>
           
         </div>
         <div className="ctrls">
