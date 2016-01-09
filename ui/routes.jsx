@@ -9,6 +9,7 @@ import Bookmarks from './views/bookmarks'
 import Data from './views/data'
 import Msg from './views/msg'
 import Composer from './views/composer'
+import People from './views/people'
 import Profile from './views/profile'
 import Sync from './views/sync'
 import Help from './views/help'
@@ -36,7 +37,8 @@ export var routes = (
       <Route path="inbox" component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
-      <Route path="profile" component={Profile} />
+      <Route path="people" component={People} />
+      <Route path="profile" component={People} />
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
       <Route path="composer" component={Composer} />
