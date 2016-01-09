@@ -77,7 +77,7 @@
     "scuttlebot": "~7.4.3",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
-    "ssb-marked": "~0.5.0",
+    "ssb-markdown": "^1.0.0",
     "ssb-msg-schemas": "~6.1.0",
     "ssb-msgs": "~5.2.0",
     "ssb-ref": "~2.2.0",
@@ -91,3 +91,4 @@
     "patchwork": "./bin.js"
   }
 }
+
