@@ -169,22 +169,15 @@ export default class ImageInput extends React.Component {
 
   render() {
     return <div className="image-input">
-      <div>
-        <label>
-          <span>{this.props.label}</span>
-          <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
-          <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
-        </label>
-      </div>
       { this.state.hasImg ? 
         <div className="image-input-ctrls">
           <div className="flex" style={{color: 'gray', alignItems: 'center'}}>
-            <div style={{whiteSpace: 'pre', paddingRight: '15px'}}>
-              <label>Rotation: <button className="btn" onClick={this.onRotate.bind(this)}>{(this.state.rotation*90)+' degrees'}</button></label>
-            </div>
             <div style={{flex: 1, paddingRight: '5px'}}>
               { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
               <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} style={{height: '45px', verticalAlign: 'middle'}} />
+            </div>
+            <div style={{whiteSpace: 'pre', paddingLeft: '15px'}}>
+              <label>Rotate: <button className="btn" onClick={this.onRotate.bind(this)} style={{padding: '10px 16px', color: 'gray'}}><i className="fa fa-rotate-right" /></button></label>
             </div>
           </div>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
@@ -194,6 +187,13 @@ export default class ImageInput extends React.Component {
             onMouseMove={this.onCanvasMouseMove.bind(this)} />
         </div>
         : '' }
+      <div>
+        <label>
+          <span>{this.props.label}</span>
+          <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
+          <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
+        </label>
+      </div>
     </div>
   }
 
