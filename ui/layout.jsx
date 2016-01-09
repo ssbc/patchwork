@@ -19,7 +19,7 @@ const SETUP_LABELS = [
   <span><i className="fa fa-power-off"/><br/><small>Welcome</small></span>,
   <span><i className="fa fa-pencil"/><br/><small>Nickname</small></span>,
   <span><i className="fa fa-photo"/><br/><small>Photo</small></span>,
-  <span><i className="fa fa-th-list"/><br/><small>Interface</small></span>
+  <span><i className="fa fa-th-list"/><br/><small>View</small></span>
 ]
 const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, ViewMode]
 const RIGHT_NAVS = {
@@ -39,7 +39,7 @@ export default class Layout extends React.Component {
     app.on('focus:search', this.focusSearch.bind(this))
     app.on('focus:find', this.focusFind.bind(this))
     app.on('toggle:rightnav', this.toggleRightNav.bind(this))
-    app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
+    app.on('modal:setup', isOpen => { this.setState({ setupIsOpen: isOpen }); app.fetchLatestState() })
     app.on('find:next', this.doFind.bind(this, true))
     app.on('find:previous', this.doFind.bind(this, false))
   }
