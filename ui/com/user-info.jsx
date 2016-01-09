@@ -8,7 +8,7 @@ import ModalBtn from './modals/btn'
 import Tabs from './tabs'
 import Rename from './forms/rename'
 import ProfileSetup from './forms/profile-setup'
-import { UserLink, UserPic, UserBtn } from './index'
+import { AutoRefreshingComponent, UserLink, UserPic, UserBtn } from './index'
 import DropdownBtn from './dropdown'
 import app from '../lib/app'
 import u from '../lib/util'
@@ -19,28 +19,6 @@ const FLAG_DROPDOWN = [
   { value: 'abuse', label: <span><i className="fa fa-flag" /> Abusive</span> },
   { value: false,   label: <span><i className="fa fa-flag" /> Personal reasons</span> }
 ]
-
-// helper to refresh state any time the main application state updates
-// - this should be replaced -- the entire `app` construct is a bit much
-class AutoRefreshingComponent extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = this.computeState()
-    this.refreshState = props => { this.setState(this.computeState(props)) }
-  }
-  componentDidMount() {
-    app.on('update:all', this.refreshState) // re-render on app state updates
-  }
-  componentWillReceiveProps(newProps) {
-    this.refreshState(newProps)
-  }
-  componentWillUnmount() {
-    app.removeListener('update:all', this.refreshState)    
-  }
-  computeState(props) {
-    // should be overwritten by sublcass
-  }
-}
 
 export class UserInfoHeader extends AutoRefreshingComponent {
   constructor(props) {
