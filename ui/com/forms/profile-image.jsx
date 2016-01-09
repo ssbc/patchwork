@@ -61,7 +61,7 @@ export default class ProfileSetup extends React.Component {
       <h1><span>Would you like to choose a {rainbow('picture')}?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
-          <div ref="imageInputContainer"><ImageInput label="Image" current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} /></div>
+          <div ref="imageInputContainer"><ImageInput current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} /></div>
         </fieldset>
       </form>
     </div>
