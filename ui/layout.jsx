@@ -11,7 +11,7 @@ import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
 import ProfileName from './com/forms/profile-name'
 import ProfileImage from './com/forms/profile-image'
-import Friends from './com/forms/friends'
+import ViewMode from './com/forms/view-mode'
 import Issues from './com/issues'
 import FindBar from './com/findbar'
 
@@ -19,9 +19,9 @@ const SETUP_LABELS = [
   <span><i className="fa fa-power-off"/><br/><small>Welcome</small></span>,
   <span><i className="fa fa-pencil"/><br/><small>Nickname</small></span>,
   <span><i className="fa fa-photo"/><br/><small>Photo</small></span>,
-  <span><i className="fa fa-check-square"/><br/><small>Start</small></span>
+  <span><i className="fa fa-th-list"/><br/><small>Interface</small></span>
 ]
-const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, Friends]
+const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, ViewMode]
 const RIGHT_NAVS = {
   notifications: Notifications
 }
@@ -56,7 +56,7 @@ export default class Layout extends React.Component {
       indexCounts: app.indexCounts||{},
       user: app.user,
       users: app.users,
-      setupIsOpen: true,//app.user.needsSetup,
+      setupIsOpen: app.user.needsSetup,
       setupCantClose: app.user.needsSetup,
       isComposerOpen: app.isComposerOpen
     }
