@@ -237,15 +237,17 @@ export class Editor extends React.Component {
         }
 
         // publish edit
-        var post = schemas.postEdit(text, mentions, msg.key);
+        var edit = schemas.postEdit(text, msg.root, mentions, msg.key);
         let published = (err, msg) => {
           this.setState({ isSending: false })
-            if (err) app.issue('Error While Editing', err, 'This error occurred while trying to edit an existing post.')
+            if (err) app.issue('Error While Editing',
+                               err, 'This error occurred while trying to edit an existing post.')
             else {
               // reset form
               this.setState({ text: '', isPreviewing: false });
 
-              // mark read (include the thread root because the api will automatically mark the root unread on new reply)
+              // mark read (include the thread root because the api will
+              // automatically mark the root unread on new reply)
               app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key);
 
               // call handler
@@ -254,11 +256,10 @@ export class Editor extends React.Component {
             }
         }
         if (recps) {
-          app.ssb.private.publish(post, recps, published);
+          app.ssb.private.publish(edit, recps, published);
         }
         else {
-          console.log("publishing edit");
-          app.ssb.publish(post, published);
+          app.ssb.publish(edit, published);
         }
       })
   }
