@@ -44,10 +44,12 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       this.setState({ channels: app.channels })
     }
     app.on('update:channels', this.refresh)
+    app.on('ui:set-view-mode', (this.setMsgView = view => this.setState({ currentMsgView: view }) ))
   }
   componentWillUnmount() {
     app.removeListener('update:channels', this.refresh)
     app.removeListener('open:msg', this.onOpenMsg)
+    app.removeListener('ui:set-view-mode', this.setMsgView)
   }
 
   // ui event handlers
