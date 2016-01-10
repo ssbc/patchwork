@@ -9,7 +9,10 @@ import u from '../lib/util'
 export default class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { users: [] }
+    this.state = {
+      users: [], 
+      filters: { following: true, follower: false, flagged: false }
+    }
   }
 
   componentDidMount() {
@@ -17,13 +20,11 @@ export default class Profile extends React.Component {
     pull(
       app.ssb.latest(),
       pull.map((user) => {
-        user.name = u.getName(user.id)
-        user.isUser = user.id === app.user.id
-        user.isFollowing = social.follows(app.user.id, user.id)
-        user.followsYou = social.follows(user.id, app.user.id)
-        user.nfollowers = social.followers(user.id).length
-        user.followed = social.follows(app.user.id, user.id)
-        user.follows = social.follows(user.id, app.user.id)
+        user.name      = u.getName(user.id)
+        user.isUser    = user.id === app.user.id
+        user.following = social.follows(app.user.id, user.id)
+        user.follower  = social.follows(user.id, app.user.id)
+        user.flagged   = social.flags(app.user.id, user.id)
         return user
       }),
       pull.collect((err, users) => {
@@ -31,35 +32,44 @@ export default class Profile extends React.Component {
           return app.minorIssue('An error occurred while fetching known users', err)
 
         users.sort(function (a, b) {
-          return b.nfollowers - a.nfollowers
+          return a.name.localeCompare(b.name)
         })
         this.setState({ users: users })
       })
     )
   }
 
-  render() {
-    // predicates
-    const isUser = user => user.isUser
-    const isFriend = user => !user.isUser && (user.isFollowing && user.followsYou)
-    const isFollowing = user => !user.isUser && (user.isFollowing && !user.followsYou)
-    const isFollower = user => !user.isUser && (!user.isFollowing && user.followsYou)
-    const isOther = user => !user.isUser && (!user.isFollowing && !user.followsYou)
+  toggleFilter(filter) {
+    this.state.filters[filter] = !this.state.filters[filter]
+    this.setState(this.state)
+  }
 
-    const group = pred => this.state.users.filter(pred).map((user, i) => <UserSummary key={i} pid={user.id} />)
+  filter(user) {
+    const f = this.state.filters
+    if (f.following && !user.following)
+      return false
+    if (f.follower && !user.follower)
+      return false
+    if (f.flagged && !user.flagged)
+      return false
+    return true
+  }
+
+  render() {
+    const FilterCheckbox = props => {
+      const onClick = () => this.toggleFilter(props.for)
+      return <label><input type="checkbox" onClick={onClick} checked={this.state.filters[props.for]} /> {props.children}</label>
+    }
     return <VerticalFilledContainer id="people" className="flex">
       <LeftNav location={this.props.location} />
       <div className="flex-fill user-summaries">
-        <h1>You</h1>
-        { group(isUser) }
-        <h1>Friends</h1>
-        { group(isFriend) }
-        <h1>Following</h1>
-        { group(isFollowing) }
-        <h1>Followers</h1>
-        { group(isFollower) }
-        <h1>Other</h1>
-        { group(isOther) }
+        <div className="filters flex">
+          <div>Show Only:</div>
+          <FilterCheckbox for="following">Following</FilterCheckbox>
+          <FilterCheckbox for="follower">Follows You</FilterCheckbox>
+          <FilterCheckbox for="flagged">Flagged By You</FilterCheckbox>
+        </div>
+        { this.state.users.filter(this.filter.bind(this)).map(user => <UserSummary key={user.id} pid={user.id} />) }
       </div>
     </VerticalFilledContainer>
   }
