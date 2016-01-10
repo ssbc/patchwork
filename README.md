@@ -14,7 +14,7 @@ That's our informal barrier to entry right now, since we're not prepared for lot
 Patchwork embeds [Scuttlebot](https://github.com/ssbc/scuttlebot), so if you're running Patchwork, you don't need to run another scuttlebot server.
 
 
-## Install
+## Install  (current stable)
 
 Install node v5 (you might like to use [nvm](https://github.com/creationix/nvm)).
 
@@ -22,28 +22,45 @@ Install node v5 (you might like to use [nvm](https://github.com/creationix/nvm))
 npm install ssb-patchwork -g
 ```
 
-or
+Run Patchwork
+
+```bash
+patchwork
+```
+
+## Install (bleeding edge)
+
+Install npm vesion 3
+
+```bash 
+npm install -g npm@3
+```
+
+Clone and install Patchwork
 
 ```bash
 git clone https://github.com/ssbc/patchwork.git
 cd patchwork
 npm install
+```
+
+Run Patchwork
+
+```bash
+# from directory you cloned patchwork to
+npm start
+```
+
+To bring in newest changes
+
+```bash
+# from directory you cloned patchwork to
+git pull origin master
+npm install
 npm run build:ui
 ```
 
-## Run
-
-```bash
-# if installed globally
-patchwork
-```
-
-or
-
-```bash
-# from the checkout directory
-npm start
-```
+---
 
 If it's your first time running patchwork,
 follow the on screen instructions to start a new identity
