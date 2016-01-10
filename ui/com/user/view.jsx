@@ -1,13 +1,13 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
-import MsgList from './msg-list'
-import Card from './msg-view/card'
-import Oneline from './msg-view/oneline'
-import { VerticalFilledContainer } from './index'
-import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } from './user-info'
-import app from '../lib/app'
-import u from '../lib/util'
+import MsgList from '../msg-list'
+import Card from '../msg-view/card'
+import Oneline from '../msg-view/oneline'
+import { VerticalFilledContainer } from '../index'
+import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } from './info'
+import app from '../../lib/app'
+import u from '../../lib/util'
 
 const VIEW_PMS = { label: 'You & Them' }
 const VIEW_POSTS = { label: 'Posts' }
@@ -16,7 +16,7 @@ const VIEW_DATA = { label: 'Data' }
 const SELF_TABS = [VIEW_POSTS, VIEW_ABOUT, VIEW_DATA]
 const OTHER_TABS = [VIEW_PMS, VIEW_POSTS, VIEW_ABOUT, VIEW_DATA]
 
-export default class UserProfile extends React.Component {
+export default class UserView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {

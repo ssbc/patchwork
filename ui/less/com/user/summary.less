@@ -1,21 +1,46 @@
 .user-summary {
-  display: inline-block;
-  margin: 5px;
+  display: flex;
+  margin: 1px;
   cursor: pointer;
+  color: #555;
+  background: #fff;
+  &:hover {
+    background: #fafafa;
+  }
 
   .user-pic img {
     display: block;
-    width: 100px;
-    height: 100px;
-    border-radius: 3px;
+    width: 50px;
+    height: 50px;
+    border-radius: 2px;
+  }
+  .name {
+    flex: 1;
+    font-size: 21px;
+    font-weight: 300;
+    padding: 10px;
+  }
+  .label {
+    padding: 14px 0px;
+    span {
+      background: #eee;
+      border-radius: 2px;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      margin: 0 2px;
+      color: gray;
+      font-size: 14px;
+    }
   }
 }
 
 .user-summaries {
-  h1 {  
-    font-weight: 100;
-    font-size: 55px;
-    color: #555;
-    line-height: 35px;
+  .filters {  
+    div, label {
+      padding: 12px 25px 12px 0;
+      color: gray;
+      font-weight: 100;
+      font-size: 21px;
+    }
   }
 }

@@ -10,9 +10,12 @@ export default class UserSummary extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props.pid
     return {
-      profile:     app.users.profiles[pid],
-      name:        app.users.names[pid] || u.shortString(pid, 6),
-      followers:   social.followers(pid)
+      profile:    app.users.profiles[pid],
+      name:       app.users.names[pid] || u.shortString(pid, 6),
+      isUser:     app.user.id === pid,
+      following:  social.follows(app.user.id, pid),
+      follower:   social.follows(pid, app.user.id),
+      flagged:    social.flags(app.user.id, pid)
     }
   }
 
@@ -21,9 +24,13 @@ export default class UserSummary extends AutoRefreshingComponent {
   }
 
   render() {
-    const nfollowers = this.state.followers.length
     return <div className="user-summary" onClick={this.onClick.bind(this)}>
       <UserPic id={this.props.pid} />
+      <div className="name">{this.state.name}</div>
+      <div className="label">{ this.state.isUser ? <span>You</span> : '' }</div>
+      <div className="label">{ this.state.following ? <span>Following</span> : '' }</div>
+      <div className="label">{ this.state.follower ? <span>Follows You</span> : '' }</div>
+      <div className="label">{ this.state.flagged ? <span>Flagged By You</span> : '' }</div>
     </div>
   }
 }
