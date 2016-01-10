@@ -30,6 +30,10 @@ function userIsTrusted (userId) {
   return userId === app.user.id || social.follows(app.user.id, userId)
 }
 
+function isRevision(msg) {
+  return msg.value.content.type === 'post-edit'
+}
+
 class BookmarkBtn extends React.Component {
   onClick(e) {
     e.stopPropagation()
@@ -217,6 +221,17 @@ export default class Card extends React.Component {
     </div>
   }
 
+  renderRevisionInfo(msg) {
+    if (isRevision(msg)) {
+      return (
+        <div key={msg.key + "rev-ctrls"}>
+          <a href="#">Revised <NiceDate ts={msg.value.timestamp} /></a>
+        </div>)
+    } else {
+      return null
+    }
+  }
+
   renderMuted(msg) {
     const text = msg.value.content.text
     return <div className={'msg-view card-muted'}>
@@ -285,6 +300,7 @@ export default class Card extends React.Component {
           { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
           { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
+          <div>{this.renderRevisionInfo(msg)}</div>
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
           { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
@@ -335,6 +351,7 @@ export default class Card extends React.Component {
             { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
             { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
             { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
+            <div>{this.renderRevisionInfo(msg)}</div>
             <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
             { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
