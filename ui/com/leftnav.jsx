@@ -71,6 +71,7 @@ export default class LeftNav extends React.Component {
     // render
     const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
     return <div className="leftnav">
+      <LeftNav.Link pathname={pathname} to="/add-friend" className="big-btn"><i className="fa fa-user-plus" /> Add Friend</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</LeftNav.Link>
