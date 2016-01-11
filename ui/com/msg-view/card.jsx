@@ -180,7 +180,10 @@ export default class Card extends React.Component {
     if (this.state.isEditing)
       return this.renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted);
 
-    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
+    if ((msg.value.content.type == 'post' ||
+         msg.value.content.type == 'post-edit') &&
+        downvoters.length > upvoters.length &&
+        !this.state.isExpanded)
       return this.renderMuted(msg);
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
