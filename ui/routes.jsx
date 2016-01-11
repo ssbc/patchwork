@@ -11,6 +11,7 @@ import Msg from './views/msg'
 import Composer from './views/composer'
 import People from './views/people'
 import Profile from './views/profile'
+import AddFriend from './views/add-friend'
 import WebView from './views/webview'
 import Sync from './views/sync'
 import Help from './views/help'
@@ -38,6 +39,7 @@ export default (
       <Route path="inbox" component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
+      <Route path="add-friend" component={AddFriend} />
       <Route path="people" component={People} />
       <Route path="profile" component={People} />
       <Route path="profile/:id" component={Profile} />

@@ -1,0 +1,22 @@
+.info-plaque {
+  .elevation-card;
+  position: relative;
+  color: #555;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  margin: 12px 0 12px 0;
+  padding: 24px 18px 14px;
+
+  &:before {
+    content: attr(data-label);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #ddd;
+    color: #555;
+    padding: 0 7px 3px;
+    font-size: 12px;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+}
