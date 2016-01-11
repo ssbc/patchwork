@@ -9,12 +9,10 @@ import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } f
 import app from '../../lib/app'
 import u from '../../lib/util'
 
-const VIEW_PMS = { label: 'You & Them' }
 const VIEW_POSTS = { label: 'Posts' }
 const VIEW_ABOUT = { label: 'About' }
 const VIEW_DATA = { label: 'Data' }
-const SELF_TABS = [VIEW_POSTS, VIEW_ABOUT, VIEW_DATA]
-const OTHER_TABS = [VIEW_PMS, VIEW_POSTS, VIEW_ABOUT, VIEW_DATA]
+const TABS = [VIEW_POSTS, VIEW_ABOUT, VIEW_DATA]
 
 export default class UserView extends React.Component {
   constructor(props) {
@@ -25,7 +23,7 @@ export default class UserView extends React.Component {
   }
 
   getTabs() {
-    return (this.props.pid == app.user.id) ? SELF_TABS : OTHER_TABS
+    return TABS
   }
 
   onSelectTab(tab) {
@@ -68,34 +66,20 @@ export default class UserView extends React.Component {
     // normal msg-list render
     const name = u.getName(this.props.pid)
     const isSelf = this.props.pid == app.user.id
-    const feed = (currentTab === VIEW_PMS)
-      ? app.ssb.patchwork.createInboxStream
-      : (opts) => {
-        opts = opts || {}
-        opts.id = this.props.pid
-        return app.ssb.createUserStream(opts)
-      }
+    const feed = opts => {
+      opts = opts || {}
+      opts.id = this.props.pid
+      return app.ssb.createUserStream(opts)
+    }
     const cursor = (msg) => {
       if (msg)
-        return (currentTab === VIEW_PMS) ? [msg.value.timestamp, msg.value.author] : msg.value.sequence
+        return msg.value.sequence
     }
     const forceRaw = (currentTab === VIEW_DATA)
-    const filter = (currentTab === VIEW_PMS)
-      ? (msg) => {
-        // private posts with this author
-        var c = msg.value.content
-        if (msg.plaintext)
-          return false
-        const isRecp = mlib.links(c.recps).filter(r => r.link === this.props.pid).length > 0
-        if (c.type == 'post' && !(c.root || c.branch) && isRecp)
-          return true
-      }
-      : (currentTab === VIEW_POSTS)
+    const filter = (currentTab === VIEW_POSTS)
         ? (msg) => {      
-          // toplevel post by this user
+          // toplevel post by this user, private or public
           var c = msg.value.content
-          if (!msg.plaintext)
-            return false
           if (c.type == 'post' && !(c.root || c.branch))
             return true
         }
@@ -103,7 +87,7 @@ export default class UserView extends React.Component {
     const composerProps = (isSelf)
       ? { isPublic: true, placeholder: 'Write a new public post', onSend: this.onSend.bind(this) }
       : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private message to '+name, onSend: this.onSend.bind(this) }
-    const ListItem = (currentTab === VIEW_PMS) ? Oneline : Card
+    const ListItem = Card // TODO - use settings
   
     // MsgList must have refreshOnReply
     // - Why: in other TABS, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
@@ -114,7 +98,7 @@ export default class UserView extends React.Component {
         key={currentTab.label}
         threads
         dateDividers
-        composer={(currentTab === VIEW_PMS) || (isSelf && currentTab === VIEW_POSTS)} composerProps={composerProps}
+        composer composerProps={composerProps}
         forceRaw={forceRaw}
         ListItem={ListItem}
         Hero={Hero}
