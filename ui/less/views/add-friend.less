@@ -1,4 +1,4 @@
-#add-friend {
+#add-friend, #add-pub {
   h1 {
     margin: 0px;
     padding: 10px 0 0;
@@ -9,45 +9,12 @@
     color: #555;
     border-radius: 2px;
   }
-  .add-friend-lookup {
-    .elevation-card;
-    position: relative;
-
-    &:before {
-      content: attr(data-label);
-      position: absolute;
-      top: 1px;
-      left: 1px;
-      background: #ddd;
-      color: #555;
-      padding: 0 7px 3px;
-      font-size: 12px;
-      border-top-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-    }
-
-    input {
-      padding: 24px 18px 14px;
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-      border: 1px solid #aaa;
-      border-right: 0;
-    }
-    a {
-      background: #fff;
-      padding: 17px 18px 18px;
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-      border: 1px solid #aaa;
-      font-weight: 300;
-      font-size: 18px;
-      color: #555;
-      transition: box-shadow 0.2s;
-      
-      &:hover {
-        .elevation-btn-raised;
-        text-decoration: none;
-      }
-    }
+  .btn {
+    background: #fff;
+    padding: 7px 14px;
+    border: 1px solid #aaa;
+  }
+  .fa-exclamation-triangle {
+    color: #D41E1E;
   }
 }
