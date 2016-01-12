@@ -11,7 +11,7 @@ export default class AddFriend extends React.Component {
   }
 
   render() {
-    const numPubServers = 2 // TODO
+    const numPubServers = 0 // TODO
     return <VerticalFilledContainer id="add-friend" className="flex">
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
