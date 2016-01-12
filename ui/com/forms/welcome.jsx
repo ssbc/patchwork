@@ -11,14 +11,7 @@ export default class WelcomePage extends React.Component {
     cb()
   }
   render() {
-    const verticalCenteringStyles = {
-      position: 'absolute',
-      left: 0,
-      top: '36%',
-      transform: 'translateY(-50%)',
-      width: '100%'
-    }
-    return <div className="text-center" style={verticalCenteringStyles}>
+    return <div className="text-center vertical-center">
       <h1>Welcome to {rainbow('Patchwork')}</h1>
       <h3>{"Let's"} get started.</h3>
     </div>

@@ -31,7 +31,7 @@ export default class ViewMode extends React.Component {
   }
 
   render() {
-    return <div>
+    return <div className="text-center">
       <h1>Choose your View</h1>
       <h2>Which do you prefer?</h2>
       <ImageSelector options={OPTIONS} value={this.state.choice} onSelect={this.onSelect.bind(this)} />

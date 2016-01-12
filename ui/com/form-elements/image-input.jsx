@@ -91,6 +91,10 @@ export default class ImageInput extends React.Component {
       const imgdim = { width: img.width, height: img.height }
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
       this.refs.scaleSlider.value = 0
+
+      if (this.props.onChange)
+        this.props.onChange()
+
       this.setState({
         img: img,
         imgdim: imgdim,
@@ -171,7 +175,7 @@ export default class ImageInput extends React.Component {
     return <div className="image-input">
       { this.state.hasImg ? 
         <div className="image-input-ctrls">
-          <div className="flex" style={{color: 'gray', alignItems: 'center'}}>
+          <div className="inline-flex" style={{color: 'gray', alignItems: 'center'}}>
             <div style={{flex: 1, paddingRight: '5px'}}>
               { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
               <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} style={{height: '45px', verticalAlign: 'middle'}} />

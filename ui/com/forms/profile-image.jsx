@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import cls from 'classnames'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import { rainbow } from '../index'
@@ -13,8 +14,18 @@ function getCurrentImg() {
 }
 
 export default class ProfileSetup extends React.Component {  
+  constructor(props) {
+    super(props)
+    this.state = { wasImageAdded: false }
+  }
+
   componentDidMount() {
     this.props.setIsValid(true)
+  }
+
+  onChangeImg() {
+    // note that the image was set so that vertical centering can be turned off
+    this.setState({ wasImageAdded: true })
   }
 
   getValues(cb) {
@@ -57,11 +68,13 @@ export default class ProfileSetup extends React.Component {
 
   render() {
     const currentImg = getCurrentImg()
-    return <div>
+    const hasImg = !!currentImg || this.state.wasImageAdded
+    const useVerticalCentering = !hasImg // dont vertically center if an image is assigned
+    return <div className={cls({ 'text-center': true, 'vertical-center': useVerticalCentering })}>
       <h1><span>Would you like to choose a picture?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
-          <div ref="imageInputContainer"><ImageInput current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} /></div>
+          <div ref="imageInputContainer"><ImageInput current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} onChange={this.onChangeImg.bind(this)} /></div>
         </fieldset>
       </form>
     </div>
