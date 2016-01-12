@@ -79,7 +79,7 @@ export default class ProfileSetup extends React.Component {
   render() {
     const currentName = getCurrentName()
     return <div>
-      <h1><span>What would you like to be {rainbow('called')}?</span></h1>
+      <h1><span>What would you like to be called?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
           <div>
