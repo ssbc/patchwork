@@ -15,12 +15,6 @@ import ViewMode from './com/forms/view-mode'
 import Issues from './com/issues'
 import FindBar from './com/findbar'
 
-const SETUP_LABELS = [
-  <span><i className="fa fa-power-off"/><br/><small>Welcome</small></span>,
-  <span><i className="fa fa-pencil"/><br/><small>Nickname</small></span>,
-  <span><i className="fa fa-photo"/><br/><small>Photo</small></span>,
-  <span><i className="fa fa-th-list"/><br/><small>View</small></span>
-]
 const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, ViewMode]
 const RIGHT_NAVS = {
   notifications: Notifications
@@ -56,7 +50,7 @@ export default class Layout extends React.Component {
       indexCounts: app.indexCounts||{},
       user: app.user,
       users: app.users,
-      setupIsOpen: app.user.needsSetup,
+      setupIsOpen: true,//app.user.needsSetup,
       setupCantClose: app.user.needsSetup,
       isComposerOpen: app.isComposerOpen
     }
@@ -106,7 +100,7 @@ export default class Layout extends React.Component {
     }
 
     return <div className="layout-rows">
-      <ModalFlow className="fullheight" labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar titlebar flex">
         <div>
           { isElectron

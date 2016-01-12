@@ -76,7 +76,7 @@ export default class ModalFlow extends React.Component {
         </div>
         { this.state.helpText ? <div className="modal-helptext">{this.state.helpText}</div> : '' }
         <div className="modal-ctrls">
-          <SteppedProgressBar current={this.state.step} labels={this.props.labels} />
+          <SteppedProgressBar current={this.state.step} labels={this.props.labels} num={this.props.labels ? this.props.labels.length : this.props.Forms.length} />
           <div className="next">
             <button disabled={!this.state.isValid} className={nextCls.join(' ')} onClick={this.onNextClick.bind(this)}>
               {nextText} <i className="fa fa-angle-right" />
