@@ -3,9 +3,8 @@
     margin: 0px;
     padding: 10px 0 0;
   }
-  .main {
-    background: #fff;
-    padding: 0px 10px 30px;
+  .section {
+    padding: 0 10px;
     margin: 5px;
     color: #555;
     border-radius: 2px;
@@ -35,12 +34,19 @@
       border-right: 0;
     }
     a {
-      padding: 19px 18px 19px;
+      background: #fff;
+      padding: 17px 18px 18px;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       border: 1px solid #aaa;
+      font-weight: 300;
+      font-size: 18px;
+      color: #555;
+      transition: box-shadow 0.2s;
+      
       &:hover {
-        border-color: #006EFF;
+        .elevation-btn-raised;
+        text-decoration: none;
       }
     }
   }
