@@ -78,7 +78,7 @@ export default class ProfileSetup extends React.Component {
 
   render() {
     const currentName = getCurrentName()
-    return <div>
+    return <div className="text-center vertical-center">
       <h1><span>What would you like to be called?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
