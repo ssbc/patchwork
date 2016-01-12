@@ -17,7 +17,7 @@ export default class AddPub extends React.Component {
         <div className="section">
           <h1>Join a Pub Server</h1>
           <h3 style={{marginTop: 5}}>Enter the invite-code below:</h3>
-          <InputPlaque label="Pub Invite Code" placeholder="Pub Invite Code" btn={<span><i className="fa fa-laptop" /> Lookup</span>} />
+          <InputPlaque label="Pub Invite Code" placeholder="Pub Invite Code" btn={<span><i className="fa fa-laptop" /> Join</span>} />
           <h4>
             <i className="fa fa-question-circle" /> Ask a Pub operator if you can join their Pub. If they say yes, {"they'll"} send you an invite code, which you can use above.<br/>
             <i className="fa fa-info-circle" /> Anybody can create a Pub server (<a href="https://github.com/ssbc/docs" target="_blank">instructions</a>).
