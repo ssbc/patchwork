@@ -19,22 +19,8 @@ export default class Notification extends React.Component {
   }
 
   componentDidMount() {
-    // load the subject msg
-    const msg = this.props.msg
-    if (!msg || msg.value.content.type !== 'vote')
-      return this.setState({ subjectMsg: null }) // no subject msg needed
-
-    // `props.msg` is a vote, load the subject msg
-    const vote = mlib.link(msg.value.content.vote, 'msg')
-    if (!vote)
-      return this.setState({ subjectMsg: null }) // malformed
-
-    app.ssb.get(vote.link, (err, subjectMsg) => {
-      if (subjectMsg) {
-        subjectMsg = { key: vote.link, value: subjectMsg }
-        threadlib.decryptThread(app.ssb, subjectMsg, () => this.setState({ subjectMsg: subjectMsg }))
-      } else
-        this.setState({ subjectMsg: null })
+    u.getSubjectMessage(this.props.msg, (subjectMsg) => {
+      this.setState({ subjectMsg: subjectMsg })
     })
   }
 
