@@ -1,0 +1,112 @@
+<html>
+    <head>
+    <title>Patchwork - SSBC</title>
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+    <body>
+      <div id="leftnav">
+    <div class="leftnav-item ">
+      <a href="/" title="Home">Home</a>
+    </div>
+    <div class="leftnav-item selected">
+      <a href="/patchwork" title="Patchwork">Patchwork</a>
+    </div>
+    <div class="leftnav-item ">
+      <a href="/secure-scuttlebutt" title="Secure Scuttlebutt">Secure Scuttlebutt</a>
+    </div>
+    <div class="leftnav-subitems">
+      <div class="leftnav-item ">
+      <a href="/docs/learn.html" title="Learn about the Protocol">Learn about the Protocol</a>
+    </div>
+    </div>
+    <div class="leftnav-item ">
+      <a href="/scuttlebot" title="Scuttlebot">Scuttlebot</a>
+    </div>
+    <div class="leftnav-subitems">
+      <div class="leftnav-item ">
+      <a href="/docs/intro-to-using-sbot.html" title="Introduction to Using Scuttlebot">Introduction to Using Scuttlebot</a>
+    </div>
+    </div>
+    <div class="leftnav-item ">
+      <a href="/docs" title="Documentation">Documentation</a>
+    </div>
+  </div>
+      <div id="content">
+        <h1 id="patchwork">Patchwork</h1>
+<p><img src="./screenshot.png" alt="screenshot"></p>
+<p><strong>Patchwork is a decentralized messaging and sharing app.</strong></p>
+<p>It&#39;s better than email because:</p>
+<ul>
+<li>Private messages are end-to-end encrypted, always.</li>
+<li>You have to follow somebody to get messages from them, so you won&#39;t get spammed.</li>
+<li>Your mail can be public broadcasts or private, and you&#39;ll only see replies by people you follow.</li>
+<li>The datastructure is a global mesh of append-only logs, which can support new types of data (not just &quot;mail&quot;).</li>
+<li>Users are not bound to one server/host (what we call &quot;pubs&quot;) and do not have to trust the servers.</li>
+<li>It&#39;s very easy to setup and maintain your own pub.</li>
+</ul>
+<p>It&#39;s better than twitter and facebook because:</p>
+<ul>
+<li>Private messages are end-to-end encrypted, always.</li>
+<li>The software runs on your device, so there&#39;s nobody tracking your browsing.</li>
+<li>The application-code is FOSS, so you&#39;re free to fork or write new applications without a gatekeeper setting terms.</li>
+<li>Data is saved to your disk, and so the application works offline.</li>
+<li>You can sync directly with friends over the wifi. </li>
+</ul>
+<p>Because we&#39;re still in development, <strong>you&#39;ll need to contact an SSB team member (in #scuttlebutt on Freenode) to get onto the network!</strong>
+That&#39;s our informal barrier to entry right now, since we&#39;re not prepared for lots of users yet.</p>
+<p>Patchwork embeds the <a href="https://github.com/ssbc/scuttlebot">Scuttlebot networked database</a>, so if you&#39;re running Patchwork, you don&#39;t need to run another scuttlebot server.</p>
+<h2 id="install-current-stable-">Install  (current stable)</h2>
+<p>This is the stable release. It will be the least likely to break.</p>
+<p><strong>Dependencies:</strong></p>
+<ul>
+<li>node v5.3.x (you might like to use <a href="https://github.com/creationix/nvm">nvm</a>)</li>
+<li>npm v3.5.x (<a href="#updating-npm">Instructions to update NPM when using NVM</a>)</li>
+</ul>
+<p><strong>Install:</strong></p>
+<pre><code class="lang-bash">npm install ssb-patchwork -g
+</code></pre>
+<p><strong>Run:</strong></p>
+<pre><code class="lang-bash">patchwork
+</code></pre>
+<p><strong>Update:</strong></p>
+<pre><code class="lang-bash">npm install ssb-patchwork -g
+</code></pre>
+<h2 id="install-bleeding-edge-">Install (bleeding edge)</h2>
+<p>This is the development version. It will contain updates not yet published on NPM.</p>
+<p><strong>Dependencies:</strong></p>
+<ul>
+<li>node v5.3.x (you might like to use <a href="https://github.com/creationix/nvm">nvm</a>)</li>
+<li>npm v3.5.x (<a href="#updating-npm">Instructions to update NPM when using NVM</a>)</li>
+</ul>
+<p><strong>Install:</strong></p>
+<pre><code class="lang-bash">git clone https://github.com/ssbc/patchwork.git
+cd patchwork
+npm install
+</code></pre>
+<p><strong>Run:</strong></p>
+<p>From directory you cloned patchwork to:</p>
+<pre><code class="lang-bash">npm start
+</code></pre>
+<p><strong>Update:</strong></p>
+<p>From directory you cloned patchwork to:</p>
+<pre><code class="lang-bash">git pull origin master
+npm install
+</code></pre>
+<h2 id="updating-npm">Updating NPM</h2>
+<p>Some people experience installation issues when using the npm version packaged with node 5.3.0. We have found upgrading to npm 3.5.x solves these issues.</p>
+<p>If you are using nvm, you can update npm with the following steps:</p>
+<pre><code class="lang-bash">cd ~/.nvm/versions/node/v5.3.0/lib
+npm install npm
+</code></pre>
+<h2 id="docs">Docs</h2>
+<ul>
+<li><a href="./docs/BUILDING.md">Building Patchwork</a></li>
+<li><a href="./docs/TESTING.md">Creating a Testing Environment, and Running Tests</a></li>
+<li><a href="./docs/PROJECT-STRUCTURE.md">Patchwork Project Structure</a></li>
+<li><a href="https://github.com/ssbc/docs">SSB Docs Repo</a></li>
+</ul>
+
+      </div>
+    </body>
+  </html>
