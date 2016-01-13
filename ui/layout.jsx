@@ -9,6 +9,7 @@ import FollowNearby from './com/forms/follow-nearby'
 import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
 import FindBar from './com/findbar'
+import desktopNotifications from './lib/desktop-notifications'
 
 const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
 const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
@@ -32,6 +33,8 @@ export default class Layout extends React.Component {
     app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
     app.on('find:next', this.doFind.bind(this, true))
     app.on('find:previous', this.doFind.bind(this, false))
+
+    desktopNotifications.stream(app.ssb.patchwork.createNotificationsStream)
   }
   componentWillReceiveProps() {
     // update state on view changes
