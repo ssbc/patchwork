@@ -8,111 +8,38 @@
     <script>hljs.initHighlightingOnLoad();</script>
   </head>
     <body>
-      <div id="leftnav">
-    <div class="leftnav-item selected">
-      <a href="/patchwork" title="Patchwork">Patchwork<br><small>Messaging App</small></a>
-    </div>
-    <div class="leftnav-subitems">
-      <div class="leftnav-item ">
-      <a href="/docs/patchwork/install.html" title="Install">Install</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/patchwork/help-faq.html" title="Help / FAQ">Help / FAQ</a>
-    </div>
-    </div>
-    <div class="leftnav-item ">
-      <a href="/scuttlebot" title="Scuttlebot">Scuttlebot<br><small>P2P Database</small></a>
-    </div>
-    <div class="leftnav-subitems">
-      <div class="leftnav-item ">
-      <a href="/docs/sbot/install.html" title="Install">Install</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/sbot/tutorial.html" title="Tutorial">Tutorial</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/sbot/howto-setup-a-pub.html" title="HOWTO: Setup a Pub">HOWTO: Setup a Pub</a>
-    </div>
-    </div>
-    <div class="leftnav-item ">
-      <a href="/secure-scuttlebutt" title="Secure Scuttlebutt">Secure Scuttlebutt<br><small>Database Protocol</small></a>
-    </div>
-    <div class="leftnav-subitems">
-      <div class="leftnav-item ">
-      <a href="/docs/ssb/learn.html" title="Learn about the Protocol">Learn about the Protocol</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/ssb/secret-handshake.html" title="Secret Handshake">Secret Handshake</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/ssb/end-to-end-encryption.html" title="End-to-end Encryption">End-to-end Encryption</a>
-    </div>
-    </div>
-    <div class="leftnav-item">API Documentation</div>
-    <div class="leftnav-subitems">
-      <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot.html" title="scuttlebot">scuttlebot</a>
-    </div>
-      <div class="leftnav-indent">
-        <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot-blobs.html" title="blobs">blobs</a>
-    </div>
-        <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot-block.html" title="block">block</a>
-    </div>
-        <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot-friends.html" title="friends">friends</a>
-    </div>
-        <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot-gossip.html" title="gossip">gossip</a>
-    </div>
-        <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot-invite.html" title="invite">invite</a>
-    </div>
-        <div class="leftnav-item ">
-      <a href="/docs/api/scuttlebot-replicate.html" title="replicate">replicate</a>
-    </div>
-      </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/ssb-msgs.html" title="ssb-msgs">ssb-msgs</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/ssb-msg-schemas.html" title="ssb-msg-schemas">ssb-msg-schemas</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/ssb-ref.html" title="ssb-ref">ssb-ref</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/ssb-keys.html" title="ssb-keys">ssb-keys</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/ssb-config.html" title="ssb-config">ssb-config</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/secret-stack.html" title="secret-stack">secret-stack</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/muxrpc.html" title="muxrpc">muxrpc</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/api/pull-stream.html" title="pull-stream">pull-stream</a>
-    </div>
-    </div>
-    <div class="leftnav-item">Articles</div>
-    <div class="leftnav-subitems">
-      <div class="leftnav-item ">
-      <a href="/docs/articles/design-challenge-avoid-centralization-and-singletons.html" title="Design Challenge: Avoiding Centralization and Singletons">Design Challenge: Avoiding Centralization and Singletons</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/articles/design-challenge-sybil-attack.html" title="Design Challenge: Sybil Attacks">Design Challenge: Sybil Attacks</a>
-    </div>
-      <div class="leftnav-item ">
-      <a href="/docs/articles/using-trust-in-open-networks.html" title="Using Trust in Open Networks">Using Trust in Open Networks</a>
-    </div>
+      <div id="topnav">
+    <div id="topnav-inner">
+      <a class="topnav-item " href="/" title="Home">
+      Home<br><small>SSBC</small>
+    </a>
+      <a class="topnav-item selected" href="/patchwork" title="Patchwork">
+      Patchwork<br><small>Messaging App</small>
+    </a>
+      <a class="topnav-item " href="/scuttlebot" title="Scuttlebot">
+      Scuttlebot<br><small>P2P Database</small>
+    </a>
+      <a class="topnav-item " href="/docs" title="Documentation">
+      Documentation<br><small>APIs, Tutorials, Whitepapers</small>
+    </a>
     </div>
   </div>
-      <div id="content">
-        <h1 id="patchwork">Patchwork</h1>
+      <div id="layout">
+        <div id="leftnav">
+      <div class="leftnav-item selected">
+      <a href="/patchwork" title="Patchwork">Patchwork</a>
+    </div>
+      <div class="leftnav-subitems">
+        <div class="leftnav-item ">
+      <a href="/docs/patchwork/install.html" title="Install">Install</a>
+    </div>
+        <div class="leftnav-item ">
+      <a href="/docs/patchwork/help-faq.html" title="Help / FAQ">Help / FAQ</a>
+    </div>
+      </div>
+    </div>
+        <div id="content">
+          <h1 id="patchwork">Patchwork</h1>
 <p><img src="./screenshot.png" alt="screenshot"></p>
 <p><strong>Patchwork is a decentralized messaging and sharing app.</strong></p>
 <p>It&#39;s better than email because:</p>
@@ -186,6 +113,7 @@ npm install npm
 <li><a href="https://github.com/ssbc/docs">SSB Docs Repo</a></li>
 </ul>
 
+        </div>
       </div>
     </body>
   </html>
