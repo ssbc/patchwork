@@ -8,6 +8,7 @@
     <script>hljs.initHighlightingOnLoad();</script>
   </head>
     <body>
+      <link rel="stylesheet" href="/patchwork.css">
       <div id="topnav">
     <div id="topnav-inner">
       <a class="topnav-item " href="/" title="Home">
@@ -24,46 +25,23 @@
     </a>
     </div>
   </div>
+      <header>
+        <h1><span class="rainbow"><span>p</span><span>a</span><span>t</span><span>c</span><span>h</span><span>w</span><span>o</span><span>r</span><span>k</span></span> alpha</h1>
+        <div id="about">
+          <span>End-to-end encrypted mail.</span>
+          <span>Public social feeds.</span>            
+          <span>No central servers.</span>
+          <span>Sync over WiFi.</span>
+          <span>Offline operation.</span>
+          <span>GPL licensed.</span>
+        </div>
+      </header>
       <div id="layout">
-        <div id="leftnav">
-      <div class="leftnav-item selected">
-      <a href="/patchwork" title="Patchwork">Patchwork</a>
-    </div>
-      <div class="leftnav-subitems">
-        <div class="leftnav-item ">
-      <a href="/docs/patchwork/install.html" title="Install">Install</a>
-    </div>
-        <div class="leftnav-item ">
-      <a href="/docs/patchwork/help-faq.html" title="Help / FAQ">Help / FAQ</a>
-    </div>
-      </div>
-    </div>
         <div id="content">
-          <h1 id="patchwork">Patchwork</h1>
-<p><img src="./screenshot.png" alt="screenshot"></p>
-<p><strong>Patchwork is a decentralized messaging and sharing app.</strong></p>
-<p>It&#39;s better than email because:</p>
-<ul>
-<li>Private messages are end-to-end encrypted, always.</li>
-<li>You have to follow somebody to get messages from them, so you won&#39;t get spammed.</li>
-<li>Your mail can be public broadcasts or private, and you&#39;ll only see replies by people you follow.</li>
-<li>The datastructure is a global mesh of append-only logs, which can support new types of data (not just &quot;mail&quot;).</li>
-<li>Users are not bound to one server/host (what we call &quot;pubs&quot;) and do not have to trust the servers.</li>
-<li>It&#39;s very easy to setup and maintain your own pub.</li>
-</ul>
-<p>It&#39;s better than twitter and facebook because:</p>
-<ul>
-<li>Private messages are end-to-end encrypted, always.</li>
-<li>The software runs on your device, so there&#39;s nobody tracking your browsing.</li>
-<li>The application-code is FOSS, so you&#39;re free to fork or write new applications without a gatekeeper setting terms.</li>
-<li>Data is saved to your disk, and so the application works offline.</li>
-<li>You can sync directly with friends over the wifi. </li>
-</ul>
-<p>Because we&#39;re still in development, <strong>you&#39;ll need to contact an SSB team member (in #scuttlebutt on Freenode) to get onto the network!</strong>
-That&#39;s our informal barrier to entry right now, since we&#39;re not prepared for lots of users yet.</p>
-<p>Patchwork embeds the <a href="https://github.com/ssbc/scuttlebot">Scuttlebot networked database</a>, so if you&#39;re running Patchwork, you don&#39;t need to run another scuttlebot server.</p>
-<h2 id="install-current-stable-">Install  (current stable)</h2>
-<p>This is the stable release. It will be the least likely to break.</p>
+          <section><h1 id="install">Install</h1>
+<h2 id="from-npm">From NPM</h2>
+<p>NPM hosts the stable release.
+It will be the least likely to have bugs.</p>
 <p><strong>Dependencies:</strong></p>
 <ul>
 <li>node v5.3.x (you might like to use <a href="https://github.com/creationix/nvm">nvm</a>)</li>
@@ -75,11 +53,9 @@ That&#39;s our informal barrier to entry right now, since we&#39;re not prepared
 <p><strong>Run:</strong></p>
 <pre><code class="lang-bash">patchwork
 </code></pre>
-<p><strong>Update:</strong></p>
-<pre><code class="lang-bash">npm install ssb-patchwork -g
-</code></pre>
-<h2 id="install-bleeding-edge-">Install (bleeding edge)</h2>
-<p>This is the development version. It will contain updates not yet published on NPM.</p>
+<h2 id="from-git">From Git</h2>
+<p>GitHub hosts the development version.
+It will contain updates not yet published on NPM.</p>
 <p><strong>Dependencies:</strong></p>
 <ul>
 <li>node v5.3.x (you might like to use <a href="https://github.com/creationix/nvm">nvm</a>)</li>
@@ -105,14 +81,38 @@ npm install
 <pre><code class="lang-bash">cd ~/.nvm/versions/node/v5.3.0/lib
 npm install npm
 </code></pre>
-<h2 id="docs">Docs</h2>
-<ul>
-<li><a href="./docs/BUILDING.md">Building Patchwork</a></li>
-<li><a href="./docs/TESTING.md">Creating a Testing Environment, and Running Tests</a></li>
-<li><a href="./docs/PROJECT-STRUCTURE.md">Patchwork Project Structure</a></li>
-<li><a href="https://github.com/ssbc/docs">SSB Docs Repo</a></li>
-</ul>
-
+</section>
+          <section><h1 id="help-faq">Help / FAQ</h1>
+<h2 id="following">Following</h2>
+<p><strong>What is following?</strong><br>
+Following in Patchwork is like following in Twitter. It means you&#39;ll see the posts and actions of the person you follow.</p>
+<p><strong>Can I talk to the people I follow?</strong><br>
+Only if they follow you. If you want to converse with somebody, you&#39;ll both need to follow each other.</p>
+<h2 id="pubs">Pubs</h2>
+<p><strong>What are Pubs?</strong><br>
+Pubs host users&#39; feeds and files on the public Internet.
+Without a Pub, you won&#39;t be able to reach anybody outside of your WiFi, so you want at least one.</p>
+<p><strong>How do I join a Pub?</strong><br>
+Ask the Pub&#39;s operator for an invite-code. You can use the invite-code in Patchwork to join the Pub.</p>
+<p><strong>Can I change Pubs?</strong><br>
+Yes. You can change Pubs, and use more than one at once.</p>
+<p><strong>Why do Pubs exist?</strong><br>
+SecureScuttlebutt is a peer-to-peer network, but not all users can connect to each other because of inherent limitations of the Internet.
+Pubs ensure that everybody can participate.</p>
+<p><strong>How do I create my own Pub?</strong><br>
+See <a href="../sbot/howto-setup-a-pub.md">HOWTO: Setup a Pub</a></p>
+<h2 id="privacy">Privacy</h2>
+<p><strong>Who can read my public messages?</strong><br>
+Anybody can, even if they&#39;re not following you when you make the post.</p>
+<p><strong>Who can read my channel messages?</strong><br>
+Anybody can. Channel messages are public.</p>
+<p><strong>Who can see my profile, and who I follow?</strong><br>
+Anybody can (currently). Profiles are public.</p>
+<p><strong>Who can read my private messages?</strong><br>
+Only the recipients. Private messages are encrypted end-to-end, so not even Pub operators can read them.</p>
+<p><strong>Who can see which messages I open, or what I search for?</strong><br>
+Nobody. Patchwork runs on your device, so nobody can track your clicks around the application.</p>
+</section>
         </div>
       </div>
     </body>
