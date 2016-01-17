@@ -25,12 +25,8 @@ const FLAG_DROPDOWN = [
 class AutoRefreshingComponent extends React.Component {
   constructor(props) {
     super(props)
-    const handleCB = (err, state) => {
-      if (err) throw err
-      this.setState(state)
-    }
-    this.computeState(null, handleCB)
-    this.refreshState = props => { this.computeState(props, handleCB) }
+    this.state = this.computeState()
+    this.refreshState = props => { this.setState(this.computeState(props)) }
   }
   componentDidMount() {
     app.on('update:all', this.refreshState) // re-render on app state updates
@@ -41,9 +37,8 @@ class AutoRefreshingComponent extends React.Component {
   componentWillUnmount() {
     app.removeListener('update:all', this.refreshState)    
   }
-  computeState(props, callback) {
+  computeState(props) {
     // should be overwritten by sublcass
-    throw 'this should be overwritten by subclass'
   }
 }
 
@@ -94,10 +89,9 @@ export class UserInfoHeader extends AutoRefreshingComponent {
     }
   }
 
-  computeState(props, callback) {
+  computeState(props) {
     const pid = props ? props.pid : this.props.pid
-
-    let details = {
+    return {
       profile:     app.users.profiles[pid],
       name:        app.users.names[pid] || u.shortString(pid, 6),
       isSelf:      (pid == app.user.id),
@@ -110,13 +104,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       followeds:   social.followeds(pid),
       flaggers:    social.followedFlaggers(app.user.id, pid, true)
     }
-
-    app.ssb.getLatest(pid, (err,data)=> {
-      if (err) throw err
-
-      details.latestMessageTime = data.value.timestamp
-      callback(null, details)
-    })
   }
 
   render() {
@@ -135,8 +122,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       //   h('p', h('small', 'ProTip: You can rename users to avoid getting confused!'))
       // )
     }
-    // expect an empty state initially because of callback
-    if (!this.state) return <div />
 
     const nfollowers = this.state.followers1.length + this.state.followers2.length
     const nflaggers = this.state.flaggers.length
@@ -175,7 +160,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
             <tr><td>{nflaggers}</td><td>flag{nflaggers===1?'':'s'}</td></tr>
           </tbody>
         </table>
-        <div className="last-known-activity">Last known activity: {u.niceDate(this.state.latestMessageTime, true)}</div>
       </div>
     </div>
   }
@@ -189,9 +173,9 @@ function sortFollowedFirst (a, b) {
 }
 
 export class UserInfoFollowers extends AutoRefreshingComponent {
-  computeState(props, callback) {
+  computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    callback(null, { followers: social.followers(pid).sort(sortFollowedFirst) })
+    return { followers: social.followers(pid).sort(sortFollowedFirst) }
   }
   render() {
     return <div className="user-info-card">
@@ -205,9 +189,9 @@ export class UserInfoFollowers extends AutoRefreshingComponent {
 }
 
 export class UserInfoFolloweds extends AutoRefreshingComponent {
-  computeState(props, callback) {
+  computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    callback(null, { followeds: social.followeds(pid).sort(sortFollowedFirst) })
+    return { followeds: social.followeds(pid).sort(sortFollowedFirst) }
   }
   render() {
     return <div className="user-info-card">
@@ -222,9 +206,9 @@ export class UserInfoFolloweds extends AutoRefreshingComponent {
 
 
 export class UserInfoFlags extends AutoRefreshingComponent {
-  computeState(props, callback) {
+  computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    callback(null, { flaggers: social.followedFlaggers(app.user.id, pid, true) })
+    return { flaggers: social.followedFlaggers(app.user.id, pid, true) }
   }
   render() {
     const pid = this.props.pid
