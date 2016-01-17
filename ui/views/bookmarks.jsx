@@ -1,8 +1,6 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import pull from 'pull-stream'
-import mlib from 'ssb-msgs'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'

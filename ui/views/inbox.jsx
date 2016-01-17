@@ -1,8 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import pull from 'pull-stream'
-import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -29,8 +28,11 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   cursor (msg) {
-    if (msg)
+    if (msg) {
+      // find the last post (inbox is ordered by timestamp of last post in thread)
+      var last = threadlib.getLastThreadPost(msg)
       return [msg.value.timestamp, msg.value.author]
+    }
   }
 
   onSelectMsgView(v, index) {
