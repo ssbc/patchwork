@@ -11,6 +11,7 @@ import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
+import social from '../lib/social-graph'
 
 const LISTITEMS = [
   { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
@@ -66,7 +67,12 @@ export default class Inbox extends LocalStoragePersistedComponent {
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}
+        filter={followedOnlyFilter}
         cursor={this.cursor} />
     </div>
   }
+}
+
+function followedOnlyFilter (msg) {
+  return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
 }

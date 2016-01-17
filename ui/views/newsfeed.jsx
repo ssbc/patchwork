@@ -89,9 +89,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return app.ssb.patchwork.createNewsfeedStream(opts)
     }
     const filter = msg => {
-      if (this.state.isFollowedOnly)
-        return followedOnlyFilter(msg)
-      return true
+      return followedOnlyFilter(msg)
     }
 
     const Toolbar = props => {    
