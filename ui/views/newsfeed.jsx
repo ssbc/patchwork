@@ -42,7 +42,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       } else {
         // navigate
         app.history.pushState(null, '/msg/' + encodeURIComponent(key))
-      }      
+      }
     }))
     this.refresh = () => {
       this.setState({ channels: app.channels })
@@ -69,7 +69,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
 
   onMarkAllRead() {
-    alert('todo')    
+    alert('todo')
   }
 
   render() {
@@ -84,7 +84,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         return [msg.value.timestamp, msg.value.author]
     }
     const source = (opts) => {
-      if (channel) 
+      if (channel)
         return app.ssb.patchwork.createChannelStream(channel, opts)
       return app.ssb.patchwork.createNewsfeedStream(opts)
     }
@@ -94,7 +94,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return true
     }
 
-    const Toolbar = props => {    
+    const Toolbar = props => {
       const isPinned = channelData && channelData.pinned
       return <div className="flex light-toolbar">
         { channel
@@ -104,14 +104,14 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
 
     // render content
     const thread = this.state.isUsingThreadPanel && this.state.currentThreadKey
-    // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}    
+    // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}
     return <div id="newsfeed" key={channel||'*'}>
       <MsgList
         ref="list"

@@ -28,7 +28,7 @@ class ChannelListItem extends React.Component {
     return <div className={cls(this.props.selected, channel.hasNew)} onClick={onSelect}>
       <div className="flex-fill"><i className="fa fa-hashtag" /> { channel.name }</div>
       <div className="ctrls">
-        <a className={classNames({ pin: true, pinned: channel.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
+        <a href='javascript:;' className={classNames({ pin: true, pinned: channel.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
       </div>
     </div>
   }
@@ -56,7 +56,7 @@ export class ChannelList extends React.Component {
   }
 
   onClearSearch() {
-    this.setState({ searchText: '', searchQuery: false })    
+    this.setState({ searchText: '', searchQuery: false })
   }
 
   onClickOpen() {
@@ -77,7 +77,7 @@ export class ChannelList extends React.Component {
   render() {
     const selected = this.props.selected
     const search = this.state.searchText
-    
+
     // predicates
     const isPartialMatch = channel => ((this.state.searchQuery) ? this.state.searchQuery.test(channel.name) : true)
     const isExactMatch   = channel => ((this.state.searchText)  ? this.state.searchText === channel.name : false)
@@ -107,11 +107,11 @@ export class ChannelList extends React.Component {
         <p>
           { search
             ? (hasExactMatch
-              ? <small><a onClick={this.onClickOpen.bind(this)}>Open "#{search}"</a> | </small>
-              : <small><a onClick={this.onClickCreate.bind(this)}>Create "#{search}"</a> | </small>)
+              ? <small><a href='javascript:;' onClick={this.onClickOpen.bind(this)}>Open "#{search}"</a> | </small>
+              : <small><a href='javascript:;' onClick={this.onClickCreate.bind(this)}>Create "#{search}"</a> | </small>)
             : '' }
           { search
-            ? <small><a onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
+            ? <small><a href='javascript:;' onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
             : '' }
         </p>
       </div>
