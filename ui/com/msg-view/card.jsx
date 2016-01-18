@@ -37,7 +37,7 @@ class BookmarkBtn extends React.Component {
     const b = this.props.isBookmarked
     const title = 'Bookmark'+(b?'ed':'')
     return <span>
-      <a className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+      <a href='javascript:;' className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} />
       </a>
     </span>
@@ -51,7 +51,7 @@ class DigBtn extends React.Component {
   }
   render() {
     let label = this.props.isUpvoted ? 'Dug' : 'Dig'
-    return <a className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
+    return <a href='javascript:;' className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
       <i className="fa fa-hand-peace-o" /> {label.split('').map((l,i) => <span key={i}>{l}</span>)} <span>i</span><span>t</span>
     </a>
   }
@@ -208,7 +208,7 @@ export default class Card extends React.Component {
     const dropdownOpts = [
       { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
-      (isDownvoted) ? 
+      (isDownvoted) ?
         { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
         { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
@@ -236,12 +236,12 @@ export default class Card extends React.Component {
         </div>
         <div className="body" ref="body">
           <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
-          { this.state.isOversized ? <div className="read-more" onClick={this.onToggleExpand.bind(this)}><a>Read more</a></div> : ''}
+          { this.state.isOversized ? <div className="read-more"><a href='javascript:;' onClick={this.onToggleExpand.bind(this)}>Read more</a></div> : ''}
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?
             <div>
-              <a onClick={this.onSelect.bind(this)}>
+              <a href='javascript:;' onClick={this.onSelect.bind(this)}>
                 {replies === 1 ? '1 reply ' : (replies + ' replies ')}
                 { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
               </a>
@@ -250,7 +250,7 @@ export default class Card extends React.Component {
           { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
-          { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
+          { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
       </div>
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />

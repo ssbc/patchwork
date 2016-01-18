@@ -23,7 +23,7 @@ export default class Notifications extends React.Component {
         emptyMsg="No new notifications."
         filters={FILTERS}
         source={app.ssb.patchwork.createNotificationsStream}
-        cursor={this.cursor} 
+        cursor={this.cursor}
         live={{ gt: [Date.now(), false] }} />
     </div>
   }
@@ -61,7 +61,7 @@ export default class FNB extends React.Component {
   render() {
     const count = this.state.count || ''
     return <div className={'fnb '+(this.props.className||'')+(this.state.isExpanded?' expanded':'')} onMouseLeave={this.onMouseLeave.bind(this)}>
-      <div className="fnb-btn"><a className={count?'attention':''} data-count={count} onClick={this.onClick.bind(this)}><i className="fa fa-bell" /></a></div>
+      <div className="fnb-btn"><a href='javascript:;' className={count?'attention':''} data-count={count} onClick={this.onClick.bind(this)}><i className="fa fa-bell" /></a></div>
       { this.state.isExpanded ? <Notifications/> : '' }
     </div>
   }
