@@ -232,6 +232,7 @@ export default class Card extends React.Component {
   }
 
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
+
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
     const isViewingRaw = this.state.isViewingRaw
@@ -268,6 +269,7 @@ export default class Card extends React.Component {
             {channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
           </div>
           <div className="header-right">
+            { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
             <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
           </div>
@@ -334,9 +336,13 @@ export default class Card extends React.Component {
           </div>
         </div>
         <div className="body" ref="body">
-          { /* <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> */ }
-          <Editor isEditing="true" editingContent={msg.value.content.text} />
-          
+          <Editor {...this.props} isEditing="true"
+                                  isPublic={msg.value.content.recps === undefined}
+                                  editingContent={msg.value.content.text}
+                                  onSend={this.onCancelEdit.bind(this)}
+                                  onCancel={this.onCancelEdit.bind(this)}
+                                  originalMessage={msg}/>
+    
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?
