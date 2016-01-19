@@ -24,5 +24,5 @@ app.fetchLatestState(function () {
 
 function onError (e) {
   e.preventDefault()
-  app.minorIssue('Unexpected Error', e.error, 'This was an unhandled exception.')
+  app.minorIssue('Unexpected Error', e.error || e, 'This was an unhandled exception.')
 }

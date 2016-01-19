@@ -4,8 +4,6 @@ import React from 'react'
 import classNames from 'classnames'
 import app from '../lib/app'
 
-export const ALL_CHANNELS = Symbol('all')
-
 function cls (selected, hasNew) {
   return classNames({ 'channel-list-item': true, flex: true, selected: selected, unread: hasNew })
 }

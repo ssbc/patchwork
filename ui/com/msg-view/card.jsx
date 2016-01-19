@@ -123,7 +123,7 @@ export default class Card extends React.Component {
       return
     // wait for images to finish loading
     var done = multicb()
-    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
+    ;[].slice.call(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
     done(() => {
       // check height
       if (!this.refs.body)
