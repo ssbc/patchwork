@@ -52,8 +52,18 @@ export default class Thread extends React.Component {
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
       var that = this // yes we're going there
-      
-      threadlib.getLatestRevision(app.ssb, thread, function(thread) {
+      const origThread = thread
+      threadlib.getLatestRevision(app.ssb, thread, function(err, thread) {
+        if (err &&
+            err.message !== '"Param 0 must have a .id of type "msgId""') {
+          // pass through for now
+          thread = origThread
+        } else if (err) {
+          return app.issue('Failed to get latest msg revision', err,
+                           'This happened in msg-thread componentDidMount')
+        }
+        console.log("thread type: ", thread.value.content.type)
+
         var flatThread = threadlib.flattenThread(thread)
         // set state, after some processing
         that.setState({
@@ -105,7 +115,7 @@ export default class Thread extends React.Component {
           )
         }
       })
-    })
+    } )
   }
   
   componentDidMount() {
