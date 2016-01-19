@@ -5,7 +5,7 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
 import pull from 'pull-stream'
-import { VerticalFilledContainer } from './index'
+import { VerticalFilledContainer, UserPics } from './index'
 import LeftNav from './leftnav'
 import ResponsiveElement from './responsive-element'
 import Card from './msg-view/card'
@@ -214,8 +214,9 @@ export default class Thread extends React.Component {
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
-    const publicOrPrivate = (thread && thread.plaintext) ? 'Public' : 'Private'
+    const isPublic = (thread && thread.plaintext)
     const authorName = thread && u.getName(thread.value.author)
+    const recps = thread && mlib.links(thread.value.content.recps, 'feed')
     return <div className="msg-thread">
       <VerticalFilledContainer id="msg-thread-vertical" className="flex">
         <LeftNav location={this.props.location} />
@@ -234,7 +235,10 @@ export default class Thread extends React.Component {
                     ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
                     : '' }
                 </div>
-                <hr className="labeled" data-label={`${publicOrPrivate} post by ${authorName}`} />
+                <hr className="labeled" data-label={`${isPublic?'Public':'Private'} post by ${authorName}${isPublic?'':' to:'}`} />
+                { recps && recps.length
+                  ? <div className="recps-list flex"><div className="flex-fill"/><UserPics ids={recps.map(r => r.link)} /><div className="flex-fill"/></div>
+                  : '' }
                 <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
                   { this.state.msgs.map((msg, i) => {
                     const isFirst = (i === 0)

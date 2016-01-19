@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import cls from 'classnames'
+import threadlib from 'patchwork-threads'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -80,18 +81,16 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
     // msg-list params
     const cursor = msg => {
-      if (msg)
-        return [msg.value.timestamp, msg.value.author]
+      if (msg) {
+        // find the last post (newsfeed is ordered by timestamp of last post in thread)
+        var last = threadlib.getLastThreadPost(msg)
+        return [last.value.timestamp, last.value.author]
+      }
     }
     const source = (opts) => {
       if (channel)
         return app.ssb.patchwork.createChannelStream(channel, opts)
       return app.ssb.patchwork.createNewsfeedStream(opts)
-    }
-    const filter = msg => {
-      if (this.state.isFollowedOnly)
-        return followedOnlyFilter(msg)
-      return true
     }
 
     const Toolbar = props => {
@@ -99,7 +98,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       return <div className="flex light-toolbar">
         { channel
           ? <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link>
-          : '' }
+          : <Link to="/"><i className="fa fa-bullhorn" /> Public Threads</Link> }
         { channel
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
@@ -118,7 +117,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         threads
         dateDividers
         openMsgEvent
-        filter={filter}
+        composer composerProps={{ isPublic: true, channel: channel }}
+        filter={followedOnlyFilter}
         Hero={Toolbar}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         ListItem={ListItem} listItemProps={{ userPic: true }}

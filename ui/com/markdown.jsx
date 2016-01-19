@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import markdown from '../lib/markdown'
+import markdown from 'ssb-markdown'
 
 export class Block extends React.Component {
   render() {

@@ -533,7 +533,7 @@ exports.init = function (sbot, opts) {
           if (limit && added >= limit)
             break
 
-          // we're going to only look at timestamp, because that's all that phoenix cares about
+          // we're going to only look at timestamp, because that's all that the index tracks
           var invalid = !!(
             (lt  && row.ts >= lt[0]) ||
             (lte && row.ts > lte[0]) ||

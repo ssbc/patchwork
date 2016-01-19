@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
-import pull from 'pull-stream'
-import mlib from 'ssb-msgs'
+import { Link } from 'react-router'
+import threadlib from 'patchwork-threads'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -10,6 +10,7 @@ import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
+import social from '../lib/social-graph'
 
 const LISTITEMS = [
   { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
@@ -27,8 +28,11 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   cursor (msg) {
-    if (msg)
+    if (msg) {
+      // find the last post (inbox is ordered by timestamp of last post in thread)
+      var last = threadlib.getLastThreadPost(msg)
       return [msg.value.timestamp, msg.value.author]
+    }
   }
 
   onSelectMsgView(v, index) {
@@ -45,6 +49,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
 
     const Toolbar = props => {
       return <div className="flex light-toolbar">
+        <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
         <div className="flex-fill"/>
         <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
@@ -57,13 +62,19 @@ export default class Inbox extends LocalStoragePersistedComponent {
         ref="list"
         threads
         dateDividers
+        composer composerProps={{ isPublic: false }}
         Hero={Toolbar}
         ListItem={ListItem} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}
+        filter={followedOnlyFilter}
         cursor={this.cursor} />
     </div>
   }
+}
+
+function followedOnlyFilter (msg) {
+  return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
 }
