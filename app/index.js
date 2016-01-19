@@ -19,6 +19,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/logging'))
   .use(require('scuttlebot/plugins/private'))
   .use(require('scuttlebot/plugins/local'))
+  .use(require('ssb-names'))
   .use(require('../api'))
 
 config.keys = ssbKeys.loadOrCreateSync(path.join(config.path, 'secret'))
