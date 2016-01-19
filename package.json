@@ -13,7 +13,7 @@
     "build": "npm run build:js && npm run build:css",
     "build:ui": "npm run build:js && npm run build:css",
     "build:js": "node ./scripts/build.js ./ui/main.js ./ui/main.build.js",
-    "build:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less ./ui/css/main.css",
+    "build:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less --autoprefix ./ui/css/main.css",
     "prepublish": "npm run build"
   },
   "author": "Paul Frazee <pfrazee@gmail.com>",
@@ -25,7 +25,7 @@
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "browserify-incremental": "^3.0.1",
-    "less": "~1.7.5",
+    "less": "^2.5.3",
     "osenv": "~0.1.0",
     "rimraf": "~2.2.8",
     "tape": "~3.0.0"
@@ -39,6 +39,7 @@
     "hyperscript": "~1.4.6",
     "image-loaded": "0.0.2",
     "ip": "^1.0.2",
+    "less-plugin-autoprefix": "^1.5.1",
     "mime-types": "^2.1.3",
     "moment": "^2.10.6",
     "multiblob": "^1.8.0",
