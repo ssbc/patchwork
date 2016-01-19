@@ -5,6 +5,9 @@ module.exports = function (conf) {
     getHostname: function () {
       return conf.host || 'localhost'
     },
+    getLocalUrl: function () {
+      return 'http://localhost:7777/'
+    },
 
     allowRemoteAccess: function () {
       return conf.allowRemoteAccess

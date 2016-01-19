@@ -61,3 +61,8 @@ if (configOracle.useTLS()) {
   ws.createServer(wsServerFn).listen(7778)
   console.log('Serving at http://localhost:7777')
 }
+
+// run electron-specific code, if appropriate
+if (process.versions['electron']) {
+  require('./electron')(configOracle)
+}

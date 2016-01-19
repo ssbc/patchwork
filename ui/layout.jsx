@@ -96,7 +96,7 @@ export default class Layout extends React.Component {
         <div>
           <NavLink className="home" to="/" icon="home" />
         </div>
-        <div className="flex-fill"><SearchPalette/></div>
+        <div className="flex-fill"><SearchPalette ref="search"/></div>
         <div>
           <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
         </div>
