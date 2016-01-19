@@ -8,11 +8,25 @@ import app from '../lib/app'
 import social from '../lib/social-graph'
 import u from '../lib/util'
 
+function first (obj) {
+  for(var k in obj) return k
+}
+
 export class UserLink extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      id: props.id,
+      name: u.shortString(props.id, 6)
+    }
+    app.ssb.names.signifier(props.id, (err, names) => {
+      this.setState({name: first(names)})
+    })
+  }
+
   render() {
-    const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
-    const label = (this.props.shorten) ? name.slice(0, 3) : name
-    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link" title={name}>{label}</Link>
+    const label = (this.props.shorten) ? this.state.name.slice(0, 3) : this.state.name
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-link" title={this.state.id}>{label}</Link>
   }
 }
 
@@ -40,10 +54,9 @@ export class UserLinks extends React.Component {
   }
 }
 
-export class UserPic extends React.Component {
+export class UserPic extends UserLink {
   render() {
-    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
-    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic" title={name}>
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic" title={this.state.name}>
       <img src={u.profilePicUrl(this.props.id)} />
     </Link>
   }
@@ -59,9 +72,8 @@ export class UserPics extends React.Component {
   }
 }
 
-export class UserBtn extends React.Component {
+export class UserBtn extends UserLink {
   render() {
-    const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
     const followedIcon = (app.user.id === this.props.id || social.follows(app.user.id, this.props.id))
       ? <i className="fa fa-check-circle" />
       : <i className="fa fa-circle-thin" />
@@ -179,3 +191,6 @@ class _VerticalFilledContainer extends React.Component {
   }
 }
 export var VerticalFilledContainer = verticalFilled(_VerticalFilledContainer)
+
+
+
