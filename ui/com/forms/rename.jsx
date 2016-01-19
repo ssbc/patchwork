@@ -4,18 +4,20 @@ import schemas from 'ssb-msg-schemas'
 import { rainbow } from '../index'
 import app from '../../lib/app'
 
-function getCurrentName (id) {
-  return app.users.names[id]||''
-}
-
 export default class Rename extends React.Component {
   constructor(props) {
     super(props)
-    this.state = this.validate(getCurrentName(this.props.id), true)    
+    this.state = {name: '', currentName: this.props.id}
+    app.ssb.names.signifier(this.props.id, (_, names) => {
+      for(var k in names) {
+        var s = this.validate(k)
+        s.currentName = k
+        return this.setState(s)
+      }
+    })
   }
 
   componentDidMount() {
-    this.validate(getCurrentName(this.props.id))
     this.props.setHelpText('You can rename anybody! Other people can see the name you choose, but it will only affect you.')
   }
 
@@ -54,11 +56,12 @@ export default class Rename extends React.Component {
   }
 
   submit(cb) {
-    const currentName = getCurrentName(this.props.id)
-    const newName = this.state.name
-    if (currentName === newName)
+    if(!this.state.name) return cb()
+
+    if (this.state.currentName === this.state.name)
       return cb()
-    app.ssb.publish(schemas.name(this.props.id, newName), err => {
+
+    app.ssb.publish(schemas.name(this.props.id, this.state.name), err => {
       if (err)
         return cb(err)
       app.fetchLatestState(cb)
@@ -69,7 +72,7 @@ export default class Rename extends React.Component {
     return <div>
       <form className="fullwidth" onSubmit={e=>e.preventDefault()}>
         <fieldset>
-          <h1>{rainbow('Rename')} {getCurrentName(this.props.id)}</h1>
+          <h1>{rainbow('Rename')} {this.state.currentName}</h1>
           <label><span/><input type="text" value={this.state.name} onChange={this.onChange.bind(this)} /></label>
           <div className="error">{this.state.error}</div>
         </fieldset>
@@ -77,3 +80,9 @@ export default class Rename extends React.Component {
     </div>
   }
 }
+
+
+
+
+
+

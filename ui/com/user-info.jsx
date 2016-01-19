@@ -14,6 +14,10 @@ import app from '../lib/app'
 import u from '../lib/util'
 import social from '../lib/social-graph'
 
+function first (obj) {
+  for(var k in obj) return k
+}
+
 const FLAG_DROPDOWN = [
   { value: 'spam',  label: <span><i className="fa fa-flag" /> Spammer</span> },
   { value: 'abuse', label: <span><i className="fa fa-flag" /> Abusive</span> },
@@ -45,6 +49,8 @@ class AutoRefreshingComponent extends React.Component {
 export class UserInfoHeader extends AutoRefreshingComponent {
   constructor(props) {
     super(props)
+
+    this.state.name = u.shortString(props.pid, 6)
 
     // helper to refresh state and render after making changes
     const reload = () => { app.fetchLatestState(this.refreshState.bind(this)) }
@@ -87,13 +93,18 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         })
       }
     }
+
+    app.ssb.names.signifier(props.pid, (err, names) => {
+      this.setState({name: first(names), aka: names})
+    })
+
   }
 
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
+
     return {
       profile:     app.users.profiles[pid],
-      name:        app.users.names[pid] || u.shortString(pid, 6),
       isSelf:      (pid == app.user.id),
       isFollowing: social.follows(app.user.id, pid),
       followsYou:  social.follows(pid, app.user.id),
@@ -107,22 +118,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
   }
 
   render() {
-    // name conflict controls
-    var nameConflictDlg
-    var nameConflicts = []
-    for (var id in app.users.names) {
-      if (id != this.props.pid && app.users.names[id] == app.users.names[this.props.pid])
-        nameConflicts.push(id)
-    }
-    if (nameConflicts.length) {
-      // :TODO:
-      // nameConflictDlg = h('.well.white', { style: 'margin: -10px 15px 15px' },
-      //   h('p', { style: 'margin-bottom: 10px' }, h('strong', 'Other users named "'+app.users.names[pid]+'":')),
-      //   h('ul.list-inline', nameConflicts.map(function (id) { return h('li', com.user(id)) })),
-      //   h('p', h('small', 'ProTip: You can rename users to avoid getting confused!'))
-      // )
-    }
-
     const nfollowers = this.state.followers1.length + this.state.followers2.length
     const nflaggers = this.state.flaggers.length
     return <div className="user-info">
@@ -242,3 +237,7 @@ export class UserInfoFlags extends AutoRefreshingComponent {
     </div>
   }
 }
+
+
+
+
