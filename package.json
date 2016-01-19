@@ -80,7 +80,7 @@
     "ssb-markdown": "^1.0.0",
     "ssb-msg-schemas": "~6.1.0",
     "ssb-msgs": "~5.2.0",
-    "ssb-names": "0.0.1",
+    "ssb-names": "^1.0.0",
     "ssb-ref": "~2.2.0",
     "stack": "^0.1.0",
     "stream-to-pull-stream": "^1.6.1",
