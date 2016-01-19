@@ -247,6 +247,7 @@ export default class Card extends React.Component {
   }
 
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
+
     const replies = countReplies(msg)
     const unreadReplies = countReplies(msg, m => !m.isRead)
     const isViewingRaw = this.state.isViewingRaw
@@ -340,8 +341,13 @@ export default class Card extends React.Component {
           </div>
         </div>
         <div className="body" ref="body">
-          <Editor {...this.props} isEditing="true" editingContent={msg.value.content.text} onSend={this.onCancelEdit.bind(this)} onCancel={this.onCancelEdit.bind(this)}/>
-          
+          <Editor {...this.props} isEditing="true"
+                                  isPublic={msg.value.content.recps === undefined}
+                                  editingContent={msg.value.content.text}
+                                  onSend={this.onCancelEdit.bind(this)}
+                                  onCancel={this.onCancelEdit.bind(this)}
+                                  originalMessage={msg}/>
+    
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?

@@ -41,13 +41,14 @@ const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed);
 
 export class Editor extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-      // thread info
-      let recps = this.props.recps || []
+    // thread info
+    let recps = this.props.recps || []
     this.isPublic = this.props.isPublic
     this.threadRoot = null
     this.threadBranch = null
+
     if (this.props.thread) {
       // public thread?
       this.isPublic = isThreadPublic(this.props.thread)
@@ -99,7 +100,7 @@ export class Editor extends React.Component {
   onFilesAdded() {
 
     var done = multicb({ pluck: 1 })
-      var filesInput = this.refs.files
+    var filesInput = this.refs.files
     var handled=0, total = filesInput.files.length
     this.setState({ isAddingFiles: true, hasAddedFiles: true })
 
@@ -236,8 +237,18 @@ export class Editor extends React.Component {
             })
         }
 
+        // collect up previous metadata
+        const origMsg = this.props.originalMessage
+        const revisionRoot = msg.root ? msg.root :
+                             origMsg.value.content.root ?
+                             origMsg.value.content.root : origMsg.key
+        const revisionMentions = mentions ? mentions : origMsg.value.content.mentions
+        const origKey = origMsg.key
+        
         // publish edit
-        var edit = schemas.postEdit(text, msg.root, mentions, msg.key);
+        var edit = schemas.postEdit(text, revisionRoot, revisionMentions, origKey);
+        debugger;
+        
         let published = (err, msg) => {
           this.setState({ isSending: false })
             if (err) app.issue('Error While Editing',
