@@ -40,10 +40,23 @@ module.exports = extend(new Emitter(), {
         image: './img/emoji/' + emoji + '.png',
         title: emoji,
         subtitle: emoji,
-        value: emoji + ':'
+        value: ':' + emoji + ':'
       }
     }),
-    '@': []
+    '@': function (word, cb) {
+      app.ssb.names.signified(word, function (err, names) {
+        cb(null, names.map(function (user) {
+          return {
+            id: user.id,
+            cls: 'user',        
+            title: user.name,
+            image: require('./util').profilePicUrl(user.id),
+            subtitle: user.name,
+            value: '@' + user.name // if using id, dont include the @ sigil
+          }
+        }))
+      })
+    }
   },
   issues: [],
   issue: addIssue.bind(null, true), // helper to add an issue
@@ -186,23 +199,23 @@ function fetchLatestState (cb) {
     app.user.nonfriendFollowers = social.unfollowedFollowers(app.user.id, app.user.id)
 
     // refresh suggest options for usernames
-    app.suggestOptions['@'] = []
-    if (app.user.profile) {
-      for (var id in app.users.profiles) {
-        if (id == app.user.profile.id || (app.user.profile.assignedTo[id] && app.user.profile.assignedTo[id].following)) {
-          var name = app.users.names[id]
-          app.suggestOptions['@'].push({
-            id: id,
-            cls: 'user',        
-            title: name || id,
-            image: require('./util').profilePicUrl(id),
-            subtitle: name || id,
-            value: name || id.slice(1) // if using id, dont include the @ sigil
-          })
-        }
-      }
-    }
-
+//    app.suggestOptions['@'] = []
+//    if (app.user.profile) {
+//      for (var id in app.users.profiles) {
+//        if (id == app.user.profile.id || (app.user.profile.assignedTo[id] && app.user.profile.assignedTo[id].following)) {
+//          var name = app.users.names[id]
+//          app.suggestOptions['@'].push({
+//            id: id,
+//            cls: 'user',        
+//            title: name || id,
+//            image: require('./util').profilePicUrl(id),
+//            subtitle: name || id,
+//            value: '@' + name || id.slice(1) // if using id, dont include the @ sigil
+//          })
+//        }
+//      }
+//    }
+//
     app.emit('update:all')
     cb && cb()
   })
