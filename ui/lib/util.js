@@ -89,7 +89,7 @@ exports.profilePicUrl = function (id) {
 
 exports.getPubStats = function (peers) {
   var membersof=0, membersofActive=0, membersofUntried=0, connected=0
-  ;(peers||app.peers).forEach(function (peer) {
+  ;(peers||app.peers||[]).forEach(function (peer) {
     // filter out LAN peers
     if (ip.isLoopback(peer.host) || ip.isPrivate(peer.host))
       return
@@ -119,7 +119,7 @@ exports.getContactedPeerIds = function (peers) {
   let remote = new Array()
   let connected = new Array()
 
-  ;(peers||app.peers).forEach(function (peer) {
+  ;(peers||app.peers||[]).forEach(function (peer) {
     if (ip.isLoopback(peer.host)) return
 
     if (peer.connected) {
