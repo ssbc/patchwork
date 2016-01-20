@@ -97,20 +97,20 @@ export default class Card extends React.Component {
 
   onSelectDropdown(choice) {
     if (choice === 'copy-link')
-      this.copyLink();
+      this.copyLink()
     else if (choice === 'flag')
-      this.setState({ isFlagModalOpen: true });
+      this.setState({ isFlagModalOpen: true })
     else if (choice === 'unflag')
-      this.props.onFlag(this.props.msg, 'unflag');
+      this.props.onFlag(this.props.msg, 'unflag')
     else if (choice === 'toggle-raw')
-      this.setState({ isViewingRaw: !this.state.isViewingRaw });
+      this.setState({ isViewingRaw: !this.state.isViewingRaw })
     else if (choice === 'edit-post') {
-      this.setState({ isEditing: !this.state.isEditing });
+      this.setState({ isEditing: !this.state.isEditing })
     }
   }
 
   onCancelEdit() {
-    this.setState({ isEditing: !this.state.isEditing });
+    this.setState({ isEditing: !this.state.isEditing })
   }
 
   copyLink() {
@@ -126,7 +126,7 @@ export default class Card extends React.Component {
 
   componentDidMount() {
     // load subject msg, if needed
-    let msg = this.props.msg;
+    let msg = this.props.msg
     if (msg.value && msg.value.content.type === 'vote') {
       let vote = mlib.link(msg.value.content.vote, 'msg')
       if (vote) {
@@ -145,14 +145,14 @@ export default class Card extends React.Component {
       return
     // wait for images to finish loading
     var done = multicb()
-    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()));
+    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
     done(() => {
       // check height
       if (!this.refs.body)
-        return;
-      const rect = this.refs.body.getClientRects()[0];
+        return
+      const rect = this.refs.body.getClientRects()[0]
       if (rect && rect.height > MAX_CONTENT_HEIGHT) {
-        this.setState({ isOversized: true });
+        this.setState({ isOversized: true })
       }
     })
   }
@@ -166,25 +166,25 @@ export default class Card extends React.Component {
 
     const msg = this.props.msg
     if (msg.isNotFound)
-      return this.renderNotFound(msg);
+      return this.renderNotFound(msg)
     if (msg.isLink)
-      return this.renderLink(msg);
+      return this.renderLink(msg)
     if (msg.isMention)
-      return this.renderMention(msg);
+      return this.renderMention(msg)
 
-    const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1);
-    const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1);
-    const isUpvoted = upvoters.indexOf(app.user.id) !== -1;
-    const isDownvoted = downvoters.indexOf(app.user.id) !== -1;
+    const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
+    const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
+    const isUpvoted = upvoters.indexOf(app.user.id) !== -1
+    const isDownvoted = downvoters.indexOf(app.user.id) !== -1
 
     if (this.state.isEditing)
-      return this.renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted);
+      return this.renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted)
 
     if ((msg.value.content.type == 'post' ||
          msg.value.content.type == 'post-edit') &&
         downvoters.length > upvoters.length &&
         !this.state.isExpanded)
-      return this.renderMuted(msg);
+      return this.renderMuted(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
 
@@ -264,7 +264,7 @@ export default class Card extends React.Component {
     if (app.user.id === msg.value.author)
       dropdownOpts.unshift({ value: 'edit-post',
                              label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span>
-      });
+      })
 
 
     const oversizedCls = (this.state.isOversized?'oversized':'')
@@ -314,14 +314,14 @@ export default class Card extends React.Component {
   }
 
   renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
-    const replies = countReplies(msg);
-    const unreadReplies = countReplies(msg, m => !m.isRead);
-    const isViewingRaw = this.state.isViewingRaw;
-    const channel = msg && msg.value && msg.value.content && msg.value.content.channel;
+    const replies = countReplies(msg)
+    const unreadReplies = countReplies(msg, m => !m.isRead)
+    const isViewingRaw = this.state.isViewingRaw
+    const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
-    const oversizedCls = (this.state.isOversized?'oversized':'');
-    const expandedCls  = (this.state.isExpanded?'expanded':'');
-    const newCls       = (msg.isNew?'new':'');
+    const oversizedCls = (this.state.isOversized?'oversized':'')
+    const expandedCls  = (this.state.isExpanded?'expanded':'')
+    const newCls       = (msg.isNew?'new':'')
     return <div className={`msg-view card-post ${oversizedCls} ${expandedCls} ${newCls}`}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
