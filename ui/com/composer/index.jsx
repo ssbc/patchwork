@@ -288,28 +288,46 @@ class CompositionUnit extends React.Component {
                 : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
     </div>)
   }
+
+  renderComposerArea() {
+    const Preview = this.renderPreview(this.props)
+    const channel = this.getChannel()
+    const setPreviewing = this.setPreviewing
+    const vertical = this.props.verticalFilled
+    const ComposerTextarea = this.renderComposerTextarea(vertical)
+    var toolbarTop, toolbarBottom
+
+    if (vertical) toolbarTop = this.renderToolbar()
+    else toolbarBottom = this.renderToolbar()
+
+    return (
+        <div className="composer">
+          <input ref="files"
+                 type="file" multiple
+                 onChange={this.onFilesAdded.bind(this)}
+                 style={{display: 'none'}} />
+          <Modal Content={Preview}
+                 isOpen={this.state.isPreviewing}
+                 onClose={setPreviewing(false)} />
+          { toolbarTop }
+          <div className="composer-content">
+            <ComposerTextarea
+                ref="textarea"
+                value={this.state.text}
+                onChange={this.onChangeText.bind(this)}
+                onSubmit={this.onSend.bind(this)}
+                placeholder={this.isReply() ?
+                             'Write a reply' :
+                             (this.props.placeholder||'Write your message here')}
+            />
+          </div>
+          { toolbarBottom }
+        </div>)
+  }
   
 
   render() {
-    const vertical = this.props.verticalFilled
-    const channel = this.getChannel()
-    const setPreviewing = b => () => this.setState({ isPreviewing: b })
-    const ComposerTextarea = this.renderComposerTextarea(vertical)
-    const Preview = this.renderPreview(this.props)
-
-    var toolbarTop, toolbarBottom
-    if (vertical) toolbarTop = this.renderToolbar()
-    else toolbarBottom = this.renderToolbar()
-    
-    return <div className="composer">
-      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      { toolbarTop }
-      <div className="composer-content">
-        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={this.isReply() ? 'Write a reply' : (this.props.placeholder||'Write your message here')} />
-      </div>
-      { toolbarBottom }
-    </div>
+    return this.renderComposerArea()
   }
 }
   
@@ -411,61 +429,78 @@ export class Editor extends CompositionUnit {
       })
   }
 
-  render() {
-    const vertical = this.props.verticalFilled
+  renderToolbar() {
+    const AudienceBtn = this.renderAudienceBtn(this.props)
+    const AttachBtn = this.renderAttachBtn(this.props)
+    const SendBtn = this.renderSendBtn(this.props)
+    const setPreviewing = this.setPreviewing
+    const DeleteControls = () => {
+    const sendIcon = (this.isPublic()) ? 'users' : 'lock'
+      return (
+        <div>
+          <a className="btn" onClick={this.props.onCancel.bind(this)}>Cancel</a>          
+          {
+            this.canDelete() ?
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}>
+              <i className={`fa fa-${sendIcon}`}/> Delete Post</a> :
+            (!this.canSend() || this.state.isSending) ?
+            <a className="btn disabled">Submit Edit</a> :
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}>
+              <i className={`fa fa-${sendIcon}`}/> Submit Edit</a> }
+        </div>)
+    }
+    
+    return (<div>
+          <div className="composer-ctrls flex">
+            <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+            <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+            <DeleteControls />
+            <div className="flex-fill" />
+            <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+            <SendBtn canSend={this.canSend() && !this.state.isSending} />
+          </div>
+    </div>)
+
+  }
+
+  renderEditorArea() {
+    const Preview = this.renderPreview(this.props)
     const channel = this.getChannel()
     const setPreviewing = this.setPreviewing
+    const vertical = this.props.verticalFilled
     const ComposerTextarea = this.renderComposerTextarea(vertical)
-    const Preview = this.renderPreview(this.props)
-    const SendBtn = this.renderSendBtn(this.props)
     var toolbarTop, toolbarBottom
 
     if (vertical) toolbarTop = this.renderToolbar()
     else toolbarBottom = this.renderToolbar()
 
-    const deleteControls = () => {
-      const sendIcon = (this.isPublic()) ? 'users' : 'lock'
-      return(<div>{ this.canDelete() ?
-                   <a className="btn highlighted" onClick={this.onSend.bind(this)}>
-                     <i className={`fa fa-${sendIcon}`}/> Delete Post</a> :
-                   (!this.canSend() || this.state.isSending) ?
-                   <a className="btn disabled">Submit Edit</a> :
-                   <a className="btn highlighted" onClick={this.onSend.bind(this)}>
-                     <i className={`fa fa-${sendIcon}`}/> Submit Edit</a> }
+    return (
+      <div className="composer">
+        <input ref="files"
+               type="file" multiple
+               onChange={this.onFilesAdded.bind(this)}
+               style={{display: 'none'}} />
+        <Modal Content={Preview}
+               isOpen={this.state.isPreviewing}
+               onClose={setPreviewing(false)} />
+        { toolbarTop }
+        <div className="composer-content">
+          <ComposerTextarea
+              ref="textarea"
+              defaultValue={this.props.editingContent}
+              onChange={this.onChangeText.bind(this)}
+              onSubmit={this.onSend.bind(this)}
+              placeholder={this.isReply() ?
+                           'Write a reply' :
+                           (this.props.placeholder||'Write your message here')}
+          />
+        </div>
+        { toolbarBottom }
       </div>)
-    }
+  }
 
-    return <div className="composer">
-        <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-        <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-        { channel ? 
-          <div className="composer-channel">#{channel}</div>
-          : '' }
-          <div className="composer-content">
-            <ComposerTextarea ref="textarea" 
-                              defaultValue={this.props.editingContent}
-                              onChange={this.onChangeText.bind(this)}
-                              onSubmit={this.onSend.bind(this)}
-                              placeholder={!this.state.isReply ?
-                                           this.props.placeholder : 'Write a reply'} />
-          </div>
-          <div className="composer-ctrls flex">
-            <div className="flex-fill">
-              { !this.isPublic ?
-                (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work yet in private messages. Sorry!</em> : '') :
-                (this.state.isAddingFiles ?
-                 <em>Adding...</em> :
-                 <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
-            </div>
-            <div>
-              <a className="btn" onClick={this.props.onCancel.bind(this)}>Cancel</a>
-            </div>
-            <div>
-              <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-            </div>
-            {deleteControls}
-          </div>
-    </div>
+  render() {
+    return this.renderEditorArea()
   }
   
 }
@@ -549,28 +584,6 @@ export default class Composer extends CompositionUnit {
       else
         app.ssb.publish(post, published)
     })
-  }
-
-  render() {
-    const vertical = this.props.verticalFilled
-    const channel = this.getChannel()
-    const setPreviewing = this.setPreviewing
-    const ComposerTextarea = this.renderComposerTextarea(vertical)
-    const Preview = this.renderPreview(this.props)
-    const SendBtn = this.renderSendBtn(this.props)
-    var toolbarTop, toolbarBottom
-
-    if (vertical) toolbarTop = this.renderToolbar()
-    else toolbarBottom = this.renderToolbar()
-    return <div className="composer">
-      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      { toolbarTop }
-      <div className="composer-content">
-        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={this.isReply() ? 'Write a reply' : (this.props.placeholder||'Write your message here')} />
-      </div>
-      { toolbarBottom }
-    </div>
   }
 }
 
