@@ -1,7 +1,6 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import threadlib from 'patchwork-threads'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -10,7 +9,6 @@ import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
-import social from '../lib/social-graph'
 
 const LISTITEMS = [
   { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
@@ -20,7 +18,7 @@ const LISTITEMS = [
 const LISTITEM_CARD = LISTITEMS[0]
 const LISTITEM_ONELINE = LISTITEMS[1]
 
-export default class Inbox extends LocalStoragePersistedComponent {
+export default class Bookmarks extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'msgList', {
       currentMsgView: 0
@@ -28,11 +26,8 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   cursor (msg) {
-    if (msg) {
-      // find the last post (inbox is ordered by timestamp of last post in thread)
-      var last = threadlib.getLastThreadPost(msg)
-      return [msg.value.timestamp, msg.value.author]
-    }
+    if (msg)
+      return [msg.ts, false]
   }
 
   onSelectMsgView(v, index) {
@@ -49,32 +44,25 @@ export default class Inbox extends LocalStoragePersistedComponent {
 
     const Toolbar = props => {    
       return <div className="flex light-toolbar">
-        <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
+        <Link to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked Threads</Link>
         <div className="flex-fill"/>
         <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
 
-    // composer composerProps={{placeholder: 'Write a new private message'}}
-    return <div id="inbox">
+    return <div id="bookmarks">
       <MsgList
         ref="list"
         threads
         dateDividers
-        composer composerProps={{ isPublic: false }}
         Hero={Toolbar}
         ListItem={ListItem} listItemProps={{ userPic: true }}
-        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Your inbox is empty."
-        source={app.ssb.patchwork.createInboxStream}
-        filter={followedOnlyFilter}
+        emptyMsg="Your bookmarks view is empty."
+        source={app.ssb.patchwork.createBookmarkStream}
         cursor={this.cursor} />
     </div>
   }
-}
-
-function followedOnlyFilter (msg) {
-  return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
 }
