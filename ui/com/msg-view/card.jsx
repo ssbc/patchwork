@@ -107,7 +107,7 @@ export default class Card extends React.Component {
   }
 
   onCancelEdit() {
-    this.setState({ isEditing: !this.state.isEditing });
+    this.setState({ isEditing: !this.state.isEditing })
   }
 
   copyLink() {
@@ -249,7 +249,7 @@ export default class Card extends React.Component {
     if (app.user.id === msg.value.author)
       dropdownOpts.unshift({ value: 'edit-post',
                              label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span>
-      });
+      })
 
 
     const oversizedCls = (this.state.isOversized?'oversized':'')
@@ -299,10 +299,10 @@ export default class Card extends React.Component {
   }
 
   renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
-    const replies = countReplies(msg);
-    const unreadReplies = countReplies(msg, m => !m.isRead);
-    const isViewingRaw = this.state.isViewingRaw;
-    const channel = msg && msg.value && msg.value.content && msg.value.content.channel;
+    const replies = countReplies(msg)
+    const unreadReplies = countReplies(msg, m => !m.isRead)
+    const isViewingRaw = this.state.isViewingRaw
+    const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
       { value: 'edit-post',  label: <span><i className="fa fa-pencil" /> Cancel Editing</span> },
