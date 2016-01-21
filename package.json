@@ -71,7 +71,7 @@
     "react-infinite": "^0.5.10",
     "react-modal": "^0.6.0",
     "react-router": "1.0.2",
-    "scuttlebot": "~7.4.3",
+    "scuttlebot": "~7.5.0",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
     "ssb-markdown": "^1.0.0",
