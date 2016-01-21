@@ -22,6 +22,8 @@ npm install ssb-patchwork -g
 patchwork
 ```
 
+Then open `localhost:7777`.
+
 
 ## From Git
 
@@ -48,6 +50,8 @@ From directory you cloned patchwork to:
 ```bash
 npm start
 ```
+
+Then open `localhost:7777`.
 
 **Update:**
 

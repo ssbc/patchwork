@@ -29,6 +29,8 @@ Patchwork embeds the [Scuttlebot networked database](https://github.com/ssbc/scu
 
 ## [Install Instructions](./docs/install.md)
 
+## [Electron Version](https://github.com/ssbc/patchwork-electron)
+
 ## Docs
 
 - [Help / FAQ](./docs/help-faq.md)
