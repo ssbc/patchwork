@@ -12,6 +12,14 @@ browserifyInc({
     basedir: path.dirname(process.argv[2]),
     debug: false
   })
-  .transform(babelify, {presets: ['es2015', 'stage-0', 'react']})
+  .transform(babelify, {presets: absPathPresets(['es2015', 'stage-0', 'react'])})
   .bundle()
   .pipe(fs.createWriteStream(process.argv[3]))
+
+// babel has trouble finding the presets when symlinked node_modules are used
+// giving absolute paths to the modules solves that
+function absPathPresets (arr) {
+  return arr.map(function (name) {
+    return path.join(__dirname, '../node_modules/', 'babel-preset-'+name)
+  })
+}
