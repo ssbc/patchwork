@@ -10,11 +10,12 @@
   "scripts": {
     "start": "node ./index.js",
     "test": "set -e; for t in api/test/*.js; do node $t; done",
+    "build-release": "NODE_ENV=production npm run build",
     "build": "npm run build:js && npm run build:css",
     "build:ui": "npm run build:js && npm run build:css",
     "build:js": "node ./scripts/build.js ./ui/main.js ./ui/main.build.js",
     "build:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less --autoprefix ./ui/css/main.css",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build-release"
   },
   "author": "Paul Frazee <pfrazee@gmail.com>",
   "license": "?",
