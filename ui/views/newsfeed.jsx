@@ -31,7 +31,8 @@ const LISTITEM_ONELINE = LISTITEMS[1]
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'msgList', {
-      currentMsgView: 0
+      currentMsgView: 0,
+      showFoaf: true
     })
     this.state.channels = app.channels || []
 
@@ -68,7 +69,11 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         app.issue('Failed to pin channel', err)
     })
   }
-
+  onToggleShowFoaf() {
+    this.setState({ showFoaf: !this.state.showFoaf }, () => {
+      this.refs.list.reload()
+    })
+  }
   onMarkAllRead() {
     alert('todo')
   }
@@ -87,6 +92,11 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         return [last.value.timestamp, last.value.author]
       }
     }
+    const filter = msg => {
+      if (this.state.showFoaf)
+        return true
+      return followedOnlyFilter(msg)
+    }
     const source = (opts) => {
       if (channel)
         return app.ssb.patchwork.createChannelStream(channel, opts)
@@ -95,6 +105,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
     const Toolbar = props => {
       const isPinned = channelData && channelData.pinned
+      const showFoafDesc = this.state.showFoaf ? 'Friends + FoaF' : 'Friends Only'
       return <div className="flex light-toolbar">
         { channel
           ? <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link>
@@ -104,6 +115,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
           : '' }
         <div className="flex-fill"/>
         <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onToggleShowFoaf.bind(this)}><i className="fa fa-user" /> Show: {showFoafDesc}</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
@@ -118,7 +130,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         dateDividers
         openMsgEvent
         composer composerProps={{ isPublic: true, channel: channel }}
-        filter={followedOnlyFilter}
+        filter={filter}
         Hero={Toolbar}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         ListItem={ListItem} listItemProps={{ userPic: true }}
