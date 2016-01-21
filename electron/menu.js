@@ -1,6 +1,7 @@
-var Menu = require('menu')
-var dialog = require('dialog')
+var Menu = require('electron').Menu
+var dialog = require('electron').dialog
 var pkg = require('../package')
+var windows = require('./windows')
 
 var isMac = (process.platform == 'darwin')
 
@@ -28,13 +29,14 @@ function showLicense(win) {
   })
 }
 
-module.exports = function (window) {
+module.exports = function (configOracle) {
   var template = [
     {
       label: 'Patchwork',
       submenu: [
         {
           label: 'About Patchwork',
+          role: 'about',
           click: function (item, win) {
             showAbout(win)
           }
@@ -46,16 +48,19 @@ module.exports = function (window) {
         {
           label: 'Hide Patchwork',
           accelerator: 'Command+H',
-          selector: 'hide:'
+          selector: 'hide:',
+          role: 'hide'
         },
         {
           label: 'Hide Others',
           accelerator: 'Option+Command+H',
-          selector: 'hideOtherApplications:'
+          selector: 'hideOtherApplications:',
+        role: 'hideothers'
         },
         {
           label: 'Show All',
-          selector: 'unhideAllApplications:'
+          selector: 'unhideAllApplications:',
+          role: 'unhide'
         },
       ] : [], [
         {
@@ -64,8 +69,8 @@ module.exports = function (window) {
         {
           label: 'Quit',
           accelerator: 'CmdOrCtrl+Q',
-          click: function () {
-            require('app').quit()
+          click: function (item, win) {
+            require('electron').app.quit()
           }
         }
       ])
@@ -112,22 +117,22 @@ module.exports = function (window) {
         {
           label: 'Find...',
           accelerator: 'CmdOrCtrl+F',
-          click: function () {
-            window.rpc.triggerFind()
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.emit("focus:find")')
           }
         },
         {
           label: 'Find Previous',
           accelerator: 'CmdOrCtrl+Shift+G',
-          click: function () {
-            window.rpc.findPrevious()
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.emit("find:previous")')
           }
         },
         {
           label: 'Find Next',
           accelerator: 'CmdOrCtrl+G',
-          click: function () {
-            window.rpc.findNext()
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.emit("find:next")')
           }
         }
       ]
@@ -138,39 +143,22 @@ module.exports = function (window) {
         {
           label: 'Zoom In',
           accelerator: 'CmdOrCtrl+=',
-          click: function () {
-            window.rpc.zoomIn()
+          click: function (item, win) {
+            win.webContents.executeJavaScript('window.zoom.zoomIn()')
           }
         },
         {
           label: 'Zoom Out',
           accelerator: 'CmdOrCtrl+-',
-          click: function () {
-            window.rpc.zoomOut()
+          click: function (item, win) {
+            win.webContents.executeJavaScript('window.zoom.zoomOut()')
           }
         },
         {
           label: 'Normal Size',
           accelerator: 'CmdOrCtrl+0',
-          click: function () {
-            window.rpc.zoomReset()
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Toggle Bookmarks',
-          accelerator: 'CmdOrCtrl+Shift+B',
-          click: function() {
-            window.rpc.navigateToggle('bookmarks')
-          }
-        },
-        {
-          label: 'Toggle Notifications',
-          accelerator: 'CmdOrCtrl+Shift+N',
-          click: function() {
-            window.rpc.navigateToggle('notifications')
+          click: function (item, win) {
+            win.webContents.executeJavaScript('window.zoom.zoomReset()')
           }
         },
         {
@@ -179,9 +167,8 @@ module.exports = function (window) {
         {
           label: 'Toggle DevTools',
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-          click: function() { 
-            window.toggleDevTools()
-            // window.rpc.contextualToggleDevTools()
+          click: function (item, win) { 
+            win.toggleDevTools()
           }
         }
       ]
@@ -192,23 +179,22 @@ module.exports = function (window) {
         {
           label: 'Back',
           accelerator: 'Alt+Left',
-          click: function() {
-            window.rpc.navigateHistory(-1)
+          click: function (item, win) {
+            win.webContents.goBack()
           }
         },
         {
           label: 'Forward',
           accelerator: 'Alt+Right',
-          click: function() {
-            window.rpc.navigateHistory(1)
+          click: function (item, win) {
+            win.webContents.goForward()
           }
         },
         {
           label: 'Reload',
           accelerator: 'CmdOrCtrl+R',
-          click: function() {
-            window.resetRpc()
-            window.reload()
+          click: function (item, win) {
+            win.reload()
           }
         },
         {
@@ -217,36 +203,36 @@ module.exports = function (window) {
         {
           label: 'Feed',
           accelerator: 'CmdOrCtrl+1',
-          click: function () {
-            window.rpc.navigate('/')
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "")')
           }
         },
         {
           label: 'Inbox',
           accelerator: 'CmdOrCtrl+2',
-          click: function () {
-            window.rpc.navigate('/inbox')
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "inbox")')
           }
         },
         {
           label: 'Contacts',
           accelerator: 'CmdOrCtrl+3',
-          click: function () {
-            window.rpc.navigate('/profile')
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "profile")')
           }
         },
         {
           label: 'Network Status',
           accelerator: 'CmdOrCtrl+4',
-          click: function () {
-            window.rpc.navigate('/sync')
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "sync")')
           }
         },
         {
           label: 'Data Log',
           accelerator: 'CmdOrCtrl+5',
-          click: function () {
-            window.rpc.navigate('/data')
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "data")')
           }
         },
         {
@@ -255,8 +241,8 @@ module.exports = function (window) {
         {
           label: 'Search',
           accelerator: 'CmdOrCtrl+K',
-          click: function () {
-            window.rpc.focusSearch()
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.emit("focus:search")')
           }
         }
       ]
@@ -264,6 +250,21 @@ module.exports = function (window) {
     isMac ? {
       label: 'Window',
       submenu: [
+        {
+          label: 'New Window',
+          accelerator: 'CmdOrCtrl+N',
+          click: function (item, win) {
+            var newWindow = windows.create()
+            newWindow.loadURL(configOracle.getLocalUrl())
+          }
+        },
+        {
+          label: 'Close',
+          accelerator: 'CmdOrCtrl+W',
+          click: function (item, win) {
+            win.close()
+          }
+        },
         {
           label: 'Minimize',
           accelerator: 'CmdOrCtrl+M',
@@ -274,7 +275,8 @@ module.exports = function (window) {
         },
         {
           label: 'Bring All to Front',
-          selector: 'arrangeInFront:'
+          selector: 'arrangeInFront:',
+          role: 'front'
         }
       ]
     } : {}

@@ -67,7 +67,7 @@ function openObject (ref) {
   } else if (ssbref.isMsgId(ref)) {
     app.history.pushState(null, '/msg/'+encodeURIComponent(ref))
   } else if (ssbref.isBlobId(ref)) {
-    app.history.pushState(null, '/webview/'+encodeURIComponent(ref))            
+    window.location = '/'+encodeURIComponent(ref)
   }
 }
 

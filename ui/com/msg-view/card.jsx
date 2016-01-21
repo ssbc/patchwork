@@ -3,7 +3,6 @@ import React from 'react'
 import {Link} from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import clipboard from 'clipboard'
 import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
@@ -38,7 +37,7 @@ class BookmarkBtn extends React.Component {
     const b = this.props.isBookmarked
     const title = 'Bookmark'+(b?'ed':'')
     return <span>
-      <a className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+      <a href='javascript:;' className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} />
       </a>
     </span>
@@ -52,7 +51,7 @@ class DigBtn extends React.Component {
   }
   render() {
     let label = this.props.isUpvoted ? 'Dug' : 'Dig'
-    return <a className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
+    return <a href='javascript:;' className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
       <i className="fa fa-hand-peace-o" /> {label.split('').map((l,i) => <span key={i}>{l}</span>)} <span>i</span><span>t</span>
     </a>
   }
@@ -66,10 +65,8 @@ export default class Card extends React.Component {
       isExpanded: false,
       isViewingRaw: false,
       subject: null,
-      wasLinkCopied: null, // used by the link-copy behavior to give confirmation
       isFlagModalOpen: false
     }
-    this.timeout = false // used by link-copy behavior to clear confirmation
   }
 
   onSelect() {
@@ -101,14 +98,7 @@ export default class Card extends React.Component {
   }
 
   copyLink() {
-    clipboard.writeText(this.props.msg.key)
-    this.setState({ wasLinkCopied: true })
-    if (this.timeout)
-      clearTimeout(this.timeout)
-    this.timeout = setTimeout(() => {
-      this.setState({ wasLinkCopied: false })
-      this.timeout = null
-    }, 3e3)
+    prompt('Here is the Message ID. Press cmd/ctrl+c to copy it.', this.props.msg.key)
   }
 
   componentDidMount() {
@@ -133,7 +123,7 @@ export default class Card extends React.Component {
       return
     // wait for images to finish loading
     var done = multicb()
-    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
+    ;[].slice.call(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
     done(() => {
       // check height
       if (!this.refs.body)
@@ -143,11 +133,6 @@ export default class Card extends React.Component {
         this.setState({ isOversized: true })
       }
     })
-  }
-
-  componentWillUnmount() {
-    if (this.timeout)
-      clearTimeout(this.timeout)
   }
 
   render() {
@@ -221,9 +206,9 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
     const dropdownOpts = [
-      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy Link</span> },
+      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
       { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
-      (isDownvoted) ? 
+      (isDownvoted) ?
         { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
         { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
@@ -245,19 +230,18 @@ export default class Card extends React.Component {
             {channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
           </div>
           <div className="header-right">
-            { this.state.wasLinkCopied ? <small>Copied!</small> : '' }
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
             <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
           </div>
         </div>
         <div className="body" ref="body">
           <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
-          { this.state.isOversized ? <div className="read-more" onClick={this.onToggleExpand.bind(this)}><a>Read more</a></div> : ''}
+          { this.state.isOversized ? <div className="read-more"><a href='javascript:;' onClick={this.onToggleExpand.bind(this)}>Read more</a></div> : ''}
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?
             <div>
-              <a onClick={this.onSelect.bind(this)}>
+              <a href='javascript:;' onClick={this.onSelect.bind(this)}>
                 {replies === 1 ? '1 reply ' : (replies + ' replies ')}
                 { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
               </a>
@@ -266,7 +250,7 @@ export default class Card extends React.Component {
           { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
-          { !this.props.noReplies ? <div><a onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
+          { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>
       </div>
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />

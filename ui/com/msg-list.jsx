@@ -127,7 +127,7 @@ export default class MsgList extends React.Component {
   componentDidMount() {
     // load first messages
     var start = Date.now()
-    this.loadMore({ amt: this.props.DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
+    this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
 
     // setup autoresizing
     this.calcContainerHeight()

@@ -99,6 +99,10 @@ export default class SearchPalette extends React.Component {
     this.refs.results.getSelectedResult().fn(this.state.query)    
   }
 
+  focus() {
+    this.refs.search.focus()
+  }
+
   render() {
     const hasQuery = !!this.state.query
     return <div className="search-palette">

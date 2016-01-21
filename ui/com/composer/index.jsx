@@ -122,10 +122,20 @@ export default class Composer extends React.Component {
         this.setState({ isAddingFiles: false })
         return false
       }
-      // hash file
-      app.ssb.patchwork.addFileToBlobs(f.path, (err, res) => {
+
+      // read, hash, and store
+      var reader = new FileReader()
+      reader.onload = function () {
+        var buff64 = new Buffer(new Uint8Array(reader.result)).toString('base64')
+        app.ssb.patchwork.addFileToBlobs(buff64, next)
+      }
+      reader.onerror = function (e) {
+        console.error(e)
+        next(new Error('Failed to upload '+f.name))
+      }
+      const next = (err, hash) => {
         if (err) {
-          app.issue('Error Attaching File', error, 'This error occurred while trying to add a file to the blobstore for a new post.')
+          app.issue('Error Attaching File', err, 'This error occurred while trying to add a file to the blobstore for a new post.')
         } else {
           // insert the mention
           var str = ''
@@ -133,25 +143,25 @@ export default class Composer extends React.Component {
             str += ' ' // add some space if not on a newline
           if (isImageFilename(f.name))
             str += '!' // inline the image
-          str += '['+(f.name||'untitled')+']('+res.hash+')'
+          str += '['+(f.name||'untitled')+']('+hash+')'
           this.setState({ text: this.state.text + str })
 
           // capture metadata
-          var meta = this.state.addedFileMeta[res.hash] = {
+          var meta = this.state.addedFileMeta[hash] = {
             name: f.name || 'untitled',
             size: f.size
           }
-          if (mime.contentType(f.name))
+          if (f.type)
+            meta.type = f.type
+          else if (mime.contentType(f.name))
             meta.type = mime.contentType(f.name)
-          if (res.width)
-            meta.width = res.width
-          if (res.height)
-            meta.height = res.height
+          
           this.setState({ addedFileMeta: this.state.addedFileMeta })
         }
         if (++handled >= total)
           this.setState({ isAddingFiles: false })
-      })
+      }
+      reader.readAsArrayBuffer(f)
       return true
     }
 

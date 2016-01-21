@@ -12,7 +12,7 @@ class TableRow extends React.Component {
         value = <MsgLink id={value} name={this.props.name} />
       else if (ssbref.isBlob(value))
         value = <BlobLink id={value} name={this.props.name} />
-      else
+      else if (ssbref.isFeed(value))
         value = <UserLink id={value} />
     }
     else if (typeof value == 'boolean')
@@ -64,7 +64,7 @@ class DivElem extends React.Component {
         value = <MsgLink id={value} name={this.props.name} />
       else if (ssbref.isBlob(value))
         value = <BlobLink id={value} name={this.props.name} />
-      else
+      else if (ssbref.isFeed(value))
         value = <UserLink id={value} />
     }
     else if (typeof value == 'boolean')

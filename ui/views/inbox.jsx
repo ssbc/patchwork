@@ -31,7 +31,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
     if (msg) {
       // find the last post (inbox is ordered by timestamp of last post in thread)
       var last = threadlib.getLastThreadPost(msg)
-      return [msg.value.timestamp, msg.value.author]
+      return [last.value.timestamp, last.value.author]
     }
   }
 
@@ -40,18 +40,18 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   onMarkAllRead() {
-    alert('todo')    
+    alert('todo')
   }
 
   render() {
     const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
 
-    const Toolbar = props => {    
+    const Toolbar = props => {
       return <div className="flex light-toolbar">
         <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
