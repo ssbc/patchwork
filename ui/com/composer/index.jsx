@@ -42,11 +42,12 @@ class ComposerTextareaFixed extends React.Component {
 }
 const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed)
 
-export default class Composer extends React.Component {
+  
+class CompositionUnit extends React.Component {
   constructor(props) {
     super(props)
 
-    // thread info
+      // thread info
     let recps = this.props.recps || []
     this.isThreadPublic = null
     this.threadChannel = null
@@ -55,20 +56,19 @@ export default class Composer extends React.Component {
     if (this.props.thread) {
       // thread categorization
       this.isThreadPublic = isThreadPublic(this.props.thread)
-      this.threadChannel = (this.props.thread.value.content.channel || '').trim()
+        this.threadChannel = (this.props.thread.value.content.channel || '').trim()
 
-      // root and branch links
-      this.threadRoot = getThreadRoot(this.props.thread)
-      this.threadBranch = threadlib.getLastThreadPost(this.props.thread).key
+        // root and branch links
+        this.threadRoot = getThreadRoot(this.props.thread)
+        this.threadBranch = threadlib.getLastThreadPost(this.props.thread).key
 
       // extract encryption recipients from thread
       if (Array.isArray(this.props.thread.value.content.recps)) {
         recps = mlib.links(this.props.thread.value.content.recps)
-          .map(function (recp) { return recp.link })
-          .filter(Boolean)
+                    .map(function (recp) { return recp.link })
+                    .filter(Boolean)
       }
     }
-
     // setup state (pulling from thread)
     this.state = {
       isPreviewing: false,
@@ -203,6 +203,314 @@ export default class Composer extends React.Component {
     return !!this.state.text.trim()
   }
 
+  // onSend()
+
+  // Stateless components
+  renderComposerTextarea(vertical) {
+    return (vertical ? ComposerTextareaVerticalFilled : ComposerTextareaFixed)
+  }
+
+  renderPreview(props) {
+    return (props) => (
+      <div>
+        <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}>
+          <MarkdownBlock md={this.state.text} />
+        </div>
+      </div>)
+  }
+
+  renderAudienceBtn(props) {
+    return (props) => {
+      const opts = [
+        { label: <span><i className="fa fa-inbox"/> Private</span>, value: false },
+        { label: <span><i className="fa fa-bullhorn"/> Public</span>, value: true }
+      ]
+      if (!props.canChange) {
+        return (<a className="btn disabled">{opts[+props.isPublic].label}</a>)
+      } else {
+        return (<DropdownBtn className="btn" items={opts} onSelect={props.onSelect}>
+        {opts[+props.isPublic].label} <i className="fa fa-caret-down" />
+        </DropdownBtn>)
+      }
+    }
+  }
+
+  renderAttachBtn(props) {
+    return (props) => {
+      if (!props.isPublic) {
+        if (props.isReply) {
+          return <span/>
+        } else {
+          return <a className="btn disabled">
+          <i className="fa fa-paperclip" /> Attachments not available in PMs</a>
+        }
+      }
+      if (props.isAdding) {
+        return <a className="btn disabled"><i className="fa fa-paperclip" /> Adding...</a>
+      } else {
+        return <a className="btn" onClick={props.onAttach}><i className="fa fa-paperclip" /> Add an attachment</a>
+      }
+    }
+  }
+
+  renderSendBtn(props) {
+    return (props) => {
+      const sendIcon = (this.isPublic()) ? 'users' : 'lock'
+      if (!props.canSend) {
+        return <a className="btn disabled">Send</a>
+      } else {
+        return <a className="btn highlighted" onClick={this.onSend.bind(this)}>
+            <i className={`fa fa-${sendIcon}`}/> Send</a>
+      }
+    }
+  }
+
+  setPreviewing(bool) {
+    return newVal => () => this.setState((isPreviewing: newVal))
+  }
+
+  renderToolbar() {
+    const AudienceBtn = this.renderAudienceBtn(this.props)
+    const AttachBtn = this.renderAttachBtn(this.props)
+    const SendBtn = this.renderSendBtn(this.props)
+    const setPreviewing = this.setPreviewing
+      
+    return (<div>
+              <div className="composer-ctrls flex">
+                <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+                <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+                <div className="flex-fill" />
+                <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+                <SendBtn canSend={this.canSend() && !this.state.isSending} />
+              </div>
+              { this.isPublic()
+                  ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
+                : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
+    </div>)
+  }
+
+  renderComposerArea() {
+    const Preview = this.renderPreview(this.props)
+    const channel = this.getChannel()
+    const setPreviewing = this.setPreviewing
+    const vertical = this.props.verticalFilled
+    const ComposerTextarea = this.renderComposerTextarea(vertical)
+    var toolbarTop, toolbarBottom
+
+    if (vertical) toolbarTop = this.renderToolbar()
+    else toolbarBottom = this.renderToolbar()
+
+    return (
+        <div className="composer">
+          <input ref="files"
+                 type="file" multiple
+                 onChange={this.onFilesAdded.bind(this)}
+                 style={{display: 'none'}} />
+          <Modal Content={Preview}
+                 isOpen={this.state.isPreviewing}
+                 onClose={setPreviewing(false)} />
+          { toolbarTop }
+          <div className="composer-content">
+            <ComposerTextarea
+                ref="textarea"
+                value={this.state.text}
+                onChange={this.onChangeText.bind(this)}
+                onSubmit={this.onSend.bind(this)}
+                placeholder={this.isReply() ?
+                             'Write a reply' :
+                             (this.props.placeholder||'Write your message here')}
+            />
+          </div>
+          { toolbarBottom }
+        </div>)
+  }
+  
+
+  render() {
+    return this.renderComposerArea()
+  }
+}
+  
+export class Editor extends CompositionUnit {
+  constructor(props) {
+    super(props);
+  }
+
+  canDelete() {
+    // deletion condition is 0-length string like !canSend(), but also checks if
+    // there was originally text
+    return ((this.state.text !== null) &&
+            (this.state.text.length === 0) &&
+            (this.props.editingContent.length > 0));
+  }
+  
+  onSend() {
+    var text = this.state.text
+    if (!text.trim())
+      return;
+    
+    this.setState({ isSending: true, isEditing: false })
+
+      // prep text
+      mentionslib.extract(text, (err, mentions) => {
+        if (err) {
+          this.setState({ isSending: false })
+            if (err.conflict)
+            app.issue('Error While Publishing', 'You follow multiple people with the name "'+err.name+'." Resolve this before publishing.')
+            else
+            app.issue('Error While Publishing', err, 'This error occured while trying to extract the mentions from a new post.')
+            return
+        }
+
+        // add file meta to mentions
+        if (mentions && mentions.length) {
+          mentions.forEach(mention => {
+            var meta = this.state.addedFileMeta[mention.link]
+            if (meta) {
+              for (var k in meta) {
+                if (k != 'link')
+                  mention[k] = meta[k]
+              }
+            }
+          })
+        }
+
+        let recps = null, recpLinks = null
+        if (!this.isPublic) {
+          // setup recipients
+          recps = this.state.recps
+
+          // make sure the user is in the recipients
+          if (recps.indexOf(app.user.id) === -1)
+            recps.push(app.user.id)
+
+            // setup links
+            recpLinks = recps.map((id) => {
+              let name = u.getName(id)
+                return (name) ? { link: id, name: name } : id
+            })
+        }
+
+        // collect up previous metadata
+        const origMsg = this.props.originalMessage
+        const revisionRoot = msg.root ? msg.root :
+                             origMsg.value.content.root ?
+                             origMsg.value.content.root : origMsg.key
+        const revisionMentions = mentions ? mentions : origMsg.value.content.mentions
+        const origKey = origMsg.key
+        
+        // publish edit
+        var edit = schemas.postEdit(text, revisionRoot, revisionMentions, origKey);
+        debugger;
+        
+        let published = (err, msg) => {
+          this.setState({ isSending: false })
+            if (err) app.issue('Error While Editing',
+                               err, 'This error occurred while trying to edit an existing post.')
+            else {
+              // reset form
+              this.setState({ text: '', isPreviewing: false });
+
+              // mark read (include the thread root because the api will
+              // automatically mark the root unread on new reply)
+              app.ssb.patchwork.markRead((this.threadRoot) ? [this.threadRoot, msg.key] : msg.key);
+
+              // call handler
+              if (this.props.onSend)
+                this.props.onSend(msg);
+            }
+        }
+        if (recps) {
+          app.ssb.private.publish(edit, recps, published);
+        }
+        else {
+          app.ssb.publish(edit, published);
+        }
+      })
+  }
+
+  renderToolbar() {
+    const AudienceBtn = this.renderAudienceBtn(this.props)
+    const AttachBtn = this.renderAttachBtn(this.props)
+    const SendBtn = this.renderSendBtn(this.props)
+    const setPreviewing = this.setPreviewing
+    const DeleteControls = () => {
+    const sendIcon = (this.isPublic()) ? 'users' : 'lock'
+      return (
+        <div>
+          <a className="btn" onClick={this.props.onCancel.bind(this)}>Cancel</a>          
+          {
+            this.canDelete() ?
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}>
+              <i className={`fa fa-${sendIcon}`}/> Delete Post</a> :
+            (!this.canSend() || this.state.isSending) ?
+            <a className="btn disabled">Submit Edit</a> :
+            <a className="btn highlighted" onClick={this.onSend.bind(this)}>
+              <i className={`fa fa-${sendIcon}`}/> Submit Edit</a> }
+        </div>)
+    }
+    
+    return (<div>
+          <div className="composer-ctrls flex">
+            <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+            <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
+            <DeleteControls />
+            <div className="flex-fill" />
+            <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+            <SendBtn canSend={this.canSend() && !this.state.isSending} />
+          </div>
+    </div>)
+
+  }
+
+  renderEditorArea() {
+    const Preview = this.renderPreview(this.props)
+    const channel = this.getChannel()
+    const setPreviewing = this.setPreviewing
+    const vertical = this.props.verticalFilled
+    const ComposerTextarea = this.renderComposerTextarea(vertical)
+    var toolbarTop, toolbarBottom
+
+    if (vertical) toolbarTop = this.renderToolbar()
+    else toolbarBottom = this.renderToolbar()
+
+    return (
+      <div className="composer">
+        <input ref="files"
+               type="file" multiple
+               onChange={this.onFilesAdded.bind(this)}
+               style={{display: 'none'}} />
+        <Modal Content={Preview}
+               isOpen={this.state.isPreviewing}
+               onClose={setPreviewing(false)} />
+        { toolbarTop }
+        <div className="composer-content">
+          <ComposerTextarea
+              ref="textarea"
+              defaultValue={this.props.editingContent}
+              onChange={this.onChangeText.bind(this)}
+              onSubmit={this.onSend.bind(this)}
+              placeholder={this.isReply() ?
+                           'Write a reply' :
+                           (this.props.placeholder||'Write your message here')}
+          />
+        </div>
+        { toolbarBottom }
+      </div>)
+  }
+
+  render() {
+    return this.renderEditorArea()
+  }
+  
+}
+  
+export default class Composer extends CompositionUnit {
+  constructor(props) {
+    super(props)
+
+  }
+  
   onSend() {
     var text = this.state.text
     if (!text.trim())
@@ -276,88 +584,6 @@ export default class Composer extends React.Component {
       else
         app.ssb.publish(post, published)
     })
-  }
-
-  render() {
-    const vertical = this.props.verticalFilled
-    const channel = this.getChannel()
-    const setPreviewing = b => () => this.setState({ isPreviewing: b })
-    const ComposerTextarea = (vertical) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
-
-    const Preview = (props) => {
-      return <div>
-        <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
-      </div>
-    }
-
-    const AudienceBtn = (props) => {
-      const opts = [
-        { label: <span><i className="fa fa-inbox"/> Private</span>, value: false },
-        { label: <span><i className="fa fa-bullhorn"/> Public</span>, value: true }
-      ]
-      if (!props.canChange)
-        return <a className="btn disabled">{opts[+props.isPublic].label}</a>
-      return <DropdownBtn className="btn" items={opts} onSelect={props.onSelect}>{opts[+props.isPublic].label} <i className="fa fa-caret-down" /></DropdownBtn>
-    }
-
-    const AttachBtn = (props) => {
-      if (!props.isPublic) {
-        if (props.isReply)
-          return <span/>
-        return <a className="btn disabled"><i className="fa fa-paperclip" /> Attachments not available in PMs</a>
-      }
-      if (props.isAdding)
-        return <a className="btn disabled"><i className="fa fa-paperclip" /> Adding...</a>
-      return <a className="btn" onClick={props.onAttach}><i className="fa fa-paperclip" /> Add an attachment</a>
-    }
-
-    const SendBtn = (props) => {
-      const sendIcon = (this.isPublic()) ? 'users' : 'lock'
-      if (!props.canSend)
-        return <a className="btn disabled">Send</a>
-      return <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a>
-    }
-
-    var toolbarTop, toolbarBottom
-    if (vertical) {
-      toolbarTop = <div>
-        <div className="composer-ctrls flex">
-          <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
-          <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
-          <div className="flex-fill" />
-          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-          <SendBtn canSend={this.canSend() && !this.state.isSending} />
-        </div>
-        { this.isPublic()
-          ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
-          : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> }
-      </div>
-    } else {
-      toolbarBottom = <div>
-        <div className="composer-ctrls flex" style={{ borderBottomColor: '#ccc', borderTop: 0 }}>
-          <AudienceBtn canChange={!this.isReply()} isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
-          <AttachBtn isPublic={this.isPublic()} isReply={this.isReply()} hasAdded={this.state.hasAddedFiles} isAdding={this.state.isAddingFiles} onAttach={this.onAttach.bind(this)} />
-          <div className="flex-fill" />
-          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-          <SendBtn canSend={this.canSend() && !this.state.isSending} />
-        </div> 
-        { !this.isReply()
-          ? ( this.isPublic()
-            ? <ComposerChannel isReadOnly={this.isReply()} onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
-            : <ComposerRecps isReadOnly={this.isReply()} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> )
-          : '' }
-      </div>
-    }
-
-    return <div className="composer">
-      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      { toolbarTop }
-      <div className="composer-content">
-        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={this.isReply() ? 'Write a reply' : (this.props.placeholder||'Write your message here')} />
-      </div>
-      { toolbarBottom }
-    </div>
   }
 }
 

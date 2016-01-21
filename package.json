@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "electron .",
+    "start-dev": "env ssb_appname=test-user electron .",
     "test": "set -e; for t in api/test/*.js; do node $t; done",
     "clean": "rm -Rf ./dist",
     "clean:osx": "rm -Rf ./dist/osx",
@@ -91,4 +92,3 @@
     "patchwork": "./bin.js"
   }
 }
-
