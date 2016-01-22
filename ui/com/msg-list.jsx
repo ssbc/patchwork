@@ -380,32 +380,30 @@ export default class MsgList extends React.Component {
                 </div>
                 :
                 <ResponsiveElement widthStep={250}>
-                  <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-                    { this.state.msgs.map((m, i) => {
-                      // missing value?
-                      if (!m.value)
-                        return <span key={m.key} /> // dont render
+                  { this.state.msgs.map((m, i) => {
+                    // missing value?
+                    if (!m.value)
+                      return <span key={m.key} /> // dont render
 
-                      // render item
-                      const item = <ListItem
-                        key={m.key}
-                        msg={m}
-                        {...this.handlers}
-                        {...this.props.listItemProps}
-                        selected={selectedKey === m.key}
-                        forceRaw={this.props.forceRaw} />
+                    // render item
+                    const item = <ListItem
+                      key={m.key}
+                      msg={m}
+                      {...this.handlers}
+                      {...this.props.listItemProps}
+                      selected={selectedKey === m.key}
+                      forceRaw={this.props.forceRaw} />
 
-                      // render a date divider if this post is from a different day than the last
-                      const oldLastDate = lastDate
-                      const lastPost = threadlib.getLastThreadPost(m)
-                      lastDate = moment(lastPost.value.timestamp)
-                      if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-                        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                        return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
-                      }
-                      return item
-                    }) }
-                  </ReactCSSTransitionGroup>
+                    // render a date divider if this post is from a different day than the last
+                    const oldLastDate = lastDate
+                    const lastPost = threadlib.getLastThreadPost(m)
+                    lastDate = moment(lastPost.value.timestamp)
+                    if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
+                      let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+                      return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
+                    }
+                    return item
+                  }) }
                 </ResponsiveElement>
               }
               {append}
