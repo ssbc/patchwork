@@ -20,7 +20,7 @@ import app from '../lib/app'
 import u from '../lib/util'
 
 // how many messages to fetch in a batch?
-const DEFAULT_BATCH_LOAD_AMT = 30
+const DEFAULT_BATCH_LOAD_AMT = 60
 
 // what's the avg height a message will be?
 // (used in loading calculations, when trying to scroll to a specific spot. doesnt need to be exact)
@@ -29,6 +29,8 @@ const AVG_RENDERED_MSG_HEIGHT = 200
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
 
+// how many pixels from the bottom of the screen before we load the next batch?
+const LOAD_BOTTOM_DISTANCE = 2000
 
 export default class MsgList extends React.Component {
   constructor(props) {
@@ -359,7 +361,7 @@ export default class MsgList extends React.Component {
           ref="container"
           elementHeight={this.props.listItemHeight||60}
           containerHeight={this.state.containerHeight}
-          infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
+          infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : LOAD_BOTTOM_DISTANCE}
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading}>
