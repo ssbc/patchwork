@@ -71,7 +71,6 @@ class CompositionUnit extends React.Component {
                     .filter(Boolean)
       }
     }
-
     // setup state (pulling from thread)
     this.state = {
       isPreviewing: false,
@@ -288,7 +287,7 @@ class CompositionUnit extends React.Component {
 
   renderToolbar() {
     const AudienceBtn = this.renderAudienceBtn(this.props)
-    const AttachBtn = this.renderAttachBtn(this.props)
+    const AttachBtn- = this.renderAttachBtn(this.props)
     const SendBtn = this.renderSendBtn(this.props)
     const setPreviewing = this.setPreviewing.bind(this)
 
@@ -297,8 +296,8 @@ class CompositionUnit extends React.Component {
                 <AudienceBtn canChange={!this.isReply()} 
                              isPublic={this.isPublic()} 
                              onSelect={this.onSelectPublic.bind(this)} />
-                <AttachBtn isPublic={this.isPublic()} 
-                           isReply={this.isReply()} 
+                <AttachBtn isPublic={this.isPublic()}  
+                          isReply={this.isReply()} 
                            hasAdded={this.state.hasAddedFiles} 
                            isAdding={this.state.isAddingFiles} 
                            onAttach={this.onAttach.bind(this)} />
@@ -554,7 +553,8 @@ export default class Composer extends CompositionUnit {
 
   onSend() {
     var text = this.state.text
-    if (!text.trim()) { return }
+    if (!text.trim())
+      return
 
     this.setState({ isSending: true })
 
@@ -576,14 +576,15 @@ export default class Composer extends CompositionUnit {
 
       // add file meta to mentions
       if (mentions && mentions.length) {
-          mentions.forEach(mention => {
-            var meta = this.state.addedFileMeta[mention.link]
-            if (meta) {
-              for (var k in meta) {
-                if (k != 'link') { mention[k] = meta[k] }
+        mentions.forEach(mention => {
+          var meta = this.state.addedFileMeta[mention.link]
+          if (meta) {
+            for (var k in meta) {
+              if (k != 'link')
+                mention[k] = meta[k]
             }
           }
-       })
+        })
       }
 
       let channel = this.getChannel()
@@ -640,7 +641,8 @@ export default class Composer extends CompositionUnit {
 }
 
 function isThreadPublic (thread) {
-  if ('plaintext' in thread) { return thread.plaintext }
+  if ('plaintext' in thread)
+    return thread.plaintext
   return (typeof thread.value.content !== 'string')
 }
 
