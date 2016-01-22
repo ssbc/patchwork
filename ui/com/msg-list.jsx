@@ -365,7 +365,7 @@ export default class MsgList extends React.Component {
           isInfiniteLoading={this.state.isLoading}>
           <div className="flex">
             { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
-            <div className="flex-fill" style={{padding: '5px'}}>
+            <div className="flex-fill">
               { Hero ? <Hero/> : '' }
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
