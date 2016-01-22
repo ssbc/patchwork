@@ -1,5 +1,6 @@
 var browserifyInc = require('browserify-incremental')
 var babelify = require('babelify')
+var envify = require('envify')
 var fs = require('fs')
 var path = require('path')
 
@@ -12,7 +13,8 @@ browserifyInc({
     basedir: path.dirname(process.argv[2]),
     debug: false
   })
-  .transform(babelify, {presets: absPathPresets(['es2015', 'stage-0', 'react'])})
+  .transform(envify, { global: true })
+  .transform(babelify, { presets: absPathPresets(['es2015', 'stage-0', 'react']) })
   .bundle()
   .pipe(fs.createWriteStream(process.argv[3]))
 
