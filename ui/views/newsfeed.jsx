@@ -86,11 +86,8 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
 
     // msg-list params
     const cursor = msg => {
-      if (msg) {
-        // find the last post (newsfeed is ordered by timestamp of last post in thread)
-        var last = threadlib.getLastThreadPost(msg)
-        return [last.value.timestamp, last.value.author]
-      }
+      if (msg)
+        return [msg.ts, false]
     }
     const filter = msg => {
       if (this.state.showFoaf)
