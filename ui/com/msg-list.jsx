@@ -194,7 +194,7 @@ export default class MsgList extends React.Component {
   setupLivestream() {
     let source = this.props.source || app.ssb.createFeedStream
     let opts = (typeof this.props.live == 'object') ? this.props.live : {}
-    opts.threads = true
+    opts.threads = this.props.threads
     opts.live = true
     opts.old = false
     this.liveStream = source(opts)
@@ -286,7 +286,7 @@ export default class MsgList extends React.Component {
 
     this.setState({ isLoading: true })
     pull(
-      source({ threads: true, reverse: true, lt: cursor(this.botcursor) }),
+      source({ threads: this.props.threads, reverse: true, lt: cursor(this.botcursor) }),
       pull.through(msg => { lastmsg = msg }), // track last message processed
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
