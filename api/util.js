@@ -3,6 +3,9 @@ var multicb = require('multicb')
 var EventEmitter = require('events').EventEmitter
 var threadlib = require('patchwork-threads')
 
+// constant used to decide if an index-entry was recent enough to emit an 'add' event for
+var IS_RECENT_MAX = 1e3 * 60 * 60 * 48 // 2 days
+
 module.exports.index = function (name) {
   var index = new EventEmitter()
   index.name = name
@@ -18,12 +21,14 @@ module.exports.index = function (name) {
     for (var i=0; i < index.rows.length; i++) {
       if (index.rows[i].ts < row.ts) {
         index.rows.splice(i, 0, row)
-        index.emit('add', row)
+        if (timestampIsRecent(row.ts))
+          index.emit('add', row)
         return row
       }
     }
     index.rows.push(row)
-    index.emit('add', row)
+    if (timestampIsRecent(row.ts))
+      index.emit('add', row)
     return row
   }
 
@@ -84,6 +89,12 @@ module.exports.index = function (name) {
         return i
     }
     return 0
+  }
+
+  function timestampIsRecent (ts) {
+    var now = Date.now()
+    var delta = Math.abs(now - ts)
+    return (delta < IS_RECENT_MAX)
   }
 
   return index
