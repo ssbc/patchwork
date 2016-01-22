@@ -28,11 +28,8 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   cursor (msg) {
-    if (msg) {
-      // find the last post (inbox is ordered by timestamp of last post in thread)
-      var last = threadlib.getLastThreadPost(msg)
-      return [last.value.timestamp, last.value.author]
-    }
+    if (msg)
+      return [msg.ts, false]
   }
 
   onSelectMsgView(v, index) {
