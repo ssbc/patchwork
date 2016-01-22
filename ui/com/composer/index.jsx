@@ -23,8 +23,7 @@ class ComposerTextareaFixed extends React.Component {
   componentDidMount() {
     // setup the suggest-box
     let textarea = this.refs && this.refs.textarea
-    if (!textarea || textarea.isSetup)
-      return
+    if (!textarea || textarea.isSetup) { return }
     textarea.isSetup = true
     suggestBox(textarea, app.suggestOptions)
     textarea.addEventListener('suggestselect', this.props.onChange)
@@ -37,7 +36,11 @@ class ComposerTextareaFixed extends React.Component {
     }
   }
   render() {
-    return <textarea ref="textarea" {...this.props} onKeyDown={this.onKeyDown.bind(this)} style={{height: this.props.height+TEXTAREA_VERTICAL_FILL_ADJUST, overflow: 'auto'}} />
+    return <textarea ref="textarea" {...this.props} 
+              onKeyDown={this.onKeyDown.bind(this)} 
+              style={{height: this.props.height+TEXTAREA_VERTICAL_FILL_ADJUST, 
+                      overflow: 'auto'}} 
+           />
   }
 }
 const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed)
@@ -118,7 +121,9 @@ export default class Composer extends React.Component {
       // limit to 5mb
       if (f.size > 5 * (1024*1024)) {
         var inMB = Math.round(f.size / (1024*1024) * 100) / 100
-        app.issue('Error Attaching File', new Error(f.name + ' is larger than the 5 megabyte limit (' + inMB + ' MB)'))
+        app.issue('Error Attaching File', 
+                  new Error(f.name + ' is larger than the 5 megabyte limit (' + 
+                            inMB + ' MB)'))
         this.setState({ isAddingFiles: false })
         return false
       }
@@ -135,7 +140,9 @@ export default class Composer extends React.Component {
       }
       const next = (err, hash) => {
         if (err) {
-          app.issue('Error Attaching File', err, 'This error occurred while trying to add a file to the blobstore for a new post.')
+          app.issue('Error Attaching File', 
+                    err, 
+                    'This error occurred while trying to add a file to the blobstore for a new post.')
         } else {
           // insert the mention
           var str = ''
@@ -372,8 +379,7 @@ export default class Composer extends React.Component {
 }
 
 function isThreadPublic (thread) {
-  if ('plaintext' in thread)
-    return thread.plaintext
+  if ('plaintext' in thread) { return thread.plaintext }
   return (typeof thread.value.content !== 'string')
 }
 
