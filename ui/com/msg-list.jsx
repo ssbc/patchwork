@@ -96,6 +96,7 @@ export default class MsgList extends React.Component {
           let msg = this.state.msgs[i]
           if (msg.key === e.key) {
             msg.hasUnread = !e.value
+            incMsgChangeCounter(msg)
             this.setState({ msgs: this.state.msgs })
             return
           }
