@@ -62,6 +62,7 @@ export default class MsgList extends React.Component {
 
           // re-render
           msg.isBookmarked = isBookmarked
+          incMsgChangeCounter(msg)
           this.setState(this.state)
         })
       },
@@ -79,6 +80,7 @@ export default class MsgList extends React.Component {
 
           // re-render
           msg.votes[app.user.id] = newVote
+          incMsgChangeCounter(msg)
           this.setState(this.state)
         }
         if (msg.plaintext)
@@ -114,6 +116,7 @@ export default class MsgList extends React.Component {
           // re-render
           msg.votes = msg.votes || {}
           msg.votes[app.user.id] = (reason === 'unflag') ? 0 : -1
+          incMsgChangeCounter(msg)
           this.setState(this.state)
         }
         if (msg.plaintext)
@@ -318,10 +321,14 @@ export default class MsgList extends React.Component {
     var selected = this.state.selected
     msgs = Array.isArray(msgs) ? msgs : [msgs]
     msgs.forEach(msg => {
+
       // remove any noticeable duplicates...
       // check if the message is already in the first N and remove it if so
       for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
         if (this.state.msgs[i].key === msg.key) {
+          // hold onto the change counter
+          msg.changeCounter = this.state.msgs[i].changeCounter
+          // remove the old message
           this.state.msgs.splice(i, 1)
           break
         }
@@ -329,6 +336,7 @@ export default class MsgList extends React.Component {
       // add to start of msgs
       if (selected && selected.key === msg.key)
         selected = msg // update selected, in case we replaced the current msg
+      incMsgChangeCounter(msg)
       this.state.msgs.unshift(msg)
     })
     this.setState({ msgs: this.state.msgs, selected: selected })
@@ -414,4 +422,10 @@ export default class MsgList extends React.Component {
       </div>
     </div>
   }
+}
+
+// this little hack helps us keep track of when we update a message, and should therefore re-render it
+// msg-view/card and msg-view/oneline use this number in shouldComponentUpdate to decide the answer
+function incMsgChangeCounter (msg) {
+  msg.changeCounter = (msg.changeCounter || 0) + 1
 }
