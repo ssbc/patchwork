@@ -397,6 +397,7 @@ export default class MsgList extends React.Component {
                     const item = <ListItem
                       key={m.key}
                       msg={m}
+                      selectiveUpdate
                       {...this.handlers}
                       {...this.props.listItemProps}
                       selected={selectedKey === m.key}

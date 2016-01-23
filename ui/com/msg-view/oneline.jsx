@@ -18,9 +18,12 @@ export default class Oneline extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    var shouldUpdate = this.changeCounter !== nextProps.msg.changeCounter
-    this.changeCounter = nextProps.msg.changeCounter
-    return shouldUpdate
+    if (nextProps.selectiveUpdate) {
+      var shouldUpdate = this.changeCounter !== nextProps.msg.changeCounter
+      this.changeCounter = nextProps.msg.changeCounter
+      return shouldUpdate
+    }
+    return true
   }
 
   render() {
