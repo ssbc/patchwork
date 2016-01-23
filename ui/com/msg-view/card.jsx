@@ -73,8 +73,8 @@ export default class Card extends React.Component {
       subject: null,
       isFlagModalOpen: false
     }
-
     this.thingsThatArePosts = ['post', 'post-edit']
+    this.changeCounter = props.msg.changeCounter || 0
   }
 
   onSelect() {
@@ -148,6 +148,12 @@ export default class Card extends React.Component {
         this.setState({ isOversized: true })
       }
     })
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    var shouldUpdate = this.changeCounter !== nextProps.msg.changeCounter
+    this.changeCounter = nextProps.msg.changeCounter
+    return shouldUpdate
   }
 
   render() {
