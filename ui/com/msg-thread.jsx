@@ -51,27 +51,18 @@ export default class Thread extends React.Component {
     // load thread
     threadlib.getPostThread(app.ssb, id, (err, thread) => {
       if (err)
-        return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
-
-      var that = this // yes we're going there
-//      const origThread = thread
-//       threadlib.getLatestRevision(app.ssb, thread, function(err, thread) {
-//         if (err &&
-//             err.message !== '"Param 0 must have a .id of type "msgId""') {
-//           // pass through for now
-//           thread = origThread
-//         } else if (err) {
-//           return app.issue('Failed to get latest msg revision', err,
-//                            'This happened in msg-thread componentDidMount')
-//         }
-        console.log("thread type: ", thread.value.content.type)
-
-        var flatThread = threadlib.flattenThread(thread)
-        // set state, after some processing
-        that.setState({
+        return app.issue('Failed to Load Message', 
+                         err, 
+                         'This happened in msg-list componentDidMount')
+      // set state, after some processing
+      const flatThread = threadlib.flattenThread(thread)
+      threadlib.reviseFlatThread(app.ssb, flatThread, (err, flatNewThread) => {
+        this.setState({
           thread: thread,
-          msgs: flatThread,
-          isReplying: (that.state.thread && thread.key === that.state.thread.key) ? that.state.isReplying : false
+          msgs: flatNewThread,
+          isReplying: (this.state.thread && 
+                       thread.key === this.state.thread.key) ? 
+                       this.state.isReplying : false
         })
 
         // mark read
@@ -79,36 +70,36 @@ export default class Thread extends React.Component {
           threadlib.markThreadRead(app.ssb, thread, (err) => {
             if (err)
               return app.minorIssue('Failed to mark thread as read', err)
-            that.setState({ thread: thread })
+            this.setState({ thread: thread })
           })
         }
 
         // listen for new replies
-        if (that.props.live) {
-          if (that.liveStream)
-            that.liveStream(true, ()=>{}) // abort existing livestream
+        if (this.props.live) {
+          if (this.liveStream)
+            this.liveStream(true, ()=>{}) // abort existing livestream
 
           pull(
             // listen for all new messages
-            (that.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
+            (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
             pull.filter(obj => !obj.sync), // filter out the sync obj
             pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
             pull.drain((msg) => {
-              if (!that.state.thread)
+              if (!this.state.thread)
                 return
               
               var c = msg.value.content
-              var rels = mlib.relationsTo(msg, that.state.thread)
-              // reply post to that thread?
+              var rels = mlib.relationsTo(msg, this.state.thread)
+              // reply post to this thread?
               if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
                 // add to thread and flatlist
-                that.state.msgs.push(msg)
-                that.state.thread.related = (that.state.thread.related||[]).concat(msg)
-                that.setState({ thread: that.state.thread, msgs: that.state.msgs })
+                this.state.msgs.push(msg)
+                this.state.thread.related = (this.state.thread.related||[]).concat(msg)
+                this.setState({ thread: this.state.thread, msgs: this.state.msgs })
 
                 // mark read
                 thread.hasUnread = true
-                threadlib.markThreadRead(app.ssb, that.state.thread, err => {
+                threadlib.markThreadRead(app.ssb, this.state.thread, err => {
                   if (err)
                     app.minorIssue('Failed to mark live-streamed reply as read', err)
                 })
@@ -116,12 +107,10 @@ export default class Thread extends React.Component {
             })
           )
         }
-    }
-   )   
-  } //)  
-  //}
-  
-  
+      })
+    })
+  }
+
   componentDidMount() {
     this.constructState(this.props.id)
   }
