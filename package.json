@@ -77,7 +77,7 @@
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
     "ssb-markdown": "^1.0.0",
-    "ssb-msg-schemas": "~6.1.0",
+    "ssb-msg-schemas": "git@github.com:du5t/ssb-msg-schemas.git",
     "ssb-msgs": "~5.2.0",
     "ssb-ref": "~2.2.0",
     "stack": "^0.1.0",
