@@ -11,11 +11,16 @@ exports.notify = function notify(opts) {
     Notification.requestPermission(notify.bind(this, opts))
 }
 
+function trimMessage(str) {
+  str = String(str)
+  return str.length > 140 ? str.substr(0, 140) + '⋯' : str
+}
+
 /* text taken from ui/com/msg-view/notification.jsx */
 
 var render = {
   post: function (msg, c, cb) {
-    var subject = c.text || 'a message'
+    var subject = trimMessage(c.text) || 'a message'
     var author = u.getName(msg.value.author)
     cb({
       title: author + ' mentioned you in ',
@@ -26,7 +31,7 @@ var render = {
   vote: function (msg, c, cb) {
     u.getSubjectMessage(msg, function (subject) {
       var text = (subject && subject.value.content &&
-                  subject.value.content.text || 'this message')
+                  trimMessage(subject.value.content.text) || 'this message')
       var author = u.getName(msg.value.author)
       if (typeof c.vote.value !== 'number')
         return null
