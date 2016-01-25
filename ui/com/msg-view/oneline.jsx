@@ -9,8 +9,21 @@ import app from '../../lib/app'
 import u from '../../lib/util'
 
 export default class Oneline extends React.Component {
+  constructor(props) {
+    super(props)
+    this.changeCounter = props.msg.changeCounter || 0
+  }
   onClick() {
     this.props.onSelect(this.props.msg)
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.selectiveUpdate) {
+      var shouldUpdate = this.changeCounter !== nextProps.msg.changeCounter
+      this.changeCounter = nextProps.msg.changeCounter
+      return shouldUpdate
+    }
+    return true
   }
 
   render() {
