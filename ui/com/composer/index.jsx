@@ -82,7 +82,8 @@ class CompositionUnit extends React.Component {
                             // public mode, then they switch to private
       addedFileMeta: {}, // map of file hash -> metadata
       recps: recps,
-      text: ''
+      text: '',
+      hasBeenEdited: false // used to see if the user has touched the text at all
     }
   }
 
@@ -98,7 +99,10 @@ class CompositionUnit extends React.Component {
     return (this.isReply()) ? this.threadChannel : this.state.channel
   }
 
-  onChangeText(event) { this.setState({ text: event.target.value }) }
+  onChangeText(event) { 
+    this.setState({ text: event.target.value })
+    this.setState({ hasBeenEdited: true })
+  }
 
   onAttach() { this.refs.files.click() } // trigger file-selector
 
@@ -361,11 +365,9 @@ export class Editor extends CompositionUnit {
   }
 
   canDelete() {
-    // deletion condition is 0-length string like !canSend(), but also checks if
-    // there was originally text
-    return ((this.state.text !== null) &&
-            (this.state.text.length === 0) &&
-            (this.props.editingContent.length > 0))
+    // deletion condition is 0-length string like !canSend() + text was deleted
+    return ((this.state.hasBeenEdited) &&
+            (this.state.text.length === 0))
   }
 
   onCancel() {
