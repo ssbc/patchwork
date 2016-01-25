@@ -296,8 +296,8 @@ class CompositionUnit extends React.Component {
                 <AudienceBtn canChange={!this.isReply()} 
                              isPublic={this.isPublic()} 
                              onSelect={this.onSelectPublic.bind(this)} />
-                <AttachBtn isPublic={this.isPublic()}  
-                          isReply={this.isReply()} 
+                <AttachBtn isPublic={this.isPublic()} 
+                           isReply={this.isReply()} 
                            hasAdded={this.state.hasAddedFiles} 
                            isAdding={this.state.isAddingFiles} 
                            onAttach={this.onAttach.bind(this)} />
