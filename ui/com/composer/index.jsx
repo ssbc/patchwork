@@ -214,8 +214,7 @@ class CompositionUnit extends React.Component {
     return (props) => (
       <div>
         <div className="card" 
-             style={{padding: '20px', margin: '40px 10px 30px 0'}}
-        >
+             style={{padding: '20px', margin: '40px 10px 30px 0'}}>
           <MarkdownBlock md={this.state.text} />
         </div>
       </div>)
@@ -234,10 +233,8 @@ class CompositionUnit extends React.Component {
       } else {
         return (<DropdownBtn className="btn" 
                              items={opts} 
-                             onSelect={props.onSelect}
-                 >
-                   {opts[+props.isPublic].label} 
-                   <i className="fa fa-caret-down" />
+                             onSelect={props.onSelect}>
+                   {opts[+props.isPublic].label} <i className="fa fa-caret-down" />
                 </DropdownBtn>)
       }
     }
@@ -249,22 +246,13 @@ class CompositionUnit extends React.Component {
         if (props.isReply) {
           return <span/>
         } else {
-          return (<a className="btn disabled">
-                    <i className="fa fa-paperclip" /> 
-                    Attachments not available in PMs
-                  </a>)
+          return <a className="btn disabled"><i className="fa fa-paperclip" /> Attachments not available in PMs</a>
         }
       }
       if (props.isAdding) {
-        return (<a className="btn disabled">
-                  <i className="fa fa-paperclip" /> 
-                  Adding...
-                </a>)
+        return <a className="btn disabled"><i className="fa fa-paperclip" /> Adding...</a>
       } else {
-        return (<a className="btn" onClick={props.onAttach}>
-                 <i className="fa fa-paperclip" />
-                 Add an attachment
-                </a>)
+        return <a className="btn" onClick={props.onAttach}><i className="fa fa-paperclip" /> Add an attachment</a>
       }
     }
   }
@@ -275,11 +263,9 @@ class CompositionUnit extends React.Component {
       if (!props.canSend) {
         return <a className="btn disabled">Send</a>
       } else {
-        return (<a className="btn highlighted" 
-                   onClick={this.onSend.bind(this)}
-                 >
-                 <i className={`fa fa-${sendIcon}`}/>Send
-                </a>)
+        return <a className="btn highlighted" onClick={this.onSend.bind(this)}>
+          <i className={`fa fa-${sendIcon}`}/> Send
+        </a>
       }
     }
   }
@@ -298,14 +284,12 @@ class CompositionUnit extends React.Component {
               <div className="composer-ctrls flex">
                 <AudienceBtn canChange={!this.isReply()} 
                              isPublic={this.isPublic()} 
-                             onSelect={this.onSelectPublic.bind(this)} 
-                 />
+                             onSelect={this.onSelectPublic.bind(this)} />
                 <AttachBtn isPublic={this.isPublic()} 
                            isReply={this.isReply()} 
                            hasAdded={this.state.hasAddedFiles} 
                            isAdding={this.state.isAddingFiles} 
-                           onAttach={this.onAttach.bind(this)} 
-                 />
+                           onAttach={this.onAttach.bind(this)} />
                 <div className="flex-fill" />
                 <a className="btn" onClick={setPreviewing(true)}>Preview</a>
                 <SendBtn canSend={this.canSend() && !this.state.isSending} />
@@ -313,13 +297,11 @@ class CompositionUnit extends React.Component {
               { this.isPublic()
                 ? <ComposerChannel isReadOnly={this.isReply()} 
                                    onChange={this.onChangeChannel.bind(this)} 
-                                   value={this.getChannel()} 
-                   />
+                                   value={this.getChannel()} />
                 : <ComposerRecps isReadOnly={this.isReply()} 
                                  recps={this.state.recps} 
                                  onAdd={this.onAddRecp.bind(this)} 
-                                 onRemove={this.onRemoveRecp.bind(this)} 
-                   /> 
+                                 onRemove={this.onRemoveRecp.bind(this)} /> 
               }
     </div>)
   }
@@ -353,8 +335,7 @@ class CompositionUnit extends React.Component {
                 onSubmit={this.onSend.bind(this)}
                 placeholder={this.isReply() ?
                              'Write a reply' :
-                             (this.props.placeholder||'Write your message here')}
-            />
+                             (this.props.placeholder||'Write your message here')} />
           </div>
           { toolbarBottom }
         </div>)
