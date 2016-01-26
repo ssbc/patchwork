@@ -1,6 +1,7 @@
 .user-summary {
-  display: flex;
-  margin: 1px;
+  display: inline-flex;
+  flex-direction: column;
+  margin: 5px;
   cursor: pointer;
   color: #555;
   background: #fff;
@@ -10,37 +11,28 @@
 
   .user-pic img {
     display: block;
-    width: 50px;
-    height: 50px;
-    border-radius: 2px;
+    width: 200px;
+    height: 200px;
   }
   .name {
     flex: 1;
     font-size: 21px;
     font-weight: 300;
-    padding: 10px;
-  }
-  .label {
-    padding: 14px 0px;
-    span {
-      background: #eee;
-      border-radius: 2px;
-      text-transform: uppercase;
-      padding: 1px 6px;
-      margin: 0 2px;
-      color: gray;
-      font-size: 14px;
-    }
+    padding: 20px;
   }
 }
 
 .user-summaries {
-  .filters {  
-    div, label {
+  .tabs {  
+    a {
       padding: 12px 25px 12px 0;
       color: gray;
       font-weight: 100;
-      font-size: 21px;
+      font-size: 28px;
+      &.selected {
+        font-weight: normal;
+        color: #555;
+      }
     }
   }
 }
