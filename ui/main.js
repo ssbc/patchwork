@@ -8,6 +8,7 @@ var ReactDOM = require('react-dom')
 
 // master state object
 window.app = require('./lib/app')
+window.pull = pull // pull is useful for debugging
 
 // toplevel events
 window.addEventListener('error', onError)
