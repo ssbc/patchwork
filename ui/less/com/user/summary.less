@@ -1,5 +1,6 @@
 .user-summary {
   display: inline-flex;
+  vertical-align: top;
   flex-direction: column;
   margin: 5px;
   cursor: pointer;
@@ -15,7 +16,6 @@
     height: 200px;
   }
   .name {
-    flex: 1;
     font-size: 21px;
     font-weight: 300;
     padding: 20px;
@@ -23,16 +23,21 @@
 }
 
 .user-summaries {
-  .tabs {  
-    a {
-      padding: 12px 25px 12px 0;
-      color: gray;
-      font-weight: 100;
-      font-size: 28px;
-      &.selected {
-        font-weight: normal;
-        color: #555;
+  .user-add {
+    .user-summary;
+    text-align: center;
+    div:first-child {
+      width: 200px;
+      height: 200px;
+      font-size: 41px;
+      color: #aaa;
+      i {
+        position: relative;
+        top: 70px;
       }
+    }
+    .name {
+      color: #aaa;
     }
   }
 }
