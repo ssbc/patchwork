@@ -26,8 +26,8 @@ export default class LeftNav extends React.Component {
       if (!this.state.isChannelListOpen)
         return
       // is the click within the channel list?
-      for (var i=0; i < e.path.length; i++) {
-        if (e.path[i].classList && e.path[i].classList.contains('channel-list'))
+      for (var el = e.target; el; el = el.parentNode) {
+        if (el.classList && el.classList.contains('channel-list'))
           return // keep open
       }
       // close, this was a click out of the channel list

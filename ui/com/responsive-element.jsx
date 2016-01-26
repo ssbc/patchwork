@@ -1,5 +1,6 @@
 'use babel'
 import React from 'react'
+import ReactDOM from 'react-dom'
 
 // Helper element to apply classes based on the width of the element
 // This lets us do responsive sizing based on the region's width

@@ -1,11 +1,13 @@
 'use babel'
 import React from 'react'
-import NativeImage from 'native-image'
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
 import app from '../../lib/app'
 
 const CANVAS_SIZE = 512
+
+if (!('URL' in window) && ('webkitURL' in window))
+  window.URL = window.webkitURL
 
 export default class ImageInput extends React.Component {
   constructor(props) {
@@ -79,23 +81,16 @@ export default class ImageInput extends React.Component {
   onFileChosen(e) {
     this.setState({ editorMsg: 'loading...', hasImg: true })
 
-    // give the html renderer a turn before loading the image
-    // if the image is large, it'll block for a sec, and we want to render "loading..." first
-    setTimeout(() => {
-      const file = this.refs.fileInput.files[0]
-      if (!file)
-        return
-      const ni = NativeImage.createFromPath(file.path)
-      const dataUrl = ni.toDataUrl()
-      if (dataUrl === 'data:image/png;base64,')
-        return this.setState({ editorMsg: 'Failed to load image. Must be a valid PNG or JPEG.' })
-
+    const fileInput = this.refs.fileInput
+    var file = fileInput.files[0]
+    var reader = new FileReader()
+    reader.onload = e => {
       const img = document.createElement('img')
-      const imgdim = ni.getSize()
-      const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
-      img.src = dataUrl
-      this.refs.scaleSlider.value = 0
+      img.src = e.target.result
 
+      const imgdim = { width: img.width, height: img.height }
+      const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
+      this.refs.scaleSlider.value = 0
       this.setState({
         img: img,
         imgdim: imgdim,
@@ -103,10 +98,11 @@ export default class ImageInput extends React.Component {
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
-        minzoom: CANVAS_SIZE/smallest,
+        minzoom: CANVAS_SIZE/smallest
       })
       this.drawCanvas()
-    }, 100)
+    }
+    reader.readAsDataURL(file)
   }
 
   onCanvasMouseDown (e) {
@@ -201,21 +197,23 @@ export default class ImageInput extends React.Component {
     </div>
   }
 
-  static canvasToPng(canvas) {
-    var dataUrl = canvas.toDataURL('image/png')
-    return NativeImage.createFromDataUrl(dataUrl).toPng()
+  static canvasToPng(canvas, cb) {
+    canvas.toBlob(function (blob) {
+      var reader = new FileReader()
+      reader.onloadend = function () {
+        cb(null, new Buffer(new Uint8Array(reader.result)))
+      }
+      reader.readAsArrayBuffer(blob)
+    })
   }
 
   static uploadCanvasToBlobstore(canvas, cb) {
-    var hasher = createHash('sha256')
-    pull(
-      pull.once(ImageInput.canvasToPng(canvas)),
-      hasher,
-      app.ssb.blobs.add(function (err) {
-        if (err)
-          return cb(err)
-        cb(null, hasher)
+    ImageInput.canvasToPng(canvas, function (err, buffer) {
+      if (err) return cb(err)
+      app.ssb.patchwork.addFileToBlobs(buffer.toString('base64'), function (err, hash) {
+        if (err) return cb(err)
+        cb(null, { hash: hash, size: buffer.length })
       })
-    )
+    })
   }
 }

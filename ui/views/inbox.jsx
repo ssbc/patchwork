@@ -1,8 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import pull from 'pull-stream'
-import mlib from 'ssb-msgs'
+import threadlib from 'patchwork-threads'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -11,6 +10,7 @@ import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
+import social from '../lib/social-graph'
 
 const LISTITEMS = [
   { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
@@ -29,7 +29,7 @@ export default class Inbox extends LocalStoragePersistedComponent {
 
   cursor (msg) {
     if (msg)
-      return [msg.value.timestamp, msg.value.author]
+      return [msg.ts, false]
   }
 
   onSelectMsgView(v, index) {
@@ -37,18 +37,18 @@ export default class Inbox extends LocalStoragePersistedComponent {
   }
 
   onMarkAllRead() {
-    alert('todo')    
+    alert('todo')
   }
 
   render() {
     const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
 
-    const Toolbar = props => {    
+    const Toolbar = props => {
       return <div className="flex light-toolbar">
         <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
@@ -66,7 +66,12 @@ export default class Inbox extends LocalStoragePersistedComponent {
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}
+        filter={followedOnlyFilter}
         cursor={this.cursor} />
     </div>
   }
+}
+
+function followedOnlyFilter (msg) {
+  return msg.value.author === app.user.id || social.follows(app.user.id, msg.value.author)
 }

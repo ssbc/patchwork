@@ -24,7 +24,7 @@ export class MsgLink extends React.Component {
 
 export class BlobLink extends React.Component {
   render() {
-    return <Link to={'/webview/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</Link>
+    return <a href={'/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</a>
   }
 }
 

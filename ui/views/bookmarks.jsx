@@ -1,8 +1,6 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
-import pull from 'pull-stream'
-import mlib from 'ssb-msgs'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -37,18 +35,18 @@ export default class Bookmarks extends LocalStoragePersistedComponent {
   }
 
   onMarkAllRead() {
-    alert('todo')    
+    alert('todo')
   }
 
   render() {
     const listItem = LISTITEMS[this.state.currentMsgView]
     const ListItem = listItem.Component
 
-    const Toolbar = props => {    
+    const Toolbar = props => {
       return <div className="flex light-toolbar">
         <Link to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked Threads</Link>
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }

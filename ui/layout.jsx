@@ -76,6 +76,7 @@ export default class Layout extends React.Component {
   }
 
   render() {
+    const isElectron = !!window.electron
     const location = this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
     const onToggleRightNav = (id) => () => { this.toggleRightNav(id) }
@@ -98,10 +99,12 @@ export default class Layout extends React.Component {
       <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar titlebar flex">
         <div>
-          <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
+          { isElectron
+            ? <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
+            : '' }
           <NavLink className="home" to="/" icon="home" />
         </div>
-        <div className="flex-fill"><SearchPalette/></div>
+        <div className="flex-fill"><SearchPalette ref="search"/></div>
         <div>
           <NavToggle to="notifications" icon="bell" count={this.state.indexCounts.notificationsUnread} />
         </div>

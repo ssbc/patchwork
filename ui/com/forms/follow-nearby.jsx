@@ -38,7 +38,7 @@ export default class FollowNearby extends React.Component {
       app.peers
         .filter(p => !ip.isLoopback(p.host) && ip.isPrivate(p.host))
         .forEach(p => peers.add(p.key))
-      peers = peers.toJSON()
+      peers = [...peers]
       if (peers.length) {
         this.props.setHelpText(NEARBY_FOUND_HELPTEXT)
         this.props.setIsReady(true)
@@ -46,14 +46,18 @@ export default class FollowNearby extends React.Component {
       this.setState({ foundNearbyPeers: peers })
     }
     setTimeout(() => {
-      this.onPeersUpdate()
-      app.on('update:peers', this.onPeersUpdate)
+      // this may happen after `componentWillUnmount`, so check if nullified
+      if (this.onPeersUpdate) {
+        this.onPeersUpdate()
+        app.on('update:peers', this.onPeersUpdate)
+      }
     }, TIME_FOR_FIRST_SCAN)
   }
 
   componentWillUnmount() {
     clearTimeout(this.scanDiscouragedTimer)
     app.removeListener('update:peers', this.onPeersUpdate)
+    this.onPeersUpdate = null // nullify so it's not incorrectly used
   }
 
   startScan() {    

@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import pull from 'pull-stream'
 import mlib from 'ssb-msgs'
 import cls from 'classnames'
+import threadlib from 'patchwork-threads'
 import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
 import DropdownBtn from '../com/dropdown'
@@ -13,7 +14,7 @@ import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
 import Summary from '../com/msg-view/summary'
 import Thread from '../com/msg-thread'
-import { ALL_CHANNELS, ChannelList } from '../com/channel-list'
+import { ChannelList } from '../com/channel-list'
 import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
 import social from '../lib/social-graph'
@@ -30,7 +31,8 @@ const LISTITEM_ONELINE = LISTITEMS[1]
 export default class NewsFeed extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'msgList', {
-      currentMsgView: 0
+      currentMsgView: 0,
+      showFoaf: true
     })
     this.state.channels = app.channels || []
 
@@ -42,7 +44,7 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
       } else {
         // navigate
         app.history.pushState(null, '/msg/' + encodeURIComponent(key))
-      }      
+      }
     }))
     this.refresh = () => {
       this.setState({ channels: app.channels })
@@ -67,9 +69,13 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         app.issue('Failed to pin channel', err)
     })
   }
-
+  onToggleShowFoaf() {
+    this.setState({ showFoaf: !this.state.showFoaf }, () => {
+      this.refs.list.reload()
+    })
+  }
   onMarkAllRead() {
-    alert('todo')    
+    alert('todo')
   }
 
   render() {
@@ -81,21 +87,22 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     // msg-list params
     const cursor = msg => {
       if (msg)
-        return [msg.value.timestamp, msg.value.author]
+        return [msg.ts, false]
+    }
+    const filter = msg => {
+      if (this.state.showFoaf)
+        return true
+      return followedOnlyFilter(msg)
     }
     const source = (opts) => {
-      if (channel) 
+      if (channel)
         return app.ssb.patchwork.createChannelStream(channel, opts)
       return app.ssb.patchwork.createNewsfeedStream(opts)
     }
-    const filter = msg => {
-      if (this.state.isFollowedOnly)
-        return followedOnlyFilter(msg)
-      return true
-    }
 
-    const Toolbar = props => {    
+    const Toolbar = props => {
       const isPinned = channelData && channelData.pinned
+      const showFoafDesc = this.state.showFoaf ? 'Friends + FoaF' : 'Friends Only'
       return <div className="flex light-toolbar">
         { channel
           ? <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link>
@@ -104,14 +111,15 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onToggleShowFoaf.bind(this)}><i className="fa fa-user" /> Show: {showFoafDesc}</a>
         <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
       </div>
     }
 
     // render content
     const thread = this.state.isUsingThreadPanel && this.state.currentThreadKey
-    // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}    
+    // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}
     return <div id="newsfeed" key={channel||'*'}>
       <MsgList
         ref="list"

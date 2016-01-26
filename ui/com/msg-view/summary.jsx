@@ -11,10 +11,10 @@ import u from '../../lib/util'
 export default class Summary extends React.Component {
   onClick(e) {
     // make sure the user didnt click on a link
-    for (var i=0; i < e.nativeEvent.path.length; i++) {
-      if (e.nativeEvent.path[i] === e.currentTarget)
+    for (var el = e.nativeEvent.target; el; el = el.parentNode) {
+      if (el === e.currentTarget)
         break // found the msg-view top without finding any anchors, good to go
-      if (e.nativeEvent.path[i].tagName === 'A')
+      if (el.tagName === 'A')
         return // click was on a link inside of msg-view, let the default behavior occur
     }
     this.props.onSelect(this.props.msg)
