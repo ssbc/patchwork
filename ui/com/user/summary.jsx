@@ -27,10 +27,6 @@ export default class UserSummary extends AutoRefreshingComponent {
     return <div className="user-summary" onClick={this.onClick.bind(this)}>
       <UserPic id={this.props.pid} />
       <div className="name">{this.state.name}</div>
-      <div className="label">{ this.state.isUser ? <span>You</span> : '' }</div>
-      <div className="label">{ this.state.following ? <span>Following</span> : '' }</div>
-      <div className="label">{ this.state.follower ? <span>Follows You</span> : '' }</div>
-      <div className="label">{ this.state.flagged ? <span>Flagged By You</span> : '' }</div>
     </div>
   }
 }
