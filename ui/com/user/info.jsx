@@ -109,14 +109,14 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       <div className="facts">
         <div className="flex" style={{alignItems: 'center'}}>
           <h1 style={{marginRight: 5}}>{this.state.name}</h1> 
-          <ModalBtn className="fullheight" Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
+          <ModalBtn className="fullheight" Form={this.state.isSelf ? ProfileName : Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
         </div>
         <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
             <span className="btn-group">
-              <ModalBtn className="btn" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
-              <ModalBtn className="btn" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
+              <ModalBtn className="btn fullheight" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
+              <ModalBtn className="btn fullheight" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
             </span> :
             <span className="btn-group">
               { (this.state.hasBlocked) ?

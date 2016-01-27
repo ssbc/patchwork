@@ -1,7 +1,6 @@
 'use babel'
 import React from 'react'
 import schemas from 'ssb-msg-schemas'
-import { rainbow } from '../index'
 import app from '../../lib/app'
 
 function getCurrentName (id) {
@@ -16,7 +15,7 @@ export default class Rename extends React.Component {
 
   componentDidMount() {
     this.validate(getCurrentName(this.props.id))
-    this.props.setHelpText('You can rename anybody! Other people can see the name you choose, but it will only affect you.')
+    this.props.setHelpText('You can rename anybody. It will only change for you, but other people will see the name you chose.')
   }
 
   onChange(e) {
@@ -66,10 +65,10 @@ export default class Rename extends React.Component {
   }
 
   render() {
-    return <div>
-      <form className="fullwidth" onSubmit={e=>e.preventDefault()}>
+    return <div className="text-center vertical-center">
+      <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
-          <h1>{rainbow('Rename')} {getCurrentName(this.props.id)}</h1>
+          <h1>Rename {getCurrentName(this.props.id)} to...</h1>
           <label><span/><input type="text" value={this.state.name} onChange={this.onChange.bind(this)} /></label>
           <div className="error">{this.state.error}</div>
         </fieldset>

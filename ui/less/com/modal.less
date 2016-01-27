@@ -29,8 +29,7 @@
   }
   .modal-helptext {
     padding: 0 40px 20px;
-    font-weight: 200;
-    color: gray;
+    font-weight: 300;
     text-align: justify;
   }
   .modal-ctrls {
@@ -101,6 +100,15 @@
   &.fullheight:not(.center-block) {
     .modal-inner {
       padding-bottom: 80px;
+    }
+    .modal-helptext {
+      position: fixed;
+      left: 0;
+      bottom: 110px;
+      right: 0;
+      background: #fff;
+      padding: 30px;
+      text-align: center;
     }
     .modal-ctrls {
       position: fixed;
