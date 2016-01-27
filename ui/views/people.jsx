@@ -19,14 +19,15 @@ export default class People extends React.Component {
     // get all followed
     pull(
       app.ssb.friends.createFriendStream({ hops: 1 }),
+      pull.filter(id => {
+        // remove non-friends
+        return social.follows(id, app.user.id)
+      }),
       pull.map(id => {
         return {
           id:        id,
           name:      u.getName(id),
-          isUser:    id ==app.user.id,
-          following: social.follows(app.user.id, id),
-          follower:  social.follows(id, app.user.id),
-          flagged:   social.flags(app.user.id, id)
+          isUser:    id == app.user.id
         }
       }),
       pull.collect((err, users) => {
