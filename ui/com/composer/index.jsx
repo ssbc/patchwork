@@ -323,7 +323,8 @@ class CompositionUnit extends React.Component {
                  type="file" multiple
                  onChange={this.onFilesAdded.bind(this)}
                  style={{display: 'none'}} />
-          <Modal Content={Preview}
+          <Modal className="fullheight"
+                 Content={Preview}
                  isOpen={this.state.isPreviewing}
                  onClose={setPreviewing(false)} />
           { toolbarTop }

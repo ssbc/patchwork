@@ -9,7 +9,7 @@ export default class ModalPopup extends React.Component {
     if (!this.props.isOpen || !Content)
       return <span/>
 
-    return <div className={'modal modal-single '+(this.props.fullheight?'fullheight':'')}>
+    return <div className={'modal modal-single '+(this.props.className||'')}>
       <div className="modal-inner">
         <div className="modal-content">
           <Content {...this.props.contentProps} />

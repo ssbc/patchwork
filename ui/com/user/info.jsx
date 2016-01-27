@@ -4,9 +4,10 @@ import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import ModalBtn from '../modals/btn'
-import Tabs from '../tabs'
 import Rename from '../forms/rename'
-import ProfileSetup from '../forms/profile-setup'
+import ProfileName from '../forms/profile-name'
+import ProfileImage from '../forms/profile-image'
+import Tabs from '../tabs'
 import { AutoRefreshingComponent, UserLink, UserPic, UserBtn } from '../index'
 import DropdownBtn from '../dropdown'
 import mentionslib from '../../lib/mentions'
@@ -111,12 +112,15 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
         <div className="flex" style={{alignItems: 'center'}}>
           <h1 style={{marginRight: 5}}>{this.state.name}</h1> 
-          <ModalBtn Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
+          <ModalBtn className="fullheight" Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
         </div>
         <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
-            <ModalBtn className="btn" Form={ProfileSetup} fullheight nextLabel="Publish"><i className="fa fa-wrench" /> Edit Profile</ModalBtn> :
+            <span className="btn-group">
+              <ModalBtn className="btn" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
+              <ModalBtn className="btn" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
+            </span> :
             <span className="btn-group">
               { (this.state.hasBlocked) ?
                 <span className="btn disabled">Blocked</span> :

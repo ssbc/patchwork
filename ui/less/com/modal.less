@@ -4,32 +4,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(100, 100, 100, 0.75);
   z-index: 10000;
   cursor: default;
+  background: #fff;
+  overflow: auto;
 
   .modal-inner {
     display: flex;
     flex-direction: column;
-
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    width: 640px;
-    max-height: 90%;
-    transform: translateX(-50%);
-
-    box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.2);
-    border-radius: 0;
-    border: 0;
-    background: #fff;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    outline: none;
-    padding: 0;
-  }
-  &.fullheight .modal-inner {
-    bottom: 40px;  
   }
 
   .modal-content {
@@ -58,6 +40,11 @@
     display: flex;
     flex: 0 0 70px;
     padding: 0 20px 0 0;
+
+    @media (max-width: 800px) {
+      padding: 0 0 0 20px;
+    }
+
     .cancel {
       flex: 1;
       padding-left: 26px;
@@ -75,6 +62,10 @@
       margin: 2px 5px 0 0;
       position: relative;
       left: -20px;
+
+      &.no-labels {
+        margin-top: 10px;
+      }
     }
     .next {
       flex: 0 0 170px;
@@ -87,6 +78,43 @@
   .btn {
     padding: 10px 50px;
     font-size: 18px;
+  }
+
+  &.center-block {
+    overflow: none;
+    background-color: rgba(100, 100, 100, 0.75);
+    .modal-inner {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 640px;
+      max-height: 90%;
+      overflow: scroll;
+      background: #fff;
+      box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.2);
+    }
+    &.fullheight {
+      .modal-inner {
+        bottom: 40px;  
+      }
+    }
+  }
+
+  &.fullheight:not(.center-block) {
+    .modal-inner {
+      padding-bottom: 80px;
+    }
+    .modal-ctrls {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      height: 80px;
+      background: #fff;
+      padding-top: 40px;
+      border-top: 1px solid #ddd;
+    }
   }
 }
 

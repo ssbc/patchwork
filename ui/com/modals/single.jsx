@@ -44,7 +44,7 @@ export default class ModalSingle extends React.Component {
     const setIsValid = isValid => { this.setState({ isValid: isValid }) }
     const setIsReady = isReady => { this.setState({ isReady: isReady }) }
 
-    return <div className={'modal modal-single '+(this.props.fullheight?'fullheight':'')}>
+    return <div className={'modal modal-single '+(this.props.className||'')}>
       <div className="modal-inner">
         <div className="modal-content">
           <Form ref="form" setIsReady={setIsReady} setIsValid={setIsValid} setHelpText={setHelpText} {...this.props.formProps} />

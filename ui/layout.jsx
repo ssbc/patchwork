@@ -3,15 +3,16 @@ import React from 'react'
 import { Link } from 'react-router'
 import app from './lib/app'
 import ModalFlow from './com/modals/flow'
+import Welcome from './com/forms/welcome'
+import ProfileName from './com/forms/profile-name'
+import ProfileImage from './com/forms/profile-image'
+import ViewMode from './com/forms/view-mode'
+import Issues from './com/issues'
 import Notifications from './com/msg-list/notifications'
-import ProfileSetup from './com/forms/profile-setup'
-import FollowNearby from './com/forms/follow-nearby'
-import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
 import FindBar from './com/findbar'
 
-const SETUP_LABELS = [<i className="fa fa-user"/>, <i className="fa fa-wifi"/>, <i className="fa fa-cloud"/>]
-const SETUP_FORMS = [ProfileSetup, FollowNearby, PubInvite]
+const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, ViewMode]
 const RIGHT_NAVS = {
   notifications: Notifications
 }
@@ -29,7 +30,7 @@ export default class Layout extends React.Component {
     app.on('focus:search', this.focusSearch.bind(this))
     app.on('focus:find', this.focusFind.bind(this))
     app.on('toggle:rightnav', this.toggleRightNav.bind(this))
-    app.on('modal:setup', isOpen => this.setState({ setupIsOpen: isOpen }))
+    app.on('modal:setup', isOpen => { this.setState({ setupIsOpen: isOpen }); app.fetchLatestState() })
     app.on('find:next', this.doFind.bind(this, true))
     app.on('find:previous', this.doFind.bind(this, false))
   }
@@ -96,7 +97,7 @@ export default class Layout extends React.Component {
     }
 
     return <div className="layout-rows">
-      <ModalFlow fullheight labels={SETUP_LABELS} Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
       <div className="toolbar titlebar flex">
         <div>
           { isElectron
