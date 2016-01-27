@@ -15,6 +15,12 @@ window.addEventListener('error', onError)
 
 // render
 app.fetchLatestState(function () {
+  // redirect to contacts page if new-user setup is occurring
+  // that's where where we want the user to land after the modal flow
+  if (app.user.needsSetup)
+    app.history.pushState(null, '/contacts')
+
+  // begin rendering
   var routes = require('./routes.jsx')
   ReactDOM.render(routes.routes, document.body.querySelector('div'))
   window.removeEventListener('error', window.loadErrorHandler)
