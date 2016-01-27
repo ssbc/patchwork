@@ -23,23 +23,6 @@ export default class PubInvite extends React.Component {
   componentDidMount() {
     this.props.setIsReady(true)
     this.props.setIsValid(true)
-    this.props.setHelpText(<div className="faq">
-      { this.props.gotoNextStep ?
-        <div><a onClick={this.props.gotoNextStep}>You can skip this step</a>, but your messages {"won't"} reach outside the WiFi until you do it.</div>
-        : '' }
-      <div className="faq-entry">
-        <div>{"What's"} an invite code?</div>
-        <div>An invite code tells the Pub to join your contacts.</div>
-      </div>
-      <div className="faq-entry">
-        <div>Where can I get an invite code?</div>
-        <div>You should ask a Pub operator. Many of them hang out in #scuttlebutt on Freenode.</div>
-      </div>
-      <div className="faq-entry">
-        <div>Can I create a Pub?</div>
-        <div>Yes, but it requires a public server. If you have one, you can <a href="http://ssbc.github.io/docs/scuttlebot/howto-setup-a-pub.html" target="_blank">follow&nbsp;this&nbsp;guide</a>.</div>
-      </div>
-    </div>)
   }
 
   getValues(cb) {
@@ -93,6 +76,23 @@ export default class PubInvite extends React.Component {
         </fieldset>
       </form>
       { this.state.isProcessing ? <MDLSpinner /> : '' }
+      <div className="faq text-center">
+        { this.props.gotoNextStep ?
+          <div><a onClick={this.props.gotoNextStep}>You can skip this step</a>, but your messages {"won't"} reach outside the WiFi until you do it.</div>
+          : '' }
+        <div className="faq-entry">
+          <div>{"What's"} an invite code?</div>
+          <div>An invite code tells the Pub to join your contacts.</div>
+        </div>
+        <div className="faq-entry">
+          <div>Where can I get an invite code?</div>
+          <div>You should ask a Pub operator. Many of them hang out in #scuttlebutt on Freenode.</div>
+        </div>
+        <div className="faq-entry">
+          <div>Can I create a Pub?</div>
+          <div>Yes, but it requires a public server. If you have one, you can <a href="http://ssbc.github.io/docs/scuttlebot/howto-setup-a-pub.html" target="_blank">follow&nbsp;this&nbsp;guide</a>.</div>
+        </div>
+      </div>
     </div>
   }
 }
