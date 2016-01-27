@@ -4,17 +4,15 @@ import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import ModalBtn from '../modals/btn'
-import Tabs from '../tabs'
 import Rename from '../forms/rename'
-import ProfileSetup from '../forms/profile-setup'
+import ProfileName from '../forms/profile-name'
+import ProfileImage from '../forms/profile-image'
 import { AutoRefreshingComponent, UserLink, UserPic, UserBtn } from '../index'
 import DropdownBtn from '../dropdown'
 import mentionslib from '../../lib/mentions'
 import app from '../../lib/app'
 import u from '../../lib/util'
 import social from '../../lib/social-graph'
-import ProfileName from './forms/profile-name'
-import ProfileImage from './forms/profile-image'
 
 const FLAG_DROPDOWN = [
   { value: 'spam',  label: <span><i className="fa fa-flag" /> Spammer</span> },
@@ -110,7 +108,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         <img src={u.profilePicUrl(this.props.pid)} />
       </div>
       <div className="facts">
-        <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
         <div className="flex" style={{alignItems: 'center'}}>
           <h1 style={{marginRight: 5}}>{this.state.name}</h1> 
           <ModalBtn className="fullheight" Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
