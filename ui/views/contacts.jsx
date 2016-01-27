@@ -63,6 +63,7 @@ export default class Contacts extends React.Component {
             <div><i className="fa fa-user-plus" /></div>
             <div className="name">Add Contact</div>
           </div>
+          <UserSummary pid={app.user.id} />
           { this.state.contacts.map(id => <UserSummary key={id} pid={id} />) }
         </div>
       </div>
