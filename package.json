@@ -37,7 +37,7 @@
   "dependencies": {
     "babel": "^5.8.23",
     "blob-to-buffer": "^1.2.3",
-    "classnames": "^2.2.1",
+    "classnames": "^2.2.3",
     "emoji-named-characters": "^1.0.1",
     "history": "1.13.1",
     "hyperscript": "~1.4.6",
