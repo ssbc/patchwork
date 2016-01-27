@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import mlib from 'ssb-msgs'
+import Tabs from '../tabs'
 import MsgList from '../msg-list'
 import Card from '../msg-view/card'
 import Oneline from '../msg-view/oneline'
@@ -9,10 +10,10 @@ import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } f
 import app from '../../lib/app'
 import u from '../../lib/util'
 
-const VIEW_POSTS = { label: 'Posts' }
-const VIEW_ABOUT = { label: 'About' }
-const VIEW_DATA = { label: 'Data' }
-const TABS = [VIEW_POSTS, VIEW_ABOUT, VIEW_DATA]
+const VIEW_POSTS = { label: <h2>Posts</h2> }
+const VIEW_CONTACTS = { label: <h2>Contacts</h2> }
+const VIEW_DATA = { label: <h2>Data</h2> }
+const TABS = [VIEW_POSTS, VIEW_CONTACTS, VIEW_DATA]
 
 export default class UserView extends React.Component {
   constructor(props) {
@@ -46,12 +47,12 @@ export default class UserView extends React.Component {
     const currentTab = tabs[this.state.currentTabIndex] || tabs[0]
     const Hero = (props) => {
       return <div>
-        <UserInfoHeader key={this.props.pid} pid={this.props.pid} tabs={tabs} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} />
-        <h2 style={{fontWeight: 300, textAlign: 'center', margin: 0, color: 'gray', paddingRight: 10}}>{currentTab.label}</h2>
+        <UserInfoHeader key={this.props.pid} pid={this.props.pid} />
+        <Tabs options={tabs} selected={currentTab} onSelect={this.onSelectTab.bind(this)} />
       </div>
     }
 
-    if (currentTab === VIEW_ABOUT) {
+    if (currentTab === VIEW_CONTACTS) {
       // about render
       return <VerticalFilledContainer className="user-profile" key={this.props.pid}>
         <Hero />
@@ -90,9 +91,9 @@ export default class UserView extends React.Component {
     const ListItem = Card // TODO - use settings
   
     // MsgList must have refreshOnReply
-    // - Why: in other TABS, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
+    // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
-    return <div className="user-profile" key={this.props.pid}>
+    return <div className="user-profile" key={this.props.pid + (currentTab === VIEW_DATA ? 'data' : 'posts')}>
       <MsgList
         ref="list"
         key={currentTab.label}
