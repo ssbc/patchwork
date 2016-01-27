@@ -58,7 +58,7 @@ export default class People extends React.Component {
           <div>
             <div className="user-add" onClick={this.onClickAddFriend.bind(this)}>
               <div><i className="fa fa-user-plus" /></div>
-              <div className="name">Add Friend</div>
+              <div className="name">Add Contact</div>
             </div>
             { this.state.users.map(user => <UserSummary key={user.id} pid={user.id} />) }
           </div>
