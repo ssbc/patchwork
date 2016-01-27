@@ -13,7 +13,7 @@ export default class ModalSingle extends React.Component {
   }
 
   onCancelClick() {
-    this.props.onClose && this.props.onClose()
+    this.props.onClose && this.props.onClose(false, false)
   }
 
   onNextClick() {
@@ -22,8 +22,7 @@ export default class ModalSingle extends React.Component {
     this.refs.form.submit(err => {
       if (err)
         this.issue('An Error Occurred', err)
-      else
-        this.props.onClose && this.props.onClose()
+      this.props.onClose && this.props.onClose(err, true)
     })
   }
 

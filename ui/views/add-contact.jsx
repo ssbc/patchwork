@@ -18,13 +18,16 @@ export default class Pubs extends React.Component {
     super(props)
     this.state = { pubs: [], isModalOpen: false }
   }
-  componentDidMount() {    
+  componentDidMount() {
+    this.fetch()
+  }
+  fetch() {    
     // get followeds
     pull(
       app.ssb.friends.createFriendStream({ hops: 1 }),
       pull.filter(id => {
-        // filter down to pubs
-        return id !== app.user.id && social.isPub(id)
+        // filter down to user's pubs
+        return id !== app.user.id && social.follows(id, app.user.id) && social.isPub(id)
       }),
       pull.collect((err, ids) => {
         if (err)
@@ -37,8 +40,10 @@ export default class Pubs extends React.Component {
   onOpenModal() {
     this.setState({ isModalOpen: true })
   }
-  onCloseModal() {
+  onCloseModal(err, completed) {
     this.setState({ isModalOpen: false })
+    if (!err && completed)
+      app.fetchLatestState(this.fetch.bind(this))
   }
 
   render() {
