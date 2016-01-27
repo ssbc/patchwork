@@ -53,10 +53,12 @@ export default class Contacts extends React.Component {
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
         <div className="user-summaries">
-          <div className="pending">
-            <h2>Pending</h2>
-            { this.state.pendings.map(id => <UserPic key={id} id={id} />) }
-          </div>
+          { this.state.pendings.length > 0
+            ? <div className="pending">
+              <h2>Pending</h2>
+              { this.state.pendings.map(id => <UserPic key={id} id={id} />) }
+            </div>
+            : '' }
           <div className="user-add" onClick={this.onClickAddFriend.bind(this)}>
             <div><i className="fa fa-user-plus" /></div>
             <div className="name">Add Contact</div>
