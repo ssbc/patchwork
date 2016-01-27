@@ -24,6 +24,14 @@ export default class FollowNearby extends React.Component {
         .forEach(p => peers.add(p.key))
       peers = [...peers]
       this.setState({ foundNearbyPeers: peers })
+
+      // HACK
+      // I want names to show up on these peers, and the local peers may still be replicating messages
+      // so I'm having the app refresh its state every time the peers have polled
+      // a better solution would be to have the backend state in sync with frontend through a continuous 'change' stream
+      // but that's a future project
+      // -prf
+      app.fetchLatestState()
     }
     this.onPeersUpdate()
     app.on('update:peers', this.onPeersUpdate)
