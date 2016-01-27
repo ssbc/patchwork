@@ -84,7 +84,6 @@ export default class ProfileSetup extends React.Component {
         <fieldset>
           <div>
             <label>
-              <span>Nickname</span>
               <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} />
               { this.state.error ? <p className="error">{this.state.error}</p> : '' }
             </label>
