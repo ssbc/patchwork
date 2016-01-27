@@ -9,9 +9,9 @@ import Bookmarks from './views/bookmarks'
 import Data from './views/data'
 import Msg from './views/msg'
 import Composer from './views/composer'
-import People from './views/people'
+import Contacts from './views/contacts'
 import Profile from './views/profile'
-import AddFriend from './views/add-friend'
+import AddContact from './views/add-contact'
 import AddPub from './views/add-pub'
 import WebView from './views/webview'
 import Sync from './views/sync'
@@ -40,10 +40,10 @@ export var routes = (
       <Route path="inbox" component={Inbox} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
-      <Route path="add-friend" component={AddFriend} />
+      <Route path="add-contact" component={AddContact} />
       <Route path="add-pub" component={AddPub} />
-      <Route path="people" component={People} />
-      <Route path="profile" component={People} />
+      <Route path="contacts" component={Contacts} />
+      <Route path="profile" component={Contacts} />
       <Route path="profile/:id" component={Profile} />
       <Route path="msg/:id" component={Msg} />
       <Route path="composer" component={Composer} />
