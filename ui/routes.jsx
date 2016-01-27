@@ -12,7 +12,6 @@ import Composer from './views/composer'
 import Contacts from './views/contacts'
 import Profile from './views/profile'
 import AddContact from './views/add-contact'
-import AddPub from './views/add-pub'
 import Sync from './views/sync'
 import Help from './views/help'
 import Search from './views/search'
@@ -40,7 +39,6 @@ export var routes = (
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
       <Route path="add-contact" component={AddContact} />
-      <Route path="add-pub" component={AddPub} />
       <Route path="contacts" component={Contacts} />
       <Route path="profile" component={Contacts} />
       <Route path="profile/:id" component={Profile} />

@@ -1,3 +1,4 @@
+var ip = require('ip')
 var app = require('./app')
 
 var follows =
@@ -73,4 +74,15 @@ exports.followedFlaggers = function (a, c, includeA) {
   if (includeA && flags(a, c))
     ids.push(a)
   return ids
+}
+
+var isPub =
+exports.isPub = function (id) {
+  // try to find the ID in the peerlist, and see if it's a public peer if so
+  for (var i=0; i < app.peers.length; i++) {
+    var peer = app.peers[i]
+    if (peer.key === id && !ip.isPrivate(peer.host))
+      return true
+  }
+  return false
 }
