@@ -54,6 +54,7 @@ export default class ImageInput extends React.Component {
     img.src = this.props.current
     img.onload = () => {
       let imgdim = { width: img.width, height: img.height }
+      console.log(imgdim)
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
       this.refs.scaleSlider.value = 0
 
@@ -79,10 +80,13 @@ export default class ImageInput extends React.Component {
   }
 
   onFileChosen(e) {
-    this.setState({ editorMsg: 'loading...', hasImg: true })
-
     const fileInput = this.refs.fileInput
     var file = fileInput.files[0]
+    if (!file)
+      return
+
+    this.setState({ editorMsg: 'loading...', hasImg: true })
+
     var reader = new FileReader()
     reader.onload = e => {
       const img = document.createElement('img')
@@ -128,6 +132,7 @@ export default class ImageInput extends React.Component {
   onCanvasMouseMove (e) {
     e.preventDefault()
     if (this.state.dragging) {
+      console.log('ox+clientX-mx',this.state.ox + e.clientX - this.state.mx, '-width', -this.state.imgdim.width, 'zoom', this.state.zoom, '-width*zoom+canvas', -this.state.imgdim.width * this.state.zoom + CANVAS_SIZE)
       this.setState({
         ox: Math.max(Math.min(this.state.ox + e.clientX - this.state.mx, 0), -this.state.imgdim.width * this.state.zoom + CANVAS_SIZE),
         oy: Math.max(Math.min(this.state.oy + e.clientY - this.state.my, 0), -this.state.imgdim.height * this.state.zoom + CANVAS_SIZE),
@@ -157,18 +162,21 @@ export default class ImageInput extends React.Component {
  
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-		ctx.save()
+    // ctx.drawImage(this.state.img, this.state.ox, this.state.oy, this.state.img.width * this.state.zoom, this.state.img.height * this.state.zoom)
 
-    ctx.scale(this.state.zoom, this.state.zoom)
+    ctx.save()
+
+    // rotate from center
+    // TODO Im disabling this for now because it's broken, and I dont have time to fix it atm -prf
+    // ctx.translate(CANVAS_SIZE/2, CANVAS_SIZE/2)
+    // ctx.rotate(this.state.rotation/2 * Math.PI)
+    // ctx.translate(-CANVAS_SIZE/2, -CANVAS_SIZE/2)
+    
     ctx.translate(this.state.ox, this.state.oy)
-  	ctx.translate(this.state.img.width/2, this.state.img.height/2)
-		ctx.rotate(this.state.rotation/2 * Math.PI)
-		ctx.drawImage(
-      this.state.img, 
-      -this.state.img.width/2, -this.state.img.height/2,
-      this.state.img.width, this.state.img.height
-    )
-		ctx.restore()
+    ctx.scale(this.state.zoom, this.state.zoom)
+    ctx.drawImage(this.state.img, 0, 0, this.state.img.width, this.state.img.height)
+
+    ctx.restore()
   }
 
   render() {
@@ -180,9 +188,9 @@ export default class ImageInput extends React.Component {
               { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
               <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} style={{height: '45px', verticalAlign: 'middle'}} />
             </div>
-            <div style={{whiteSpace: 'pre', paddingLeft: '15px'}}>
+            {''/*<div style={{whiteSpace: 'pre', paddingLeft: '15px'}}>
               <label>Rotate: <button className="btn" onClick={this.onRotate.bind(this)} style={{padding: '10px 16px', color: 'gray'}}><i className="fa fa-rotate-right" /></button></label>
-            </div>
+            </div>*/}
           </div>
           <br/>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
