@@ -1,6 +1,9 @@
 .flex {
   display: flex;
 }
+.inline-flex {
+  display: inline-flex;
+}
 .flex-fill {
   flex: 1;
   max-width: 100%;
@@ -13,15 +16,31 @@
 
 .faq {
   color: gray;
-  font-weight: 200;
-  margin: 20px 0;
+  font-size: 18px;
+  font-weight: 300;
+  padding: 30px 40px;
 
   .faq-entry {
-    margin: 0 0 12px;
+    margin: 0 0 24px;
+    div:first-child {
+      font-size: 21px;
+      font-weight: normal;
+    }
     &:last-child {
       margin: 0;
     }
   }
+}
+
+.text-center {
+  text-align: center;
+}
+.vertical-center {
+  position: absolute;
+  left: 0;
+  top: 36%;
+  transform: translateY(-50%);
+  width: 100%;
 }
 
 .well {

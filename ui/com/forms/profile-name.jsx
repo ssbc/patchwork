@@ -3,17 +3,10 @@ import React from 'react'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import { rainbow } from '../index'
-import ImageInput from '../form-elements/image-input'
 import app from '../../lib/app'
 
 function getCurrentName() {
   return app.users.names[app.user.id]||''
-}
-
-function getCurrentImg() {
-  const profile = app.users.profiles[app.user.id]
-  if (profile && profile.self.image)
-    return profile.self.image.link
 }
 
 export default class ProfileSetup extends React.Component {  
@@ -61,23 +54,7 @@ export default class ProfileSetup extends React.Component {
   }
 
   getValues(cb) {
-    const canvas = this.refs.imageInputContainer.querySelector('canvas')
-    if (canvas) {
-      ImageInput.uploadCanvasToBlobstore(canvas, (err, res) => {
-        if (err)
-          return app.issue('Failed to save image', err, 'This occurred during profile setup')
-        const imageLink = {
-          link: res.hash,
-          size: res.size,
-          type: 'image/png',
-          width: 512,
-          height: 512
-        }
-        cb({ name: this.state.name, image: imageLink })
-      })
-    } else {
-      cb({ name: this.state.name })      
-    }    
+    cb({ name: this.state.name })
   }
 
   submit(cb) {
@@ -86,9 +63,6 @@ export default class ProfileSetup extends React.Component {
       var done = multicb()
       if (values.name && values.name !== getCurrentName())
         app.ssb.publish(schemas.name(app.user.id, values.name), done())
-      if (values.image && values.image.link !== getCurrentImg())
-        app.ssb.publish(schemas.image(app.user.id, values.image), done())
-
       done(err => {
         if (err) return cb(err)
 
@@ -104,19 +78,16 @@ export default class ProfileSetup extends React.Component {
 
   render() {
     const currentName = getCurrentName()
-    const currentImg = getCurrentImg()
-    return <div>
-      <h1>{(currentName) ? rainbow('Edit Profile') : <span>Welcome to {rainbow('Patchwork')}</span>}</h1>
+    return <div className="text-center vertical-center">
+      <h1><span>What would you like to be called?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
           <div>
             <label>
-              <span>Name</span>
               <input type="text" onChange={this.onChangeName.bind(this)} value={this.state.name} />
               { this.state.error ? <p className="error">{this.state.error}</p> : '' }
             </label>
           </div>
-          <div ref="imageInputContainer"><ImageInput label="Image" current={(currentImg) ? ('/' + currentImg) : false} /></div>
         </fieldset>
       </form>
     </div>

@@ -110,6 +110,26 @@ export class LocalStoragePersistedComponent extends React.Component {
     })
   }
 }
+// parent class for components which should recompute their state every time the app-state changes
+export class AutoRefreshingComponent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = this.computeState(props)
+    this.refreshState = () => { this.setState(this.computeState(this.props)) }
+  }
+  componentDidMount() {
+    app.on('update:all', this.refreshState) // re-render on app state updates
+  }
+  componentWillReceiveProps(newProps) {
+    this.refreshState(newProps)
+  }
+  componentWillUnmount() {
+    app.removeListener('update:all', this.refreshState)    
+  }
+  computeState(props) {
+    // should be overwritten by sublcass
+  }
+}
 
 // helper to create rainbowed-out elements
 export function rainbow (str) {

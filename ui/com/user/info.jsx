@@ -3,44 +3,23 @@ import React from 'react'
 import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
-import mentionslib from '../lib/mentions'
-import ModalBtn from './modals/btn'
-import Tabs from './tabs'
-import Rename from './forms/rename'
-import ProfileSetup from './forms/profile-setup'
-import { UserLink, UserPic, UserBtn } from './index'
-import DropdownBtn from './dropdown'
-import app from '../lib/app'
-import u from '../lib/util'
-import social from '../lib/social-graph'
+import ModalBtn from '../modals/btn'
+import Rename from '../forms/rename'
+import ProfileName from '../forms/profile-name'
+import ProfileImage from '../forms/profile-image'
+import { AutoRefreshingComponent, UserLink, UserPic, UserBtn } from '../index'
+import UserSummary from './summary'
+import DropdownBtn from '../dropdown'
+import mentionslib from '../../lib/mentions'
+import app from '../../lib/app'
+import u from '../../lib/util'
+import social from '../../lib/social-graph'
 
 const FLAG_DROPDOWN = [
   { value: 'spam',  label: <span><i className="fa fa-flag" /> Spammer</span> },
   { value: 'abuse', label: <span><i className="fa fa-flag" /> Abusive</span> },
   { value: false,   label: <span><i className="fa fa-flag" /> Personal reasons</span> }
 ]
-
-// helper to refresh state any time the main application state updates
-// - this should be replaced -- the entire `app` construct is a bit much
-class AutoRefreshingComponent extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = this.computeState()
-    this.refreshState = props => { this.setState(this.computeState(props)) }
-  }
-  componentDidMount() {
-    app.on('update:all', this.refreshState) // re-render on app state updates
-  }
-  componentWillReceiveProps(newProps) {
-    this.refreshState(newProps)
-  }
-  componentWillUnmount() {
-    app.removeListener('update:all', this.refreshState)    
-  }
-  computeState(props) {
-    // should be overwritten by sublcass
-  }
-}
 
 export class UserInfoHeader extends AutoRefreshingComponent {
   constructor(props) {
@@ -99,9 +78,7 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       followsYou:  social.follows(pid, app.user.id),
       hasFlagged:  social.flags(app.user.id, pid),
       hasBlocked:  social.blocks(app.user.id, pid),
-      followers1:  social.followedFollowers(app.user.id, pid, true),
-      followers2:  social.unfollowedFollowers(app.user.id, pid),
-      followeds:   social.followeds(pid),
+      contacts:    social.contacts(pid),
       flaggers:    social.followedFlaggers(app.user.id, pid, true)
     }
   }
@@ -123,22 +100,24 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       // )
     }
 
-    const nfollowers = this.state.followers1.length + this.state.followers2.length
+    const ncontacts = this.state.contacts.length
     const nflaggers = this.state.flaggers.length
     return <div className="user-info">
       <div className="avatar">
         <img src={u.profilePicUrl(this.props.pid)} />
       </div>
       <div className="facts">
-        <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
         <div className="flex" style={{alignItems: 'center'}}>
           <h1 style={{marginRight: 5}}>{this.state.name}</h1> 
-          <ModalBtn Form={Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
+          <ModalBtn className="fullheight" Form={this.state.isSelf ? ProfileName : Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
         </div>
         <pre><code>{this.props.pid}</code></pre>
         <div>
           {(this.state.isSelf) ?
-            <ModalBtn className="btn" Form={ProfileSetup} fullheight nextLabel="Publish"><i className="fa fa-wrench" /> Edit Profile</ModalBtn> :
+            <span className="btn-group">
+              <ModalBtn className="btn fullheight" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
+              <ModalBtn className="btn fullheight" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
+            </span> :
             <span className="btn-group">
               { (this.state.hasBlocked) ?
                 <span className="btn disabled">Blocked</span> :
@@ -156,7 +135,7 @@ export class UserInfoHeader extends AutoRefreshingComponent {
         </div>
         <table>
           <tbody>
-            <tr><td>{nfollowers}</td><td>follower{nfollowers===1?'':'s'}</td></tr>
+            <tr><td>{ncontacts}</td><td>contact{ncontacts===1?'':'s'}</td></tr>
             <tr><td>{nflaggers}</td><td>flag{nflaggers===1?'':'s'}</td></tr>
           </tbody>
         </table>
@@ -172,33 +151,16 @@ function sortFollowedFirst (a, b) {
   return bFollowed - aFollowed  
 }
 
-export class UserInfoFollowers extends AutoRefreshingComponent {
+export class UserInfoContacts extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    return { followers: social.followers(pid).sort(sortFollowedFirst) }
+    return { contacts: social.contacts(pid).sort(sortFollowedFirst) }
   }
   render() {
     return <div className="user-info-card">
-      <h3>followers</h3>
       <div className="content">
-        {this.state.followers.length ? '' : <em>No followers found.</em>}
-        {this.state.followers.map((id, i) => <UserBtn key={'follower'+i} id={id} />)}
-      </div>
-    </div>
-  }
-}
-
-export class UserInfoFolloweds extends AutoRefreshingComponent {
-  computeState(props) {
-    const pid = props ? props.pid : this.props.pid
-    return { followeds: social.followeds(pid).sort(sortFollowedFirst) }
-  }
-  render() {
-    return <div className="user-info-card">
-      <h3>following</h3>
-      <div className="content">
-        {this.state.followeds.length ? '' : <em>No follows published.</em>}
-        {this.state.followeds.map((id, i) => <UserBtn key={'followed'+i} id={id} />)}
+        {this.state.contacts.length ? '' : <em>No contacts found.</em>}
+        {this.state.contacts.map(id => <UserSummary key={id} pid={id} />)}
       </div>
     </div>
   }

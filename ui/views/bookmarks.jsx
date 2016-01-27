@@ -7,16 +7,12 @@ import DropdownBtn from '../com/dropdown'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
-import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
 
 const LISTITEMS = [
-  { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
-  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
-  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
+  { label: <span><i className="fa fa-list"/> View: Feed</span>, Component: Card },
+  { label: <span><i className="fa fa-list"/> View: Inbox</span>, Component: Oneline }
 ]
-const LISTITEM_CARD = LISTITEMS[0]
-const LISTITEM_ONELINE = LISTITEMS[1]
 
 export default class Bookmarks extends LocalStoragePersistedComponent {
   constructor(props) {
@@ -30,8 +26,8 @@ export default class Bookmarks extends LocalStoragePersistedComponent {
       return [msg.ts, false]
   }
 
-  onSelectMsgView(v, index) {
-    this.setState({ currentMsgView: index })
+  onToggleMsgView() {
+    this.setState({ currentMsgView: +(!this.state.currentMsgView) })
   }
 
   onMarkAllRead() {
@@ -39,7 +35,7 @@ export default class Bookmarks extends LocalStoragePersistedComponent {
   }
 
   render() {
-    const listItem = LISTITEMS[this.state.currentMsgView]
+    const listItem = LISTITEMS[this.state.currentMsgView] || LISTITEMS[0]
     const ListItem = listItem.Component
 
     const Toolbar = props => {
@@ -47,7 +43,7 @@ export default class Bookmarks extends LocalStoragePersistedComponent {
         <Link to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked Threads</Link>
         <div className="flex-fill"/>
         <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
+        <a href='javascript:;' onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
       </div>
     }
 

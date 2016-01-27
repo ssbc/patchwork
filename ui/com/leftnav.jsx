@@ -74,7 +74,7 @@ export default class LeftNav extends React.Component {
       <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/sync"><i className="fa fa-users" /> People</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Contacts</LeftNav.Link>
       <Issues/>
       { this.props.children ? <LeftNav.Heading>{this.props.title||'This Page'}</LeftNav.Heading> : '' }
       { this.props.children }
