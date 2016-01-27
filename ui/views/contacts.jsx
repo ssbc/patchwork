@@ -7,7 +7,7 @@ import LeftNav from '../com/leftnav'
 import social from '../lib/social-graph'
 import u from '../lib/util'
 
-export default class People extends React.Component {
+export default class Contacts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -47,11 +47,11 @@ export default class People extends React.Component {
   }
 
   onClickAddFriend() {
-    app.history.pushState(null, '/add-friend')
+    app.history.pushState(null, '/add-contact')
   }
 
   render() {
-    return <VerticalFilledContainer id="people" className="flex">
+    return <VerticalFilledContainer id="contacts" className="flex">
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
         <div className="user-summaries">

@@ -7,7 +7,7 @@ import FollowNearby from '../com/forms/follow-nearby'
 import FollowFoafs from '../com/forms/follow-foafs'
 import InputPlaque from '../com/form-elements/input-plaque'
 
-export default class AddFriend extends React.Component {
+export default class AddContact extends React.Component {
   constructor(props) {
     super(props)
   }
