@@ -76,6 +76,14 @@ exports.followedFlaggers = function (a, c, includeA) {
   return ids
 }
 
+var contacts =
+exports.contacts = function (a) {
+  // all two-way follows
+  return followers(a).filter(function (b) {
+    return follows(b, a)
+  })
+}
+
 var isPub =
 exports.isPub = function (id) {
   // try to find the ID in the peerlist, and see if it's a public peer if so

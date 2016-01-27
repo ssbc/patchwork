@@ -6,7 +6,7 @@ import MsgList from '../msg-list'
 import Card from '../msg-view/card'
 import Oneline from '../msg-view/oneline'
 import { VerticalFilledContainer } from '../index'
-import { UserInfoHeader, UserInfoFolloweds, UserInfoFollowers, UserInfoFlags } from './info'
+import { UserInfoHeader, UserInfoContacts, UserInfoFlags } from './info'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
@@ -53,13 +53,11 @@ export default class UserView extends React.Component {
     }
 
     if (currentTab === VIEW_CONTACTS) {
-      // about render
+      // TODO <UserInfoFlags pid={this.props.pid} />
       return <VerticalFilledContainer className="user-profile" key={this.props.pid}>
         <Hero />
         <div className="user-profile-about">
-          <UserInfoFlags pid={this.props.pid} />
-          <UserInfoFollowers pid={this.props.pid} />
-          <UserInfoFolloweds pid={this.props.pid} />
+          <UserInfoContacts pid={this.props.pid} />
         </div>
       </VerticalFilledContainer>
     }
