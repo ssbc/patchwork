@@ -11,6 +11,9 @@ export class InviteErrorExplanation extends React.Component {
     if (~msg.indexOf('invite code not provided'))
       return <div className="error">The invite code is required.</div>
 
+    if (~msg.indexOf('invite not accepted'))
+      return <div className="error">The invite code was not accepted.</div>
+
     if (~msg.indexOf('incorrect or expired') || ~msg.indexOf('has expired'))
       return <div className="error">The invite code is mis-issued or expired.</div>
 
@@ -29,7 +32,7 @@ export class InviteErrorExplanation extends React.Component {
     if (~msg.indexOf('already following'))
       return <div className="error">You are already followed by this pub server.</div>
 
-    return <div className="error">Sorry, an unexpected error occurred.</div>
+    return <div className="error">Sorry, an unexpected error occurred: {msg}</div>
   }
 }
 
@@ -40,6 +43,9 @@ export class InviteErrorHelp extends React.Component {
     const err = this.props.error
     let msg = err.message.toLowerCase()
     let helpText = false
+
+    if (~msg.indexOf('invite not accepted'))
+      helpText = 'The invite code was not accepted. It may have been used already. Ask the pub-operator for a new code and try again.'
 
     if (~msg.indexOf('incorrect or expired') || ~msg.indexOf('has expired'))
       helpText = 'The invite code is incorrect or expired. Make sure you copy/pasted it correctly. If you did, ask the pub-operator for a new code and try again.'
