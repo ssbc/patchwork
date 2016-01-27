@@ -41,7 +41,6 @@ export var routes = (
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="data" component={Data} />
       <Route path="add-contact" component={AddContact} />
-      <Route path="add-pub" component={AddPub} />
       <Route path="contacts" component={Contacts} />
       <Route path="profile" component={Contacts} />
       <Route path="profile/:id" component={Profile} />
