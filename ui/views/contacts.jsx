@@ -2,7 +2,7 @@
 import React from 'react'
 import pull from 'pull-stream'
 import UserSummary from '../com/user/summary'
-import { VerticalFilledContainer } from '../com/index'
+import { VerticalFilledContainer, UserPic } from '../com/index'
 import LeftNav from '../com/leftnav'
 import social from '../lib/social-graph'
 import u from '../lib/util'
@@ -11,7 +11,8 @@ export default class Contacts extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      users: []
+      contacts: [],
+      pendings: []
     }
   }
 
@@ -19,25 +20,22 @@ export default class Contacts extends React.Component {
     // get all followed
     pull(
       app.ssb.friends.createFriendStream({ hops: 1 }),
-      pull.filter(id => {
-        // remove non-friends
-        return social.follows(id, app.user.id)
-      }),
-      pull.map(id => {
-        return {
-          id:        id,
-          name:      u.getName(id),
-          isUser:    id == app.user.id
-        }
-      }),
       pull.collect((err, users) => {
         if (err)
-          return app.minorIssue('An error occurred while fetching known users', err)
+          return app.minorIssue('An error occurred while fetching known contacts', err)
 
-        users.sort(function (a, b) {
-          return a.name.localeCompare(b.name)
+        var contacts = users.filter(id => {
+          // remove non-contacts
+          return social.follows(id, app.user.id) && id !== app.user.id
         })
-        this.setState({ users: users })
+        contacts.sort(function (a, b) {
+          return u.getName(a).localeCompare(u.getName(b))
+        })
+        var pendings = users.filter(id => {
+          // remove contacts
+          return !social.follows(id, app.user.id) && id !== app.user.id
+        })
+        this.setState({ contacts, pendings })
       })
     )
   }
@@ -55,13 +53,15 @@ export default class Contacts extends React.Component {
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
         <div className="user-summaries">
-          <div>
-            <div className="user-add" onClick={this.onClickAddFriend.bind(this)}>
-              <div><i className="fa fa-user-plus" /></div>
-              <div className="name">Add Contact</div>
-            </div>
-            { this.state.users.map(user => <UserSummary key={user.id} pid={user.id} />) }
+          <div className="pending">
+            <h2>Pending</h2>
+            { this.state.pendings.map(id => <UserPic key={id} id={id} />) }
           </div>
+          <div className="user-add" onClick={this.onClickAddFriend.bind(this)}>
+            <div><i className="fa fa-user-plus" /></div>
+            <div className="name">Add Contact</div>
+          </div>
+          { this.state.contacts.map(id => <UserSummary key={id} pid={id} />) }
         </div>
       </div>
     </VerticalFilledContainer>
