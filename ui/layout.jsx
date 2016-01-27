@@ -79,6 +79,10 @@ export default class Layout extends React.Component {
     window.history.back()
   }
 
+  onSetupClose() {
+    app.fetchLatestState()
+  }
+
   render() {
     const isElectron = !!window.electron
     const location = this.props.location.pathname
@@ -100,7 +104,7 @@ export default class Layout extends React.Component {
     }
 
     return <div className="layout-rows">
-      <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} cantClose={this.state.setupCantClose} />
+      <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
       <div className="toolbar titlebar flex">
         <div>
           { isElectron
