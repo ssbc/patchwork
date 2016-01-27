@@ -151,8 +151,10 @@ function pollPeers () {
 function fetchLatestState (cb) {
   if (!patchworkEventStream)
     pull((patchworkEventStream = app.ssb.patchwork.createEventStream()), pull.drain(onPatchworkEvent.bind(this)))
-  if (!isWatchingNetwork)
+  if (!isWatchingNetwork) {
     setInterval(pollPeers, POLL_PEER_INTERVAL)
+    isWatchingNetwork = true
+  }
 
   var done = multicb({ pluck: 1 })
   app.ssb.whoami(done())
