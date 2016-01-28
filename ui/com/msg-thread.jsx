@@ -206,10 +206,6 @@ export default class Thread extends React.Component {
     this.openMsg(threadRoot.link)
   }
 
-  onCloseMsg() {
-    app.emit('open:msg', null)
-  }
-
   render() {
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')

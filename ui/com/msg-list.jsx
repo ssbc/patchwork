@@ -49,8 +49,8 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        if (this.props.openMsgEvent)
-          app.emit('open:msg', msg.key)
+        if (this.props.openInplace)
+          return // TODO
         else
           app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
       },

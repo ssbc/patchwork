@@ -12,7 +12,6 @@ import Tabs from '../com/tabs'
 import MsgList from '../com/msg-list'
 import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
-import Thread from '../com/msg-thread'
 import { ChannelList } from '../com/channel-list'
 import * as HelpCards from '../com/help/cards'
 import app from '../lib/app'
@@ -32,16 +31,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     })
     this.state.channels = app.channels || []
 
-    // watch for open:msg events
-    app.on('open:msg', (this.onOpenMsg = key => {
-      if (this.state.isUsingThreadPanel) {
-        // show in the panel
-        this.setState({ currentThreadKey: key })
-      } else {
-        // navigate
-        app.history.pushState(null, '/msg/' + encodeURIComponent(key))
-      }
-    }))
     this.refresh = () => {
       this.setState({ channels: app.channels })
     }
@@ -50,7 +39,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
   }
   componentWillUnmount() {
     app.removeListener('update:channels', this.refresh)
-    app.removeListener('open:msg', this.onOpenMsg)
     app.removeListener('ui:set-view-mode', this.setMsgView)
   }
 
@@ -116,7 +104,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
     }
 
     // render content
-    const thread = this.state.isUsingThreadPanel && this.state.currentThreadKey
     // composer composerProps={{isPublic: true, channel: channel, placeholder: 'Write a public post'+(channel?' on '+channel:'')}}
     return <div id="newsfeed" key={channel||'*'}>
       <MsgList
@@ -133,9 +120,6 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your newsfeed is empty.'}
         source={source}
         cursor={cursor} />
-      { thread
-        ? <Thread key={thread} id={thread} closeBtn live />
-        : '' }
     </div>
   }
 }
