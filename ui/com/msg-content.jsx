@@ -40,6 +40,6 @@ export class Inline extends React.Component {
       }
     } catch (e) { console.warn(e) }
 
-    return <div>{JSON.stringify(c)}</div>
+    return <div className="raw">{JSON.stringify(c)}</div>
   }
 }

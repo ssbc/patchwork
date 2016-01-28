@@ -132,7 +132,7 @@ class CompositionUnit extends React.Component {
           var str = ''
           if (!(/(^|\s)$/.test(this.state.text)))
             str += ' ' // add some space if not on a newline
-          if (isImageFilename(f.name))
+          if (u.isImageFilename(f.name))
             str += '!' // inline the image
           str += '['+(f.name||'untitled')+']('+hash+')'
           this.setState({ text: this.state.text + str })
@@ -446,11 +446,6 @@ function isThreadPublic (thread) {
   if ('plaintext' in thread)
     return thread.plaintext
   return (typeof thread.value.content !== 'string')
-}
-
-function isImageFilename (name) {
-  var ct = mime.contentType(name)
-  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
 }
 
 function getThreadRoot (msg) {

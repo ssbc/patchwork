@@ -4,9 +4,6 @@
     color: gray;
     text-align: center;
   }
-  :first-child > hr {
-    margin-top: 14px; // remove top margin when the divider is the first item in the list
-  }
   .new-msg-queue {
     transition: background 0.2s;
     display: block;
@@ -35,5 +32,8 @@
     position: relative;
     left: -20px;
     margin: 10px auto;
+  }
+  hr.labeled:after {
+    transform: translateX(-50px);
   }
 }
