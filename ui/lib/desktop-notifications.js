@@ -71,5 +71,8 @@ function notifyMsg(msg) {
 
 exports.stream = function (getNotifs) {
   if (window.Notification)
-    pull(getNotifs({live: 'only'}), pull.drain(notifyMsg))
+    pull(
+      getNotifs({ live: true, gt: [Date.now()] }),
+      pull.drain(notifyMsg)
+    )
 }

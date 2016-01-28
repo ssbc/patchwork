@@ -524,10 +524,6 @@ exports.init = function (sbot, opts) {
       var readPush = pushable()
       var read = pull(readPush, paramap(fetch))
 
-      // allow live-only stream
-      if (opts && opts.live === 'only')
-        readPush.end()
-      else
       // await sync, then emit the reads
       awaitSync(function () {
         var added = 0
