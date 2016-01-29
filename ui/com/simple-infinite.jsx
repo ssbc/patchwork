@@ -30,10 +30,14 @@ class SimpleInfinite extends React.Component {
   }
 
   // helper to scroll & load until a destination is reached
-  scrollTo(top) {
+  scrollTo(top, lastTop) {
     const el = this.refs && this.refs.container
     if (!el) return
-    if (el.scrollTop == top || !this.hasLoadableContent()) {
+
+    // stop when:
+    // - we reached the destination, or
+    // - we're out of loadable content, and attempting to scroll further has not moved us
+    if (el.scrollTop == top || (!this.hasLoadableContent() && el.scrollTop === lastTop)) {
       this.scrollingTo = false
       return // we're done
     }
@@ -41,7 +45,7 @@ class SimpleInfinite extends React.Component {
     el.scrollTop = top
     if (el.scrollTop !== top) { // didnt get all the way there?
       this.scrollingTo = top
-      setTimeout(() => this.scrollTo(top), 1) // try again in 1ms, after more loading has had a chance to occur
+      setTimeout(() => this.scrollTo(top, el.scrollTop), 1) // try again in 1ms, after more loading has had a chance to occur
     } else
       this.scrollingTo = false // done
   }
