@@ -38,7 +38,7 @@ export default class MsgList extends React.Component {
     this.botcursor = null
     this.state = {
       msgs: [],
-      currentOpenMsg: null,
+      currentOpenMsgKey: null,
       newMsgQueue: [], // used to store message updates that we dont want to render immediately
       selected: null,
       isLoading: false,
@@ -50,8 +50,7 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        // app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
-        this.setState({ currentOpenMsg: msg }, () => {
+        this.setState({ currentOpenMsgKey: msg.key }, () => {
           if (!this.refs.currentOpenMsg || !this.refs.container)
             return
 
@@ -218,6 +217,10 @@ export default class MsgList extends React.Component {
       (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
 
+        // do nothing if the thread is currently open
+        if (this.state.currentOpenMsgKey === msg.key)
+          return
+
         if (this.props.queueNewMsgs) {
           // suppress if by the local user
           const lastMsg = threadlib.getLastThreadPost(msg)
@@ -266,7 +269,7 @@ export default class MsgList extends React.Component {
         return // abort, it's a click within the messages
       if (node.classList.contains('msg-list')) {
         // reached our toplevel, lets close the thread
-        this.setState({ currentOpenMsg: null })
+        this.setState({ currentOpenMsgKey: null })
         return
       }
     }
@@ -378,7 +381,7 @@ export default class MsgList extends React.Component {
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
-    const current = this.state.currentOpenMsg
+    const currentKey = this.state.currentOpenMsgKey
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
@@ -418,7 +421,7 @@ export default class MsgList extends React.Component {
                         return <span key={m.key} /> // dont render
 
                       // render item
-                      const item = (current === m)
+                      const item = (currentKey === m.key)
                         ? <Thread
                             key={m}
                             ref="currentOpenMsg"
