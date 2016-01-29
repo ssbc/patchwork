@@ -48,22 +48,21 @@ export default class Thread extends React.Component {
 
   // helper to do setup on thread-change
   constructState(id) {
-    // load thread
-    // threadlib.getPostThread(app.ssb, id, (err, thread) => {
-    // NOTE: normally I'd use ^
-    // but I need to flatten the thread, so:
-    app.ssb.relatedMessages({ id: id, count: true }, (err, thread) => {
+    // load thread, but defer computing any knowledge
+    threadlib.getPostThread(app.ssb, id, { isRead: false, isBookmarked: false, mentions: false, votes: false }, (err, thread) => {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
       console.log('loading!')
 
-      // flatten, then fetch additional thread data (bookmarked state, unread state, etc)
+      // flatten...
       var flattenedMsgs = threadlib.flattenThread(thread)
       thread.related = flattenedMsgs.slice(1) // skip the first, root is in there
+
+      // ...and *now* fetch thread data
       threadlib.fetchThreadData(app.ssb, thread, null, (err, thread) => {
-      if (err)
-        return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
+        if (err)
+          return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
         // now set state
         this.setState({
