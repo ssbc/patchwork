@@ -1,19 +1,20 @@
 .msg-view.card-post {
+  .elevation-1;
   display: flex;
-  max-width: 660px;
-  margin: 10px auto;
+  background: #fff;
 
   .left-meta {
-    flex: 0 0 74px;
-    padding: 2px 0 0;
+    padding: 10px;
+    padding-right: 0;
     img {
-      width: 60px;
+      display: block;
+      width: 50px;
       margin: 2px;
       border-radius: 3px;
     }
     div {
       text-align: right;
-      padding-right: 12px;
+      padding-right: 2px;
       font-weight: 300;
       font-size: 14px;
       a {
@@ -22,9 +23,7 @@
     }
   }
   .content {
-    border: 1px solid #ccc;
     flex: 1;
-    background-color: #fff;
   }
 
   .header {
@@ -34,8 +33,9 @@
     color: @gray1;
     .header-left {
       flex: 1;
-      font-size: 21px;
-      font-weight: 300;
+      .date {
+        font-weight: 200;
+      }
     }
     .header-right {
       white-space: pre;
@@ -159,12 +159,8 @@
 }
 
 .msg-view.card-missing-post {
-  max-width: 660px;
-  margin: 20px auto;
-
   div {
-    .elevation-card;
-    margin-left: 77px;
+    .elevation-1;
     background: #fafafa;
     padding: 20px;
     font-weight: 300;
@@ -176,13 +172,9 @@
 }
 
 .msg-view.card-mention {
-  max-width: 660px;
-  margin: 20px auto;
-
   &>div {
-    .elevation-card;
+    .elevation-1;
     display: flex;
-    margin-left: 77px;
     padding: 10px 15px;
     font-weight: 300;
     color: #666;
@@ -201,8 +193,6 @@
 
 .msg-view.card-muted {
   display: flex;
-  max-width: 660px;
-  margin: 20px auto;
 
   .ctrls {
     flex: 0 0 75px;

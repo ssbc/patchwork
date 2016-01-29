@@ -1,12 +1,12 @@
 'use babel'
 import React from 'react'
+import { Link } from 'react-router'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
 import pull from 'pull-stream'
-import { VerticalFilledContainer, UserPics } from './index'
-import LeftNav from './leftnav'
+import { UserLinks } from './index'
 import ResponsiveElement from './responsive-element'
 import Card from './msg-view/card'
 import { isaReplyTo, relationsTo } from '../lib/msg-relation'
@@ -212,50 +212,51 @@ export default class Thread extends React.Component {
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     const isPublic = (thread && thread.plaintext)
     const authorName = thread && u.getName(thread.value.author)
+    const channel = thread && thread.value.content.channel
     const recps = thread && mlib.links(thread.value.content.recps, 'feed')
+
     return <div className="msg-thread">
-      <VerticalFilledContainer id="msg-thread-vertical" className="flex">
-        <LeftNav location={this.props.location} />
-        <div className="flex-fill" style={{padding: 5}}>
-          { !thread
-            ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
-            : <ResponsiveElement widthStep={250}>
-                <div className="flex light-toolbar">
-                  { threadRoot
-                    ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
-                    : '' }
-                  { !threadRoot && thread
-                    ? <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
-                    : '' }
-                  { thread
-                    ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
-                    : '' }
-                </div>
-                <hr className="labeled" data-label={`${isPublic?'Public':'Private'} post by ${authorName}${isPublic?'':' to:'}`} />
+      { !thread
+        ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
+        : <ResponsiveElement widthStep={250}>
+            <div className="flex thread-toolbar">
+              <div className="flex-fill">
+                { (thread && thread.mentionsUser) ? <i className="fa fa-at"/> : '' }{' '}
+                { (thread && thread.plaintext) ? '' : <i className="fa fa-lock"/> }{' '}
                 { recps && recps.length
-                  ? <div className="recps-list flex"><div className="flex-fill"/><UserPics ids={recps.map(r => r.link)} /><div className="flex-fill"/></div>
+                  ? <span>To: <UserLinks ids={recps.map(r => r.link)} /></span>
                   : '' }
-                <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-                  { this.state.msgs.map((msg, i) => {
-                    const isFirst = (i === 0)
-                    return <Card
-                      key={msg.key}
-                      msg={msg}
-                      noReplies
-                      noBookmark
-                      forceRaw={this.props.forceRaw}
-                      forceOpen={isFirst}
-                      onSelect={()=>this.openMsg(msg.key)}
-                      onToggleStar={()=>this.onToggleStar(msg)}
-                      onFlag={(msg, reason)=>this.onFlag(msg, reason)}
-                      onToggleBookmark={()=>this.onToggleBookmark(msg)} />
-                  }) }
-                  <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
-                </ReactCSSTransitionGroup>
-              </ResponsiveElement>
-          }
-        </div>
-      </VerticalFilledContainer>
+                { channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
+              </div>
+              { threadRoot
+                ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
+                : '' }
+              { !threadRoot && thread
+                ? <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+                : '' }
+              { thread
+                ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
+                : '' }
+            </div>
+            <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+              { this.state.msgs.map((msg, i) => {
+                const isFirst = (i === 0)
+                return <Card
+                  key={msg.key}
+                  msg={msg}
+                  noReplies
+                  noBookmark
+                  forceRaw={this.props.forceRaw}
+                  forceOpen={isFirst}
+                  onSelect={()=>this.openMsg(msg.key)}
+                  onToggleStar={()=>this.onToggleStar(msg)}
+                  onFlag={(msg, reason)=>this.onFlag(msg, reason)}
+                  onToggleBookmark={()=>this.onToggleBookmark(msg)} />
+              }) }
+              <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
+            </ReactCSSTransitionGroup>
+          </ResponsiveElement>
+      }
     </div>
   }
 }

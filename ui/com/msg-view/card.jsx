@@ -229,15 +229,11 @@ export default class Card extends React.Component {
     return <div className={`msg-view card-post ${oversizedCls} ${expandedCls} ${newCls}`}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
-        <div><a onClick={this.onSelect.bind(this)}><NiceDate ts={msg.value.timestamp} /></a></div>
       </div>
       <div className="content">
         <div className="header">
           <div className="header-left">
-            <UserLink id={msg.value.author} />{' '}
-            {msg.plaintext ? '' : <i className="fa fa-lock"/>}{' '}
-            {msg.mentionsUser ? <i className="fa fa-at"/> : ''}{' '}
-            {channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
+            <UserLink id={msg.value.author} /> <span className="date"><NiceDate ts={msg.value.timestamp} /></span>
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
