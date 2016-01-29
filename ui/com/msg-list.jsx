@@ -50,7 +50,15 @@ export default class MsgList extends React.Component {
     this.handlers = {
       onSelect: msg => {
         // app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
-        this.setState({ currentOpenMsg: msg })
+        this.setState({ currentOpenMsg: msg }, () => {
+          if (!this.refs.currentOpenMsg || !this.refs.container)
+            return
+
+          var dest = this.refs.currentOpenMsg.getScrollTop()
+          if (dest === false)
+            return
+          this.refs.container.scrollTo(dest)
+        })
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB
@@ -396,6 +404,7 @@ export default class MsgList extends React.Component {
                     const item = (current === m)
                       ? <Thread
                           key={m}
+                          ref="currentOpenMsg"
                           id={m.key}
                           live />
                       : <ListItem

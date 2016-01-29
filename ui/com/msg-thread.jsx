@@ -68,7 +68,7 @@ export default class Thread extends React.Component {
           thread: thread,
           msgs: flattenedMsgs,
           isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
-        }, () => console.log(this.state.msgs))
+        })
 
         // mark read
         if (thread.hasUnread) {
@@ -125,6 +125,14 @@ export default class Thread extends React.Component {
     // abort the livestream
     if (this.liveStream)
       this.liveStream(true, ()=>{})
+  }
+
+  getScrollTop() {
+    // helper to bring the thread into view
+    const container = this.refs.container
+    if (!container)
+      return false
+    return container.offsetTop
   }
 
   onToggleUnread() {
@@ -226,7 +234,7 @@ export default class Thread extends React.Component {
     const channel = thread && thread.value.content.channel
     const recps = thread && mlib.links(thread.value.content.recps, 'feed')
 
-    return <div className="msg-thread">
+    return <div className="msg-thread" ref="container">
       { !thread
         ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
         : <ResponsiveElement widthStep={250}>
