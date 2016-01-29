@@ -48,12 +48,14 @@ export default class Thread extends React.Component {
 
   // helper to do setup on thread-change
   constructState(id) {
+    // only construct for new threads
+    if (this.state.thread && id === this.state.thread.key)
+      return
+
     // load thread, but defer computing any knowledge
     threadlib.getPostThread(app.ssb, id, { isRead: false, isBookmarked: false, mentions: false, votes: false }, (err, thread) => {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
-
-      console.log('loading!')
 
       // flatten...
       var flattenedMsgs = threadlib.flattenThread(thread)
