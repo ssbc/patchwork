@@ -49,59 +49,70 @@ export default class Thread extends React.Component {
   // helper to do setup on thread-change
   constructState(id) {
     // load thread
-    threadlib.getPostThread(app.ssb, id, (err, thread) => {
+    // threadlib.getPostThread(app.ssb, id, (err, thread) => {
+    // NOTE: normally I'd use ^
+    // but I need to flatten the thread, so:
+    app.ssb.relatedMessages({ id: id, count: true }, (err, thread) => {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
-      // set state, after some processing
-      this.setState({
-        thread: thread,
-        msgs: threadlib.flattenThread(thread),
-        isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
-      })
+      // flatten, then fetch additional thread data (bookmarked state, unread state, etc)
+      var flattenedMsgs = threadlib.flattenThread(thread)
+      thread.related = flattenedMsgs.slice(1) // skip the first, root is in there
+      threadlib.fetchThreadData(app.ssb, thread, null, (err, thread) => {
+      if (err)
+        return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
-      // mark read
-      if (thread.hasUnread) {
-        threadlib.markThreadRead(app.ssb, thread, (err) => {
-          if (err)
-            return app.minorIssue('Failed to mark thread as read', err)
-          this.setState({ thread: thread })
-        })
-      }
+        // now set state
+        this.setState({
+          thread: thread,
+          msgs: flattenedMsgs,
+          isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
+        }, () => console.log(this.state.msgs))
 
-      // listen for new replies
-      if (this.props.live) {
-        if (this.liveStream)
-          this.liveStream(true, ()=>{}) // abort existing livestream
-
-        pull(
-          // listen for all new messages
-          (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
-          pull.filter(obj => !obj.sync), // filter out the sync obj
-          pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
-          pull.drain((msg) => {
-            if (!this.state.thread)
-              return
-            
-            var c = msg.value.content
-            var rels = mlib.relationsTo(msg, this.state.thread)
-            // reply post to this thread?
-            if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
-              // add to thread and flatlist
-              this.state.msgs.push(msg)
-              this.state.thread.related = (this.state.thread.related||[]).concat(msg)
-              this.setState({ thread: this.state.thread, msgs: this.state.msgs })
-
-              // mark read
-              thread.hasUnread = true
-              threadlib.markThreadRead(app.ssb, this.state.thread, err => {
-                if (err)
-                  app.minorIssue('Failed to mark live-streamed reply as read', err)
-              })
-            }
+        // mark read
+        if (thread.hasUnread) {
+          threadlib.markThreadRead(app.ssb, thread, (err) => {
+            if (err)
+              return app.minorIssue('Failed to mark thread as read', err)
+            this.setState({ thread: thread })
           })
-        )
-      }
+        }
+
+        // listen for new replies
+        if (this.props.live) {
+          if (this.liveStream)
+            this.liveStream(true, ()=>{}) // abort existing livestream
+
+          pull(
+            // listen for all new messages
+            (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
+            pull.filter(obj => !obj.sync), // filter out the sync obj
+            pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
+            pull.drain((msg) => {
+              if (!this.state.thread)
+                return
+              
+              var c = msg.value.content
+              var rels = mlib.relationsTo(msg, this.state.thread)
+              // reply post to this thread?
+              if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
+                // add to thread and flatlist
+                this.state.msgs.push(msg)
+                this.state.thread.related = (this.state.thread.related||[]).concat(msg)
+                this.setState({ thread: this.state.thread, msgs: this.state.msgs })
+
+                // mark read
+                thread.hasUnread = true
+                threadlib.markThreadRead(app.ssb, this.state.thread, err => {
+                  if (err)
+                    app.minorIssue('Failed to mark live-streamed reply as read', err)
+                })
+              }
+            })
+          )
+        }
+      })
     })
   }
   componentDidMount() {
@@ -240,14 +251,14 @@ export default class Thread extends React.Component {
             </div>
             <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
               { this.state.msgs.map((msg, i) => {
-                const isFirst = (i === 0)
+                const isLast = (i === this.state.msgs.length - 1)
                 return <Card
                   key={msg.key}
                   msg={msg}
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceOpen={isFirst}
+                  forceExpanded={isLast}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)}

@@ -63,8 +63,6 @@
     font-weight: 300;
     font-family: @content-font;
     line-height: 1.4;
-    min-height: 30px;
-    max-height: 500px;
     word-break: break-word;
   }
   .ctrls {
@@ -114,45 +112,20 @@
     }
   }
 
-  .read-more {
-    display: none;
-  }
-  &.oversized {
-    .body {
-      position: relative;
-      height: 400px;
-      overflow: hidden;
-    }
-    .read-more {
-      display: block;
-      background: #fff;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      padding-top: 5px;
-      color: blue;
-      cursor: pointer;
-      border-top: 1px solid #ccc;
-      &:before {
-        // put some white space above the border
-        content: '';
-        width: 100%;
-        display: block;
-        background: #fff;
-        left: 0;
-        position: absolute;
-        top: -11px;
-        height: 10px;
-      }
-    }
-  }
+  &.collapsed {
+    background: #fdfdfd;
+    cursor: pointer;
 
-  &.expanded {
     .body {
-      height: auto;
-      max-height: none;
+      height: 24px;
+      width: 570px;
+      color: gray;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      white-space: nowrap;
     }
-    .read-more {
+    .ctrls {
       display: none;
     }
   }
@@ -161,13 +134,13 @@
 .msg-view.card-missing-post {
   div {
     .elevation-1;
-    background: #fafafa;
+    background: #fff;
     padding: 20px;
     font-weight: 300;
     color: #666;
   }
-  &.expanded div {
-    background: #fff;
+  &.collapsed div {
+    background: #fafafa;
   }
 }
 
@@ -179,7 +152,6 @@
     font-weight: 300;
     color: #666;
     background: #FFF;
-    border: 1px solid #D5D5D5;
 
     i {
       margin: 4px 5px 0 0;
