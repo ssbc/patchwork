@@ -56,6 +56,8 @@ export default class Thread extends React.Component {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
+      console.log('loading!')
+
       // flatten, then fetch additional thread data (bookmarked state, unread state, etc)
       var flattenedMsgs = threadlib.flattenThread(thread)
       thread.related = flattenedMsgs.slice(1) // skip the first, root is in there
@@ -149,14 +151,18 @@ export default class Thread extends React.Component {
     })
   }
 
-  onToggleBookmark(msg) {
+  onToggleBookmark(e) {
+    e.preventDefault()
+    e.stopPropagation()
+
     // toggle in the DB
-    app.ssb.patchwork.toggleBookmark(msg.key, (err, isBookmarked) => {
+    let thread = this.state.thread
+    app.ssb.patchwork.toggleBookmark(thread.key, (err, isBookmarked) => {
       if (err)
         return app.issue('Failed to toggle bookmark', err, 'Happened in onToggleBookmark of MsgThread')
 
       // re-render
-      msg.isBookmarked = isBookmarked
+      thread.isBookmarked = isBookmarked
       this.setState(this.state)
     })
   }
@@ -219,9 +225,11 @@ export default class Thread extends React.Component {
     app.history.pushState(null, '/msg/'+encodeURIComponent(id))
   }
 
-  onSelectRoot() {
-    let thread = this.state.thread
-    let threadRoot = mlib.link(thread.value.content.root, 'msg')
+  onSelectRoot(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    const thread = this.state.thread
+    const threadRoot = mlib.link(thread.value.content.root, 'msg')
     this.openMsg(threadRoot.link)
   }
 
@@ -251,7 +259,7 @@ export default class Thread extends React.Component {
                 ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
                 : '' }
               { !threadRoot && thread
-                ? <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
+                ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }
               { thread
                 ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
@@ -269,8 +277,7 @@ export default class Thread extends React.Component {
                   forceExpanded={isLast}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
-                  onFlag={(msg, reason)=>this.onFlag(msg, reason)}
-                  onToggleBookmark={()=>this.onToggleBookmark(msg)} />
+                  onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
               }) }
               <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
             </ReactCSSTransitionGroup>

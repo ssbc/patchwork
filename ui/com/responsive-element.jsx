@@ -32,6 +32,6 @@ export default class ResponsiveElement extends React.Component {
     }
   }
   render() {
-    return <div ref="el" className={this.state.widthClass}>{this.props.children||''}</div>
+    return <div ref="el" className={this.state.widthClass + ' ' + (this.props.className||'')}>{this.props.children||''}</div>
   }
 }

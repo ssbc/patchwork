@@ -2,6 +2,7 @@
 import pull from 'pull-stream'
 import moment from 'moment'
 import React from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import ReactDOM from 'react-dom'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
@@ -57,7 +58,7 @@ export default class MsgList extends React.Component {
           var dest = this.refs.currentOpenMsg.getScrollTop()
           if (dest === false)
             return
-          this.refs.container.scrollTo(dest)
+          this.refs.container.scrollTo(dest - 15)
         })
       },
       onToggleBookmark: (msg) => {
@@ -256,6 +257,21 @@ export default class MsgList extends React.Component {
     this.loadMore({ amt })
   }
 
+  onClickAnything(e) {
+    // if the user clicks the background, close the thread
+    for (var node = e.target; node; node = node.parentNode) {
+      if (!node.classList)
+        return
+      if (node.classList.contains('msg-view') || node.classList.contains('items'))
+        return // abort, it's a click within the messages
+      if (node.classList.contains('msg-list')) {
+        // reached our toplevel, lets close the thread
+        this.setState({ currentOpenMsg: null })
+        return
+      }
+    }
+  }
+
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
     if (this.props.threads && msg.value && !('related' in msg)) {
@@ -368,7 +384,7 @@ export default class MsgList extends React.Component {
     const nQueued = this.state.newMsgQueue.length
     const endOfToday = moment().endOf('day')
     var lastDate = moment().startOf('day').add(1, 'day')
-    return <div className="msg-list">
+    return <div className="msg-list" onClick={this.onClickAnything.bind(this)}>
       <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
         <Infinite
@@ -395,36 +411,38 @@ export default class MsgList extends React.Component {
                 </div>
                 :
                 <ResponsiveElement widthStep={250}>
-                  { this.state.msgs.map((m, i) => {
-                    // missing value?
-                    if (!m.value)
-                      return <span key={m.key} /> // dont render
+                  <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+                    { this.state.msgs.map((m, i) => {
+                      // missing value?
+                      if (!m.value)
+                        return <span key={m.key} /> // dont render
 
-                    // render item
-                    const item = (current === m)
-                      ? <Thread
-                          key={m}
-                          ref="currentOpenMsg"
-                          id={m.key}
-                          live />
-                      : <ListItem
-                          key={m.key}
-                          msg={m}
-                          selectiveUpdate
-                          {...this.handlers}
-                          {...this.props.listItemProps}
-                          forceRaw={this.props.forceRaw} />
+                      // render item
+                      const item = (current === m)
+                        ? <Thread
+                            key={m}
+                            ref="currentOpenMsg"
+                            id={m.key}
+                            live />
+                        : <ListItem
+                            key={m.key}
+                            msg={m}
+                            selectiveUpdate
+                            {...this.handlers}
+                            {...this.props.listItemProps}
+                            forceRaw={this.props.forceRaw} />
 
-                    // render a date divider if this post is from a different day than the last
-                    const oldLastDate = lastDate
-                    const lastPost = threadlib.getLastThreadPost(m)
-                    lastDate = moment(lastPost.value.timestamp)
-                    if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-                      let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                      return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
-                    }
-                    return item
-                  }) }
+                      // render a date divider if this post is from a different day than the last
+                      const oldLastDate = lastDate
+                      const lastPost = threadlib.getLastThreadPost(m)
+                      lastDate = moment(lastPost.value.timestamp)
+                      if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
+                        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+                        return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
+                      }
+                      return item
+                    }) }
+                  </ReactCSSTransitionGroup>
                 </ResponsiveElement>
               }
               {append}
