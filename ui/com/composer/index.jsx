@@ -294,14 +294,17 @@ class CompositionUnit extends React.Component {
                 <a className="btn" onClick={setPreviewing(true)}>Preview</a>
                 <SendBtn canSend={this.canSend() && !this.state.isSending} />
               </div>
-              { this.isPublic()
-                ? <ComposerChannel isReadOnly={this.isReply()} 
-                                   onChange={this.onChangeChannel.bind(this)} 
-                                   value={this.getChannel()} />
-                : <ComposerRecps isReadOnly={this.isReply()} 
-                                 recps={this.state.recps} 
-                                 onAdd={this.onAddRecp.bind(this)} 
-                                 onRemove={this.onRemoveRecp.bind(this)} /> 
+              { this.isReply()
+                ? '' /* no channel/recps control for replies */
+                : ( this.isPublic()
+                  ? <ComposerChannel isReadOnly={this.isReply()} 
+                                     onChange={this.onChangeChannel.bind(this)} 
+                                     value={this.getChannel()} />
+                  : <ComposerRecps isReadOnly={this.isReply()} 
+                                   recps={this.state.recps} 
+                                   onAdd={this.onAddRecp.bind(this)} 
+                                   onRemove={this.onRemoveRecp.bind(this)} /> 
+                )
               }
     </div>)
   }
