@@ -48,7 +48,7 @@ export default class UserView extends React.Component {
     const Hero = (props) => {
       return <div>
         <UserInfoHeader key={this.props.pid} pid={this.props.pid} />
-        <Tabs options={tabs} selected={currentTab} onSelect={this.onSelectTab.bind(this)} />
+        <Tabs className="user-info-tabs" options={tabs} selected={currentTab} onSelect={this.onSelectTab.bind(this)} />
       </div>
     }
 
