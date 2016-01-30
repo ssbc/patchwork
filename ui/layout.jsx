@@ -71,7 +71,7 @@ export default class Layout extends React.Component {
     const isWifiMode = this.state.isWifiMode
 
     const NavLink = (props) => {
-      const selected = false //props.selected || (props.to === location)
+      const selected = props.selected || (props.to === location)
       const cls = (props.className||'')+' ctrl '+(selected?'selected':'')
       const count = props.count ? <div className="count">{props.count}</div> : ''
       return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
@@ -87,6 +87,8 @@ export default class Layout extends React.Component {
           <NavLink className="home" to="/" icon="home" />
         </div>
         <div className="flex-fill"><SearchPalette ref="search"/></div>
+        <NavLink to="/sync" icon="cloud-download" />
+        <NavLink to="/data" icon="database" />
       </div>
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>
