@@ -399,7 +399,7 @@ export default class MsgList extends React.Component {
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading}>
-          <div className="flex">
+          <div className="flex" style={{position: 'relative'}}>
             { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
             <div className="flex-fill">
               { Hero ? <Hero/> : '' }

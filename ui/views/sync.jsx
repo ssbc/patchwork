@@ -457,7 +457,7 @@ export default class Sync extends React.Component {
       filter((peer) => peer.connected).
       length
 
-    return <VerticalFilledContainer id="sync" className="flex">
+    return <VerticalFilledContainer id="sync" className="flex" style={{position: 'relative'}}>
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
         <div className="header">

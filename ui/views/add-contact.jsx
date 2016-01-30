@@ -72,7 +72,7 @@ export default class AddContact extends React.Component {
   }
 
   render() {
-    return <VerticalFilledContainer id="add-contact" className="flex">
+    return <VerticalFilledContainer id="add-contact" className="flex" style={{position: 'relative'}}>
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
         { '' /* TODO <div className="section">

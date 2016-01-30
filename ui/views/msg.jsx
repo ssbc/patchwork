@@ -11,7 +11,7 @@ export default class Msg extends React.Component {
   render() {
     const id = this.props.params && this.props.params.id
     return <div id="msg">
-      <VerticalFilledContainer id="msg-thread-vertical" className="flex">
+      <VerticalFilledContainer id="msg-thread-vertical" className="flex" style={{position: 'relative'}}>
         <LeftNav location={this.props.location} />
         <div className="flex-fill" style={{padding: 5}}>
           <Thread id={id} live />
