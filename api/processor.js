@@ -13,6 +13,24 @@ module.exports = function (sbot, db, state, emit) {
       var recps = mlib.links(c.recps)
       var mentions = mlib.links(c.mentions)
 
+      // inbox index:
+      // add msgs that mention or address the user
+      var inboxRow
+      if (findLink(mentions, sbot.id) || findLink(recps, sbot.id)) {
+        inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
+        emit('index-change', { index: 'inbox' })
+        attachChildIsRead(inboxRow, msg.key)
+      }
+      // update for replies
+      else if (root) {
+        inboxRow = state.inbox.find(root.link)
+        if (inboxRow) {
+          state.inbox.sortedUpsert(ts(msg), root.link)
+          emit('index-change', { index: 'inbox' })
+          attachChildIsRead(inboxRow, msg.key)
+        }
+      }
+
       // public posts index: add public posts / update for replies
       if (!root && recps.length === 0) {
         state.publicPosts.sortedUpsert(ts(msg), msg.key)
@@ -73,13 +91,6 @@ module.exports = function (sbot, db, state, emit) {
           attachChildIsRead(privatePostsRow, msg.key)          
         }
       }
-
-      // notifications index: add msgs that mention the user
-      // if (findLink(mentions, sbot.id)) {
-      //   var notificationsRow = state.notifications.sortedUpsert(ts(msg), msg.key)
-      //   emit('index-change', { index: 'notifications' })
-      //   attachIsRead(notificationsRow)   
-      // }
     },
 
     contact: function (msg) {      
@@ -89,11 +100,11 @@ module.exports = function (sbot, db, state, emit) {
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
 
-        // notifications indexes: add follows or blocks
-        // if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-        //   state.notifications.sortedUpsert(ts(msg), msg.key)
-        //   emit('index-change', { index: 'notifications' })
-        // }
+        // inbox index: add follows or blocks
+        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
+          state.inbox.sortedUpsert(ts(msg), msg.key)
+          emit('index-change', { index: 'inbox' })
+        }
       })
     },
 

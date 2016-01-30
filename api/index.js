@@ -62,7 +62,7 @@ exports.init = function (sbot, opts) {
     }
   }
 
-  // load bookmarks into an index
+  // load bookmarks into indexes
   state.pinc()
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
@@ -79,6 +79,8 @@ exports.init = function (sbot, opts) {
       function (msg) {
         if (msg.value) {
           var row = state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+          row.isread = msg.isread
+          row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)
           row.isread = msg.isread
         }
       },
@@ -265,10 +267,13 @@ exports.init = function (sbot, opts) {
       db.bookmarked.put(key, 1, done()) // update bookmarks index
       u.getThreadHasUnread(sbot, key, done()) // get the target thread's read/unread state
       done(function (err, putRes, hasUnread) {
-        // insert into the bookmarks index
+        // insert into the bookmarks and inbox indexes
         var bookmarksRow = state.bookmarks.sortedUpsert(value.timestamp, key)
         bookmarksRow.isread = !hasUnread // set isread state
         emit('index-change', { index: 'bookmarks' })
+        var inboxRow = state.inbox.sortedUpsert(value.timestamp, key)
+        inboxRow.isread = !hasUnread // set isread state
+        emit('index-change', { index: 'inbox' })
         cb(err, putRes)
       })
     })
@@ -277,6 +282,7 @@ exports.init = function (sbot, opts) {
     sbot.get(key, function (err, value) {
       if (err) return cb(err)
       state.bookmarks.remove(key)
+      state.inbox.remove(key)
       db.bookmarked.del(key, cb) 
     })
   }
