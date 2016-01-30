@@ -223,7 +223,7 @@ class CompositionUnit extends React.Component {
   renderAudienceBtn(props) {
     return (props) => {
       const opts = [
-        { label: <span><i className="fa fa-inbox"/> Private</span>, 
+        { label: <span><i className="fa fa-lock"/> Private</span>, 
           value: false },
         { label: <span><i className="fa fa-bullhorn"/> Public</span>, 
           value: true }

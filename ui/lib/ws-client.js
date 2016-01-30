@@ -80,10 +80,10 @@ var manifest = {
   "patchwork": {
     "createEventStream": "source",
     "getIndexCounts": "async",
-    "createNewsfeedStream": "source",
     "createInboxStream": "source",
     "createBookmarkStream": "source",
-    "createNotificationsStream": "source",
+    "createPrivatePostStream": "source",
+    "createPublicPostStream": "source",
     "createChannelStream": "source",
     "markRead": "async",
     "markUnread": "async",

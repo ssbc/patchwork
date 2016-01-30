@@ -2,10 +2,10 @@ module.exports = {
   createEventStream: 'source',
 
   getIndexCounts: 'async',
-  createNewsfeedStream: 'source',
   createInboxStream: 'source',
   createBookmarkStream: 'source',
-  createNotificationsStream: 'source',
+  createPrivatePostStream: 'source',
+  createPublicPostStream: 'source',
   createChannelStream: 'source',
 
   markRead: 'async',

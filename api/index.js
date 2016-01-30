@@ -29,10 +29,10 @@ exports.init = function (sbot, opts) {
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
-    newsfeed: u.index('newsfeed'),
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
-    notifications: u.index('notifications'),
+    privatePosts: u.index('privatePosts'),
+    publicPosts: u.index('publicPosts'),
     // other indexes: channel-* are created as needed
 
     // views
@@ -151,23 +151,16 @@ exports.init = function (sbot, opts) {
     awaitSync(function () {
       var counts = {
         inbox: state.inbox.rows.length,
-        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
-        bookmarks: state.bookmarks.rows.length,
-        bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
-        notificationsUnread: state.notifications.countUntouched()
-      }
-      for (var k in state) {
-        if (k.indexOf('channel-') === 0)
-          counts[k] = state[k].rows.length
+        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
       }
       cb(null, counts)
     })
   }
 
-  api.createNewsfeedStream = indexStreamFn(state.newsfeed)
   api.createInboxStream = indexStreamFn(state.inbox)
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
-  api.createNotificationsStream = indexStreamFn(state.notifications)
+  api.createPrivatePostStream = indexStreamFn(state.privatePosts)
+  api.createPublicPostStream = indexStreamFn(state.publicPosts)
   api.createChannelStream = function (channel, opts) {
     if (typeof channel !== 'string' || !channel.trim())
       return cb(new Error('Invalid channel'))

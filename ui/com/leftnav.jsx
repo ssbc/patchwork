@@ -47,7 +47,7 @@ export default class LeftNav extends React.Component {
   }
   onSelectChannel(channel) {
     this.setState({ isChannelListOpen: false })
-    app.history.pushState(null, '/newsfeed/channel/' + encodeURIComponent(channel.name))
+    app.history.pushState(null, '/public/channel/' + encodeURIComponent(channel.name))
   }
 
   static Heading (props) {
@@ -69,16 +69,18 @@ export default class LeftNav extends React.Component {
     const pinnedChannels = this.state.channels.filter(isPinned(true))
 
     // render
-    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/newsfeed/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
+    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/public/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
     return <div className="leftnav">
-      <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Private ({this.state.indexCounts.inboxUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({this.state.indexCounts.bookmarksUnread})</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Inbox (0)</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Contacts</LeftNav.Link>
       <Issues/>
+      <LeftNav.Heading>Private</LeftNav.Heading>
+      <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Messages</LeftNav.Link>
       { this.props.children ? <LeftNav.Heading>{this.props.title||'This Page'}</LeftNav.Heading> : '' }
       { this.props.children }
-      <LeftNav.Heading>Channels</LeftNav.Heading>
+      <LeftNav.Heading>Public</LeftNav.Heading>
+      <LeftNav.Link pathname={pathname} to="/public"><i className="fa fa-bullhorn" /> All Channels</LeftNav.Link>
       { pinnedChannels.map(renderChannel) }
       <div className="leftnav-link">
         <a onClick={this.onOpenChannelList.bind(this)}>Find more...</a>

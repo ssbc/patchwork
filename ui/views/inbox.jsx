@@ -5,7 +5,7 @@ import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-view/oneline'
 import app from '../lib/app'
 
-export default class Inbox extends React.Component {
+export default class InboxPosts extends React.Component {
   cursor (msg) {
     if (msg)
       return [msg.ts, false]
@@ -17,7 +17,7 @@ export default class Inbox extends React.Component {
         ref="list"
         threads
         dateDividers
-        composer composerProps={{ isPublic: false }}
+        composer composerProps={{ isPublic: true }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         live={{ gt: [Date.now(), null] }}

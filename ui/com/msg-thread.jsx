@@ -254,7 +254,7 @@ export default class Thread extends React.Component {
                 { recps && recps.length
                   ? <span>To: <UserLinks ids={recps.map(r => r.link)} /></span>
                   : '' }
-                { channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
+                { channel ? <span className="channel">in <Link to={`/public/channel/${channel}`}>#{channel}</Link></span> : ''}
               </div>
               { threadRoot
                 ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>

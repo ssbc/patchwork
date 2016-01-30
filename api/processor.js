@@ -13,16 +13,16 @@ module.exports = function (sbot, db, state, emit) {
       var recps = mlib.links(c.recps)
       var mentions = mlib.links(c.mentions)
 
-      // newsfeed index: add public posts / update for replies
+      // public posts index: add public posts / update for replies
       if (!root && recps.length === 0) {
-        state.newsfeed.sortedUpsert(ts(msg), msg.key)
-        emit('index-change', { index: 'newsfeed' })
+        state.publicPosts.sortedUpsert(ts(msg), msg.key)
+        emit('index-change', { index: 'publicPosts' })
       }
       else if (root) {
-        var newsfeedRow = state.newsfeed.find(root.link)
-        if (newsfeedRow) {
-          state.newsfeed.sortedUpsert(ts(msg), root.link)
-          emit('index-change', { index: 'newsfeed' })
+        var publicPostsRow = state.publicPosts.find(root.link)
+        if (publicPostsRow) {
+          state.publicPosts.sortedUpsert(ts(msg), root.link)
+          emit('index-change', { index: 'publicPosts' })
         }
       }
 
@@ -55,31 +55,31 @@ module.exports = function (sbot, db, state, emit) {
         }
       }
 
-      // inbox index: update for replies
-      var inboxRow
+      // private posts index: update for replies
+      var privatePostsRow
       if (root) {
-        inboxRow = state.inbox.find(root.link)
-        if (inboxRow) {
-          state.inbox.sortedUpsert(ts(msg), root.link)
-          emit('index-change', { index: 'inbox' })
-          attachChildIsRead(inboxRow, msg.key)
+        privatePostsRow = state.privatePosts.find(root.link)
+        if (privatePostsRow) {
+          state.privatePosts.sortedUpsert(ts(msg), root.link)
+          emit('index-change', { index: 'privatePosts' })
+          attachChildIsRead(privatePostsRow, msg.key)
         }
       }
-      // inbox index: add msgs addressed to the user
-      else if (!inboxRow) { // dont bother if already updated inbox for this msg
+      // privatePosts index: add msgs addressed to the user
+      else if (!privatePostsRow) { // dont bother if already updated privatePosts for this msg
         if (findLink(recps, sbot.id)) {
-          inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
-          emit('index-change', { index: 'inbox' })
-          attachChildIsRead(inboxRow, msg.key)          
+          privatePostsRow = state.privatePosts.sortedUpsert(ts(msg), root ? root.link : msg.key)
+          emit('index-change', { index: 'privatePosts' })
+          attachChildIsRead(privatePostsRow, msg.key)          
         }
       }
 
       // notifications index: add msgs that mention the user
-      if (findLink(mentions, sbot.id)) {
-        var notificationsRow = state.notifications.sortedUpsert(ts(msg), msg.key)
-        emit('index-change', { index: 'notifications' })
-        attachIsRead(notificationsRow)   
-      }
+      // if (findLink(mentions, sbot.id)) {
+      //   var notificationsRow = state.notifications.sortedUpsert(ts(msg), msg.key)
+      //   emit('index-change', { index: 'notifications' })
+      //   attachIsRead(notificationsRow)   
+      // }
     },
 
     contact: function (msg) {      
@@ -90,10 +90,10 @@ module.exports = function (sbot, db, state, emit) {
         else        updateOtherContact(msg.value.author, link.link, msg)
 
         // notifications indexes: add follows or blocks
-        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          state.notifications.sortedUpsert(ts(msg), msg.key)
-          emit('index-change', { index: 'notifications' })
-        }
+        // if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
+        //   state.notifications.sortedUpsert(ts(msg), msg.key)
+        //   emit('index-change', { index: 'notifications' })
+        // }
       })
     },
 
@@ -108,11 +108,11 @@ module.exports = function (sbot, db, state, emit) {
 
     vote: function (msg) {
       // notifications index: add votes on your messages
-      var msgLink = mlib.link(msg.value.content.vote, 'msg')
-      if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
-        state.notifications.sortedUpsert(ts(msg), msg.key)
-        emit('index-change', { index: 'notifications' })
-      }
+      // var msgLink = mlib.link(msg.value.content.vote, 'msg')
+      // if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
+      //   state.notifications.sortedUpsert(ts(msg), msg.key)
+      //   emit('index-change', { index: 'notifications' })
+      // }
 
       // user flags
       var userLink = mlib.link(msg.value.content.vote, 'feed')
