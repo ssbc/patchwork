@@ -33,7 +33,7 @@ export class Inline extends React.Component {
     const c = this.props.msg.value.content
 
     if (this.props.forceRaw)
-      return <div>{JSON.stringify(c)}</div>
+      return <DivRaw key={this.props.msg.key} obj={c} />
 
     try {
       switch (c.type) {
@@ -61,6 +61,6 @@ export class Inline extends React.Component {
       }
     } catch (e) { console.warn(e) }
 
-    return <div className="raw">{JSON.stringify(c)}</div>
+    return <DivRaw key={this.props.msg.key} obj={c} />
   }
 }
