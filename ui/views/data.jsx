@@ -10,7 +10,7 @@ export default class Data extends React.Component {
     const source = opts => {
       return app.ssb.createLogStream(opts)
     }
-    return <div id="data" style={{paddingTop: 5}}>
+    return <div id="data">
       <MsgList
         forceRaw
         ListItem={Oneline} listItemProps={{noReplies: true}}
