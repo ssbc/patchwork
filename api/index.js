@@ -500,7 +500,7 @@ exports.init = function (sbot, opts) {
       // helper to fetch rows
       function fetch (row, cb) {
         if (threads) {
-          threadlib.getPostSummary(sbot, row.key, function (err, thread) {
+          threadlib.getPostSummary(sbot, row.key, { isBookmarked: true, isRead: true, mentions: sbot.id }, function (err, thread) {
             for (var k in thread)
               row[k] = thread[k]
             cb(null, row)

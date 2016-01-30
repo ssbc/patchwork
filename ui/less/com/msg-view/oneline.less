@@ -10,11 +10,6 @@
   overflow: hidden;
   color: #555;
 
-  .type {
-    padding: 3px 0 0 0;
-    font-size: 21px;
-    text-align: right;
-  }
   .authors {
     flex: 0 0 125px;
     overflow: hidden;
@@ -33,9 +28,10 @@
     }
   }
   .replies {
-    flex: 0 0 30px;
-    text-align: center;
+    flex: 0 0 20px;
+    text-align: right;
     padding-top: 5px;
+    padding-right: 5px;
   }
   .content {
     flex: 1;
@@ -100,18 +96,23 @@
     text-align: right;
     padding: 5px 0 0 5px;
   }
+  .label {
+    margin-left: 5px;
+    padding: 8px 5px;
+    background: #eee;
+    color: gray;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
 
   &.unread {
-    background: #fff url(/img/lines.svg);
+    background-image: url(/img/lines.svg);
     .authors, .replies, .content, .date {
       font-weight: bold;
     }
   }
-  
+
   &:hover {
     background-color: #fafafa;
   }
-}
-.divider-spot .msg-view.oneline {
-  border-top: 0;
 }

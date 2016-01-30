@@ -32,18 +32,27 @@ export default class Oneline extends React.Component {
     let replies = countReplies(msg)
     replies = (replies === 0) ? <span style={{color:'#bbb'}}>1</span> : <span>{replies+1}</span>
 
-    return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
+    var label = ''
+    if (!msg.plaintext) {
+      label = <div className="label">private</div>
+    } else if (msg.mentionsUser) {
+      label = <div className="label">mentioned</div>
+    } else if (msg.isBookmarked) {
+      label = <div className="label"><i className="fa fa-bookmark" /></div>
+    }
+
+    return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')+(!msg.plaintext ? ' private' : '')} onClick={this.onClick.bind(this)}>
       <div className="authors">
         <UserPic id={msg.value.author} />
         <UserLink id={msg.value.author} />
       </div>
       { !this.props.noReplies ? <div className="replies">{replies}</div> : '' }
-      <div className="type">{ msg.plaintext ? '' : <i className="fa fa-lock" title="Secret Message" /> }</div>
       <div className="content">
         <Content msg={msg} forceRaw={this.props.forceRaw} />
         <Attachments msg={msg} />
       </div>
-      <div className="date"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>
+      {''/*<div className="date"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>*/}
+      { label }
     </div>
   }
 }
