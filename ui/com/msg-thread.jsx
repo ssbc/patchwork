@@ -142,6 +142,10 @@ export default class Thread extends React.Component {
     return container.offsetTop
   }
 
+  onClose() {
+    this.props.onClose && this.props.onClose()
+  }
+
   onToggleUnread() {
     // mark unread in db
     let thread = this.state.thread
@@ -251,7 +255,7 @@ export default class Thread extends React.Component {
       { !thread
         ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
         : <ResponsiveElement widthStep={250}>
-            <div className="flex thread-toolbar">
+            <div className="flex thread-toolbar" onClick={this.onClose.bind(this)}>
               <div className="flex-fill">
                 { (thread && thread.mentionsUser) ? <i className="fa fa-at"/> : '' }{' '}
                 { (thread && thread.plaintext) ? '' : <i className="fa fa-lock"/> }{' '}

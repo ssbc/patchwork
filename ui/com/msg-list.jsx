@@ -38,9 +38,7 @@ export default class MsgList extends React.Component {
     this.botcursor = null
     this.state = {
       msgs: [],
-      currentOpenMsgKey: null,
       newMsgQueue: [], // used to store message updates that we dont want to render immediately
-      selected: null,
       isLoading: false,
       isAtEnd: false,
       containerHeight: window.innerHeight
@@ -50,19 +48,12 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        this.setState({ currentOpenMsgKey: msg.key })
+        msg.isOpened = true
+        this.setState({ msgs: this.state.msgs })
       },
-      onThreadDidMount: () => {
-        if (!this.refs.currentOpenMsg || !this.refs.container)
-          return
-
-        var destTop = this.refs.currentOpenMsg.getScrollTop()
-        if (destTop === false)
-          return
-
-        // TODO find the right event? sometimes it doesnt seem to be painted yet
-        if (!this.refs.container.isPointVisible(0, destTop))
-          this.refs.container.scrollTo(destTop - 15)
+      onCloseThread: msg => {
+        msg.isOpened = false
+        this.setState({ msgs: this.state.msgs })
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB
@@ -178,33 +169,6 @@ export default class MsgList extends React.Component {
     })
   }
 
-  // helper to change the actively-viewed message
-  // - msg: message object to select
-  // - isFreshMsg: bool, was the message loaded in somewhere other than the msg list?
-  //   - if true, will splice it into the list
-  selectThread(thread, isFreshMsg) {
-    // deselect toggle
-    if (this.state.selected === thread)
-      return this.setState({ selected: false })
-
-    // splice the thread into the list, if it's new
-    // that way, operations on the selected message will be reflected in the list
-    if (isFreshMsg) {
-      for (var i=0; i < this.state.msgs.length; i++) {
-        if (this.state.msgs[i].key === thread.key) {
-          this.state.msgs.splice(i, 1, thread)
-          break
-        }
-      }
-    }
-
-    // update UI
-    this.setState({ selected: thread, msgs: this.state.msgs })
-  }
-  deselectThread() {
-    this.setState({ selected: false })
-  }
-
   setupLivestream() {
     let source = this.props.source || app.ssb.createFeedStream
     let opts = (typeof this.props.live == 'object') ? this.props.live : {}
@@ -264,7 +228,7 @@ export default class MsgList extends React.Component {
     this.loadMore({ amt })
   }
 
-  onClickAnything(e) {
+  /*onClickAnything(e) {
     // if the user clicks the background, close the thread
     for (var node = e.target; node; node = node.parentNode) {
       if (!node.classList)
@@ -277,7 +241,7 @@ export default class MsgList extends React.Component {
         return
       }
     }
-  }
+  }*/
 
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
@@ -348,7 +312,6 @@ export default class MsgList extends React.Component {
 
   // add messages to the top
   prependNewMsg(msgs) {
-    var selected = this.state.selected
     msgs = Array.isArray(msgs) ? msgs : [msgs]
     msgs.forEach(msg => {
 
@@ -364,12 +327,10 @@ export default class MsgList extends React.Component {
         }
       }
       // add to start of msgs
-      if (selected && selected.key === msg.key)
-        selected = msg // update selected, in case we replaced the current msg
       incMsgChangeCounter(msg)
       this.state.msgs.unshift(msg)
     })
-    this.setState({ msgs: this.state.msgs, selected: selected })
+    this.setState({ msgs: this.state.msgs })
   }
 
   // flush queue into the page
@@ -385,13 +346,12 @@ export default class MsgList extends React.Component {
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
-    const currentKey = this.state.currentOpenMsgKey
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
     const endOfToday = moment().endOf('day')
     var lastDate = moment().startOf('day').add(1, 'day')
-    return <div className="msg-list" onClick={this.onClickAnything.bind(this)}>
+    return <div className="msg-list">
       <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
         <Infinite
@@ -425,12 +385,11 @@ export default class MsgList extends React.Component {
                         return <span key={m.key} /> // dont render
 
                       // render item
-                      const item = (currentKey === m.key)
+                      const item = (m.isOpened)
                         ? <Thread
-                            key={m}
-                            ref="currentOpenMsg"
+                            key={m.key}
                             id={m.key}
-                            onDidMount={this.handlers.onThreadDidMount}
+                            onClose={() => this.handlers.onCloseThread(m)}
                             live />
                         : <ListItem
                             key={m.key}
