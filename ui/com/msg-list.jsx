@@ -50,15 +50,19 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        this.setState({ currentOpenMsgKey: msg.key }, () => {
-          if (!this.refs.currentOpenMsg || !this.refs.container)
-            return
+        this.setState({ currentOpenMsgKey: msg.key })
+      },
+      onThreadDidMount: () => {
+        if (!this.refs.currentOpenMsg || !this.refs.container)
+          return
 
-          var dest = this.refs.currentOpenMsg.getScrollTop()
-          if (dest === false)
-            return
-          this.refs.container.scrollTo(dest - 15)
-        })
+        var destTop = this.refs.currentOpenMsg.getScrollTop()
+        if (destTop === false)
+          return
+
+        // TODO find the right event? sometimes it doesnt seem to be painted yet
+        if (!this.refs.container.isPointVisible(0, destTop))
+          this.refs.container.scrollTo(destTop - 15)
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB
@@ -426,6 +430,7 @@ export default class MsgList extends React.Component {
                             key={m}
                             ref="currentOpenMsg"
                             id={m.key}
+                            onDidMount={this.handlers.onThreadDidMount}
                             live />
                         : <ListItem
                             key={m.key}

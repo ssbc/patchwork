@@ -161,6 +161,29 @@ export function verticalFilled (Component) {
       }
       this.setState({ height: height })
     },
+    getScrollTop() {
+      const el = this.refs && this.refs.el
+      if (!el) return 0
+      console.log('b')
+      if (el.getScrollTop)
+        return el.getScrollTop() // use the child's impl
+      console.log('c')
+      return el.scrollTop
+    },
+    // check if a location is in scroll-view
+    isPointVisible(left, top) {
+      const el = this.refs && this.refs.el
+      if (!el) return
+      if (el.isPointVisible)
+        return el.isPointVisible(left, top) // use the child's impl
+
+      // TODO left
+
+      if (el.scrollTop > top || el.scrollTop + this.state.height < top)
+        return false
+
+      return true
+    },
     scrollTo(top) {
       const el = this.refs && this.refs.el
       if (!el) return

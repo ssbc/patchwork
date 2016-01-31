@@ -120,9 +120,13 @@ export default class Thread extends React.Component {
   }
   componentDidMount() {
     this.constructState(this.props.id)
+    this.props.onDidMount && this.props.onDidMount()
   }
   componentWillReceiveProps(newProps) {
     this.constructState(newProps.id)
+  }
+  componentDidUpdate() {
+    this.props.onDidMount && this.props.onDidMount()    
   }
   componentWillUnmount() {
     // abort the livestream
