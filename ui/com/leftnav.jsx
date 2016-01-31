@@ -72,15 +72,13 @@ export default class LeftNav extends React.Component {
     const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/public/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
     return <div className="leftnav">
       <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-inbox" /> Inbox {app.indexCounts.inboxUnread}</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Contacts</LeftNav.Link>
       <Issues/>
-      <LeftNav.Heading>Private</LeftNav.Heading>
-      <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Messages</LeftNav.Link>
-      { this.props.children ? <LeftNav.Heading>{this.props.title||'This Page'}</LeftNav.Heading> : '' }
-      { this.props.children }
-      <LeftNav.Heading>Public</LeftNav.Heading>
-      <LeftNav.Link pathname={pathname} to="/public"><i className="fa fa-bullhorn" /> All Channels</LeftNav.Link>
+      <LeftNav.Heading>Messages</LeftNav.Heading>
+      <LeftNav.Link pathname={pathname} to="/public"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked</LeftNav.Link>
+      <LeftNav.Heading>Channels</LeftNav.Heading>
       { pinnedChannels.map(renderChannel) }
       <div className="leftnav-link">
         <a onClick={this.onOpenChannelList.bind(this)}>Find more...</a>
