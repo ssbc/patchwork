@@ -65,9 +65,8 @@ module.exports = function (sbot, db, state, emit) {
           attachChildIsRead(inboxRow, msg.key)
         }
       }
-
       // inbox index: add msgs addressed to the user
-      if (!inboxRow) { // dont bother if already updated inbox for this msg
+      else if (!inboxRow) { // dont bother if already updated inbox for this msg
         if (findLink(recps, sbot.id)) {
           inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
           emit('index-change', { index: 'inbox' })

@@ -38,7 +38,11 @@ export class UserHexagrid extends React.Component {
     })
     if (row.length)
       els.push(<div key={els.length}>{row}</div>)
-    return <div className={'user-hexagrid-'+size}>{els}</div>
+
+    var cls = 'user-hexagrid-'+size
+    if (this.props.horizontal)
+      cls += ' horizontal'
+    return <div className={cls}>{els}</div>
   }
 }
 

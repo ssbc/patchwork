@@ -1,10 +1,15 @@
 'use babel'
 import React from 'react'
-import UserList from '../com/user-list'
+import { VerticalFilledContainer } from '../com'
+import LeftNav from '../com/leftnav'
+import UserView from '../com/user/view'
 
 export default class Profile extends React.Component {
   render() {
     const pid = (this.props.params.id) ? decodeURIComponent(this.props.params.id) : false
-    return <div id="profile"><UserList selected={pid} /></div>
+    return <VerticalFilledContainer id="profile" className="flex">
+      <LeftNav location={this.props.location} />
+      <div className="flex-fill"><UserView pid={pid} /></div>
+    </VerticalFilledContainer>
   }
 }

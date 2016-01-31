@@ -2,19 +2,6 @@
 
 Overview of the asset- and code-structure of Patchwork.
 
-## `/app`
-
-Electron main-process code.
-Loads Scuttlebot, adds `/api` to sbot as a plugin, and opens `/ui` in a BrowserWindow.
-
-| Name | Desc |
-|------|------|
-| `index.js` | Electron entry-point. |
-| `lib/windows.js` | Window-management toolset. |
-| `lib/blobs.js` | HTTP server for Scuttlebot's blob-store. |
-| `lib/menu.js` | Definition for the window's permanent menu. |
-| `lib/muxrpc-ipc.js` | RPC interface to BrowserWindows. |
-
 ## `/api`
 
 RPC methods and message-processing, added to the `scuttlebot` object as a plugin.
@@ -30,9 +17,9 @@ RPC methods and message-processing, added to the `scuttlebot` object as a plugin
 
 ## `/ui`
 
-Electron ui-process code.
+Ui code.
 Uses React.
-Mostly compiled with babel, and therefore written in ES6+JSX.
+Compiled with babel, and written in ES6+JSX.
 
 | Name | Desc |
 |------|------|
@@ -44,7 +31,7 @@ Mostly compiled with babel, and therefore written in ES6+JSX.
 | `com/*` | UI components, used by the views and by each other. |
 | `lib/app.js` | Master state object. |
 | `lib/markdown.js` | Markdown behaviors (inline, block). |
-| `lib/muxrpc-ipc.js` | RPC interface to the main process. |
+| `lib/ws-cient.js` | RPC interface to the host process. |
 | `lib/mentions.js` | Helpers for extracting SSB link-mentions out of text. |
 | `lib/msg-relation.js` | Helpers for message-processing. |
 | `lib/social-graph.js` | Helpers for analyzing the social graph. |
@@ -54,11 +41,6 @@ Mostly compiled with babel, and therefore written in ES6+JSX.
 | `img/*` | Static assets. |
 | `fonts/*` | Static assets. |
 | `vendor/*` | Static assets (js). May not be in use anymore. |
-| `webview-preload.js` | Script preloaded into webview elements, to setup RPC. |
-
-## `/assets`
-
-Assets for building the Electron package (mainly icons).
 
 ## `/scripts`
 

@@ -1,0 +1,54 @@
+.leftnav {
+  flex: 0 0 175px;
+  
+  .leftnav-heading {
+    margin: 15px 0 5px 10px;
+    font-weight: bold;
+    color: gray;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .leftnav-link {
+    border-left: 5px solid transparent;
+    padding: 5px 0 5px 10px;
+    a {
+      color: #555;
+    }
+    &.selected {
+      border-color: #1a86ff;
+      a {
+        color: #1a86ff;
+      }
+    }
+    &.big-btn {
+      padding: 12px 0 15px 10px;
+      a {
+        background: linear-gradient(to bottom, #4da1ff, #4F9BEF);
+        color: white;
+        padding: 5px 23px 6px 20px;
+        border-radius: 3px;
+
+        &:hover {
+          background: darken(#4da1ff, 5%);
+          text-decoration: none;
+        }
+      }
+    }
+    i { 
+      width: 20px;
+      text-align: center;
+    }
+  }
+  .channel-list {
+    position: fixed;
+    left: 110px;
+    top: 50%;
+    height: 80%;
+    transform: translateY(-50%);
+    z-index: 100000;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}

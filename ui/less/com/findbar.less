@@ -1,0 +1,49 @@
+.findbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(238, 238, 238, 0.8);
+
+  border-top: 1px solid #ccc;
+  font-weight: 300;
+  height: 28px;
+  padding: 5px;
+
+  &.hidden {
+    display: none;
+  }
+
+  .search {
+    display: inline-block;
+    position: relative;
+    padding-right: 5px;
+
+    i {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      color: #999;
+    }
+    input {
+      color: gray;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      padding: 3px 0 3px 30px;
+      width: 300px;
+
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+
+  .close {
+    float: right;
+  }
+}
+
+highlight {
+  background-color: yellow;
+}

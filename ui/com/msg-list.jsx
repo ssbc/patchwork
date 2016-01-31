@@ -12,6 +12,7 @@ import ReactInfinite from 'react-infinite'
 import classNames from 'classnames'
 import ComposerCard from './composer/card'
 import SimpleInfinite from './simple-infinite'
+import ResponsiveElement from './responsive-element'
 import Summary from './msg-view/summary'
 import { VerticalFilledContainer, verticalFilled } from './index'
 import { isaReplyTo } from '../lib/msg-relation'
@@ -19,7 +20,7 @@ import app from '../lib/app'
 import u from '../lib/util'
 
 // how many messages to fetch in a batch?
-const DEFAULT_BATCH_LOAD_AMT = 30
+const DEFAULT_BATCH_LOAD_AMT = 60
 
 // what's the avg height a message will be?
 // (used in loading calculations, when trying to scroll to a specific spot. doesnt need to be exact)
@@ -28,6 +29,8 @@ const AVG_RENDERED_MSG_HEIGHT = 200
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
 
+// how many pixels from the bottom of the screen before we load the next batch?
+const LOAD_BOTTOM_DISTANCE = 2000
 
 export default class MsgList extends React.Component {
   constructor(props) {
@@ -59,6 +62,7 @@ export default class MsgList extends React.Component {
 
           // re-render
           msg.isBookmarked = isBookmarked
+          incMsgChangeCounter(msg)
           this.setState(this.state)
         })
       },
@@ -76,6 +80,7 @@ export default class MsgList extends React.Component {
 
           // re-render
           msg.votes[app.user.id] = newVote
+          incMsgChangeCounter(msg)
           this.setState(this.state)
         }
         if (msg.plaintext)
@@ -91,6 +96,7 @@ export default class MsgList extends React.Component {
           let msg = this.state.msgs[i]
           if (msg.key === e.key) {
             msg.hasUnread = !e.value
+            incMsgChangeCounter(msg)
             this.setState({ msgs: this.state.msgs })
             return
           }
@@ -111,6 +117,7 @@ export default class MsgList extends React.Component {
           // re-render
           msg.votes = msg.votes || {}
           msg.votes[app.user.id] = (reason === 'unflag') ? 0 : -1
+          incMsgChangeCounter(msg)
           this.setState(this.state)
         }
         if (msg.plaintext)
@@ -126,7 +133,7 @@ export default class MsgList extends React.Component {
   componentDidMount() {
     // load first messages
     var start = Date.now()
-    this.loadMore({ amt: this.props.DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
+    this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -191,8 +198,9 @@ export default class MsgList extends React.Component {
   setupLivestream() {
     let source = this.props.source || app.ssb.createFeedStream
     let opts = (typeof this.props.live == 'object') ? this.props.live : {}
-    opts.threads = true
+    opts.threads = this.props.threads
     opts.live = true
+    opts.old = false
     this.liveStream = source(opts)
     pull(
       this.liveStream,
@@ -244,7 +252,7 @@ export default class MsgList extends React.Component {
 
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
-    if (this.props.threads && !('related' in msg)) {
+    if (this.props.threads && msg.value && !('related' in msg)) {
       threadlib.getPostSummary(app.ssb, msg.key, cb)
     } else
       cb(null, msg) // noop
@@ -282,7 +290,7 @@ export default class MsgList extends React.Component {
 
     this.setState({ isLoading: true })
     pull(
-      source({ threads: true, reverse: true, lt: cursor(this.botcursor) }),
+      source({ threads: this.props.threads, reverse: true, lt: cursor(this.botcursor) }),
       pull.through(msg => { lastmsg = msg }), // track last message processed
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
@@ -314,10 +322,14 @@ export default class MsgList extends React.Component {
     var selected = this.state.selected
     msgs = Array.isArray(msgs) ? msgs : [msgs]
     msgs.forEach(msg => {
+
       // remove any noticeable duplicates...
       // check if the message is already in the first N and remove it if so
       for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
         if (this.state.msgs[i].key === msg.key) {
+          // hold onto the change counter
+          msg.changeCounter = this.state.msgs[i].changeCounter
+          // remove the old message
           this.state.msgs.splice(i, 1)
           break
         }
@@ -325,6 +337,7 @@ export default class MsgList extends React.Component {
       // add to start of msgs
       if (selected && selected.key === msg.key)
         selected = msg // update selected, in case we replaced the current msg
+      incMsgChangeCounter(msg)
       this.state.msgs.unshift(msg)
     })
     this.setState({ msgs: this.state.msgs, selected: selected })
@@ -339,6 +352,7 @@ export default class MsgList extends React.Component {
   render() {
     const Hero = this.props.Hero
     const LeftNav = this.props.LeftNav
+    const RightNav = this.props.RightNav
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
@@ -356,7 +370,7 @@ export default class MsgList extends React.Component {
           ref="container"
           elementHeight={this.props.listItemHeight||60}
           containerHeight={this.state.containerHeight}
-          infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : 1200}
+          infiniteLoadBeginBottomOffset={this.state.isAtEnd ? undefined : LOAD_BOTTOM_DISTANCE}
           onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           loadingSpinnerDelegate={this.loadingElement()}
           isInfiniteLoading={this.state.isLoading}>
@@ -374,12 +388,17 @@ export default class MsgList extends React.Component {
                   { (this.props.emptyMsg || 'No messages.') }
                 </div>
                 :
-                <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+                <ResponsiveElement widthStep={250}>
                   { this.state.msgs.map((m, i) => {
+                    // missing value?
+                    if (!m.value)
+                      return <span key={m.key} /> // dont render
+
                     // render item
                     const item = <ListItem
                       key={m.key}
                       msg={m}
+                      selectiveUpdate
                       {...this.handlers}
                       {...this.props.listItemProps}
                       selected={selectedKey === m.key}
@@ -391,17 +410,24 @@ export default class MsgList extends React.Component {
                     lastDate = moment(lastPost.value.timestamp)
                     if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
                       let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                      return <div key={m.key}><hr className="msgs-divider" data-label={label} />{item}</div>
+                      return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
                     }
                     return item
                   }) }
-                </ReactCSSTransitionGroup>
+                </ResponsiveElement>
               }
               {append}
             </div>
+            { RightNav ? <RightNav {...this.props.rightNavProps} /> : '' }
           </div>
         </Infinite>
       </div>
     </div>
   }
+}
+
+// this little hack helps us keep track of when we update a message, and should therefore re-render it
+// msg-view/card and msg-view/oneline use this number in shouldComponentUpdate to decide the answer
+function incMsgChangeCounter (msg) {
+  msg.changeCounter = (msg.changeCounter || 0) + 1
 }

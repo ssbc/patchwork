@@ -1,11 +1,13 @@
 'use babel'
 import React from 'react'
-import NativeImage from 'native-image'
 import { createHash } from 'multiblob/util'
 import pull from 'pull-stream'
 import app from '../../lib/app'
 
 const CANVAS_SIZE = 512
+
+if (!('URL' in window) && ('webkitURL' in window))
+  window.URL = window.webkitURL
 
 export default class ImageInput extends React.Component {
   constructor(props) {
@@ -52,6 +54,7 @@ export default class ImageInput extends React.Component {
     img.src = this.props.current
     img.onload = () => {
       let imgdim = { width: img.width, height: img.height }
+      console.log(imgdim)
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
       this.refs.scaleSlider.value = 0
 
@@ -77,24 +80,24 @@ export default class ImageInput extends React.Component {
   }
 
   onFileChosen(e) {
+    const fileInput = this.refs.fileInput
+    var file = fileInput.files[0]
+    if (!file)
+      return
+
     this.setState({ editorMsg: 'loading...', hasImg: true })
 
-    // give the html renderer a turn before loading the image
-    // if the image is large, it'll block for a sec, and we want to render "loading..." first
-    setTimeout(() => {
-      const file = this.refs.fileInput.files[0]
-      if (!file)
-        return
-      const ni = NativeImage.createFromPath(file.path)
-      const dataUrl = ni.toDataUrl()
-      if (dataUrl === 'data:image/png;base64,')
-        return this.setState({ editorMsg: 'Failed to load image. Must be a valid PNG or JPEG.' })
-
+    var reader = new FileReader()
+    reader.onload = e => {
       const img = document.createElement('img')
-      const imgdim = ni.getSize()
+      img.src = e.target.result
+
+      const imgdim = { width: img.width, height: img.height }
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
-      img.src = dataUrl
       this.refs.scaleSlider.value = 0
+
+      if (this.props.onChange)
+        this.props.onChange()
 
       this.setState({
         img: img,
@@ -103,10 +106,11 @@ export default class ImageInput extends React.Component {
         ox: 0,
         oy: 0,
         zoom: CANVAS_SIZE/smallest,
-        minzoom: CANVAS_SIZE/smallest,
+        minzoom: CANVAS_SIZE/smallest
       })
       this.drawCanvas()
-    }, 100)
+    }
+    reader.readAsDataURL(file)
   }
 
   onCanvasMouseDown (e) {
@@ -128,6 +132,7 @@ export default class ImageInput extends React.Component {
   onCanvasMouseMove (e) {
     e.preventDefault()
     if (this.state.dragging) {
+      console.log('ox+clientX-mx',this.state.ox + e.clientX - this.state.mx, '-width', -this.state.imgdim.width, 'zoom', this.state.zoom, '-width*zoom+canvas', -this.state.imgdim.width * this.state.zoom + CANVAS_SIZE)
       this.setState({
         ox: Math.max(Math.min(this.state.ox + e.clientX - this.state.mx, 0), -this.state.imgdim.width * this.state.zoom + CANVAS_SIZE),
         oy: Math.max(Math.min(this.state.oy + e.clientY - this.state.my, 0), -this.state.imgdim.height * this.state.zoom + CANVAS_SIZE),
@@ -157,40 +162,37 @@ export default class ImageInput extends React.Component {
  
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-		ctx.save()
+    // ctx.drawImage(this.state.img, this.state.ox, this.state.oy, this.state.img.width * this.state.zoom, this.state.img.height * this.state.zoom)
 
-    ctx.scale(this.state.zoom, this.state.zoom)
+    ctx.save()
+
+    // rotate from center
+    // TODO Im disabling this for now because it's broken, and I dont have time to fix it atm -prf
+    // ctx.translate(CANVAS_SIZE/2, CANVAS_SIZE/2)
+    // ctx.rotate(this.state.rotation/2 * Math.PI)
+    // ctx.translate(-CANVAS_SIZE/2, -CANVAS_SIZE/2)
+    
     ctx.translate(this.state.ox, this.state.oy)
-  	ctx.translate(this.state.img.width/2, this.state.img.height/2)
-		ctx.rotate(this.state.rotation/2 * Math.PI)
-		ctx.drawImage(
-      this.state.img, 
-      -this.state.img.width/2, -this.state.img.height/2,
-      this.state.img.width, this.state.img.height
-    )
-		ctx.restore()
+    ctx.scale(this.state.zoom, this.state.zoom)
+    ctx.drawImage(this.state.img, 0, 0, this.state.img.width, this.state.img.height)
+
+    ctx.restore()
   }
 
   render() {
     return <div className="image-input">
-      <div>
-        <label>
-          <span>{this.props.label}</span>
-          <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
-          <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
-        </label>
-      </div>
       { this.state.hasImg ? 
         <div className="image-input-ctrls">
-          <div className="flex" style={{color: 'gray', alignItems: 'center'}}>
-            <div style={{whiteSpace: 'pre', paddingRight: '15px'}}>
-              <label>Rotation: <button className="btn" onClick={this.onRotate.bind(this)}>{(this.state.rotation*90)+' degrees'}</button></label>
-            </div>
+          <div className="inline-flex" style={{color: 'gray', alignItems: 'center'}}>
             <div style={{flex: 1, paddingRight: '5px'}}>
               { this.state.editorMsg ? <div>{this.state.editorMsg}</div> : '' }
               <input ref="scaleSlider" type="range" value={this.state.scaleSliderValue} onChange={this.onResize.bind(this)} style={{height: '45px', verticalAlign: 'middle'}} />
             </div>
+            {''/*<div style={{whiteSpace: 'pre', paddingLeft: '15px'}}>
+              <label>Rotate: <button className="btn" onClick={this.onRotate.bind(this)} style={{padding: '10px 16px', color: 'gray'}}><i className="fa fa-rotate-right" /></button></label>
+            </div>*/}
           </div>
+          <br/>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
             onMouseDown={this.onCanvasMouseDown.bind(this)}
             onMouseUp={this.onCanvasMouseUp.bind(this)}
@@ -198,24 +200,33 @@ export default class ImageInput extends React.Component {
             onMouseMove={this.onCanvasMouseMove.bind(this)} />
         </div>
         : '' }
+      <div>
+        <label>
+          <span>{this.props.label}</span>
+          <input ref="fileInput" type="file" accept="image/png,image/jpg,image/jpeg" onChange={this.onFileChosen.bind(this)} style={{display: 'none'}} />
+          <button className="btn" onClick={this.onClickFile.bind(this)}>Choose File</button>
+        </label>
+      </div>
     </div>
   }
 
-  static canvasToPng(canvas) {
-    var dataUrl = canvas.toDataURL('image/png')
-    return NativeImage.createFromDataUrl(dataUrl).toPng()
+  static canvasToPng(canvas, cb) {
+    canvas.toBlob(function (blob) {
+      var reader = new FileReader()
+      reader.onloadend = function () {
+        cb(null, new Buffer(new Uint8Array(reader.result)))
+      }
+      reader.readAsArrayBuffer(blob)
+    })
   }
 
   static uploadCanvasToBlobstore(canvas, cb) {
-    var hasher = createHash('sha256')
-    pull(
-      pull.once(ImageInput.canvasToPng(canvas)),
-      hasher,
-      app.ssb.blobs.add(function (err) {
-        if (err)
-          return cb(err)
-        cb(null, hasher)
+    ImageInput.canvasToPng(canvas, function (err, buffer) {
+      if (err) return cb(err)
+      app.ssb.patchwork.addFileToBlobs(buffer.toString('base64'), function (err, hash) {
+        if (err) return cb(err)
+        cb(null, { hash: hash, size: buffer.length })
       })
-    )
+    })
   }
 }

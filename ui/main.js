@@ -1,8 +1,5 @@
 'use strict'
 
-// install babel hooks
-require('babel/register')
-
 var pull     = require('pull-stream')
 var ReactDOM = require('react-dom')
 
@@ -11,14 +8,21 @@ var ReactDOM = require('react-dom')
 
 // master state object
 window.app = require('./lib/app')
+window.pull = pull // pull is useful for debugging
 
 // toplevel events
 window.addEventListener('error', onError)
-window.addEventListener('contextmenu', require('./contextmenu'))
 
 // render
 app.fetchLatestState(function () {
-  ReactDOM.render(require('./routes.jsx'), document.body.querySelector('div'))
+  // redirect to contacts page if new-user setup is occurring
+  // that's where where we want the user to land after the modal flow
+  if (app.user.needsSetup)
+    app.history.pushState(null, '/contacts')
+
+  // begin rendering
+  var routes = require('./routes.jsx')
+  ReactDOM.render(routes.routes, document.body.querySelector('div'))
   window.removeEventListener('error', window.loadErrorHandler)
 })
 
@@ -27,5 +31,5 @@ app.fetchLatestState(function () {
 
 function onError (e) {
   e.preventDefault()
-  app.minorIssue('Unexpected Error', e.error, 'This was an unhandled exception.')
+  app.minorIssue('Unexpected Error', e.error || e, 'This was an unhandled exception.')
 }

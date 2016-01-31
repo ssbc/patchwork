@@ -4,8 +4,6 @@ import React from 'react'
 import classNames from 'classnames'
 import app from '../lib/app'
 
-export const ALL_CHANNELS = Symbol('all')
-
 function cls (selected, hasNew) {
   return classNames({ 'channel-list-item': true, flex: true, selected: selected, unread: hasNew })
 }
@@ -28,7 +26,7 @@ class ChannelListItem extends React.Component {
     return <div className={cls(this.props.selected, channel.hasNew)} onClick={onSelect}>
       <div className="flex-fill"><i className="fa fa-hashtag" /> { channel.name }</div>
       <div className="ctrls">
-        <a className={classNames({ pin: true, pinned: channel.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
+        <a href='javascript:;' className={classNames({ pin: true, pinned: channel.pinned })} onClick={this.onPin.bind(this)}><i className="fa fa-thumb-tack" /></a>
       </div>
     </div>
   }
@@ -56,7 +54,7 @@ export class ChannelList extends React.Component {
   }
 
   onClearSearch() {
-    this.setState({ searchText: '', searchQuery: false })    
+    this.setState({ searchText: '', searchQuery: false })
   }
 
   onClickOpen() {
@@ -77,7 +75,7 @@ export class ChannelList extends React.Component {
   render() {
     const selected = this.props.selected
     const search = this.state.searchText
-    
+
     // predicates
     const isPartialMatch = channel => ((this.state.searchQuery) ? this.state.searchQuery.test(channel.name) : true)
     const isExactMatch   = channel => ((this.state.searchText)  ? this.state.searchText === channel.name : false)
@@ -90,9 +88,10 @@ export class ChannelList extends React.Component {
     // render
     const hasExactMatch = this.props.channels.filter(isExactMatch).length > 0
     const renderChannel = channel => <ChannelListItem key={channel.name} channel={channel} selected={channel.name === selected} onSelect={this.props.onSelect} />
-    return <div className="channel-list" style={{height: this.props.height, overflow: 'auto'}}>
+    return <div className="channel-list">
       <div className="channel-list-ctrls">
         <div className="search">
+          <i className="fa fa-hashtag" />
           <input ref="searchInput" type="text" placeholder="New Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
@@ -106,11 +105,11 @@ export class ChannelList extends React.Component {
         <p>
           { search
             ? (hasExactMatch
-              ? <small><a onClick={this.onClickOpen.bind(this)}>Open "{search}"</a> | </small>
-              : <small><a onClick={this.onClickCreate.bind(this)}>Create "{search}"</a> | </small>)
+              ? <small><a href='javascript:;' onClick={this.onClickOpen.bind(this)}>Open "#{search}"</a> | </small>
+              : <small><a href='javascript:;' onClick={this.onClickCreate.bind(this)}>Create "#{search}"</a> | </small>)
             : '' }
           { search
-            ? <small><a onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
+            ? <small><a href='javascript:;' onClick={this.onClearSearch.bind(this)}>Clear filter</a></small>
             : '' }
         </p>
       </div>

@@ -69,14 +69,14 @@ export default class ModalFlow extends React.Component {
     const setIsValid = isValid => { this.setState({ isValid: isValid }) }
     const setIsReady = isReady => { this.setState({ isReady: isReady }) }
 
-    return <div className={'modal modal-flow '+(this.props.fullheight?'fullheight':'')}>
+    return <div className={'modal modal-flow '+(this.props.className||'')}>
       <div className="modal-inner">
         <div className="modal-content">
           <StepCom ref="step" setIsReady={setIsReady} setIsValid={setIsValid} setHelpText={setHelpText} gotoNextStep={this.gotoNextStep.bind(this)} />
         </div>
         { this.state.helpText ? <div className="modal-helptext">{this.state.helpText}</div> : '' }
         <div className="modal-ctrls">
-          <SteppedProgressBar current={this.state.step} labels={this.props.labels} />
+          <SteppedProgressBar current={this.state.step} labels={this.props.labels} num={this.props.labels ? this.props.labels.length : this.props.Forms.length} />
           <div className="next">
             <button disabled={!this.state.isValid} className={nextCls.join(' ')} onClick={this.onNextClick.bind(this)}>
               {nextText} <i className="fa fa-angle-right" />

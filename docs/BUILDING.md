@@ -1,34 +1,49 @@
 # Building
 
 
-## CSS
+## For release
 
-Build `ui/less` into `ui/css`.
+Build css and js
 
 ```
-npm run build:ui
+npm run build-release
+```
+
+### JS
+
+```
+npm run build-release:js
+```
+
+### CSS
+
+
+```
+npm run build-release:css
+```
+
+## During dev
+
+Build css and js
+
+```
+npm run build
+```
+
+### JS
+
+```
+npm run build:js
+```
+
+### CSS
+
+
+```
+npm run build:css
 ```
 
 
 ## Electron Package
 
-Produce packages for Windows, OSX, and Linux.
-Windows requires special dependencies:
-
-```
-# Windows dependencies in Linux
-$ add-apt-repository ppa:ubuntu-wine/ppa -y
-$ apt-get update
-$ apt-get install nsis wine
-
-# Windows dependencies in OSX
-$ brew install makensis wine
-```
-
-To build the package:
-
-```
-npm install -d
-npm run build
-npm run pack
-```
+See https://github.com/ssbc/patchwork-electron

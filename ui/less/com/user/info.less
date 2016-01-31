@@ -1,0 +1,61 @@
+.user-info {
+  display: flex;
+  margin: 5px;
+  background: #fff;
+
+  .avatar {
+    flex: 0 0 230px;
+    img {
+      width: 225px;
+      display: block;
+    }
+  }
+  .facts {
+    padding: 30px 0 30px 30px;
+    .tabs a:first-child {
+      padding-left: 0;
+    }
+    & > .flex > h1 {
+      color: #444;
+      font-size: 250%;
+      margin: 0 0 5px;
+      line-height: 1;
+    }
+    pre {        
+      margin: 0 0 10px;
+      border: 0;
+      background: #fafafa;
+    }
+    .btn-group {
+      display: flex;
+    }
+    table {
+      margin-top: 5px;
+      font-family: @content-font;
+      font-weight: 100;
+      color: #555;
+      td {
+        vertical-align: top;
+        padding-right: 5px;
+        padding-top: 4px;
+        &:first-child {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+.user-info-card {
+  margin: 30px 20px;
+  color: #555;
+  h3 {
+    font-family: @content-font;
+    margin: 10px 0;
+    font-size: 150%;
+    font-weight: 100;
+  }
+  .content {
+    padding-left: 20px;
+  }
+}

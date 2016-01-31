@@ -1,82 +1,9 @@
 .composer {
-  .elevation-card;
-  background: #ffffff;
-  padding-top: 1px;
-
-  .toolbar {
-//    background: #697786;
-    margin-bottom: 10px;
-    /*a {
-      color: #CDD9E2;
-      &.selected, &:hover {
-        color: #E9F1F7;
-        background: rgba(255, 255, 255, 0.1);
-        border: 0;
-        padding-bottom: 10px;
-      }
-    }*/
-  }
-  .composer-channel {
-    border-bottom: 1px solid #ddd;
-    padding: 5px 9px 5px;
-    color: gray;
-    background: #F5F5F5;
-  }
-  .composer-recps {
-    padding: 10px;
-    border: 1px solid #eee;
-    margin: 5px;
-    font-weight: 300;
-    input {
-      border: 0;
-      margin-left: 5px;
-      &:focus, &:active {
-        outline: 0;
-      }
-    }
-    .recp {
-      display: inline-block;
-      border: 1px solid @light-gray2;
-      border-radius: 2px;
-      padding: 0px 5px 1px;
-      margin-left: 5px;
-      box-shadow: 1px 1px 2px rgba(0,0,0,0.05);
-
-      a {
-        margin-left: 5px;
-        color: @gray2;
-      }
-    }
-  }
-  .composer-content {
-    font-family: @content-font;
-    font-weight: 300;
-    color: #555555;
-    line-height: 1.4;
-
-    textarea {
-      display: block;
-      box-sizing: border-box;
-      width: 100%;
-      resize: none;
-      border: 0;
-      min-height: 140px;
-      padding: 10px;
-      margin: 0;
-
-      &:active, &:focus {
-        outline: 0;
-      }
-    }
-    & > div {
-      padding: 10px;
-      min-height: 140px;
-      font-weight: 300;
-      color: @dark-gray3;
-    }
-  }
   .composer-ctrls {
+    background: #fff;
     font-weight: 300;
+    border: 1px solid #ccc;
+    border-top: 0;
     
     .btn {
       padding: 10px 20px;
@@ -100,6 +27,68 @@
         background: none !important;
         box-shadow: none !important;
       }
+    }
+  }
+  .composer-recps {
+    background: #fff;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-top: 0;
+    font-weight: 300;
+    i {
+      color: #666;
+    }
+    input {
+      border: 0;
+      margin-left: 5px;
+      background: transparent;
+      &:focus, &:active {
+        outline: 0;
+      }
+    }
+    .recp {
+      display: inline-block;
+      border: 1px solid @light-gray2;
+      border-radius: 2px;
+      padding: 0px 5px 1px;
+      margin-left: 5px;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+
+      a {
+        margin-left: 5px;
+        color: @gray2;
+      }
+    }
+  }
+  .composer-content {
+    font-family: @content-font;
+    font-weight: 300;
+    color: #555555;
+    line-height: 1.4;
+    margin-top: 5px;
+    background: #fafafa;
+    border: 1px solid #ccc;
+
+    textarea {
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      resize: none;
+      border: 0;
+      min-height: 140px;
+      max-width: 586px; // mimics the rendered cards
+      padding: 10px;
+      margin: 0;
+
+      &:active, &:focus {
+        outline: 0;
+      }
+    }
+    & > div {
+      padding: 10px;
+      min-height: 140px;
+      font-weight: 300;
+      color: @dark-gray3;
     }
   }
   .warning {
