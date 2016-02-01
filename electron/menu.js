@@ -247,7 +247,7 @@ module.exports = function (configOracle) {
         }
       ]
     },
-    isMac ? {
+    {
       label: 'Window',
       submenu: [
         {
@@ -265,6 +265,7 @@ module.exports = function (configOracle) {
             win.close()
           }
         },
+      ].concat(isMac ? [
         {
           label: 'Minimize',
           accelerator: 'CmdOrCtrl+M',
@@ -278,8 +279,8 @@ module.exports = function (configOracle) {
           selector: 'arrangeInFront:',
           role: 'front'
         }
-      ]
-    } : {}
+      ] : [])
+    }
   ]
 
   menu = Menu.buildFromTemplate(template)
