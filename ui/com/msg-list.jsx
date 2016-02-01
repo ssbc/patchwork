@@ -184,11 +184,6 @@ export default class MsgList extends React.Component {
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
       (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
-
-        // do nothing if the thread is currently open
-        if (this.state.currentOpenMsgKey === msg.key)
-          return
-
         if (this.props.queueNewMsgs) {
           // suppress if by the local user
           const lastMsg = threadlib.getLastThreadPost(msg)
@@ -316,9 +311,12 @@ export default class MsgList extends React.Component {
     msgs.forEach(msg => {
 
       // remove any noticeable duplicates...
-      // check if the message is already in the first N and remove it if so
+      // ...or abort update if the thread is open
+      // check if the message is already in the first N
       for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
         if (this.state.msgs[i].key === msg.key) {
+          if (this.state.msgs[i].isOpened)
+            return // abort
           // hold onto the change counter
           msg.changeCounter = this.state.msgs[i].changeCounter
           // remove the old message
