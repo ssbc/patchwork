@@ -41,6 +41,7 @@ export default class Thread extends React.Component {
     super(props)
     this.state = {
       thread: null,
+      isLoading: true,
       msgs: []
     }
     this.liveStream = null
@@ -72,6 +73,7 @@ export default class Thread extends React.Component {
 
         // now set state
         this.setState({
+          isLoading: false,
           thread: thread,
           msgs: flattenedMsgs,
           isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
@@ -257,7 +259,7 @@ export default class Thread extends React.Component {
 
     return <div className="msg-thread" ref="container">
       { !thread
-        ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
+        ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>{ this.state.isLoading ? 'Loading...' : 'No thread selected.' }</div>
         : <ResponsiveElement widthStep={250}>
             <div className="flex thread-toolbar" onClick={this.onClose.bind(this)}>
               <div className="flex-fill">
