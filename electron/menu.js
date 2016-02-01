@@ -1,5 +1,6 @@
 var Menu = require('electron').Menu
 var dialog = require('electron').dialog
+var nativeImage = require('electron').nativeImage
 var pkg = require('../package')
 var windows = require('./windows')
 
@@ -10,10 +11,11 @@ function showAbout(win) {
     title: 'About Patchwork',
     buttons: ['Close', 'License'],
     type: 'info',
-    icon: 'assets/icon.png',
+    icon: nativeImage.createFromPath('ui/img/icon.png'),
     message: pkg.name + ' v' + pkg.version,
     detail: pkg.description + '\n\n' +
-      'Copyright © 2015-2016 Secure Scuttlebutt Consortium'
+      'Copyright © 2015-2016 Secure Scuttlebutt Consortium\n\n' +
+      'http://ssbc.github.io/patchwork/'
   }, function (btn) {
     if (btn == 1)
       showLicense(win)
