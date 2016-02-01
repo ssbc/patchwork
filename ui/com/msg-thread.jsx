@@ -66,6 +66,9 @@ export default class Thread extends React.Component {
         if (err)
           return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
+        // note which messages start out unread, so they stay collapsed during this render
+        flattenedMsgs.forEach(m => m.wasRead = m.isRead)
+
         // now set state
         this.setState({
           thread: thread,
@@ -283,7 +286,7 @@ export default class Thread extends React.Component {
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceExpanded={isLast}
+                  forceExpanded={isLast || !msg.wasRead}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
