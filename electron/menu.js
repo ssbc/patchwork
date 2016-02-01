@@ -1,8 +1,8 @@
 var Menu = require('electron').Menu
 var dialog = require('electron').dialog
-var nativeImage = require('electron').nativeImage
 var pkg = require('../package')
 var windows = require('./windows')
+var path = require('path')
 
 var isMac = (process.platform == 'darwin')
 
@@ -11,7 +11,7 @@ function showAbout(win) {
     title: 'About Patchwork',
     buttons: ['Close', 'License'],
     type: 'info',
-    icon: nativeImage.createFromPath('ui/img/icon.png'),
+    icon: path.join(__dirname, '../ui/img/icon.png'),
     message: pkg.name + ' v' + pkg.version,
     detail: pkg.description + '\n\n' +
       'Copyright © 2015-2016 Secure Scuttlebutt Consortium\n\n' +
