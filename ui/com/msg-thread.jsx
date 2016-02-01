@@ -62,7 +62,7 @@ export default class Thread extends React.Component {
 
       // flatten *before* fetching info on replies, to make sure that info is attached to the right msg object
       var flattenedMsgs = threadlib.flattenThread(thread)
-      thread.related = flattenedMsgs.slice(1) // skip the first, root is in there
+      thread.related = flattenedMsgs.slice(flattenedMsgs.indexOf(thread) + 1) // skip past the root
       threadlib.fetchThreadData(app.ssb, thread, { isRead: true, isBookmarked: true, mentions: true }, (err, thread) => {
         if (err)
           return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
