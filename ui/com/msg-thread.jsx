@@ -57,12 +57,13 @@ export default class Thread extends React.Component {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
-      // flatten...
+      // compile thread votes
+      threadlib.compileThreadVotes(thread)
+
+      // flatten *before* fetching info on replies, to make sure that info is attached to the right msg object
       var flattenedMsgs = threadlib.flattenThread(thread)
       thread.related = flattenedMsgs.slice(1) // skip the first, root is in there
-
-      // ...and *now* fetch thread data
-      threadlib.fetchThreadData(app.ssb, thread, null, (err, thread) => {
+      threadlib.fetchThreadData(app.ssb, thread, { isRead: true, isBookmarked: true, mentions: true }, (err, thread) => {
         if (err)
           return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
