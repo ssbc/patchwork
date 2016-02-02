@@ -9,11 +9,15 @@
   },
   "scripts": {
     "build-release": "npm run build-release:js && npm run build-release:css",
-    "build-release:js": "NODE_ENV=production node ./scripts/build.js ./ui/main.js ./ui/main.build.js && ./node_modules/uglify-js/bin/uglifyjs ui/main.build.js > ui/main.build.min.js; mv ui/main.build.min.js ui/main.build.js",
+    "build-release:js": "NODE_ENV=production browserifyinc ./ui/main.js --extension=.jsx | uglifyjs > ./ui/main.build.js",
     "build-release:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less --autoprefix ./ui/css/main.css",
     "build": "npm run build:js && npm run build:css",
-    "build:js": "NODE_ENV=development node ./scripts/build.js ./ui/main.js ./ui/main.build.js",
+    "build:js": "NODE_ENV=development browserifyinc ./ui/main.js --extension=.jsx -o ./ui/main.build.js",
     "build:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less ./ui/css/main.css",
+    "watch": "npm run watch:server & npm run watch:js & npm run watch:css",
+    "watch:server": "nodemon -q -w api -w './*.js'",
+    "watch:js": "NODE_ENV=development watchify ./ui/main.js --extension=.jsx -o ./ui/main.build.js -v",
+    "watch:css": "mkdir -p ./ui/css && nodemon -q -e less -w ./ui/less -x 'lessc --verbose ./ui/less/main.less ./ui/css/main.css'",
     "start": "node ./index.js",
     "test": "set -e; for t in api/test/*.js; do node $t; done",
     "prepublish": "npm run build-release"
@@ -29,10 +33,12 @@
     "browserify-incremental": "^3.0.1",
     "envify": "^3.4.0",
     "less": "^2.5.3",
+    "nodemon": "^1.8.1",
     "osenv": "~0.1.0",
     "rimraf": "~2.2.8",
     "tape": "~3.0.0",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "watchify": "^3.7.0"
   },
   "dependencies": {
     "babel": "^5.8.23",
@@ -90,5 +96,21 @@
   },
   "bin": {
     "patchwork": "./index.js"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "envify",
+        {
+          "global": true
+        }
+      ],
+      [
+        "babelify",
+        {
+          "presets": ["es2015", "stage-0", "react"]
+        }
+      ]
+    ]
   }
 }
