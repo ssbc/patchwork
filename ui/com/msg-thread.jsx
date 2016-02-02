@@ -42,6 +42,7 @@ export default class Thread extends React.Component {
     this.state = {
       thread: null,
       isLoading: true,
+      isHidingHistory: true,
       msgs: []
     }
     this.liveStream = null
@@ -69,7 +70,7 @@ export default class Thread extends React.Component {
           return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
         // note which messages start out unread, so they stay collapsed during this render
-        flattenedMsgs.forEach(m => m.wasRead = m.isRead)
+        flattenedMsgs.forEach(m => m._isRead = m.isRead)
 
         // now set state
         this.setState({
@@ -150,6 +151,10 @@ export default class Thread extends React.Component {
 
   onClose() {
     this.props.onClose && this.props.onClose()
+  }
+
+  onShowHistory() {
+    this.setState({ isHidingHistory: false })
   }
 
   onToggleUnread() {
@@ -257,6 +262,25 @@ export default class Thread extends React.Component {
     const channel = thread && thread.value.content.channel
     const recps = thread && mlib.links(thread.value.content.recps, 'feed')
 
+    // hide old unread messages
+    // (only do it for the first unbroken chain of unreads)
+    var msgs = [].concat(this.state.msgs)
+    var numOldHidden = 0
+    if (this.state.isHidingHistory) {
+      let startOld = msgs.indexOf(thread) // start at the root (which isnt always first)
+      if (startOld !== -1) {
+        startOld += 1 // always include the root
+        for (let i=startOld; i < msgs.length - 1; i++) {
+          if (!msgs[i]._isRead)
+            break // found an unread, break here
+          numOldHidden++
+        }
+        numOldHidden-- // always include the last old msg
+        if (numOldHidden > 0)
+          msgs.splice(startOld, numOldHidden, { isOldMsgsPlaceholder: true })
+      }
+    }
+
     return <div className="msg-thread" ref="container">
       { !thread
         ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>{ this.state.isLoading ? 'Loading...' : 'No thread selected.' }</div>
@@ -281,15 +305,18 @@ export default class Thread extends React.Component {
                 : '' }
             </div>
             <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-              { this.state.msgs.map((msg, i) => {
-                const isLast = (i === this.state.msgs.length - 1)
+              { msgs.map((msg, i) => {
+                if (msg.isOldMsgsPlaceholder)
+                  return <div className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{numOldHidden} older messages</div>
+
+                const isLast = (i === msgs.length - 1)
                 return <Card
                   key={msg.key}
                   msg={msg}
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceExpanded={isLast || !msg.wasRead}
+                  forceExpanded={isLast || !msg._isRead}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
