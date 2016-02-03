@@ -73,6 +73,7 @@ class Attachment extends React.Component {
   render() {
     if (u.isImageContentType(this.props.blob.type) || u.isImageFilename(this.props.blob.name))
       return <img src={'/'+encodeURIComponent(this.props.blob.link)} />
-    return <div><span>{this.props.blob.name || this.props.blob.type || this.props.blob.link}</span></div>
+    return <span/>
+    //return <div><span>{this.props.blob.name || this.props.blob.type || this.props.blob.link}</span></div>
   }
 }
