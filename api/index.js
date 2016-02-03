@@ -232,6 +232,17 @@ exports.init = function (sbot, opts) {
       }
     })
   }
+  api.markAllRead = function (indexName, cb) {
+    awaitSync(function () {
+      var index = state[indexName]
+      if (!index || index.name !== indexName)
+        return cb(new Error('Invalid index'))
+      var keys = index
+        .filter(function (row) { return !row.isread })
+        .map(function (row) { return row.key })
+      api.markRead(keys, cb)
+    })
+  }
   api.toggleRead = function (key, cb) {
     api.isRead(key, function (err, v) {
       if (!v) {

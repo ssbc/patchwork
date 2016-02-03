@@ -10,6 +10,7 @@ module.exports = {
 
   markRead: 'async',
   markUnread: 'async',
+  markAllRead: 'async',
   toggleRead: 'async',
   isRead: 'async',
 

@@ -87,6 +87,7 @@ var manifest = {
     "createChannelStream": "source",
     "markRead": "async",
     "markUnread": "async",
+    "markAllRead": "async",
     "toggleRead": "async",
     "isRead": "async",
     "bookmark": "async",
