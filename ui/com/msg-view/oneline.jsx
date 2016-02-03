@@ -60,7 +60,15 @@ export default class Oneline extends React.Component {
 class Attachments extends React.Component {
   render() {
     var blobs = []
-    mlib.indexLinks(this.props.msg.value.content, { blob: true }, blob => blobs.push(blob))
+    mlib.indexLinks(
+      this.props.msg.value.content, 
+      { blob: true },
+      blob => {
+        // images only
+        if (u.isImageContentType(blob.type) || u.isImageFilename(blob.name))
+          blobs.push(blob)
+      }
+    )
     if (!blobs.length)
       return <span/>
     return <div className="attachments">
@@ -71,9 +79,7 @@ class Attachments extends React.Component {
 
 class Attachment extends React.Component {
   render() {
-    if (u.isImageContentType(this.props.blob.type) || u.isImageFilename(this.props.blob.name))
-      return <img src={'/'+encodeURIComponent(this.props.blob.link)} />
-    return <span/>
+    return <img src={'/'+encodeURIComponent(this.props.blob.link)} />
     //return <div><span>{this.props.blob.name || this.props.blob.type || this.props.blob.link}</span></div>
   }
 }
