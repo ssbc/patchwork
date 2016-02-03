@@ -73,6 +73,8 @@ export default class Card extends React.Component {
       subject: null,
       isFlagModalOpen: false
     }
+
+    this.thingsThatArePosts = ['post', 'post-edit']
   }
 
   onSelect() {
@@ -165,8 +167,7 @@ export default class Card extends React.Component {
     if (this.state.isEditing)
       return this.renderEditor(msg, upvoters, downvoters, isUpvoted, isDownvoted);
 
-    if ((msg.value.content.type == 'post' ||
-         msg.value.content.type == 'post-edit') &&
+    if (this.thingsThatArePosts.includes(msg.value.content.type) &&
         downvoters.length > upvoters.length &&
         !this.state.isExpanded)
       return this.renderMuted(msg)

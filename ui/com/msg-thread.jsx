@@ -44,6 +44,8 @@ export default class Thread extends React.Component {
       msgs: []
     }
     this.liveStream = null
+
+    this.thingsThatArePosts = ['post', 'post-edit']
   }
 
   // helper to do setup on thread-change
@@ -91,7 +93,8 @@ export default class Thread extends React.Component {
               var c = msg.value.content
               var rels = mlib.relationsTo(msg, this.state.thread)
               // reply post to this thread?
-              if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
+              if (this.thingsThatArePosts.includes(c.type) && 
+                  (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
                 // add to thread and flatlist
                 this.state.msgs.push(msg)
                 this.state.thread.related = (this.state.thread.related||[]).concat(msg)
