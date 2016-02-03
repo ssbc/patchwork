@@ -237,10 +237,19 @@ exports.init = function (sbot, opts) {
       var index = state[indexName]
       if (!index || index.name !== indexName)
         return cb(new Error('Invalid index'))
-      var keys = index
+
+      var done = multicb()
+      index
         .filter(function (row) { return !row.isread })
-        .map(function (row) { return row.key })
-      api.markRead(keys, cb)
+        .forEach(function (row) { 
+          var cb = done()
+          threadlib.getPostThread(sbot, row.key, { isRead: true }, function (err, thread) {
+            if (err)
+              return cb()
+            threadlib.markThreadRead(sbot, thread, cb)
+          })
+        })
+      done(cb)
     })
   }
   api.toggleRead = function (key, cb) {

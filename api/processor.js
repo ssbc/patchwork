@@ -102,8 +102,9 @@ module.exports = function (sbot, db, state, emit) {
 
         // inbox index: add follows or blocks
         if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          state.inbox.sortedUpsert(ts(msg), msg.key)
+          var inboxRow = state.inbox.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'inbox' })
+          attachIsRead(inboxRow)
         }
       })
     },
