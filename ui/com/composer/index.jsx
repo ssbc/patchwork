@@ -430,6 +430,8 @@ export default class Composer extends CompositionUnit {
           app.ssb.patchwork.markRead((this.threadRoot) ? 
                                      [this.threadRoot, msg.key] : 
                                      msg.key)
+          // auto-bookmark the thread
+          app.ssb.patchwork.bookmark(this.threadRoot || msg.key)
 
           // call handler
           if (this.props.onSend instanceof Function) { this.props.onSend(msg) }
