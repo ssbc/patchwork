@@ -25,12 +25,20 @@ class BookmarkBtn extends React.Component {
 }
 
 class UnreadBtn extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state={marked: false}
+  }
+  onClick() {
+    if (this.state.marked)
+      return
+    this.setState({marked: true})
+    this.props.onClick()
+  }
   render() {
-    const b = this.props.isUnread
-    const title = (b?'Mark Read':'Mark Unread')
-    const icon = 'fa fa-'+(b?'square-o':'check-square-o')
-    return <a onClick={this.props.onClick} title={title}>
-      <i className={icon} /> {title}
+    const m = this.state.marked
+    return <a onClick={this.onClick.bind(this)}>
+      <i className={"fa fa-envelope"+(m?'':'-o')} /> Mark{m?'ed':''} Unread
     </a>
   }
 }
@@ -157,16 +165,16 @@ export default class Thread extends React.Component {
     this.setState({ isHidingHistory: false })
   }
 
-  onToggleUnread() {
+  onMarkUnread() {
     // mark unread in db
     let thread = this.state.thread
-    app.ssb.patchwork.toggleRead(thread.key, (err, isRead) => {
+    app.ssb.patchwork.markUnread(thread.key, err => {
       if (err)
         return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkUnread of MsgThread')
 
       // re-render
-      thread.isRead = isRead
-      thread.hasUnread = !isRead
+      thread.isRead = false
+      thread.hasUnread = true
       this.setState(this.state)
     })
   }
@@ -301,7 +309,7 @@ export default class Thread extends React.Component {
                 ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }
               { thread
-                ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
+                ? <UnreadBtn onClick={this.onMarkUnread.bind(this)} isUnread={thread.hasUnread} />
                 : '' }
             </div>
             <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
