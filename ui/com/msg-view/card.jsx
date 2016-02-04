@@ -143,8 +143,8 @@ export default class Card extends React.Component {
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
     const isDownvoted = downvoters.indexOf(app.user.id) !== -1
-    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
-      return this.renderMuted(msg)
+    // if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
+      // return this.renderMuted(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
 
