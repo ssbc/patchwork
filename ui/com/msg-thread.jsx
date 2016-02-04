@@ -279,7 +279,7 @@ export default class Thread extends React.Component {
       if (startOld !== -1) {
         startOld += 1 // always include the root
         for (let i=startOld; i < msgs.length - 1; i++) {
-          if (!msgs[i]._isRead)
+          if (msgs[i]._isRead === false)
             break // found an unread, break here
           numOldHidden++
         }
