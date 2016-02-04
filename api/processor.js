@@ -31,6 +31,24 @@ module.exports = function (sbot, db, state, emit) {
         }
       }
 
+      // mentions index:
+      // add msgs that mention the user
+      var mentionRow
+      if (findLink(mentions, sbot.id)) {
+        mentionRow = state.mentions.sortedUpsert(ts(msg), root ? root.link : msg.key)
+        emit('index-change', { index: 'mentions' })
+        attachChildIsRead(mentionRow, msg.key)
+      }
+      // update for replies
+      else if (root) {
+        mentionRow = state.mentions.find(root.link)
+        if (mentionRow) {
+          state.mentions.sortedUpsert(ts(msg), root.link)
+          emit('index-change', { index: 'mentions' })
+          attachChildIsRead(mentionRow, msg.key)
+        }
+      }
+
       // public posts index: add public posts / update for replies
       if (!root && recps.length === 0) {
         state.publicPosts.sortedUpsert(ts(msg), msg.key)

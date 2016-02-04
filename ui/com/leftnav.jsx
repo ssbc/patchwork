@@ -77,7 +77,8 @@ export default class LeftNav extends React.Component {
       <LeftNav.Heading>Messages</LeftNav.Heading>
       <LeftNav.Link pathname={pathname} to="/public"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentions</LeftNav.Link>
       <LeftNav.Heading>Channels</LeftNav.Heading>
       { pinnedChannels.map(renderChannel) }
       <div className="leftnav-link">

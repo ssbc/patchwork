@@ -82,6 +82,7 @@ var manifest = {
     "getIndexCounts": "async",
     "createInboxStream": "source",
     "createBookmarkStream": "source",
+    "createMentionStream": "source",
     "createPrivatePostStream": "source",
     "createPublicPostStream": "source",
     "createChannelStream": "source",

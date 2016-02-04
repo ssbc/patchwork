@@ -7,6 +7,7 @@ import Inbox from './views/inbox'
 import PublicPosts from './views/public'
 import PrivatePosts from './views/private'
 import Bookmarks from './views/bookmarks'
+import Mentions from './views/mentions'
 import Data from './views/data'
 import Msg from './views/msg'
 import Composer from './views/composer'
@@ -40,6 +41,7 @@ export var routes = (
       <Route path="public/channel/:channel" component={PublicPosts} />
       <Route path="private" component={PrivatePosts} />
       <Route path="bookmarks" component={Bookmarks} />
+      <Route path="mentions" component={Mentions} />
       <Route path="data" component={Data} />
       <Route path="add-contact" component={AddContact} />
       <Route path="contacts" component={Contacts} />
