@@ -9,7 +9,7 @@ export function countReplies (thread, filter) {
   let n = 0
   let counted = {}
   thread.related.forEach(function (r) {
-    if (!isaReplyTo(r, thread)) // only replies
+    if (!r.value || !r.value.content || !isaReplyTo(r, thread)) // only replies
       return
     if (counted[r.key]) // only count each message once
       return
