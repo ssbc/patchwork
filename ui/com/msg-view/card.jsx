@@ -69,12 +69,16 @@ export default class Card extends React.Component {
     this.changeCounter = props.msg.changeCounter || 0
   }
 
+  isExpanded() {
+    return this.props.forceExpanded || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
+  }
+
   onSelect() {
     this.props.onSelect(this.props.msg)
   }
 
   onClickExpand(e) {
-    if (!this.state.isExpanded) {
+    if (!this.isExpanded()) {
       e.preventDefault()
       this.setState({ isExpanded: true })
     }
@@ -209,7 +213,7 @@ export default class Card extends React.Component {
         { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
     ]
 
-    const isExpanded   = this.props.forceExpanded || this.state.isExpanded || (msg && !msg.isRead)
+    const isExpanded   = this.isExpanded()
     const collapsedCls = (isExpanded?'':'collapsed')
     const newCls       = (msg.isNew?'new':'')
     return <div className={`msg-view card-post ${collapsedCls} ${newCls}`} onClick={this.onClickExpand.bind(this)}>
