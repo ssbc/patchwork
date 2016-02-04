@@ -13,6 +13,7 @@ export default class Data extends React.Component {
     return <div id="data">
       <MsgList
         forceRaw
+        composer composerProps={{ isPublic: true }}
         ListItem={Oneline} listItemProps={{noReplies: true}}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         source={source}
