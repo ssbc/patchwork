@@ -137,12 +137,12 @@ module.exports = function (sbot, db, state, emit) {
     },
 
     vote: function (msg) {
-      // notifications index: add votes on your messages
-      // var msgLink = mlib.link(msg.value.content.vote, 'msg')
-      // if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0) {
-      //   state.notifications.sortedUpsert(ts(msg), msg.key)
-      //   emit('index-change', { index: 'notifications' })
-      // }
+      // digs index: add upvotes on your messages
+      var msgLink = mlib.link(msg.value.content.vote, 'msg')
+      if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0 && msgLink.value > 0) {
+        state.digs.sortedUpsert(ts(msg), msg.key)
+        emit('index-change', { index: 'digs' })
+      }
 
       // user flags
       var userLink = mlib.link(msg.value.content.vote, 'feed')

@@ -41,11 +41,7 @@ export default class Notification extends React.Component {
   onSelect() {
     // get root msg
     var subject = this.state.subjectMsg || this.props.msg
-    threadlib.getParentPostThread(app.ssb, subject.key, (err, thread) => {
-      if (err)
-        return app.issue('Failed to load thread', err, 'This occurred when a notification link was clicked')
-      this.props.onSelect(thread, true)
-    })
+    app.history.pushState(null, '/msg/'+encodeURIComponent(subject.key))
   }
 
   render() {

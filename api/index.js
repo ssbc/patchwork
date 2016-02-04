@@ -32,6 +32,7 @@ exports.init = function (sbot, opts) {
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
     mentions: u.index('mentions'),
+    digs: u.index('digs'),
     privatePosts: u.index('privatePosts'),
     publicPosts: u.index('publicPosts'),
     // other indexes: channel-* are created as needed
@@ -163,6 +164,7 @@ exports.init = function (sbot, opts) {
   api.createInboxStream = indexStreamFn(state.inbox)
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
   api.createMentionStream = indexStreamFn(state.mentions)
+  api.createDigStream = indexStreamFn(state.digs)
   api.createPrivatePostStream = indexStreamFn(state.privatePosts)
   api.createPublicPostStream = indexStreamFn(state.publicPosts)
   api.createChannelStream = function (channel, opts) {
