@@ -309,24 +309,32 @@ export default class MsgList extends React.Component {
   prependNewMsg(msgs) {
     msgs = Array.isArray(msgs) ? msgs : [msgs]
     msgs.forEach(msg => {
+      var doPrepend = true
 
       // remove any noticeable duplicates...
       // ...or abort update if the thread is open
       // check if the message is already in the first N
       for (var i=0; i < this.state.msgs.length && i < DEDUPLICATE_LIMIT; i++) {
         if (this.state.msgs[i].key === msg.key) {
-          if (this.state.msgs[i].isOpened)
-            return // abort
           // hold onto the change counter
           msg.changeCounter = this.state.msgs[i].changeCounter
-          // remove the old message
-          this.state.msgs.splice(i, 1)
+          // is the thread open in the view?
+          if (this.state.msgs[i].isOpened) {
+            // update in-place
+            doPrepend = false
+            msg.isOpened = true
+            this.state.msgs.splice(i, 1, msg)
+          } else {
+            // remove the old message
+            this.state.msgs.splice(i, 1)
+          }
           break
         }
       }
       // add to start of msgs
       incMsgChangeCounter(msg)
-      this.state.msgs.unshift(msg)
+      if (doPrepend)
+        this.state.msgs.unshift(msg)
     })
     this.setState({ msgs: this.state.msgs })
   }
@@ -347,8 +355,47 @@ export default class MsgList extends React.Component {
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
+
+    // render messages here, into an array, so we can insert date dividers
     const endOfToday = moment().endOf('day')
     var lastDate = moment().startOf('day').add(1, 'day')
+    var listEls = []
+    this.state.msgs.forEach((m, i) => {
+      // missing value?
+      if (!m.value)
+        return // dont render
+
+      // render a date divider if this post is from a different day than the last
+      const oldLastDate = lastDate
+      const lastPost = threadlib.getLastThreadPost(m)
+      lastDate = moment(lastPost.value.timestamp)
+      if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
+        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+        listEls.push(<hr className="labeled" data-label={label} />)
+      }
+
+      // render item
+      if (m.isOpened) {
+        listEls.push(
+          <Thread
+            key={m.key}
+            id={m.key}
+            onClose={() => this.handlers.onCloseThread(m)}
+            live />
+        )
+      } else {
+        listEls.push(
+          <ListItem
+            key={m.key}
+            msg={m}
+            selectiveUpdate
+            {...this.handlers}
+            {...this.props.listItemProps}
+            forceRaw={this.props.forceRaw} />
+        )
+      }
+    })
+
     return <div className="msg-list">
       <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
@@ -377,36 +424,7 @@ export default class MsgList extends React.Component {
                 :
                 <ResponsiveElement widthStep={250}>
                   <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-                    { this.state.msgs.map((m, i) => {
-                      // missing value?
-                      if (!m.value)
-                        return <span key={m.key} /> // dont render
-
-                      // render item
-                      const item = (m.isOpened)
-                        ? <Thread
-                            key={m.key}
-                            id={m.key}
-                            onClose={() => this.handlers.onCloseThread(m)}
-                            live />
-                        : <ListItem
-                            key={m.key}
-                            msg={m}
-                            selectiveUpdate
-                            {...this.handlers}
-                            {...this.props.listItemProps}
-                            forceRaw={this.props.forceRaw} />
-
-                      // render a date divider if this post is from a different day than the last
-                      const oldLastDate = lastDate
-                      const lastPost = threadlib.getLastThreadPost(m)
-                      lastDate = moment(lastPost.value.timestamp)
-                      if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-                        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                        return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
-                      }
-                      return item
-                    }) }
+                    { listEls }
                   </ReactCSSTransitionGroup>
                 </ResponsiveElement>
               }
