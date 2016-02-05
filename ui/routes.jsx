@@ -37,7 +37,7 @@ app.history.listenBefore(beforeNavigation)
 export var routes = (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={Inbox} />
+      <IndexRoute component={PublicPosts} />
       <Route path="inbox" component={Inbox} />
       <Route path="public" component={PublicPosts} />
       <Route path="public/channel/:channel" component={PublicPosts} />
