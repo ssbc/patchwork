@@ -154,8 +154,11 @@ exports.init = function (sbot, opts) {
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       var counts = {
-        inbox: state.inbox.rows.length,
-        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
+        // inbox: state.inbox.rows.length, DISABLED
+        // inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
+        bookmarkUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
+        mentionUnread: state.mentions.filter(function (row) { return !row.isread }).length,
+        privateUnread: state.privatePosts.filter(function (row) { return !row.isread }).length,
       }
       cb(null, counts)
     })
@@ -212,8 +215,10 @@ exports.init = function (sbot, opts) {
 
   api.markRead = function (key, cb) {
     awaitSync(function () {
-      indexMarkRead('inbox', key)
+      // indexMarkRead('inbox', key) DISABLED
       indexMarkRead('bookmarks', key)
+      indexMarkRead('mentions', key)
+      indexMarkRead('privatePosts', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: true }) })
@@ -225,8 +230,10 @@ exports.init = function (sbot, opts) {
   }
   api.markUnread = function (key, cb) {
     awaitSync(function () {
-      indexMarkUnread('inbox', key)
+      // indexMarkUnread('inbox', key) DISABLED
       indexMarkUnread('bookmarks', key)
+      indexMarkUnread('mentions', key)
+      indexMarkUnread('privatePosts', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: false }) })
