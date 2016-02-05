@@ -11,7 +11,8 @@ import u from '../lib/util'
 
 export class Block extends React.Component {
   render() {
-    let c = this.props.msg.value.content
+    const author = this.props.msg.value.author
+    const c = this.props.msg.value.content
 
     if (this.props.forceRaw)
       return <TableRaw key={this.props.msg.key} obj={c} />
@@ -20,6 +21,26 @@ export class Block extends React.Component {
       switch (c.type) {
         case 'post':
           if (c.text) return <MdBlock md={c.text} msg={this.props.msg} />
+          break
+
+        case 'contact':
+          var contact = mlib.link(c.contact).link
+          if (contact === app.user.id) {
+            if (c.following) {
+              if (!social.follows(app.user.id, author))
+                return <div><i className="fa fa-user-plus" /> <UserLink id={author} /> has followed you. Follow back?</div>
+              else
+                return <div><i className="fa fa-user-plus" /> <UserLink id={author} /> has joined your contacts.</div>
+            } else {
+              return <div><i className="fa fa-user-times" /> <UserLink id={author} /> has stopped following you.</div>
+            }
+          } else {
+            if (c.following)
+              return <div><i className="fa fa-user-plus" /> <UserLink id={author} /> has followed {u.getName(contact)}.</div>
+            else
+              return <div><i className="fa fa-user-times" /> <UserLink id={author} /> has stopped following {u.getName(contact)}.</div>
+          }
+          break
       }
     } catch (e) { console.warn(e) }
 
