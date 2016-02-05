@@ -6,12 +6,11 @@ import ModalFlow from './com/modals/flow'
 import Welcome from './com/forms/welcome'
 import ProfileName from './com/forms/profile-name'
 import ProfileImage from './com/forms/profile-image'
-import ViewMode from './com/forms/view-mode'
 import Issues from './com/issues'
 import SearchPalette from './com/search-palette'
 import FindBar from './com/findbar'
 
-const SETUP_FORMS = [Welcome, ProfileName, ProfileImage, ViewMode]
+const SETUP_FORMS = [Welcome, ProfileName, ProfileImage]
 
 export default class Layout extends React.Component {
   constructor(props) {
