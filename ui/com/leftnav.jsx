@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { ChannelList } from './channel-list'
 import Issues from './issues'
 import app from '../lib/app'
+import u from '../lib/util'
 
 export default class LeftNav extends React.Component {
   constructor(props) {
@@ -67,18 +68,19 @@ export default class LeftNav extends React.Component {
     
     // lists
     const pinnedChannels = this.state.channels.filter(isPinned(true))
+    const contacts = app.user.friends.map(id => ({ id: id, name: u.getName(id) })).sort((a, b) => a.name.localeCompare(b.name))
 
     // render
     const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/public/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
+    const renderContact = c => <LeftNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}><i className="fa fa-user" /> {c.name}</LeftNav.Link>
     return <div className="leftnav">
-      <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-inbox" /> Inbox {app.indexCounts.inboxUnread}</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/public"><i className="fa fa-comment-o" /> All talk</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Contacts</LeftNav.Link>
       <Issues/>
-      <LeftNav.Heading>Messages</LeftNav.Heading>
-      <LeftNav.Link pathname={pathname} to="/public"><i className="fa fa-bullhorn" /> Public</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarks</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentions</LeftNav.Link>
+      <LeftNav.Heading>Inbox</LeftNav.Heading>
+      <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private (0)</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked (0)</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentions (0)</LeftNav.Link>
       <LeftNav.Heading>Channels</LeftNav.Heading>
       { pinnedChannels.map(renderChannel) }
       <div className="leftnav-link">
@@ -86,6 +88,9 @@ export default class LeftNav extends React.Component {
         { this.state.isChannelListOpen ? <i className="fa fa-caret-left" style={{ color: 'gray' }} /> : '' }
       </div>
       { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
+      <LeftNav.Heading>Contacts</LeftNav.Heading>
+      { contacts.map(renderContact) }
+      <div className="leftnav-link"><Link to="/add-contact">Find more...</Link></div>
     </div>
   }
 }

@@ -164,10 +164,8 @@ export function verticalFilled (Component) {
     getScrollTop() {
       const el = this.refs && this.refs.el
       if (!el) return 0
-      console.log('b')
       if (el.getScrollTop)
         return el.getScrollTop() // use the child's impl
-      console.log('c')
       return el.scrollTop
     },
     // check if a location is in scroll-view
@@ -218,7 +216,7 @@ export function verticalFilled (Component) {
 }
 class _VerticalFilledContainer extends React.Component {
   render() {
-    return <div className="vertical-filled" {...this.props} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
+    return <div className="vertical-filled" {...this.props} style={{position: 'relative', height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
   }
 }
 export var VerticalFilledContainer = verticalFilled(_VerticalFilledContainer)

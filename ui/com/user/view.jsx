@@ -6,6 +6,7 @@ import MsgList from '../msg-list'
 import Oneline from '../msg-view/oneline'
 import { VerticalFilledContainer } from '../index'
 import { UserInfoHeader, UserInfoContacts, UserInfoFlags } from './info'
+import LeftNav from '../leftnav'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
@@ -53,10 +54,13 @@ export default class UserView extends React.Component {
 
     if (currentTab === VIEW_CONTACTS) {
       // TODO <UserInfoFlags pid={this.props.pid} />
-      return <VerticalFilledContainer className="user-profile" key={this.props.pid}>
-        <Hero />
-        <div className="user-profile-about">
-          <UserInfoContacts pid={this.props.pid} />
+      return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
+        <LeftNav location={this.props.location} />
+        <div className="flex-fill">
+          <Hero />
+          <div className="user-profile-about">
+            <UserInfoContacts pid={this.props.pid} />
+          </div>
         </div>
       </VerticalFilledContainer>
     }
@@ -95,6 +99,7 @@ export default class UserView extends React.Component {
         key={currentTab.label}
         threads
         dateDividers
+        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         composer composerProps={composerProps}
         forceRaw={forceRaw}
         ListItem={Oneline}
