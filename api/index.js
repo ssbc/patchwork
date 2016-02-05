@@ -159,6 +159,7 @@ exports.init = function (sbot, opts) {
         bookmarkUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
         mentionUnread: state.mentions.filter(function (row) { return !row.isread }).length,
         privateUnread: state.privatePosts.filter(function (row) { return !row.isread }).length,
+        digsUnread: state.digs.countUntouched()
       }
       cb(null, counts)
     })

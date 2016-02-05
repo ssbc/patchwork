@@ -13,9 +13,8 @@ export default class Notification extends React.Component {
   constructor(props) {
     super(props)
     this.state = { 
-      subjectMsg: null, // the message that `props.msg` is about (used by votes)
-      wasSeen: false // did the user click on the note, and so we can stop showing as 'new' ?
-     } 
+      subjectMsg: null // the message that `props.msg` is about (used by votes)
+    } 
   }
 
   componentDidMount() {
@@ -49,8 +48,7 @@ export default class Notification extends React.Component {
     const content = this.renderContent()
     if (!content)
       return <span/>
-    const setWasSeen = () => { this.setState({ wasSeen: true }) }
-    return <div className={'msg-view notification'+((msg.isLiveUpdate&&!this.state.wasSeen)?' new':'')} onClick={setWasSeen}>
+    return <div className={'msg-view notification'+((msg.isNew)?' new':'')}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
         <div>{content}</div>

@@ -87,7 +87,7 @@ export default class Layout extends React.Component {
           <NavLink className="home" to="/" icon="home" />
         </div>
         <div className="flex-fill"><SearchPalette ref="search"/></div>
-        <NavLink to="/digs" icon="hand-peace-o" />
+        <NavLink to="/digs" icon="hand-peace-o" count={app.indexCounts.digsUnread} />
         <NavLink to="/sync" icon="cloud-download" />
         <NavLink to="/data" icon="database" />
       </div>
