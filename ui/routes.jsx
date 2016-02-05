@@ -8,6 +8,7 @@ import PublicPosts from './views/public'
 import PrivatePosts from './views/private'
 import Bookmarks from './views/bookmarks'
 import Mentions from './views/mentions'
+import Follows from './views/follows'
 import Digs from './views/digs'
 import Data from './views/data'
 import Msg from './views/msg'
@@ -43,6 +44,7 @@ export var routes = (
       <Route path="private" component={PrivatePosts} />
       <Route path="bookmarks" component={Bookmarks} />
       <Route path="mentions" component={Mentions} />
+      <Route path="follows" component={Follows} />
       <Route path="digs" component={Digs} />
       <Route path="data" component={Data} />
       <Route path="add-contact" component={AddContact} />

@@ -5,6 +5,7 @@ module.exports = {
   createInboxStream: 'source',
   createBookmarkStream: 'source',
   createMentionStream: 'source',
+  createFollowStream: 'source',
   createDigStream: 'source',
   createPrivatePostStream: 'source',
   createPublicPostStream: 'source',

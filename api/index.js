@@ -32,6 +32,7 @@ exports.init = function (sbot, opts) {
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
     mentions: u.index('mentions'),
+    follows: u.index('follows'),
     digs: u.index('digs'),
     privatePosts: u.index('privatePosts'),
     publicPosts: u.index('publicPosts'),
@@ -159,6 +160,7 @@ exports.init = function (sbot, opts) {
         bookmarkUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
         mentionUnread: state.mentions.filter(function (row) { return !row.isread }).length,
         privateUnread: state.privatePosts.filter(function (row) { return !row.isread }).length,
+        followUnread: state.follows.filter(function (row) { return !row.isread }).length,
         digsUnread: state.digs.countUntouched()
       }
       cb(null, counts)
@@ -168,6 +170,7 @@ exports.init = function (sbot, opts) {
   api.createInboxStream = indexStreamFn(state.inbox)
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
   api.createMentionStream = indexStreamFn(state.mentions)
+  api.createFollowStream = indexStreamFn(state.follows)
   api.createDigStream = indexStreamFn(state.digs)
   api.createPrivatePostStream = indexStreamFn(state.privatePosts)
   api.createPublicPostStream = indexStreamFn(state.publicPosts)
@@ -220,6 +223,7 @@ exports.init = function (sbot, opts) {
       indexMarkRead('bookmarks', key)
       indexMarkRead('mentions', key)
       indexMarkRead('privatePosts', key)
+      indexMarkRead('follows', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: true }) })
@@ -235,6 +239,7 @@ exports.init = function (sbot, opts) {
       indexMarkUnread('bookmarks', key)
       indexMarkUnread('mentions', key)
       indexMarkUnread('privatePosts', key)
+      indexMarkUnread('follows', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: false }) })

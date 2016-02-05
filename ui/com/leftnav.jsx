@@ -80,7 +80,8 @@ export default class LeftNav extends React.Component {
       <LeftNav.Heading>Inbox</LeftNav.Heading>
       <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private ({app.indexCounts.privateUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentions ({app.indexCounts.mentionUnread})</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/follows"><i className="fa fa-user-plus" /> Follows ({app.indexCounts.followUnread})</LeftNav.Link>
       <LeftNav.Heading>Channels</LeftNav.Heading>
       { pinnedChannels.map(renderChannel) }
       <div className="leftnav-link">

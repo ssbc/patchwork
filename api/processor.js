@@ -124,6 +124,12 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'inbox' })
           attachIsRead(inboxRow)
         }
+        // follow index: add follows or blocks
+        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
+          var inboxRow = state.follows.sortedUpsert(ts(msg), msg.key)
+          emit('index-change', { index: 'follows' })
+          attachIsRead(inboxRow)
+        }
       })
     },
 

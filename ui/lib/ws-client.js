@@ -83,6 +83,7 @@ var manifest = {
     "createInboxStream": "source",
     "createBookmarkStream": "source",
     "createMentionStream": "source",
+    "createFollowStream": "source",
     "createDigStream": "source",
     "createPrivatePostStream": "source",
     "createPublicPostStream": "source",
