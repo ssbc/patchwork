@@ -1,19 +1,20 @@
 .msg-view.card-post {
+  .elevation-1;
   display: flex;
-  max-width: 660px;
-  margin: 10px auto;
+  background: #fff;
 
   .left-meta {
-    flex: 0 0 74px;
-    padding: 2px 0 0;
+    padding: 10px;
+    padding-right: 0;
     img {
-      width: 60px;
+      display: block;
+      width: 50px;
       margin: 2px;
       border-radius: 3px;
     }
     div {
       text-align: right;
-      padding-right: 12px;
+      padding-right: 2px;
       font-weight: 300;
       font-size: 14px;
       a {
@@ -22,9 +23,7 @@
     }
   }
   .content {
-    border: 1px solid #ccc;
     flex: 1;
-    background-color: #fff;
   }
 
   .header {
@@ -34,8 +33,9 @@
     color: @gray1;
     .header-left {
       flex: 1;
-      font-size: 21px;
-      font-weight: 300;
+      .date {
+        font-weight: 200;
+      }
     }
     .header-right {
       white-space: pre;
@@ -63,8 +63,6 @@
     font-weight: 300;
     font-family: @content-font;
     line-height: 1.4;
-    min-height: 30px;
-    max-height: 500px;
     word-break: break-word;
   }
   .ctrls {
@@ -114,80 +112,51 @@
     }
   }
 
-  .read-more {
-    display: none;
-  }
-  &.oversized {
-    .body {
-      position: relative;
-      height: 400px;
-      overflow: hidden;
-    }
-    .read-more {
-      display: block;
-      background: #fff;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      padding-top: 5px;
-      color: blue;
-      cursor: pointer;
-      border-top: 1px solid #ccc;
-      &:before {
-        // put some white space above the border
-        content: '';
-        width: 100%;
-        display: block;
-        background: #fff;
-        left: 0;
-        position: absolute;
-        top: -11px;
-        height: 10px;
-      }
-    }
-  }
+  &.collapsed {
+    background: #fdfdfd;
+    cursor: pointer;
 
-  &.expanded {
     .body {
-      height: auto;
-      max-height: none;
+      height: 24px;
+      width: 570px;
+      color: gray;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      white-space: nowrap;
     }
-    .read-more {
+    .ctrls {
       display: none;
     }
   }
 }
 
 .msg-view.card-missing-post {
-  max-width: 660px;
-  margin: 20px auto;
-
   div {
-    .elevation-card;
-    margin-left: 77px;
-    background: #fafafa;
+    .elevation-1;
+    background: #fff;
     padding: 20px;
     font-weight: 300;
     color: #666;
   }
-  &.expanded div {
-    background: #fff;
+  &.collapsed div {
+    background: #fafafa;
   }
 }
 
 .msg-view.card-mention {
-  max-width: 660px;
-  margin: 20px auto;
+  .elevation-1;
+  background: #fdfdfd;
+  margin: 1px 0;
+  padding: 10px 15px;
 
   &>div {
-    .elevation-card;
     display: flex;
-    margin-left: 77px;
-    padding: 10px 15px;
     font-weight: 300;
     color: #666;
-    background: #FFF;
-    border: 1px solid #D5D5D5;
+    height: 22px;
+    overflow: hidden;
+    word-break: break-all;
 
     i {
       margin: 4px 5px 0 0;
@@ -201,8 +170,6 @@
 
 .msg-view.card-muted {
   display: flex;
-  max-width: 660px;
-  margin: 20px auto;
 
   .ctrls {
     flex: 0 0 75px;

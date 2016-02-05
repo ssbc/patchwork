@@ -132,7 +132,7 @@ class CompositionUnit extends React.Component {
           var str = ''
           if (!(/(^|\s)$/.test(this.state.text)))
             str += ' ' // add some space if not on a newline
-          if (isImageFilename(f.name))
+          if (u.isImageFilename(f.name))
             str += '!' // inline the image
           str += '['+(f.name||'untitled')+']('+hash+')'
           this.setState({ text: this.state.text + str })
@@ -294,14 +294,17 @@ class CompositionUnit extends React.Component {
                 <a className="btn" onClick={setPreviewing(true)}>Preview</a>
                 <SendBtn canSend={this.canSend() && !this.state.isSending} />
               </div>
-              { this.isPublic()
-                ? <ComposerChannel isReadOnly={this.isReply()} 
-                                   onChange={this.onChangeChannel.bind(this)} 
-                                   value={this.getChannel()} />
-                : <ComposerRecps isReadOnly={this.isReply()} 
-                                 recps={this.state.recps} 
-                                 onAdd={this.onAddRecp.bind(this)} 
-                                 onRemove={this.onRemoveRecp.bind(this)} /> 
+              { this.isReply()
+                ? '' /* no channel/recps control for replies */
+                : ( this.isPublic()
+                  ? <ComposerChannel isReadOnly={this.isReply()} 
+                                     onChange={this.onChangeChannel.bind(this)} 
+                                     value={this.getChannel()} />
+                  : <ComposerRecps isReadOnly={this.isReply()} 
+                                   recps={this.state.recps} 
+                                   onAdd={this.onAddRecp.bind(this)} 
+                                   onRemove={this.onRemoveRecp.bind(this)} /> 
+                )
               }
     </div>)
   }
@@ -446,11 +449,6 @@ function isThreadPublic (thread) {
   if ('plaintext' in thread)
     return thread.plaintext
   return (typeof thread.value.content !== 'string')
-}
-
-function isImageFilename (name) {
-  var ct = mime.contentType(name)
-  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
 }
 
 function getThreadRoot (msg) {

@@ -2,11 +2,10 @@
 import pull from 'pull-stream'
 import moment from 'moment'
 import React from 'react'
-import ReactDOM from 'react-dom'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import ReactDOM from 'react-dom'
 import schemas from 'ssb-msg-schemas'
 import mlib from 'ssb-msgs'
-import ssbref from 'ssb-ref'
 import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
 import classNames from 'classnames'
@@ -14,6 +13,7 @@ import ComposerCard from './composer/card'
 import SimpleInfinite from './simple-infinite'
 import ResponsiveElement from './responsive-element'
 import Summary from './msg-view/summary'
+import Thread from './msg-thread'
 import { VerticalFilledContainer, verticalFilled } from './index'
 import { isaReplyTo } from '../lib/msg-relation'
 import app from '../lib/app'
@@ -24,7 +24,7 @@ const DEFAULT_BATCH_LOAD_AMT = 60
 
 // what's the avg height a message will be?
 // (used in loading calculations, when trying to scroll to a specific spot. doesnt need to be exact)
-const AVG_RENDERED_MSG_HEIGHT = 200
+const AVG_RENDERED_MSG_HEIGHT = 50
 
 // used when live msgs come in, how many msgs, from the top, should we check for deduplication?
 const DEDUPLICATE_LIMIT = 100
@@ -38,6 +38,7 @@ export default class MsgList extends React.Component {
     this.botcursor = null
     this.state = {
       msgs: [],
+      currentOpenMsgKey: null,
       newMsgQueue: [], // used to store message updates that we dont want to render immediately
       selected: null,
       isLoading: false,
@@ -49,10 +50,15 @@ export default class MsgList extends React.Component {
     // handlers
     this.handlers = {
       onSelect: msg => {
-        if (this.props.openMsgEvent)
-          app.emit('open:msg', msg.key)
-        else
-          app.history.pushState(null, '/msg/' + encodeURIComponent(msg.key))
+        this.setState({ currentOpenMsgKey: msg.key }, () => {
+          if (!this.refs.currentOpenMsg || !this.refs.container)
+            return
+
+          var dest = this.refs.currentOpenMsg.getScrollTop()
+          if (dest === false)
+            return
+          this.refs.container.scrollTo(dest - 15)
+        })
       },
       onToggleBookmark: (msg) => {
         // toggle in the DB
@@ -211,6 +217,10 @@ export default class MsgList extends React.Component {
       (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
 
+        // do nothing if the thread is currently open
+        if (this.state.currentOpenMsgKey === msg.key)
+          return
+
         if (this.props.queueNewMsgs) {
           // suppress if by the local user
           const lastMsg = threadlib.getLastThreadPost(msg)
@@ -248,6 +258,21 @@ export default class MsgList extends React.Component {
       amt = Math.max((scrollingTo / AVG_RENDERED_MSG_HEIGHT)|0, DEFAULT_BATCH_LOAD_AMT)
     }
     this.loadMore({ amt })
+  }
+
+  onClickAnything(e) {
+    // if the user clicks the background, close the thread
+    for (var node = e.target; node; node = node.parentNode) {
+      if (!node.classList)
+        return
+      if (node.classList.contains('msg-view') || node.classList.contains('items'))
+        return // abort, it's a click within the messages
+      if (node.classList.contains('msg-list')) {
+        // reached our toplevel, lets close the thread
+        this.setState({ currentOpenMsgKey: null })
+        return
+      }
+    }
   }
 
   processMsg(msg, cb) {
@@ -356,13 +381,13 @@ export default class MsgList extends React.Component {
     const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
-    const selectedKey = this.state.selected && this.state.selected.key
+    const currentKey = this.state.currentOpenMsgKey
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
     const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
     const nQueued = this.state.newMsgQueue.length
     const endOfToday = moment().endOf('day')
     var lastDate = moment().startOf('day').add(1, 'day')
-    return <div className="msg-list">
+    return <div className="msg-list" onClick={this.onClickAnything.bind(this)}>
       <div className="msg-list-items flex-fill">
         { Toolbar ? <Toolbar/> : '' }
         <Infinite
@@ -389,31 +414,38 @@ export default class MsgList extends React.Component {
                 </div>
                 :
                 <ResponsiveElement widthStep={250}>
-                  { this.state.msgs.map((m, i) => {
-                    // missing value?
-                    if (!m.value)
-                      return <span key={m.key} /> // dont render
+                  <ReactCSSTransitionGroup component="div" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+                    { this.state.msgs.map((m, i) => {
+                      // missing value?
+                      if (!m.value)
+                        return <span key={m.key} /> // dont render
 
-                    // render item
-                    const item = <ListItem
-                      key={m.key}
-                      msg={m}
-                      selectiveUpdate
-                      {...this.handlers}
-                      {...this.props.listItemProps}
-                      selected={selectedKey === m.key}
-                      forceRaw={this.props.forceRaw} />
+                      // render item
+                      const item = (currentKey === m.key)
+                        ? <Thread
+                            key={m}
+                            ref="currentOpenMsg"
+                            id={m.key}
+                            live />
+                        : <ListItem
+                            key={m.key}
+                            msg={m}
+                            selectiveUpdate
+                            {...this.handlers}
+                            {...this.props.listItemProps}
+                            forceRaw={this.props.forceRaw} />
 
-                    // render a date divider if this post is from a different day than the last
-                    const oldLastDate = lastDate
-                    const lastPost = threadlib.getLastThreadPost(m)
-                    lastDate = moment(lastPost.value.timestamp)
-                    if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-                      let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-                      return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
-                    }
-                    return item
-                  }) }
+                      // render a date divider if this post is from a different day than the last
+                      const oldLastDate = lastDate
+                      const lastPost = threadlib.getLastThreadPost(m)
+                      lastDate = moment(lastPost.value.timestamp)
+                      if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
+                        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+                        return <div key={m.key} className="divider-spot"><hr className="labeled" data-label={label} />{item}</div>
+                      }
+                      return item
+                    }) }
+                  </ReactCSSTransitionGroup>
                 </ResponsiveElement>
               }
               {append}
