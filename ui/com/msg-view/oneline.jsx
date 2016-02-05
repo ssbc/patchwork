@@ -32,14 +32,11 @@ export default class Oneline extends React.Component {
     let replies = countReplies(msg)
     replies = (replies === 0) ? <span style={{color:'#bbb'}}>1</span> : <span>{replies+1}</span>
 
-    var label = ''
-    if (!msg.plaintext) {
-      label = <div className="label">private</div>
-    } else if (msg.mentionsUser) {
-      label = <div className="label">mentioned</div>
-    } else if (msg.isBookmarked) {
-      label = <div className="label"><i className="fa fa-bookmark" /></div>
-    }
+    var labelIcons = []
+    if (!msg.plaintext)   labelIcons.push(<i className="fa fa-lock" />)
+    // if (msg.mentionsUser) labelIcons.push(<i className="fa fa-at" />)
+    // if (msg.isBookmarked) labelIcons.push(<i className="fa fa-bookmark" />)
+    var label = labelIcons.length ? (<div className="label">{labelIcons}</div>) : ''
 
     return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')+(!msg.plaintext ? ' private' : '')} onClick={this.onClick.bind(this)}>
       <div className="authors">
