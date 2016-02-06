@@ -1,17 +1,26 @@
 'use babel'
 import React from 'react'
+import ClipboardBtn from 'react-clipboard.js'
 
 export class Dropdown extends React.Component {
-  onSelect(v) {
-  }
   render() {
-    const onSelect = (v, i) => e => {
+    const onSelect = (item, i) => e => {
       e.stopPropagation()
-      this.props.onSelect(v, i)
+      item.selectFunction ? item.selectFunction() : this.props.onSelect(item.value, i)
     }
+    const span = (item) => <span><i className={"fa "+item.faClass} /> {item.label}</span>
+
     return <span className={'dropdown' + (this.props.open?' open':' closed') + (this.props.right?' right':'')}>
       <ul onMouseLeave={this.props.onClose}>
-        { this.props.items.map((item,i) => <li key={i} onClick={onSelect(item.value, i)}>{item.label}</li>) }
+        {
+          this.props.items.map((item,i) => {
+            return (item.value === "copy-link") ?
+              <ClipboardBtn component='li' data-clipboard-text={item.id} key={i}>{span(item)}</ClipboardBtn> :
+              <li key={i} onClick={item.onClick(this.props.card)}>{span(item)}</li>
+          })
+
+        }
+
       </ul>
     </span>
   }
@@ -34,8 +43,9 @@ export default class DropdownBtn extends React.Component {
   }
   render() {
     return <a className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')} onClick={this.onOpen.bind(this)}>
-      <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} onSelect={this.onSelect.bind(this)} />
+      <Dropdown card={this.props.card} items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} onSelect={this.onSelect.bind(this)} />
       {this.props.children}
+      <i className="fa fa-ellipsis-h" />
     </a>
   }
 }

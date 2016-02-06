@@ -98,10 +98,6 @@ export default class Card extends React.Component {
       this.setState({ isViewingRaw: !this.state.isViewingRaw })
   }
 
-  copyLink() {
-    prompt('Here is the Message ID. Press cmd/ctrl+c to copy it.', this.props.msg.key)
-  }
-
   componentDidMount() {
     // load subject msg, if needed
     let msg = this.props.msg
@@ -215,12 +211,21 @@ export default class Card extends React.Component {
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
 
+    const toggleDataView = (target) => (ev) => { 
+      target.setState({ isViewingRaw: !target.state.isViewingRaw })
+      console.log(target.props.msg.key, target.state)
+    }
+
     const dropdownOpts = [
-      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
-      { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
-      (isDownvoted) ?
-        { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
-        { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
+      { value: 'copy-link',  label: "Copy ID", faClass: "fa-external-link", id: msg.key },
+      (isViewingRaw ?
+        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onClick: toggleDataView } :
+        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",  onClick: toggleDataView } 
+      ),
+      (isDownvoted ?
+        { value: 'unflag', label: "Unflag", faClass: "fa-times" ,  onClick: toggleDataView } :
+        { value: 'flag',   label: "Flag",   faClass: "fa-flag" ,  onClick: toggleDataView }
+      )
     ]
 
     const oversizedCls = (this.state.isOversized?'oversized':'')
@@ -241,7 +246,7 @@ export default class Card extends React.Component {
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
+            <DropdownBtn card={this} items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)} />
           </div>
         </div>
         <div className="body" ref="body">
