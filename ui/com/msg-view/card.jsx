@@ -81,14 +81,6 @@ export default class Card extends React.Component {
     this.markShouldUpdate()
   }
 
-  onUnflag(item) {
-    this.props.onFlag(this.props.msg, 'unflag')
-  }
-
-  onFlag(item) {
-    this.setState({ isFlagModalOpen: true })
-  }
-
   onToggleExpand() {
     this.setState({ isExpanded: !this.state.isExpanded })
     this.markShouldUpdate()
@@ -98,6 +90,15 @@ export default class Card extends React.Component {
     this.props.onFlag(this.props.msg, reason)
     this.setState({ isFlagModalOpen: false })
     this.markShouldUpdate()
+  }
+
+  onFlag(item) {
+    this.setState({ isFlagModalOpen: true })
+    this.markShouldUpdate()
+  }
+  
+  onUnflag(item) {
+    this.props.onFlag(this.props.msg, 'unflag')
   }
 
   onCloseFlagModal() {
