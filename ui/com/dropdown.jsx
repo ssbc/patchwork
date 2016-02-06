@@ -41,7 +41,11 @@ export default class DropdownBtn extends React.Component {
   }
   render() {
     return <a className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')} onClick={this.onOpen.bind(this)}>
-      <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} />
+      {
+        (this.state.open) ? 
+          <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} /> :
+          ''
+      }
       {this.props.children}
       <i className="fa fa-ellipsis-h" />
     </a>
