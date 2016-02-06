@@ -16,11 +16,9 @@ export class Dropdown extends React.Component {
           this.props.items.map((item,i) => {
             return (item.value === "copy-link") ?
               <ClipboardBtn component='li' data-clipboard-text={item.id} key={i}>{span(item)}</ClipboardBtn> :
-              <li key={i} onClick={item.onClick(this.props.card)}>{span(item)}</li>
+              <li key={i} onClick={item.onClick}>{span(item)}</li>
           })
-
         }
-
       </ul>
     </span>
   }
@@ -43,7 +41,7 @@ export default class DropdownBtn extends React.Component {
   }
   render() {
     return <a className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')} onClick={this.onOpen.bind(this)}>
-      <Dropdown card={this.props.card} items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} onSelect={this.onSelect.bind(this)} />
+      <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} />
       {this.props.children}
       <i className="fa fa-ellipsis-h" />
     </a>

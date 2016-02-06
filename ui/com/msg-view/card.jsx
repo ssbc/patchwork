@@ -87,17 +87,6 @@ export default class Card extends React.Component {
     this.setState({ isFlagModalOpen: false })
   }
 
-  onSelectDropdown(choice) {
-    if (choice === 'copy-link')
-      this.copyLink()
-    else if (choice === 'flag')
-      this.setState({ isFlagModalOpen: true })
-    else if (choice === 'unflag')
-      this.props.onFlag(this.props.msg, 'unflag')
-    else if (choice === 'toggle-raw')
-      this.setState({ isViewingRaw: !this.state.isViewingRaw })
-  }
-
   componentDidMount() {
     // load subject msg, if needed
     let msg = this.props.msg
@@ -213,18 +202,27 @@ export default class Card extends React.Component {
 
     const toggleDataView = (target) => (ev) => { 
       target.setState({ isViewingRaw: !target.state.isViewingRaw })
-      console.log(target.props.msg.key, target.state)
+      console.log('toggling data view', target.props.msg.key, target.state)
     }
 
+    const unflag = target => (ev) => {
+      target.props.onFlag(this.props.msg, 'unflag')
+      console.log('unflag card', target.props.msg.key, target.state)
+    }
+    const flag = target => (ev) => {
+      target.setState({ isFlagModalOpen: true })
+      console.log('flag card', target.props.msg.key, target.state)
+    }
+    
     const dropdownOpts = [
       { value: 'copy-link',  label: "Copy ID", faClass: "fa-external-link", id: msg.key },
       (isViewingRaw ?
-        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onClick: toggleDataView } :
-        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",  onClick: toggleDataView } 
+        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onClick: toggleDataView(this) } :
+        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",      onClick: toggleDataView(this) } 
       ),
       (isDownvoted ?
-        { value: 'unflag', label: "Unflag", faClass: "fa-times" ,  onClick: toggleDataView } :
-        { value: 'flag',   label: "Flag",   faClass: "fa-flag" ,  onClick: toggleDataView }
+        { value: 'unflag', label: "Unflag", faClass: "fa-times", onClick: unflag(this) } :
+        { value: 'flag',   label: "Flag",   faClass: "fa-flag",  onClick: flag(this) }
       )
     ]
 
@@ -246,7 +244,7 @@ export default class Card extends React.Component {
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn card={this} items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)} />
+            <DropdownBtn items={dropdownOpts} right />
           </div>
         </div>
         <div className="body" ref="body">
