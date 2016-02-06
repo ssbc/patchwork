@@ -18,7 +18,8 @@ class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
     const title = 'Bookmark'+(b?'ed':'')
-    return <a className={(b?' selected':'')} onClick={this.props.onClick} title={title}>
+    const hint = (b?'Remove this message from your bookmarks':'Add this message to your bookmarks')
+    return <a className={'hint--bottom '+(b?' selected':'')} data-hint={hint} onClick={this.props.onClick} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title}
     </a>
   }
@@ -37,7 +38,7 @@ class UnreadBtn extends React.Component {
   }
   render() {
     const m = this.state.marked
-    return <a onClick={this.onClick.bind(this)}>
+    return <a onClick={this.onClick.bind(this)} className="hint--bottom" data-hint="Close this thread and leave it unread">
       <i className={"fa fa-envelope"+(m?'':'-o')} /> Mark{m?'ed':''} Unread
     </a>
   }

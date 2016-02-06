@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import classNames from 'classnames'
 import app from './lib/app'
 import ModalFlow from './com/modals/flow'
 import Welcome from './com/forms/welcome'
@@ -71,9 +72,12 @@ export default class Layout extends React.Component {
 
     const NavLink = (props) => {
       const selected = props.selected || (props.to === location)
-      const cls = (props.className||'')+' ctrl '+(selected?'selected':'')
+      const cls = classNames(props.className||'', 'ctrl', { selected }, props.hint ? ('hint--'+props.hint) : '')
       const count = props.count ? <div className="count">{props.count}</div> : ''
-      return <Link className={cls} to={props.to}><i className={'fa fa-'+props.icon} /><span className="label">{props.label}</span> {count}</Link>
+      return <Link className={cls} to={props.to} data-hint={props.title}>
+        <i className={'fa fa-'+props.icon} />
+        <span className="label">{props.label}</span> {count}
+      </Link>
     }
 
     return <div className="layout-rows">
@@ -83,12 +87,12 @@ export default class Layout extends React.Component {
           { isElectron
             ? <a className="ctrl back" onClick={this.onClickBack}><i className="fa fa-angle-left" /></a>
             : '' }
-          <NavLink className="home" to="/" icon="home" />
+          <NavLink className="home" to="/" icon="home" title="Home" hint="bottom-right" />
         </div>
         <div className="flex-fill"><SearchPalette ref="search"/></div>
-        <NavLink to="/digs" icon="hand-peace-o" count={app.indexCounts.digsUnread} />
-        <NavLink to="/sync" icon="cloud-download" />
-        <NavLink to="/data" icon="database" />
+        <NavLink to="/digs" icon="hand-peace-o" count={app.indexCounts.digsUnread} title="Digs on your posts" hint="bottom" />
+        <NavLink to="/sync" icon="cloud-download" title="Network sync status" hint="bottom" />
+        <NavLink to="/data" icon="database" title="Raw database feed" hint="bottom-left" />
       </div>
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>

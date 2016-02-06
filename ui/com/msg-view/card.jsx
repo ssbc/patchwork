@@ -37,8 +37,9 @@ class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
     const title = 'Bookmark'+(b?'ed':'')
+    const hint = (b?'Remove this message from your bookmarks':'Add this message to your bookmarks')
     return <span>
-      <a href='javascript:;' className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+      <a href='javascript:;' className={'hint--bottom save'+(this.props.isBookmarked?' selected':'')} data-hint={hint} onClick={this.onClick.bind(this)} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} />
       </a>
     </span>

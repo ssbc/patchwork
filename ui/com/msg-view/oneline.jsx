@@ -41,7 +41,7 @@ export default class Oneline extends React.Component {
     return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')+(!msg.plaintext ? ' private' : '')} onClick={this.onClick.bind(this)}>
       <div className="authors">
         <UserPic id={msg.value.author} />
-        <UserLink id={msg.value.author} />
+        <div className="names"><UserLink id={msg.value.author} /></div>
       </div>
       { !this.props.noReplies ? <div className="replies">{replies}</div> : '' }
       <div className="content">
