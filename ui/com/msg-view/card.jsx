@@ -5,6 +5,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
+import ClipboardBtn from 'react-clipboard.js'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content, Inline as ContentInline } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
@@ -77,6 +78,11 @@ export default class Card extends React.Component {
     this.props.onSelect(this.props.msg)
   }
 
+  onToggleDataView(item) { 
+    this.setState({ isViewingRaw: !this.state.isViewingRaw })
+    this.markShouldUpdate()
+  }
+
   onClickExpand(e) {
     if (!this.isExpanded()) {
       e.preventDefault()
@@ -87,25 +93,21 @@ export default class Card extends React.Component {
   onSubmitFlag(reason) {
     this.props.onFlag(this.props.msg, reason)
     this.setState({ isFlagModalOpen: false })
+    this.markShouldUpdate()
+  }
+
+  onFlag(item) {
+    this.setState({ isFlagModalOpen: true })
+    this.markShouldUpdate()
+  }
+  
+  onUnflag(item) {
+    this.props.onFlag(this.props.msg, 'unflag')
   }
 
   onCloseFlagModal() {
     this.setState({ isFlagModalOpen: false })
-  }
-
-  onSelectDropdown(choice) {
-    if (choice === 'copy-link')
-      this.copyLink()
-    else if (choice === 'flag')
-      this.setState({ isFlagModalOpen: true })
-    else if (choice === 'unflag')
-      this.props.onFlag(this.props.msg, 'unflag')
-    else if (choice === 'toggle-raw')
-      this.setState({ isViewingRaw: !this.state.isViewingRaw })
-  }
-
-  copyLink() {
-    prompt('Here is the Message ID. Press cmd/ctrl+c to copy it.', this.props.msg.key)
+    this.markShouldUpdate()
   }
 
   componentDidMount() {
@@ -127,12 +129,21 @@ export default class Card extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    // this is a performance hack in react
+    // we avoid extraneous render() calls (esp in the msg-list) by returning false
+    // the changeCounter is tracked on message objects and incremented when an update is made
     if (nextProps.selectiveUpdate) {
       var shouldUpdate = this.changeCounter !== nextProps.msg.changeCounter
       this.changeCounter = nextProps.msg.changeCounter
       return shouldUpdate
     }
     return true
+  }
+
+  markShouldUpdate() {
+    // the message's change counter increments when it needs to be rendered
+    // if some state in this object changes, we decrement to get the same effect
+    this.changeCounter--
   }
 
   render() {
@@ -204,13 +215,24 @@ export default class Card extends React.Component {
     const unreadReplies = countReplies(msg, m => !m.isRead)
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
-
+    
     const dropdownOpts = [
-      { value: 'copy-link',  label: <span><i className="fa fa-external-link" /> Copy ID</span> },
-      { value: 'toggle-raw', label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span> },
-      (isDownvoted) ?
-        { value: 'unflag',   label: <span><i className="fa fa-times" /> Unflag</span> } :
-        { value: 'flag',     label: <span><i className="fa fa-flag" /> Flag</span> }
+      {
+        value: 'copy-link',
+        Com: props => <ClipboardBtn component='li' data-clipboard-text={msg.key} onSuccess={props.onClick}>
+          <i className="fa fa-external-link" /> Copy ID
+        </ClipboardBtn>
+        // onSelect: this.markShouldUpdate.bind(this)
+      },
+      { 
+        value: 'toggle-raw',
+        label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span>,
+        onSelect: this.onToggleDataView.bind(this)
+      },
+      (isDownvoted ?
+        { value: 'unflag', label: <span><i className="fa fa-times" /> Unflag</span>, onSelect: this.onUnflag.bind(this) } :
+        { value: 'flag',   label: <span><i className="fa fa-flag" /> Flag</span>,    onSelect: this.onFlag.bind(this) }
+      )
     ]
 
     const isExpanded   = this.isExpanded()
@@ -227,7 +249,7 @@ export default class Card extends React.Component {
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn items={dropdownOpts} right onSelect={this.onSelectDropdown.bind(this)}><i className="fa fa-ellipsis-h" /></DropdownBtn>
+            <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
           </div>
         </div>
         <div className="body" ref="body">

@@ -19,6 +19,9 @@ if (configOracle.hasError()) {
     return
   }
 }
+
+logLicense() // per the GPL's recommendation, let ppl know the license
+
 console.log('Starting...')
 
 // start sbot
@@ -65,4 +68,11 @@ if (configOracle.useTLS()) {
 // run electron-specific code, if appropriate
 if (process.versions['electron']) {
   require('./electron')(configOracle)
+}
+
+function logLicense () {
+  console.log('Patchwork - Copyright (C) 2015 - Secure Scuttlebut Consortium')
+  console.log('This program comes with ABSOLUTELY NO WARRANTY.')
+  console.log('This is free software, and you are welcome to redistribute it under certain conditions (GPL-3.0).')
+  console.log('')
 }
