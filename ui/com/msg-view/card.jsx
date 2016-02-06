@@ -74,17 +74,34 @@ export default class Card extends React.Component {
     this.props.onSelect(this.props.msg)
   }
 
+
+  onToggleDataView(item) { 
+    this.setState({ isViewingRaw: !this.state.isViewingRaw })
+    this.markShouldUpdate()
+  }
+
+  onUnflag(item) {
+    this.props.onFlag(this.props.msg, 'unflag')
+  }
+
+  onFlag(item) {
+    this.setState({ isFlagModalOpen: true })
+  }
+
   onToggleExpand() {
     this.setState({ isExpanded: !this.state.isExpanded })
+    this.markShouldUpdate()
   }
 
   onSubmitFlag(reason) {
     this.props.onFlag(this.props.msg, reason)
     this.setState({ isFlagModalOpen: false })
+    this.markShouldUpdate()
   }
 
   onCloseFlagModal() {
     this.setState({ isFlagModalOpen: false })
+    this.markShouldUpdate()
   }
 
   componentDidMount() {
@@ -122,12 +139,21 @@ export default class Card extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    // this is a performance hack in react
+    // we avoid extraneous render() calls (esp in the msg-list) by returning false
+    // the changeCounter is tracked on message objects and incremented when an update is made
     if (nextProps.selectiveUpdate) {
       var shouldUpdate = this.changeCounter !== nextProps.msg.changeCounter
       this.changeCounter = nextProps.msg.changeCounter
       return shouldUpdate
     }
     return true
+  }
+
+  markShouldUpdate() {
+    // the message's change counter increments when it needs to be rendered
+    // if some state in this object changes, we decrement to get the same effect
+    this.changeCounter--
   }
 
   render() {
@@ -199,30 +225,16 @@ export default class Card extends React.Component {
     const unreadReplies = countReplies(msg, m => !m.isRead)
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
-
-    const toggleDataView = (target) => (ev) => { 
-      target.setState({ isViewingRaw: !target.state.isViewingRaw })
-      console.log('toggling data view', target.props.msg.key, target.state)
-    }
-
-    const unflag = target => (ev) => {
-      target.props.onFlag(this.props.msg, 'unflag')
-      console.log('unflag card', target.props.msg.key, target.state)
-    }
-    const flag = target => (ev) => {
-      target.setState({ isFlagModalOpen: true })
-      console.log('flag card', target.props.msg.key, target.state)
-    }
     
     const dropdownOpts = [
       { value: 'copy-link',  label: "Copy ID", faClass: "fa-external-link", id: msg.key },
       (isViewingRaw ?
-        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onSelect: toggleDataView(this) } :
-        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",      onSelect: toggleDataView(this) } 
+        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onSelect: this.onToggleDataView.bind(this) } :
+        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",      onSelect: this.onToggleDataView.bind(this) } 
       ),
       (isDownvoted ?
-        { value: 'unflag', label: "Unflag", faClass: "fa-times", onSelect: unflag(this) } :
-        { value: 'flag',   label: "Flag",   faClass: "fa-flag",  onSelect: flag(this) }
+        { value: 'unflag', label: "Unflag", faClass: "fa-times", onSelect: this.onUnflag.bind(this) } :
+        { value: 'flag',   label: "Flag",   faClass: "fa-flag",  onSelect: this.onFlag.bind(this) }
       )
     ]
 
