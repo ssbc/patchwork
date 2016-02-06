@@ -1,12 +1,17 @@
 .msg-view.oneline {
   .elevation-1;
   display: flex;
-  background: #fff;
+  background: #fdfdfd;
   padding: 8px 6px 6px;
   max-width: 650px;
   margin: 1px auto;
   overflow: hidden;
   color: #555;
+
+  strong {
+    // dont allow any bolding, to contrast against unread messages
+    font-weight: normal;
+  }
 
   .authors {
     flex: 0 0 125px;
@@ -108,7 +113,7 @@
   }
 
   &.unread {
-    background-image: url(/img/lines.svg);
+    background-color: #fff;
     .authors, .replies, .content, .date {
       font-weight: bold;
     }
