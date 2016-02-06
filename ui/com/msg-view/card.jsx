@@ -243,12 +243,12 @@ export default class Card extends React.Component {
     const dropdownOpts = [
       { value: 'copy-link',  label: "Copy ID", faClass: "fa-external-link", id: msg.key },
       (isViewingRaw ?
-        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onClick: toggleDataView(this) } :
-        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",      onClick: toggleDataView(this) } 
+        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onSelect: toggleDataView(this) } :
+        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",      onSelect: toggleDataView(this) } 
       ),
       (isDownvoted ?
-        { value: 'unflag', label: "Unflag", faClass: "fa-times", onClick: unflag(this) } :
-        { value: 'flag',   label: "Flag",   faClass: "fa-flag",  onClick: flag(this) }
+        { value: 'unflag', label: "Unflag", faClass: "fa-times", onSelect: unflag(this) } :
+        { value: 'flag',   label: "Flag",   faClass: "fa-flag",  onSelect: flag(this) }
       )
     ]
 

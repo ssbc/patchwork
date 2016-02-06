@@ -6,7 +6,7 @@ export class Dropdown extends React.Component {
   render() {
     const onSelect = (item, i) => e => {
       e.stopPropagation()
-      item.selectFunction ? item.selectFunction() : this.props.onSelect(item.value, i)
+      item.onSelect ? item.onSelect() : this.props.onSelect(item.value, i)
     }
     const span = (item) => <span><i className={"fa "+item.faClass} /> {item.label}</span>
 
@@ -16,7 +16,7 @@ export class Dropdown extends React.Component {
           this.props.items.map((item,i) => {
             return (item.value === "copy-link") ?
               <ClipboardBtn component='li' data-clipboard-text={item.id} key={i}>{span(item)}</ClipboardBtn> :
-              <li key={i} onClick={item.onClick}>{span(item)}</li>
+              <li key={i} onClick={onSelect(item, i)}>{span(item)}</li>
           })
         }
       </ul>
