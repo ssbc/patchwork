@@ -1,24 +1,21 @@
 'use babel'
 import React from 'react'
-import ClipboardBtn from 'react-clipboard.js'
 
 export class Dropdown extends React.Component {
   render() {
     const onSelect = (item, i) => e => {
-      e.stopPropagation()
-      item.onSelect ? item.onSelect() : this.props.onSelect(item.value, i)
+      this.props.onSelect && this.props.onSelect(item.value, i)
+      item.onSelect && item.onSelect()
     }
-    const span = (item) => <span><i className={"fa "+item.faClass} /> {item.label}</span>
 
     return <span className={'dropdown' + (this.props.open?' open':' closed') + (this.props.right?' right':'')}>
       <ul onMouseLeave={this.props.onClose}>
-        {
-          this.props.items.map((item,i) => {
-            return (item.value === "copy-link") ?
-              <ClipboardBtn component='li' data-clipboard-text={item.id} key={i}>{span(item)}</ClipboardBtn> :
-              <li key={i} onClick={onSelect(item, i)}>{span(item)}</li>
-          })
-        }
+        { this.props.items.map((item,i) => {
+          const onClick = onSelect(item, i)
+          if (item.Com) 
+            return <item.Com key={i} onClick={onClick} />
+          return <li key={i} onClick={onClick}>{item.label}</li>
+        }) }
       </ul>
     </span>
   }
@@ -37,17 +34,14 @@ export default class DropdownBtn extends React.Component {
   }
   onSelect(v, index) {
     this.setState({ open: false })
-    this.props.onSelect(v, index)
+    this.props.onSelect && this.props.onSelect(v, index)
   }
   render() {
-    return <a className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')} onClick={this.onOpen.bind(this)}>
-      {
-        (this.state.open) ? 
-          <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} /> :
-          ''
-      }
-      {this.props.children}
-      <i className="fa fa-ellipsis-h" />
-    </a>
+    return <span className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')}>
+      <a onClick={this.onOpen.bind(this)}>
+        {this.props.children}
+      </a>
+      <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} onSelect={this.onSelect.bind(this)} />
+    </span>
   }
 }
