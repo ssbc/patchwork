@@ -5,6 +5,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
+import ClipboardBtn from 'react-clipboard.js'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
@@ -227,14 +228,21 @@ export default class Card extends React.Component {
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
     
     const dropdownOpts = [
-      { value: 'copy-link',  label: "Copy ID", faClass: "fa-external-link", id: msg.key },
-      (isViewingRaw ?
-        { value: 'toggle-raw', label: "View Msg",  faClass: "fa-envelope-o", onSelect: this.onToggleDataView.bind(this) } :
-        { value: 'toggle-raw', label: "View Data", faClass: "fa-gears",      onSelect: this.onToggleDataView.bind(this) } 
-      ),
+      {
+        value: 'copy-link',
+        Com: props => <ClipboardBtn component='li' data-clipboard-text={msg.key} onSuccess={props.onClick}>
+          <i className="fa fa-external-link" /> Copy ID
+        </ClipboardBtn>
+        // onSelect: this.markShouldUpdate.bind(this)
+      },
+      { 
+        value: 'toggle-raw',
+        label: <span><i className={isViewingRaw?'fa fa-envelope-o':'fa fa-gears'} /> View {isViewingRaw?'Msg':'Data'}</span>,
+        onSelect: this.onToggleDataView.bind(this)
+      },
       (isDownvoted ?
-        { value: 'unflag', label: "Unflag", faClass: "fa-times", onSelect: this.onUnflag.bind(this) } :
-        { value: 'flag',   label: "Flag",   faClass: "fa-flag",  onSelect: this.onFlag.bind(this) }
+        { value: 'unflag', label: <span><i className="fa fa-times" /> Unflag</span>, onSelect: this.onUnflag.bind(this) } :
+        { value: 'flag',   label: <span><i className="fa fa-flag" /> Flag</span>,    onSelect: this.onFlag.bind(this) }
       )
     ]
 
@@ -256,7 +264,7 @@ export default class Card extends React.Component {
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn items={dropdownOpts} right />
+            <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
           </div>
         </div>
         <div className="body" ref="body">
