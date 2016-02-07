@@ -377,7 +377,9 @@ export class Editor extends CompositionUnit {
   
   onSend() {
     var text = this.state.text
-    if (!text.trim()) { return } // don't send if no text
+    if (!text.trim()) { 
+      text = "*deleted*"
+    } // don't send if no text
     
     this.setState({ isSending: true, isEditing: false })
 
@@ -498,10 +500,9 @@ export class Editor extends CompositionUnit {
                            hasAdded={this.state.hasAddedFiles} 
                            isAdding={this.state.isAddingFiles} 
                            onAttach={this.onAttach.bind(this)} />
-                <DeleteControls />
                 <div className="flex-fill" />
                 <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-                <SendBtn canSend={this.canSend() && !this.state.isSending} />
+                <DeleteControls />
               </div>
             </div>)
   }
@@ -637,43 +638,7 @@ export default class Composer extends CompositionUnit {
   }
 
   render() {
-    const channel = this.getChannel()
-    const setPreviewing = b => () => this.setState({ isPreviewing: b })
-    const ComposerTextarea = (this.props.verticalFilled) ? ComposerTextareaVerticalFilled : ComposerTextareaFixed
-    const Preview = (props) => {
-      return <div>
-        <div className="card" style={{padding: '20px', margin: '40px 10px 30px 0'}}><MarkdownBlock md={this.state.text} /></div>
-      </div>
-    }
-    const sendIcon = (this.isPublic) ? 'users' : 'lock'
-    return <div className="composer">
-      <input ref="files" type="file" multiple onChange={this.onFilesAdded.bind(this)} style={{display: 'none'}} />
-      <Modal className="fullheight" Content={Preview} isOpen={this.state.isPreviewing} onClose={setPreviewing(false)} />
-      { channel ? 
-        <div className="composer-channel">#{channel}</div>
-        : '' }
-      <ComposerRecps isPublic={this.isPublic} isReadOnly={this.state.isReply} recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} />
-      <div className="composer-content">
-        <ComposerTextarea ref="textarea" value={this.state.text} onChange={this.onChangeText.bind(this)} onSubmit={this.onSend.bind(this)} placeholder={!this.state.isReply ? this.props.placeholder : 'Write a reply'} />
-      </div>
-      <div className="composer-ctrls flex">
-        <div className="flex-fill">
-          { !this.isPublic ?
-            (this.state.hasAddedFiles ? <em>Warning: attachments don{'\''}t work yet in private messages. Sorry!</em> : '') :
-            (this.state.isAddingFiles ?
-              <em>Adding...</em> :
-              <a className="btn" onClick={this.onAttach.bind(this)}><i className="fa fa-paperclip" /> Add an attachment</a>) }
-        </div>
-        <div>
-          <a className="btn" onClick={setPreviewing(true)}>Preview</a>
-        </div>
-        <div>
-          { (!this.canSend() || this.state.isSending) ?
-            <a className="btn disabled">Send</a> :
-            <a className="btn highlighted" onClick={this.onSend.bind(this)}><i className={`fa fa-${sendIcon}`}/> Send</a> }
-        </div>
-      </div>
-    </div>
+    return this.renderComposerArea()
   }
 }
 

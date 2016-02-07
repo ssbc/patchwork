@@ -45,7 +45,6 @@ export default class Inbox extends LocalStoragePersistedComponent {
         <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
         <div className="flex-fill"/>
         <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <a href='javascript:;' onClick={this.onToggleShowFoaf.bind(this)}><i className="fa fa-user" /> Show: {showFoafDesc}</a>
         <a href='javascript:;' onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
       </div>
     }

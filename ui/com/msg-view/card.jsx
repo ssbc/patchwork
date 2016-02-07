@@ -81,8 +81,15 @@ export default class Card extends React.Component {
   onSelect() {
     this.props.onSelect(this.props.msg)
   }
+  
+  onEdit() {
+    this.setState({ isEditing: true })
+  }
 
-
+  onCancelEdit() {
+    this.setState({ isEditing: false })
+  }
+  
   onToggleDataView(item) { 
     this.setState({ isViewingRaw: !this.state.isViewingRaw })
     this.markShouldUpdate()
@@ -275,8 +282,9 @@ export default class Card extends React.Component {
 
     if (app.user.id === msg.value.author)
       dropdownOpts.unshift({ value: 'edit-post',
-                             label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span>
-      })
+                             label: <span><i className="fa fa-pencil" /> Edit/Delete Post</span>,
+                             onSelect: this.onEdit.bind(this)
+                           })
 
 
     const oversizedCls = (this.state.isOversized?'oversized':'')

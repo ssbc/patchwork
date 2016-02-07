@@ -5,8 +5,6 @@ import app from './lib/app'
 import ModalFlow from './com/modals/flow'
 import Notifications from './com/msg-list/notifications'
 import Welcome from './com/forms/welcome'
-import FollowNearby from './com/forms/follow-nearby'
-import PubInvite from './com/forms/pub-invite'
 import SearchPalette from './com/search-palette'
 import ProfileName from './com/forms/profile-name'
 import ProfileImage from './com/forms/profile-image'
@@ -49,8 +47,7 @@ export default class Layout extends React.Component {
       indexCounts: app.indexCounts||{},
       user: app.user,
       users: app.users,
-      setupIsOpen: true,//app.user.needsSetup,
-      setupCantClose: app.user.needsSetup,
+      setupIsOpen: app.user.needsSetup,
       isComposerOpen: app.isComposerOpen
     }
   }
