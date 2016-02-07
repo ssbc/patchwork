@@ -54,7 +54,7 @@ export default class ProfileSetup extends React.Component {
   }
 
   getValues(cb) {
-    cb({ name: this.state.name })      
+    cb({ name: this.state.name })
   }
 
   submit(cb) {
@@ -63,6 +63,9 @@ export default class ProfileSetup extends React.Component {
       var done = multicb()
       if (values.name && values.name !== getCurrentName())
         app.ssb.publish(schemas.name(app.user.id, values.name), done())
+      if (values.image && values.image.link !== getCurrentImg())
+        app.ssb.publish(schemas.image(app.user.id, values.image), done())
+
       done(err => {
         if (err) return cb(err)
 

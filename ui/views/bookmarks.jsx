@@ -42,8 +42,9 @@ export default class Bookmarks extends LocalStoragePersistedComponent {
       return <div className="flex light-toolbar">
         <Link to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked Threads</Link>
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onToggleShowFoaf.bind(this)}><i className="fa fa-user" /> Show: {showFoafDesc}</a>
+        <a href='javascript:;' onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
       </div>
     }
 

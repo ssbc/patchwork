@@ -192,6 +192,7 @@ export default class ImageInput extends React.Component {
               <label>Rotate: <button className="btn" onClick={this.onRotate.bind(this)} style={{padding: '10px 16px', color: 'gray'}}><i className="fa fa-rotate-right" /></button></label>
             </div>*/}
           </div>
+          <br/>
           <canvas ref="canvas" width={CANVAS_SIZE} height={CANVAS_SIZE}
             onMouseDown={this.onCanvasMouseDown.bind(this)}
             onMouseUp={this.onCanvasMouseUp.bind(this)}

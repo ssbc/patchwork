@@ -109,8 +109,9 @@ export default class NewsFeed extends LocalStoragePersistedComponent {
           ? <a onClick={this.onTogglePinned.bind(this)}><i className="fa fa-thumb-tack" /> {isPinned?"Unpin Channel":"Pin Channel"}</a>
           : '' }
         <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <a onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
+        <a href='javascript:;' onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
+        <a href='javascript:;' onClick={this.onToggleShowFoaf.bind(this)}><i className="fa fa-user" /> Show: {showFoafDesc}</a>
+        <a href='javascript:;' onClick={this.onToggleMsgView.bind(this)}>{listItem.label}</a>
       </div>
     }
 
