@@ -287,7 +287,7 @@ class CompositionUnit extends React.Component {
 
   renderToolbar() {
     const AudienceBtn = this.renderAudienceBtn(this.props)
-    const AttachBtn- = this.renderAttachBtn(this.props)
+    const AttachBtn = this.renderAttachBtn(this.props)
     const SendBtn = this.renderSendBtn(this.props)
     const setPreviewing = this.setPreviewing.bind(this)
 

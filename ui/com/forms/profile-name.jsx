@@ -54,23 +54,7 @@ export default class ProfileSetup extends React.Component {
   }
 
   getValues(cb) {
-    const canvas = this.refs.imageInputContainer.querySelector('canvas')
-    if (canvas) {
-      ImageInput.uploadCanvasToBlobstore(canvas, (err, res) => {
-        if (err)
-          return app.issue('Failed to save image', err, 'This occurred during profile setup')
-        const imageLink = {
-          link: res.hash,
-          size: res.size,
-          type: 'image/png',
-          width: 512,
-          height: 512
-        }
-        cb({ name: this.state.name, image: imageLink })
-      })
-    } else {
-      cb({ name: this.state.name })      
-    }    
+    cb({ name: this.state.name })      
   }
 
   submit(cb) {
@@ -104,7 +88,6 @@ export default class ProfileSetup extends React.Component {
               { this.state.error ? <p className="error">{this.state.error}</p> : '' }
             </label>
           </div>
-          <div ref="imageInputContainer"><ImageInput label="Image" current={(currentImg) ? ('/' + currentImg) : false} /></div>
         </fieldset>
       </form>
     </div>

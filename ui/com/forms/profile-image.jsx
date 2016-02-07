@@ -29,21 +29,7 @@ export default class ProfileSetup extends React.Component {
   }
 
   getValues(cb) {
-    const canvas = this.refs.imageInputContainer.querySelector('canvas')
-    if (canvas) {
-      ImageInput.uploadCanvasToBlobstore(canvas, (err, hasher) => {
-        const imageLink = {
-          link: '&'+hasher.digest,
-          size: hasher.size,
-          type: 'image/png',
-          width: 512,
-          height: 512
-        }
-        cb({ image: imageLink })
-      })
-    } else {
-      cb({ image: null })      
-    }    
+    cb({ name: this.state.name })
   }
 
   submit(cb) {
