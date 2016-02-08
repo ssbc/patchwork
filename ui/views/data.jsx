@@ -3,6 +3,7 @@ import React from 'react'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-view/oneline'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import app from '../lib/app'
 
 export default class Data extends React.Component {
@@ -16,6 +17,7 @@ export default class Data extends React.Component {
         composer composerProps={{ isPublic: true }}
         ListItem={Oneline} listItemProps={{noReplies: true}}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        RightNav={RightNav}
         source={source}
         live={{ gt: Date.now() }} />
     </div>

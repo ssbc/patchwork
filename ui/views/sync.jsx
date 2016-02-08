@@ -10,6 +10,7 @@ import u from '../lib/util'
 import social from '../lib/social-graph'
 import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import PubInvite from '../com/forms/pub-invite'
 import Modal from '../com/modals/single'
 import ModalBtn from '../com/modals/btn'
@@ -496,6 +497,7 @@ export default class Sync extends React.Component {
           <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
         </div>
       </div>
+      <RightNav/>
     </VerticalFilledContainer>
   }
 }

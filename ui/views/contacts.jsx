@@ -4,6 +4,7 @@ import pull from 'pull-stream'
 import UserSummary from '../com/user/summary'
 import { VerticalFilledContainer, UserPic } from '../com/index'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import social from '../lib/social-graph'
 import u from '../lib/util'
 
@@ -67,6 +68,7 @@ export default class Contacts extends React.Component {
           { this.state.contacts.map(id => <UserSummary key={id} pid={id} />) }
         </div>
       </div>
+      <RightNav/>
     </VerticalFilledContainer>
   }
 }
