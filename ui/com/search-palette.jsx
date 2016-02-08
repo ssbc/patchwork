@@ -109,7 +109,6 @@ export default class SearchPalette extends React.Component {
       <i className="fa fa-search" />
       <input 
         ref="search"
-        placeholder="Search for people or content"
         value={this.state.query}
         onChange={this.onChange.bind(this)}
         onKeyDown={this.onKeyDown.bind(this)} />

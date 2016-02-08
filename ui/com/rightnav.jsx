@@ -15,10 +15,6 @@ export default class RightNav extends React.Component {
     app.on('update:indexCounts', refresh)
     app.on('update:isWifiMode', refresh)
   }
-  componentWillReceiveProps() {
-    // update state on view changes
-    app.fetchLatestState()
-  }
   buildState() {
     // copy over app state
     return {

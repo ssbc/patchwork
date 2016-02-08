@@ -1,0 +1,38 @@
+.topnav {
+  max-width: 660px;
+  margin: 10px auto;
+
+  .topnav-bar {
+    background: #fff;
+    border-radius: 2px;
+
+    .compose-btn {
+      border-left: 1px solid #ccc;
+      padding: 6px 10px 7px 13px;
+      color: gray;
+      font-size: 18px;
+      transition: background 0.2s, color 0.2s;
+
+      &:hover {
+        text-decoration: none;
+        color: #555;
+        background: #ddd;
+      }
+
+      i {
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
+  .topnav-content {
+    a {
+      color: gray;
+      margin: 5px;
+
+      &.selected {
+        font-weight: bold;
+      }
+    }
+  }
+}

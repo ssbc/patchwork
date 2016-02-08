@@ -89,7 +89,7 @@ export default class LeftNav extends React.Component {
         { this.state.isChannelListOpen ? <i className="fa fa-caret-left" style={{ color: 'gray' }} /> : '' }
       </div>
       { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
-      <LeftNav.Heading>Contacts</LeftNav.Heading>
+      <LeftNav.Heading>Network</LeftNav.Heading>
       { contacts.map(renderContact) }
       <div className="leftnav-link"><Link to="/add-contact">Find more...</Link></div>
     </div>
