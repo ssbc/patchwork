@@ -77,7 +77,7 @@ const openChannel = channel => () => {
   app.history.pushState(null, '/public/channel/'+encodeURIComponent(channel))
 }
 
-const doSearch = opts => query => {
+export const doSearch = opts => query => {
   // TODO incorporate `opts`
   app.history.pushState(null, '/search/'+encodeURIComponent(query))
 }

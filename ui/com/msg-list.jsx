@@ -414,7 +414,7 @@ export default class MsgList extends React.Component {
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
                 : '' }
-              <TopNav contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} />
+              <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} />
               { '' /*this.props.composer ? <ComposerCard {...this.props.composerProps} /> : ''*/ }
               { this.state.msgs.length === 0 && this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
               { isEmpty ?

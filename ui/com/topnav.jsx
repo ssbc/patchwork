@@ -42,14 +42,13 @@ export default class TopNav extends React.Component {
   }
 
   render() {
+    const onClickCompose = this.onClickCompose.bind(this)
     return <div className="topnav">
       <div className="flex topnav-bar">
-        <div className="flex-fill"><SearchPalette ref="search"/></div>
-        <a className="compose-btn" onClick={this.onClickCompose.bind(this)}>
-          { this.state.isComposerOpen
-            ? <span><i className="fa fa-times" /> Cancel </span>
-            : <span><i className="fa fa-plus" /> New Post</span> }
-        </a>
+        <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} /></div>
+        { this.state.isComposerOpen
+          ? <a className="compose-btn cancel" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>
+          : <a className="compose-btn" onClick={onClickCompose}><i className="fa fa-plus" /> New Post</a> }
       </div>
       <div className="flex topnav-content">
         { (this.props.contentTypes||[]).map((ct, i) => {

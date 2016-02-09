@@ -40,8 +40,7 @@ export default class PublicPosts extends React.Component {
         ref="list"
         threads
         dateDividers
-        contentTypes={['Discussions','Links','Images','Events','Reviews','Software']}
-        composer composerProps={{ isPublic: true, channel: channel }}
+        composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={RightNav}
         ListItem={Oneline} listItemProps={{ userPic: true }}
