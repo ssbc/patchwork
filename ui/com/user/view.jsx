@@ -3,10 +3,10 @@ import React from 'react'
 import mlib from 'ssb-msgs'
 import Tabs from '../tabs'
 import MsgList from '../msg-list'
-import Card from '../msg-view/card'
 import Oneline from '../msg-view/oneline'
 import { VerticalFilledContainer } from '../index'
 import { UserInfoHeader, UserInfoContacts, UserInfoFlags } from './info'
+import LeftNav from '../leftnav'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
@@ -48,16 +48,19 @@ export default class UserView extends React.Component {
     const Hero = (props) => {
       return <div>
         <UserInfoHeader key={this.props.pid} pid={this.props.pid} />
-        <Tabs options={tabs} selected={currentTab} onSelect={this.onSelectTab.bind(this)} />
+        <Tabs className="user-info-tabs" options={tabs} selected={currentTab} onSelect={this.onSelectTab.bind(this)} />
       </div>
     }
 
     if (currentTab === VIEW_CONTACTS) {
       // TODO <UserInfoFlags pid={this.props.pid} />
-      return <VerticalFilledContainer className="user-profile" key={this.props.pid}>
-        <Hero />
-        <div className="user-profile-about">
-          <UserInfoContacts pid={this.props.pid} />
+      return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
+        <LeftNav location={this.props.location} />
+        <div className="flex-fill">
+          <Hero />
+          <div className="user-profile-about">
+            <UserInfoContacts pid={this.props.pid} />
+          </div>
         </div>
       </VerticalFilledContainer>
     }
@@ -86,16 +89,6 @@ export default class UserView extends React.Component {
     const composerProps = (isSelf)
       ? { isPublic: true, placeholder: 'Write a new public post', onSend: this.onSend.bind(this) }
       : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private message to '+name, onSend: this.onSend.bind(this) }
-
-    var ListItem = Card
-    if (currentTab === VIEW_POSTS) {
-      // look in localstorage settings
-      try {
-        const currentListItemView = JSON.parse(localStorage.msgList).currentMsgView
-        if (currentListItemView === 1)
-          ListItem = Oneline
-      } catch(e){}
-    }
   
     // MsgList must have refreshOnReply
     // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
@@ -106,9 +99,10 @@ export default class UserView extends React.Component {
         key={currentTab.label}
         threads
         dateDividers
+        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         composer composerProps={composerProps}
         forceRaw={forceRaw}
-        ListItem={ListItem}
+        ListItem={Oneline}
         Hero={Hero}
         source={feed}
         cursor={cursor}

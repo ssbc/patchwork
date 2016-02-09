@@ -7,7 +7,7 @@ import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
 import ClipboardBtn from 'react-clipboard.js'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
-import { Block as Content } from '../msg-content'
+import { Block as Content, Inline as ContentInline } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
 import Modal from '../modals/single'
 import FlagMsgForm from '../forms/flag-msg'
@@ -37,8 +37,9 @@ class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
     const title = 'Bookmark'+(b?'ed':'')
+    const hint = (b?'Remove this message from your bookmarks':'Add this message to your bookmarks')
     return <span>
-      <a href='javascript:;' className={'save'+(this.props.isBookmarked?' selected':'')} onClick={this.onClick.bind(this)} title={title}>
+      <a href='javascript:;' className={'hint--bottom save'+(this.props.isBookmarked?' selected':'')} data-hint={hint} onClick={this.onClick.bind(this)} title={title}>
         <i className={'fa fa-bookmark'+(b?'':'-o')} />
       </a>
     </span>
@@ -62,7 +63,6 @@ export default class Card extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      isOversized: false,
       isExpanded: false,
       isViewingRaw: false,
       subject: null,
@@ -71,19 +71,24 @@ export default class Card extends React.Component {
     this.changeCounter = props.msg.changeCounter || 0
   }
 
+  isExpanded() {
+    return this.props.forceExpanded || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
+  }
+
   onSelect() {
     this.props.onSelect(this.props.msg)
   }
-
 
   onToggleDataView(item) { 
     this.setState({ isViewingRaw: !this.state.isViewingRaw })
     this.markShouldUpdate()
   }
 
-  onToggleExpand() {
-    this.setState({ isExpanded: !this.state.isExpanded })
-    this.markShouldUpdate()
+  onClickExpand(e) {
+    if (!this.isExpanded()) {
+      e.preventDefault()
+      this.setState({ isExpanded: true })
+    }
   }
 
   onSubmitFlag(reason) {
@@ -122,22 +127,6 @@ export default class Card extends React.Component {
         })
       }
     }
-
-    // is the card oversized?
-    if (!this.refs.body)
-      return
-    // wait for images to finish loading
-    var done = multicb()
-    ;[].slice.call(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
-    done(() => {
-      // check height
-      if (!this.refs.body)
-        return
-      const rect = this.refs.body.getClientRects()[0]
-      if (rect && rect.height > MAX_CONTENT_HEIGHT) {
-        this.setState({ isOversized: true })
-      }
-    })
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -170,16 +159,16 @@ export default class Card extends React.Component {
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
     const isDownvoted = downvoters.indexOf(app.user.id) !== -1
-    if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
-      return this.renderMuted(msg)
+    // if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
+      // return this.renderMuted(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
 
   renderNotFound(msg) {
     const expanded = this.state.isExpanded
-    return <div key={msg.key} className={'msg-view card-missing-post'+(expanded?' expanded':'')}>
+    return <div key={msg.key} className={'msg-view card-missing-post'+(expanded?'':' collapsed')}>
       <div>
-        <a onClick={this.onToggleExpand.bind(this)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+        <a onClick={this.onClickExpand.bind(this)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
           <i className="fa fa-warning" /> Missing Post
         </a>
         { expanded ?
@@ -216,7 +205,7 @@ export default class Card extends React.Component {
     return <div className={'msg-view card-muted'}>
       <div className="ctrls"><UserPic id={msg.value.author} /></div>
       <div className="content">
-        <div><a onClick={this.onToggleExpand.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
+        <div><a onClick={this.onClickExpand.bind(this)}><MdInline limit={INLINE_LENGTH_LIMIT} md={text} /></a> <small>flagged</small></div>
         <div><NiceDate ts={msg.value.timestamp} /></div>
       </div>
     </div>
@@ -247,21 +236,17 @@ export default class Card extends React.Component {
       )
     ]
 
-    const oversizedCls = (this.state.isOversized?'oversized':'')
-    const expandedCls  = (this.state.isExpanded?'expanded':'')
+    const isExpanded   = this.isExpanded()
+    const collapsedCls = (isExpanded?'':'collapsed')
     const newCls       = (msg.isNew?'new':'')
-    return <div className={`msg-view card-post ${oversizedCls} ${expandedCls} ${newCls}`}>
+    return <div className={`msg-view card-post ${collapsedCls} ${newCls}`} onClick={this.onClickExpand.bind(this)}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
-        <div><a onClick={this.onSelect.bind(this)}><NiceDate ts={msg.value.timestamp} /></a></div>
       </div>
       <div className="content">
         <div className="header">
           <div className="header-left">
-            <UserLink id={msg.value.author} />{' '}
-            {msg.plaintext ? '' : <i className="fa fa-lock"/>}{' '}
-            {msg.mentionsUser ? <i className="fa fa-at"/> : ''}{' '}
-            {channel ? <span className="channel">in <Link to={`/newsfeed/channel/${channel}`}>#{channel}</Link></span> : ''}
+            <UserLink id={msg.value.author} /> <span className="date"><NiceDate ts={msg.value.timestamp} /></span>
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
@@ -269,8 +254,9 @@ export default class Card extends React.Component {
           </div>
         </div>
         <div className="body" ref="body">
-          <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
-          { this.state.isOversized ? <div className="read-more"><a href='javascript:;' onClick={this.onToggleExpand.bind(this)}>Read more</a></div> : ''}
+          { isExpanded
+            ? <Content       msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
+            : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
         </div>
         <div className="ctrls">
           { replies && !this.props.noReplies ?

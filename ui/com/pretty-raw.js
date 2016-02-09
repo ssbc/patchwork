@@ -76,7 +76,7 @@ class DivElem extends React.Component {
 export class Div extends Table {
   render() {
     if (!this.state.obj || typeof this.state.obj == 'string')
-      return <div className="pretty-raw flex">Encrypted Message</div>
-    return <div className="pretty-raw flex">{elements(false, this.state.obj, DivElem)}</div>
+      return <div className="pretty-raw"><i className="fa fa-lock" /></div>
+    return <div className="pretty-raw">{elements(false, this.state.obj, DivElem)}</div>
   }
 }

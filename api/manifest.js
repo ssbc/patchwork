@@ -2,14 +2,18 @@ module.exports = {
   createEventStream: 'source',
 
   getIndexCounts: 'async',
-  createNewsfeedStream: 'source',
   createInboxStream: 'source',
   createBookmarkStream: 'source',
-  createNotificationsStream: 'source',
+  createMentionStream: 'source',
+  createFollowStream: 'source',
+  createDigStream: 'source',
+  createPrivatePostStream: 'source',
+  createPublicPostStream: 'source',
   createChannelStream: 'source',
 
   markRead: 'async',
   markUnread: 'async',
+  markAllRead: 'async',
   toggleRead: 'async',
   isRead: 'async',
 

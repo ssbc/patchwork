@@ -29,10 +29,13 @@ exports.init = function (sbot, opts) {
   var state = {
     // indexes (lists of {key:, ts:})
     mymsgs: [],
-    newsfeed: u.index('newsfeed'),
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
-    notifications: u.index('notifications'),
+    mentions: u.index('mentions'),
+    follows: u.index('follows'),
+    digs: u.index('digs'),
+    privatePosts: u.index('privatePosts'),
+    publicPosts: u.index('publicPosts'),
     // other indexes: channel-* are created as needed
 
     // views
@@ -62,7 +65,7 @@ exports.init = function (sbot, opts) {
     }
   }
 
-  // load bookmarks into an index
+  // load bookmarks into indexes
   state.pinc()
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
@@ -79,6 +82,8 @@ exports.init = function (sbot, opts) {
       function (msg) {
         if (msg.value) {
           var row = state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+          row.isread = msg.isread
+          row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)
           row.isread = msg.isread
         }
       },
@@ -150,24 +155,25 @@ exports.init = function (sbot, opts) {
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       var counts = {
-        inbox: state.inbox.rows.length,
-        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
-        bookmarks: state.bookmarks.rows.length,
-        bookmarksUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
-        notificationsUnread: state.notifications.countUntouched()
-      }
-      for (var k in state) {
-        if (k.indexOf('channel-') === 0)
-          counts[k] = state[k].rows.length
+        // inbox: state.inbox.rows.length, DISABLED
+        // inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
+        bookmarkUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
+        mentionUnread: state.mentions.filter(function (row) { return !row.isread }).length,
+        privateUnread: state.privatePosts.filter(function (row) { return !row.isread }).length,
+        followUnread: state.follows.filter(function (row) { return !row.isread }).length,
+        digsUnread: state.digs.countUntouched()
       }
       cb(null, counts)
     })
   }
 
-  api.createNewsfeedStream = indexStreamFn(state.newsfeed)
   api.createInboxStream = indexStreamFn(state.inbox)
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
-  api.createNotificationsStream = indexStreamFn(state.notifications)
+  api.createMentionStream = indexStreamFn(state.mentions)
+  api.createFollowStream = indexStreamFn(state.follows)
+  api.createDigStream = indexStreamFn(state.digs)
+  api.createPrivatePostStream = indexStreamFn(state.privatePosts)
+  api.createPublicPostStream = indexStreamFn(state.publicPosts)
   api.createChannelStream = function (channel, opts) {
     if (typeof channel !== 'string' || !channel.trim())
       return cb(new Error('Invalid channel'))
@@ -213,8 +219,11 @@ exports.init = function (sbot, opts) {
 
   api.markRead = function (key, cb) {
     awaitSync(function () {
-      indexMarkRead('inbox', key)
+      // indexMarkRead('inbox', key) DISABLED
       indexMarkRead('bookmarks', key)
+      indexMarkRead('mentions', key)
+      indexMarkRead('privatePosts', key)
+      indexMarkRead('follows', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: true }) })
@@ -226,8 +235,11 @@ exports.init = function (sbot, opts) {
   }
   api.markUnread = function (key, cb) {
     awaitSync(function () {
-      indexMarkUnread('inbox', key)
+      // indexMarkUnread('inbox', key) DISABLED
       indexMarkUnread('bookmarks', key)
+      indexMarkUnread('mentions', key)
+      indexMarkUnread('privatePosts', key)
+      indexMarkUnread('follows', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: false }) })
@@ -235,6 +247,26 @@ exports.init = function (sbot, opts) {
         db.isread.del(key, cb) 
         emit('isread', { key: key, value: false })
       }
+    })
+  }
+  api.markAllRead = function (indexName, cb) {
+    awaitSync(function () {
+      var index = state[indexName]
+      if (!index || index.name !== indexName)
+        return cb(new Error('Invalid index'))
+
+      var done = multicb()
+      index
+        .filter(function (row) { return !row.isread })
+        .forEach(function (row) { 
+          var cb = done()
+          threadlib.getPostThread(sbot, row.key, { isRead: true }, function (err, thread) {
+            if (err)
+              return cb()
+            threadlib.markThreadRead(sbot, thread, cb)
+          })
+        })
+      done(cb)
     })
   }
   api.toggleRead = function (key, cb) {
@@ -272,10 +304,13 @@ exports.init = function (sbot, opts) {
       db.bookmarked.put(key, 1, done()) // update bookmarks index
       u.getThreadHasUnread(sbot, key, done()) // get the target thread's read/unread state
       done(function (err, putRes, hasUnread) {
-        // insert into the bookmarks index
+        // insert into the bookmarks and inbox indexes
         var bookmarksRow = state.bookmarks.sortedUpsert(value.timestamp, key)
         bookmarksRow.isread = !hasUnread // set isread state
         emit('index-change', { index: 'bookmarks' })
+        var inboxRow = state.inbox.sortedUpsert(value.timestamp, key)
+        inboxRow.isread = !hasUnread // set isread state
+        emit('index-change', { index: 'inbox' })
         cb(err, putRes)
       })
     })
@@ -284,6 +319,7 @@ exports.init = function (sbot, opts) {
     sbot.get(key, function (err, value) {
       if (err) return cb(err)
       state.bookmarks.remove(key)
+      state.inbox.remove(key)
       db.bookmarked.del(key, cb) 
     })
   }
@@ -501,7 +537,7 @@ exports.init = function (sbot, opts) {
       // helper to fetch rows
       function fetch (row, cb) {
         if (threads) {
-          threadlib.getPostSummary(sbot, row.key, function (err, thread) {
+          threadlib.getPostSummary(sbot, row.key, { isBookmarked: true, isRead: true, mentions: sbot.id }, function (err, thread) {
             for (var k in thread)
               row[k] = thread[k]
             cb(null, row)

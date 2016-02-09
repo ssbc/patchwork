@@ -1,11 +1,12 @@
 'use babel'
 import React from 'react'
+import { Link } from 'react-router'
 import LeftNav from '../com/leftnav'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-view/oneline'
 import app from '../lib/app'
 
-export default class InboxPosts extends React.Component {
+export default class Follows extends React.Component {
   cursor (msg) {
     if (msg)
       return [msg.ts, false]
@@ -13,7 +14,7 @@ export default class InboxPosts extends React.Component {
 
   onMarkAllRead() {
     if (confirm('Mark all messages read. Are you sure?')) {
-      app.ssb.patchwork.markAllRead('inbox', err => {
+      app.ssb.patchwork.markAllRead('follows', err => {
         if (err)
           app.issue('Failed to mark all read', err)
       })
@@ -27,18 +28,18 @@ export default class InboxPosts extends React.Component {
       </div>
     }
 
-    return <div id="inbox">
+    return <div id="follows">
       <MsgList
         ref="list"
         threads
         dateDividers
         composer composerProps={{ isPublic: true }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
-        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={RightNav}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Your inbox is empty."
-        source={app.ssb.patchwork.createInboxStream}
+        emptyMsg="Nobody has followed you yet."
+        source={app.ssb.patchwork.createFollowStream}
         cursor={this.cursor} />
     </div>
   }

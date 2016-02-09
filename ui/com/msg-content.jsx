@@ -6,10 +6,13 @@ import ssbref from 'ssb-ref'
 import { MsgLink, UserLink } from './index'
 import { Block as MdBlock, Inline as MdInline } from './markdown'
 import { Table as TableRaw, Div as DivRaw } from './pretty-raw'
+import social from '../lib/social-graph'
+import u from '../lib/util'
 
 export class Block extends React.Component {
   render() {
-    let c = this.props.msg.value.content
+    const author = this.props.msg.value.author
+    const c = this.props.msg.value.content
 
     if (this.props.forceRaw)
       return <TableRaw key={this.props.msg.key} obj={c} />
@@ -18,6 +21,26 @@ export class Block extends React.Component {
       switch (c.type) {
         case 'post':
           if (c.text) return <MdBlock md={c.text} msg={this.props.msg} />
+          break
+
+        case 'contact':
+          var contact = mlib.link(c.contact).link
+          if (contact === app.user.id) {
+            if (c.following) {
+              if (!social.follows(app.user.id, author))
+                return <div><i className="fa fa-user-plus" /> <UserLink id={author} /> has followed you. Follow back?</div>
+              else
+                return <div><i className="fa fa-user-plus" /> <UserLink id={author} /> has joined your contacts.</div>
+            } else {
+              return <div><i className="fa fa-user-times" /> <UserLink id={author} /> has stopped following you.</div>
+            }
+          } else {
+            if (c.following)
+              return <div><i className="fa fa-user-plus" /> <UserLink id={author} /> has followed {u.getName(contact)}.</div>
+            else
+              return <div><i className="fa fa-user-times" /> <UserLink id={author} /> has stopped following {u.getName(contact)}.</div>
+          }
+          break
       }
     } catch (e) { console.warn(e) }
 
@@ -27,19 +50,38 @@ export class Block extends React.Component {
 
 export class Inline extends React.Component {
   render() {
-    let c = this.props.msg.value.content
+    const author = this.props.msg.value.author
+    const c = this.props.msg.value.content
 
     if (this.props.forceRaw)
-      return <div>{JSON.stringify(c)}</div>
+      return <DivRaw key={this.props.msg.key} obj={c} />
 
     try {
       switch (c.type) {
         case 'post':
           if (c.text) return <MdInline md={c.text} />
           break
+        case 'contact':
+          var contact = mlib.link(c.contact).link
+          if (contact === app.user.id) {
+            if (c.following) {
+              if (!social.follows(app.user.id, author))
+                return <div><i className="fa fa-user-plus" /> {u.getName(author)} has followed you. Follow back?</div>
+              else
+                return <div><i className="fa fa-user-plus" /> {u.getName(author)} has joined your contacts.</div>
+            } else {
+              return <div><i className="fa fa-user-times" /> {u.getName(author)} has stopped following you.</div>
+            }
+          } else {
+            if (c.following)
+              return <div><i className="fa fa-user-plus" /> {u.getName(author)} has followed {u.getName(contact)}.</div>
+            else
+              return <div><i className="fa fa-user-times" /> {u.getName(author)} has stopped following {u.getName(contact)}.</div>
+          }
+          break
       }
     } catch (e) { console.warn(e) }
 
-    return <div>{JSON.stringify(c)}</div>
+    return <DivRaw key={this.props.msg.key} obj={c} />
   }
 }

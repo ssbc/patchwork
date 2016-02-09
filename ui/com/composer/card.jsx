@@ -16,6 +16,9 @@ export default class ComposerCard extends React.Component {
         this.refs.container.querySelector('textarea').focus()
       else
         this.refs.container.querySelector('input[type=text], textarea').focus()
+
+      // after the expand animation, remove the max-height limit so that the preview can expand
+      setTimeout(() => this.refs.container.style.maxHeight = '100%', 1e3)
     })
   }
   onSend(msg) {

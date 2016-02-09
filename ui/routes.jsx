@@ -3,9 +3,13 @@ import React from 'react'
 import { Router, Route, IndexRoute } from 'react-router'
 import app from './lib/app'
 import Layout from './layout'
-import NewsFeed from './views/newsfeed'
 import Inbox from './views/inbox'
+import PublicPosts from './views/public'
+import PrivatePosts from './views/private'
 import Bookmarks from './views/bookmarks'
+import Mentions from './views/mentions'
+import Follows from './views/follows'
+import Digs from './views/digs'
 import Data from './views/data'
 import Msg from './views/msg'
 import Composer from './views/composer'
@@ -33,10 +37,15 @@ app.history.listenBefore(beforeNavigation)
 export var routes = (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={NewsFeed} />
-      <Route path="newsfeed/channel/:channel" component={NewsFeed} />
+      <IndexRoute component={PublicPosts} />
       <Route path="inbox" component={Inbox} />
+      <Route path="public" component={PublicPosts} />
+      <Route path="public/channel/:channel" component={PublicPosts} />
+      <Route path="private" component={PrivatePosts} />
       <Route path="bookmarks" component={Bookmarks} />
+      <Route path="mentions" component={Mentions} />
+      <Route path="follows" component={Follows} />
+      <Route path="digs" component={Digs} />
       <Route path="data" component={Data} />
       <Route path="add-contact" component={AddContact} />
       <Route path="contacts" component={Contacts} />

@@ -74,7 +74,7 @@ function openObject (ref) {
 const openChannel = channel => () => {
   if (channel.charAt(0) == '#') // strip off the pound
     channel = channel.slice(1)
-  app.history.pushState(null, '/newsfeed/channel/'+encodeURIComponent(channel))
+  app.history.pushState(null, '/public/channel/'+encodeURIComponent(channel))
 }
 
 const doSearch = opts => query => {

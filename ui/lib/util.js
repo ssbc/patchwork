@@ -36,6 +36,17 @@ exports.bytesHuman = function (nBytes) {
   return str
 }
 
+module.exports.isImageFilename = function (name) {
+  if (typeof name !== 'string')
+    return false
+  return isImageContentType(mime.contentType(name))
+}
+
+var isImageContentType =
+module.exports.isImageContentType = function (ct) {
+  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
+}
+
 const startOfDay = moment().startOf('day')
 const lastWeek = moment().subtract(1, 'weeks')
 const lastYear = moment().subtract(1, 'years')

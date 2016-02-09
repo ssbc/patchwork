@@ -463,11 +463,7 @@ export default class Sync extends React.Component {
         <div className="header">
           <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
           <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
-        </div>
-
-        <div className='peer-status-group'>
-          <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
+          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Join Pub</ModalBtn>
         </div>
 
         <div className='peer-status-group'>
@@ -494,6 +490,10 @@ export default class Sync extends React.Component {
             this.state.peers.filter(isNotLAN).
               map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
           }
+        </div>
+
+        <div className='peer-status-group'>
+          <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
         </div>
       </div>
     </VerticalFilledContainer>

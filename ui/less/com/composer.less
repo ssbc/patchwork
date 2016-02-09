@@ -1,9 +1,9 @@
 .composer {
   .composer-ctrls {
+    .elevation-1;
     background: #fff;
     font-weight: 300;
-    border: 1px solid #ccc;
-    border-top: 0;
+    margin: 1px 0;
     
     .btn {
       padding: 10px 20px;
@@ -30,10 +30,10 @@
     }
   }
   .composer-recps {
+    .elevation-1;
     background: #fff;
     padding: 10px 20px;
-    border: 1px solid #ccc;
-    border-top: 0;
+    margin: 1px 0;
     font-weight: 300;
     i {
       color: #666;
@@ -61,13 +61,13 @@
     }
   }
   .composer-content {
+    .elevation-1;
     font-family: @content-font;
     font-weight: 300;
     color: #555555;
     line-height: 1.4;
-    margin-top: 5px;
-    background: #fafafa;
-    border: 1px solid #ccc;
+    background: #fff;
+    margin: 1px 0;
 
     textarea {
       display: block;
@@ -76,7 +76,6 @@
       resize: none;
       border: 0;
       min-height: 140px;
-      max-width: 586px; // mimics the rendered cards
       padding: 10px;
       margin: 0;
 
@@ -94,5 +93,16 @@
   .warning {
     color: @dark-red3;
     margin: 5px 0;
+  }
+  .preview {
+    .elevation-1;
+    background: #fff;
+    margin: 1px 0;
+    padding: 14px 20px 20px;
+    color: @dark-gray3;
+    font-weight: 300;
+    font-family: @content-font;
+    line-height: 1.4;
+    word-break: break-word;
   }
 }

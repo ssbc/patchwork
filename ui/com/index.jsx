@@ -42,7 +42,7 @@ export class UserLinks extends React.Component {
 
 export class UserPic extends React.Component {
   render() {
-    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
     return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic" title={name}>
       <img src={u.profilePicUrl(this.props.id)} />
     </Link>
@@ -161,6 +161,27 @@ export function verticalFilled (Component) {
       }
       this.setState({ height: height })
     },
+    getScrollTop() {
+      const el = this.refs && this.refs.el
+      if (!el) return 0
+      if (el.getScrollTop)
+        return el.getScrollTop() // use the child's impl
+      return el.scrollTop
+    },
+    // check if a location is in scroll-view
+    isPointVisible(left, top) {
+      const el = this.refs && this.refs.el
+      if (!el) return
+      if (el.isPointVisible)
+        return el.isPointVisible(left, top) // use the child's impl
+
+      // TODO left
+
+      if (el.scrollTop > top || el.scrollTop + this.state.height < top)
+        return false
+
+      return true
+    },
     scrollTo(top) {
       const el = this.refs && this.refs.el
       if (!el) return
@@ -195,7 +216,7 @@ export function verticalFilled (Component) {
 }
 class _VerticalFilledContainer extends React.Component {
   render() {
-    return <div className="vertical-filled" {...this.props} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
+    return <div className="vertical-filled" {...this.props} style={{position: 'relative', height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
   }
 }
 export var VerticalFilledContainer = verticalFilled(_VerticalFilledContainer)

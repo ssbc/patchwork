@@ -132,7 +132,7 @@ class CompositionUnit extends React.Component {
           var str = ''
           if (!(/(^|\s)$/.test(this.state.text)))
             str += ' ' // add some space if not on a newline
-          if (isImageFilename(f.name))
+          if (u.isImageFilename(f.name))
             str += '!' // inline the image
           str += '['+(f.name||'untitled')+']('+hash+')'
           this.setState({ text: this.state.text + str })
@@ -210,20 +210,22 @@ class CompositionUnit extends React.Component {
     return (vertical ? ComposerTextareaVerticalFilled : ComposerTextareaFixed)
   }
 
-  renderPreview(props) {
-    return (props) => (
-      <div>
-        <div className="card" 
-             style={{padding: '20px', margin: '40px 10px 30px 0'}}>
-          <MarkdownBlock md={this.state.text} />
-        </div>
-      </div>)
+  static Preview(props) {
+    if (!props.text)
+      return <span/>
+    return <div className="preview">
+      <div className="muted">
+        <small>preview</small>
+        <a className="float-right" onClick={props.togglePreviewing}>&times;</a>
+      </div>
+      <MarkdownBlock md={props.text} />
+    </div>
   }
 
   renderAudienceBtn(props) {
     return (props) => {
       const opts = [
-        { label: <span><i className="fa fa-inbox"/> Private</span>, 
+        { label: <span><i className="fa fa-lock"/> Private</span>, 
           value: false },
         { label: <span><i className="fa fa-bullhorn"/> Public</span>, 
           value: true }
@@ -270,15 +272,15 @@ class CompositionUnit extends React.Component {
     }
   }
 
-  setPreviewing(newBool) {
-    return (() => this.setState({isPreviewing: newBool}))
+  togglePreviewing() {
+    return this.setState({ isPreviewing: !this.state.isPreviewing })
   }
 
   renderToolbar() {
     const AudienceBtn = this.renderAudienceBtn(this.props)
     const AttachBtn = this.renderAttachBtn(this.props)
     const SendBtn = this.renderSendBtn(this.props)
-    const setPreviewing = this.setPreviewing.bind(this)
+    const togglePreviewing = this.togglePreviewing.bind(this)
 
     return (<div>
               <div className="composer-ctrls flex">
@@ -291,26 +293,28 @@ class CompositionUnit extends React.Component {
                            isAdding={this.state.isAddingFiles} 
                            onAttach={this.onAttach.bind(this)} />
                 <div className="flex-fill" />
-                <a className="btn" onClick={setPreviewing(true)}>Preview</a>
+                { this.state.isPreviewing ? '' : <a className="btn" onClick={togglePreviewing}>Preview</a> }
                 <SendBtn canSend={this.canSend() && !this.state.isSending} />
               </div>
-              { this.isPublic()
-                ? <ComposerChannel isReadOnly={this.isReply()} 
-                                   onChange={this.onChangeChannel.bind(this)} 
-                                   value={this.getChannel()} />
-                : <ComposerRecps isReadOnly={this.isReply()} 
-                                 recps={this.state.recps} 
-                                 onAdd={this.onAddRecp.bind(this)} 
-                                 onRemove={this.onRemoveRecp.bind(this)} /> 
+              { this.isReply()
+                ? '' /* no channel/recps control for replies */
+                : ( this.isPublic()
+                  ? <ComposerChannel isReadOnly={this.isReply()} 
+                                     onChange={this.onChangeChannel.bind(this)} 
+                                     value={this.getChannel()} />
+                  : <ComposerRecps isReadOnly={this.isReply()} 
+                                   recps={this.state.recps} 
+                                   onAdd={this.onAddRecp.bind(this)} 
+                                   onRemove={this.onRemoveRecp.bind(this)} /> 
+                )
               }
     </div>)
   }
 
   renderComposerArea() {
-    const Preview = this.renderPreview(this.props)
     const channel = this.getChannel()
-    const setPreviewing = this.setPreviewing.bind(this)
     const vertical = this.props.verticalFilled
+    const togglePreviewing = this.togglePreviewing.bind(this)
     const ComposerTextarea = this.renderComposerTextarea(vertical)
     var toolbarTop, toolbarBottom
 
@@ -323,10 +327,6 @@ class CompositionUnit extends React.Component {
                  type="file" multiple
                  onChange={this.onFilesAdded.bind(this)}
                  style={{display: 'none'}} />
-          <Modal className="fullheight"
-                 Content={Preview}
-                 isOpen={this.state.isPreviewing}
-                 onClose={setPreviewing(false)} />
           { toolbarTop }
           <div className="composer-content">
             <ComposerTextarea
@@ -339,6 +339,7 @@ class CompositionUnit extends React.Component {
                              (this.props.placeholder||'Write your message here')} />
           </div>
           { toolbarBottom }
+          { this.state.isPreviewing ? <CompositionUnit.Preview text={this.state.text} togglePreviewing={togglePreviewing} /> : '' }
         </div>)
   }
   
@@ -427,6 +428,8 @@ export default class Composer extends CompositionUnit {
           app.ssb.patchwork.markRead((this.threadRoot) ? 
                                      [this.threadRoot, msg.key] : 
                                      msg.key)
+          // auto-bookmark the thread
+          app.ssb.patchwork.bookmark(this.threadRoot || msg.key)
 
           // call handler
           if (this.props.onSend instanceof Function) { this.props.onSend(msg) }
@@ -446,11 +449,6 @@ function isThreadPublic (thread) {
   if ('plaintext' in thread)
     return thread.plaintext
   return (typeof thread.value.content !== 'string')
-}
-
-function isImageFilename (name) {
-  var ct = mime.contentType(name)
-  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
 }
 
 function getThreadRoot (msg) {
