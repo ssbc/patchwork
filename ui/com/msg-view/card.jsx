@@ -246,7 +246,7 @@ export default class Card extends React.Component {
       <div className="content">
         <div className="header">
           <div className="header-left">
-            <UserLink id={msg.value.author} /> <span className="date"><NiceDate ts={msg.value.timestamp} /></span>
+            <UserLink id={msg.value.author} /> <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link>
           </div>
           <div className="header-right">
             { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
