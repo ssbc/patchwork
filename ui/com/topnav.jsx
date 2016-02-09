@@ -24,7 +24,8 @@ export default class TopNav extends React.Component {
     } else {
       this.setState({ isComposerOpen: true }, () => {
         // focus the textarea
-        if (this.props.recps) // if recps are provided, focus straight onto the textarea
+        const cp = this.props.composerProps
+        if (cp && (cp.recps || cp.isPublic)) // if public, or recps are provided, focus straight onto the textarea
           this.refs.composer.querySelector('textarea').focus()
         else
           this.refs.composer.querySelector('input[type=text], textarea').focus()
