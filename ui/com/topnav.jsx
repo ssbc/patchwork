@@ -19,6 +19,7 @@ export default class TopNav extends React.Component {
   }
 
   onClickCompose() {
+    clearTimeout(this.expandTimeout)
     if (this.state.isComposerOpen) {
       this.setState({ isComposerOpen: false })
     } else {
@@ -31,7 +32,8 @@ export default class TopNav extends React.Component {
           this.refs.composer.querySelector('input[type=text], textarea').focus()
 
         // after the expand animation, remove the max-height limit so that the preview can expand
-        setTimeout(() => this.refs.composer.style.maxHeight = '100%', 1e3)
+        this.expandTimeout =
+          setTimeout(() => this.refs.composer.style.maxHeight = '100%', 1e3)
       })
     }
   }
