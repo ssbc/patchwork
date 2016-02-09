@@ -75,7 +75,7 @@ export default class LeftNav extends React.Component {
     const renderContact = c => <LeftNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}><i className="fa fa-user" /> {c.name}</LeftNav.Link>
     return <div className="leftnav">
       <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-comment-o" /> All talk</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Contacts</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Network</LeftNav.Link>
       <Issues/>
       <LeftNav.Heading>Inbox</LeftNav.Heading>
       <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private ({app.indexCounts.privateUnread})</LeftNav.Link>

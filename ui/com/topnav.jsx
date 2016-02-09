@@ -24,12 +24,11 @@ export default class Layout extends React.Component {
       </div>
       <div className="flex topnav-content">
         <a className="selected">Discussions</a>
-        <a>Files</a>
         <a>Links</a>
         <a>Images</a>
-        <a>Video</a>
-        <a>Music</a>
         <a>Events</a>
+        <a>Reviews</a>
+        <a>Software</a>
       </div>
     </div>
   }
