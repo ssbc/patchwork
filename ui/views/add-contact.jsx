@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import { VerticalFilledContainer } from '../com/index'
 import UserSummary from '../com/user/summary'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import FollowNearby from '../com/forms/follow-nearby'
 import FollowFoafs from '../com/forms/follow-foafs'
 import PubInvite from '../com/forms/pub-invite'
@@ -83,6 +84,7 @@ export default class AddContact extends React.Component {
         <div className="section"><Pubs /></div>
         <div className="section"><FollowFoafs /></div>
       </div>
+      <RightNav/>
     </VerticalFilledContainer>
   }
 }

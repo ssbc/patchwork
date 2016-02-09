@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import cls from 'classnames'
-import { getResults } from '../lib/search'
+import { doSearch, getResults } from '../lib/search'
 
 const KEYCODE_UP = 38
 const KEYCODE_DOWN = 40
@@ -55,7 +55,8 @@ export default class SearchPalette extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      query: '',
+      query: this.props.query || '',
+      isOpen: false,
       results: []
     }
     this.unlistenBefore = app.history.listenBefore(this.onBeforeNavigation.bind(this))
@@ -96,7 +97,10 @@ export default class SearchPalette extends React.Component {
   }
 
   onSearch() {
-    this.refs.results.getSelectedResult().fn(this.state.query)    
+    if (this.state.isOpen)
+      this.refs.results.getSelectedResult().fn(this.state.query)
+    else
+      doSearch()(this.state.query)
   }
 
   focus() {
@@ -104,16 +108,14 @@ export default class SearchPalette extends React.Component {
   }
 
   render() {
-    const hasQuery = !!this.state.query
     return <div className="search-palette">
       <i className="fa fa-search" />
       <input 
         ref="search"
-        placeholder="Search for people or content"
         value={this.state.query}
         onChange={this.onChange.bind(this)}
         onKeyDown={this.onKeyDown.bind(this)} />
-      { hasQuery ? <SearchResults ref="results" query={this.state.query} results={this.state.results} onClickResult={this.onSearch.bind(this)} /> : '' }
+      { this.state.isOpen ? <SearchResults ref="results" query={this.state.query} results={this.state.results} onClickResult={this.onSearch.bind(this)} /> : '' }
     </div>
   }
 }

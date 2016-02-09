@@ -7,6 +7,7 @@ import Oneline from '../msg-view/oneline'
 import { VerticalFilledContainer } from '../index'
 import { UserInfoHeader, UserInfoContacts, UserInfoFlags } from './info'
 import LeftNav from '../leftnav'
+import RightNav from '../rightnav'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
@@ -62,6 +63,7 @@ export default class UserView extends React.Component {
             <UserInfoContacts pid={this.props.pid} />
           </div>
         </div>
+        <RightNav />
       </VerticalFilledContainer>
     }
 
@@ -100,6 +102,7 @@ export default class UserView extends React.Component {
         threads
         dateDividers
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
+        RightNav={RightNav}
         composer composerProps={composerProps}
         forceRaw={forceRaw}
         ListItem={Oneline}

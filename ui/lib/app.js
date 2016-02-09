@@ -41,7 +41,7 @@ module.exports = extend(new Emitter(), {
         image: './img/emoji/' + emoji + '.png',
         title: emoji,
         subtitle: emoji,
-        value: emoji + ':'
+        value: ':' + emoji + ':'
       }
     }),
     '@': []
@@ -200,7 +200,7 @@ function fetchLatestState (cb) {
             title: name || id,
             image: require('./util').profilePicUrl(id),
             subtitle: name || id,
-            value: name || id.slice(1) // if using id, dont include the @ sigil
+            value: name ? ('@'+name) : id
           })
         }
       }

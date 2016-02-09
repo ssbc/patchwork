@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
 import Notification from '../com/msg-view/notification'
 import app from '../lib/app'
@@ -20,6 +21,7 @@ export default class Mentions extends React.Component {
         composer composerProps={{ isPublic: true }}
         ListItem={Notification} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        RightNav={RightNav}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Nobody has dug any of your posts yet. They will, though!"
         source={app.ssb.patchwork.createDigStream}

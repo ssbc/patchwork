@@ -9,6 +9,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import ReactInfinite from 'react-infinite'
 import classNames from 'classnames'
+import TopNav from './topnav'
 import ComposerCard from './composer/card'
 import SimpleInfinite from './simple-infinite'
 import ResponsiveElement from './responsive-element'
@@ -349,7 +350,6 @@ export default class MsgList extends React.Component {
     const Hero = this.props.Hero
     const LeftNav = this.props.LeftNav
     const RightNav = this.props.RightNav
-    const Toolbar = this.props.Toolbar
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
@@ -398,7 +398,6 @@ export default class MsgList extends React.Component {
 
     return <div className="msg-list">
       <div className="msg-list-items flex-fill">
-        { Toolbar ? <Toolbar/> : '' }
         <Infinite
           id="msg-list-infinite"
           ref="container"
@@ -415,7 +414,8 @@ export default class MsgList extends React.Component {
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
                 : '' }
-              { this.props.composer ? <ComposerCard {...this.props.composerProps} /> : '' }
+              <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} />
+              { '' /*this.props.composer ? <ComposerCard {...this.props.composerProps} /> : ''*/ }
               { this.state.msgs.length === 0 && this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
               { isEmpty ?
                 <div className="empty-msg">

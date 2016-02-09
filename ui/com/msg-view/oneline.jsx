@@ -46,37 +46,9 @@ export default class Oneline extends React.Component {
       { !this.props.noReplies ? <div className="replies">{replies}</div> : '' }
       <div className="content">
         <Content msg={msg} forceRaw={this.props.forceRaw} />
-        <Attachments msg={msg} />
       </div>
       {''/*<div className="date"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>*/}
       { label }
     </div>
-  }
-}
-
-class Attachments extends React.Component {
-  render() {
-    var blobs = []
-    mlib.indexLinks(
-      this.props.msg.value.content, 
-      { blob: true },
-      blob => {
-        // images only
-        if (u.isImageContentType(blob.type) || u.isImageFilename(blob.name))
-          blobs.push(blob)
-      }
-    )
-    if (!blobs.length)
-      return <span/>
-    return <div className="attachments">
-      { blobs.map(blob => <Attachment key={blob.link} blob={blob} />)}
-    </div>
-  }
-}
-
-class Attachment extends React.Component {
-  render() {
-    return <img src={'/'+encodeURIComponent(this.props.blob.link)} />
-    //return <div><span>{this.props.blob.name || this.props.blob.type || this.props.blob.link}</span></div>
   }
 }

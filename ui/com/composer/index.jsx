@@ -276,50 +276,14 @@ class CompositionUnit extends React.Component {
     return this.setState({ isPreviewing: !this.state.isPreviewing })
   }
 
-  renderToolbar() {
-    const AudienceBtn = this.renderAudienceBtn(this.props)
-    const AttachBtn = this.renderAttachBtn(this.props)
-    const SendBtn = this.renderSendBtn(this.props)
-    const togglePreviewing = this.togglePreviewing.bind(this)
-
-    return (<div>
-              <div className="composer-ctrls flex">
-                <AudienceBtn canChange={!this.isReply()} 
-                             isPublic={this.isPublic()} 
-                             onSelect={this.onSelectPublic.bind(this)} />
-                <AttachBtn isPublic={this.isPublic()} 
-                           isReply={this.isReply()} 
-                           hasAdded={this.state.hasAddedFiles} 
-                           isAdding={this.state.isAddingFiles} 
-                           onAttach={this.onAttach.bind(this)} />
-                <div className="flex-fill" />
-                { this.state.isPreviewing ? '' : <a className="btn" onClick={togglePreviewing}>Preview</a> }
-                <SendBtn canSend={this.canSend() && !this.state.isSending} />
-              </div>
-              { this.isReply()
-                ? '' /* no channel/recps control for replies */
-                : ( this.isPublic()
-                  ? <ComposerChannel isReadOnly={this.isReply()} 
-                                     onChange={this.onChangeChannel.bind(this)} 
-                                     value={this.getChannel()} />
-                  : <ComposerRecps isReadOnly={this.isReply()} 
-                                   recps={this.state.recps} 
-                                   onAdd={this.onAddRecp.bind(this)} 
-                                   onRemove={this.onRemoveRecp.bind(this)} /> 
-                )
-              }
-    </div>)
-  }
-
   renderComposerArea() {
     const channel = this.getChannel()
     const vertical = this.props.verticalFilled
     const togglePreviewing = this.togglePreviewing.bind(this)
     const ComposerTextarea = this.renderComposerTextarea(vertical)
-    var toolbarTop, toolbarBottom
-
-    if (vertical) toolbarTop = this.renderToolbar()
-    else toolbarBottom = this.renderToolbar()
+    const AudienceBtn = this.renderAudienceBtn(this.props)
+    const AttachBtn = this.renderAttachBtn(this.props)
+    const SendBtn = this.renderSendBtn(this.props)
 
     return (
         <div className="composer">
@@ -327,7 +291,18 @@ class CompositionUnit extends React.Component {
                  type="file" multiple
                  onChange={this.onFilesAdded.bind(this)}
                  style={{display: 'none'}} />
-          { toolbarTop }
+          { this.isReply()
+            ? '' /* no channel/recps control for replies */
+            : ( this.isPublic()
+              ? <ComposerChannel isReadOnly={this.isReply()} 
+                                 onChange={this.onChangeChannel.bind(this)} 
+                                 value={this.getChannel()} />
+              : <ComposerRecps isReadOnly={this.isReply()} 
+                               recps={this.state.recps} 
+                               onAdd={this.onAddRecp.bind(this)} 
+                               onRemove={this.onRemoveRecp.bind(this)} /> 
+            )
+          }
           <div className="composer-content">
             <ComposerTextarea
                 ref="textarea"
@@ -338,7 +313,19 @@ class CompositionUnit extends React.Component {
                              'Write a reply' :
                              (this.props.placeholder||'Write your message here')} />
           </div>
-          { toolbarBottom }
+          <div className="composer-ctrls flex">
+            <AudienceBtn canChange={!this.isReply()} 
+                         isPublic={this.isPublic()} 
+                         onSelect={this.onSelectPublic.bind(this)} />
+            <AttachBtn isPublic={this.isPublic()} 
+                       isReply={this.isReply()} 
+                       hasAdded={this.state.hasAddedFiles} 
+                       isAdding={this.state.isAddingFiles} 
+                       onAttach={this.onAttach.bind(this)} />
+            <div className="flex-fill" />
+            { this.state.isPreviewing ? '' : <a className="btn" onClick={togglePreviewing}>Preview</a> }
+            <SendBtn canSend={this.canSend() && !this.state.isSending} />
+          </div>
           { this.state.isPreviewing ? <CompositionUnit.Preview text={this.state.text} togglePreviewing={togglePreviewing} /> : '' }
         </div>)
   }
