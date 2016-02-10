@@ -124,17 +124,17 @@ module.exports = function (configOracle) {
           }
         },
         {
-          label: 'Find Previous',
-          accelerator: 'CmdOrCtrl+Shift+G',
-          click: function (item, win) {
-            win.webContents.executeJavaScript('app.emit("find:previous")')
-          }
-        },
-        {
           label: 'Find Next',
           accelerator: 'CmdOrCtrl+G',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.emit("find:next")')
+          }
+        },
+        {
+          label: 'Find Previous',
+          accelerator: 'CmdOrCtrl+Shift+G',
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.emit("find:previous")')
           }
         }
       ]
