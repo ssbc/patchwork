@@ -202,41 +202,87 @@ module.exports = function (configOracle) {
         {
           type: 'separator'
         },
+
         {
-          label: 'Feed',
+          label: 'All Talk',
           accelerator: 'CmdOrCtrl+1',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "")')
           }
         },
         {
-          label: 'Inbox',
+          label: 'Network',
           accelerator: 'CmdOrCtrl+2',
           click: function (item, win) {
-            win.webContents.executeJavaScript('app.history.pushState(null, "inbox")')
+            win.webContents.executeJavaScript('app.history.pushState(null, "contacts")')
           }
         },
         {
-          label: 'Contacts',
+          type: 'separator'
+        },
+
+        {
+          label: 'Private',
           accelerator: 'CmdOrCtrl+3',
           click: function (item, win) {
-            win.webContents.executeJavaScript('app.history.pushState(null, "profile")')
+            win.webContents.executeJavaScript('app.history.pushState(null, "private")')
           }
         },
         {
-          label: 'Network Status',
+          label: 'Bookmarked',
+          accelerator: 'CmdOrCtrl+b',
+          click: function (item, win) {
+            win.webcontents.executeJavascript('app.history.pushState(null, "bookmarks")')
+          }
+        },
+        {
+          label: 'Mentioned',
+          accelerator: 'CmdOrCtrl+Shift+M',
+          click: function (item, win) {
+            win.webcontents.executeJavascript('app.history.pushState(null, "mentions")')
+          }
+        },
+        {
+          label: 'Follows',
+          accelerator: 'CmdOrCtrl+Shift+F',
+          click: function (item, win) {
+            win.webcontents.executeJavascript('app.history.pushState(null, "follows")')
+          }
+        },
+        {
+          type: 'separator'
+        },
+
+        {
+          label: 'Digs on Your Posts',
+          accelerator: 'CmdOrCtrl+Shift+D',
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "digs")')
+          }
+        },
+        {
+          label: 'Your Profile',
+          accelerator: 'CmdOrCtrl+Shift+P',
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "profile/" + encodeURIComponent(app.user.id))')
+          }
+        },
+
+        {
+          label: 'Network Sync Status',
           accelerator: 'CmdOrCtrl+4',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "sync")')
           }
         },
         {
-          label: 'Data Log',
+          label: 'Datafeed',
           accelerator: 'CmdOrCtrl+5',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "data")')
           }
         },
+
         {
           type: 'separator'
         },
