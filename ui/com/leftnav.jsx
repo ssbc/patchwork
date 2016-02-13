@@ -73,16 +73,19 @@ export default class LeftNav extends React.Component {
     // render
     const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/public/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
     const renderContact = c => <LeftNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}><i className="fa fa-user" /> {c.name}</LeftNav.Link>
+    const followUnread = (app.indexCounts.followUnread > 0) ? `(${app.indexCounts.followUnread})` : ''
     return <div className="leftnav">
-      <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-comment-o" /> All talk</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-inbox" /> Inbox</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Important ({app.indexCounts.inboxUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Network</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/follows"><i className="fa fa-user-plus" /> Follows {followUnread}</LeftNav.Link>
       <Issues/>
 
-      <LeftNav.Heading>Inbox</LeftNav.Heading>
+      {''/*<LeftNav.Heading>Inbox</LeftNav.Heading>
       <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private ({app.indexCounts.privateUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/follows"><i className="fa fa-user-plus" /> Follows ({app.indexCounts.followUnread})</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/follows"><i className="fa fa-user-plus" /> Follows ({app.indexCounts.followUnread})</LeftNav.Link>*/}
 
       <LeftNav.Heading>Channels</LeftNav.Heading>
       { pinnedChannels.map(renderChannel) }

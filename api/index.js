@@ -155,8 +155,7 @@ exports.init = function (sbot, opts) {
   api.getIndexCounts = function (cb) {
     awaitSync(function () {
       var counts = {
-        // inbox: state.inbox.rows.length, DISABLED
-        // inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length
+        inboxUnread: state.inbox.filter(function (row) { return !row.isread }).length,
         bookmarkUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
         mentionUnread: state.mentions.filter(function (row) { return !row.isread }).length,
         privateUnread: state.privatePosts.filter(function (row) { return !row.isread }).length,

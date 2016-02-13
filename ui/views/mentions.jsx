@@ -1,6 +1,5 @@
 'use babel'
 import React from 'react'
-import { Link } from 'react-router'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
