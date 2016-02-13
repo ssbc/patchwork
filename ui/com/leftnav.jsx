@@ -78,7 +78,6 @@ export default class LeftNav extends React.Component {
       <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-inbox" /> Inbox</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Important ({app.indexCounts.inboxUnread})</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Network</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/follows"><i className="fa fa-user-plus" /> Follows {followUnread}</LeftNav.Link>
       <Issues/>
 
       {''/*<LeftNav.Heading>Inbox</LeftNav.Heading>

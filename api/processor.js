@@ -118,11 +118,14 @@ module.exports = function (sbot, db, state, emit) {
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
 
-        // follow index: add follows or blocks
+        // follow, inbox index: add follows or blocks
         if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          var inboxRow = state.follows.sortedUpsert(ts(msg), msg.key)
-          emit('index-change', { index: 'follows' })
+          var inboxRow = state.inbox.sortedUpsert(ts(msg), msg.key)
+          emit('index-change', { index: 'inbox' })
           attachIsRead(inboxRow)
+          var followRow = state.follows.sortedUpsert(ts(msg), msg.key)
+          emit('index-change', { index: 'follows' })
+          attachIsRead(followRow)
         }
       })
     },
