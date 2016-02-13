@@ -46,12 +46,15 @@ export default class TopNav extends React.Component {
 
   render() {
     const onClickCompose = this.onClickCompose.bind(this)
+    if (this.state.isComposerOpen) {
+      return <div className="topnav">
+        <div ref="composer"><Composer {...this.props.composerProps} cancelBtn onCancel={onClickCompose} onSend={this.onSend.bind(this)} /></div>
+      </div>
+    }
     return <div className="topnav">
       <div className="flex topnav-bar">
         <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} /></div>
-        { this.state.isComposerOpen
-          ? <a className="compose-btn cancel" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>
-          : <a className="compose-btn" onClick={onClickCompose}><i className="fa fa-plus" /> New Post</a> }
+        <a className="compose-btn" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a>
       </div>
       <div className="flex topnav-content">
         { (this.props.contentTypes||[]).map((ct, i) => {
@@ -59,7 +62,6 @@ export default class TopNav extends React.Component {
           return <a key={ct} className={cls}>{ct}</a>
         }) }
       </div>
-      { this.state.isComposerOpen ? <div ref="composer"><Composer {...this.props.composerProps} onSend={this.onSend.bind(this)} /></div> : '' }
     </div>
   }
 }
