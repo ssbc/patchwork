@@ -43,7 +43,6 @@ export class Table extends React.Component {
   componentDidMount() {
     var obj = this.props.obj
     var id = this.props.id
-    console.log(this.props)
     this.setState({ obj: obj, id: id })
     if (typeof obj == 'string') {
       // try to decrypt
