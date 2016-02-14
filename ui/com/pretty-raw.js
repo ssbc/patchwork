@@ -21,12 +21,14 @@ class TableRow extends React.Component {
   }
 }
 
-function elements(path, obj, Com) {
+function elements(path, id, obj, Com) {
   var els = []
   path = (path) ? path + '.' : ''
+  if (id) els.push(<Com key={path+'-id'} path={'id'} value={id} />)
+
   for (var k in obj) {
     if (obj[k] && typeof obj[k] == 'object')
-      els = els.concat(elements(path+k, obj[k], Com))
+      els = els.concat(elements(path+k, null, obj[k], Com))
     else
       els.push(<Com key={path+k} path={path+k} value={obj[k]} name={obj.name} />)
   }
@@ -36,11 +38,13 @@ function elements(path, obj, Com) {
 export class Table extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { obj: null }
+    this.state = { obj: null, key: null }
   }
   componentDidMount() {
     var obj = this.props.obj
-    this.setState({ obj: obj })
+    var id = this.props.id
+    console.log(this.props)
+    this.setState({ obj: obj, id: id })
     if (typeof obj == 'string') {
       // try to decrypt
       app.ssb.private.unbox(obj, (err, decrypted) => {
@@ -52,7 +56,7 @@ export class Table extends React.Component {
   render() {
     if (!this.state.obj || typeof this.state.obj == 'string')
       return <table className="pretty-raw"><tbody><tr><td>Encrypted Message</td></tr></tbody></table>
-    return <table className="pretty-raw"><tbody>{elements(false, this.state.obj, TableRow)}</tbody></table>
+    return <table className="pretty-raw"><tbody>{elements(false, this.state.id, this.state.obj, TableRow)}</tbody></table>
   }
 }
 
@@ -77,6 +81,6 @@ export class Div extends Table {
   render() {
     if (!this.state.obj || typeof this.state.obj == 'string')
       return <div className="pretty-raw"><i className="fa fa-lock" /></div>
-    return <div className="pretty-raw">{elements(false, this.state.obj, DivElem)}</div>
+    return <div className="pretty-raw">{elements(false, this.state.obj, this.state.key, DivElem)}</div>
   }
 }

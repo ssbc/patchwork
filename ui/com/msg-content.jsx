@@ -13,9 +13,10 @@ export class Block extends React.Component {
   render() {
     const author = this.props.msg.value.author
     const c = this.props.msg.value.content
+    const id = this.props.msg.key
 
     if (this.props.forceRaw)
-      return <TableRaw key={this.props.msg.key} obj={c} />
+      return <TableRaw key={id} id={id} obj={c} />
 
     try {
       switch (c.type) {
@@ -44,7 +45,7 @@ export class Block extends React.Component {
       }
     } catch (e) { console.warn(e) }
 
-    return <TableRaw key={this.props.msg.key} obj={c} />
+    return <TableRaw key={id} id={id} obj={c} />
   }
 }
 
