@@ -38,7 +38,7 @@ function elements(path, id, obj, Com) {
 export class Table extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { obj: null, key: null }
+    this.state = { obj: null, id: null }
   }
   componentDidMount() {
     var obj = this.props.obj
@@ -81,6 +81,6 @@ export class Div extends Table {
   render() {
     if (!this.state.obj || typeof this.state.obj == 'string')
       return <div className="pretty-raw"><i className="fa fa-lock" /></div>
-    return <div className="pretty-raw">{elements(false, this.state.obj, this.state.key, DivElem)}</div>
+    return <div className="pretty-raw">{elements(false, this.state.obj, this.state.id, DivElem)}</div>
   }
 }
