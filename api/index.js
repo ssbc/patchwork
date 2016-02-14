@@ -218,11 +218,11 @@ exports.init = function (sbot, opts) {
 
   api.markRead = function (key, cb) {
     awaitSync(function () {
-      // indexMarkRead('inbox', key) DISABLED
-      indexMarkRead('bookmarks', key)
-      indexMarkRead('mentions', key)
-      indexMarkRead('privatePosts', key)
-      indexMarkRead('follows', key)
+      indexMarkRead('inbox', key)
+      // indexMarkRead('bookmarks', key)
+      // indexMarkRead('mentions', key)
+      // indexMarkRead('privatePosts', key)
+      // indexMarkRead('follows', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: true }) })
@@ -234,11 +234,11 @@ exports.init = function (sbot, opts) {
   }
   api.markUnread = function (key, cb) {
     awaitSync(function () {
-      // indexMarkUnread('inbox', key) DISABLED
-      indexMarkUnread('bookmarks', key)
-      indexMarkUnread('mentions', key)
-      indexMarkUnread('privatePosts', key)
-      indexMarkUnread('follows', key)
+      indexMarkUnread('inbox', key)
+      // indexMarkUnread('bookmarks', key)
+      // indexMarkUnread('mentions', key)
+      // indexMarkUnread('privatePosts', key)
+      // indexMarkUnread('follows', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: false }) })
