@@ -56,12 +56,6 @@ export default class TopNav extends React.Component {
         <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} /></div>
         <a className="compose-btn" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a>
       </div>
-      <div className="flex topnav-content">
-        { (this.props.contentTypes||[]).map((ct, i) => {
-          var cls = classNames({ selected: i===0 }) // TODO
-          return <a key={ct} className={cls}>{ct}</a>
-        }) }
-      </div>
     </div>
   }
 }

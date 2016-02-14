@@ -6,6 +6,8 @@ class Tab extends React.Component {
     this.props.onClick(this.props.option)
   }
   render() {
+    if (this.props.option.divider)
+      return <span className="divider">|</span>
     const icon = (this.props.useIcon) ? <i className={'fa fa-'+(this.props.selected?'check-circle-o':'circle-thin')} /> : ''
     return <a className={this.props.selected?'selected':''} onClick={this.onClick.bind(this)}>
       {icon} {this.props.option.label}

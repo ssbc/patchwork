@@ -371,7 +371,7 @@ export default class MsgList extends React.Component {
       lastDate = moment(lastPost.value.timestamp)
       if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
         let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
-        listEls.push(<hr className="labeled" data-label={label} />)
+        listEls.push(<hr key={m.key+'-divider'} className="labeled" data-label={label} />)
       }
 
       // render item
@@ -411,11 +411,10 @@ export default class MsgList extends React.Component {
             { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
             <div className="flex-fill">
               { Hero ? <Hero/> : '' }
+              <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} />
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
                 : '' }
-              <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} />
-              { '' /*this.props.composer ? <ComposerCard {...this.props.composerProps} /> : ''*/ }
               { this.state.msgs.length === 0 && this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
               { isEmpty ?
                 <div className="empty-msg">

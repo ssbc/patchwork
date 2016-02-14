@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
+import Tabs from '../tabs'
 import ModalBtn from '../modals/btn'
 import Rename from '../forms/rename'
 import ProfileName from '../forms/profile-name'
@@ -21,7 +22,7 @@ const FLAG_DROPDOWN = [
   { value: false,   label: <span><i className="fa fa-flag" /> Personal reasons</span> }
 ]
 
-export class UserInfoHeader extends AutoRefreshingComponent {
+export class Header extends AutoRefreshingComponent {
   constructor(props) {
     super(props)
 
@@ -77,7 +78,6 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       isFollowing: social.follows(app.user.id, pid),
       followsYou:  social.follows(pid, app.user.id),
       hasFlagged:  social.flags(app.user.id, pid),
-      hasBlocked:  social.blocks(app.user.id, pid),
       contacts:    social.contacts(pid),
       flaggers:    social.followedFlaggers(app.user.id, pid, true)
     }
@@ -106,20 +106,25 @@ export class UserInfoHeader extends AutoRefreshingComponent {
       <div className="avatar">
         <img src={u.profilePicUrl(this.props.pid)} />
       </div>
-      <div className="facts">
-        <div className="flex" style={{alignItems: 'center'}}>
-          <h1 style={{marginRight: 5}}>{this.state.name}</h1> 
-          <ModalBtn className="fullheight" Form={this.state.isSelf ? ProfileName : Rename} formProps={{id: this.props.pid}} nextLabel="Publish"><i className="fa fa-pencil" style={{color:'gray'}} /></ModalBtn>
+      <div className="info">
+        <div className="info-inner">
+          <h1>{this.state.name}</h1> 
+          <div>
+            <a className="btn"><i className="fa fa-check" /> In your contacts</a>
+            <a className="btn compose-btn"><i className="fa fa-pencil" /> Send Message</a>
+          </div>
+          <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
         </div>
-        <pre><code>{this.props.pid}</code></pre>
-        <div>
+        <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
+        {''/*<pre><code>{this.props.pid}</code></pre>*/}
+        {''/*<div>
           {(this.state.isSelf) ?
             <span className="btn-group">
               <ModalBtn className="btn fullheight" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
               <ModalBtn className="btn fullheight" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
             </span> :
             <span className="btn-group">
-              { (this.state.hasBlocked) ?
+              { (this.state.hasFlagged) ?
                 <span className="btn disabled">Blocked</span> :
                 <a className="btn"
                   onClick={this.on.toggleFollow}>
@@ -127,18 +132,12 @@ export class UserInfoHeader extends AutoRefreshingComponent {
                     <span><i className="fa fa-user-times" /> Unfollow</span> :
                     <span><i className="fa fa-user-plus" /> Follow</span> }
                 </a> }
-              { (this.state.hasBlocked) ?
+              { (this.state.hasFlagged) ?
                 <a className="btn" onClick={this.on.unflag}><i className="fa fa-times" /> Unflag</a> :
                 <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.on.flag}><i className="fa fa-flag" /> Flag</DropdownBtn>  }
             </span>
           }
-        </div>
-        <table>
-          <tbody>
-            <tr><td>{ncontacts}</td><td>contact{ncontacts===1?'':'s'}</td></tr>
-            <tr><td>{nflaggers}</td><td>flag{nflaggers===1?'':'s'}</td></tr>
-          </tbody>
-        </table>
+        </div>*/}
       </div>
     </div>
   }
@@ -151,23 +150,21 @@ function sortFollowedFirst (a, b) {
   return bFollowed - aFollowed  
 }
 
-export class UserInfoContacts extends AutoRefreshingComponent {
+export class Contacts extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
     return { contacts: social.contacts(pid).sort(sortFollowedFirst) }
   }
   render() {
-    return <div className="user-info-card">
-      <div className="content">
-        {this.state.contacts.length ? '' : <em>No contacts found.</em>}
-        {this.state.contacts.map(id => <UserSummary key={id} pid={id} />)}
-      </div>
+    return <div>
+      {this.state.contacts.length ? '' : <em>No contacts found.</em>}
+      {this.state.contacts.map(id => <UserSummary key={id} pid={id} />)}
     </div>
   }
 }
 
 
-export class UserInfoFlags extends AutoRefreshingComponent {
+export class Flags extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
     return { flaggers: social.followedFlaggers(app.user.id, pid, true) }
@@ -182,13 +179,14 @@ export class UserInfoFlags extends AutoRefreshingComponent {
     let flagsGroupedByReason = {}
     flaggers.forEach(userId => {
       try {
-        const flagMsg = app.users.profiles[pid].assignedBy[userId].flagged
+        const flagMsg = app.users.profiles[pid].flaggers[userId]
         const r = flagMsg.reason||'other'
         flagsGroupedByReason[r] = flagsGroupedByReason[r] || []
         flagsGroupedByReason[r].push(userId)
       } catch (e) {}
     })
-    return <div className="user-info-card">
+    return <div>
+      <hr className="labeled" data-label="warnings" />
       { Object.keys(flagsGroupedByReason).map(reason => {
         let reasonLabel
         if      (reason === 'spam')  reasonLabel = 'spamming'
@@ -201,6 +199,55 @@ export class UserInfoFlags extends AutoRefreshingComponent {
           </div>
         </div>
       }) }
+    </div>
+  }
+}
+
+export class Names extends AutoRefreshingComponent {
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
+    return { profile: app.users.profiles[pid] }
+  }
+  render() {
+    if (!this.state.profile)
+      return <span/>
+    return <div>
+      <hr className="labeled" data-label="names" />
+      <div className="user-info-cards">
+        { Object.keys(this.state.profile.names).map(name => <div key={name} className="card name"><h2>{name}</h2></div>) }
+        <div className="add-new"><h2><i className="fa fa-plus"/> new name</h2></div>
+      </div>
+    </div>
+  }
+}
+
+export class Pics extends AutoRefreshingComponent {
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
+    return { profile: app.users.profiles[pid] }
+  }
+  render() {
+    return <div>
+      <hr className="labeled" data-label="pictures" />
+      <div className="user-info-cards">
+        { Object.keys(this.state.profile.images).map(image => <div key={image} className="card pic"><img src={'/'+image} /></div>) }
+        <div className="add-new"><h2><i className="fa fa-plus"/> new pic</h2></div>
+      </div>
+    </div>
+  }
+}
+
+export class Data extends AutoRefreshingComponent {
+  computeState(props) {
+    const pid = props ? props.pid : this.props.pid
+    return { pid }
+  }
+  render() {
+    return <div>
+      <hr className="labeled" data-label="data" />
+      <div className="user-info-cards">
+        <div className="card data"><span>Public Key</span> <code>{this.props.pid}</code></div>
+      </div>
     </div>
   }
 }

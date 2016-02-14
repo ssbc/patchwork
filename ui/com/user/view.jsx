@@ -5,16 +5,17 @@ import Tabs from '../tabs'
 import MsgList from '../msg-list'
 import Oneline from '../msg-view/oneline'
 import { VerticalFilledContainer } from '../index'
-import { UserInfoHeader, UserInfoContacts, UserInfoFlags } from './info'
+import * as UserInfo from './info'
 import LeftNav from '../leftnav'
 import RightNav from '../rightnav'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
-const VIEW_POSTS = { label: <h2>Posts</h2> }
+const VIEW_ABOUT = { label: <h2>About</h2> }
+const VIEW_MSGS = { label: <h2>Messages</h2> }
 const VIEW_CONTACTS = { label: <h2>Contacts</h2> }
-const VIEW_DATA = { label: <h2>Data</h2> }
-const TABS = [VIEW_POSTS, VIEW_CONTACTS, VIEW_DATA]
+const VIEW_DATA = { label: <h2>Activity</h2> }
+const TABS = [VIEW_ABOUT, VIEW_CONTACTS, VIEW_MSGS, VIEW_DATA]
 
 export default class UserView extends React.Component {
   constructor(props) {
@@ -48,22 +49,42 @@ export default class UserView extends React.Component {
     const currentTab = tabs[this.state.currentTabIndex] || tabs[0]
     const Hero = (props) => {
       return <div>
-        <UserInfoHeader key={this.props.pid} pid={this.props.pid} />
-        <Tabs className="user-info-tabs" options={tabs} selected={currentTab} onSelect={this.onSelectTab.bind(this)} />
+        <UserInfo.Header key={this.props.pid} pid={this.props.pid} tabs={tabs} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} />
       </div>
     }
 
-    if (currentTab === VIEW_CONTACTS) {
-      // TODO <UserInfoFlags pid={this.props.pid} />
+    const ThisRightNav = props => {
+      return <RightNav>
+        <hr className="labeled" data-label="this user" />
+        <a className="btn" href="javascript:"><i className="fa fa-flag" /> Flag this user</a>
+      </RightNav>
+    }
+
+    if (currentTab === VIEW_ABOUT) {
       return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
         <LeftNav location={this.props.location} />
         <div className="flex-fill">
           <Hero />
           <div className="user-profile-about">
-            <UserInfoContacts pid={this.props.pid} />
+            <UserInfo.Flags pid={this.props.pid} />
+            <UserInfo.Names pid={this.props.pid} />
+            <UserInfo.Pics pid={this.props.pid} />
+            <UserInfo.Data pid={this.props.pid} />
           </div>
         </div>
-        <RightNav />
+        <ThisRightNav />
+      </VerticalFilledContainer>
+    }
+    if (currentTab === VIEW_CONTACTS) {
+      return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
+        <LeftNav location={this.props.location} />
+        <div className="flex-fill">
+          <Hero />
+          <div className="user-profile-contacts">
+            <UserInfo.Contacts pid={this.props.pid} />
+          </div>
+        </div>
+        <ThisRightNav />
       </VerticalFilledContainer>
     }
 
@@ -80,7 +101,7 @@ export default class UserView extends React.Component {
         return msg.value.sequence
     }
     const forceRaw = (currentTab === VIEW_DATA)
-    const filter = (currentTab === VIEW_POSTS)
+    const filter = (currentTab === VIEW_MSGS)
         ? (msg) => {      
           // toplevel post by this user, private or public
           var c = msg.value.content
@@ -102,7 +123,7 @@ export default class UserView extends React.Component {
         threads
         dateDividers
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
-        RightNav={RightNav}
+        RightNav={ThisRightNav}
         composer composerProps={composerProps}
         forceRaw={forceRaw}
         ListItem={Oneline}
