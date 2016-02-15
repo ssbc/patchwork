@@ -35,14 +35,11 @@ export class Header extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
     return {
-      profile:     app.users.profiles[pid],
       name:        app.users.names[pid] || u.shortString(pid, 6),
       isSelf:      (pid == app.user.id),
       isFollowing: social.follows(app.user.id, pid),
       followsYou:  social.follows(pid, app.user.id),
-      hasFlagged:  social.flags(app.user.id, pid),
-      contacts:    social.contacts(pid),
-      flaggers:    social.followedFlaggers(app.user.id, pid, true)
+      contacts:    social.contacts(pid)
     }
   }
 
@@ -64,7 +61,6 @@ export class Header extends AutoRefreshingComponent {
     }
 
     const ncontacts = this.state.contacts.length
-    const nflaggers = this.state.flaggers.length
     return <div className="user-info">
       <div className="avatar">
         <img src={u.profilePicUrl(this.props.pid)} />
@@ -101,30 +97,11 @@ export class Header extends AutoRefreshingComponent {
                       </HoverShifter>
                     : '' }
                 </a>
-                <a href="javascript:" className="btn compose-btn"><i className="fa fa-pencil" /> Send Message</a>
+                <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
               </div> }
           <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
         </div>
         <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
-        {''/*<pre><code>{this.props.pid}</code></pre>*/}
-        {''/*<div>
-          {(this.state.isSelf) ?
-            <span className="btn-group">
-              <ModalBtn className="btn fullheight" Form={ProfileName} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Name</ModalBtn>
-              <ModalBtn className="btn fullheight" Form={ProfileImage} nextLabel="Publish"><i className="fa fa-wrench" /> Edit Image</ModalBtn>
-            </span> :
-            <span className="btn-group">
-              { (this.state.hasFlagged) ?
-                <span className="btn disabled">Blocked</span> :
-                <a className="btn"
-                  onClick={this.on.toggleFollow}>
-                  {(this.state.isFollowing) ?
-                    <span><i className="fa fa-user-times" /> Unfollow</span> :
-                    <span><i className="fa fa-user-plus" /> Follow</span> }
-                </a> }
-            </span>
-          }
-        </div>*/}
       </div>
     </div>
   }

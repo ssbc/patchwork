@@ -5,6 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import DropdownBtn from '../dropdown'
 import MsgList from '../msg-list'
 import Oneline from '../msg-view/oneline'
+import Composer from '../composer'
 import { AutoRefreshingComponent, VerticalFilledContainer } from '../index'
 import * as UserInfo from './info'
 import LeftNav from '../leftnav'
@@ -29,6 +30,7 @@ export default class UserView extends AutoRefreshingComponent {
     const pid = props ? props.pid : this.props.pid
     return {
       currentTabIndex: (this.state) ? this.state.currentTabIndex : 0,
+      isComposerOpen: (this.state) ? this.state.isComposerOpen : false,
       hasFlagged: social.flags(app.user.id, pid)
     }
   }
@@ -42,8 +44,20 @@ export default class UserView extends AutoRefreshingComponent {
     this.setState({ currentTabIndex: tabs.indexOf(tab) })
   }
 
-  onSend() {
-    this.refs.list.reload()
+  onClickCompose() {
+    this.setState({ isComposerOpen: true }, () => {
+      // focus the textarea
+      this.refs.profile.querySelector('textarea').focus()
+    })
+  }
+
+  onCancelCompose() {
+    this.setState({ isComposerOpen: false })
+  }
+
+  onSend(msg) {
+    // go to the message
+    app.history.pushState(null, '/msg/'+encodeURIComponent(msg.key))
   }
 
   onFlag(reason) {
@@ -67,17 +81,23 @@ export default class UserView extends AutoRefreshingComponent {
   }
 
   render() {
-    // HACK
-    // there's too much built into the MsgList component, but I dont have time to refactor
-    // until MsgList can be decomposed:
-    // - render 1 way for about, and a different way for msg lists
-    // - use the hero and toolbar attributes to maintain consistency (really shouldnt be part of MsgList)
-    // - also, abuse the key attr on MsgList to get a rerender on view change
+    const name = u.getName(this.props.pid)
     const tabs = this.getTabs()
     const currentTab = tabs[this.state.currentTabIndex] || tabs[0]
+
     const Hero = (props) => {
       return <div>
-        <UserInfo.Header key={this.props.pid} pid={this.props.pid} tabs={tabs} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} />
+        <UserInfo.Header key={this.props.pid} pid={this.props.pid} tabs={tabs} currentTab={currentTab} onSelectTab={this.onSelectTab.bind(this)} onClickCompose={this.onClickCompose.bind(this)} />
+        { this.state.isComposerOpen
+          ? <div className="user-profile-composer">
+              <Composer
+                isPublic={false}
+                recps={[this.props.pid]}
+                placeholder={'Write a private message to '+name}
+                cancelBtn onCancel={this.onCancelCompose.bind(this)}
+                onSend={this.onSend.bind(this)} />
+            </div>
+          : '' }
       </div>
     }
 
@@ -93,7 +113,7 @@ export default class UserView extends AutoRefreshingComponent {
     if (currentTab === VIEW_ABOUT) {
       return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
         <LeftNav location={this.props.location} />
-        <div className="flex-fill">
+        <div ref="profile" className="flex-fill">
           <Hero />
           <div className="user-profile-about">
             <UserInfo.Flags pid={this.props.pid} />
@@ -108,7 +128,7 @@ export default class UserView extends AutoRefreshingComponent {
     if (currentTab === VIEW_CONTACTS) {
       return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
         <LeftNav location={this.props.location} />
-        <div className="flex-fill">
+        <div ref="profile" className="flex-fill">
           <Hero />
           <div className="user-profile-contacts">
             <UserInfo.Contacts pid={this.props.pid} />
@@ -119,8 +139,6 @@ export default class UserView extends AutoRefreshingComponent {
     }
 
     // normal msg-list render
-    const name = u.getName(this.props.pid)
-    const isSelf = this.props.pid == app.user.id
     const feed = opts => {
       opts = opts || {}
       opts.id = this.props.pid
@@ -130,14 +148,11 @@ export default class UserView extends AutoRefreshingComponent {
       if (msg)
         return msg.value.sequence
     }
-    const composerProps = (isSelf)
-      ? { isPublic: true, placeholder: 'Write a new public post', onSend: this.onSend.bind(this) }
-      : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private message to '+name, onSend: this.onSend.bind(this) }
   
     // MsgList must have refreshOnReply
     // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
-    return <div className="user-profile" key={this.props.pid + (currentTab === VIEW_DATA ? 'data' : 'posts')}>
+    return <div ref="profile" className="user-profile" key={this.props.pid + (currentTab === VIEW_DATA ? 'data' : 'posts')}>
       <MsgList
         ref="list"
         key={currentTab.label}
