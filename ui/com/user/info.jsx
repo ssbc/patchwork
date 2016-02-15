@@ -10,24 +10,13 @@ import ProfileName from '../forms/profile-name'
 import ProfileImage from '../forms/profile-image'
 import { AutoRefreshingComponent, UserLink, UserPic, UserBtn, HoverShifter } from '../index'
 import UserSummary from './summary'
-import DropdownBtn from '../dropdown'
-import mentionslib from '../../lib/mentions'
 import app from '../../lib/app'
 import u from '../../lib/util'
 import social from '../../lib/social-graph'
 
-const FLAG_DROPDOWN = [
-  { value: 'spam',  label: <span><i className="fa fa-flag" /> Spammer</span> },
-  { value: 'abuse', label: <span><i className="fa fa-flag" /> Abusive</span> },
-  { value: false,   label: <span><i className="fa fa-flag" /> Personal reasons</span> }
-]
-
 export class Header extends AutoRefreshingComponent {
   constructor(props) {
     super(props)
-
-    // helper to refresh state and render after making changes
-    const reload = () => { app.fetchLatestState(this.refreshState.bind(this)) }
 
     // event handlers
     this.on = {
@@ -37,33 +26,7 @@ export class Header extends AutoRefreshingComponent {
         let msg = (this.state.isFollowing) ? schemas.unfollow(this.props.pid) : schemas.follow(this.props.pid)
         app.ssb.publish(msg, (err) => {
           if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
-          reload()
-        })
-      },
-      flag: (reason) => {
-        // publish vote and contact messages
-        const voteMsg = schemas.vote(this.props.pid, -1, reason)
-        const contactMsg = schemas.block(this.props.pid)
-        let done = multicb()
-        app.ssb.publish(voteMsg, done())
-        app.ssb.publish(contactMsg, done())
-        done(err => {
-          if (err)
-            return app.issue('Failed to publish flag', err, 'Happened in on.flag of UserInfo')
-          reload()
-        })
-      },
-      unflag: (reason) => {
-        // publish vote and contact messages
-        const voteMsg = schemas.vote(this.props.pid, 0)
-        const contactMsg = schemas.unblock(this.props.pid)
-        let done = multicb()
-        app.ssb.publish(voteMsg, done())
-        app.ssb.publish(contactMsg, done())
-        done(err => {
-          if (err)
-            return app.issue('Failed to publish update', err, 'Happened in on.unflag of UserInfo')
-          reload()
+          app.fetchLatestState()
         })
       }
     }
@@ -159,9 +122,6 @@ export class Header extends AutoRefreshingComponent {
                     <span><i className="fa fa-user-times" /> Unfollow</span> :
                     <span><i className="fa fa-user-plus" /> Follow</span> }
                 </a> }
-              { (this.state.hasFlagged) ?
-                <a className="btn" onClick={this.on.unflag}><i className="fa fa-times" /> Unflag</a> :
-                <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.on.flag}><i className="fa fa-flag" /> Flag</DropdownBtn>  }
             </span>
           }
         </div>*/}
@@ -194,36 +154,35 @@ export class Contacts extends AutoRefreshingComponent {
 export class Flags extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    return { flaggers: social.followedFlaggers(app.user.id, pid, true) }
+    return {
+      profile: app.users.profiles[pid],
+      flaggers: social.followedFlaggers(app.user.id, pid, true)
+    }
   }
   render() {
     const pid = this.props.pid
     const flaggers = this.state.flaggers
     if (flaggers.length === 0)
       return <span />
-
-    // split flags up into groups
-    let flagsGroupedByReason = {}
-    flaggers.forEach(userId => {
-      try {
-        const flagMsg = app.users.profiles[pid].flaggers[userId]
-        const r = flagMsg.reason||'other'
-        flagsGroupedByReason[r] = flagsGroupedByReason[r] || []
-        flagsGroupedByReason[r].push(userId)
-      } catch (e) {}
-    })
     return <div>
       <hr className="labeled" data-label="warnings" />
-      { Object.keys(flagsGroupedByReason).map(reason => {
+      { flaggers.map(flagger => {
+        const flag = this.state.profile.flaggers[flagger]
+
         let reasonLabel
-        if      (reason === 'spam')  reasonLabel = 'spamming'
-        else if (reason === 'abuse') reasonLabel = 'abusive behavior'
-        else                         reasonLabel = 'personal reasons'
-        return <div key={'flag-'+reason}>
-          <h3>flagged for {reasonLabel} by</h3>
-          <div className="content">
-            {flagsGroupedByReason[reason].map((id, i) => <UserBtn key={'flag'+i} id={id} />)}
+        if      (flag.reason === 'spam')  reasonLabel = 'Warning! This account is a spammer.'
+        else if (flag.reason === 'abuse') reasonLabel = 'Warning! This account is abusive.'
+        else if (flag.reason === 'dead')  reasonLabel = 'Warning! This account has been discontinued.'
+        else if (flag.reason)             reasonLabel = flag.reason
+        else                              reasonLabel = 'Flagged for personal reasons.'
+
+        const onClick = () => app.history.pushState(null, '/msg/'+encodeURIComponent(flag.msgKey))   
+        return <div className="msg-view oneline" onClick={onClick}>
+          <div className="authors">
+            <UserPic id={flagger} />
+            <UserLink id={flagger} />
           </div>
+          <div className="content"><i className="fa fa-flag" /> {reasonLabel}</div>
         </div>
       }) }
     </div>

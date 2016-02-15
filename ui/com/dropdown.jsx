@@ -8,16 +8,14 @@ export class Dropdown extends React.Component {
       item.onSelect && item.onSelect()
     }
 
-    return <span className={'dropdown' + (this.props.open?' open':' closed') + (this.props.right?' right':'')}>
-      <ul onMouseLeave={this.props.onClose}>
-        { this.props.items.map((item,i) => {
-          const onClick = onSelect(item, i)
-          if (item.Com) 
-            return <item.Com key={i} onClick={onClick} />
-          return <li key={i} onClick={onClick}>{item.label}</li>
-        }) }
-      </ul>
-    </span>
+    return <ul className={'dropdown' + (this.props.open?' open':' closed') + (this.props.right?' right':'')} onMouseLeave={this.props.onClose}>
+      { this.props.items.map((item,i) => {
+        const onClick = onSelect(item, i)
+        if (item.Com) 
+          return <item.Com key={i} onClick={onClick} />
+        return <li key={i} onClick={onClick}>{item.label}</li>
+      }) }
+    </ul>
   }
 }
 

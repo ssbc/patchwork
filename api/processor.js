@@ -148,11 +148,11 @@ module.exports = function (sbot, db, state, emit) {
       }
 
       // user flags
-      var userLink = mlib.link(msg.value.content.vote, 'feed')
-      if (userLink) {
-        var target = getProfile(userLink.link)
-        if (userLink.value < 0)
-          target.flaggers[msg.value.author] = userLink
+      var voteLink = mlib.link(msg.value.content.vote, 'feed')
+      if (voteLink) {
+        var target = getProfile(voteLink.link)
+        if (voteLink.value < 0)
+          target.flaggers[msg.value.author] = { msgKey: msg.key, reason: voteLink.reason }
         else
           delete target.flaggers[msg.value.author]
       }
