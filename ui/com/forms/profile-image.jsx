@@ -6,17 +6,16 @@ import multicb from 'multicb'
 import { rainbow } from '../index'
 import ImageInput from '../form-elements/image-input'
 import app from '../../lib/app'
-
-function getCurrentImg() {
-  const profile = app.users.profiles[app.user.id]
-  if (profile && profile.self.image)
-    return profile.self.image.link
-}
+import u from '../../lib/util'
 
 export default class ProfileSetup extends React.Component {  
   constructor(props) {
     super(props)
     this.state = { wasImageAdded: false }
+  }
+
+  getId() {
+    return this.props.id || app.user.id
   }
 
   componentDidMount() {
@@ -50,8 +49,9 @@ export default class ProfileSetup extends React.Component {
     this.getValues(values => {
       // publish update messages
       var done = multicb()
-      if (values.image && values.image.link !== getCurrentImg())
-        app.ssb.publish(schemas.image(app.user.id, values.image), done())
+      const currentImg = u.profilePic(this.getId())
+      if (values.image && (!currentImg || values.image.link !== currentImg.link))
+        app.ssb.publish(schemas.image(this.getId(), values.image), done())
 
       done(err => {
         if (err) return cb(err)
@@ -67,14 +67,14 @@ export default class ProfileSetup extends React.Component {
   }
 
   render() {
-    const currentImg = getCurrentImg()
+    const currentImg = u.profilePic(this.getId())
     const hasImg = !!currentImg || this.state.wasImageAdded
     const useVerticalCentering = !hasImg // dont vertically center if an image is assigned
     return <div className={cls({ 'text-center': true, 'vertical-center': useVerticalCentering })}>
       <h1><span>Would you like to choose a picture?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
-          <div ref="imageInputContainer"><ImageInput current={(currentImg) ? ('http://localhost:7777/' + currentImg) : false} onChange={this.onChangeImg.bind(this)} /></div>
+          <div ref="imageInputContainer"><ImageInput current={(currentImg) ? ('http://localhost:7777/' + currentImg.link) : false} onChange={this.onChangeImg.bind(this)} /></div>
         </fieldset>
       </form>
     </div>

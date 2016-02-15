@@ -69,31 +69,40 @@ exports.getName = function (id) {
   return app.users.names[id] || exports.shortString(id, 6)
 }
 
-exports.profilePicUrl = function (id) {
-  var url = './img/default-prof-pic.png'
+exports.profilePic = function (id) {
   var profile = app.users.profiles[id]
   if (profile) {
     var link
 
     // lookup the image link
     if (profile.byMe.image)
-      link = profile.byMe.image // use local user's choice...
+      return profile.byMe.image // use local user's choice...
     else if (profile.self.image)
-      link = profile.self.image // ...fallback to their choice
+      return profile.self.image // ...fallback to their choice
+  }
+  return false
+}
 
-    if (link) {
-      url = '/'+link.link
+exports.profilePicRef = function (id) {
+  var link = exports.profilePic(id)
+  return link ? link.link : false
+}
 
-      // append the 'backup img' flag, so we always have an image
-      url += '?fallback=img'
+exports.profilePicUrl = function (id) {
+  var url = './img/default-prof-pic.png'
+  var link = exports.profilePic(id)
+  if (link) {
+    url = '/'+link.link
 
-      // if we know the filetype, try to construct a good filename
-      if (link.type) {
-        var ext = link.type.split('/')[1]
-        if (ext) {
-          var name = app.users.names[id] || 'profile'
-          url += '&name='+encodeURIComponent(name+'.'+ext)
-        }
+    // append the 'backup img' flag, so we always have an image
+    url += '?fallback=img'
+
+    // if we know the filetype, try to construct a good filename
+    if (link.type) {
+      var ext = link.type.split('/')[1]
+      if (ext) {
+        var name = app.users.names[id] || 'profile'
+        url += '&name='+encodeURIComponent(name+'.'+ext)
       }
     }
   }

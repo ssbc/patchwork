@@ -283,19 +283,82 @@ export class Names extends AutoRefreshingComponent {
 export class Pics extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    return { profile: app.users.profiles[pid] }
+    return {
+      profile: app.users.profiles[pid],
+      expandedImageLink: this.state ? this.state.expandedImageLink : false,
+      currentImageLink: u.profilePicRef(pid)
+    }
+  }
+  onSelectImage(image) {
+    app.ssb.publish(schemas.image(this.props.pid, image), err => {
+      if (err)
+        return app.issue('Failed to Update Image', err, 'This error occurred while using an image chosen by someone else')
+      app.fetchLatestState()
+    })    
+  }
+  static ExpandedInfo(props) {
+    const isMe = props.profile.id === app.user.id 
+    const images = props.profile.images[props.expandedImageLink]
+
+    // is what the user chose for themselves
+    const isSelfAssigned = (getLinkRef(props.profile.self.image) === props.expandedImageLink)
+
+    // is an image that I've explicitly chosen for them
+    const isMyChosenImage = (props.expandedImageLink == (isMe ? getLinkRef(props.profile.self.image) : getLinkRef(props.profile.byMe.image)))
+
+    // is the image currently in use
+    const isCurrentImage = (props.currentImageLink === props.expandedImageLink)
+    
+    // users (followed and unfollowed) that have chosen this image
+    const followedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.user.id, id))
+    const unfollowedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.user.id, id))
+    const followedUsersNames = followedUsers.map(id => u.getName(id)).join(', ')
+    const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(id)).join(', ')
+
+    return <div className="expanded-card-info">
+      { isSelfAssigned ? <div><strong>Default image (self-assigned)</strong></div> : '' }
+      { (isMyChosenImage || followedUsers.length || unfollowedUsers.length)
+        ? <div>Chosen by:
+            <ul>
+              { followedUsers.length ? <li><span className="hint--bottom" data-hint={followedUsersNames}>{followedUsers.length} users you follow</span></li> : '' }
+              { unfollowedUsers.length ? <li><span className="hint--bottom" data-hint={unfollowedUsersNames}>{unfollowedUsers.length} users you {"don't"} follow</span></li> : '' }
+              { isMyChosenImage ? <li><strong>You</strong></li> : '' }
+            </ul>
+          </div>
+        : '' }
+      { !isCurrentImage ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectImage(props.expandedImageLink)}>Use This Image</a></div> : '' }
+    </div>
   }
   render() {
     if (!this.state.profile)
       return <span/>
+    const isMe = this.state.profile.id === app.user.id 
+    const expanded = this.state.expandedImageLink
+    const current = this.state.currentImageLink
+    const onSelect = image => () => this.setState({ expandedImageLink: (image == this.state.expandedImageLink) ? false : image })
+    const renderImage = image => {
+      return <div key={image} className={`card pic ${image==current?'current':''} ${image==expanded?'expanded':''}`} onClick={onSelect(image)}>
+        <img src={'/'+image} />
+        { this.state.expandedImageLink == image ? <Pics.ExpandedInfo {...this.state} onSelectImage={this.onSelectImage.bind(this)} /> : '' }
+      </div>
+    }
     return <div>
       <hr className="labeled" data-label="pictures" />
       <div className="user-info-cards">
-        { Object.keys(this.state.profile.images).map(image => <div key={image} className="card pic"><img src={'/'+image} /></div>) }
-        <div className="add-new pic"><h2><i className="fa fa-plus"/> new pic</h2></div>
+        { Object.keys(this.state.profile.images).map(renderImage) }
+        <div className="add-new pic">
+          <ModalBtn className="fullheight" Form={ProfileImage} formProps={{id: this.props.pid}} nextLabel="Publish">
+            <h2><i className="fa fa-plus"/> new pic</h2>
+          </ModalBtn>
+        </div>
       </div>
     </div>
   }
+}
+
+// helper to get the ref of a link, if it exists
+function getLinkRef(link) {
+  return (link) ? link.link : false
 }
 
 export class Data extends AutoRefreshingComponent {
