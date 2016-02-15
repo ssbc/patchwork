@@ -212,16 +212,34 @@ export class Names extends AutoRefreshingComponent {
       currentName: u.getName(pid)
     }
   }
+  onSelectName(name) {
+    app.ssb.publish(schemas.name(this.props.pid, name), err => {
+      if (err)
+        return app.issue('Failed to Update Name', err, 'This error occurred while using a name chosen by someone else')
+      app.fetchLatestState()
+    })    
+  }
   static ExpandedInfo(props) {
-    const isSelfAssigned = (props.profile.self.name === props.expandedName)
+    const isMe = props.profile.id === app.user.id 
     const names = props.profile.names[props.expandedName]
-    const isMyChosenName = (props.profile.id !== app.user.id && props.expandedName == props.profile.byMe.name)
+
+    // is what the user chose for themselves
+    const isSelfAssigned = (props.profile.self.name === props.expandedName)
+
+    // is a name that I've explicitly chosen for them
+    const isMyChosenName = (props.expandedName == (isMe ? props.profile.self.name : props.profile.byMe.name))
+
+    // is the name currently in use
+    const isCurrentName = (props.currentName === props.expandedName)
+    
+    // users (followed and unfollowed) that have chosen this name
     const followedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.user.id, id))
     const unfollowedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.user.id, id))
     const followedUsersNames = followedUsers.map(id => u.getName(id)).join(', ')
     const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(id)).join(', ')
+
     return <div className="expanded-card-info">
-      <h2>{props.expandedName}</h2>
+      <h1>{props.expandedName}</h1>
       { isSelfAssigned ? <div><strong>Default name (self-assigned)</strong></div> : '' }
       { (isMyChosenName || followedUsers.length || unfollowedUsers.length)
         ? <div>Chosen by:
@@ -232,6 +250,7 @@ export class Names extends AutoRefreshingComponent {
             </ul>
           </div>
         : '' }
+      { !isCurrentName ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectName(props.expandedName)}>Use This Name</a></div> : '' }
     </div>
   }
   render() {
@@ -243,7 +262,7 @@ export class Names extends AutoRefreshingComponent {
     const renderName = name => {
       return <div key={name} className={`card name ${name==current?'current':''} ${name==expanded?'expanded':''}`} onClick={onSelect(name)}>
         <h2>{name}</h2>
-        { this.state.expandedName == name ? <Names.ExpandedInfo {...this.state} /> : '' }
+        { this.state.expandedName == name ? <Names.ExpandedInfo {...this.state} onSelectName={this.onSelectName.bind(this)} /> : '' }
       </div>
     }
     return <div>
