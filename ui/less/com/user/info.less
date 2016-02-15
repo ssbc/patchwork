@@ -51,14 +51,26 @@
 }
 .user-info-cards {
   padding: 0 5px;
+
   .card {
     .elevation-1;
+    position: relative;
     background: #fff;
     display: inline-block;
     padding: 5px 10px;
     margin: 0 5px 5px 0;
+    cursor: pointer;
+    color: #555;
+
     h2 {
       margin: 0;
+    }
+    &:hover, &.expanded {
+      background: #fafafa;
+    }
+    &.current {
+      border: 1px solid #4880F1;
+      color: #4880F1;
     }
 
     &.pic {
@@ -67,6 +79,11 @@
         width: 100px;
         height: 100px;
         vertical-align: middle;
+      }
+      &:hover {
+        img {
+          opacity: 0.9;
+        }
       }
     }
     &.data {
@@ -82,11 +99,40 @@
     display: inline-block;
     padding: 5px 10px;
     margin: 0 5px 5px 0;
+    cursor: pointer;
+
+    &:hover {
+      background: #ddd;
+    }
+
     h2 {
       margin: 0;
     }
     i {
       font-size: 20px;
+    }
+  }
+  .expanded-card-info {
+    .elevation-4;
+    position: absolute;
+    bottom: 110%;
+    left: 0;
+    color: #555;
+    background: #fff;
+    padding: 30px;
+    min-width: 210px;
+    border: 1px solid #ddd;
+
+    h2 {
+      margin-top: 0;
+    }
+    ul {
+      margin-bottom: 0;
+    }
+
+    .hint--bottom {
+      cursor: pointer;
+      border-bottom: 1px dashed #ccc;
     }
   }
 }

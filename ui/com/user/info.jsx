@@ -206,16 +206,51 @@ export class Flags extends AutoRefreshingComponent {
 export class Names extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    return { profile: app.users.profiles[pid] }
+    return {
+      profile: app.users.profiles[pid],
+      expandedName: this.state ? this.state.expandedName : false,
+      currentName: u.getName(pid)
+    }
+  }
+  static ExpandedInfo(props) {
+    const isSelfAssigned = (props.profile.self.name === props.expandedName)
+    const names = props.profile.names[props.expandedName]
+    const isMyChosenName = (props.profile.id !== app.user.id && props.expandedName == props.profile.byMe.name)
+    const followedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.user.id, id))
+    const unfollowedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.user.id, id))
+    const followedUsersNames = followedUsers.map(id => u.getName(id)).join(', ')
+    const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(id)).join(', ')
+    return <div className="expanded-card-info">
+      <h2>{props.expandedName}</h2>
+      { isSelfAssigned ? <div><strong>Default name (self-assigned)</strong></div> : '' }
+      { (isMyChosenName || followedUsers.length || unfollowedUsers.length)
+        ? <div>Chosen by:
+            <ul>
+              { followedUsers.length ? <li><span className="hint--bottom" data-hint={followedUsersNames}>{followedUsers.length} users you follow</span></li> : '' }
+              { unfollowedUsers.length ? <li><span className="hint--bottom" data-hint={unfollowedUsersNames}>{unfollowedUsers.length} users you {"don't"} follow</span></li> : '' }
+              { isMyChosenName ? <li><strong>You</strong></li> : '' }
+            </ul>
+          </div>
+        : '' }
+    </div>
   }
   render() {
     if (!this.state.profile)
       return <span/>
+    const expanded = this.state.expandedName
+    const current = this.state.currentName
+    const onSelect = name => () => this.setState({ expandedName: (name == this.state.expandedName) ? false : name })
+    const renderName = name => {
+      return <div key={name} className={`card name ${name==current?'current':''} ${name==expanded?'expanded':''}`} onClick={onSelect(name)}>
+        <h2>{name}</h2>
+        { this.state.expandedName == name ? <Names.ExpandedInfo {...this.state} /> : '' }
+      </div>
+    }
     return <div>
       <hr className="labeled" data-label="names" />
       <div className="user-info-cards">
-        { Object.keys(this.state.profile.names).map(name => <div key={name} className="card name"><h2>{name}</h2></div>) }
-        <div className="add-new"><h2><i className="fa fa-plus"/> new name</h2></div>
+        { Object.keys(this.state.profile.names).map(renderName) }
+        <div className="add-new name"><h2><i className="fa fa-plus"/> new name</h2></div>
       </div>
     </div>
   }
@@ -231,7 +266,7 @@ export class Pics extends AutoRefreshingComponent {
       <hr className="labeled" data-label="pictures" />
       <div className="user-info-cards">
         { Object.keys(this.state.profile.images).map(image => <div key={image} className="card pic"><img src={'/'+image} /></div>) }
-        <div className="add-new"><h2><i className="fa fa-plus"/> new pic</h2></div>
+        <div className="add-new pic"><h2><i className="fa fa-plus"/> new pic</h2></div>
       </div>
     </div>
   }
