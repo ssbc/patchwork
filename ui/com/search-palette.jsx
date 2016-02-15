@@ -108,7 +108,7 @@ export default class SearchPalette extends React.Component {
   }
 
   render() {
-    return <div className="search-palette">
+    return <div className="search-palette" onClick={this.focus.bind(this)}>
       <i className="fa fa-search" />
       <input 
         ref="search"
