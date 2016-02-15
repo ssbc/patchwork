@@ -488,6 +488,9 @@ exports.init = function (sbot, opts) {
   api.getNamesById = function (cb) {
     awaitSync(function () { cb(null, state.names) })
   }
+  api.getIdsByName = function (cb) {
+    awaitSync(function () { cb(null, state.ids) })
+  }
   api.getName = function (id, cb) {
     awaitSync(function () { cb(null, state.names[id]) })
   }

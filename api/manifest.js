@@ -37,6 +37,7 @@ module.exports = {
   getAllProfiles: 'async',
 
   getNamesById: 'async',
+  getIdsByName: 'async',
   getName: 'async',
   getActionItems: 'async'
 }
