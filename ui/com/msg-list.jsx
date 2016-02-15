@@ -370,7 +370,13 @@ export default class MsgList extends React.Component {
       const lastPost = threadlib.getLastThreadPost(m)
       lastDate = moment(lastPost.value.timestamp)
       if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+        let label = (lastDate.isSame(endOfToday, 'day'))
+          ? 'today'
+          : (lastDate.isSame(endOfToday, 'month'))
+            ? lastDate.endOf('day').from(endOfToday)
+            : (lastDate.isSame(endOfToday, 'year'))
+              ? lastDate.format("dddd, MMMM Do")
+              : lastDate.format("MMMM Do YYYY")
         listEls.push(<hr key={m.key+'-divider'} className="labeled" data-label={label} />)
       }
 
