@@ -76,8 +76,10 @@ exports.profilePicUrl = function (id) {
     var link
 
     // lookup the image link
-    if (profile.self.image)
-      link = profile.self.image
+    if (profile.byMe.image)
+      link = profile.byMe.image // use local user's choice...
+    else if (profile.self.image)
+      link = profile.self.image // ...fallback to their choice
 
     if (link) {
       url = '/'+link.link

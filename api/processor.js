@@ -168,7 +168,7 @@ module.exports = function (sbot, db, state, emit) {
       state.profiles[pid] = profile = {
         id: pid,
         self: { name: null, image: null }, // values set by this user about this user
-        byMe: { name: null }, // values set by the local user about this user
+        byMe: { name: null, image: null }, // values set by the local user about this user
         names: {}, // map of name -> array of users to use that name
         images: {}, // map of images -> array of users to use that pic
         followers: {}, // map of followers -> true
@@ -212,6 +212,8 @@ module.exports = function (sbot, db, state, emit) {
 
         // add new assignment
         author.self.image = imageLink
+        if (author.id == sbot.id)
+          author.byMe.image = imageLink
         author.images[imageLink.link] = (author.images[imageLink.link]||[]).concat(author.id)
       }
     }
@@ -253,6 +255,8 @@ module.exports = function (sbot, db, state, emit) {
 
         // add new assignment
         target.images[imageLink.link] = (target.images[imageLink.link]||[]).concat(source.id)
+        if (source.id == sbot.id)
+          target.byMe.image = imageLink
       }
     }
 

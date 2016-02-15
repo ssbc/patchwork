@@ -38,6 +38,5 @@ module.exports = {
 
   getNamesById: 'async',
   getName: 'async',
-  getIdsByName: 'async',
   getActionItems: 'async'
 }
