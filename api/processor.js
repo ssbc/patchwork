@@ -17,7 +17,7 @@ module.exports = function (sbot, db, state, emit) {
       // add msgs that mention or address the user
       var inboxRow
       if (findLink(mentions, sbot.id) || findLink(recps, sbot.id)) {
-        inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
+        inboxRow = state.inbox.sortedUpsert(msg.received, root ? root.link : msg.key)
         emit('index-change', { index: 'inbox' })
         attachChildIsRead(inboxRow, msg.key)
       }
@@ -25,7 +25,7 @@ module.exports = function (sbot, db, state, emit) {
       else if (root) {
         inboxRow = state.inbox.find(root.link)
         if (inboxRow) {
-          state.inbox.sortedUpsert(ts(msg), root.link)
+          state.inbox.sortedUpsert(msg.received, root.link)
           emit('index-change', { index: 'inbox' })
           attachChildIsRead(inboxRow, msg.key)
         }
