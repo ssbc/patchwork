@@ -8,7 +8,7 @@ import ModalBtn from '../modals/btn'
 import Rename from '../forms/rename'
 import ProfileName from '../forms/profile-name'
 import ProfileImage from '../forms/profile-image'
-import { AutoRefreshingComponent, UserLink, UserPic, UserBtn } from '../index'
+import { AutoRefreshingComponent, UserLink, UserPic, UserBtn, HoverShifter } from '../index'
 import UserSummary from './summary'
 import DropdownBtn from '../dropdown'
 import mentionslib from '../../lib/mentions'
@@ -109,10 +109,37 @@ export class Header extends AutoRefreshingComponent {
       <div className="info">
         <div className="info-inner">
           <h1>{this.state.name}</h1> 
-          <div>
-            <a className="btn"><i className="fa fa-check" /> In your contacts</a>
-            <a className="btn compose-btn"><i className="fa fa-pencil" /> Send Message</a>
-          </div>
+          { this.state.isSelf
+            ? <div>This is you!</div>
+            : <div>
+                <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
+                  { this.state.isFollowing && this.state.followsYou
+                    ? <HoverShifter>
+                        <span><i className="fa fa-check" /> In your contacts</span>
+                        <span><i className="fa fa-times" /> Stop following</span>
+                      </HoverShifter>
+                    : '' }
+                  { this.state.isFollowing && !this.state.followsYou
+                    ? <HoverShifter>
+                        <span><i className="fa fa-user-plus" /> Request pending</span>
+                        <span><i className="fa fa-times" /> Stop following</span>
+                      </HoverShifter>
+                    : '' }
+                  { !this.state.isFollowing && this.state.followsYou
+                    ? <HoverShifter>
+                        <span><i className="fa fa-user-plus" /> Wants to connect</span>
+                        <span><i className="fa fa-plus" /> Add to contacts</span>
+                      </HoverShifter>
+                    : '' }
+                  { !this.state.isFollowing && !this.state.followsYou
+                    ? <HoverShifter>
+                        <span><i className="fa fa-plus" /> Add to contacts</span>
+                        <span><i className="fa fa-plus" /> Start following</span>
+                      </HoverShifter>
+                    : '' }
+                </a>
+                <a href="javascript:" className="btn compose-btn"><i className="fa fa-pencil" /> Send Message</a>
+              </div> }
           <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
         </div>
         <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
@@ -367,8 +394,6 @@ export class Data extends AutoRefreshingComponent {
     return { pid }
   }
   render() {
-    if (!this.state.profile)
-      return <span/>
     return <div>
       <hr className="labeled" data-label="data" />
       <div className="user-info-cards">
