@@ -256,6 +256,7 @@ export class Names extends AutoRefreshingComponent {
   render() {
     if (!this.state.profile)
       return <span/>
+    const isMe = this.state.profile.id === app.user.id 
     const expanded = this.state.expandedName
     const current = this.state.currentName
     const onSelect = name => () => this.setState({ expandedName: (name == this.state.expandedName) ? false : name })
@@ -269,7 +270,11 @@ export class Names extends AutoRefreshingComponent {
       <hr className="labeled" data-label="names" />
       <div className="user-info-cards">
         { Object.keys(this.state.profile.names).map(renderName) }
-        <div className="add-new name"><h2><i className="fa fa-plus"/> new name</h2></div>
+        <div className="add-new name">
+          <ModalBtn className="fullheight" Form={isMe ? ProfileName : Rename} formProps={{id: this.props.pid}} nextLabel="Publish">
+            <h2><i className="fa fa-plus"/> new name</h2>
+          </ModalBtn>
+        </div>
       </div>
     </div>
   }
@@ -281,6 +286,8 @@ export class Pics extends AutoRefreshingComponent {
     return { profile: app.users.profiles[pid] }
   }
   render() {
+    if (!this.state.profile)
+      return <span/>
     return <div>
       <hr className="labeled" data-label="pictures" />
       <div className="user-info-cards">
@@ -297,6 +304,8 @@ export class Data extends AutoRefreshingComponent {
     return { pid }
   }
   render() {
+    if (!this.state.profile)
+      return <span/>
     return <div>
       <hr className="labeled" data-label="data" />
       <div className="user-info-cards">
