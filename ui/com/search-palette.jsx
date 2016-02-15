@@ -113,6 +113,7 @@ export default class SearchPalette extends React.Component {
       <input 
         ref="search"
         value={this.state.query}
+        placeholder={this.props.placeholder||'Search your inbox'}
         onChange={this.onChange.bind(this)}
         onKeyDown={this.onKeyDown.bind(this)} />
       { this.state.isOpen ? <SearchResults ref="results" query={this.state.query} results={this.state.results} onClickResult={this.onSearch.bind(this)} /> : '' }
