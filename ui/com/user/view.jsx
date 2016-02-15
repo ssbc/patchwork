@@ -12,10 +12,9 @@ import app from '../../lib/app'
 import u from '../../lib/util'
 
 const VIEW_ABOUT = { label: <h2>About</h2> }
-const VIEW_MSGS = { label: <h2>Messages</h2> }
 const VIEW_CONTACTS = { label: <h2>Contacts</h2> }
 const VIEW_DATA = { label: <h2>Activity</h2> }
-const TABS = [VIEW_ABOUT, VIEW_CONTACTS, VIEW_MSGS, VIEW_DATA]
+const TABS = [VIEW_ABOUT, VIEW_CONTACTS, VIEW_DATA]
 
 export default class UserView extends React.Component {
   constructor(props) {
@@ -100,15 +99,6 @@ export default class UserView extends React.Component {
       if (msg)
         return msg.value.sequence
     }
-    const forceRaw = (currentTab === VIEW_DATA)
-    const filter = (currentTab === VIEW_MSGS)
-        ? (msg) => {      
-          // toplevel post by this user, private or public
-          var c = msg.value.content
-          if (c.type == 'post' && !(c.root || c.branch))
-            return true
-        }
-        : () => true // allow all
     const composerProps = (isSelf)
       ? { isPublic: true, placeholder: 'Write a new public post', onSend: this.onSend.bind(this) }
       : { isPublic: false, recps: [this.props.pid], placeholder: 'Write a private message to '+name, onSend: this.onSend.bind(this) }
@@ -120,17 +110,13 @@ export default class UserView extends React.Component {
       <MsgList
         ref="list"
         key={currentTab.label}
-        threads
         dateDividers
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        composer composerProps={composerProps}
-        forceRaw={forceRaw}
         ListItem={Oneline}
         Hero={Hero}
         source={feed}
         cursor={cursor}
-        filter={filter}
         refreshOnReply />
     </div>
   }
