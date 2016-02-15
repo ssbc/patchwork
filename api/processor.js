@@ -33,7 +33,7 @@ module.exports = function (sbot, db, state, emit) {
 
       // mentions index:
       // add msgs that mention the user
-      var mentionRow
+      /*var mentionRow
       if (findLink(mentions, sbot.id)) {
         mentionRow = state.mentions.sortedUpsert(ts(msg), root ? root.link : msg.key)
         emit('index-change', { index: 'mentions' })
@@ -47,7 +47,7 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'mentions' })
           attachChildIsRead(mentionRow, msg.key)
         }
-      }
+      }*/
 
       // public posts index: add public posts / update for replies
       if (!root && recps.length === 0) {
@@ -81,7 +81,7 @@ module.exports = function (sbot, db, state, emit) {
       }
 
       // bookmarks index: update for replies
-      var bookmarkRow
+      /*var bookmarkRow
       if (root) {
         bookmarkRow = state.bookmarks.find(root.link)
         if (bookmarkRow) {
@@ -89,10 +89,10 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'bookmarks' })
           attachChildIsRead(bookmarkRow, msg.key)
         }
-      }
+      }*/
 
       // private posts index: update for replies
-      var privatePostsRow
+      /*var privatePostsRow
       if (root) {
         privatePostsRow = state.privatePosts.find(root.link)
         if (privatePostsRow) {
@@ -108,7 +108,7 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'privatePosts' })
           attachChildIsRead(privatePostsRow, msg.key)          
         }
-      }
+      }*/
     },
 
     contact: function (msg) {      
@@ -123,9 +123,9 @@ module.exports = function (sbot, db, state, emit) {
           var inboxRow = state.inbox.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'inbox' })
           attachIsRead(inboxRow)
-          var followRow = state.follows.sortedUpsert(ts(msg), msg.key)
+          /*var followRow = state.follows.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'follows' })
-          attachIsRead(followRow)
+          attachIsRead(followRow)*/
         }
       })
     },
