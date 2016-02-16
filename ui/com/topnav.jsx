@@ -11,7 +11,11 @@ export default class TopNav extends React.Component {
     this.state = { isComposerOpen: false }
 
     // listen for events that should update our state
-    app.on('focus:search', this.focusSearch.bind(this))
+    this._focusSearch = this.focusSearch.bind(this)
+    app.on('focus:search', this._focusSearch)
+  }
+  componentWillUnmount() {
+    app.removeListener('focus:search', this._focusSearch)
   }
 
   focusSearch() {
