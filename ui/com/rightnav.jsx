@@ -12,10 +12,15 @@ export default class RightNav extends React.Component {
     this.state = this.buildState()
 
     // listen for app change-events that should update our state
-    const refresh = () => { this.setState(this.buildState()) }
-    app.on('update:all', refresh)
-    app.on('update:indexCounts', refresh)
-    app.on('update:isWifiMode', refresh)
+    this.refresh = () => { this.setState(this.buildState()) }
+    app.on('update:all', this.refresh)
+    app.on('update:indexCounts', this.refresh)
+    app.on('update:isWifiMode', this.refresh)
+  }
+  componentWillUnmount() {
+    app.removeListener('update:all', this.refresh)
+    app.removeListener('update:indexCounts', this.refresh)
+    app.removeListener('update:isWifiMode', this.refresh)
   }
   buildState() {
     // copy over app state
