@@ -9,8 +9,6 @@ import { Table as TableRaw, Div as DivRaw } from './pretty-raw'
 import social from '../lib/social-graph'
 import u from '../lib/util'
 
-
-//return <TableRaw key={id} id={id} obj={c} />
 function rawAttrString(msg) {
   return <div className='raw-message'><pre><code>
     { JSON.stringify( Object.assign({id: msg.key}, msg.value), null, 2 ) }
