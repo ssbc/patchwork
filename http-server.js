@@ -22,7 +22,11 @@ var AppCSP = function (req, config) {
     host = (requestHostname == 'localhost' || requestHostname == config.getHostname())
       ? requestHostname
       : (config.getHostname() || 'localhost')
-  }  
+
+    // final glorious hack: if they're using 127.0.0.1, we should too
+    if (requestHostname == '127.0.0.1' && host == 'localhost')
+      host = '127.0.0.1'
+  }
 
   return "default-src 'self'; "+
     "connect-src 'self' ws://"+host+":7778 wss://"+host+":7778; "+
