@@ -50,13 +50,12 @@ module.exports = function (sbot, db, state, emit) {
       }*/
 
       // public posts index: add public posts / update for replies
-      if (!root && recps.length === 0) {
-        state.publicPosts.sortedUpsert(ts(msg), msg.key)
-        emit('index-change', { index: 'publicPosts' })
-      }
-      else if (root) {
-        var publicPostsRow = state.publicPosts.find(root.link)
-        if (publicPostsRow) {
+      if (recps.length === 0) {
+        if (!root) {
+          state.publicPosts.sortedUpsert(ts(msg), msg.key)
+          emit('index-change', { index: 'publicPosts' })
+        }
+        else if (root) {
           state.publicPosts.sortedUpsert(ts(msg), root.link)
           emit('index-change', { index: 'publicPosts' })
         }
