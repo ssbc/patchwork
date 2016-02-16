@@ -9,14 +9,21 @@ import { Table as TableRaw, Div as DivRaw } from './pretty-raw'
 import social from '../lib/social-graph'
 import u from '../lib/util'
 
+
+//return <TableRaw key={id} id={id} obj={c} />
+function rawAttrString(msg) {
+  return <code><pre>
+    { JSON.stringify( Object.assign({id: msg.key}, msg.value), null, 2 ) }
+  </pre></code>
+}
+
 export class Block extends React.Component {
   render() {
-    const author = this.props.msg.value.author
-    const c = this.props.msg.value.content
-    const id = this.props.msg.key
+    const msg = this.props.msg
+    const author = msg.value.author
+    const c = msg.value.content
 
-    if (this.props.forceRaw)
-      return <TableRaw key={id} id={id} obj={c} />
+    if (this.props.forceRaw) return rawAttrString(msg)
 
     try {
       switch (c.type) {
@@ -25,7 +32,7 @@ export class Block extends React.Component {
           break
 
         case 'contact':
-          var contact = mlib.link(c.contact).link
+          var contact = c.contact ? mlib.link(c.contact).link : undefined
           if (contact === app.user.id) {
             if (c.following) {
               if (!social.follows(app.user.id, author))
@@ -45,7 +52,7 @@ export class Block extends React.Component {
       }
     } catch (e) { console.warn(e) }
 
-    return <TableRaw key={id} id={id} obj={c} />
+    return rawAttrString(msg)
   }
 }
 
