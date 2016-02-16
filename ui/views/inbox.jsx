@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-view/oneline'
 import app from '../lib/app'
@@ -21,10 +22,11 @@ export default class InboxPosts extends React.Component {
   }
 
   render() {
-    const RightNav = props => {
-      return <div className="rightnav">
-        <a onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
-      </div>
+    const ThisRightNav = props => {
+      return <RightNav>
+        <hr className="labeled" data-label="important" />
+        <a className="btn" onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
+      </RightNav>
     }
 
     return <div id="inbox">
@@ -34,8 +36,8 @@ export default class InboxPosts extends React.Component {
         dateDividers
         composer composerProps={{ isPublic: true }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
-        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
-        RightNav={RightNav}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        RightNav={ThisRightNav}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}

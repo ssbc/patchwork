@@ -293,15 +293,14 @@ class CompositionUnit extends React.Component {
                  style={{display: 'none'}} />
           { this.isReply()
             ? '' /* no channel/recps control for replies */
-            : ( this.isPublic()
-              ? <ComposerChannel isReadOnly={this.isReply()} 
-                                 onChange={this.onChangeChannel.bind(this)} 
-                                 value={this.getChannel()} />
-              : <ComposerRecps isReadOnly={this.isReply()} 
-                               recps={this.state.recps} 
-                               onAdd={this.onAddRecp.bind(this)} 
-                               onRemove={this.onRemoveRecp.bind(this)} /> 
-            )
+            : <div className="composer-ctrls composer-recps flex">
+                <AudienceBtn canChange isPublic={this.isPublic()} onSelect={this.onSelectPublic.bind(this)} />
+                { this.isPublic()
+                  ? <ComposerChannel onChange={this.onChangeChannel.bind(this)} value={this.getChannel()} />
+                  : <ComposerRecps recps={this.state.recps} onAdd={this.onAddRecp.bind(this)} onRemove={this.onRemoveRecp.bind(this)} /> 
+                }
+                { this.props.cancelBtn ? <a className="btn" onClick={this.props.onCancel}><i className="fa fa-times" /> Cancel</a> : '' }
+              </div>
           }
           <div className="composer-content">
             <ComposerTextarea
@@ -314,9 +313,6 @@ class CompositionUnit extends React.Component {
                              (this.props.placeholder||'Write your message here')} />
           </div>
           <div className="composer-ctrls flex">
-            <AudienceBtn canChange={!this.isReply()} 
-                         isPublic={this.isPublic()} 
-                         onSelect={this.onSelectPublic.bind(this)} />
             <AttachBtn isPublic={this.isPublic()} 
                        isReply={this.isReply()} 
                        hasAdded={this.state.hasAddedFiles} 

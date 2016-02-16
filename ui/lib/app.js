@@ -192,7 +192,7 @@ function fetchLatestState (cb) {
     app.suggestOptions['@'] = []
     if (app.user.profile) {
       for (var id in app.users.profiles) {
-        if (id == app.user.profile.id || (app.user.profile.assignedTo[id] && app.user.profile.assignedTo[id].following)) {
+        if (id == app.user.profile.id || social.follows(app.user.id, id)) {
           var name = app.users.names[id]
           app.suggestOptions['@'].push({
             id: id,

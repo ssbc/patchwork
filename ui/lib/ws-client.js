@@ -108,8 +108,8 @@ var manifest = {
     "getProfile": "async",
     "getAllProfiles": "async",
     "getNamesById": "async",
+    "getIdsByName": 'async',
     "getName": "async",
-    "getIdsByName": "async",
     "getActionItems": "async"
   }
 }

@@ -1,11 +1,13 @@
 .composer {
   .composer-ctrls {
+    .elevation-1;
     background: #fff;
     font-weight: 300;
     margin: 1px 0;
     
     .btn {
       padding: 10px 20px;
+      white-space: pre;
       border-radius: 0;
       background: none;
       box-shadow: none;
@@ -29,11 +31,7 @@
     }
   }
   .composer-recps {
-    background: #fff;
-    padding: 10px 20px;
-    margin: 1px 0;
-    font-weight: 300;
-    i {
+    .fa-hashtag, .fa-user {
       color: #666;
     }
     input {
@@ -43,6 +41,10 @@
       &:focus, &:active {
         outline: 0;
       }
+    }
+    .recps-inputs {
+      padding: 10px;
+      border-left: 1px solid #ddd;
     }
     .recp {
       display: inline-block;
@@ -59,6 +61,7 @@
     }
   }
   .composer-content {
+    .elevation-1;
     font-family: @content-font;
     font-weight: 300;
     color: #555555;
@@ -70,7 +73,7 @@
       display: block;
       box-sizing: border-box;
       width: 100%;
-      resize: none;
+      resize: vertical;
       border: 0;
       min-height: 140px;
       padding: 10px;
@@ -92,6 +95,7 @@
     margin: 5px 0;
   }
   .preview {
+    .elevation-1;
     background: #fff;
     margin: 1px 0;
     padding: 14px 20px 20px;

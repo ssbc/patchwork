@@ -1,62 +1,157 @@
 .user-info {
+  .elevation-1;
+  border-radius: 2px;
   display: flex;
-  max-width: 770px;
-  margin: 5px auto;
+  max-width: 660px;
+  margin: 5px auto 1px;
   background: #fff;
 
   .avatar {
-    flex: 0 0 230px;
+    flex: 0 0 225px;
     img {
       width: 225px;
       display: block;
+      border-top-left-radius: 2px;
+      border-bottom-left-radius: 2px;
     }
   }
-  .facts {
-    padding: 30px 0 30px 30px;
-    .tabs a:first-child {
-      padding-left: 0;
+  .info {
+    width: 100%;
+    .info-inner {
+      height: 122px;
+      padding: 30px;
+      h1 {
+        color: #444;
+        font-size: 250%;
+        margin: 0 0 5px;
+        line-height: 1;
+      }
+      & > div {
+        font-weight: 300;
+        color: #555;
+        margin-top: 10px;
+        font-size: 20px;
+      }
     }
-    & > .flex > h1 {
-      color: #444;
-      font-size: 250%;
-      margin: 0 0 5px;
-      line-height: 1;
-    }
-    pre {        
-      margin: 0 0 10px;
-      border: 0;
-      background: #fafafa;
-    }
-    .btn-group {
-      display: flex;
-    }
-    table {
-      margin-top: 5px;
-      font-family: @content-font;
-      font-weight: 100;
-      color: #555;
-      td {
-        vertical-align: top;
-        padding-right: 5px;
-        padding-top: 4px;
-        &:first-child {
-          text-align: right;
+    .compose-btn, .btn {
+      padding: 6px 10px 7px 13px;
+      &:first-child {
+        width: 190px;
+        &>span { 
+          display: block;
         }
+      }
+    }
+    .tabs {
+      display: block;
+      padding: 0 8px;
+      background: #fafafa;
+      h2 {
+        margin: 0;
+      }
+      .selected {
+        border-bottom: 2px solid;
       }
     }
   }
 }
+.user-info-cards {
+  padding: 0 5px;
 
-.user-info-card {
-  margin: 30px 20px;
-  color: #555;
-  h3 {
-    font-family: @content-font;
-    margin: 10px 0;
-    font-size: 150%;
-    font-weight: 100;
+  .card {
+    .elevation-1;
+    position: relative;
+    background: #fff;
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 5px 5px 0;
+    color: #555;
+
+    h2 {
+      margin: 0;
+    }
+    &.name, &.pic {
+      cursor: pointer;
+      &:hover, &.expanded {
+        background: #fafafa;
+      }
+      &.current {
+        border: 1px solid #4880F1;
+        color: #4880F1;
+      }
+    }
+
+    &.pic {
+      padding: 0;
+      img {
+        width: 100px;
+        height: 100px;
+        vertical-align: middle;
+      }
+      &:hover {
+        img {
+          opacity: 0.9;
+        }
+      }
+    }
+    &.data {
+      font-family: @code-font;
+      padding: 5px 4px 7px 7px;
+      code {
+        border: 1px solid #bbb;
+      }
+    }
   }
-  .content {
-    padding-left: 20px;
+  .add-new {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 5px 5px 0;
+    cursor: pointer;
+
+    &:hover {
+      background: #ddd;
+    }
+
+    a {
+      color: gray;
+      text-decoration: none;
+    }
+    h2 {
+      margin: 0;
+    }
+    i {
+      font-size: 20px;
+    }
+  }
+  .expanded-card-info {
+    .elevation-4;
+    position: absolute;
+    bottom: 110%;
+    left: 0;
+    color: #555;
+    background: #fff;
+    padding: 30px;
+    min-width: 210px;
+    border: 1px solid #ddd;
+
+    h1 {
+      margin: 0;
+    }
+    ul {
+      margin-bottom: 0;
+    }
+
+    .hint--bottom {
+      cursor: pointer;
+      border-bottom: 1px dashed #ccc;
+    }
+
+    .btn {
+      display: block;
+      font-size: 19px;
+      margin: 15px 0 0;
+      padding: 7px 12px;
+      text-align: center;
+    }
   }
 }

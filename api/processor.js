@@ -33,7 +33,7 @@ module.exports = function (sbot, db, state, emit) {
 
       // mentions index:
       // add msgs that mention the user
-      var mentionRow
+      /*var mentionRow
       if (findLink(mentions, sbot.id)) {
         mentionRow = state.mentions.sortedUpsert(ts(msg), root ? root.link : msg.key)
         emit('index-change', { index: 'mentions' })
@@ -47,7 +47,7 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'mentions' })
           attachChildIsRead(mentionRow, msg.key)
         }
-      }
+      }*/
 
       // public posts index: add public posts / update for replies
       if (!root && recps.length === 0) {
@@ -81,7 +81,7 @@ module.exports = function (sbot, db, state, emit) {
       }
 
       // bookmarks index: update for replies
-      var bookmarkRow
+      /*var bookmarkRow
       if (root) {
         bookmarkRow = state.bookmarks.find(root.link)
         if (bookmarkRow) {
@@ -89,10 +89,10 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'bookmarks' })
           attachChildIsRead(bookmarkRow, msg.key)
         }
-      }
+      }*/
 
       // private posts index: update for replies
-      var privatePostsRow
+      /*var privatePostsRow
       if (root) {
         privatePostsRow = state.privatePosts.find(root.link)
         if (privatePostsRow) {
@@ -108,7 +108,7 @@ module.exports = function (sbot, db, state, emit) {
           emit('index-change', { index: 'privatePosts' })
           attachChildIsRead(privatePostsRow, msg.key)          
         }
-      }
+      }*/
     },
 
     contact: function (msg) {      
@@ -118,17 +118,14 @@ module.exports = function (sbot, db, state, emit) {
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
 
-        // inbox index: add follows or blocks
+        // follow, inbox index: add follows or blocks
         if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
           var inboxRow = state.inbox.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'inbox' })
           attachIsRead(inboxRow)
-        }
-        // follow index: add follows or blocks
-        if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          var inboxRow = state.follows.sortedUpsert(ts(msg), msg.key)
+          /*var followRow = state.follows.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'follows' })
-          attachIsRead(inboxRow)
+          attachIsRead(followRow)*/
         }
       })
     },
@@ -151,26 +148,13 @@ module.exports = function (sbot, db, state, emit) {
       }
 
       // user flags
-      var userLink = mlib.link(msg.value.content.vote, 'feed')
-      if (userLink) {
-        var source = getProfile(msg.value.author)
-        var target = getProfile(userLink.link)
-        source.assignedTo[target.id] = source.assignedTo[target.id] || {}
-        target.assignedBy[source.id] = target.assignedBy[source.id] || {}
-
-        if (userLink.value < 0) {
-          // a flag
-          source.assignedTo[target.id].flagged = userLink
-          target.assignedBy[source.id].flagged = userLink
-          if (source.id === sbot.id)
-            target.flagged = userLink
-        } else {
-          // not a flag
-          source.assignedTo[target.id].flagged = false
-          target.assignedBy[source.id].flagged = false
-          if (source.id === sbot.id)
-            target.flagged = false
-        }
+      var voteLink = mlib.link(msg.value.content.vote, 'feed')
+      if (voteLink) {
+        var target = getProfile(voteLink.link)
+        if (voteLink.value < 0)
+          target.flaggers[msg.value.author] = { msgKey: msg.key, reason: voteLink.reason }
+        else
+          delete target.flaggers[msg.value.author]
       }
     }
   }
@@ -183,14 +167,12 @@ module.exports = function (sbot, db, state, emit) {
     if (!profile) {
       state.profiles[pid] = profile = {
         id: pid,
-
-        // current values...
-        self: { name: null, image: null }, // ...set by self about self
-        assignedBy: {}, // ...set by others about self
-        assignedTo: {}, // ...set by self about others
-
-        // has local user flagged?
-        flagged: false
+        self: { name: null, image: null }, // values set by this user about this user
+        byMe: { name: null, image: null }, // values set by the local user about this user
+        names: {}, // map of name -> array of users to use that name
+        images: {}, // map of images -> array of users to use that pic
+        followers: {}, // map of followers -> true
+        flaggers: {}, // map of flaggers -> flag-msg
       }
     }
     return profile
@@ -202,16 +184,38 @@ module.exports = function (sbot, db, state, emit) {
 
     // name: a non-empty string
     if (nonEmptyStr(c.name)) {
-      author.self.name = makeNameSafe(c.name)
+      var safeName = makeNameSafe(c.name)
+
+      // remove old assignment, if it exists
+      for (var name in author.names) {
+        author.names[name] = author.names[name].filter(function (id) { return id !== author.id })
+        if (!author.names[name][0])
+          delete author.names[name]
+      }
+
+      // add new assignment
+      author.self.name = safeName
+      author.names[safeName] = (author.names[safeName]||[]).concat(author.id)
       rebuildNamesFor(author)
     }
 
     // image: link to image
     if ('image' in c) {
-      if (mlib.link(c.image, 'blob'))
-        author.self.image = mlib.link(c.image)
-      else if (!c.image)
-        delete author.self.image
+      var imageLink = mlib.link(c.image, 'blob')
+      if (imageLink) {
+        // remove old assignment, if it exists
+        for (var image in author.images) {
+          author.images[image] = author.images[image].filter(function (id) { return id !== author.id })
+          if (!author.images[image][0])
+            delete author.images[image]
+        }
+
+        // add new assignment
+        author.self.image = imageLink
+        if (author.id == sbot.id)
+          author.byMe.image = imageLink
+        author.images[imageLink.link] = (author.images[imageLink.link]||[]).concat(author.id)
+      }
     }
   }
 
@@ -219,31 +223,53 @@ module.exports = function (sbot, db, state, emit) {
     var c = msg.value.content
     source = getProfile(source)
     target = getProfile(target)
-    source.assignedTo[target.id] = source.assignedTo[target.id] || {}
-    target.assignedBy[source.id] = target.assignedBy[source.id] || {}
-    var userProf = getProfile(sbot.id)
 
     // name: a non-empty string
     if (nonEmptyStr(c.name)) {
-      source.assignedTo[target.id].name = makeNameSafe(c.name)
-      target.assignedBy[source.id].name = makeNameSafe(c.name)
+      var safeName = makeNameSafe(c.name)
+
+      // remove old assignment, if it exists
+      for (var name in target.names) {
+        target.names[name] = target.names[name].filter(function (id) { return id !== source.id })
+        if (!target.names[name][0])
+          delete target.names[name]
+      }
+
+      // add new assignment
+      target.names[safeName] = (target.names[safeName]||[]).concat(source.id)
+      if (source.id === sbot.id)
+        target.byMe.name = safeName
       rebuildNamesFor(target)
+    }
+
+    // image: link to image
+    if ('image' in c) {
+      var imageLink = mlib.link(c.image, 'blob')
+      if (imageLink) {
+        // remove old assignment, if it exists
+        for (var image in target.images) {
+          target.images[image] = target.images[image].filter(function (id) { return id !== source.id })
+          if (!target.images[image][0])
+            delete target.images[image]
+        }
+
+        // add new assignment
+        target.images[imageLink.link] = (target.images[imageLink.link]||[]).concat(source.id)
+        if (source.id == sbot.id)
+          target.byMe.image = imageLink
+      }
     }
 
     // following: bool
     if (typeof c.following === 'boolean') {
-      source.assignedTo[target.id].following = c.following
-      target.assignedBy[source.id].following = c.following
+      if (c.following)
+        target.followers[source.id] = true
+      else
+        delete target.followers[source.id]
 
       // if from the user, update names (in case un/following changes conflict status)
-      if (source.id == sbot.id)
+      if (msg.value.author == sbot.id)
         rebuildNamesFor(target)
-    }
-
-    // blocking: bool
-    if (typeof c.blocking === 'boolean') {
-      source.assignedTo[target.id].blocking = c.blocking
-      target.assignedBy[source.id].blocking = c.blocking
     }
   }
 
@@ -272,10 +298,12 @@ module.exports = function (sbot, db, state, emit) {
 
     // default to self-assigned name
     var name = profile.self.name
-    if (profile.id !== sbot.id && profile.assignedBy[sbot.id] && profile.assignedBy[sbot.id].name) {
-      // use name assigned by the local user, if one is given
-      name = profile.assignedBy[sbot.id].name
-    }
+
+    // override with name assigned by the local user
+    if (profile.id !== sbot.id && profile.byMe.name)
+      name = profile.byMe.name
+
+    // abort if there's no name at all
     if (!name)
       return
 
@@ -283,7 +311,7 @@ module.exports = function (sbot, db, state, emit) {
     state.names[profile.id] = name
 
     // if following, update id->name map
-    if (profile.id === sbot.id || profile.assignedBy[sbot.id] && profile.assignedBy[sbot.id].following) {
+    if (profile.id === sbot.id || profile.followers[sbot.id]) {
       if (!state.ids[name]) { // no conflict?
         // take it
         state.ids[name] = profile.id
@@ -347,8 +375,9 @@ module.exports = function (sbot, db, state, emit) {
   }
 
   function follows (a, b) {
-    var aT = getProfile(a).assignedTo[b]
-    return (a != b && aT && aT.following)
+    if (a.id) a = a.id // if `a` is a profile, just get its id
+    if (b.id) b = b.id // if `b` is a profile, just get its id
+    return (a != b && getProfile(b).followers[a])
   }
 
   function findLink (links, id) {
