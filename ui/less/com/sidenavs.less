@@ -1,17 +1,27 @@
-.leftnav {
+.sidenav {
   width: 175px;
-  padding-top: 10px;
-  background: #eee;
+  flex: 0 0 175px;
+
+  hr {
+    margin: 5px 35px 5px 15px;
+  }
   
-  .leftnav-heading {
+  .heading {
     margin: 15px 0 5px 10px;
     font-weight: bold;
     color: gray;
     font-size: 12px;
     text-transform: uppercase;
+
+    a {
+      color: #aaa;
+      &:hover {
+        color: gray;
+      }
+    }
   }
 
-  .leftnav-link {
+  .link {
     border-left: 5px solid transparent;
     padding: 5px 0 5px 10px;
     a {
@@ -42,9 +52,19 @@
       text-align: center;
     }
   }
+}
+
+.leftnav {
+  .sidenav;
+  padding-top: 10px;
+
+  hr {
+    margin: 5px 35px 5px 15px;
+  }
+
   .channel-list {
     position: fixed;
-    left: 110px;
+    left: 135px;
     top: 50%;
     height: 80%;
     transform: translateY(-50%);
@@ -58,5 +78,54 @@
   .leftnav {
     position: absolute;
     z-index: 1;
+  }
+}
+
+.rightnav {
+  .sidenav;
+  position: absolute;
+  right: 0;
+  z-index: 1;
+
+  .heading {
+    text-align: right;  
+    margin: 15px 10px 5px 0;
+  }
+
+  .link {
+    text-align: right;
+    padding: 5px 10px 5px 0;
+  }
+
+  a.btn {
+    display: block;
+    margin: 10px 10px 0 0;
+    padding: 10px;
+  }
+  .dropdown {
+    margin-right: 10px;
+  }
+  hr {
+    margin-right: 10px;
+  }
+  .toolbar {
+    background: none;
+    border: 0;
+    margin-top: 5px;
+    margin-bottom: 35px;
+    a {
+      color: #555;
+      font-size: 23px;
+    }
+    .user-pic img {
+      width: 32px;
+      height: 32px;
+      border-radius: 2px;
+    }
+  }
+}
+@media(max-width: 1000px) {
+  .rightnav {
+    display: none;
   }
 }
