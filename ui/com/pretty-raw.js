@@ -24,6 +24,7 @@ class TableRow extends React.Component {
 function elements(path, obj, Com) {
   var els = []
   path = (path) ? path + '.' : ''
+
   for (var k in obj) {
     if (obj[k] && typeof obj[k] == 'object')
       els = els.concat(elements(path+k, obj[k], Com))
