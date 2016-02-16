@@ -71,7 +71,7 @@ if (process.versions['electron']) {
 }
 
 function logLicense () {
-  console.log('Patchwork - Copyright (C) 2015 - Secure Scuttlebut Consortium')
+  console.log('Patchwork - Copyright (C) 2015-2016 Secure Scuttlebutt Consortium')
   console.log('This program comes with ABSOLUTELY NO WARRANTY.')
   console.log('This is free software, and you are welcome to redistribute it under certain conditions (GPL-3.0).')
   console.log('')

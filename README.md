@@ -41,7 +41,7 @@ Patchwork embeds the [Scuttlebot networked database](https://github.com/ssbc/scu
 
 ## License
 
-Copyright (C) 2015 Secure Scuttlebutt Consortium
+Copyright (C) 2015-2016 Secure Scuttlebutt Consortium
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
