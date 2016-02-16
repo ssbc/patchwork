@@ -20,8 +20,26 @@ export default class PublicPosts extends React.Component {
     app.removeListener('update:channels', this.refresh)
   }
 
+  onTogglePin(channel) {
+    app.ssb.patchwork.toggleChannelPinned(channel, err => {
+      if (err)
+        app.issue('Failed to pin channel', err)
+    })
+  }
+
   render() {
     const channel = this.props.params.channel
+    const channelData = findChannelData(channel)
+    console.log(channel, channelData)
+    const ThisRightNav = props => {
+      if (channel) {
+        return <RightNav>
+          <hr className="labeled" data-label="channel" />
+          <a className="btn" onClick={this.onTogglePin.bind(this, channel)}><i className="fa fa-thumb-tack" /> { (channelData && channelData.pinned) ? 'Unpin' : 'Pin' } this channel</a>
+        </RightNav>
+      }
+      return <RightNav/>
+    }
 
     // msg-list params
     const cursor = msg => {
@@ -43,12 +61,21 @@ export default class PublicPosts extends React.Component {
         topNavProps={{ placeholder: 'Search your inbox' }}
         composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
-        RightNav={RightNav}
+        RightNav={ThisRightNav}
         ListItem={Oneline} listItemProps={{ userPic: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your feed is empty.'}
         source={source}
         cursor={cursor} />
     </div>
+  }
+}
+
+function findChannelData(channel) {
+  if (!channel)
+    return null
+  for (var i=0; i < app.channels.length; i++) {
+    if (app.channels[i].name === channel)
+      return app.channels[i]
   }
 }
