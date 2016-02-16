@@ -1,8 +1,6 @@
 .leftnav {
-  position: absolute;
   width: 175px;
   padding-top: 10px;
-  z-index: 1;
   background: #eee;
   
   .leftnav-heading {
@@ -54,5 +52,11 @@
     border: 1px solid #ccc;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+}
+@media(min-width: 1000px) {
+  .leftnav {
+    position: absolute;
+    z-index: 1;
   }
 }

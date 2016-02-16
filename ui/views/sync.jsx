@@ -25,7 +25,7 @@ function peerSorter (a, b) {
   const aBoost = (social.follows(a.key, app.user.id)) ? 1000 : 0
   // then sort by # of announcers
   try {
-    return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
+    return (bBoost + (b.announcers ? b.announcers.length : 0)) - (aBoost + (a.announcers ? a.announcers.length : 0))
   } catch(err) { console.log('a', a); console.log('b', b); throw err }
 }
 

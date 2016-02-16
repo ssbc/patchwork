@@ -316,7 +316,7 @@ export default class Thread extends React.Component {
             <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
               { msgs.map((msg, i) => {
                 if (msg.isOldMsgsPlaceholder)
-                  return <div className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{numOldHidden} older messages</div>
+                  return <div key={thread.key+'-oldposts'} className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{numOldHidden} older messages</div>
 
                 const isLast = (i === msgs.length - 1)
                 return <Card

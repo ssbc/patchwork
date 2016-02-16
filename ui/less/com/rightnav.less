@@ -1,6 +1,7 @@
 .rightnav {
   position: absolute;
   width: 175px;
+  flex: 0 0 175px;
   right: 0;
   z-index: 1;
 
@@ -19,6 +20,7 @@
     background: none;
     border: 0;
     margin-top: 5px;
+    margin-bottom: 35px;
     a {
       color: #555;
       font-size: 23px;
@@ -28,5 +30,10 @@
       height: 32px;
       border-radius: 2px;
     }
+  }
+}
+@media(max-width: 1000px) {
+  .rightnav {
+    display: none;
   }
 }

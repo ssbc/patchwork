@@ -370,7 +370,13 @@ export default class MsgList extends React.Component {
       const lastPost = threadlib.getLastThreadPost(m)
       lastDate = moment(lastPost.value.timestamp)
       if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
-        let label = (lastDate.isSame(endOfToday, 'day')) ? 'today' : lastDate.endOf('day').from(endOfToday)
+        let label = (lastDate.isSame(endOfToday, 'day'))
+          ? 'today'
+          : (lastDate.isSame(endOfToday, 'month'))
+            ? lastDate.endOf('day').from(endOfToday)
+            : (lastDate.isSame(endOfToday, 'year'))
+              ? lastDate.format("dddd, MMMM Do")
+              : lastDate.format("MMMM Do YYYY")
         listEls.push(<hr key={m.key+'-divider'} className="labeled" data-label={label} />)
       }
 
@@ -411,7 +417,7 @@ export default class MsgList extends React.Component {
             { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
             <div className="flex-fill">
               { Hero ? <Hero/> : '' }
-              <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} />
+              <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} {...this.props.topNavProps} />
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
                 : '' }

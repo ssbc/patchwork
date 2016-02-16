@@ -11,7 +11,11 @@ export default class TopNav extends React.Component {
     this.state = { isComposerOpen: false }
 
     // listen for events that should update our state
-    app.on('focus:search', this.focusSearch.bind(this))
+    this._focusSearch = this.focusSearch.bind(this)
+    app.on('focus:search', this._focusSearch)
+  }
+  componentWillUnmount() {
+    app.removeListener('focus:search', this._focusSearch)
   }
 
   focusSearch() {
@@ -46,16 +50,16 @@ export default class TopNav extends React.Component {
 
   render() {
     const onClickCompose = this.onClickCompose.bind(this)
-    if (this.state.isComposerOpen) {
-      return <div className="topnav">
-        <div ref="composer"><Composer {...this.props.composerProps} cancelBtn onCancel={onClickCompose} onSend={this.onSend.bind(this)} /></div>
-      </div>
-    }
     return <div className="topnav">
       <div className="flex topnav-bar">
-        <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} /></div>
-        <a className="compose-btn" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a>
+        <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} placeholder={this.props.placeholder} /></div>
+        { this.state.isComposerOpen
+          ? <a className="btn" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>
+          : <a className="btn highlighted" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a> }
       </div>
+      { this.state.isComposerOpen
+        ? <div ref="composer" className="topnav-composer"><Composer {...this.props.composerProps} onSend={this.onSend.bind(this)} /></div>
+        : '' }
     </div>
   }
 }

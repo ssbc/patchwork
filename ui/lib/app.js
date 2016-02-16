@@ -122,8 +122,9 @@ function onPatchworkEvent (e) {
     for (var k in e.counts)
       app.indexCounts[k] = e.counts[k]
     app.emit('update:indexCounts')
+    updateTitle()
     if (e.index.indexOf('channel-') === 0) {
-      updateChannels(e.index.slice('channel-'.length), { lastUpdated: Date.now() }) // TODO hasNew
+      updateChannels(e.index.slice('channel-'.length), { lastUpdated: Date.now() })
       app.emit('update:channels')      
     }
   }
@@ -146,6 +147,10 @@ function pollPeers () {
       app.emit('update:isWifiMode')
     }
   })
+}
+
+function updateTitle () {
+  document.title = '('+app.indexCounts.inboxUnread+') Patchwork'
 }
 
 function fetchLatestState (cb) {
@@ -180,6 +185,7 @@ function fetchLatestState (cb) {
     app.isWifiMode      = require('./util').getPubStats(app.peers).hasSyncIssue
     app.user.profile    = app.users.profiles[app.user.id]
     app.user.needsSetup = !app.users.names[app.user.id]
+    updateTitle()
 
     // get friend list
     var social = require('./social-graph')

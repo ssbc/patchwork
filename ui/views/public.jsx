@@ -40,6 +40,7 @@ export default class PublicPosts extends React.Component {
         ref="list"
         threads
         dateDividers
+        topNavProps={{ placeholder: 'Search your inbox' }}
         composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={RightNav}

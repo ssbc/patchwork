@@ -3,23 +3,24 @@
   margin: 10px auto;
 
   .topnav-bar {
-    .elevation-1;
-    background: #fff;
-    border-radius: 2px;
-
-    .compose-btn {
-      border-top-right-radius: 2px;
-      border-bottom-right-radius: 2px;
+    .flex-fill {
+      .elevation-1;
+      background: #fff;
+      border-radius: 2px;
+      margin-right: 10px;
     }
-  }
-  .topnav-content {
-    a {
-      color: gray;
-      margin: 5px;
 
-      &.selected {
-        font-weight: bold;
+    .btn {
+      border-radius: 2px;
+      padding: 8px 10px 7px 13px;
+
+      i {
+        position: relative;
+        top: 1px;
       }
     }
+  }
+  .topnav-composer {
+    margin-top: 10px;
   }
 }

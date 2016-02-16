@@ -159,7 +159,7 @@ export default class UserView extends AutoRefreshingComponent {
         dateDividers
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        ListItem={Oneline}
+        ListItem={Oneline} listItemProps={{ noReplies: true }}
         Hero={Hero}
         source={feed}
         cursor={cursor}
