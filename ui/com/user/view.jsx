@@ -81,6 +81,7 @@ export default class UserView extends AutoRefreshingComponent {
   }
 
   render() {
+    const isSelf = this.props.pid == app.user.id
     const name = u.getName(this.props.pid)
     const tabs = this.getTabs()
     const currentTab = tabs[this.state.currentTabIndex] || tabs[0]
@@ -103,10 +104,12 @@ export default class UserView extends AutoRefreshingComponent {
 
     const ThisRightNav = props => {
       return <RightNav>
-        <hr className="labeled" data-label="this user" />
-        { (this.state.hasFlagged) ?
-          <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> Unflag this user</a> :
-          <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}><i className="fa fa-flag" /> Flag this user</DropdownBtn>  }
+        { isSelf ? '' : <div>
+          <hr className="labeled" data-label="this user" />
+          { (this.state.hasFlagged) ?
+            <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> Unflag this user</a> :
+            <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}><i className="fa fa-flag" /> Flag this user</DropdownBtn>  }
+        </div> }
       </RightNav>
     }
 
