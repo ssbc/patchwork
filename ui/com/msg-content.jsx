@@ -12,9 +12,9 @@ import u from '../lib/util'
 
 //return <TableRaw key={id} id={id} obj={c} />
 function rawAttrString(msg) {
-  return <pre><code>
+  return <div className='raw-message'><pre><code>
     { JSON.stringify( Object.assign({id: msg.key}, msg.value), null, 2 ) }
-  </code></pre>
+  </code></pre></div>
 }
 
 export class Block extends React.Component {
