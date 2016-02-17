@@ -53,11 +53,13 @@ export default class TopNav extends React.Component {
     return <div className="topnav">
       <div className="flex topnav-bar">
         <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} placeholder={this.props.placeholder} /></div>
-        { this.state.isComposerOpen
-          ? <a className="btn" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>
-          : <a className="btn highlighted" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a> }
+        { this.props.composer
+          ? ( this.state.isComposerOpen
+            ? <a className="btn" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>
+            : <a className="btn highlighted" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a> )
+          : '' }
       </div>
-      { this.state.isComposerOpen
+      { this.state.isComposerOpen && this.props.composer
         ? <div ref="composer" className="topnav-composer"><Composer {...this.props.composerProps} onSend={this.onSend.bind(this)} /></div>
         : '' }
     </div>
