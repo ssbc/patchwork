@@ -21,8 +21,8 @@ export function getResults (query) {
 
   // general results
   results = results.concat([
-    { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) },
-    { icon: 'user', label: `Search people for "${query}"`, fn: doSearch({ type: 'users' }) }
+    { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) }
+    // { icon: 'user', label: `Search people for "${query}"`, fn: doSearch({ type: 'users' }) }
   ])
 
   // builtin pages
