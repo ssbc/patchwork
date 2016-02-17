@@ -303,9 +303,6 @@ export default class Thread extends React.Component {
                   : '' }
                 { channel ? <span className="channel">in <Link to={`/public/channel/${channel}`}>#{channel}</Link></span> : ''}
               </div>
-              { threadRoot
-                ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
-                : '' }
               { !threadRoot && thread
                 ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }

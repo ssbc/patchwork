@@ -184,9 +184,8 @@ export default class Card extends React.Component {
   }
 
   renderLink(msg) {
-    const name = u.shortString(msg.value ? (msg.value.content.text || msg.key) : msg.key, 100)
     return <div key={msg.key} className="msg-view card-missing-post">
-      <div><i className="fa fa-angle-up" /> <MsgLink id={msg.key} name={name} /></div>
+      <div><i className="fa fa-angle-double-up" /> <MsgLink id={msg.key} name="View the full discussion" /></div>
     </div>
   }
 
