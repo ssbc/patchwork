@@ -67,7 +67,7 @@ export default class LeftNav extends React.Component {
     const isPinned = b => channel => (!!channel.pinned == b)
     
     // lists
-    const pinnedChannels = this.state.channels.filter(isPinned(true))
+    const pinnedChannels = this.state.channels.filter(isPinned(true)).sort((a, b) => a.name.localeCompare(b.name))
     const unpinnedChannels = this.state.channels.filter(isPinned(false)).slice(0, 30)
 
     // render

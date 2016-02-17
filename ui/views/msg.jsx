@@ -3,6 +3,7 @@ import React from 'react'
 import Thread from '../com/msg-thread'
 import { VerticalFilledContainer } from '../com'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import mlib from 'ssb-msgs'
 import app from '../lib/app'
 import u from '../lib/util'
@@ -16,6 +17,7 @@ export default class Msg extends React.Component {
         <div className="flex-fill" style={{padding: 5}}>
           <Thread id={id} live />
         </div>
+        <RightNav />
       </VerticalFilledContainer>
     </div>
   }

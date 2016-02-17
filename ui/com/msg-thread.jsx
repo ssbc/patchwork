@@ -52,7 +52,9 @@ export default class Thread extends React.Component {
       thread: null,
       isLoading: true,
       isHidingHistory: true,
-      msgs: []
+      numOldMsgsHidden: 0,
+      flattenedMsgs: [],
+      collapsedMsgs: []
     }
     this.liveStream = null
   }
@@ -81,11 +83,30 @@ export default class Thread extends React.Component {
         // note which messages start out unread, so they stay collapsed during this render
         flattenedMsgs.forEach(m => m._isRead = m.isRead)
 
+        // hide old unread messages
+        // (only do it for the first unbroken chain of unreads)
+        let collapsedMsgs = [].concat(flattenedMsgs)
+        let numOldHidden = 0
+        let startOld = collapsedMsgs.indexOf(thread) // start at the root (which isnt always first)
+        if (startOld !== -1) {
+          startOld += 1 // always include the root
+          for (let i=startOld; i < collapsedMsgs.length - 1; i++) {
+            if (collapsedMsgs[i]._isRead === false)
+              break // found an unread, break here
+            numOldHidden++
+          }
+          numOldHidden-- // always include the last old msg
+          if (numOldHidden > 0)
+            collapsedMsgs.splice(startOld, numOldHidden, { isOldMsgsPlaceholder: true })
+        }
+
         // now set state
         this.setState({
           isLoading: false,
           thread: thread,
-          msgs: flattenedMsgs,
+          flattenedMsgs: flattenedMsgs,
+          collapsedMsgs: collapsedMsgs,
+          numOldMsgsHidden: numOldHidden,
           isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
         })
 
@@ -117,9 +138,14 @@ export default class Thread extends React.Component {
               // reply post to this thread?
               if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
                 // add to thread and flatlist
-                this.state.msgs.push(msg)
+                this.state.flattenedMsgs.push(msg)
+                this.state.collapsedMsgs.push(msg)
                 this.state.thread.related = (this.state.thread.related||[]).concat(msg)
-                this.setState({ thread: this.state.thread, msgs: this.state.msgs })
+                this.setState({
+                  thread: this.state.thread,
+                  flattenedMsgs: this.state.flattenedMsgs,
+                  collapsedMsgs: this.state.collapsedMsgs
+                })
 
                 // mark read
                 thread.hasUnread = true
@@ -265,30 +291,12 @@ export default class Thread extends React.Component {
   render() {
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const msgs = (this.state.isHidingHistory) ? this.state.collapsedMsgs : this.state.flattenedMsgs
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     const isPublic = (thread && thread.plaintext)
     const authorName = thread && u.getName(thread.value.author)
     const channel = thread && thread.value.content.channel
     const recps = thread && mlib.links(thread.value.content.recps, 'feed')
-
-    // hide old unread messages
-    // (only do it for the first unbroken chain of unreads)
-    var msgs = [].concat(this.state.msgs)
-    var numOldHidden = 0
-    if (this.state.isHidingHistory) {
-      let startOld = msgs.indexOf(thread) // start at the root (which isnt always first)
-      if (startOld !== -1) {
-        startOld += 1 // always include the root
-        for (let i=startOld; i < msgs.length - 1; i++) {
-          if (msgs[i]._isRead === false)
-            break // found an unread, break here
-          numOldHidden++
-        }
-        numOldHidden-- // always include the last old msg
-        if (numOldHidden > 0)
-          msgs.splice(startOld, numOldHidden, { isOldMsgsPlaceholder: true })
-      }
-    }
 
     return <div className="msg-thread" ref="container">
       { !thread
@@ -303,9 +311,6 @@ export default class Thread extends React.Component {
                   : '' }
                 { channel ? <span className="channel">in <Link to={`/public/channel/${channel}`}>#{channel}</Link></span> : ''}
               </div>
-              { threadRoot
-                ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
-                : '' }
               { !threadRoot && thread
                 ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }
@@ -316,7 +321,7 @@ export default class Thread extends React.Component {
             <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
               { msgs.map((msg, i) => {
                 if (msg.isOldMsgsPlaceholder)
-                  return <div key={thread.key+'-oldposts'} className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{numOldHidden} older messages</div>
+                  return <div key={thread.key+'-oldposts'} className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{this.state.numOldMsgsHidden} older messages</div>
 
                 const isLast = (i === msgs.length - 1)
                 return <Card

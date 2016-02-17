@@ -30,7 +30,6 @@ export default class PublicPosts extends React.Component {
   render() {
     const channel = this.props.params.channel
     const channelData = findChannelData(channel)
-    console.log(channel, channelData)
     const ThisRightNav = props => {
       if (channel) {
         return <RightNav>
@@ -59,7 +58,7 @@ export default class PublicPosts extends React.Component {
         threads
         dateDividers
         topNavProps={{ placeholder: 'Search your inbox' }}
-        composerProps={{ isPublic: true, channel: channel }}
+        composer composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
         ListItem={Oneline} listItemProps={{ userPic: true }}
