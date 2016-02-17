@@ -367,8 +367,7 @@ export default class MsgList extends React.Component {
 
       // render a date divider if this post is from a different day than the last
       const oldLastDate = lastDate
-      const lastPost = threadlib.getLastThreadPost(m)
-      lastDate = moment(lastPost.value.timestamp).endOf('day')
+      lastDate = moment(m.ts || m.value.timestamp).endOf('day')
       if (this.props.dateDividers && !lastDate.isSame(oldLastDate, 'day')) {
         let label = (lastDate.isSame(endOfToday, 'day'))
           ? 'today'
