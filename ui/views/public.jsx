@@ -3,7 +3,7 @@ import React from 'react'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
-import Summary from '../com/msg-view/summary'
+import Card from '../com/msg-view/card'
 import app from '../lib/app'
 
 export default class PublicPosts extends React.Component {
@@ -60,7 +60,7 @@ export default class PublicPosts extends React.Component {
         composer composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        ListItem={Summary}
+        ListItem={Card} listItemProps={{ listView: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your feed is empty.'}
         source={source}

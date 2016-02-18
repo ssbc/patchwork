@@ -72,7 +72,7 @@ export default class Card extends React.Component {
   }
 
   isExpanded() {
-    return this.props.forceExpanded || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
+    return this.props.forceExpanded || this.props.listView || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
   }
 
   onSelect() {
@@ -85,7 +85,9 @@ export default class Card extends React.Component {
   }
 
   onClickExpand(e) {
-    if (!this.isExpanded()) {
+    if (this.props.listView)
+      this.onSelect()
+    else if (!this.isExpanded()) {
       e.preventDefault()
       this.setState({ isExpanded: true })
     }
@@ -212,7 +214,8 @@ export default class Card extends React.Component {
 
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
     const replies = countReplies(msg)
-    const unreadReplies = countReplies(msg, m => !m.isRead)
+    const hasUnreadReplies = msg.hasUnread && replies>0
+    const isListView   = this.props.listView
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
     
@@ -238,26 +241,40 @@ export default class Card extends React.Component {
     const isExpanded   = this.isExpanded()
     const collapsedCls = (isExpanded?'':'collapsed')
     const newCls       = (msg.isNew?'new':'')
-    return <div className={`msg-view card-post ${collapsedCls} ${newCls}`} onClick={this.onClickExpand.bind(this)}>
+    const listViewCls  = (isListView?'list-view':'')
+    const unreadCls    = (msg.hasUnread?'unread':'')
+    return <div className={`msg-view card-post ${collapsedCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
       </div>
       <div className="content">
         <div className="header">
           <div className="header-left">
-            <UserLink id={msg.value.author} /> <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link>
+            <UserLink id={msg.value.author} />
+            { isListView
+              ? ''
+              : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
           </div>
-          <div className="header-right">
-            { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
-          </div>
+          { /*!this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : ''*/'' }
+          { isListView
+            ? <div className="header-right">
+                { channel ? <span className="channel"><Link to={`/public/channel/${channel}`}>#{channel}</Link></span> : '' }
+              </div>
+            : <div className="header-right">
+                <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
+              </div> }
         </div>
         <div className="body" ref="body">
           { isExpanded
             ? <Content       msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
             : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
         </div>
-        <div className="ctrls">
+        <div className="footer">
+          <div className="flex-fill"/>
+          <div className={`replies ${hasUnreadReplies?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div>
+          <div className="digs"><i className="fa fa-hand-peace-o" /> 0</div>
+        </div>
+        {''/*<div className="ctrls">
           { replies && !this.props.noReplies ?
             <div>
               <a href='javascript:;' onClick={this.onSelect.bind(this)}>
@@ -270,7 +287,7 @@ export default class Card extends React.Component {
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
           <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
           { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
-        </div>
+        </div>*/}
       </div>
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
     </div>

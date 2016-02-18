@@ -39,10 +39,8 @@
     }
     .header-right {
       white-space: pre;
-      padding-right: 5px;
-      a.save {
-        padding-right: 10px;
-      }
+      padding-right: 10px;
+      color: #aab8c2;
     }
     a {
       color: @dark-gray2;
@@ -64,6 +62,18 @@
     font-family: @content-font;
     line-height: 1.4;
     word-break: break-word;
+  }
+  .footer {
+    display: flex;
+    color: #aab8c2;
+    font-size: 18px;
+    margin: 5px 20px;
+    & > div {
+      padding-left: 40px;
+    }
+    .replies.highlighted {
+      color: #4880F1;
+    }
   }
   .ctrls {
     display: flex;
@@ -112,6 +122,10 @@
     }
   }
 
+  .raw-message pre {
+    font-size: 80%;
+  }
+
   &.collapsed {
     background: #fdfdfd;
     cursor: pointer;
@@ -133,8 +147,19 @@
     }
   }
 
-  .raw-message pre {
-    font-size: 80%;
+  &.list-view {
+    .body {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+    }
+
+    &:hover {
+      background: #fafafa;
+      cursor: pointer;
+    }
   }
 }
 
