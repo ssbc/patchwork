@@ -53,9 +53,9 @@ class DigBtn extends React.Component {
   }
   render() {
     let label = this.props.isUpvoted ? 'Dug' : 'Dig'
-    return <a href='javascript:;' className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
-      <i className="fa fa-hand-peace-o" /> {label.split('').map((l,i) => <span key={i}>{l}</span>)} <span>i</span><span>t</span>
-    </a>
+    return <div className={'dig'+(this.props.isUpvoted?' selected':'')} onClick={this.onClick.bind(this)} title={label}>
+      <i className="fa fa-hand-peace-o" /> <span>{this.props.upvotes}</span>
+    </div>
   }
 }
 
@@ -272,7 +272,7 @@ export default class Card extends React.Component {
         <div className="footer">
           <div className="flex-fill"/>
           { isListView ? <div className={`replies ${hasUnreadReplies?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
-          <div className="digs"><i className="fa fa-hand-peace-o" /> 0</div>
+          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvotes={upvoters.length} />
         </div>
         {''/*<div className="ctrls">
           { replies && !this.props.noReplies ?
@@ -285,7 +285,7 @@ export default class Card extends React.Component {
           { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
           { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
-          <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
+          <div></div>
           { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
         </div>*/}
       </div>
