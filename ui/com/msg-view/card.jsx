@@ -271,7 +271,7 @@ export default class Card extends React.Component {
         </div>
         <div className="footer">
           <div className="flex-fill"/>
-          <div className={`replies ${hasUnreadReplies?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div>
+          { isListView ? <div className={`replies ${hasUnreadReplies?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
           <div className="digs"><i className="fa fa-hand-peace-o" /> 0</div>
         </div>
         {''/*<div className="ctrls">
