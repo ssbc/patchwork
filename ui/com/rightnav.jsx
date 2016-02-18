@@ -63,6 +63,7 @@ export default class RightNav extends React.Component {
       </div>
       {this.props.children}
       <RightNav.Heading>Your Contacts</RightNav.Heading>
+      <RightNav.Link pathname={pathname} to="/contacts">View All <i className="fa fa-users" /></RightNav.Link>
       { contacts.map(renderContact) }
       <div className="link"><Link to="/add-contact">Find more...</Link></div>
     </div>

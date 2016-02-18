@@ -24,7 +24,7 @@ export default class InboxPosts extends React.Component {
   render() {
     const ThisRightNav = props => {
       return <RightNav>
-        <hr className="labeled" data-label="important" />
+        <hr className="labeled" data-label="inbox" />
         <a className="btn" onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
       </RightNav>
     }
