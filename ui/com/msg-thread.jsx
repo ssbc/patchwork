@@ -18,7 +18,7 @@ class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
     const title = (b?'Watching Thread':'Watch Thread')
-    const hint = (b?'Updates will go in "Important." Click again to stop watching.':'Add this thread to your Important folder.')
+    const hint = (b?'Updates will go in "Important." Click again to stop watching.':'Add this thread to "Important."')
     return <a className={'hint--bottom '+(b?' selected':'')} data-hint={hint} onClick={this.props.onClick} title={title}>
         <i className={'fa fa-'+(b?'eye':'genderless')} /> {title}
     </a>
