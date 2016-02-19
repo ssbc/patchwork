@@ -30,7 +30,7 @@ export default class Oneline extends React.Component {
     const msg = this.props.msg
     const lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
     let replies = countReplies(msg)
-    replies = (replies === 0) ? <span style={{color:'#bbb'}}>1</span> : <span>{replies+1}</span>
+    replies = (replies === 0) ? '' : `(${replies+1})`
 
     var labelIcons = []
     if (!msg.plaintext)   labelIcons.push(<i key="lock" className="fa fa-lock" />)
@@ -42,8 +42,8 @@ export default class Oneline extends React.Component {
       <div className="authors">
         <UserPic id={msg.value.author} />
         <UserLink id={msg.value.author} />
+        <span className="replies">{replies}</span>
       </div>
-      { !this.props.noReplies ? <div className="replies">{replies}</div> : '' }
       <div className="content">
         <Content msg={msg} forceRaw={this.props.forceRaw} />
       </div>

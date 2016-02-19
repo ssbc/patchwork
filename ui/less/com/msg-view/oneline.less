@@ -1,9 +1,9 @@
 .msg-view.oneline {
-  .elevation-1;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   display: flex;
   background: #fff;
-  padding: 8px 6px 6px;
-  max-width: 650px;
+  padding: 10px 10px 8px;
+  max-width: 640px;
   margin: 1px auto;
   overflow: hidden;
   color: #555;
@@ -14,11 +14,11 @@
   }
 
   .authors {
-    flex: 0 0 125px;
+    flex: 0 0 150px;
     overflow: hidden;
     white-space: pre;
     text-overflow: ellipsis;
-    font-weight: normal;
+    font-weight: 300;
     a {
       color: #555;
     }
@@ -29,11 +29,10 @@
       margin-right: 8px;
       vertical-align: middle;
     }
-  }
-  .replies {
-    flex: 0 0 20px;
-    padding-top: 5px;
-    padding-right: 5px;
+    .replies {
+      color: #bbb;
+      padding-left: 5px;
+    }
   }
   .content {
     flex: 1;
