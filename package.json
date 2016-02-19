@@ -86,7 +86,7 @@
     "scuttlebot": "~7.5.0",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
-    "ssb-markdown": "^1.1.0",
+    "ssb-markdown": "^2.0.0",
     "ssb-msg-schemas": "~6.1.0",
     "ssb-msgs": "~5.2.0",
     "ssb-ref": "~2.3.0",
