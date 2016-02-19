@@ -17,10 +17,10 @@ import u from '../lib/util'
 class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
-    const title = 'Bookmark'+(b?'ed':'')
-    const hint = (b?'Remove this message from your bookmarks':'Add this message to your bookmarks')
+    const title = (b?'Watching Thread':'Watch Thread')
+    const hint = (b?'Updates will go in "Important." Click again to stop watching.':'Add this thread to your Important folder.')
     return <a className={'hint--bottom '+(b?' selected':'')} data-hint={hint} onClick={this.props.onClick} title={title}>
-        <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title}
+        <i className={'fa fa-'+(b?'eye':'genderless')} /> {title}
     </a>
   }
 }
