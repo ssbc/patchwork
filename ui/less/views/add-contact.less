@@ -1,7 +1,4 @@
 #add-contact {
-  & > .flex-fill {
-    margin-left: 200px;
-  }
   h1 {
     margin: 0px;
     padding: 10px 0 0;
@@ -11,5 +8,10 @@
     margin: 5px;
     color: #555;
     border-radius: 2px;
+  }
+}
+@media(min-width: 1000px) {
+  #add-contact > .flex-fill {
+    margin: 0 200px;
   }
 }

@@ -230,7 +230,7 @@ export class Names extends AutoRefreshingComponent {
       </div>
     }
     return <div>
-      <hr className="labeled" data-label="names" />
+      <hr className="labeled" data-label="also known as" />
       <div className="user-info-cards">
         { Object.keys(this.state.profile.names).map(renderName) }
         <div className="add-new name">
@@ -306,7 +306,7 @@ export class Pics extends AutoRefreshingComponent {
       </div>
     }
     return <div>
-      <hr className="labeled" data-label="pictures" />
+      <hr className="labeled" data-label="profile pictures" />
       <div className="user-info-cards">
         { Object.keys(this.state.profile.images).map(renderImage) }
         <div className="add-new pic">
