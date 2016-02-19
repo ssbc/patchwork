@@ -75,6 +75,10 @@ export default class Card extends React.Component {
     return this.props.forceExpanded || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
   }
 
+  isCollapsable() {
+    return !this.props.forceExpanded && this.isExpanded()
+  }
+
   onSelect() {
     this.props.onSelect(this.props.msg)
   }
@@ -89,6 +93,13 @@ export default class Card extends React.Component {
       e.preventDefault()
       this.setState({ isExpanded: true })
     }
+  }
+
+  onClickCollapse(e) {
+    if (this.isExpanded()) {
+      e.preventDefault()
+      this.setState({ isExpanded: false })
+    }    
   }
 
   onSubmitFlag(reason) {
@@ -235,22 +246,25 @@ export default class Card extends React.Component {
       )
     ]
 
-    const isExpanded   = this.isExpanded()
-    const collapsedCls = (isExpanded?'':'collapsed')
-    const newCls       = (msg.isNew?'new':'')
-    return <div className={`msg-view card-post ${collapsedCls} ${newCls}`} onClick={this.onClickExpand.bind(this)}>
+    const isExpanded     = this.isExpanded()
+    const collapsedCls   = (isExpanded?'':'collapsed')
+    const collapsableCls = (this.isCollapsable()?'collapsable':'')
+    const newCls         = (msg.isNew?'new':'')
+    return <div className={`msg-view card-post ${collapsedCls} ${collapsableCls} ${newCls}`} onClick={this.onClickExpand.bind(this)}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
       </div>
       <div className="content">
-        <div className="header">
+        <div className="header" onClick={this.onClickCollapse.bind(this)}>
           <div className="header-left">
             <UserLink id={msg.value.author} /> <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link>
           </div>
-          <div className="header-right">
-            { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-            <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
-          </div>
+          { isExpanded
+            ? <div className="header-right">
+              { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
+              <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
+            </div>
+            : '' }
         </div>
         <div className="body" ref="body">
           { isExpanded

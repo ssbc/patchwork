@@ -29,8 +29,8 @@
   .header {
     display: flex;
     margin: 10px;
-
     color: @gray1;
+
     .header-left {
       flex: 1;
       .date {
@@ -130,6 +130,18 @@
     }
     .ctrls {
       display: none;
+    }
+  }
+  &.collapsable .header {
+    cursor: pointer;
+    &:hover {
+      background: #fdfdfd;
+      &:before {
+        content: 'collapse';
+        position: absolute;
+        left: 50%;
+        color: #bbb;
+      }
     }
   }
 
