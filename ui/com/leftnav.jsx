@@ -1,10 +1,29 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import { rainbowSplitter, LocalStoragePersistedComponent } from './index'
 import { ChannelList } from './channel-list'
 import Issues from './issues'
 import app from '../lib/app'
 import u from '../lib/util'
+
+class LinkGroup extends LocalStoragePersistedComponent {
+  constructor(props) {
+    super(props, 'linkgroup-'+props.group, {
+      isExpanded: false
+    })
+  }
+  render() {
+    const b = this.state.isExpanded
+    const toggle = e => { e.preventDefault(); e.stopPropagation(); this.setState({ isExpanded: !b }) }
+    return <div>
+      <LeftNav.Link pathname={this.props.pathname} to={this.props.to} expander expanded={b} onToggleExpand={toggle}>
+        {this.props.label}
+      </LeftNav.Link>
+      { b ? <div className="sublinks">{ this.props.children }</div> : '' }
+    </div>
+  }
+}
 
 export default class LeftNav extends React.Component {
   constructor(props) {
@@ -48,7 +67,7 @@ export default class LeftNav extends React.Component {
   }
   onSelectChannel(channel) {
     this.setState({ isChannelListOpen: false })
-    app.history.pushState(null, '/public/channel/' + encodeURIComponent(channel.name))
+    app.history.pushState(null, '/channel/' + encodeURIComponent(channel.name))
   }
 
   static Heading (props) {
@@ -56,6 +75,7 @@ export default class LeftNav extends React.Component {
   }
   static Link (props) {
     return <div className={'link '+(props.className||'')+(props.pathname === props.to ? ' selected' : '')}>
+      { props.expander ? <i className={`expander fa fa-caret-${(props.expanded?'down':'right')}`} onClick={props.onToggleExpand} /> : '' }
       <Link to={props.to}>{props.children}</Link>
     </div>
   }
@@ -68,36 +88,42 @@ export default class LeftNav extends React.Component {
     
     // lists
     const pinnedChannels = this.state.channels.filter(isPinned(true)).sort((a, b) => a.name.localeCompare(b.name))
-    const unpinnedChannels = this.state.channels.filter(isPinned(false)).slice(0, 30)
+    const contacts = app.user.friends.map(id => ({ id: id, name: u.getName(id) })).sort((a, b) => a.name.localeCompare(b.name))
 
     // render
-    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/public/channel/'+c.name}><i className="fa fa-hashtag" /> {c.name}</LeftNav.Link>
+    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}>{c.name}</LeftNav.Link>
+    const renderContact = c => <LeftNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}>{c.name}</LeftNav.Link>
     // const followUnread = (app.indexCounts.followUnread > 0) ? `(${app.indexCounts.followUnread})` : ''
     return <div className="leftnav">
-      <LeftNav.Link pathname={pathname} to="/"><i className="fa fa-inbox" /> Inbox</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/inbox"><i className="fa fa-inbox" /> Important ({app.indexCounts.inboxUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/contacts"><i className="fa fa-users" /> Contacts</LeftNav.Link>
+      <div className="logo"><Link to="/">{rainbowSplitter('Patchwork')}</Link></div>
       <Issues/>
+      <LinkGroup pathname={pathname} to="/" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} group='inbox'>
+        <LeftNav.Link pathname={pathname} to="/inbox/private">Private ({app.indexCounts.privateUnread})</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/inbox/watching">Watching ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
+      </LinkGroup>
+      <LinkGroup pathname={pathname} to="/activity" label="Activity Feed" group='activity'>
+        <LeftNav.Link pathname={pathname} to="/activity/posts">Public Posts</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/activity/profile">Profile Updates</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/activity/follows">User Flags</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/activity/digs">Votes</LeftNav.Link>
+      </LinkGroup>
+      <LinkGroup pathname={pathname} to="/channels" label="Channels" group='channels'>
+        { pinnedChannels.map(renderChannel) }
+      </LinkGroup>
+      <LinkGroup pathname={pathname} to="/contacts" label="Contacts" group='contacts'>
+        { contacts.map(renderContact) }
+      </LinkGroup>
+      <hr/>
+      <LeftNav.Link pathname={pathname} to={`/profile/${encodeURIComponent(app.user.id)}`}>Your Profile</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/sync">Network Sync</LeftNav.Link>
+      <LeftNav.Link pathname={pathname} to="/data">Data Feed</LeftNav.Link>
 
-      {''/*<LeftNav.Heading>Inbox</LeftNav.Heading>
-      <LeftNav.Link pathname={pathname} to="/private"><i className="fa fa-lock" /> Private ({app.indexCounts.privateUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/bookmarks"><i className="fa fa-bookmark" /> Bookmarked ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/mentions"><i className="fa fa-at" /> Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/follows"><i className="fa fa-user-plus" /> Follows ({app.indexCounts.followUnread})</LeftNav.Link>*/}
-
-      <LeftNav.Heading>
+      {''/*<LeftNav.Heading>
         Pinned Channels <a onClick={this.onOpenChannelList.bind(this)}><i className="fa fa-wrench" /></a>
         { this.state.isChannelListOpen ? <i className="fa fa-caret-left" style={{ color: 'gray', marginLeft: 5 }} /> : '' }
       </LeftNav.Heading>
-      { pinnedChannels.map(renderChannel) }
-      { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
-
-      <LeftNav.Heading>Active Channels</LeftNav.Heading>
-      { unpinnedChannels.map(renderChannel) }
-
-      <LeftNav.Heading>Tools</LeftNav.Heading>
-      <LeftNav.Link pathname={pathname} to="/sync"><i className="fa fa-cloud-download" /> Network Sync</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/data"><i className="fa fa-database" /> Datafeed</LeftNav.Link>
+      { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }*/}
     </div>
   }
 }

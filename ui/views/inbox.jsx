@@ -24,7 +24,7 @@ export default class InboxPosts extends React.Component {
   render() {
     const ThisRightNav = props => {
       return <RightNav>
-        <hr className="labeled" data-label="important" />
+        <hr className="labeled" data-label="Inbox" />
         <a className="btn" onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
       </RightNav>
     }
@@ -34,7 +34,7 @@ export default class InboxPosts extends React.Component {
         ref="list"
         threads
         dateDividers
-        composer composerProps={{ isPublic: true }}
+        composer composerProps={{ isPublic: false }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={ThisRightNav}

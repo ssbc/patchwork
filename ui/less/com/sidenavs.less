@@ -2,6 +2,19 @@
   width: 175px;
   flex: 0 0 175px;
 
+  .logo {
+    font-size: 28px;
+    padding: 0 15px 10px;
+    font-weight: 100;
+    a {
+      color: #666;
+      &:hover {
+        text-decoration: none;
+        .rainbow;
+      }
+    }
+  }
+
   .heading {
     margin: 15px 0 5px 10px;
     font-weight: bold;
@@ -19,13 +32,24 @@
 
   .link {
     border-left: 5px solid transparent;
-    padding: 5px 0 5px 10px;
-    a {
+    padding-left: 5px;
+    a, .expander {
+      display: inline-block;
+      padding: 5px 3px;
       color: #555;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    a:hover {
+      color: #1a86ff;
+      text-decoration: none;
+    }
+    .expander:hover {
+      background: #ddd;
     }
     &.selected {
       border-color: #1a86ff;
-      a {
+      a, .expander {
         color: #1a86ff;
       }
     }
@@ -44,9 +68,19 @@
       }
     }
     i { 
-      width: 20px;
+      width: 15px;
       text-align: center;
     }
+  }
+  .sublinks {
+    padding-bottom: 10px;
+    .link {
+      padding-left: 26px;
+    }
+  }
+
+  hr {
+    margin: 10px;
   }
 }
 
@@ -80,13 +114,11 @@
   z-index: 1;
 
   .heading {
-    text-align: right;  
     margin: 15px 10px 5px 0;
   }
 
   .link {
-    text-align: right;
-    padding: 5px 10px 5px 0;
+    padding: 5px 0 0 ;
   }
 
   a.btn {
@@ -103,8 +135,8 @@
   .toolbar {
     background: none;
     border: 0;
-    margin-top: 5px;
-    margin-bottom: 35px;
+    margin-top: 10px;
+    margin-bottom: 30px;
     a {
       color: #555;
       font-size: 23px;

@@ -8,7 +8,6 @@ import PublicPosts from './views/public'
 import PrivatePosts from './views/private'
 import Bookmarks from './views/bookmarks'
 import Mentions from './views/mentions'
-import Follows from './views/follows'
 import Digs from './views/digs'
 import Data from './views/data'
 import Msg from './views/msg'
@@ -37,14 +36,13 @@ app.history.listenBefore(beforeNavigation)
 export var routes = (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={PublicPosts} />
+      <IndexRoute component={Inbox} />
       <Route path="inbox" component={Inbox} />
-      <Route path="public" component={PublicPosts} />
-      <Route path="public/channel/:channel" component={PublicPosts} />
-      <Route path="private" component={PrivatePosts} />
-      <Route path="bookmarks" component={Bookmarks} />
-      <Route path="mentions" component={Mentions} />
-      <Route path="follows" component={Follows} />
+      <Route path="inbox/private" component={PrivatePosts} />
+      <Route path="inbox/watching" component={Bookmarks} />
+      <Route path="inbox/mentions" component={Mentions} />
+      <Route path="activity" component={PublicPosts} />
+      <Route path="channel/:channel" component={PublicPosts} />
       <Route path="digs" component={Digs} />
       <Route path="data" component={Data} />
       <Route path="add-contact" component={AddContact} />

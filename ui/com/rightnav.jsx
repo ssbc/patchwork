@@ -13,7 +13,7 @@ export default class RightNav extends React.Component {
 
     // listen for app change-events that should update our state
     this.refresh = () => { this.setState(this.buildState()) }
-    app.on('update:all', this.refresh)
+    app.on('update:channels', this.refresh)
     app.on('update:indexCounts', this.refresh)
     app.on('update:isWifiMode', this.refresh)
   }
@@ -26,6 +26,7 @@ export default class RightNav extends React.Component {
     // copy over app state
     return {
       isWifiMode: app.isWifiMode,
+      channels: app.channels || [],
       indexCounts: app.indexCounts||{}
     }
   }
@@ -51,20 +52,18 @@ export default class RightNav extends React.Component {
     const pathname = this.props.location && this.props.location.pathname
     const isWifiMode = this.state.isWifiMode
 
-    const contacts = app.user.friends.map(id => ({ id: id, name: u.getName(id) })).sort((a, b) => a.name.localeCompare(b.name))
-    const renderContact = c => <RightNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}>{c.name} <i className="fa fa-user" /></RightNav.Link>
+    const channels = this.state.channels.slice(0, 7)
+    const renderChannel = c => <RightNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}>{c.name}</RightNav.Link>
 
     return <div className="rightnav">
       <div className="toolbar flex">
         <RightNav.IconLink to="/digs" icon="hand-peace-o" count={app.indexCounts.digsUnread} title="Digs on your posts" hint="bottom" />
         <RightNav.IconLink to="/sync" icon="cloud-download" title="Network sync status" hint="bottom" />
-        {''/*<RightNav.IconLink to="/data" icon="database" title="Raw database feed" hint="bottom-left" />*/}
         <Link className="ctrl flex-fill hint--bottom-left user-pic" data-hint="Your Profile" to={`/profile/${encodeURIComponent(app.user.id)}`}><img src={u.profilePicUrl(app.user.id)} /></Link>
       </div>
-      {this.props.children}
-      <RightNav.Heading>Your Contacts</RightNav.Heading>
-      { contacts.map(renderContact) }
-      <div className="link"><Link to="/add-contact">Find more...</Link></div>
+      { this.props.children ? <div style={{paddingBottom: 30}}>{this.props.children}</div> : '' }
+      <hr className="labeled" data-label="Active Channels"/>
+      { channels.map(renderChannel) }
     </div>
   }
 }

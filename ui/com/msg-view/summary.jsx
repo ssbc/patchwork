@@ -37,7 +37,7 @@ export default class Summary extends React.Component {
             { msg.plaintext ? '' : <i className="fa fa-lock"/> } <UserLink id={msg.value.author} />{' '}
             { replies }{' '}
             { msg.mentionsUser ? <i className="fa fa-at"/> : '' }{' '}
-            { channel ? <span className="channel">in <Link to={`/public/channel/${channel}`}>#{channel}</Link></span> : '' }
+            { channel ? <span className="channel">in <Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
           </div>
           <div className="header-right"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>
         </div>
