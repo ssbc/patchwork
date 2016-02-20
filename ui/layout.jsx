@@ -8,6 +8,7 @@ import Welcome from './com/forms/welcome'
 import ProfileName from './com/forms/profile-name'
 import ProfileImage from './com/forms/profile-image'
 import FindBar from './com/findbar'
+import desktopNotifications from './lib/desktop-notifications'
 
 const SETUP_FORMS = [Welcome, ProfileName, ProfileImage]
 
@@ -23,6 +24,8 @@ export default class Layout extends React.Component {
     app.on('modal:setup', isOpen => { this.setState({ setupIsOpen: isOpen }); app.fetchLatestState() })
     app.on('find:next', this.doFind.bind(this, true))
     app.on('find:previous', this.doFind.bind(this, false))
+
+    desktopNotifications.stream(app.ssb.patchwork.createNotificationsStream)
   }
   componentWillReceiveProps() {
     // update state on view changes

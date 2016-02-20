@@ -6,6 +6,7 @@ var multicb = require('multicb')
 var moment = require('moment')
 var app = require('./app')
 var social = require('./social-graph')
+var threadlib = require('patchwork-threads')
 
 exports.debounce = function (fn, wait) {
   var timeout
@@ -166,3 +167,23 @@ exports.getContactedPeerIds = function (peers) {
   }
 }
 
+exports.getSubjectMessage = function (msg, cb) {
+  // load the subject msg
+  if (!msg || msg.value.content.type !== 'vote')
+    return cb(null) // no subject msg needed
+
+  // `props.msg` is a vote, load the subject msg
+  var vote = mlib.link(msg.value.content.vote, 'msg')
+  if (!vote)
+    return cb(null) // malformed
+
+  app.ssb.get(vote.link, function (err, subjectMsg) {
+    if (subjectMsg) {
+      subjectMsg = { key: vote.link, value: subjectMsg }
+      threadlib.decryptThread(app.ssb, subjectMsg, function () {
+        cb(subjectMsg)
+      })
+    } else
+      cb(null)
+  })
+}
