@@ -5,9 +5,6 @@ import app from './lib/app'
 import Layout from './layout'
 import Inbox from './views/inbox'
 import PublicPosts from './views/public'
-import PrivatePosts from './views/private'
-import Bookmarks from './views/bookmarks'
-import Mentions from './views/mentions'
 import Digs from './views/digs'
 import Data from './views/data'
 import Msg from './views/msg'
@@ -38,9 +35,7 @@ export var routes = (
     <Route path="/" component={Layout}>
       <IndexRoute component={Inbox} />
       <Route path="inbox" component={Inbox} />
-      <Route path="inbox/private" component={PrivatePosts} />
-      <Route path="inbox/watching" component={Bookmarks} />
-      <Route path="inbox/mentions" component={Mentions} />
+      <Route path="inbox/:view" component={Inbox} />
       <Route path="activity" component={PublicPosts} />
       <Route path="channel/:channel" component={PublicPosts} />
       <Route path="digs" component={Digs} />

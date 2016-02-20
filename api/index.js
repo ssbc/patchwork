@@ -516,6 +516,7 @@ exports.init = function (sbot, opts) {
       var gte     = o(opts, 'gte')
       var limit   = o(opts, 'limit')
       var threads = o(opts, 'threads')
+      var unread  = o(opts, 'unread')
 
       // lt, lte, gt, gte should look like:
       // [msg.value.timestamp, msg.value.author]
@@ -573,7 +574,8 @@ exports.init = function (sbot, opts) {
             (lt  && row.ts >= lt[0]) ||
             (lte && row.ts > lte[0]) ||
             (gt  && row.ts <= gt[0]) ||
-            (gte && row.ts < gte[0])
+            (gte && row.ts < gte[0]) ||
+            (unread && row.isread)
           )
           if (invalid)
             continue
