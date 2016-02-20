@@ -9,6 +9,7 @@ var Notify      = require('pull-notify')
 var toPull      = require('stream-to-pull-stream')
 var ref         = require('ssb-ref')
 var pathlib     = require('path')
+var mlib        = require('ssb-msgs')
 var threadlib   = require('patchwork-threads')
 var u           = require('./util')
 
@@ -70,6 +71,7 @@ exports.init = function (sbot, opts) {
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
     pull.asyncMap(function (key, cb) {
+      // fetch the message and isread data
       var obj = { key: key, value: null, isread: false }
       db.isread.get(key, function (err, isread) { obj.isread = isread; done() })
       sbot.get(key, function (err, value) { obj.value = value; done() })
@@ -81,10 +83,15 @@ exports.init = function (sbot, opts) {
     pull.drain(
       function (msg) {
         if (msg.value) {
-          var row = state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
-          row.isread = msg.isread
+          // add to the inbox index
           row = state.inbox.sortedUpsert(msg.value.timestamp, msg.key)
           row.isread = msg.isread
+
+          // add to the bookmarks index, only if the wont already be in the private msgs index
+          if (msg.value && typeof msg.value.content != 'string') {
+            var row = state.bookmarks.sortedUpsert(msg.value.timestamp, msg.key)
+            row.isread = msg.isread
+          }
         }
       },
       function () { state.pdec() }
@@ -195,6 +202,7 @@ exports.init = function (sbot, opts) {
       row.isread = true
       if (!wasread)
         emit('index-change', { index: indexname })
+      return true
     }
   }
 
@@ -213,16 +221,16 @@ exports.init = function (sbot, opts) {
       row.isread = false
       if (wasread)
         emit('index-change', { index: indexname })
+      return true
     }
   }
 
   api.markRead = function (key, cb) {
     awaitSync(function () {
       indexMarkRead('inbox', key)
-      // indexMarkRead('bookmarks', key)
-      // indexMarkRead('mentions', key)
-      // indexMarkRead('privatePosts', key)
-      // indexMarkRead('follows', key)
+      indexMarkRead('bookmarks', key)
+      indexMarkRead('mentions', key)
+      indexMarkRead('privatePosts', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'put', key: k, value: 1 }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: true }) })
@@ -235,10 +243,9 @@ exports.init = function (sbot, opts) {
   api.markUnread = function (key, cb) {
     awaitSync(function () {
       indexMarkUnread('inbox', key)
-      // indexMarkUnread('bookmarks', key)
-      // indexMarkUnread('mentions', key)
-      // indexMarkUnread('privatePosts', key)
-      // indexMarkUnread('follows', key)
+      indexMarkUnread('bookmarks', key)
+      indexMarkUnread('mentions', key)
+      indexMarkUnread('privatePosts', key)
       if (Array.isArray(key)) {
         db.isread.batch(key.map(function (k) { return { type: 'del', key: k }}), cb)
         key.forEach(function (key) { emit('isread', { key: key, value: false }) })

@@ -9,27 +9,30 @@ import app from '../lib/app'
 
 export default class InboxPosts extends React.Component {
   getIndexName() {
-    const view = this.props.params.view || 'inbox'
     return ({
       inbox: 'inbox',
       mentions: 'mentions',
       private: 'privatePosts',
       watching: 'bookmarks'
-    })[view] || 'inbox'
+    })[this.props.params.view] || 'inbox'
   }
 
   getIndexFn() {
-    const view = this.props.params.view || 'inbox'
     return ({
       inbox: app.ssb.patchwork.createInboxStream,
       mentions: app.ssb.patchwork.createMentionStream,
       private: app.ssb.patchwork.createPrivatePostStream,
       watching: app.ssb.patchwork.createBookmarkStream
-    })[view] || app.ssb.patchwork.createInboxStream
+    })[this.props.params.view] || app.ssb.patchwork.createInboxStream
   }
 
   getUnreadCount() {
-    return app.indexCounts[this.getIndexName()+'Unread']
+    return ({
+      inbox: app.indexCounts.inboxUnread,
+      mentions: app.indexCounts.mentionUnread,
+      private: app.indexCounts.privateUnread,
+      watching: app.indexCounts.bookmarkUnread
+    })[this.props.params.view] || 0
   }
 
   cursor (msg) {

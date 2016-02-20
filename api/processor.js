@@ -16,7 +16,7 @@ module.exports = function (sbot, db, state, emit) {
       // inbox index:
       // add msgs that mention or address the user
       var inboxRow
-      if (findLink(mentions, sbot.id) || findLink(recps, sbot.id)) {
+      if (u.findLink(mentions, sbot.id) || u.findLink(recps, sbot.id)) {
         inboxRow = state.inbox.sortedUpsert(msg.received, root ? root.link : msg.key)
         emit('index-change', { index: 'inbox' })
         attachChildIsRead(inboxRow, msg.key)
@@ -31,22 +31,39 @@ module.exports = function (sbot, db, state, emit) {
         }
       }
 
-      // mentions index:
-      // add msgs that mention the user
-      var mentionRow
-      if (findLink(mentions, sbot.id)) {
-        mentionRow = state.mentions.sortedUpsert(ts(msg), root ? root.link : msg.key)
+      // inbox sub-indexes
+      // note, these sub-indexes shouldnt have overlap: thus the else/if
+      // private posts index
+      var bookmarkRow
+      if (u.findLink(recps, sbot.id)) {
+        var privatePostsRow
+        // update replies
+        if (root) {
+          privatePostsRow = state.privatePosts.find(root.link)
+          if (privatePostsRow) {
+            state.privatePosts.sortedUpsert(ts(msg), root.link)
+            emit('index-change', { index: 'privatePosts' })
+            attachChildIsRead(privatePostsRow, msg.key)
+          }
+        }
+        // add msgs addressed to the user
+        else if (!privatePostsRow) {        
+          privatePostsRow = state.privatePosts.sortedUpsert(ts(msg), root ? root.link : msg.key)
+          emit('index-change', { index: 'privatePosts' })
+          attachChildIsRead(privatePostsRow, msg.key)
+        }
+      }
+      // bookmarks index: update for replies
+      else if (root && (bookmarkRow = state.bookmarks.find(root.link))) {
+        state.bookmarks.sortedUpsert(ts(msg), root.link)
+        emit('index-change', { index: 'bookmarks' })
+        attachChildIsRead(bookmarkRow, msg.key)
+      }
+      // mentions index: add msgs that mention the user
+      else if (u.findLink(mentions, sbot.id)) {
+        var mentionRow = state.mentions.sortedUpsert(ts(msg), root ? root.link : msg.key)
         emit('index-change', { index: 'mentions' })
         attachChildIsRead(mentionRow, msg.key)
-      }
-      // update for replies
-      else if (root) {
-        mentionRow = state.mentions.find(root.link)
-        if (mentionRow) {
-          state.mentions.sortedUpsert(ts(msg), root.link)
-          emit('index-change', { index: 'mentions' })
-          attachChildIsRead(mentionRow, msg.key)
-        }
       }
 
       // public posts index: add public posts / update for replies
@@ -76,36 +93,6 @@ module.exports = function (sbot, db, state, emit) {
           // new post
           index.sortedUpsert(msg.value.timestamp, msg.key)
           emit('index-change', { index: indexName })
-        }
-      }
-
-      // bookmarks index: update for replies
-      var bookmarkRow
-      if (root) {
-        bookmarkRow = state.bookmarks.find(root.link)
-        if (bookmarkRow) {
-          state.bookmarks.sortedUpsert(ts(msg), root.link)
-          emit('index-change', { index: 'bookmarks' })
-          attachChildIsRead(bookmarkRow, msg.key)
-        }
-      }
-
-      // private posts index: update for replies
-      var privatePostsRow
-      if (root) {
-        privatePostsRow = state.privatePosts.find(root.link)
-        if (privatePostsRow) {
-          state.privatePosts.sortedUpsert(ts(msg), root.link)
-          emit('index-change', { index: 'privatePosts' })
-          attachChildIsRead(privatePostsRow, msg.key)
-        }
-      }
-      // privatePosts index: add msgs addressed to the user
-      else if (!privatePostsRow) { // dont bother if already updated privatePosts for this msg
-        if (findLink(recps, sbot.id)) {
-          privatePostsRow = state.privatePosts.sortedUpsert(ts(msg), root ? root.link : msg.key)
-          emit('index-change', { index: 'privatePosts' })
-          attachChildIsRead(privatePostsRow, msg.key)          
         }
       }
     },
@@ -377,13 +364,6 @@ module.exports = function (sbot, db, state, emit) {
     if (a.id) a = a.id // if `a` is a profile, just get its id
     if (b.id) b = b.id // if `b` is a profile, just get its id
     return (a != b && getProfile(b).followers[a])
-  }
-
-  function findLink (links, id) {
-    for (var i=0; i < (links ? links.length : 0); i++) {
-      if (links[i].link === id)
-        return links[i]
-    }
   }
 
   // helper to get the most reliable timestamp for a message
