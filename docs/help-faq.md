@@ -25,7 +25,7 @@ SecureScuttlebutt is a peer-to-peer network, but not all users can connect to ea
 Pubs ensure that everybody can participate.
 
 **How do I create my own Pub?**<br>
-See [HOWTO: Setup a Pub](../sbot/howto-setup-a-pub.md)
+See [HOWTO: Setup a Pub](/docs/scuttlebot/howto-setup-a-pub.html)
 
 ## Privacy
 
