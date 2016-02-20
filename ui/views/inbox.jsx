@@ -1,68 +1,43 @@
 'use babel'
 import React from 'react'
-import { Link } from 'react-router'
-import pull from 'pull-stream'
-import mlib from 'ssb-msgs'
-import { LocalStoragePersistedComponent } from '../com'
 import LeftNav from '../com/leftnav'
-import DropdownBtn from '../com/dropdown'
+import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
-import Card from '../com/msg-view/card'
 import Oneline from '../com/msg-view/oneline'
-import Summary from '../com/msg-view/summary'
 import app from '../lib/app'
 
-const LISTITEMS = [
-  { label: <span><i className="fa fa-list"/> View: Inline</span>, Component: Card },
-  { label: <span><i className="fa fa-list"/> View: Large</span>, Component: Summary },
-  { label: <span><i className="fa fa-list"/> View: Compact</span>, Component: Oneline }
-]
-const LISTITEM_CARD = LISTITEMS[0]
-const LISTITEM_ONELINE = LISTITEMS[1]
-
-export default class Inbox extends LocalStoragePersistedComponent {
-  constructor(props) {
-    super(props, 'msgList', {
-      currentMsgView: 0
-    })
-  }
-
+export default class InboxPosts extends React.Component {
   cursor (msg) {
     if (msg)
-      return [msg.value.timestamp, msg.value.author]
-  }
-
-  onSelectMsgView(v, index) {
-    this.setState({ currentMsgView: index })
+      return [msg.ts, false]
   }
 
   onMarkAllRead() {
-    alert('todo')    
+    if (confirm('Mark all messages read. Are you sure?')) {
+      app.ssb.patchwork.markAllRead('inbox', err => {
+        if (err)
+          app.issue('Failed to mark all read', err)
+      })
+    }
   }
 
   render() {
-    const listItem = LISTITEMS[this.state.currentMsgView]
-    const ListItem = listItem.Component
-
-    const Toolbar = props => {    
-      return <div className="flex light-toolbar">
-        <Link to="/inbox"><i className="fa fa-inbox" /> Private Threads</Link>
-        <div className="flex-fill"/>
-        <a onClick={this.onMarkAllRead.bind(this)}><i className="fa fa-check-square" /> Mark All Read</a>
-        <DropdownBtn items={LISTITEMS} right onSelect={this.onSelectMsgView.bind(this)}>{listItem.label}</DropdownBtn>
-      </div>
+    const ThisRightNav = props => {
+      return <RightNav>
+        <hr className="labeled" data-label="important" />
+        <a className="btn" onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
+      </RightNav>
     }
 
-    // composer composerProps={{placeholder: 'Write a new private message'}}
     return <div id="inbox">
       <MsgList
         ref="list"
         threads
         dateDividers
-        composer composerProps={{ isPublic: false }}
-        Hero={Toolbar}
-        ListItem={ListItem} listItemProps={{ userPic: true }}
-        LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
+        composer composerProps={{ isPublic: true }}
+        ListItem={Oneline} listItemProps={{ userPic: true }}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        RightNav={ThisRightNav}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Your inbox is empty."
         source={app.ssb.patchwork.createInboxStream}

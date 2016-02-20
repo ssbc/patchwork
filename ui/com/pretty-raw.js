@@ -12,7 +12,7 @@ class TableRow extends React.Component {
         value = <MsgLink id={value} name={this.props.name} />
       else if (ssbref.isBlob(value))
         value = <BlobLink id={value} name={this.props.name} />
-      else
+      else if (ssbref.isFeed(value))
         value = <UserLink id={value} />
     }
     else if (typeof value == 'boolean')
@@ -24,6 +24,7 @@ class TableRow extends React.Component {
 function elements(path, obj, Com) {
   var els = []
   path = (path) ? path + '.' : ''
+
   for (var k in obj) {
     if (obj[k] && typeof obj[k] == 'object')
       els = els.concat(elements(path+k, obj[k], Com))
@@ -64,7 +65,7 @@ class DivElem extends React.Component {
         value = <MsgLink id={value} name={this.props.name} />
       else if (ssbref.isBlob(value))
         value = <BlobLink id={value} name={this.props.name} />
-      else
+      else if (ssbref.isFeed(value))
         value = <UserLink id={value} />
     }
     else if (typeof value == 'boolean')
@@ -76,7 +77,7 @@ class DivElem extends React.Component {
 export class Div extends Table {
   render() {
     if (!this.state.obj || typeof this.state.obj == 'string')
-      return <div className="pretty-raw flex">Encrypted Message</div>
-    return <div className="pretty-raw flex">{elements(false, this.state.obj, DivElem)}</div>
+      return <div className="pretty-raw"><i className="fa fa-lock" /></div>
+    return <div className="pretty-raw">{elements(false, this.state.obj, DivElem)}</div>
   }
 }

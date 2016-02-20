@@ -6,6 +6,8 @@ class Tab extends React.Component {
     this.props.onClick(this.props.option)
   }
   render() {
+    if (this.props.option.divider)
+      return <span className="divider">|</span>
     const icon = (this.props.useIcon) ? <i className={'fa fa-'+(this.props.selected?'check-circle-o':'circle-thin')} /> : ''
     return <a className={this.props.selected?'selected':''} onClick={this.onClick.bind(this)}>
       {icon} {this.props.option.label}
@@ -15,7 +17,7 @@ class Tab extends React.Component {
 
 export default class Tabs extends React.Component {
   render() {
-    return <div className={'tabs'+(this.props.vertical?' vertical':'')}>
+    return <div className={`tabs ${this.props.vertical?'vertical':''} ${this.props.className||''}`}>
       {this.props.options.map((opt,i) => <Tab key={i} useIcon={!!this.props.vertical} option={opt} selected={opt === this.props.selected} onClick={this.props.onSelect} />)}
     </div>
   }

@@ -1,11 +1,12 @@
 'use babel'
 import React from 'react'
+import { Link } from 'react-router'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import threadlib from 'patchwork-threads'
-import { VerticalFilledContainer, UserPics } from './index'
-import LeftNav from './leftnav'
+import pull from 'pull-stream'
+import { UserLinks } from './index'
 import ResponsiveElement from './responsive-element'
 import Card from './msg-view/card'
 import { isaReplyTo, relationsTo } from '../lib/msg-relation'
@@ -16,20 +17,29 @@ import u from '../lib/util'
 class BookmarkBtn extends React.Component {
   render() {
     const b = this.props.isBookmarked
-    const title = 'Bookmark'+(b?'ed':'')
-    return <a className={(b?' selected':'')} onClick={this.props.onClick} title={title}>
-        <i className={'fa fa-bookmark'+(b?'':'-o')} /> {title}
+    const title = (b?'Watching Thread':'Watch Thread')
+    const hint = (b?'Updates will go in "Important." Click again to stop watching.':'Add this thread to "Important."')
+    return <a className={'hint--bottom '+(b?' selected':'')} data-hint={hint} onClick={this.props.onClick} title={title}>
+        <i className={'fa fa-'+(b?'eye':'genderless')} /> {title}
     </a>
   }
 }
 
 class UnreadBtn extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state={marked: false}
+  }
+  onClick() {
+    if (this.state.marked)
+      return
+    this.setState({marked: true})
+    this.props.onClick()
+  }
   render() {
-    const b = this.props.isUnread
-    const title = (b?'Mark Read':'Mark Unread')
-    const icon = 'fa fa-'+(b?'square-o':'check-square-o')
-    return <a onClick={this.props.onClick} title={title}>
-      <i className={icon} /> {title}
+    const m = this.state.marked
+    return <a onClick={this.onClick.bind(this)} className="hint--bottom" data-hint="Close this thread and leave it unread">
+      <i className={"fa fa-envelope"+(m?'':'-o')} /> Mark{m?'ed':''} Unread
     </a>
   }
 }
@@ -40,74 +50,125 @@ export default class Thread extends React.Component {
     super(props)
     this.state = {
       thread: null,
-      msgs: []
+      isLoading: true,
+      isHidingHistory: true,
+      numOldMsgsHidden: 0,
+      flattenedMsgs: [],
+      collapsedMsgs: []
     }
     this.liveStream = null
   }
 
   // helper to do setup on thread-change
   constructState(id) {
-    // load thread
-    threadlib.getPostThread(app.ssb, id, (err, thread) => {
+    // only construct for new threads
+    if (this.state.thread && id === this.state.thread.key)
+      return
+
+    // load thread, but defer computing any knowledge
+    threadlib.getPostThread(app.ssb, id, { isRead: false, isBookmarked: false, mentions: false, votes: false }, (err, thread) => {
       if (err)
         return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
-      // set state, after some processing
-      this.setState({
-        thread: thread,
-        msgs: threadlib.flattenThread(thread),
-        isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
-      })
+      // compile thread votes
+      threadlib.compileThreadVotes(thread)
 
-      // mark read
-      if (thread.hasUnread) {
-        threadlib.markThreadRead(app.ssb, thread, (err) => {
-          if (err)
-            return app.minorIssue('Failed to mark thread as read', err)
-          this.setState({ thread: thread })
+      // flatten *before* fetching info on replies, to make sure that info is attached to the right msg object
+      var flattenedMsgs = threadlib.flattenThread(thread)
+      thread.related = flattenedMsgs.slice(flattenedMsgs.indexOf(thread) + 1) // skip past the root
+      threadlib.fetchThreadData(app.ssb, thread, { isRead: true, isBookmarked: true, mentions: true }, (err, thread) => {
+        if (err)
+          return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
+
+        // note which messages start out unread, so they stay collapsed during this render
+        flattenedMsgs.forEach(m => m._isRead = m.isRead)
+
+        // hide old unread messages
+        // (only do it for the first unbroken chain of unreads)
+        let collapsedMsgs = [].concat(flattenedMsgs)
+        let numOldHidden = 0
+        let startOld = collapsedMsgs.indexOf(thread) // start at the root (which isnt always first)
+        if (startOld !== -1) {
+          startOld += 1 // always include the root
+          for (let i=startOld; i < collapsedMsgs.length - 1; i++) {
+            if (collapsedMsgs[i]._isRead === false)
+              break // found an unread, break here
+            numOldHidden++
+          }
+          numOldHidden-- // always include the last old msg
+          if (numOldHidden > 0)
+            collapsedMsgs.splice(startOld, numOldHidden, { isOldMsgsPlaceholder: true })
+        }
+
+        // now set state
+        this.setState({
+          isLoading: false,
+          thread: thread,
+          flattenedMsgs: flattenedMsgs,
+          collapsedMsgs: collapsedMsgs,
+          numOldMsgsHidden: numOldHidden,
+          isReplying: (this.state.thread && thread.key === this.state.thread.key) ? this.state.isReplying : false
         })
-      }
 
-      // listen for new replies
-      if (this.props.live) {
-        if (this.liveStream)
-          this.liveStream(true, ()=>{}) // abort existing livestream
-
-        pull(
-          // listen for all new messages
-          (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
-          pull.filter(obj => !obj.sync), // filter out the sync obj
-          pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
-          pull.drain((msg) => {
-            if (!this.state.thread)
-              return
-            
-            var c = msg.value.content
-            var rels = mlib.relationsTo(msg, this.state.thread)
-            // reply post to this thread?
-            if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
-              // add to thread and flatlist
-              this.state.msgs.push(msg)
-              this.state.thread.related = (this.state.thread.related||[]).concat(msg)
-              this.setState({ thread: this.state.thread, msgs: this.state.msgs })
-
-              // mark read
-              thread.hasUnread = true
-              threadlib.markThreadRead(app.ssb, this.state.thread, err => {
-                if (err)
-                  app.minorIssue('Failed to mark live-streamed reply as read', err)
-              })
-            }
+        // mark read
+        if (thread.hasUnread) {
+          threadlib.markThreadRead(app.ssb, thread, (err) => {
+            if (err)
+              return app.minorIssue('Failed to mark thread as read', err)
+            this.setState({ thread: thread })
           })
-        )
-      }
+        }
+
+        // listen for new replies
+        if (this.props.live) {
+          if (this.liveStream)
+            this.liveStream(true, ()=>{}) // abort existing livestream
+
+          pull(
+            // listen for all new messages
+            (this.liveStream = app.ssb.createLogStream({ live: true, gt: Date.now() })),
+            pull.filter(obj => !obj.sync), // filter out the sync obj
+            pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)),
+            pull.drain((msg) => {
+              if (!this.state.thread)
+                return
+              
+              var c = msg.value.content
+              var rels = mlib.relationsTo(msg, this.state.thread)
+              // reply post to this thread?
+              if (c.type == 'post' && (rels.indexOf('root') >= 0 || rels.indexOf('branch') >= 0)) {
+                // add to thread and flatlist
+                this.state.flattenedMsgs.push(msg)
+                this.state.collapsedMsgs.push(msg)
+                this.state.thread.related = (this.state.thread.related||[]).concat(msg)
+                this.setState({
+                  thread: this.state.thread,
+                  flattenedMsgs: this.state.flattenedMsgs,
+                  collapsedMsgs: this.state.collapsedMsgs
+                })
+
+                // mark read
+                thread.hasUnread = true
+                threadlib.markThreadRead(app.ssb, this.state.thread, err => {
+                  if (err)
+                    app.minorIssue('Failed to mark live-streamed reply as read', err)
+                })
+              }
+            })
+          )
+        }
+      })
     })
   }
   componentDidMount() {
     this.constructState(this.props.id)
+    this.props.onDidMount && this.props.onDidMount()
   }
   componentWillReceiveProps(newProps) {
     this.constructState(newProps.id)
+  }
+  componentDidUpdate() {
+    this.props.onDidMount && this.props.onDidMount()    
   }
   componentWillUnmount() {
     // abort the livestream
@@ -115,28 +176,48 @@ export default class Thread extends React.Component {
       this.liveStream(true, ()=>{})
   }
 
-  onToggleUnread() {
+  getScrollTop() {
+    // helper to bring the thread into view
+    const container = this.refs.container
+    if (!container)
+      return false
+    return container.offsetTop
+  }
+
+  onClose() {
+    this.props.onClose && this.props.onClose()
+  }
+
+  onShowHistory() {
+    this.setState({ isHidingHistory: false })
+  }
+
+  onMarkUnread() {
     // mark unread in db
     let thread = this.state.thread
-    app.ssb.patchwork.toggleRead(thread.key, (err, isRead) => {
+    app.ssb.patchwork.markUnread(thread.key, err => {
       if (err)
         return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkUnread of MsgThread')
 
       // re-render
-      thread.isRead = isRead
-      thread.hasUnread = !isRead
+      thread.isRead = false
+      thread.hasUnread = true
       this.setState(this.state)
     })
   }
 
-  onToggleBookmark(msg) {
+  onToggleBookmark(e) {
+    e.preventDefault()
+    e.stopPropagation()
+
     // toggle in the DB
-    app.ssb.patchwork.toggleBookmark(msg.key, (err, isBookmarked) => {
+    let thread = this.state.thread
+    app.ssb.patchwork.toggleBookmark(thread.key, (err, isBookmarked) => {
       if (err)
         return app.issue('Failed to toggle bookmark', err, 'Happened in onToggleBookmark of MsgThread')
 
       // re-render
-      msg.isBookmarked = isBookmarked
+      thread.isBookmarked = isBookmarked
       this.setState(this.state)
     })
   }
@@ -199,66 +280,65 @@ export default class Thread extends React.Component {
     app.history.pushState(null, '/msg/'+encodeURIComponent(id))
   }
 
-  onSelectRoot() {
-    let thread = this.state.thread
-    let threadRoot = mlib.link(thread.value.content.root, 'msg')
+  onSelectRoot(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    const thread = this.state.thread
+    const threadRoot = mlib.link(thread.value.content.root, 'msg')
     this.openMsg(threadRoot.link)
-  }
-
-  onCloseMsg() {
-    app.emit('open:msg', null)
   }
 
   render() {
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const msgs = (this.state.isHidingHistory) ? this.state.collapsedMsgs : this.state.flattenedMsgs
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     const isPublic = (thread && thread.plaintext)
     const authorName = thread && u.getName(thread.value.author)
+    const channel = thread && thread.value.content.channel
     const recps = thread && mlib.links(thread.value.content.recps, 'feed')
-    return <div className="msg-thread">
-      <VerticalFilledContainer id="msg-thread-vertical" className="flex">
-        <LeftNav location={this.props.location} />
-        <div className="flex-fill" style={{padding: 5}}>
-          { !thread
-            ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>No thread selected.</div>
-            : <ResponsiveElement widthStep={250}>
-                <div className="flex light-toolbar">
-                  { threadRoot
-                    ? <a onClick={this.onSelectRoot.bind(this)}><i className="fa fa-angle-double-up" /> Parent Thread</a>
-                    : '' }
-                  { !threadRoot && thread
-                    ? <BookmarkBtn onClick={()=>this.onToggleBookmark(thread)} isBookmarked={thread.isBookmarked} />
-                    : '' }
-                  { thread
-                    ? <UnreadBtn onClick={this.onToggleUnread.bind(this)} isUnread={thread.hasUnread} />
-                    : '' }
-                </div>
-                <hr className="labeled" data-label={`${isPublic?'Public':'Private'} post by ${authorName}${isPublic?'':' to:'}`} />
+
+    return <div className="msg-thread" ref="container">
+      { !thread
+        ? <div style={{padding: 20, fontWeight: 300, textAlign:'center'}}>{ this.state.isLoading ? 'Loading...' : 'No thread selected.' }</div>
+        : <ResponsiveElement widthStep={250}>
+            <div className="flex thread-toolbar" onClick={this.onClose.bind(this)}>
+              <div className="flex-fill">
+                { (thread && thread.mentionsUser) ? <i className="fa fa-at"/> : '' }{' '}
+                { (thread && thread.plaintext) ? '' : <i className="fa fa-lock"/> }{' '}
                 { recps && recps.length
-                  ? <div className="recps-list flex"><div className="flex-fill"/><UserPics ids={recps.map(r => r.link)} /><div className="flex-fill"/></div>
+                  ? <span>To: <UserLinks ids={recps.map(r => r.link)} /></span>
                   : '' }
-                <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
-                  { this.state.msgs.map((msg, i) => {
-                    const isFirst = (i === 0)
-                    return <Card
-                      key={msg.key}
-                      msg={msg}
-                      noReplies
-                      noBookmark
-                      forceRaw={this.props.forceRaw}
-                      forceOpen={isFirst}
-                      onSelect={()=>this.openMsg(msg.key)}
-                      onToggleStar={()=>this.onToggleStar(msg)}
-                      onFlag={(msg, reason)=>this.onFlag(msg, reason)}
-                      onToggleBookmark={()=>this.onToggleBookmark(msg)} />
-                  }) }
-                  <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
-                </ReactCSSTransitionGroup>
-              </ResponsiveElement>
-          }
-        </div>
-      </VerticalFilledContainer>
+                { channel ? <span className="channel">in <Link to={`/public/channel/${channel}`}>#{channel}</Link></span> : ''}
+              </div>
+              { !threadRoot && thread
+                ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
+                : '' }
+              { thread
+                ? <UnreadBtn onClick={this.onMarkUnread.bind(this)} isUnread={thread.hasUnread} />
+                : '' }
+            </div>
+            <ReactCSSTransitionGroup component="div" className="items" transitionName="fade" transitionAppear={true} transitionAppearTimeout={500} transitionEnterTimeout={500} transitionLeaveTimeout={1}>
+              { msgs.map((msg, i) => {
+                if (msg.isOldMsgsPlaceholder)
+                  return <div key={thread.key+'-oldposts'} className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{this.state.numOldMsgsHidden} older messages</div>
+
+                const isLast = (i === msgs.length - 1)
+                return <Card
+                  key={msg.key}
+                  msg={msg}
+                  noReplies
+                  noBookmark
+                  forceRaw={this.props.forceRaw}
+                  forceExpanded={isLast || !msg._isRead}
+                  onSelect={()=>this.openMsg(msg.key)}
+                  onToggleStar={()=>this.onToggleStar(msg)}
+                  onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
+              }) }
+              <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
+            </ReactCSSTransitionGroup>
+          </ResponsiveElement>
+      }
     </div>
   }
 }

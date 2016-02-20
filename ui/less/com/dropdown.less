@@ -1,33 +1,33 @@
 .dropdown {
   position: relative;
-  ul {
-    .elevation-menu;
-    z-index: 2000;
-    position: absolute;
-    background: #fff;
-    border: 1px solid #eee;
-    padding: 5px 0;
-    margin: 0;
-    min-width: 80px;
-    li {
-      text-align: left;
-      list-style: none;
-      padding: 5px 20px 5px 10px;
-      margin: 0;
-      color: #555;
-      cursor: pointer;
-      white-space: pre;
-      &:hover {
-        background: @blue1;
-        color: #fff;
-      }
-    }
-  }
-  &.closed ul {
+  .elevation-menu;
+  z-index: 2000;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 5px 0;
+  margin: 0;
+  min-width: 80px;
+
+  &.closed {
     display: none;
   }
-  &.right ul {
+  &.right {
     right: 0;
+  }
+
+  li {
+    text-align: left;
+    list-style: none;
+    padding: 5px 20px 5px 10px;
+    margin: 0;
+    color: #555;
+    cursor: pointer;
+    white-space: pre;
+    &:hover {
+      background: @blue1;
+      color: #fff;
+    }
   }
 }
 .dropdown-btn {

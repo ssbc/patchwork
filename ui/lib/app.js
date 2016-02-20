@@ -12,7 +12,8 @@ refresh because  its  commonly  needed during rendering.
 var POLL_PEER_INTERVAL = 5e3 // every 5 seconds
 
 var multicb   = require('multicb')
-var SSBClient = require('./muxrpc-ipc')
+var pull      = require('pull-stream')
+var SSBClient = require('./ws-client')
 var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')
@@ -32,7 +33,7 @@ module.exports = extend(new Emitter(), {
   fetchLatestState: fetchLatestState,
 
   // ui data
-  history: createHashHistory(),
+  history: createHashHistory({ queryKey: false }),
   isComposerOpen: false,
   suggestOptions: { 
     ':': Object.keys(emojis).map(function (emoji) {
@@ -40,7 +41,7 @@ module.exports = extend(new Emitter(), {
         image: './img/emoji/' + emoji + '.png',
         title: emoji,
         subtitle: emoji,
-        value: emoji + ':'
+        value: ':' + emoji + ':'
       }
     }),
     '@': []
@@ -121,8 +122,9 @@ function onPatchworkEvent (e) {
     for (var k in e.counts)
       app.indexCounts[k] = e.counts[k]
     app.emit('update:indexCounts')
+    updateTitle()
     if (e.index.indexOf('channel-') === 0) {
-      updateChannels(e.index.slice('channel-'.length), { lastUpdated: Date.now() }) // TODO hasNew
+      updateChannels(e.index.slice('channel-'.length), { lastUpdated: Date.now() })
       app.emit('update:channels')      
     }
   }
@@ -147,11 +149,17 @@ function pollPeers () {
   })
 }
 
+function updateTitle () {
+  document.title = '('+app.indexCounts.inboxUnread+') Patchwork'
+}
+
 function fetchLatestState (cb) {
   if (!patchworkEventStream)
     pull((patchworkEventStream = app.ssb.patchwork.createEventStream()), pull.drain(onPatchworkEvent.bind(this)))
-  if (!isWatchingNetwork)
+  if (!isWatchingNetwork) {
     setInterval(pollPeers, POLL_PEER_INTERVAL)
+    isWatchingNetwork = true
+  }
 
   var done = multicb({ pluck: 1 })
   app.ssb.whoami(done())
@@ -177,6 +185,7 @@ function fetchLatestState (cb) {
     app.isWifiMode      = require('./util').getPubStats(app.peers).hasSyncIssue
     app.user.profile    = app.users.profiles[app.user.id]
     app.user.needsSetup = !app.users.names[app.user.id]
+    updateTitle()
 
     // get friend list
     var social = require('./social-graph')
@@ -189,7 +198,7 @@ function fetchLatestState (cb) {
     app.suggestOptions['@'] = []
     if (app.user.profile) {
       for (var id in app.users.profiles) {
-        if (id == app.user.profile.id || (app.user.profile.assignedTo[id] && app.user.profile.assignedTo[id].following)) {
+        if (id == app.user.profile.id || social.follows(app.user.id, id)) {
           var name = app.users.names[id]
           app.suggestOptions['@'].push({
             id: id,
@@ -197,7 +206,7 @@ function fetchLatestState (cb) {
             title: name || id,
             image: require('./util').profilePicUrl(id),
             subtitle: name || id,
-            value: name || id.slice(1) // if using id, dont include the @ sigil
+            value: name ? ('@'+name) : id
           })
         }
       }

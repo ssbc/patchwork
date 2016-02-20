@@ -1,6 +1,5 @@
 'use babel'
 import React from 'react'
-import Modal from 'react-modal'
 import TextNodeSearcher from 'text-node-searcher'
 import u from '../lib/util'
 

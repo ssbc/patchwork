@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import cls from 'classnames'
-import { getResults } from '../lib/search'
+import { doSearch, getResults } from '../lib/search'
 
 const KEYCODE_UP = 38
 const KEYCODE_DOWN = 40
@@ -19,7 +19,7 @@ class SearchResults extends React.Component {
     }
   }
 
-  onMouseOverResult(index) {
+  onMouseEnterResult(index) {
     this.setState({ selected: index })
   }
 
@@ -40,8 +40,9 @@ class SearchResults extends React.Component {
   }
 
   render() {
+    const onClickResult = this.props.onClickResult
     const Result = props => {
-      return <div className={cls({ selected: this.state.selected === props.index })} onMouseOver={this.onMouseOverResult.bind(this, props.index)} onClick={this.props.onClickResult}>
+      return <div className={cls({ selected: this.state.selected === props.index })} onMouseEnter={this.onMouseEnterResult.bind(this, props.index)} onClick={onClickResult}>
         <i className={'fa fa-'+props.icon} /> {props.label}
       </div>
     }
@@ -55,7 +56,8 @@ export default class SearchPalette extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      query: '',
+      query: this.props.query || '',
+      isOpen: false,
       results: []
     }
     this.unlistenBefore = app.history.listenBefore(this.onBeforeNavigation.bind(this))
@@ -72,6 +74,7 @@ export default class SearchPalette extends React.Component {
     // update query & results
     const query = e.target.value
     this.setState({
+      isOpen: true,
       query: query,
       results: (query) ? getResults(query) : []
     })
@@ -96,20 +99,26 @@ export default class SearchPalette extends React.Component {
   }
 
   onSearch() {
-    this.refs.results.getSelectedResult().fn(this.state.query)    
+    if (this.state.isOpen)
+      this.refs.results.getSelectedResult().fn(this.state.query)
+    else
+      doSearch()(this.state.query)
+  }
+
+  focus() {
+    this.refs.search.focus()
   }
 
   render() {
-    const hasQuery = !!this.state.query
     return <div className="search-palette">
-      <i className="fa fa-search" />
+      <i className="fa fa-search" onClick={this.focus.bind(this)} />
       <input 
         ref="search"
-        placeholder="Search for people or content"
         value={this.state.query}
+        placeholder={this.props.placeholder||'Search your inbox'}
         onChange={this.onChange.bind(this)}
         onKeyDown={this.onKeyDown.bind(this)} />
-      { hasQuery ? <SearchResults ref="results" query={this.state.query} results={this.state.results} onClickResult={this.onSearch.bind(this)} /> : '' }
+      { this.state.isOpen && !!this.state.query ? <SearchResults ref="results" query={this.state.query} results={this.state.results} onClickResult={this.onSearch.bind(this)} /> : '' }
     </div>
   }
 }

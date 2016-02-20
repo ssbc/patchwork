@@ -48,15 +48,13 @@ export class ComposerRecps extends React.Component {
   }
 
   render() {
-    let isAtLimit = (this.props.recps.length >= RECP_LIMIT)
-    let warnings = this.props.recps.filter((id) => (id !== app.user.id) && !social.follows(id, app.user.id))
-    return <div className="composer-recps">
-      <div>
-        <i className="fa fa-user" /> To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
-        { (!isAtLimit && !this.props.isReadOnly) ?
-          <input ref="input" type="text" placeholder="Add recipients here" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
-          '' }
-      </div>
+    const isAtLimit = (this.props.recps.length >= RECP_LIMIT)
+    const warnings = this.props.recps.filter((id) => (id !== app.user.id) && !social.follows(id, app.user.id))
+    return <div className="recps-inputs flex-fill">
+      <i className="fa fa-user" /> To: {this.props.recps.map((r) => <ComposerRecp key={r} id={r} onRemove={this.props.onRemove} isReadOnly={this.props.isReadOnly} />)}
+      { (!isAtLimit && !this.props.isReadOnly) ?
+        <input ref="input" type="text" placeholder="Add recipients here" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
+        '' }
       { isAtLimit ? <div className="warning">Recipient limit reached</div> : '' }
       { warnings.length ?
         <div>{warnings.map(id => <div key={id} className="warning">Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :

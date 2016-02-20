@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import app from '../lib/app'
 import u from '../lib/util'
+import social from '../lib/social-graph'
 
 export default class Hexagon extends React.Component {
   render() {
@@ -55,13 +56,12 @@ export class FriendsHexagrid extends React.Component {
     var friends = []
     friends.push(app.user.id)
     for (var k in app.users.profiles) {
-      var p = app.users.profiles[k]
       if (this.props.reverse) {
-        if (p.assignedTo[app.user.id] && p.assignedTo[app.user.id].following)
-          friends.push(p.id)
+        if (social.follows(k, app.user.id))
+          friends.push(k)
       } else {
-        if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following)
-          friends.push(p.id)
+        if (social.follows(app.user.id, k))
+          friends.push(k)
       }
     }
     this.setState({ friends: friends })

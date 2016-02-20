@@ -36,6 +36,17 @@ exports.bytesHuman = function (nBytes) {
   return str
 }
 
+module.exports.isImageFilename = function (name) {
+  if (typeof name !== 'string')
+    return false
+  return isImageContentType(mime.contentType(name))
+}
+
+var isImageContentType =
+module.exports.isImageContentType = function (ct) {
+  return (typeof ct == 'string' && ct.indexOf('image/') === 0)
+}
+
 const startOfDay = moment().startOf('day')
 const lastWeek = moment().subtract(1, 'weeks')
 const lastYear = moment().subtract(1, 'years')
@@ -58,29 +69,40 @@ exports.getName = function (id) {
   return app.users.names[id] || exports.shortString(id, 6)
 }
 
-exports.profilePicUrl = function (id) {
-  var url = './img/default-prof-pic.png'
+exports.profilePic = function (id) {
   var profile = app.users.profiles[id]
   if (profile) {
     var link
 
     // lookup the image link
-    if (profile.self.image)
-      link = profile.self.image
+    if (profile.byMe.image)
+      return profile.byMe.image // use local user's choice...
+    else if (profile.self.image)
+      return profile.self.image // ...fallback to their choice
+  }
+  return false
+}
 
-    if (link) {
-      url = 'http://localhost:7777/'+link.link
+exports.profilePicRef = function (id) {
+  var link = exports.profilePic(id)
+  return link ? link.link : false
+}
 
-      // append the 'backup img' flag, so we always have an image
-      url += '?fallback=img'
+exports.profilePicUrl = function (id) {
+  var url = './img/default-prof-pic.png'
+  var link = exports.profilePic(id)
+  if (link) {
+    url = '/'+link.link
 
-      // if we know the filetype, try to construct a good filename
-      if (link.type) {
-        var ext = link.type.split('/')[1]
-        if (ext) {
-          var name = app.users.names[id] || 'profile'
-          url += '&name='+encodeURIComponent(name+'.'+ext)
-        }
+    // append the 'backup img' flag, so we always have an image
+    url += '?fallback=img'
+
+    // if we know the filetype, try to construct a good filename
+    if (link.type) {
+      var ext = link.type.split('/')[1]
+      if (ext) {
+        var name = app.users.names[id] || 'profile'
+        url += '&name='+encodeURIComponent(name+'.'+ext)
       }
     }
   }
@@ -89,7 +111,7 @@ exports.profilePicUrl = function (id) {
 
 exports.getPubStats = function (peers) {
   var membersof=0, membersofActive=0, membersofUntried=0, connected=0
-  ;(peers||app.peers).forEach(function (peer) {
+  ;(peers||app.peers||[]).forEach(function (peer) {
     // filter out LAN peers
     if (ip.isLoopback(peer.host) || ip.isPrivate(peer.host))
       return
@@ -119,7 +141,7 @@ exports.getContactedPeerIds = function (peers) {
   let remote = new Array()
   let connected = new Array()
 
-  ;(peers||app.peers).forEach(function (peer) {
+  ;(peers||app.peers||[]).forEach(function (peer) {
     if (ip.isLoopback(peer.host)) return
 
     if (peer.connected) {

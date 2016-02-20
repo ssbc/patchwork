@@ -4,8 +4,6 @@
   margin: 10px auto;
   transition: max-height 0.2s;
   max-height: 70px;
-  position: relative;
-  left: -20px;
 
   &.open {
     max-height: 300px;
@@ -23,13 +21,14 @@
     flex: 1;
 
     &.placeholder {
+      .elevation-1;
       cursor: text;
       font-family: @content-font;
       padding: 10px;
       color: #aaa;
       background: #fff;
       font-weight: 300;
-      border: 1px solid #ccc;
+      height: 45px;
     }
 
     .composer-content {

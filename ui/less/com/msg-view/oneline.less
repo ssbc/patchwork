@@ -1,21 +1,24 @@
 .msg-view.oneline {
+  .elevation-1;
   display: flex;
-  height: 32px;
+  background: #fff;
   padding: 8px 6px 6px;
+  max-width: 650px;
+  margin: 1px auto;
   overflow: hidden;
   color: #555;
-  border-top: 1px solid #ddd;
 
-  .type {
-    padding: 3px 0 0 0;
-    font-size: 21px;
-    text-align: right;
+  strong {
+    // dont allow any bolding, to contrast against unread messages
+    font-weight: normal;
   }
+
   .authors {
-    flex: 0 0 35px;
+    flex: 0 0 125px;
     overflow: hidden;
     white-space: pre;
     text-overflow: ellipsis;
+    font-weight: normal;
     a {
       color: #555;
     }
@@ -23,45 +26,54 @@
       width: 32px;
       height: 32px;
       border-radius: 2px;
-      margin-right: 2px;
+      margin-right: 8px;
+      vertical-align: middle;
     }
   }
   .replies {
-    flex: 0 0 30px;
-    text-align: center;
+    flex: 0 0 20px;
     padding-top: 5px;
+    padding-right: 5px;
   }
   .content {
     flex: 1;
-    white-space: pre;
     overflow: hidden;
-    text-overflow: ellipsis;
-    color: @dark-gray3;
-    font-family: Helvetica;
+    color: #666;
     font-weight: 300;
-    line-height: 2.2;
+    line-height: 1.9;
     padding-left: 3px;
+
+    .markdown, .raw {
+      height: 32px;
+      overflow: hidden;
+      display: block;
+    }
   }
   .date {
     text-align: right;
-    padding: 5px 0 0;
+    padding: 5px 0 0 5px;
+  }
+  .label {
+    margin-left: 5px;
+    padding: 8px 3px;
+    background: #eee;
+    color: gray;
+    text-transform: uppercase;
+    font-size: 12px;
+
+    i {
+      margin: 0 2px;
+    }
   }
 
   &.unread {
-    border-left: 4px solid #006EFF;
-    background: #fff;
-    .replies {
-      font-weight: bold;
-    }
-    .content {
+    background-color: #fff;
+    .authors, .replies, .content, .date, strong {
       font-weight: bold;
     }
   }
-  
+
   &:hover {
-    background: #fafafa;
+    background-color: #fafafa;
   }
-}
-.divider-spot .msg-view.oneline {
-  border-top: 0;
 }

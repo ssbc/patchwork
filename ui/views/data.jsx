@@ -2,6 +2,8 @@
 import React from 'react'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-view/oneline'
+import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import app from '../lib/app'
 
 export default class Data extends React.Component {
@@ -9,6 +11,15 @@ export default class Data extends React.Component {
     const source = opts => {
       return app.ssb.createLogStream(opts)
     }
-    return <div id="data"><MsgList ListItem={Oneline} listItemProps={{noReplies: true}} source={source} live={{ gt: Date.now() }} /></div>
+    return <div id="data">
+      <MsgList
+        forceRaw
+        composer composerProps={{ isPublic: true }}
+        ListItem={Oneline} listItemProps={{noReplies: true}}
+        LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
+        RightNav={RightNav}
+        source={source}
+        live={{ gt: Date.now() }} />
+    </div>
   }
 }

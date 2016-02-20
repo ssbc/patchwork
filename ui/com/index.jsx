@@ -24,7 +24,7 @@ export class MsgLink extends React.Component {
 
 export class BlobLink extends React.Component {
   render() {
-    return <Link to={'/webview/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</Link>
+    return <a href={'/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</a>
   }
 }
 
@@ -42,7 +42,7 @@ export class UserLinks extends React.Component {
 
 export class UserPic extends React.Component {
   render() {
-    var name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
+    const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
     return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic" title={name}>
       <img src={u.profilePicUrl(this.props.id)} />
     </Link>
@@ -68,6 +68,18 @@ export class UserBtn extends React.Component {
     return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-btn" title={name}>
       <img src={u.profilePicUrl(this.props.id)} /> {name} {followedIcon}
     </Link>
+  }
+}
+
+export class HoverShifter extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { isHovering: false }
+  }
+  render() {
+    const child = this.props.children && this.props.children[+this.state.isHovering]
+    return <span onMouseEnter={()=>this.setState({isHovering: true})} onMouseLeave={()=>this.setState({isHovering: false})}>{child}</span>
+
   }
 }
 
@@ -110,6 +122,26 @@ export class LocalStoragePersistedComponent extends React.Component {
     })
   }
 }
+// parent class for components which should recompute their state every time the app-state changes
+export class AutoRefreshingComponent extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = this.computeState(props)
+    this.refreshState = () => { this.setState(this.computeState(this.props)) }
+  }
+  componentDidMount() {
+    app.on('update:all', this.refreshState) // re-render on app state updates
+  }
+  componentWillReceiveProps(newProps) {
+    this.refreshState(newProps)
+  }
+  componentWillUnmount() {
+    app.removeListener('update:all', this.refreshState)    
+  }
+  computeState(props) {
+    // should be overwritten by sublcass
+  }
+}
 
 // helper to create rainbowed-out elements
 export function rainbow (str) {
@@ -140,6 +172,27 @@ export function verticalFilled (Component) {
         height = window.innerHeight - rect.top
       }
       this.setState({ height: height })
+    },
+    getScrollTop() {
+      const el = this.refs && this.refs.el
+      if (!el) return 0
+      if (el.getScrollTop)
+        return el.getScrollTop() // use the child's impl
+      return el.scrollTop
+    },
+    // check if a location is in scroll-view
+    isPointVisible(left, top) {
+      const el = this.refs && this.refs.el
+      if (!el) return
+      if (el.isPointVisible)
+        return el.isPointVisible(left, top) // use the child's impl
+
+      // TODO left
+
+      if (el.scrollTop > top || el.scrollTop + this.state.height < top)
+        return false
+
+      return true
     },
     scrollTo(top) {
       const el = this.refs && this.refs.el
@@ -175,7 +228,7 @@ export function verticalFilled (Component) {
 }
 class _VerticalFilledContainer extends React.Component {
   render() {
-    return <div className="vertical-filled" {...this.props} style={{height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
+    return <div className="vertical-filled" {...this.props} style={{position: 'relative', height: this.props.height, overflow: 'auto'}}>{this.props.children||''}</div>
   }
 }
 export var VerticalFilledContainer = verticalFilled(_VerticalFilledContainer)

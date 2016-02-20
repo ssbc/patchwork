@@ -21,8 +21,8 @@ export function getResults (query) {
 
   // general results
   results = results.concat([
-    { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) },
-    { icon: 'user', label: `Search people for "${query}"`, fn: doSearch({ type: 'users' }) }
+    { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) }
+    // { icon: 'user', label: `Search people for "${query}"`, fn: doSearch({ type: 'users' }) }
   ])
 
   // builtin pages
@@ -67,17 +67,17 @@ function openObject (ref) {
   } else if (ssbref.isMsgId(ref)) {
     app.history.pushState(null, '/msg/'+encodeURIComponent(ref))
   } else if (ssbref.isBlobId(ref)) {
-    app.history.pushState(null, '/webview/'+encodeURIComponent(ref))            
+    window.location = '/'+encodeURIComponent(ref)
   }
 }
 
 const openChannel = channel => () => {
   if (channel.charAt(0) == '#') // strip off the pound
     channel = channel.slice(1)
-  app.history.pushState(null, '/newsfeed/channel/'+encodeURIComponent(channel))
+  app.history.pushState(null, '/public/channel/'+encodeURIComponent(channel))
 }
 
-const doSearch = opts => query => {
+export const doSearch = opts => query => {
   // TODO incorporate `opts`
   app.history.pushState(null, '/search/'+encodeURIComponent(query))
 }

@@ -1,6 +1,6 @@
 {
   "name": "ssb-patchwork",
-  "version": "2.0.6",
+  "version": "2.4.1",
   "description": "safe secure sharing",
   "main": "app/index.js",
   "repository": {
@@ -8,45 +8,52 @@
     "url": "https://github.com/ssbc/patchwork.git"
   },
   "scripts": {
-    "start": "electron .",
+    "build-release": "npm run build-release:js && npm run build-release:css",
+    "build-release:js": "NODE_ENV=production browserifyinc ./ui/main.js --extension=.jsx | uglifyjs > ./ui/main.build.js",
+    "build-release:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less --autoprefix ./ui/css/main.css",
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "NODE_ENV=development browserifyinc ./ui/main.js --extension=.jsx -o ./ui/main.build.js",
+    "build:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less ./ui/css/main.css",
+    "watch": "npm run watch:server & npm run watch:ui",
+    "watch:ui": "npm run watch:js & npm run watch:css",
+    "watch:server": "nodemon -q -w api -w './*.js'",
+    "watch:js": "NODE_ENV=development watchify ./ui/main.js --extension=.jsx -o ./ui/main.build.js -v",
+    "watch:css": "mkdir -p ./ui/css && nodemon -q -e less -w ./ui/less -x 'lessc --verbose ./ui/less/main.less ./ui/css/main.css'",
+    "start": "node ./index.js",
     "test": "set -e; for t in api/test/*.js; do node $t; done",
-    "clean": "rm -Rf ./dist",
-    "clean:osx": "rm -Rf ./dist/osx",
-    "clean:win": "rm -Rf ./dist/win",
-    "build": "npm run clean && npm run build:ui && npm run build:osx && npm run build:win",
-    "build:ui": "mkdir -p ./ui/css && lessc ./ui/less/main.less ./ui/css/main.css",
-    "build:icon": "./scripts/make-icns.sh assets/icon1024.png assets/osx/patchwork.icns",
-    "build:osx": "electron-packager ./ Patchwork --out=dist/osx --platform=darwin --arch=x64 --ignore=node_modules/electron* --version=0.36.1 --icon=assets/osx/patchwork.icns",
-    "build:win": "electron-packager ./ Patchwork --out=dist/win --platform=win32 --arch=ia32 --ignore=node_modules/electron* --version=0.36.1 --icon=assets/win/patchwork.ico",
-    "build:nix": "electron-packager ./ patchwork --out=dist/linux --platform=linux --arch=x64 --ignore=node_modules/electron* --version=0.36.1 --icon=assets/osx/patchwork.icns",
-    "pack": "npm run pack:osx && npm run pack:win",
-    "pack:osx": "electron-builder \"dist/osx/Patchwork.app\" --platform=osx --out=\"dist/osx\" --config=packager.json",
-    "pack:win": "electron-builder \"dist/win/Patchwork-win32\" --platform=win --out=\"dist/win\" --config=packager.json",
-    "prepublish": "npm run build:ui"
+    "prepublish": "npm run build-release"
   },
   "author": "Paul Frazee <pfrazee@gmail.com>",
-  "license": "?",
+  "license": "GPL-3.0",
   "devDependencies": {
-    "electron-builder": "^2.0.0",
-    "electron-packager": "^5.2.0",
-    "less": "~1.7.5",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "browserify-incremental": "^3.0.1",
+    "envify": "^3.4.0",
+    "less": "^2.5.3",
+    "nodemon": "^1.8.1",
     "osenv": "~0.1.0",
     "rimraf": "~2.2.8",
-    "tape": "~3.0.0"
+    "tape": "~3.0.0",
+    "uglify-js": "^2.6.1",
+    "watchify": "^3.7.0"
   },
   "dependencies": {
     "babel": "^5.8.23",
     "blob-to-buffer": "^1.2.3",
-    "classnames": "^2.2.1",
-    "electron-prebuilt": "^0.36.1",
+    "classnames": "^2.2.3",
     "emoji-named-characters": "^1.0.1",
     "history": "1.13.1",
     "hyperscript": "~1.4.6",
     "image-loaded": "0.0.2",
     "ip": "^1.0.2",
+    "less-plugin-autoprefix": "^1.5.1",
     "mime-types": "^2.1.3",
     "moment": "^2.10.6",
-    "multiblob": "^1.5.0",
+    "multiblob": "^1.8.0",
     "multicb": "^1.1.0",
     "muxrpc": "^6.1.1",
     "ngraph.graph": "0.0.12",
@@ -54,41 +61,62 @@
     "nicedate": "~0.0.0",
     "observable": "^2.1.3",
     "once": "~1.3.1",
-    "patchwork-threads": "^1.1.3",
+    "patchwork-threads": "^2.0.0",
     "pause-offscreen": "^1.0.0",
     "phoenix-router": "~1.0.0",
     "published-working-tree": "~0.0.0",
     "pull-cat": "^1.1.7",
     "pull-identify-filetype": "^1.0.0",
-    "pull-ipc": "0.0.1",
     "pull-level": "~1.2.0",
     "pull-merge": "~1.0.2",
     "pull-notify": "0.0.0",
     "pull-paramap": "^1.1.3",
     "pull-pushable": "^1.1.4",
+    "pull-serializer": "^0.3.2",
     "pull-stream": "^2.27.0",
     "pull-stream-to-stream": "~1.3.0",
+    "pull-ws-server": "^1.3.4",
     "react": "^0.14.3",
     "react-addons-css-transition-group": "^0.14.3",
+    "react-clipboard.js": "^0.1.7",
     "react-dom": "^0.14.3",
     "react-infinite": "^0.5.10",
     "react-modal": "^0.6.0",
     "react-router": "1.0.2",
-    "scuttlebot": "~7.4.3",
+    "scuttlebot": "~7.5.0",
     "ssb-config": "^1.0.3",
     "ssb-keys": "^4.0.3",
-    "ssb-markdown": "^1.0.0",
+    "ssb-markdown": "^2.0.0",
     "ssb-msg-schemas": "~6.1.0",
     "ssb-msgs": "~5.2.0",
-    "ssb-ref": "~2.2.0",
+    "ssb-ref": "~2.3.0",
     "stack": "^0.1.0",
     "stream-to-pull-stream": "^1.6.1",
-    "suggest-box": "~1.1.6",
+    "suggest-box": "^2.0.0",
     "text-node-searcher": "~1.1.0",
     "xtend": "^4.0.0"
   },
   "bin": {
-    "patchwork": "./bin.js"
+    "patchwork": "./index.js"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "envify",
+        {
+          "global": true
+        }
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015",
+            "stage-0",
+            "react"
+          ]
+        }
+      ]
+    ]
   }
 }
-

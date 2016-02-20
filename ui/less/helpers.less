@@ -1,8 +1,12 @@
 .flex {
   display: flex;
 }
+.inline-flex {
+  display: inline-flex;
+}
 .flex-fill {
   flex: 1;
+  max-width: 100%;
 }
 
 .loading {
@@ -12,15 +16,43 @@
 
 .faq {
   color: gray;
-  font-weight: 200;
-  margin: 20px 0;
+  font-size: 18px;
+  font-weight: 300;
+  padding: 30px 40px;
 
   .faq-entry {
-    margin: 0 0 12px;
+    margin: 0 0 24px;
+    div:first-child {
+      font-size: 21px;
+      font-weight: normal;
+    }
     &:last-child {
       margin: 0;
     }
   }
+}
+
+.muted {
+  color: gray;
+}
+.text-left {
+  text-align: left;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.float-right {
+  float: right;
+}
+.vertical-center {
+  position: absolute;
+  left: 0;
+  top: 36%;
+  transform: translateY(-50%);
+  width: 100%;
 }
 
 .well {
@@ -84,7 +116,7 @@
 hr.labeled {
   border-bottom: 1px solid #ccc;
   position: relative;
-  margin: 16px 0;
+  margin: 30px 0;
 
   &:after {
     content: attr(data-label);

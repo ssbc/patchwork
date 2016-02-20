@@ -2,18 +2,20 @@
 import React from 'react'
 
 export class Dropdown extends React.Component {
-  onSelect(v) {
-  }
   render() {
-    const onSelect = (v, i) => e => {
-      e.stopPropagation()
-      this.props.onSelect(v, i)
+    const onSelect = (item, i) => e => {
+      this.props.onSelect && this.props.onSelect(item.value, i)
+      item.onSelect && item.onSelect()
     }
-    return <span className={'dropdown' + (this.props.open?' open':' closed') + (this.props.right?' right':'')}>
-      <ul onMouseLeave={this.props.onClose}>
-        { this.props.items.map((item,i) => <li key={i} onClick={onSelect(item.value, i)}>{item.label}</li>) }
-      </ul>
-    </span>
+
+    return <ul className={'dropdown' + (this.props.open?' open':' closed') + (this.props.right?' right':'')} onMouseLeave={this.props.onClose}>
+      { this.props.items.map((item,i) => {
+        const onClick = onSelect(item, i)
+        if (item.Com) 
+          return <item.Com key={i} onClick={onClick} />
+        return <li key={i} onClick={onClick}>{item.label}</li>
+      }) }
+    </ul>
   }
 }
 
@@ -30,12 +32,14 @@ export default class DropdownBtn extends React.Component {
   }
   onSelect(v, index) {
     this.setState({ open: false })
-    this.props.onSelect(v, index)
+    this.props.onSelect && this.props.onSelect(v, index)
   }
   render() {
-    return <a className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')} onClick={this.onOpen.bind(this)}>
+    return <span>
+      <a className={(this.props.className||'') + ' dropdown-btn' + (this.props.right ? ' right':'')} onClick={this.onOpen.bind(this)}>
+        {this.props.children}
+      </a>
       <Dropdown items={this.props.items} right={this.props.right} open={this.state.open} onClose={this.onClose.bind(this)} onSelect={this.onSelect.bind(this)} />
-      {this.props.children}
-    </a>
+    </span>
   }
 }

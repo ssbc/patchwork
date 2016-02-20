@@ -10,6 +10,7 @@ import u from '../lib/util'
 import social from '../lib/social-graph'
 import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
 import LeftNav from '../com/leftnav'
+import RightNav from '../com/rightnav'
 import PubInvite from '../com/forms/pub-invite'
 import Modal from '../com/modals/single'
 import ModalBtn from '../com/modals/btn'
@@ -24,7 +25,7 @@ function peerSorter (a, b) {
   const aBoost = (social.follows(a.key, app.user.id)) ? 1000 : 0
   // then sort by # of announcers
   try {
-    return (bBoost + b.announcers.length) - (aBoost + a.announcers.length)
+    return (bBoost + (b.announcers ? b.announcers.length : 0)) - (aBoost + (a.announcers ? a.announcers.length : 0))
   } catch(err) { console.log('a', a); console.log('b', b); throw err }
 }
 
@@ -463,11 +464,7 @@ export default class Sync extends React.Component {
         <div className="header">
           <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
           <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
-        </div>
-
-        <div className='peer-status-group'>
-          <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
+          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Join Pub</ModalBtn>
         </div>
 
         <div className='peer-status-group'>
@@ -495,7 +492,12 @@ export default class Sync extends React.Component {
               map((peer, i) => <PeerStatus key={peerId(peer)} peer={peer} />)
           }
         </div>
+
+        <div className='peer-status-group'>
+          <PeerGraph peersForGraph={this.state.peersForGraph} contactedPeerIds={this.state.contactedPeerIds} />
+        </div>
       </div>
+      <RightNav/>
     </VerticalFilledContainer>
   }
 }
