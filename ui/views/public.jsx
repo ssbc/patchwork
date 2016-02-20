@@ -3,7 +3,6 @@ import React from 'react'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
-import Oneline from '../com/msg-view/oneline'
 import Card from '../com/msg-view/card'
 import app from '../lib/app'
 
@@ -51,7 +50,6 @@ export default class PublicPosts extends React.Component {
         return app.ssb.patchwork.createChannelStream(channel, opts)
       return app.ssb.patchwork.createPublicPostStream(opts)
     }
-    const ListItem = (channel) ? Oneline : Card
 
     // render content
     return <div id="public-posts" key={channel||'*'}>
@@ -62,7 +60,7 @@ export default class PublicPosts extends React.Component {
         composer composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        ListItem={ListItem} listItemProps={{ forceExpanded: true }}
+        ListItem={Card} listItemProps={{ forceExpanded: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your feed is empty.'}
         source={source}
