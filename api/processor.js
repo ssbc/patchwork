@@ -66,30 +66,23 @@ module.exports = function (sbot, db, state, emit) {
         attachChildIsRead(mentionRow, msg.key)
       }
 
-      // public posts index: add public posts / update for replies
+      // public posts index: add public posts / replies to non-posts
       if (recps.length === 0) {
         if (!root) {
           state.publicPosts.sortedUpsert(ts(msg), msg.key)
           emit('index-change', { index: 'publicPosts' })
         }
-        else if (root) {
+        else if (root && !state.publicPosts.find(root.link)) {
           state.publicPosts.sortedUpsert(ts(msg), root.link)
           emit('index-change', { index: 'publicPosts' })
         }
       }
 
       if (c.channel && typeof c.channel === 'string') {
-        // channels index: add root posts / update for replies
+        // channels index: add root posts
         var indexName = 'channel-'+c.channel
         var index = state[indexName] = (state[indexName] || u.index(indexName))
-        if (root) {
-          // reply
-          var channelRow = index.find(root.link)
-          if (channelRow) {
-            index.sortedUpsert(msg.value.timestamp, root.link)
-            emit('index-change', { index: indexName })            
-          }
-        } else {
+        if (!root) {
           // new post
           index.sortedUpsert(msg.value.timestamp, msg.key)
           emit('index-change', { index: indexName })

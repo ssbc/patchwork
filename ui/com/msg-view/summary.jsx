@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import { UserPic, UserLink, NiceDate } from '../index'
-import { Inline as Content } from '../msg-content'
+import { Summary as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import u from '../../lib/util'
 
@@ -25,27 +25,30 @@ export default class Summary extends React.Component {
     const lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
     var replies = countReplies(msg)
-    replies = (replies === 0) ? '' : '('+(replies+1)+')'
-    return <div className={'msg-view summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')} onClick={this.onClick.bind(this)}>
-      { this.props.userPic ?
-        <div className="left-meta">
-          <UserPic id={msg.value.author} />
-        </div> : '' }
-      <div className="content">
+    return <div className={'msg-view summary'+(this.props.selected ? ' selected' : '')+(msg.hasUnread ? ' unread' : '')}>
+      <div className="left-meta">
+        <UserPic id={msg.value.author} />
+      </div>
+      <div className="content" onClick={this.onClick.bind(this)}>
         <div className="header">
           <div className="header-left">
             { msg.plaintext ? '' : <i className="fa fa-lock"/> } <UserLink id={msg.value.author} />{' '}
-            { replies }{' '}
-            { msg.mentionsUser ? <i className="fa fa-at"/> : '' }{' '}
-            { channel ? <span className="channel">in <Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
+            { /*msg.mentionsUser ? <i className="fa fa-at"/> : '' }{*/''}
+            {/* replies } replies*/''}
           </div>
-          <div className="header-right"><NiceDate ts={(lastMsg||msg).value.timestamp} /></div>
+          <div className="header-right">{ channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }</div>
         </div>
         <div className="body">
           <div className="body-line"><Content msg={msg} forceRaw={this.props.forceRaw} /></div>
-          { !this.props.noReply && lastMsg && lastMsg !== msg ?
-            <div className="body-line"><Content msg={lastMsg} /></div> :
+          { /*!this.props.noReply && lastMsg && lastMsg !== msg ?
+            <div className="body-line"><Content msg={lastMsg} /></div> :*/
             '' }
+        </div>
+        <div className="footer">
+          <div className="flex-fill"/>
+          { msg.hasUnread ? <div>unread</div> : '' }
+          <div><i className="fa fa-reply-all" /> { replies }</div>
+          <div><i className="fa fa-hand-peace-o" /> 0</div>
         </div>
       </div>
     </div>

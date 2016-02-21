@@ -39,10 +39,8 @@
     }
     .header-right {
       white-space: pre;
-      padding-right: 5px;
-      a.save {
-        padding-right: 10px;
-      }
+      padding-right: 10px;
+      color: #aab8c2;
     }
     a {
       color: @dark-gray2;
@@ -65,51 +63,38 @@
     line-height: 1.4;
     word-break: break-word;
   }
-  .ctrls {
+  .footer {
     display: flex;
-    padding: 5px 0;
-    color: #808080;
-    font-weight: 300;
-    font-size: 15px;
-    white-space: pre;
+    color: #aab8c2;
+    font-size: 18px;
+    margin: 5px 20px;
     & > div {
-      padding: 0 10px;
+      padding-left: 40px;
     }
-    .upvoters, .downvoters {
-      font-size: 80%;
-      padding-top: 2px;
-      white-space: normal;
+    .replies.highlighted {
+      color: #4880F1;
     }
-    a {
-      color: #555;
-    }
-    a.vote {
-      &:hover {
-        text-decoration: none;
+    .dig {
+      cursor: pointer;
+      &:hover, &.selected {
+        opacity: 0.5;
         i {
           .anim-rainbow-color(0.1s);
           transition: transform 0.2s cubic-bezier(0, 0, 0.75, 2.65);
         }
         span:nth-child(2) { .anim-rainbow-color(0.15s); }
         span:nth-child(3) { .anim-rainbow-color(0.2s); }
-        span:nth-child(4) { .anim-rainbow-color(0.25s); }
-        span:nth-child(5) { .anim-rainbow-color(0.3s); }
-        span:nth-child(6) { .anim-rainbow-color(0.35s); }
-        span:nth-child(7) { .anim-rainbow-color(0.4s); }
-        span:nth-child(8) { .anim-rainbow-color(0.45s); }
       }
       &.selected {
-        font-weight: normal;
         i {
           transform: scale(1.2);
         }
       }
     }
-    a.flag {
-      &.selected, &:hover {
-        color: #BB1111;
-      }
-    }
+  }
+
+  .raw-message pre {
+    font-size: 80%;
   }
 
   &.collapsed {
@@ -121,7 +106,7 @@
 
     .body {
       height: 24px;
-      width: 570px;
+      width: 510px;
       color: gray;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -145,8 +130,19 @@
     }
   }
 
-  .raw-message pre {
-    font-size: 80%;
+  &.list-view {
+    .body {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+    }
+
+    &:hover {
+      background: #fafafa;
+      cursor: pointer;
+    }
   }
 }
 

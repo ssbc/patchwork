@@ -60,7 +60,7 @@ export default class PublicPosts extends React.Component {
         composer composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        ListItem={Card} listItemProps={{ forceExpanded: true }}
+        ListItem={Card} listItemProps={{ listView: true }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your feed is empty.'}
         source={source}
