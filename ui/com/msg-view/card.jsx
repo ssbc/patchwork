@@ -53,7 +53,7 @@ class DigBtn extends React.Component {
   }
   render() {
     let label = this.props.isUpvoted ? 'Dug' : 'Dig'
-    return <div className={'dig'+(this.props.isUpvoted?' selected':'')} onClick={this.onClick.bind(this)} title={label}>
+    return <div className={'dig'+(this.props.isUpvoted?' highlighted':'')} onClick={this.onClick.bind(this)} title={label}>
       <i className="fa fa-hand-peace-o" /> <span>{this.props.upvotes}</span>
     </div>
   }
@@ -76,7 +76,7 @@ export default class Card extends React.Component {
   }
 
   isCollapsable() {
-    return !this.props.forceExpanded && this.isExpanded()
+    return !this.props.forceExpanded && !this.props.listView && this.isExpanded()
   }
 
   onSelect() {
@@ -225,7 +225,6 @@ export default class Card extends React.Component {
 
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
     const replies = countReplies(msg)
-    const hasUnreadReplies = msg.hasUnread && replies>0
     const isListView   = this.props.listView
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
@@ -262,7 +261,7 @@ export default class Card extends React.Component {
       <div className="content">
         <div className="header" onClick={this.onClickCollapse.bind(this)}>
           <div className="header-left">
-            <UserLink id={msg.value.author} />
+            <UserLink id={msg.value.author} />{' '}
             { isListView
               ? ''
               : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
@@ -283,7 +282,8 @@ export default class Card extends React.Component {
         </div>
         <div className="footer">
           <div className="flex-fill"/>
-          { isListView ? <div className={`replies ${hasUnreadReplies?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
+          { isListView && msg.hasUnread ? <div>unread</div> : '' }
+          { isListView ? <div className={`replies ${msg.hasUnread?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvotes={upvoters.length} />
         </div>
         {''/*<div className="ctrls">

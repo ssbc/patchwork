@@ -70,14 +70,17 @@
     margin: 5px 20px;
     & > div {
       padding-left: 40px;
-    }
-    .replies.highlighted {
-      color: #4880F1;
+      &:hover {
+        color: #82939E;
+      }
+      &.highlighted {
+        color: #82939E;
+      }
     }
     .dig {
       cursor: pointer;
-      &:hover, &.selected {
-        opacity: 0.5;
+      &:hover {
+        opacity: 0.75;
         i {
           .anim-rainbow-color(0.1s);
           transition: transform 0.2s cubic-bezier(0, 0, 0.75, 2.65);
@@ -85,7 +88,7 @@
         span:nth-child(2) { .anim-rainbow-color(0.15s); }
         span:nth-child(3) { .anim-rainbow-color(0.2s); }
       }
-      &.selected {
+      &.highlighted {
         i {
           transform: scale(1.2);
         }
