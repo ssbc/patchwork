@@ -53,7 +53,7 @@ export default class RightNav extends React.Component {
     const isWifiMode = this.state.isWifiMode
 
     const channels = this.state.channels.slice(0, 7)
-    const renderChannel = c => <RightNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}>{c.name}</RightNav.Link>
+    const renderChannel = c => <RightNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}># {c.name}</RightNav.Link>
 
     return <div className="rightnav">
       <div className="toolbar flex">
@@ -62,7 +62,7 @@ export default class RightNav extends React.Component {
         <Link className="ctrl flex-fill hint--bottom-left user-pic" data-hint="Your Profile" to={`/profile/${encodeURIComponent(app.user.id)}`}><img src={u.profilePicUrl(app.user.id)} /></Link>
       </div>
       { this.props.children ? <div style={{paddingBottom: 30}}>{this.props.children}</div> : '' }
-      <hr className="labeled" data-label="Active Channels"/>
+      <hr className="labeled" data-label="active channels"/>
       { channels.map(renderChannel) }
     </div>
   }

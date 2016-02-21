@@ -54,7 +54,7 @@ export default class InboxPosts extends React.Component {
     const showArchived = this.props.location.query.archived
     const hasUnread = this.getUnreadCount() > 0
     const view = this.props.params.view || 'inbox'
-    const viewLabel = view.charAt(0).toUpperCase() + view.slice(1)
+    const viewLabel = view
     const archivedUrl = this.props.location.pathname + '?archived=1'
     const source = opts => {
       opts.unread = !showArchived

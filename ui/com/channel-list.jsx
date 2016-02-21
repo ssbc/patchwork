@@ -95,9 +95,9 @@ export class ChannelList extends React.Component {
           <input ref="searchInput" type="text" placeholder="New Channel" value={search} onChange={this.onSearchChange.bind(this)} onKeyDown={this.onSearchKeyDown.bind(this)} />
         </div>
       </div>
-      { pinnedChannels.length ? <div className="channel-list-heading">Pinned</div> : '' }
+      { pinnedChannels.length ? <div className="channel-list-heading">Channels</div> : '' }
       { pinnedChannels.map(renderChannel) }
-      { unpinnedChannels.length ? <div className="channel-list-heading">Unpinned</div> : '' }
+      <hr/>
       { unpinnedChannels.map(renderChannel) }
       <hr/>
       <div style={{fontWeight: 'normal', color: 'gray', padding: '0 10px'}}>

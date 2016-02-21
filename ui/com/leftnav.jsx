@@ -91,33 +91,37 @@ export default class LeftNav extends React.Component {
     const contacts = app.user.friends.map(id => ({ id: id, name: u.getName(id) })).sort((a, b) => a.name.localeCompare(b.name))
 
     // render
-    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}>{c.name}</LeftNav.Link>
+    const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}># {c.name}</LeftNav.Link>
     const renderContact = c => <LeftNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}>{c.name}</LeftNav.Link>
-    // const followUnread = (app.indexCounts.followUnread > 0) ? `(${app.indexCounts.followUnread})` : ''
     return <div className="leftnav">
       <div className="logo"><Link to="/">{rainbowSplitter('Patchwork')}</Link></div>
+
       <Issues/>
+      { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
+      
       <LinkGroup pathname={pathname} to="/" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} group='inbox'>
         <LeftNav.Link pathname={pathname} to="/inbox/private">Private ({app.indexCounts.privateUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/watching">Watching ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
       </LinkGroup>
+
       <LinkGroup pathname={pathname} to="/activity" label="Activity Feed" group='activity'>
         { pinnedChannels.map(renderChannel) }
-      </LinkGroup>     
+        <div className="link">
+          <a onClick={this.onOpenChannelList.bind(this)}><i className="fa fa-folder-open-o"/></a>
+          { this.state.isChannelListOpen ? <i className="fa fa-caret-left" style={{ color: 'gray', marginLeft: 5 }} /> : '' }
+        </div>
+      </LinkGroup>
+
       <LinkGroup pathname={pathname} to="/contacts" label="Contacts" group='contacts'>
         { contacts.map(renderContact) }
       </LinkGroup>
+
       <hr/>
       <LeftNav.Link pathname={pathname} to={`/profile/${encodeURIComponent(app.user.id)}`}>Your Profile</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/sync">Network Sync</LeftNav.Link>
       <LeftNav.Link pathname={pathname} to="/data">Data Feed</LeftNav.Link>
-
-      {''/*<LeftNav.Heading>
-        Pinned Channels <a onClick={this.onOpenChannelList.bind(this)}><i className="fa fa-wrench" /></a>
-        { this.state.isChannelListOpen ? <i className="fa fa-caret-left" style={{ color: 'gray', marginLeft: 5 }} /> : '' }
-      </LeftNav.Heading>
-      { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }*/}
+      
     </div>
   }
 }
