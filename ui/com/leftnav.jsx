@@ -103,14 +103,8 @@ export default class LeftNav extends React.Component {
         <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
       </LinkGroup>
       <LinkGroup pathname={pathname} to="/activity" label="Activity Feed" group='activity'>
-        <LeftNav.Link pathname={pathname} to="/activity/posts">Public Posts</LeftNav.Link>
-        <LeftNav.Link pathname={pathname} to="/activity/profile">Profile Updates</LeftNav.Link>
-        <LeftNav.Link pathname={pathname} to="/activity/follows">User Flags</LeftNav.Link>
-        <LeftNav.Link pathname={pathname} to="/activity/digs">Votes</LeftNav.Link>
-      </LinkGroup>
-      <LinkGroup pathname={pathname} to="/channels" label="Channels" group='channels'>
         { pinnedChannels.map(renderChannel) }
-      </LinkGroup>
+      </LinkGroup>     
       <LinkGroup pathname={pathname} to="/contacts" label="Contacts" group='contacts'>
         { contacts.map(renderContact) }
       </LinkGroup>
