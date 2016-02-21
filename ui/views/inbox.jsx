@@ -14,7 +14,7 @@ export default class InboxPosts extends React.Component {
       mentions: 'mentions',
       private: 'privatePosts',
       watching: 'bookmarks'
-    })[this.props.params.view] || 'inbox'
+    })[this.props.params.view||'inbox'] || 'inbox'
   }
 
   getIndexFn() {
@@ -23,7 +23,7 @@ export default class InboxPosts extends React.Component {
       mentions: app.ssb.patchwork.createMentionStream,
       private: app.ssb.patchwork.createPrivatePostStream,
       watching: app.ssb.patchwork.createBookmarkStream
-    })[this.props.params.view] || app.ssb.patchwork.createInboxStream
+    })[this.props.params.view||'inbox'] || app.ssb.patchwork.createInboxStream
   }
 
   getUnreadCount() {
@@ -32,7 +32,7 @@ export default class InboxPosts extends React.Component {
       mentions: app.indexCounts.mentionUnread,
       private: app.indexCounts.privateUnread,
       watching: app.indexCounts.bookmarkUnread
-    })[this.props.params.view] || 0
+    })[this.props.params.view||'inbox'] || 0
   }
 
   cursor (msg) {

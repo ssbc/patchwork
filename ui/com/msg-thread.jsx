@@ -311,7 +311,7 @@ export default class Thread extends React.Component {
                   : '' }
                 { channel ? <span className="channel">in <Link to={`/channel/${channel}`}>#{channel}</Link></span> : ''}
               </div>
-              { !threadRoot && thread
+              { !threadRoot && thread && isPublic // dont do bookmark btn if this is a private thread (it'll already be in your inbox)
                 ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }
               { thread
