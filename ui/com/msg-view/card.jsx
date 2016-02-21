@@ -55,7 +55,7 @@ class DigBtn extends React.Component {
     let label = 'Dig this'
     if (this.props.upvoters.length)
       label = 'Dug by '+this.props.upvoters.map(u.getName).join(', ')
-    return <div className={'dig hint--bottom'+(this.props.isUpvoted?' highlighted':'')} onClick={this.onClick.bind(this)} data-hint={label}>
+    return <div className={'dig hint--top-left'+(this.props.isUpvoted?' highlighted':'')} onClick={this.onClick.bind(this)} data-hint={label}>
       <i className="fa fa-hand-peace-o" /> <span>{this.props.upvoters.length}</span>
     </div>
   }
