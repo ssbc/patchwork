@@ -62,7 +62,7 @@ export default class RightNav extends React.Component {
         <Link className="ctrl flex-fill hint--bottom-left user-pic" data-hint="Your Profile" to={`/profile/${encodeURIComponent(app.user.id)}`}><img src={u.profilePicUrl(app.user.id)} /></Link>
       </div>
       { this.props.children ? <div style={{paddingBottom: 30}}>{this.props.children}</div> : '' }
-      <hr className="labeled" data-label="active channels"/>
+      <hr className="labeled" data-label="active channels" style={{marginBottom: 15}} />
       { channels.map(renderChannel) }
     </div>
   }
