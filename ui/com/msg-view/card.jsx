@@ -52,9 +52,11 @@ class DigBtn extends React.Component {
     this.props.onClick()
   }
   render() {
-    let label = this.props.isUpvoted ? 'Dug' : 'Dig'
-    return <div className={'dig'+(this.props.isUpvoted?' highlighted':'')} onClick={this.onClick.bind(this)} title={label}>
-      <i className="fa fa-hand-peace-o" /> <span>{this.props.upvotes}</span>
+    let label = 'Dig this'
+    if (this.props.upvoters.length)
+      label = 'Dug by '+this.props.upvoters.map(u.getName).join(', ')
+    return <div className={'dig hint--bottom'+(this.props.isUpvoted?' highlighted':'')} onClick={this.onClick.bind(this)} data-hint={label}>
+      <i className="fa fa-hand-peace-o" /> <span>{this.props.upvoters.length}</span>
     </div>
   }
 }
@@ -284,7 +286,7 @@ export default class Card extends React.Component {
           <div className="flex-fill"/>
           { isListView && msg.hasUnread ? <div>unread</div> : '' }
           { isListView ? <div className={`replies ${msg.hasUnread?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
-          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvotes={upvoters.length} />
+          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
         </div>
         {''/*<div className="ctrls">
           { replies && !this.props.noReplies ?
