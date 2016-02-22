@@ -18,6 +18,7 @@ class LinkGroup extends LocalStoragePersistedComponent {
     const toggle = e => { e.preventDefault(); e.stopPropagation(); this.setState({ isExpanded: !b }) }
     return <div>
       <LeftNav.Link pathname={this.props.pathname} to={this.props.to} expander expanded={b} onToggleExpand={toggle}>
+        {this.props.icon ? <i className={'fa fa-'+this.props.icon} /> : ''}
         {this.props.label}
       </LeftNav.Link>
       { b ? <div className="sublinks">{ this.props.children }</div> : '' }
@@ -99,13 +100,13 @@ export default class LeftNav extends React.Component {
       <Issues/>
       { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
       
-      <LinkGroup pathname={pathname} to="/" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} group='inbox'>
+      <LinkGroup pathname={pathname} to="/" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} icon="inbox" group="inbox">
         <LeftNav.Link pathname={pathname} to="/inbox/private">Private ({app.indexCounts.privateUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/watching">Watching ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
       </LinkGroup>
 
-      <LinkGroup pathname={pathname} to="/activity" label="Activity Feed" group='activity'>
+      <LinkGroup pathname={pathname} to="/activity" label="Activity Feed" icon="newspaper-o" group="activity">
         { pinnedChannels.map(renderChannel) }
         <div className="link">
           <a onClick={this.onOpenChannelList.bind(this)}><i className="fa fa-folder-open-o"/></a>
@@ -113,7 +114,7 @@ export default class LeftNav extends React.Component {
         </div>
       </LinkGroup>
 
-      <LinkGroup pathname={pathname} to="/contacts" label="Contacts" group='contacts'>
+      <LinkGroup pathname={pathname} to="/contacts" label="Contacts" group="contacts">
         { contacts.map(renderContact) }
       </LinkGroup>
 
