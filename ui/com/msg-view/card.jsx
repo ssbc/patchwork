@@ -261,7 +261,7 @@ export default class Card extends React.Component {
         <UserPic id={msg.value.author} />
       </div>
       <div className="content">
-        <div className="header" onClick={this.onClickCollapse.bind(this)}>
+        <div className="header">
           <div className="header-left">
             <UserLink id={msg.value.author} />{' '}
             { isListView
@@ -274,6 +274,7 @@ export default class Card extends React.Component {
                 { channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
               </div>
             : <div className="header-right">
+                { this.isCollapsable() ? <a className="collapse-btn" onClick={this.onClickCollapse.bind(this)}><i className="fa fa-angle-up"/></a> : '' }
                 <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
               </div> }
         </div>
