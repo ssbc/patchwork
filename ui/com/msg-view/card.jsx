@@ -52,10 +52,12 @@ class DigBtn extends React.Component {
     this.props.onClick()
   }
   render() {
-    let label = this.props.isUpvoted ? 'Dug' : 'Dig'
-    return <a href='javascript:;' className={'vote'+(this.props.isUpvoted?' selected':'')} title={label} onClick={this.onClick.bind(this)}>
-      <i className="fa fa-hand-peace-o" /> {label.split('').map((l,i) => <span key={i}>{l}</span>)} <span>i</span><span>t</span>
-    </a>
+    let label = 'Dig this'
+    if (this.props.upvoters.length)
+      label = 'Dug by '+this.props.upvoters.map(u.getName).join(', ')
+    return <div className={'dig hint--top-left'+(this.props.isUpvoted?' highlighted':'')} onClick={this.onClick.bind(this)} data-hint={label}>
+      <i className="fa fa-hand-peace-o" /> <span>{this.props.upvoters.length}</span>
+    </div>
   }
 }
 
@@ -72,11 +74,11 @@ export default class Card extends React.Component {
   }
 
   isExpanded() {
-    return this.props.forceExpanded || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
+    return this.props.forceExpanded || this.props.listView || this.state.isExpanded || (this.props.msg && !this.props.msg.isRead)
   }
 
   isCollapsable() {
-    return !this.props.forceExpanded && this.isExpanded()
+    return !this.props.forceExpanded && !this.props.listView && this.isExpanded()
   }
 
   onSelect() {
@@ -89,7 +91,9 @@ export default class Card extends React.Component {
   }
 
   onClickExpand(e) {
-    if (!this.isExpanded()) {
+    if (this.props.listView)
+      this.onSelect()
+    else if (!this.isExpanded()) {
       e.preventDefault()
       this.setState({ isExpanded: true })
     }
@@ -223,7 +227,7 @@ export default class Card extends React.Component {
 
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
     const replies = countReplies(msg)
-    const unreadReplies = countReplies(msg, m => !m.isRead)
+    const isListView   = this.props.listView
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
     
@@ -246,32 +250,46 @@ export default class Card extends React.Component {
       )
     ]
 
-    const isExpanded     = this.isExpanded()
-    const collapsedCls   = (isExpanded?'':'collapsed')
+    const isExpanded   = this.isExpanded()
+    const collapsedCls = (isExpanded?'':'collapsed')
     const collapsableCls = (this.isCollapsable()?'collapsable':'')
-    const newCls         = (msg.isNew?'new':'')
-    return <div className={`msg-view card-post ${collapsedCls} ${collapsableCls} ${newCls}`} onClick={this.onClickExpand.bind(this)}>
+    const newCls       = (msg.isNew?'new':'')
+    const listViewCls  = (isListView?'list-view':'')
+    const unreadCls    = (msg.hasUnread?'unread':'')
+    return <div className={`msg-view card-post ${collapsedCls} ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
       <div className="left-meta">
         <UserPic id={msg.value.author} />
       </div>
       <div className="content">
-        <div className="header" onClick={this.onClickCollapse.bind(this)}>
+        <div className="header">
           <div className="header-left">
-            <UserLink id={msg.value.author} /> <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link>
+            <UserLink id={msg.value.author} />{' '}
+            { isListView
+              ? ''
+              : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
           </div>
-          { isExpanded
+          { /*!this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : ''*/'' }
+          { isListView
             ? <div className="header-right">
-              { !this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : '' }
-              <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
-            </div>
-            : '' }
+                { channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
+              </div>
+            : <div className="header-right">
+                { this.isCollapsable() ? <a className="collapse-btn" onClick={this.onClickCollapse.bind(this)}><i className="fa fa-angle-up"/></a> : '' }
+                <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
+              </div> }
         </div>
         <div className="body" ref="body">
           { isExpanded
             ? <Content       msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
             : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
         </div>
-        <div className="ctrls">
+        <div className="footer">
+          <div className="flex-fill"/>
+          { isListView && msg.hasUnread ? <div>unread</div> : '' }
+          { isListView ? <div className={`replies ${msg.hasUnread?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
+          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
+        </div>
+        {''/*<div className="ctrls">
           { replies && !this.props.noReplies ?
             <div>
               <a href='javascript:;' onClick={this.onSelect.bind(this)}>
@@ -282,9 +300,9 @@ export default class Card extends React.Component {
           { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
           { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
           { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
-          <div><DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} /></div>
+          <div></div>
           { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
-        </div>
+        </div>*/}
       </div>
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
     </div>

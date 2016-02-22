@@ -106,3 +106,10 @@ module.exports.getThreadHasUnread = function (sbot, msg, cb) {
     cb(err, thread.hasUnread)
   })
 }
+
+module.exports.findLink = function (links, id) {
+  for (var i=0; i < (links ? links.length : 0); i++) {
+    if (links[i].link === id)
+      return links[i]
+  }
+}

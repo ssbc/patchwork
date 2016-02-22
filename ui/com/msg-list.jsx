@@ -296,7 +296,7 @@ export default class MsgList extends React.Component {
 
         // did we reach the end?
         var isAtEnd = false
-        if (!lastmsg || (this.botcursor && this.botcursor.key == lastmsg.key))
+        if (!lastmsg || (this.botcursor && this.botcursor.key == lastmsg.key) || msgs.length < amt)
           isAtEnd = true
         this.botcursor = lastmsg
 
@@ -353,7 +353,7 @@ export default class MsgList extends React.Component {
     const Infinite = this.props.listItemHeight ? ReactInfinite : SimpleInfinite // use SimpleInfinite if we dont know the height of each elem
     const ListItem = this.props.ListItem || Summary
     const isEmpty = (!this.state.isLoading && this.state.msgs.length === 0)
-    const append = (this.state.isAtEnd && this.props.append) ? this.props.append() : ''
+    const appendEl = (this.state.isAtEnd && this.props.Append) ? <this.props.Append/> : <span/>
     const nQueued = this.state.newMsgQueue.length
 
     // render messages here, into an array, so we can insert date dividers
@@ -432,7 +432,7 @@ export default class MsgList extends React.Component {
                   </ReactCSSTransitionGroup>
                 </ResponsiveElement>
               }
-              {append}
+              {appendEl}
             </div>
             { RightNav ? <RightNav {...this.props.rightNavProps} /> : '' }
           </div>

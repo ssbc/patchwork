@@ -107,11 +107,6 @@ function updateChannels (name, values) {
 
 function sortChannels () {
   app.channels.sort(function (a, b) {
-    // put pinned at top
-    if (a.pinned !== b.pinned) {
-      if (a.pinned) return -1
-      if (b.pinned) return 1
-    }
     // go by last updated
     return b.lastUpdated - a.lastUpdated
   })
