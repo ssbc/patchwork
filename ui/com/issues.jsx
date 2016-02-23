@@ -88,7 +88,7 @@ export default class Issues extends React.Component {
     let close = () => this.setState({ isOpen: false })
     if (!this.state.numIssues)
       return <span/>
-    return <div className="leftnav-link">
+    return <div className="link">
       <a className="ctrl" onClick={open}>
         <i className="fa fa-exclamation-triangle" /> Issues ({this.state.numUnread})
       </a>
