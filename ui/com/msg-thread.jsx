@@ -80,8 +80,9 @@ export default class Thread extends React.Component {
         if (err)
           return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
-        // note which messages start out unread, so they stay collapsed during this render
+        // note which messages start out unread, so they stay collapsed or expanded during re-renders
         flattenedMsgs.forEach(m => m._isRead = m.isRead)
+        flattenedMsgs[flattenedMsgs.length - 1]._isRead = false // always expand the last one
 
         // hide old unread messages
         // (only do it for the first unbroken chain of unreads)
@@ -323,14 +324,13 @@ export default class Thread extends React.Component {
                 if (msg.isOldMsgsPlaceholder)
                   return <div key={thread.key+'-oldposts'} className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{this.state.numOldMsgsHidden} older messages</div>
 
-                const isLast = (i === msgs.length - 1)
                 return <Card
                   key={msg.key}
                   msg={msg}
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceExpanded={isLast || !msg._isRead}
+                  forceExpanded={!msg._isRead}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
