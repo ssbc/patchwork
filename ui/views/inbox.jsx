@@ -68,7 +68,9 @@ export default class InboxPosts extends React.Component {
     const ThisRightNav = props => {
       return <RightNav>
         <hr className="labeled" data-label={viewLabel} />
-        <a className="btn" onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
+        <a className="btn hint--top-left" data-hint="Mark all messages on this page as 'read'." onClick={this.onMarkAllRead.bind(this)} href="javascript:">
+          <i className="fa fa-envelope" /> Mark all read
+        </a>
       </RightNav>
     }
     const emptyMsg = showArchived

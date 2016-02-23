@@ -32,9 +32,13 @@ export default class PublicPosts extends React.Component {
     const channelData = findChannelData(channel)
     const ThisRightNav = props => {
       if (channel) {
+        const pinned = (channelData && channelData.pinned)
+        const hint = pinned ? 'Remove this channel from your lefthand menu.' : 'Add this channel to your lefthand menu (under "Activity Feed").'
         return <RightNav>
           <hr className="labeled" data-label="channel" />
-          <a className="btn" onClick={this.onTogglePin.bind(this, channel)}><i className="fa fa-thumb-tack" /> { (channelData && channelData.pinned) ? 'Unpin' : 'Pin' } this channel</a>
+          <a className="btn hint--top-left" data-hint={hint} onClick={this.onTogglePin.bind(this, channel)}>
+            <i className="fa fa-thumb-tack" /> { pinned ? 'Unpin' : 'Pin' } this channel
+          </a>
         </RightNav>
       }
       return <RightNav/>

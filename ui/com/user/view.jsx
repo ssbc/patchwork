@@ -106,9 +106,11 @@ export default class UserView extends AutoRefreshingComponent {
       return <RightNav>
         { isSelf ? '' : <div>
           <hr className="labeled" data-label="this user" />
-          { (this.state.hasFlagged) ?
-            <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> Unflag this user</a> :
-            <DropdownBtn className="btn" items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}><i className="fa fa-flag" /> Flag this user</DropdownBtn>  }
+          { (this.state.hasFlagged)
+            ? <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> Unflag this user</a> :
+              <DropdownBtn className="btn hint--top-left" data-hint="Warn your followers about this user." items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}>
+                <i className="fa fa-flag" /> Flag this user
+              </DropdownBtn>  }
         </div> }
       </RightNav>
     }
