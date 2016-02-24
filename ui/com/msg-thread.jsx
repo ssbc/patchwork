@@ -54,7 +54,8 @@ export default class Thread extends React.Component {
       isHidingHistory: true,
       numOldMsgsHidden: 0,
       flattenedMsgs: [],
-      collapsedMsgs: []
+      collapsedMsgs: [],
+      loadError: null
     }
     this.liveStream = null
   }
@@ -68,7 +69,7 @@ export default class Thread extends React.Component {
     // load thread, but defer computing any knowledge
     threadlib.getPostThread(app.ssb, id, { isRead: false, isBookmarked: false, mentions: false, votes: false }, (err, thread) => {
       if (err)
-        return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
+        return console.error(err), this.setState({ loadError: err })
 
       // compile thread votes
       threadlib.compileThreadVotes(thread)
@@ -292,6 +293,12 @@ export default class Thread extends React.Component {
   }
 
   render() {
+    if (this.state.loadError) {
+      return <div className="msg-thread not-found" ref="container">
+        Message not found.
+      </div>
+    }
+
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
     const isViewingReply = !!threadRoot
