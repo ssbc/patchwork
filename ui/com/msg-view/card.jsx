@@ -293,7 +293,7 @@ export default class Card extends React.Component {
       { isListView && replies > 0
         ? <div className="replies">
             { getLastTwoPosts(msg).map(r => {
-              return <div className="reply"><UserLink id={r.value.author} /> <ContentInline msg={r}/></div>
+              return <div className="reply"><UserLink id={r.value.author} /> <ContentInline msg={r} limit={500} /></div>
             }) }
             { replies > 2 ? <div className="reply">{ replies-2 } more replies</div> : '' }
           </div>

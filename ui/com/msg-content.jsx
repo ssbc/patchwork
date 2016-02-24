@@ -106,7 +106,10 @@ export class Inline extends React.Component {
     try {
       switch (c.type) {
         case 'post':
-          if (c.text) return <MdInline md={c.text} />
+          if (c.text) {
+            const text = this.props.limit ? u.shortString(c.text, this.props.limit) : c.text
+            return <MdInline md={text} />
+          }
           break
         case 'contact':
           var contact = mlib.link(c.contact).link
