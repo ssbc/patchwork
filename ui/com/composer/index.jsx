@@ -196,7 +196,11 @@ class CompositionUnit extends React.Component {
     }
   }
 
-  canSend() { return !!this.state.text.trim() }
+  canSend() {
+    const hasText = !!this.state.text.trim()
+    const hasRecp = this.isPublic() || this.state.recps.length > 0
+    return hasText && hasRecp
+  }
 
   // onSend() is not defined in this superclass because different components
   // like Editor or Composer do it differently. If you extend this class, make
