@@ -292,6 +292,7 @@ export default class Thread extends React.Component {
   render() {
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const isViewingReply = !!threadRoot
     const msgs = (this.state.isHidingHistory) ? this.state.collapsedMsgs : this.state.flattenedMsgs
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     const isPublic = (thread && thread.plaintext)
@@ -312,7 +313,7 @@ export default class Thread extends React.Component {
                   : '' }
                 { channel ? <span className="channel">in <Link to={`/channel/${channel}`}>#{channel}</Link></span> : ''}
               </div>
-              { !threadRoot && thread && isPublic // dont do bookmark btn if this is a private thread (it'll already be in your inbox)
+              { !isViewingReply && thread && isPublic // dont do bookmark btn if this is a private thread (it'll already be in your inbox)
                 ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }
               { thread
@@ -330,7 +331,7 @@ export default class Thread extends React.Component {
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceExpanded={!msg._isRead}
+                  forceExpanded={isViewingReply || !msg._isRead}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
