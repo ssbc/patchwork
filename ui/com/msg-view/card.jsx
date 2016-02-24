@@ -189,11 +189,11 @@ export default class Card extends React.Component {
         { expanded ?
           <span>
             <br/><br/>
-            {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reference it.'}
+            {'This post has not been downloaded. It may be authored by somebody outside of your network. Some of the other messages in this thread may reference it.'}
             <br/><br/>
             <code>{msg.key}</code>
           </span> :
-          ' This post could not be loaded.' }
+          ' Missing post.' }
       </div>
     </div>
   }
