@@ -306,8 +306,8 @@ export default class Card extends React.Component {
 
 function getLastTwoPosts (msg) {
   var lastTwo = threadlib.flattenThread(msg).slice(-2)
-  if (lastTwo[0].key == msg.key)
-    return [lastTwo[1]] // dont let the original be included
+  if (lastTwo[0].key === msg.key)
+    return lastTwo.length === 2 ? [lastTwo[1]] : [] // dont let the original be included
   return lastTwo
 }
 
