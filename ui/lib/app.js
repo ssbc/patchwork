@@ -130,6 +130,10 @@ function onPatchworkEvent (e) {
     updateChannels(e.channel, { pinned: e.value })
     app.emit('update:channels')
   }
+  else if (e.type == 'channelwatched') {
+    updateChannels(e.channel, { watched: e.value })
+    app.emit('update:channels')
+  }
 }
 
 function pollPeers () {

@@ -26,6 +26,9 @@ module.exports = {
   pinChannel: 'async',
   unpinChannel: 'async',
   toggleChannelPinned: 'async',
+  watchChannel: 'async',
+  unwatchChannel: 'async',
+  toggleChannelWatched: 'async',
 
   addFileToBlobs: 'async',
   saveBlobToFile: 'async',

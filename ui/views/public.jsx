@@ -27,17 +27,29 @@ export default class PublicPosts extends React.Component {
     })
   }
 
+  onToggleWatch(channel) {
+    app.ssb.patchwork.toggleChannelWatched(channel, err => {
+      if (err)
+        app.issue('Failed to watch channel', err)
+    })
+  }
+
   render() {
     const channel = this.props.params.channel
     const channelData = findChannelData(channel)
     const ThisRightNav = props => {
       if (channel) {
         const pinned = (channelData && channelData.pinned)
-        const hint = pinned ? 'Remove this channel from your lefthand menu.' : 'Add this channel to your lefthand menu (under "Activity Feed").'
+        const watched = (channelData && channelData.watched)
+        const pinHint = pinned ? 'Remove this channel from your lefthand menu.' : 'Add this channel to your lefthand menu (under "Activity Feed").'
+        const watchHint = watched ? 'Stop receiving updates to this channel in your inbox.' : 'Receive updates to this channel in your inbox.'
         return <RightNav>
           <hr className="labeled" data-label="channel" />
-          <a className="btn hint--top-left" data-hint={hint} onClick={this.onTogglePin.bind(this, channel)}>
-            <i className="fa fa-thumb-tack" /> { pinned ? 'Unpin' : 'Pin' } this channel
+          <a className="btn hint--top-left" data-hint={pinHint} onClick={this.onTogglePin.bind(this, channel)}>
+            <i className="fa fa-thumb-tack" /> { pinned ? 'Unpin' : 'Pin' } channel
+          </a>
+          <a className="btn hint--top-left" data-hint={watchHint} onClick={this.onToggleWatch.bind(this, channel)}>
+            <i className={'fa fa-eye'+(watched?'-slash':'')} /> { watched ? 'Unwatch' : 'Watch' } channel
           </a>
         </RightNav>
       }
