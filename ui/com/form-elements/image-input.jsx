@@ -54,7 +54,6 @@ export default class ImageInput extends React.Component {
     img.src = this.props.current
     img.onload = () => {
       let imgdim = { width: img.width, height: img.height }
-      console.log(imgdim)
       const smallest = (imgdim.width < imgdim.height) ? imgdim.width : imgdim.height
       this.refs.scaleSlider.value = 0
 
