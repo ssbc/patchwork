@@ -269,7 +269,6 @@ export default class Card extends React.Component {
                 ? ''
                 : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
             </div>
-            { /*!this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : ''*/'' }
             { isListView
               ? <div className="header-right">
                   { channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
@@ -285,7 +284,7 @@ export default class Card extends React.Component {
               : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
           </div>
           <div className="footer">
-            { replies > 0 && msg.hasUnread ? <div style={{margin:0}}>new replies</div> : '' }
+            { isListView && replies > 0 && msg.hasUnread ? <div style={{margin:0}}>new replies</div> : '' }
             <div className="flex-fill"/>
             <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
           </div>
