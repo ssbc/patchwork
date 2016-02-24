@@ -257,54 +257,70 @@ export default class Card extends React.Component {
     const listViewCls  = (isListView?'list-view':'')
     const unreadCls    = (msg.hasUnread?'unread':'')
     return <div className={`msg-view card-post ${collapsedCls} ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
-      <div className="left-meta">
-        <UserPic id={msg.value.author} />
-      </div>
-      <div className="content">
-        <div className="header">
-          <div className="header-left">
-            <UserLink id={msg.value.author} />{' '}
+      <div className="flex">
+        <div className="left-meta">
+          <UserPic id={msg.value.author} />
+        </div>
+        <div className="content">
+          <div className="header">
+            <div className="header-left">
+              <UserLink id={msg.value.author} />{' '}
+              { isListView
+                ? ''
+                : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
+            </div>
+            { /*!this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : ''*/'' }
             { isListView
-              ? ''
-              : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
+              ? <div className="header-right">
+                  { channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
+                </div>
+              : <div className="header-right">
+                  { this.isCollapsable() ? <a className="collapse-btn" onClick={this.onClickCollapse.bind(this)}><i className="fa fa-angle-up"/></a> : '' }
+                  <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
+                </div> }
           </div>
-          { /*!this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : ''*/'' }
-          { isListView
-            ? <div className="header-right">
-                { channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
-              </div>
-            : <div className="header-right">
-                { this.isCollapsable() ? <a className="collapse-btn" onClick={this.onClickCollapse.bind(this)}><i className="fa fa-angle-up"/></a> : '' }
-                <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
-              </div> }
+          <div className="body" ref="body">
+            { isExpanded
+              ? <Content       msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
+              : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
+          </div>
+          <div className="footer">
+            <div className="flex-fill"/>
+            <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
+          </div>
+          {''/*<div className="ctrls">
+            { replies && !this.props.noReplies ?
+              <div>
+                <a href='javascript:;' onClick={this.onSelect.bind(this)}>
+                  {replies === 1 ? '1 reply ' : (replies + ' replies ')}
+                  { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
+                </a>
+              </div> : '' }
+            { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
+            { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
+            { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
+            <div></div>
+            { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
+          </div>*/}
         </div>
-        <div className="body" ref="body">
-          { isExpanded
-            ? <Content       msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
-            : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
-        </div>
-        <div className="footer">
-          <div className="flex-fill"/>
-          { isListView && msg.hasUnread ? <div>unread</div> : '' }
-          { isListView ? <div className={`replies ${msg.hasUnread?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
-          <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
-        </div>
-        {''/*<div className="ctrls">
-          { replies && !this.props.noReplies ?
-            <div>
-              <a href='javascript:;' onClick={this.onSelect.bind(this)}>
-                {replies === 1 ? '1 reply ' : (replies + ' replies ')}
-                { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
-              </a>
-            </div> : '' }
-          { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
-          { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
-          { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
-          <div></div>
-          { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
-        </div>*/}
       </div>
+      { isListView && replies > 0
+        ? <div className="replies">
+            { getLastTwoPosts(msg).map(r => {
+              return <div className="reply"><UserLink id={r.value.author} /> <ContentInline msg={r}/></div>
+            }) }
+            { replies > 2 ? <div className="reply">{ replies-2 } more replies</div> : '' }
+          </div>
+        : '' }
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
     </div>
   }
 }
+
+function getLastTwoPosts (msg) {
+  var lastTwo = threadlib.flattenThread(msg).slice(-2)
+  if (lastTwo[0].key == msg.key)
+    return [lastTwo[1]] // dont let the original be included
+  return lastTwo
+}
+

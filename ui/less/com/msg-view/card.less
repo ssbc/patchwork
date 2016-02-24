@@ -1,6 +1,5 @@
 .msg-view.card-post {
   .elevation-1;
-  display: flex;
   background: #fff;
 
   .left-meta {
@@ -133,8 +132,19 @@
     }
 
     &:hover {
-      background: #fafafa;
+      background: #fcfcfc;
       cursor: pointer;
+    }
+
+    .reply {      
+      border-top: 1px solid #ddd;
+      padding: 9px;
+      background: #fafafa;
+      color: gray;
+      a {
+        color: #777;
+        font-weight: bold;
+      }
     }
   }
 }
