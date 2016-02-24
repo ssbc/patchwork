@@ -285,23 +285,10 @@ export default class Card extends React.Component {
               : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
           </div>
           <div className="footer">
+            { replies > 0 && msg.hasUnread ? <div style={{margin:0}}>new replies</div> : '' }
             <div className="flex-fill"/>
             <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
           </div>
-          {''/*<div className="ctrls">
-            { replies && !this.props.noReplies ?
-              <div>
-                <a href='javascript:;' onClick={this.onSelect.bind(this)}>
-                  {replies === 1 ? '1 reply ' : (replies + ' replies ')}
-                  { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
-                </a>
-              </div> : '' }
-            { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
-            { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
-            { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
-            <div></div>
-            { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
-          </div>*/}
         </div>
       </div>
       { isListView && replies > 0
