@@ -49,6 +49,9 @@ module.exports = extend(new Emitter(), {
   issues: [],
   issue: addIssue.bind(null, true), // helper to add an issue
   minorIssue: addIssue.bind(null, false), // helper to add an issue that shouldnt trigger a modal
+  notifications: [],
+  notice: addNotification,
+  dismissNotice: removeNotification,
 
   // application state, fetched every refresh
   actionItems: {},
@@ -86,6 +89,16 @@ function addIssue (isUrgent, title, err, extraIssueInfo) {
     issueUrl: 'https://github.com/ssbc/patchwork/issues/new?body='+encodeURIComponent(issueDesc)
   })
   app.emit('update:issues')
+}
+
+var notificationUuidCounter = 0
+function addNotification (message) {
+  app.notifications.push({ key: ++notificationUuidCounter, message: message, dismissAfter: 5e3 })
+  app.emit('update:notifications')
+}
+function removeNotification (notification) {
+  app.notifications = app.notifications.filter(n => n !== notification)
+  app.emit('update:notifications')
 }
 
 function updateChannels (name, values) {

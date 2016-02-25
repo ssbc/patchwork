@@ -66,6 +66,7 @@ export default class UserView extends AutoRefreshingComponent {
     app.ssb.publish(voteMsg, err => {
       if (err)
         return app.issue('Failed to publish flag', err, 'Happened when the user used the flag modal in the profile')
+      app.notice('Your flag has been published')
       app.fetchLatestState()
     })
   }
@@ -76,6 +77,7 @@ export default class UserView extends AutoRefreshingComponent {
     app.ssb.publish(voteMsg, err => {
       if (err)
         return app.issue('Failed to publish update', err, 'Happened when the user used the unflag button in the profile')
+      app.notice('Your flag has been removed')
       app.fetchLatestState()
     })
   }

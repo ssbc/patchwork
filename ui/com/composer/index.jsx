@@ -410,6 +410,14 @@ export default class Composer extends CompositionUnit {
           // reset form
           this.setState({ text: '', isPreviewing: false })
 
+          // give user feedback
+          if (this.isReply())
+            app.notice('Your reply has been published')
+          else if (this.isPublic())
+            app.notice('Your post has been published')
+          else
+            app.notice('Your private message has been published')
+
           // mark read (include the thread root because the api will
           // automatically mark the root unread on new reply)
           app.ssb.patchwork.markRead((this.threadRoot) ? 

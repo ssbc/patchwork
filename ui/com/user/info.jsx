@@ -23,10 +23,15 @@ export class Header extends AutoRefreshingComponent {
       toggleFollow: () => {
         if (this.state.isSelf) return
         // publish contact msg
-        let msg = (this.state.isFollowing) ? schemas.unfollow(this.props.pid) : schemas.follow(this.props.pid)
+        const willBeFollowing = !this.state.isFollowing
+        let msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
         app.ssb.publish(msg, (err) => {
           if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
           app.fetchLatestState()
+          if (willBeFollowing)
+            app.notice('You are now following '+this.state.name)
+          else
+            app.notice('You are no longer following '+this.state.name)
         })
       }
     }
@@ -180,6 +185,7 @@ export class Names extends AutoRefreshingComponent {
       if (err)
         return app.issue('Failed to Update Name', err, 'This error occurred while using a name chosen by someone else')
       app.fetchLatestState()
+      app.notice('Name updated')
     })    
   }
   static ExpandedInfo(props) {
@@ -257,6 +263,7 @@ export class Pics extends AutoRefreshingComponent {
       if (err)
         return app.issue('Failed to Update Image', err, 'This error occurred while using an image chosen by someone else')
       app.fetchLatestState()
+      app.notice('Profile picture updated')
     })    
   }
   static ExpandedInfo(props) {
