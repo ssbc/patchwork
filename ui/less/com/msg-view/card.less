@@ -3,54 +3,32 @@
   background: #fff;
   transition: 0.2s box-shadow;
 
-  .left-meta {
-    padding: 10px 0 10px 10px;
-    img {
-      display: block;
-      width: 50px;
-      margin: 2px;
-      border-radius: 3px;
-    }
-    div {
-      text-align: right;
-      padding-right: 2px;
-      font-weight: 300;
-      font-size: 14px;
-      a {
-        color: #555;
-      }
-    }
-  }
-  .content {
-    flex: 1;
-  }
-
   .header {
     display: flex;
-    margin: 10px 10px 20px;
+    padding: 8px 15px 8px 8px;
     color: @gray1;
+    white-space: pre;
 
-    .header-left {
-      flex: 1;
-    }
-    .header-right {
-      white-space: pre;
-      padding-right: 10px;
-      color: #aab8c2;
+    img {
+      display: block;
+      width: 40px;
+      margin: 2px 6px 2px 2px;
+      border-radius: 2px;
     }
     a {
       color: @dark-gray2;
     }
     .channel {
-      color: gray;
       font-weight: 300;
       font-size: 16px;
       a {
         color: #8694a7;
       }
     }
-    .date {
+    .date, .audience {
       font-weight: 200;
+      font-size: 15px;
+      color: #8694a7;
     }
     .collapse-btn {
       margin: 0 15px;
@@ -58,7 +36,7 @@
     }
   }
   .body {
-    margin: 10px 70px 0 10px;
+    margin: 10px 30px 0;
     overflow: hidden;
     color: @dark-gray3;
     font-weight: 300;
@@ -70,7 +48,7 @@
     display: flex;
     color: #aab8c2;
     font-size: 18px;
-    margin: 10px 20px 10px 10px;
+    padding: 2px 20px 10px 10px;
     & > div {
       margin-left: 40px;
       &:hover {
@@ -109,6 +87,10 @@
       background-color: #f5f5f5;
     }
 
+    .header {
+      padding-right: 2px;
+    }
+
     .body {
       height: 24px;
       width: 510px;
@@ -117,6 +99,7 @@
       text-overflow: ellipsis;
       word-break: break-all;
       white-space: nowrap;
+      margin: 20px 0 0;
     }
     .ctrls {
       display: none;
@@ -138,6 +121,7 @@
     }
 
     .reply {
+      display: flex;
       border-top: 1px solid #ddd;
       padding: 9px;
       background: #fafafa;
@@ -146,6 +130,15 @@
       a {
         color: #777;
         font-weight: normal;
+      }
+      img {
+        display: block;
+        width: 25px;
+        border-radius: 2px;
+        margin: 0 7px 0 2px;
+      }
+      & > div {
+        margin-top: 1px;
       }
     }
   }
