@@ -25,7 +25,8 @@ exports.init = function (sbot, opts) {
   var db = {
     isread: patchworkdb.sublevel('isread'),
     bookmarked: patchworkdb.sublevel('bookmarked'),
-    channelpinned: patchworkdb.sublevel('channelpinned')
+    channelpinned: patchworkdb.sublevel('channelpinned'),
+    channelwatched: patchworkdb.sublevel('channelwatched')
   }
   var state = {
     // indexes (lists of {key:, ts:})
@@ -67,7 +68,6 @@ exports.init = function (sbot, opts) {
   }
 
   // load bookmarks into indexes
-  state.pinc()
   pull(
     pl.read(db.bookmarked, { keys: true, values: false }),
     pull.asyncMap(function (key, cb) {
@@ -93,13 +93,11 @@ exports.init = function (sbot, opts) {
             row.isread = msg.isread
           }
         }
-      },
-      function () { state.pdec() }
+      }
     )
   )
 
   // load channelpins into indexes
-  state.pinc()
   pull(
     pl.read(db.channelpinned, { keys: true, values: true }),
     pull.drain(function (pin) {
@@ -107,27 +105,39 @@ exports.init = function (sbot, opts) {
         var index = getChannelIndex(pin.key)
         index.pinned = pin.value
       }
+    })
+  )
+
+  // load channelwatches into indexes
+  state.pinc()
+  pull(
+    pl.read(db.channelwatched, { keys: true, values: true }),
+    pull.drain(function (watch) {
+      if (typeof watch.key === 'string') {
+        var index = getChannelIndex(watch.key)
+        index.watched = watch.value
+      }
     },
     function () { state.pdec() })
   )
 
   // setup sbot log processor
-  var processor = require('./processor')(sbot, db, state, emit)
-  pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onHistorySync }), pull.drain(processor))
-
   var isHistorySynced = false // track so we dont emit events for old messages
-  // grab for history sync
-  state.pinc()
-  function onHistorySync () {
-    console.log('Log history read...')
-    // when all current items finish, consider prehistory synced (and start emitting)
-    awaitSync(function () { 
-      console.log('Indexes generated')
-      isHistorySynced = true
-    })
-    // release
-    state.pdec()
-  }
+  var processor = require('./processor')(sbot, db, state, emit)
+  awaitSync(function () { // wait for channelwatches to load up
+    // create log stream
+    pull(pl.read(sbot.sublevel('log'), { live: true, onSync: onHistorySync }), pull.drain(processor))
+    state.pinc()
+    function onHistorySync () {
+      console.log('Log history read...')
+      // when all current items finish, consider prehistory synced (and start emitting)
+      awaitSync(function () { 
+        console.log('Indexes generated')
+        isHistorySynced = true
+      })
+      state.pdec()
+    }
+  })
 
   // events stream
   var notify = Notify()
@@ -364,7 +374,8 @@ exports.init = function (sbot, opts) {
           channels.push({
             name: k.slice('channel-'.length),
             lastUpdated: lastUpdated,
-            pinned: state[k].pinned
+            pinned: state[k].pinned,
+            watched: state[k].watched
           })
         }
       }
@@ -391,6 +402,30 @@ exports.init = function (sbot, opts) {
       })
     } else {
       api.pinChannel(channel, function (err) {
+        cb(err, false)
+      })
+    }
+  }
+  api.watchChannel = function (channel, cb) {
+    var index = getChannelIndex(channel)
+    index.watched = true
+    db.channelwatched.put(channel, 1, cb)
+    emit('channelwatched', { channel: channel, value: true })
+  }
+  api.unwatchChannel = function (channel, cb) {
+    var index = getChannelIndex(channel)
+    index.watched = false
+    db.channelwatched.del(channel, cb) 
+    emit('channelwatched', { channel: channel, value: false })
+  }
+  api.toggleChannelWatched = function (channel, cb) {
+    var index = getChannelIndex(channel)
+    if (index.watched) {
+      api.unwatchChannel(channel, function (err) {
+        cb(err, true)
+      })
+    } else {
+      api.watchChannel(channel, function (err) {
         cb(err, false)
       })
     }

@@ -20,10 +20,10 @@ export default class PublicPosts extends React.Component {
     app.removeListener('update:channels', this.refresh)
   }
 
-  onTogglePin(channel) {
-    app.ssb.patchwork.toggleChannelPinned(channel, err => {
+  onToggleWatch(channel) {
+    app.ssb.patchwork.toggleChannelWatched(channel, err => {
       if (err)
-        app.issue('Failed to pin channel', err)
+        app.issue('Failed to watch channel', err)
     })
   }
 
@@ -32,9 +32,13 @@ export default class PublicPosts extends React.Component {
     const channelData = findChannelData(channel)
     const ThisRightNav = props => {
       if (channel) {
+        const watched = (channelData && channelData.watched)
+        const watchHint = watched ? 'Stop receiving updates to this channel in your inbox.' : 'Receive updates to this channel in your inbox.'
         return <RightNav>
           <hr className="labeled" data-label="channel" />
-          <a className="btn" onClick={this.onTogglePin.bind(this, channel)}><i className="fa fa-thumb-tack" /> { (channelData && channelData.pinned) ? 'Unpin' : 'Pin' } this channel</a>
+          <a className="btn hint--top-left" data-hint={watchHint} onClick={this.onToggleWatch.bind(this, channel)}>
+            <i className={'fa fa-eye'+(watched?'-slash':'')} /> { watched ? 'Unwatch' : 'Watch' } channel
+          </a>
         </RightNav>
       }
       return <RightNav/>

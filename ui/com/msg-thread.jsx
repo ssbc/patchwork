@@ -54,7 +54,8 @@ export default class Thread extends React.Component {
       isHidingHistory: true,
       numOldMsgsHidden: 0,
       flattenedMsgs: [],
-      collapsedMsgs: []
+      collapsedMsgs: [],
+      loadError: null
     }
     this.liveStream = null
   }
@@ -68,7 +69,7 @@ export default class Thread extends React.Component {
     // load thread, but defer computing any knowledge
     threadlib.getPostThread(app.ssb, id, { isRead: false, isBookmarked: false, mentions: false, votes: false }, (err, thread) => {
       if (err)
-        return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
+        return console.error(err), this.setState({ loadError: err })
 
       // compile thread votes
       threadlib.compileThreadVotes(thread)
@@ -80,8 +81,9 @@ export default class Thread extends React.Component {
         if (err)
           return app.issue('Failed to Load Message', err, 'This happened in msg-list componentDidMount')
 
-        // note which messages start out unread, so they stay collapsed during this render
+        // note which messages start out unread, so they stay collapsed or expanded during re-renders
         flattenedMsgs.forEach(m => m._isRead = m.isRead)
+        flattenedMsgs[flattenedMsgs.length - 1]._isRead = false // always expand the last one
 
         // hide old unread messages
         // (only do it for the first unbroken chain of unreads)
@@ -195,7 +197,9 @@ export default class Thread extends React.Component {
   onMarkUnread() {
     // mark unread in db
     let thread = this.state.thread
-    app.ssb.patchwork.markUnread(thread.key, err => {
+    let keys = this.state.flattenedMsgs.filter(m => !m._isRead).map(m => m.key) // mark unread the ones that were unread on expand
+    keys.push(thread.key)
+    app.ssb.patchwork.markUnread(keys, err => {
       if (err)
         return app.minorIssue('Failed to mark unread', err, 'Happened in onMarkUnread of MsgThread')
 
@@ -289,8 +293,15 @@ export default class Thread extends React.Component {
   }
 
   render() {
+    if (this.state.loadError) {
+      return <div className="msg-thread not-found" ref="container">
+        Message not found.
+      </div>
+    }
+
     const thread = this.state.thread
     const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const isViewingReply = !!threadRoot
     const msgs = (this.state.isHidingHistory) ? this.state.collapsedMsgs : this.state.flattenedMsgs
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     const isPublic = (thread && thread.plaintext)
@@ -311,7 +322,7 @@ export default class Thread extends React.Component {
                   : '' }
                 { channel ? <span className="channel">in <Link to={`/channel/${channel}`}>#{channel}</Link></span> : ''}
               </div>
-              { !threadRoot && thread && isPublic // dont do bookmark btn if this is a private thread (it'll already be in your inbox)
+              { !isViewingReply && thread && isPublic // dont do bookmark btn if this is a private thread (it'll already be in your inbox)
                 ? <BookmarkBtn onClick={this.onToggleBookmark.bind(this)} isBookmarked={thread.isBookmarked} />
                 : '' }
               { thread
@@ -323,14 +334,13 @@ export default class Thread extends React.Component {
                 if (msg.isOldMsgsPlaceholder)
                   return <div key={thread.key+'-oldposts'} className="msg-view card-oldposts" onClick={this.onShowHistory.bind(this)}>{this.state.numOldMsgsHidden} older messages</div>
 
-                const isLast = (i === msgs.length - 1)
                 return <Card
                   key={msg.key}
                   msg={msg}
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceExpanded={isLast || !msg._isRead}
+                  forceExpanded={isViewingReply || !msg._isRead}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />

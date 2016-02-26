@@ -56,14 +56,24 @@ var wsServerFn = require('./ws-server')(sbot)
 
 if (configOracle.useTLS()) {
   var tlsOpts = configOracle.getTLS()
-  https.createServer(tlsOpts, httpServerFn).listen(7777)
-  ws.createServer(tlsOpts, wsServerFn).listen(7778)
+  https.createServer(tlsOpts, httpServerFn).listen(7777).on('error', fatalError)
+  ws.createServer(tlsOpts, wsServerFn).listen(7778).on('error', fatalError)
   console.log('Serving at https://localhost:7777')
 } else {
-  http.createServer(httpServerFn).listen(7777)
-  ws.createServer(wsServerFn).listen(7778)
+  http.createServer(httpServerFn).listen(7777).on('error', fatalError)
+  ws.createServer(wsServerFn).listen(7778).on('error', fatalError)
   console.log('Serving at http://localhost:7777')
 }
+
+// basic error handling
+function fatalError (e) {
+  if (e.code === 'EADDRINUSE')
+    console.error('\nError: port '+e.port+' isn\'t available. Is Patchwork already running?\n')
+  else
+    console.error(e)
+  process.exit(1)
+}
+process.on('uncaughtException', fatalError)
 
 // run electron-specific code, if appropriate
 if (process.versions['electron']) {

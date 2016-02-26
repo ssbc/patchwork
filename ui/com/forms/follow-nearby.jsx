@@ -47,7 +47,7 @@ export default class FollowNearby extends React.Component {
     return <div>
       <h1>Nearby</h1>
       <h3 style={{marginTop: 5}}>{ hasPeers ? 'Potential contacts on your WiFi.' : 'Nobody found on your WiFi.' }</h3>
-      { peers.map(id => <UserSummary key={id} pid={id} />) }
+      { peers.map(id => <UserSummary key={id} pid={id} follow-btn />) }
     </div>
   }
 }

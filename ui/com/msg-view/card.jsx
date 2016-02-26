@@ -176,6 +176,8 @@ export default class Card extends React.Component {
     const isDownvoted = downvoters.indexOf(app.user.id) !== -1
     // if (msg.value.content.type == 'post' && downvoters.length > upvoters.length && !this.state.isExpanded)
       // return this.renderMuted(msg)
+    if (!this.isExpanded())
+      return this.renderPostCollapsed(msg)
     return this.renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted)
   }
 
@@ -189,11 +191,11 @@ export default class Card extends React.Component {
         { expanded ?
           <span>
             <br/><br/>
-            {'This post is by somebody outside of your network, and hasn\'t been downloaded. Some of the messages in this thread may reference it.'}
+            {'This post has not been downloaded. It may be authored by somebody outside of your network. Some of the other messages in this thread may reference it.'}
             <br/><br/>
             <code>{msg.key}</code>
           </span> :
-          ' This post could not be loaded.' }
+          ' Missing post.' }
       </div>
     </div>
   }
@@ -225,6 +227,15 @@ export default class Card extends React.Component {
     </div>
   }
 
+  renderPostCollapsed(msg) {
+    return <div className="msg-view card-post collapsed" onClick={this.onClickExpand.bind(this)}>
+      <div className="content flex">
+        <div className="header"><UserPic id={msg.value.author} /></div>
+        <div className="body flex-fill"><ContentInline msg={msg} /></div>
+      </div>
+    </div>
+  }
+
   renderPost(msg, upvoters, downvoters, isUpvoted, isDownvoted) {
     const replies = countReplies(msg)
     const isListView   = this.props.listView
@@ -250,61 +261,58 @@ export default class Card extends React.Component {
       )
     ]
 
-    const isExpanded   = this.isExpanded()
-    const collapsedCls = (isExpanded?'':'collapsed')
     const collapsableCls = (this.isCollapsable()?'collapsable':'')
     const newCls       = (msg.isNew?'new':'')
     const listViewCls  = (isListView?'list-view':'')
     const unreadCls    = (msg.hasUnread?'unread':'')
-    return <div className={`msg-view card-post ${collapsedCls} ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
-      <div className="left-meta">
-        <UserPic id={msg.value.author} />
-      </div>
+    return <div className={`msg-view card-post ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
       <div className="content">
         <div className="header">
-          <div className="header-left">
-            <UserLink id={msg.value.author} />{' '}
+          <UserPic id={msg.value.author} />
+          <div className="flex-fill">
+            <div><UserLink id={msg.value.author} /></div>
             { isListView
-              ? ''
-              : <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link> }
+              ? <div className="audience"><i className="fa fa-bullhorn" /> network</div>
+              : <div><Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link></div> }
           </div>
-          { /*!this.props.noBookmark ? <BookmarkBtn isBookmarked={msg.isBookmarked} onClick={()=>this.props.onToggleBookmark(msg)} /> : ''*/'' }
           { isListView
-            ? <div className="header-right">
+            ? <div>
                 { channel ? <span className="channel"><Link to={`/channel/${channel}`}>#{channel}</Link></span> : '' }
               </div>
-            : <div className="header-right">
+            : <div>
                 { this.isCollapsable() ? <a className="collapse-btn" onClick={this.onClickCollapse.bind(this)}><i className="fa fa-angle-up"/></a> : '' }
                 <DropdownBtn items={dropdownOpts} right><i className="fa fa-ellipsis-h" /></DropdownBtn>
               </div> }
         </div>
         <div className="body" ref="body">
-          { isExpanded
-            ? <Content       msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
-            : <ContentInline msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} /> }
+          <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
         </div>
         <div className="footer">
           <div className="flex-fill"/>
-          { isListView && msg.hasUnread ? <div>unread</div> : '' }
-          { isListView ? <div className={`replies ${msg.hasUnread?'highlighted':''}`}><i className="fa fa-reply-all" /> { replies }</div> : '' }
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
         </div>
-        {''/*<div className="ctrls">
-          { replies && !this.props.noReplies ?
-            <div>
-              <a href='javascript:;' onClick={this.onSelect.bind(this)}>
-                {replies === 1 ? '1 reply ' : (replies + ' replies ')}
-                { unreadReplies ? <strong>{unreadReplies} new</strong> : '' }
-              </a>
-            </div> : '' }
-          { upvoters.length ? <div className="upvoters flex-fill"><i className="fa fa-hand-peace-o"/> by <UserLinks ids={upvoters}/></div> : ''}
-          { downvoters.length ? <div className="downvoters flex-fill"><i className="fa fa-flag"/> by <UserLinks ids={downvoters}/></div> : ''}
-          { !upvoters.length && !downvoters.length ? <div className="flex-fill" /> : '' }
-          <div></div>
-          { !this.props.noReplies ? <div><a href='javascript:;' onClick={this.onSelect.bind(this)}><i className="fa fa-reply" /> Reply</a></div> : '' }
-        </div>*/}
       </div>
+      { isListView && replies > 0
+        ? <div className="replies">
+            { getLastTwoPosts(msg).map(r => {
+              if (!r.value) return <span/>
+              return <div className="reply">
+                <UserPic id={r.value.author} />
+                <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={500} /></div>
+              </div>
+            }) }
+            { replies > 2 ? <div className="reply" style={{whiteSpace:'pre'}}>{ replies-2 } more replies { msg.hasUnread ? <strong>(new)</strong> : '' }</div> : '' }
+          </div>
+        : '' }
       <Modal isOpen={this.state.isFlagModalOpen} onClose={this.onCloseFlagModal.bind(this)} Form={FlagMsgForm} formProps={{msg: msg, onSubmit: this.onSubmitFlag.bind(this)}} nextLabel="Publish" />
     </div>
   }
 }
+
+function getLastTwoPosts (msg) {
+  var lastTwo = threadlib.flattenThread(msg).slice(-2)
+  if (lastTwo[0].key === msg.key)
+    return lastTwo.length === 2 ? [lastTwo[1]] : [] // dont let the original be included
+  return lastTwo
+}
+

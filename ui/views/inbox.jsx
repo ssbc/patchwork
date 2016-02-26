@@ -5,6 +5,7 @@ import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
 import Oneline from '../com/msg-view/oneline'
+import Dropdown from '../com/dropdown'
 import app from '../lib/app'
 
 export default class InboxPosts extends React.Component {
@@ -41,12 +42,10 @@ export default class InboxPosts extends React.Component {
   }
 
   onMarkAllRead() {
-    if (confirm('Mark all messages read. Are you sure?')) {
-      app.ssb.patchwork.markAllRead(this.getIndexName(), err => {
-        if (err)
-          app.issue('Failed to mark all read', err)
-      })
-    }
+    app.ssb.patchwork.markAllRead(this.getIndexName(), err => {
+      if (err)
+        app.issue('Failed to mark all read', err)
+    })
   }
 
   render() {
@@ -66,9 +65,12 @@ export default class InboxPosts extends React.Component {
       ? (props => <div className="empty-msg"><Link to={archivedUrl}>View Archived</Link></div>)
       : false
     const ThisRightNav = props => {
+      const markAllReadItems = [{ label: 'Are you sure? Click here to confirm.', onSelect: this.onMarkAllRead.bind(this) }]
       return <RightNav>
         <hr className="labeled" data-label={viewLabel} />
-        <a className="btn" onClick={this.onMarkAllRead.bind(this)} href="javascript:"><i className="fa fa-envelope" /> Mark all read</a>
+        <Dropdown className="btn hint--top-left" data-hint="Mark all messages on this page as 'read'." items={markAllReadItems} right>
+          <i className="fa fa-envelope" /> Mark all read
+        </Dropdown>
       </RightNav>
     }
     const emptyMsg = showArchived

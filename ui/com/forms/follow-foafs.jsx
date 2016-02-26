@@ -36,7 +36,7 @@ export default class FollowFoafs extends React.Component {
     return <div>
       <h1>Friends of Friends</h1>
       <h3 style={{marginTop: 5}}>Potential contacts from your social network.</h3>
-      { foafs.map(id => <UserSummary key={id} pid={id} />) }
+      { foafs.map(id => <UserSummary key={id} pid={id} follow-btn />) }
     </div>
   }
 }

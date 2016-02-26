@@ -196,7 +196,11 @@ class CompositionUnit extends React.Component {
     }
   }
 
-  canSend() { return !!this.state.text.trim() }
+  canSend() {
+    const hasText = !!this.state.text.trim()
+    const hasRecp = this.isPublic() || this.state.recps.length > 0
+    return hasText && hasRecp
+  }
 
   // onSend() is not defined in this superclass because different components
   // like Editor or Composer do it differently. If you extend this class, make
@@ -405,6 +409,14 @@ export default class Composer extends CompositionUnit {
         } else {
           // reset form
           this.setState({ text: '', isPreviewing: false })
+
+          // give user feedback
+          if (this.isReply())
+            app.notice('Your reply has been published')
+          else if (this.isPublic())
+            app.notice('Your post has been published')
+          else
+            app.notice('Your private message has been published')
 
           // mark read (include the thread root because the api will
           // automatically mark the root unread on new reply)

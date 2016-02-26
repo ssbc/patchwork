@@ -78,6 +78,13 @@ module.exports = function (sbot, db, state, emit) {
         var index = state[indexName] = (state[indexName] || u.index(indexName))
         index.sortedUpsert(msg.value.timestamp, root ? root.link : msg.key)
         emit('index-change', { index: indexName })
+
+        // inbox index: add watched channels
+        if (index.watched) {
+          var inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
+          emit('index-change', { index: 'inbox' })
+          attachChildIsRead(inboxRow, msg.key)
+        }
       }
     },
 

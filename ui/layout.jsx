@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import { NotificationStack } from 'react-notification'
 import classNames from 'classnames'
 import app from './lib/app'
 import ModalFlow from './com/modals/flow'
@@ -19,6 +20,7 @@ export default class Layout extends React.Component {
     // listen for app change-events that should update our state
     const refresh = () => { this.setState(this.buildState()) }
     app.on('update:all', refresh)
+    app.on('update:notifications', refresh)
     app.on('focus:find', this.focusFind.bind(this))
     app.on('modal:setup', isOpen => { this.setState({ setupIsOpen: isOpen }); app.fetchLatestState() })
     app.on('find:next', this.doFind.bind(this, true))
@@ -32,7 +34,8 @@ export default class Layout extends React.Component {
     // copy over app state
     return {
       setupIsOpen: app.user.needsSetup,
-      isComposerOpen: app.isComposerOpen
+      isComposerOpen: app.isComposerOpen,
+      notifications: app.notifications
     }
   }
 
@@ -52,9 +55,14 @@ export default class Layout extends React.Component {
     app.fetchLatestState()
   }
 
+  onDismissNotification(notification) {
+    app.dismissNotice(notification)
+  }
+
   render() {
     return <div className="layout-rows">
       <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
+      <NotificationStack notifications={this.state.notifications} onDismiss={this.onDismissNotification.bind(this)} />
       <div className="layout-columns">
         <div id="mainview">{this.props.children}</div>
       </div>

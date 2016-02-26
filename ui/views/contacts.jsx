@@ -56,7 +56,7 @@ export default class Contacts extends React.Component {
         <div className="user-summaries">
           { this.state.pendings.length > 0
             ? <div className="pending">
-              <h2>Pending</h2>
+              <h2>Following</h2>
               { this.state.pendings.map(id => <UserPic key={id} id={id} />) }
             </div>
             : '' }
