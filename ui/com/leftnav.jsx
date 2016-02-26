@@ -119,9 +119,9 @@ export default class LeftNav extends React.Component {
       </LinkGroup>
 
       <hr/>
-      <LeftNav.Link pathname={pathname} to={`/profile/${encodeURIComponent(app.user.id)}`}>Your Profile</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/sync">Network Sync</LeftNav.Link>
-      <LeftNav.Link pathname={pathname} to="/data">Data Feed</LeftNav.Link>
+      <LeftNav.Link className="thin" pathname={pathname} to={`/profile/${encodeURIComponent(app.user.id)}`}>Your Profile</LeftNav.Link>
+      <LeftNav.Link className="thin" pathname={pathname} to="/sync">Network Sync</LeftNav.Link>
+      <LeftNav.Link className="thin" pathname={pathname} to="/data">Data Feed</LeftNav.Link>
       
     </div>
   }
