@@ -26,6 +26,7 @@ export default class Contacts extends React.Component {
       <div className="flex-fill">
         <div className="section"><FollowNearby /></div>
         <div className="section"><Pubs /></div>
+        <div className="section"><Friends /></div>
         <div className="section"><Follows /></div>
         <div className="section"><FollowFoafs /></div>
       </div>
@@ -87,6 +88,44 @@ class Pubs extends React.Component {
   }
 }
 
+class Friends extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      friends: []
+    }
+  }
+
+  componentDidMount() {
+    // get all followed
+    pull(
+      app.ssb.friends.createFriendStream({ hops: 1 }),
+      pull.collect((err, users) => {
+        if (err)
+          return app.minorIssue('An error occurred while fetching known friends', err)
+
+        var friends = users.filter(id => {
+          // remove self && non-mutal followers
+          return id !== app.user.id && social.follows(id, app.user.id)
+        })
+        friends.sort(function (a, b) {
+          // sort alphabetically
+          return u.getName(a).localeCompare(u.getName(b))
+        })
+        this.setState({ friends })
+      })
+    )
+  }
+
+  render() {
+    return <div className="user-summaries">
+      <h1>Friends</h1>
+      <h3>Users you follow, and who follow you back.</h3>
+      <UserSummaries ids={this.state.friends} />
+    </div>
+  }
+}
+
 class Follows extends React.Component {
   constructor(props) {
     super(props)
@@ -104,8 +143,8 @@ class Follows extends React.Component {
           return app.minorIssue('An error occurred while fetching known follows', err)
 
         var follows = users.filter(id => {
-          // remove self
-          return id !== app.user.id
+          // remove self and mutual followers
+          return id !== app.user.id && !social.follows(id, app.user.id)
         })
         follows.sort(function (a, b) {
           // sort alphabetically
@@ -118,7 +157,8 @@ class Follows extends React.Component {
 
   render() {
     return <div className="user-summaries">
-      <h1>Friends</h1>
+      <h1>Following</h1>
+      <h3>Users you follow, but who {"don't"} follow you back. They may not see messages from you.</h3>
       <UserSummaries ids={this.state.follows} />
     </div>
   }
