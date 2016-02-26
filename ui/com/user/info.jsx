@@ -9,7 +9,7 @@ import Rename from '../forms/rename'
 import ProfileName from '../forms/profile-name'
 import ProfileImage from '../forms/profile-image'
 import { AutoRefreshingComponent, UserLink, UserPic, UserBtn, HoverShifter } from '../index'
-import UserSummary from './summary'
+import { UserSummaries } from './summary'
 import app from '../../lib/app'
 import u from '../../lib/util'
 import social from '../../lib/social-graph'
@@ -127,7 +127,7 @@ export class Contacts extends AutoRefreshingComponent {
   render() {
     return <div>
       {this.state.contacts.length ? '' : <em>No contacts found.</em>}
-      {this.state.contacts.map(id => <UserSummary key={id} pid={id} />)}
+      <UserSummaries ids={this.state.contacts} />
     </div>
   }
 }

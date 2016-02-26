@@ -32,20 +32,49 @@ export default class UserSummary extends AutoRefreshingComponent {
   }
 
   render() {
-    return <div className="user-summary" onClick={this.onClick.bind(this)}>
+    return <div className="user-summary hint--top" data-hint={this.state.name} onClick={this.onClick.bind(this)}>
       <UserPic id={this.props.pid} />
-      <div className="name">{this.state.name}</div>
-      { this.props['follow-btn']
+      { this.props['follow-btn'] && this.props.pid !== app.user.id
         ? (this.state.following
-          ? <a className="btn follow-btn highlighted" onClick={this.onToggleFollow.bind(this)}>
+          ? <a className="btn follow-btn" onClick={this.onToggleFollow.bind(this)}>
               <HoverShifter>
-                <span><i className="fa fa-check" /> Following</span>
+                <span><i className="fa fa-check" /></span>
                 <span><i className="fa fa-times" /> Unfollow</span>
               </HoverShifter>
             </a>
-          : <a className="btn follow-btn highlighted" onClick={this.onToggleFollow.bind(this)}><i className="fa fa-plus" /> Follow</a>)
+          : <a className="btn follow-btn" onClick={this.onToggleFollow.bind(this)}>
+              <HoverShifter>
+                <span><i className="fa fa-plus" /></span>
+                <span><i className="fa fa-plus" /> Follow</span>
+              </HoverShifter>
+            </a>)
         : ''
       }
+    </div>
+  }
+}
+
+export class UserSummaries extends React.Component {
+  render() {
+    var groups = u.chunk(this.props.ids, 4)
+
+    // if the last row is short, merge it with the second-last row
+    var l =groups.length
+    if (l > 1 && groups[l - 1].length < 3) {
+      groups[l - 2] = groups[l - 2].concat(groups[l - 1])
+      groups = groups.slice(0,-1)
+    }
+
+    return <div className="user-summaries">
+      { groups.map(ids => {
+        return <div className="user-summaries-row">{ ids.map(id => {
+          if (id.addContactBtn)
+            return <a className="user-add hint--top" data-hint="Add Friends" href='#/add-contact'><i className="fa fa-user-plus" /></a>
+          if (id.joinPubBtn)
+            return <a className="user-add hint--top" data-hint="Join a Pub" onClick={this.props.onClickJoinPub}><i className="fa fa-laptop" /></a>
+          return <UserSummary key={id} pid={id} follow-btn />
+        }) }</div>
+      }) }
     </div>
   }
 }

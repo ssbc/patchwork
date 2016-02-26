@@ -1,40 +1,38 @@
 .user-summary {
-  display: inline-flex;
   position: relative;
   vertical-align: top;
-  flex-direction: column;
   margin: 5px;
+  padding: 3px;
   cursor: pointer;
   color: #555;
   background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  max-width: 220px;
   &:hover {
     background: #fafafa;
   }
 
   .user-pic img {
     display: block;
-    width: 200px;
-    height: 200px;
-  }
-  .name {
-    font-size: 21px;
-    font-weight: 300;
-    padding: 20px;
-    max-width: 160px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    width: 100%;
   }
   .follow-btn {
     position: absolute;
     font-size: 18px;
-    bottom: 75px;
-    right: 5px;
+    bottom: -2px;
+    right: -2px;
     box-shadow: 0px 0px 4px rgba(0,0,0,.5);
   }
 }
 
 .user-summaries {
-  padding-top: 5px;
+  .user-summaries-row {
+    display: flex;
+  }
+  .user-summary {
+    flex: 1;
+  }
   .pending {
     color: #555;
     margin: 5px;
@@ -48,23 +46,23 @@
     }
   }
   .user-add {
-    .user-summary;
+    position: relative;
+    flex: 1;
+    padding: 3px;
+    margin: 5px;
     text-align: center;
-    div:first-child {
-      width: 200px;
-      height: 200px;
+    background: #fafafa;
+    color: gray;
+    border-radius: 2px;
+    i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       font-size: 41px;
-      i {
-        position: relative;
-        top: 70px;
-      }
     }
-    div, .name {
-      color: #aaa;
-    }
-    &:hover div,
-    &:hover .name {
-      color: gray;
+    &:hover {
+      background: #fff;
     }
   }
 }

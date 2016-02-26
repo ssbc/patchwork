@@ -2,6 +2,7 @@
 import React from 'react'
 import pull from 'pull-stream'
 import UserSummary from '../com/user/summary'
+import { UserSummaries } from '../com/user/summary'
 import { VerticalFilledContainer, UserPic } from '../com/index'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
@@ -36,6 +37,11 @@ export default class Contacts extends React.Component {
           // remove contacts
           return !social.follows(id, app.user.id) && id !== app.user.id
         })
+
+        // add the user and an adder button to the contacts list
+        contacts.unshift(app.user.id)
+        contacts.unshift({ addContactBtn: true })
+        
         this.setState({ contacts, pendings })
       })
     )
@@ -60,12 +66,7 @@ export default class Contacts extends React.Component {
               { this.state.pendings.map(id => <UserPic key={id} id={id} />) }
             </div>
             : '' }
-          <div className="user-add" onClick={this.onClickAddFriend.bind(this)}>
-            <div><i className="fa fa-user-plus" /></div>
-            <div className="name">Add Contact</div>
-          </div>
-          <UserSummary pid={app.user.id} />
-          { this.state.contacts.map(id => <UserSummary key={id} pid={id} />) }
+          <UserSummaries ids={this.state.contacts} />
         </div>
       </div>
       <RightNav/>

@@ -3,7 +3,7 @@ import React from 'react'
 import pull from 'pull-stream'
 import { Link } from 'react-router'
 import { VerticalFilledContainer } from '../com/index'
-import UserSummary from '../com/user/summary'
+import { UserSummaries } from '../com/user/summary'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import FollowNearby from '../com/forms/follow-nearby'
@@ -33,6 +33,10 @@ export default class Pubs extends React.Component {
       pull.collect((err, ids) => {
         if (err)
           return app.minorIssue('An error occurred while fetching users', err)
+
+        // add join pub btn
+        ids.unshift({ joinPubBtn: true })
+
         this.setState({ pubs: ids })
       })
     )
@@ -58,11 +62,7 @@ export default class Pubs extends React.Component {
           : " Joining more will increase your reach." }
       </h3>
       <ModalSingle className="fullheight" Form={PubInvite} nextLabel="Join" isOpen={this.state.isModalOpen} onClose={this.onCloseModal.bind(this)} />
-      <div className="user-add" onClick={this.onOpenModal.bind(this)}>
-        <div><i className="fa fa-laptop" /></div>
-        <div className="name">Join a Pub</div>
-      </div>
-      { this.state.pubs.map(id => <UserSummary key={id} pid={id} />) }
+      <UserSummaries ids={this.state.pubs} onClickJoinPub={this.onOpenModal.bind(this)} />
     </div>
   }
 }
@@ -76,10 +76,6 @@ export default class AddContact extends React.Component {
     return <VerticalFilledContainer id="add-contact" className="flex">
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
-        { '' /* TODO <div className="section">
-          <h1>Add Contact</h1>
-          <InputPlaque label="Contact's Address" placeholder="Enter your contact's address here to send an intro request" btn={<span><i className="fa fa-user-plus" /> Send Request</span>} />
-        </div> */ }
         <div className="section"><FollowNearby /></div>
         <div className="section"><Pubs /></div>
         <div className="section"><FollowFoafs /></div>
