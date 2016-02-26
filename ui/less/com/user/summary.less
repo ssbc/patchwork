@@ -8,14 +8,26 @@
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 2px;
-  max-width: 220px;
   &:hover {
     background: #fafafa;
+  }
+  &.placeholder {
+    visibility: hidden;
   }
 
   .user-pic img {
     display: block;
     width: 100%;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+  }
+  .user-name {
+    font-size: 18px;
+    margin: 5px;
+    overflow: hidden;
+    white-space: pre;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
   .follow-btn {
     position: absolute;
