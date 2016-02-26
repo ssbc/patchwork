@@ -67,44 +67,44 @@ export class Header extends AutoRefreshingComponent {
 
     const ncontacts = this.state.contacts.length
     return <div className="user-info">
-      <div className="avatar">
-        <img src={u.profilePicUrl(this.props.pid)} />
-      </div>
       <div className="info">
-        <div className="info-inner">
-          <h1>{this.state.name}</h1> 
-          { this.state.isSelf
-            ? <div>This is you!</div>
-            : <div>
-                <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
-                  { this.state.isFollowing && this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-check" /> In your contacts</span>
-                        <span><i className="fa fa-times" /> Stop following</span>
-                      </HoverShifter>
-                    : '' }
-                  { this.state.isFollowing && !this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-user-plus" /> Request pending</span>
-                        <span><i className="fa fa-times" /> Stop following</span>
-                      </HoverShifter>
-                    : '' }
-                  { !this.state.isFollowing && this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-user-plus" /> Wants to connect</span>
-                        <span><i className="fa fa-plus" /> Add to contacts</span>
-                      </HoverShifter>
-                    : '' }
-                  { !this.state.isFollowing && !this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-plus" /> Add to contacts</span>
-                        <span><i className="fa fa-plus" /> Start following</span>
-                      </HoverShifter>
-                    : '' }
-                </a>
-                <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
-              </div> }
-          <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
+        <h1>{this.state.name}</h1> 
+        { this.state.isSelf
+          ? <div>This is you!</div>
+          : <div>
+              <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
+                { this.state.isFollowing && this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-check" /> In your contacts</span>
+                      <span><i className="fa fa-times" /> Stop following</span>
+                    </HoverShifter>
+                  : '' }
+                { this.state.isFollowing && !this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-user-plus" /> Request pending</span>
+                      <span><i className="fa fa-times" /> Stop following</span>
+                    </HoverShifter>
+                  : '' }
+                { !this.state.isFollowing && this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-user-plus" /> Wants to connect</span>
+                      <span><i className="fa fa-plus" /> Add to contacts</span>
+                    </HoverShifter>
+                  : '' }
+                { !this.state.isFollowing && !this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-plus" /> Add to contacts</span>
+                      <span><i className="fa fa-plus" /> Start following</span>
+                    </HoverShifter>
+                  : '' }
+              </a>
+              <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
+            </div> }
+        <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
+      </div>
+      <div className="bar">
+        <div className="avatar">
+          <img src={u.profilePicUrl(this.props.pid)} />
         </div>
         <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
       </div>
