@@ -1,8 +1,8 @@
 .user-summary {
+  display: flex;
   position: relative;
   vertical-align: top;
   margin: 5px;
-  padding: 3px;
   cursor: pointer;
   color: #555;
   background: #fff;
@@ -15,15 +15,17 @@
     visibility: hidden;
   }
 
+  .user-pic {
+    padding: 5px;
+  }
   .user-pic img {
     display: block;
-    width: 100%;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+    width: 80px;
+    border-radius: 2px;
   }
   .user-name {
-    font-size: 18px;
-    margin: 5px;
+    font-size: 21px;
+    margin: 15px 10px;
     overflow: hidden;
     white-space: pre;
     text-overflow: ellipsis;

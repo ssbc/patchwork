@@ -57,11 +57,11 @@ export default class UserSummary extends AutoRefreshingComponent {
 
 export class UserSummaries extends React.Component {
   render() {
-    var groups = u.chunk(this.props.ids, 5)
+    var groups = u.chunk(this.props.ids, 3)
 
     // if the last row is short, add empty items
     var l =groups.length
-    while (l > 0 && groups[l - 1].length < 5)
+    while (l > 0 && groups[l - 1].length < 3)
       groups[l - 1].push({ placeholder: true })
 
     return <div className="user-summaries">
