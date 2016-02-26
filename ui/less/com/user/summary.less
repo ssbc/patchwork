@@ -6,10 +6,11 @@
   cursor: pointer;
   color: #555;
   background: #fff;
-  border: 1px solid #ccc;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: 0.2s box-shadow;
   border-radius: 2px;
   &:hover {
-    background: #fafafa;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
   }
   &.placeholder {
     visibility: hidden;
@@ -32,11 +33,24 @@
     max-width: 100%;
   }
   .follow-btn {
-    position: absolute;
-    font-size: 18px;
-    bottom: -2px;
-    right: -2px;
-    box-shadow: 0px 0px 4px rgba(0,0,0,.5);
+    font-size: 15px;
+    box-shadow: none;
+    border: none;
+    background: #fff;
+
+    padding: 0;
+    & > span {
+      display: inline-block;
+      padding: 3px 9px 4px 9px;
+    }
+
+    &:hover {
+      color: #fff;
+      background: #4880F1;
+    }
+    &.unfollow:hover {
+      background: #E82222;
+    }
   }
 }
 
@@ -62,7 +76,6 @@
   .user-add {
     position: relative;
     flex: 1;
-    padding: 3px;
     margin: 5px;
     text-align: center;
     background: #fafafa;
