@@ -42,6 +42,7 @@ export class Header extends AutoRefreshingComponent {
     return {
       name:        app.users.names[pid] || u.shortString(pid, 6),
       isSelf:      (pid == app.user.id),
+      isPub:       social.isPub(pid),
       isFollowing: social.follows(app.user.id, pid),
       followsYou:  social.follows(pid, app.user.id),
       followers:   social.followers(pid)
@@ -68,7 +69,7 @@ export class Header extends AutoRefreshingComponent {
     const nfollowers = this.state.followers.length
     return <div className="user-info">
       <div className="info">
-        <h1>{this.state.name}</h1> 
+        <h1>{this.state.name} { this.state.isPub ? <small><i className="fa fa-laptop"/> pub bot</small> : '' }</h1> 
         { this.state.isSelf
           ? <div>This is you!</div>
           : <div>
@@ -126,18 +127,13 @@ export class Contacts extends AutoRefreshingComponent {
     }
   }
   render() {
-    const len = this.state.friends.length + this.state.followers.length + this.state.followeds.length
     return <div>
-      { !len 
-        ? <h3><em>No contacts found.</em></h3>
-        : <div>
-            <hr className="labeled" data-label="Friends" />
-             <UserSummaries ids={this.state.friends} />
-            <hr className="labeled" data-label="Followers" />
-            <UserSummaries ids={this.state.followers} />
-            <hr className="labeled" data-label="Following" />
-            <UserSummaries ids={this.state.followeds} />
-          </div> }
+      <hr className="labeled" data-label="Friends" />
+      <UserSummaries ids={this.state.friends} />
+      <hr className="labeled" data-label="Followers" />
+      <UserSummaries ids={this.state.followers} />
+      <hr className="labeled" data-label="Following" />
+      <UserSummaries ids={this.state.followeds} />
     </div>
   }
 }
@@ -178,6 +174,23 @@ export class Flags extends AutoRefreshingComponent {
         </div>
       }) }
     </div>
+  }
+}
+
+export class Type extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isPub: social.isPub(this.props.pid)
+    }
+  }
+  render() {
+    if (this.state.isPub) {
+      return <div>
+        <h2>This user is a public bot. It shares user data with peers across the globe.</h2>
+      </div>
+    }
+    return <span/>
   }
 }
 

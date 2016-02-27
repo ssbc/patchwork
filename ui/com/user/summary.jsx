@@ -13,7 +13,8 @@ export default class UserSummary extends AutoRefreshingComponent {
     return {
       name:       app.users.names[pid] || u.shortString(pid, 6),
       following:  social.follows(app.user.id, pid),
-      follower:   social.follows(pid, app.user.id)
+      follower:   social.follows(pid, app.user.id),
+      isPub:      social.isPub(pid)
     }
   }
 
@@ -36,7 +37,7 @@ export default class UserSummary extends AutoRefreshingComponent {
     return <div className="user-summary" onClick={this.onClick.bind(this)}>
       <UserPic id={this.props.pid} />
       <div className="user-name">
-        <div>{ this.state.name }</div>
+        <div>{ this.state.name }{ this.state.isPub ? <small> pub</small> : '' }</div>
         { this.props['follow-btn'] && this.props.pid !== app.user.id
           ? (this.state.following
             ? <a className="btn follow-btn unfollow" onClick={this.onToggleFollow.bind(this)}>

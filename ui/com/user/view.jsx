@@ -124,6 +124,7 @@ export default class UserView extends AutoRefreshingComponent {
           <Hero />
           <div className="user-profile-about">
             <UserInfo.Flags pid={this.props.pid} />
+            <UserInfo.Type pid={this.props.pid} />
             <UserInfo.Names pid={this.props.pid} />
             <UserInfo.Pics pid={this.props.pid} />
             <UserInfo.Data pid={this.props.pid} />
