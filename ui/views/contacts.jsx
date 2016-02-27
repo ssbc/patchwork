@@ -97,7 +97,7 @@ class Friends extends React.Component {
   }
 
   componentDidMount() {
-    var friends = social.contacts(app.user.id)
+    var friends = social.friends(app.user.id)
     friends.sort(function (a, b) {
       // sort alphabetically
       return u.getName(a).localeCompare(u.getName(b))

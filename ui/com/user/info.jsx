@@ -44,7 +44,7 @@ export class Header extends AutoRefreshingComponent {
       isSelf:      (pid == app.user.id),
       isFollowing: social.follows(app.user.id, pid),
       followsYou:  social.follows(pid, app.user.id),
-      contacts:    social.contacts(pid)
+      followers:   social.followers(pid)
     }
   }
 
@@ -65,7 +65,7 @@ export class Header extends AutoRefreshingComponent {
       // )
     }
 
-    const ncontacts = this.state.contacts.length
+    const nfollowers = this.state.followers.length
     return <div className="user-info">
       <div className="info">
         <h1>{this.state.name}</h1> 
@@ -97,7 +97,7 @@ export class Header extends AutoRefreshingComponent {
               </a>
               <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
             </div> }
-        <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
+        <div>{nfollowers} follower{nfollowers===1?'':'s'}</div>
       </div>
       <div className="bar">
         <div className="avatar">
@@ -119,12 +119,25 @@ function sortFollowedFirst (a, b) {
 export class Contacts extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    return { contacts: social.contacts(pid).sort(sortFollowedFirst) }
+    return { 
+      friends: social.friends(pid).sort(sortFollowedFirst),
+      followers: social.followerNonfriends(pid).sort(sortFollowedFirst),
+      followeds: social.followedNonfriends(pid).sort(sortFollowedFirst),
+    }
   }
   render() {
+    const len = this.state.friends.length + this.state.followers.length + this.state.followeds.length
     return <div>
-      {this.state.contacts.length ? '' : <em>No contacts found.</em>}
-      <UserSummaries ids={this.state.contacts} />
+      { !len 
+        ? <h3><em>No contacts found.</em></h3>
+        : <div>
+            <hr className="labeled" data-label="Friends" />
+             <UserSummaries ids={this.state.friends} />
+            <hr className="labeled" data-label="Followers" />
+            <UserSummaries ids={this.state.followers} />
+            <hr className="labeled" data-label="Following" />
+            <UserSummaries ids={this.state.followeds} />
+          </div> }
     </div>
   }
 }
