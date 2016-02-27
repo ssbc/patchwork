@@ -30,12 +30,28 @@ export class BlobLink extends React.Component {
 
 export class UserLinks extends React.Component {
   render() {
+    let ids = this.props.ids
     let n = this.props.ids.length
+
+    // apply limit
+    const limit = this.props.limit
+    let overLimitNames = false
+    let nOver = 0
+    if (n > limit) {
+      overLimitNames = ids.slice(limit).map(id => u.getName(id)).join(', ')
+      nOver = n - limit
+      ids = ids.slice(0, limit)
+      n = limit
+    }
+
     return <span>
-      {this.props.ids.map((id, i) => {
+      {ids.map((id, i) => {
         let isLast = (i === n-1)
         return <span key={id} ><UserLink id={id} shorten={this.props.shorten} />{isLast ? '' : ', '}</span>
       })}
+      {overLimitNames
+        ? <span className="hint--top" data-hint={overLimitNames}> and {nOver} other{u.plural(nOver)}</span>
+        : '' }
     </span>
   }
 }
