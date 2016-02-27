@@ -204,51 +204,27 @@ module.exports = function (configOracle) {
         },
 
         {
-          label: 'All Talk',
+          label: 'Inbox',
           accelerator: 'CmdOrCtrl+1',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "")')
           }
         },
         {
-          label: 'Network',
+          label: 'Activity Feed',
           accelerator: 'CmdOrCtrl+2',
+          click: function (item, win) {
+            win.webContents.executeJavaScript('app.history.pushState(null, "activity")')
+          }
+        },
+        {
+          label: 'Contacts',
+          accelerator: 'CmdOrCtrl+3',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "contacts")')
           }
         },
-        {
-          type: 'separator'
-        },
 
-        {
-          label: 'Private',
-          accelerator: 'CmdOrCtrl+3',
-          click: function (item, win) {
-            win.webContents.executeJavaScript('app.history.pushState(null, "private")')
-          }
-        },
-        {
-          label: 'Bookmarked',
-          accelerator: 'CmdOrCtrl+b',
-          click: function (item, win) {
-            win.webcontents.executeJavascript('app.history.pushState(null, "bookmarks")')
-          }
-        },
-        {
-          label: 'Mentioned',
-          accelerator: 'CmdOrCtrl+Shift+M',
-          click: function (item, win) {
-            win.webcontents.executeJavascript('app.history.pushState(null, "mentions")')
-          }
-        },
-        {
-          label: 'Follows',
-          accelerator: 'CmdOrCtrl+Shift+F',
-          click: function (item, win) {
-            win.webcontents.executeJavascript('app.history.pushState(null, "follows")')
-          }
-        },
         {
           type: 'separator'
         },
@@ -276,7 +252,7 @@ module.exports = function (configOracle) {
           }
         },
         {
-          label: 'Datafeed',
+          label: 'Data Feed',
           accelerator: 'CmdOrCtrl+5',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "data")')
