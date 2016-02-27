@@ -26,10 +26,15 @@ export default class UserSummary extends AutoRefreshingComponent {
     e.preventDefault()
     e.stopPropagation()
     // publish contact msg
-    let msg = (this.state.following) ? schemas.unfollow(this.props.pid) : schemas.follow(this.props.pid)
+    const willBeFollowing = !this.state.following
+    const msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
     app.ssb.publish(msg, (err) => {
       if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
       app.fetchLatestState()
+      if (willBeFollowing)
+        app.notice('You are now following '+this.state.name)
+      else
+        app.notice('You are no longer following '+this.state.name)
     })
   }
 

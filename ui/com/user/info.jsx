@@ -24,7 +24,7 @@ export class Header extends AutoRefreshingComponent {
         if (this.state.isSelf) return
         // publish contact msg
         const willBeFollowing = !this.state.isFollowing
-        let msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
+        const msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
         app.ssb.publish(msg, (err) => {
           if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
           app.fetchLatestState()
