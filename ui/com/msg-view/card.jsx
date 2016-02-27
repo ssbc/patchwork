@@ -272,7 +272,9 @@ export default class Card extends React.Component {
           <div className="flex-fill">
             <div><UserLink id={msg.value.author} /></div>
             { isListView
-              ? <div className="audience"><i className="fa fa-bullhorn" /> network</div>
+              ? (msg.plaintext
+                  ? <div className="audience"><i className="fa fa-bullhorn" /> network</div>
+                  : <div className="audience"><i className="fa fa-lock" /> private</div>)
               : <div><Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link></div> }
           </div>
           { isListView

@@ -75,27 +75,24 @@ export class Header extends AutoRefreshingComponent {
               <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
                 { this.state.isFollowing && this.state.followsYou
                   ? <HoverShifter>
-                      <span><i className="fa fa-check" /> In your contacts</span>
+                      <span><i className="fa fa-check" /> Friend</span>
                       <span><i className="fa fa-times" /> Stop following</span>
                     </HoverShifter>
                   : '' }
                 { this.state.isFollowing && !this.state.followsYou
                   ? <HoverShifter>
-                      <span><i className="fa fa-user-plus" /> Request pending</span>
+                      <span><i className="fa fa-check" /> Following</span>
                       <span><i className="fa fa-times" /> Stop following</span>
                     </HoverShifter>
                   : '' }
                 { !this.state.isFollowing && this.state.followsYou
                   ? <HoverShifter>
-                      <span><i className="fa fa-user-plus" /> Wants to connect</span>
-                      <span><i className="fa fa-plus" /> Add to contacts</span>
+                      <span><i className="fa fa-user-plus" /> Follows you</span>
+                      <span><i className="fa fa-plus" /> Add to friends</span>
                     </HoverShifter>
                   : '' }
                 { !this.state.isFollowing && !this.state.followsYou
-                  ? <HoverShifter>
-                      <span><i className="fa fa-plus" /> Add to contacts</span>
-                      <span><i className="fa fa-plus" /> Start following</span>
-                    </HoverShifter>
+                  ? <span><i className="fa fa-plus" /> Start following</span>
                   : '' }
               </a>
               <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
