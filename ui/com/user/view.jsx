@@ -15,9 +15,9 @@ import social from '../../lib/social-graph'
 import u from '../../lib/util'
 
 const VIEW_ABOUT = { label: <h2>About</h2> }
-const VIEW_CONTACTS = { label: <h2>Contacts</h2> }
+const VIEW_FRIENDS = { label: <h2>Friends</h2> }
 const VIEW_DATA = { label: <h2>Activity</h2> }
-const TABS = [VIEW_ABOUT, VIEW_CONTACTS, VIEW_DATA]
+const TABS = [VIEW_ABOUT, VIEW_FRIENDS, VIEW_DATA]
 
 const FLAG_DROPDOWN = [
   { value: 'dead',  label: "Dead Account / Lost Keys" },
@@ -132,7 +132,7 @@ export default class UserView extends AutoRefreshingComponent {
         <ThisRightNav />
       </VerticalFilledContainer>
     }
-    if (currentTab === VIEW_CONTACTS) {
+    if (currentTab === VIEW_FRIENDS) {
       return <VerticalFilledContainer className="user-profile flex" key={this.props.pid}>
         <LeftNav location={this.props.location} />
         <div ref="profile" className="flex-fill">

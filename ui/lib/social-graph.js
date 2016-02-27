@@ -70,7 +70,7 @@ var contacts =
 exports.contacts = function (a) {
   // all two-way follows
   return followers(a).filter(function (b) {
-    return follows(b, a)
+    return follows(a, b)
   })
 }
 

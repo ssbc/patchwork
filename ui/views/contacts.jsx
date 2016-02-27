@@ -97,24 +97,12 @@ class Friends extends React.Component {
   }
 
   componentDidMount() {
-    // get all followed
-    pull(
-      app.ssb.friends.createFriendStream({ hops: 1 }),
-      pull.collect((err, users) => {
-        if (err)
-          return app.minorIssue('An error occurred while fetching known friends', err)
-
-        var friends = users.filter(id => {
-          // remove self && non-mutal followers
-          return id !== app.user.id && social.follows(id, app.user.id)
-        })
-        friends.sort(function (a, b) {
-          // sort alphabetically
-          return u.getName(a).localeCompare(u.getName(b))
-        })
-        this.setState({ friends })
-      })
-    )
+    var friends = social.contacts(app.user.id)
+    friends.sort(function (a, b) {
+      // sort alphabetically
+      return u.getName(a).localeCompare(u.getName(b))
+    })
+    this.setState({ friends })
   }
 
   render() {
@@ -135,24 +123,15 @@ class Follows extends React.Component {
   }
 
   componentDidMount() {
-    // get all followed
-    pull(
-      app.ssb.friends.createFriendStream({ hops: 1 }),
-      pull.collect((err, users) => {
-        if (err)
-          return app.minorIssue('An error occurred while fetching known follows', err)
-
-        var follows = users.filter(id => {
-          // remove self and mutual followers
-          return id !== app.user.id && !social.follows(id, app.user.id)
-        })
-        follows.sort(function (a, b) {
-          // sort alphabetically
-          return u.getName(a).localeCompare(u.getName(b))
-        })
-        this.setState({ follows })
-      })
-    )
+    var follows = social.followeds(app.user.id).filter(id => {
+      // remove self and mutual followers
+      return !social.follows(id, app.user.id)
+    })
+    follows.sort(function (a, b) {
+      // sort alphabetically
+      return u.getName(a).localeCompare(u.getName(b))
+    })
+    this.setState({ follows })
   }
 
   render() {
