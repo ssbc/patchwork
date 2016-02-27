@@ -416,7 +416,7 @@ export default class Composer extends CompositionUnit {
           else if (this.isPublic())
             app.notice('Your post has been published')
           else
-            app.notice('Your private message has been published')
+            app.notice('Your private message has been sent')
 
           // mark read (include the thread root because the api will
           // automatically mark the root unread on new reply)

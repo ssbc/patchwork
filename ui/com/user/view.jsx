@@ -4,7 +4,7 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import DropdownBtn from '../dropdown'
 import MsgList from '../msg-list'
-import Oneline from '../msg-view/oneline'
+import Card from '../msg-view/card'
 import Composer from '../composer'
 import { AutoRefreshingComponent, VerticalFilledContainer } from '../index'
 import * as UserInfo from './info'
@@ -14,10 +14,10 @@ import app from '../../lib/app'
 import social from '../../lib/social-graph'
 import u from '../../lib/util'
 
+const VIEW_ACTIVITY = { label: <h2>Activity</h2> }
 const VIEW_ABOUT = { label: <h2>About</h2> }
 const VIEW_CONTACTS = { label: <h2>Contacts</h2> }
-const VIEW_DATA = { label: <h2>Activity</h2> }
-const TABS = [VIEW_ABOUT, VIEW_CONTACTS, VIEW_DATA]
+const TABS = [VIEW_ACTIVITY, VIEW_ABOUT, VIEW_CONTACTS]
 
 const FLAG_DROPDOWN = [
   { value: 'dead',  label: "Dead Account / Lost Keys" },
@@ -124,6 +124,7 @@ export default class UserView extends AutoRefreshingComponent {
           <Hero />
           <div className="user-profile-about">
             <UserInfo.Flags pid={this.props.pid} />
+            <UserInfo.Type pid={this.props.pid} />
             <UserInfo.Names pid={this.props.pid} />
             <UserInfo.Pics pid={this.props.pid} />
             <UserInfo.Data pid={this.props.pid} />
@@ -159,14 +160,15 @@ export default class UserView extends AutoRefreshingComponent {
     // MsgList must have refreshOnReply
     // - Why: in other views, such as the inbox view, a reply will trigger a new message to be emitted in the livestream
     // - that's not the case for `createUserStream`, so we need to manually refresh a thread on reply
-    return <div ref="profile" className="user-profile" key={this.props.pid + (currentTab === VIEW_DATA ? 'data' : 'posts')}>
+    return <div ref="profile" className="user-profile" key={this.props.pid}>
       <MsgList
         ref="list"
         key={currentTab.label}
         dateDividers
+        noTopNav
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        ListItem={Oneline} listItemProps={{ noReplies: true }}
+        ListItem={Card} listItemProps={{ listView: true }}
         Hero={Hero}
         source={feed}
         cursor={cursor}

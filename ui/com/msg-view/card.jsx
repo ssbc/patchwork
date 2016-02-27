@@ -61,6 +61,18 @@ class DigBtn extends React.Component {
   }
 }
 
+class AuthorAndVia extends React.Component {
+  render() {
+    const author = this.props.id
+    var via = (app.user.id==author || social.follows(app.user.id, author)) ? false : social.followedFollowers(app.user.id, author)
+    if (via && via.length === 0)
+      via = false
+    return <div>
+      <UserLink id={author} /> { via ? <small>via <UserLinks ids={via} limit={1} /></small> : '' }
+    </div>
+  }
+}
+
 export default class Card extends React.Component {
   constructor(props) {
     super(props)
@@ -270,9 +282,11 @@ export default class Card extends React.Component {
         <div className="header">
           <UserPic id={msg.value.author} />
           <div className="flex-fill">
-            <div><UserLink id={msg.value.author} /></div>
+            <AuthorAndVia id={msg.value.author} />
             { isListView
-              ? <div className="audience"><i className="fa fa-bullhorn" /> network</div>
+              ? (msg.plaintext
+                  ? <div className="audience"><i className="fa fa-bullhorn" /> network</div>
+                  : <div className="audience"><i className="fa fa-lock" /> private</div>)
               : <div><Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link></div> }
           </div>
           { isListView

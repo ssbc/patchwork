@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import ip from 'ip'
-import UserSummary from '../user/summary'
+import { UserSummaries } from '../user/summary'
 import social from '../../lib/social-graph'
 import app from '../../lib/app'
 
@@ -20,7 +20,7 @@ export default class FollowNearby extends React.Component {
       var peers = new Set()
       app.peers
         .filter(p => !ip.isLoopback(p.host) && ip.isPrivate(p.host))
-        .filter(p => !social.follows(app.user.id, p.key) && !social.flags(app.user.id, p.key))
+        .filter(p => !social.flags(app.user.id, p.key))
         .forEach(p => peers.add(p.key))
       peers = [...peers]
       this.setState({ foundNearbyPeers: peers })
@@ -47,7 +47,7 @@ export default class FollowNearby extends React.Component {
     return <div>
       <h1>Nearby</h1>
       <h3 style={{marginTop: 5}}>{ hasPeers ? 'Potential contacts on your WiFi.' : 'Nobody found on your WiFi.' }</h3>
-      { peers.map(id => <UserSummary key={id} pid={id} follow-btn />) }
+      <UserSummaries ids={peers} />
     </div>
   }
 }

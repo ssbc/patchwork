@@ -36,6 +36,16 @@ exports.bytesHuman = function (nBytes) {
   return str
 }
 
+// break an array into arrays of fixed length
+exports.chunk = function (arr, size) {
+  var arrs = [], i=0, s=0
+  while (i < arr.length) {
+    arrs.push(arr.slice(i, i+size))
+    i += size
+  }
+  return arrs
+}
+
 module.exports.isImageFilename = function (name) {
   if (typeof name !== 'string')
     return false

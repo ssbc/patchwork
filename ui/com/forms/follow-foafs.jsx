@@ -1,9 +1,10 @@
 'use babel'
 import React from 'react'
 import pull from 'pull-stream'
-import UserSummary from '../user/summary'
+import { UserSummaries } from '../user/summary'
 import social from '../../lib/social-graph'
 import app from '../../lib/app'
+import u from '../../lib/util'
 
 export default class FollowFoafs extends React.Component {
   constructor(props) {
@@ -14,11 +15,14 @@ export default class FollowFoafs extends React.Component {
   }
   componentDidMount() {    
     // get foafs
+    var hits = {}
     pull(
       app.ssb.friends.createFriendStream({ hops: 2 }),
       pull.filter(id => {
-        // remove already-followed and flagged
-        return id !== app.user.id && !social.follows(app.user.id, id) && !social.flags(app.user.id, id)
+        // remove already-followed, flagged, self, duplicates, and users w/o names and pics
+        if (hits[id]) return false
+        hits[id] = true
+        return id !== app.user.id && !!app.users.names[id] && !!u.profilePic(id) && !social.follows(app.user.id, id) && !social.flags(app.user.id, id)
       }),
       pull.collect((err, ids) => {
         if (err)
@@ -36,7 +40,7 @@ export default class FollowFoafs extends React.Component {
     return <div>
       <h1>Friends of Friends</h1>
       <h3 style={{marginTop: 5}}>Potential contacts from your social network.</h3>
-      { foafs.map(id => <UserSummary key={id} pid={id} follow-btn />) }
+      <UserSummaries ids={foafs} />
     </div>
   }
 }

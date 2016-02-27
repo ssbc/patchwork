@@ -9,7 +9,7 @@ import Rename from '../forms/rename'
 import ProfileName from '../forms/profile-name'
 import ProfileImage from '../forms/profile-image'
 import { AutoRefreshingComponent, UserLink, UserPic, UserBtn, HoverShifter } from '../index'
-import UserSummary from './summary'
+import { UserSummaries } from './summary'
 import app from '../../lib/app'
 import u from '../../lib/util'
 import social from '../../lib/social-graph'
@@ -24,7 +24,7 @@ export class Header extends AutoRefreshingComponent {
         if (this.state.isSelf) return
         // publish contact msg
         const willBeFollowing = !this.state.isFollowing
-        let msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
+        const msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
         app.ssb.publish(msg, (err) => {
           if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
           app.fetchLatestState()
@@ -42,9 +42,10 @@ export class Header extends AutoRefreshingComponent {
     return {
       name:        app.users.names[pid] || u.shortString(pid, 6),
       isSelf:      (pid == app.user.id),
+      isPub:       social.isPub(pid),
       isFollowing: social.follows(app.user.id, pid),
       followsYou:  social.follows(pid, app.user.id),
-      contacts:    social.contacts(pid)
+      followers:   social.followers(pid)
     }
   }
 
@@ -65,46 +66,43 @@ export class Header extends AutoRefreshingComponent {
       // )
     }
 
-    const ncontacts = this.state.contacts.length
+    const nfollowers = this.state.followers.length
     return <div className="user-info">
-      <div className="avatar">
-        <img src={u.profilePicUrl(this.props.pid)} />
-      </div>
       <div className="info">
-        <div className="info-inner">
-          <h1>{this.state.name}</h1> 
-          { this.state.isSelf
-            ? <div>This is you!</div>
-            : <div>
-                <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
-                  { this.state.isFollowing && this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-check" /> In your contacts</span>
-                        <span><i className="fa fa-times" /> Stop following</span>
-                      </HoverShifter>
-                    : '' }
-                  { this.state.isFollowing && !this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-user-plus" /> Request pending</span>
-                        <span><i className="fa fa-times" /> Stop following</span>
-                      </HoverShifter>
-                    : '' }
-                  { !this.state.isFollowing && this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-user-plus" /> Wants to connect</span>
-                        <span><i className="fa fa-plus" /> Add to contacts</span>
-                      </HoverShifter>
-                    : '' }
-                  { !this.state.isFollowing && !this.state.followsYou
-                    ? <HoverShifter>
-                        <span><i className="fa fa-plus" /> Add to contacts</span>
-                        <span><i className="fa fa-plus" /> Start following</span>
-                      </HoverShifter>
-                    : '' }
-                </a>
-                <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
-              </div> }
-          <div>{ncontacts} contact{ncontacts===1?'':'s'}</div>
+        <h1>{this.state.name} { this.state.isPub ? <small><i className="fa fa-laptop"/> pub bot</small> : '' }</h1> 
+        { this.state.isSelf
+          ? <div>This is you!</div>
+          : <div>
+              <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
+                { this.state.isFollowing && this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-check" /> Friend</span>
+                      <span><i className="fa fa-times" /> Stop following</span>
+                    </HoverShifter>
+                  : '' }
+                { this.state.isFollowing && !this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-check" /> Following</span>
+                      <span><i className="fa fa-times" /> Stop following</span>
+                    </HoverShifter>
+                  : '' }
+                { !this.state.isFollowing && this.state.followsYou
+                  ? <HoverShifter>
+                      <span><i className="fa fa-user-plus" /> Follows you</span>
+                      <span><i className="fa fa-plus" /> Add to friends</span>
+                    </HoverShifter>
+                  : '' }
+                { !this.state.isFollowing && !this.state.followsYou
+                  ? <span><i className="fa fa-plus" /> Start following</span>
+                  : '' }
+              </a>
+              <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
+            </div> }
+        <div>{nfollowers} follower{nfollowers===1?'':'s'}</div>
+      </div>
+      <div className="bar">
+        <div className="avatar">
+          <img src={u.profilePicUrl(this.props.pid)} />
         </div>
         <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
       </div>
@@ -122,12 +120,20 @@ function sortFollowedFirst (a, b) {
 export class Contacts extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
-    return { contacts: social.contacts(pid).sort(sortFollowedFirst) }
+    return { 
+      friends: social.friends(pid).sort(sortFollowedFirst),
+      followers: social.followerNonfriends(pid).sort(sortFollowedFirst),
+      followeds: social.followedNonfriends(pid).sort(sortFollowedFirst),
+    }
   }
   render() {
     return <div>
-      {this.state.contacts.length ? '' : <em>No contacts found.</em>}
-      {this.state.contacts.map(id => <UserSummary key={id} pid={id} />)}
+      <hr className="labeled" data-label="Friends" />
+      <UserSummaries ids={this.state.friends} />
+      <hr className="labeled" data-label="Followers" />
+      <UserSummaries ids={this.state.followers} />
+      <hr className="labeled" data-label="Following" />
+      <UserSummaries ids={this.state.followeds} />
     </div>
   }
 }
@@ -168,6 +174,23 @@ export class Flags extends AutoRefreshingComponent {
         </div>
       }) }
     </div>
+  }
+}
+
+export class Type extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isPub: social.isPub(this.props.pid)
+    }
+  }
+  render() {
+    if (this.state.isPub) {
+      return <div>
+        <h2>This user is a public bot. It shares user data with peers across the globe.</h2>
+      </div>
+    }
+    return <span/>
   }
 }
 
