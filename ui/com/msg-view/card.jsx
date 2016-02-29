@@ -312,7 +312,7 @@ export default class Card extends React.Component {
               if (!r.value) return <span/>
               return <div className="reply">
                 <UserPic id={r.value.author} />
-                <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={500} /></div>
+                <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={250} /></div>
               </div>
             }) }
             { replies > 2 ? <div className="reply" style={{whiteSpace:'pre'}}>{ replies-2 } more replies { msg.hasUnread ? <strong>(new)</strong> : '' }</div> : '' }
