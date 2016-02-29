@@ -18,7 +18,7 @@ export class UserLink extends React.Component {
 
 export class MsgLink extends React.Component {
   render() {
-    return <Link to={'/msg/'+encodeURIComponent(this.props.id)}>{this.props.name||this.props.id}</Link>
+    return <Link to={'/msg/'+encodeURIComponent(this.props.id)}>{this.props.children||this.props.name||this.props.id}</Link>
   }
 }
 

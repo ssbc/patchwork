@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import { UserPic, UserLink, NiceDate } from '../index'
-import { Summary as Content } from '../msg-content'
+import { Block as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import u from '../../lib/util'
 

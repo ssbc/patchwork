@@ -94,7 +94,10 @@ export default class Card extends React.Component {
   }
 
   onSelect() {
-    this.props.onSelect(this.props.msg)
+    if (this.props.onSelect)
+      this.props.onSelect(this.props.msg)
+    else
+      app.history.pushState(null, '/msg/'+encodeURIComponent(this.props.msg.key))
   }
 
   onToggleDataView(item) { 
