@@ -9,13 +9,17 @@ module.exports = function () {
 
   // setup rpc stream over websockets
   var protocol = (window.location.protocol == 'https:') ? 'wss:' : 'ws:'
-  var stream = ws.connect(protocol+'//'+(window.location.hostname)+':7778')
+  var stream = ws.connect(protocol+'//'+(window.location.hostname)+':7778', { onClose: onConnectionLost })
   pull(stream, ssb.createStream(), stream)
   return ssb
 }
 
 function serialize (stream) {
   return Serializer(stream, JSON, {split: '\n\n'})
+}
+
+function onConnectionLost () {
+  document.body.classList.add('connection-lost')
 }
 
 // manifest TEMPORARY

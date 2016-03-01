@@ -4,7 +4,7 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import DropdownBtn from '../dropdown'
 import MsgList from '../msg-list'
-import Card from '../msg-view/card'
+import Notification from '../msg-view/notification'
 import Composer from '../composer'
 import { AutoRefreshingComponent, VerticalFilledContainer } from '../index'
 import * as UserInfo from './info'
@@ -168,7 +168,7 @@ export default class UserView extends AutoRefreshingComponent {
         noTopNav
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
-        ListItem={Card} listItemProps={{ listView: true }}
+        ListItem={Notification} listItemProps={{ listView: true }}
         Hero={Hero}
         source={feed}
         cursor={cursor}

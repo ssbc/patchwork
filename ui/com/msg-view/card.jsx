@@ -18,7 +18,7 @@ import app from '../../lib/app'
 import social from '../../lib/social-graph'
 
 const INLINE_LENGTH_LIMIT = 100
-const MAX_CONTENT_HEIGHT = 400 // px
+const MAX_CONTENT_HEIGHT = 200 // px
 
 function getVotes (msg, filter) {
   if (!msg.votes) return []
@@ -78,6 +78,7 @@ export default class Card extends React.Component {
     super(props)
     this.state = {
       isExpanded: false,
+      isOversized: false,
       isViewingRaw: false,
       subject: null,
       isFlagModalOpen: false
@@ -94,7 +95,10 @@ export default class Card extends React.Component {
   }
 
   onSelect() {
-    this.props.onSelect(this.props.msg)
+    if (this.props.onSelect)
+      this.props.onSelect(this.props.msg)
+    else
+      app.history.pushState(null, '/msg/'+encodeURIComponent(this.props.msg.key))
   }
 
   onToggleDataView(item) { 
@@ -154,6 +158,23 @@ export default class Card extends React.Component {
         })
       }
     }
+
+    // is the card oversized?
+    if (!this.refs.body || !this.props.listView)
+      return
+    // wait for images to finish loading
+    var done = multicb()
+    Array.from(this.refs.body.querySelectorAll('img')).forEach(el => onImageLoaded(el, done()))
+    done(() => {
+      // check height
+      if (!this.refs.body)
+        return
+      const rect = this.refs.body.getClientRects()[0]
+      if (rect && rect.height > MAX_CONTENT_HEIGHT) {
+        this.props.msg.isOversized = true // mark on the message, so we can load from that
+        this.setState({ isOversized: true })
+      }
+    })
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -273,11 +294,12 @@ export default class Card extends React.Component {
       )
     ]
 
+    const oversizedCls = ((msg.isOversized||this.state.isOversized)?'oversized':'')
     const collapsableCls = (this.isCollapsable()?'collapsable':'')
     const newCls       = (msg.isNew?'new':'')
     const listViewCls  = (isListView?'list-view':'')
     const unreadCls    = (msg.hasUnread?'unread':'')
-    return <div className={`msg-view card-post ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
+    return <div className={`msg-view card-post ${oversizedCls} ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
       <div className="content">
         <div className="header">
           <UserPic id={msg.value.author} />
@@ -302,6 +324,7 @@ export default class Card extends React.Component {
           <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
         </div>
         <div className="footer">
+          <div className="read-more">Read more</div>
           <div className="flex-fill"/>
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
         </div>
@@ -312,7 +335,7 @@ export default class Card extends React.Component {
               if (!r.value) return <span/>
               return <div className="reply">
                 <UserPic id={r.value.author} />
-                <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={500} /></div>
+                <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={250} /></div>
               </div>
             }) }
             { replies > 2 ? <div className="reply" style={{whiteSpace:'pre'}}>{ replies-2 } more replies { msg.hasUnread ? <strong>(new)</strong> : '' }</div> : '' }
