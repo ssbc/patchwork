@@ -143,6 +143,8 @@ export default class Card extends React.Component {
   }
 
   componentDidMount() {
+    this.checkOversized()
+
     // load subject msg, if needed
     let msg = this.props.msg
     if (msg.value && msg.value.content.type === 'vote') {
@@ -158,7 +160,9 @@ export default class Card extends React.Component {
         })
       }
     }
+  }
 
+  checkOversized() {
     // is the card oversized?
     if (!this.refs.body || !this.props.listView)
       return
@@ -172,6 +176,7 @@ export default class Card extends React.Component {
       const rect = this.refs.body.getClientRects()[0]
       if (rect && rect.height > MAX_CONTENT_HEIGHT) {
         this.props.msg.isOversized = true // mark on the message, so we can load from that
+        this.markShouldUpdate()
         this.setState({ isOversized: true })
       }
     })
@@ -333,7 +338,7 @@ export default class Card extends React.Component {
         ? <div className="replies">
             { getLastTwoPosts(msg).map(r => {
               if (!r.value) return <span/>
-              return <div className="reply">
+              return <div className="reply" key={r.key}>
                 <UserPic id={r.value.author} />
                 <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={250} /></div>
               </div>
