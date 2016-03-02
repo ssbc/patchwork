@@ -333,7 +333,7 @@ export default class Card extends React.Component {
         ? <div className="replies">
             { getLastTwoPosts(msg).map(r => {
               if (!r.value) return <span/>
-              return <div className="reply">
+              return <div className="reply" key={r.key}>
                 <UserPic id={r.value.author} />
                 <div><UserLink id={r.value.author} /> <ContentInline msg={r} limit={250} /></div>
               </div>

@@ -69,7 +69,7 @@ export default class Notification extends React.Component {
     if (this.isRootPost()) {
       // root posts will have their thread (summary) loaded into subjectMsg
       // use that if it's been loaded, otherwise fallback to the msg we have
-      return <Card msg={this.state.subjectMsg || msg} listView />
+      return <Card msg={this.state.subjectMsg || msg} listView onToggleStar={this.props.onToggleStar} onSelect={this.onSelect.bind(this)} />
     }
 
     const content = this.renderContent()
@@ -115,28 +115,17 @@ export default class Notification extends React.Component {
 
     const subject = (ssbref.isFeed(vote.link))
       ? <UserLink id={vote.link} />
-      : <MdInline md={(this.state.subjectMsg && this.state.subjectMsg.value.content && this.state.subjectMsg.value.content.text || 'this message')} />
+      : <a className="subject" onClick={this.onSelect.bind(this)}><MdInline md={(this.state.subjectMsg && this.state.subjectMsg.value.content && this.state.subjectMsg.value.content.text || 'this message')} /></a>
     
     const icon = (c.vote.value > 0) ? 'fa fa-hand-peace-o' : (c.vote.value === 0) ? 'fa fa-times'            : 'fa fa-flag'
     const desc = (c.vote.value > 0) ? 'dug'                : (c.vote.value === 0) ? 'removed their vote for' : 'flagged'
     const reason = (c.vote.reason) ? ('as '+c.vote.reason) : ''
     return <span>
-      <i className={icon} /> <UserLink id={msg.value.author} /> {desc} <a className="subject" onClick={this.onSelect.bind(this)}>
-        {subject}
-      </a> {reason}
+      <i className={icon} /> <UserLink id={msg.value.author} /> {desc} {subject} {reason}
     </span> 
   }
 
   renderContact() {
-    const msg = this.props.msg
-    const c = msg.value.content
-    const pid = mlib.link(c.contact).link
-    if (c.following === true) return <span><i className="fa fa-user-plus" /> <UserLink id={msg.value.author} /> followed <UserLink id={pid} /></span>
-    if (c.blocking === true) return <span><i className="fa fa-microphone-slash" /> <UserLink id={msg.value.author} /> blocked <UserLink id={pid} /></span>
-    if (c.following === false) return <span><i className="fa fa-user-times" /> <UserLink id={msg.value.author} /> unfollowed <UserLink id={pid} /></span>
-  }
-
-  renderAbout() {
     const msg = this.props.msg
     const c = msg.value.content
     const pid = mlib.link(c.contact).link
