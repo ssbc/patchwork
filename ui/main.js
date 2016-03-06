@@ -20,8 +20,10 @@ app.fetchLatestState(function () {
   if (app.user.needsSetup)
     app.history.pushState(null, '/contacts')
 
+
   // begin rendering
   var routes = require('./routes.jsx')
+  document.body.removeChild(document.querySelector('.loading'))
   ReactDOM.render(routes.routes, document.body.querySelector('div'))
   window.removeEventListener('error', window.loadErrorHandler)
 })
