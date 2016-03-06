@@ -17,7 +17,7 @@
     "watch": "npm run watch:server & npm run watch:ui",
     "watch:ui": "npm run watch:js & npm run watch:css",
     "watch:server": "nodemon -q -w api -w './*.js'",
-    "watch:js": "NODE_ENV=development watchify ./ui/main.js --extension=.jsx -o ./ui/main.build.js -v",
+    "watch:js": "NODE_ENV=development watchify ./ui/main.js --extension=.jsx -o ./ui/main.build.js -v --debug",
     "watch:css": "mkdir -p ./ui/css && nodemon -q -e less -w ./ui/less -x 'lessc --verbose ./ui/less/main.less ./ui/css/main.css'",
     "start": "node ./index.js",
     "test": "set -e; for t in api/test/*.js; do node $t; done",
