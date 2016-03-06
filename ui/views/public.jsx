@@ -61,6 +61,7 @@ export default class PublicPosts extends React.Component {
         ref="list"
         threads
         dateDividers
+        batchLoadAmt={5}
         composer composerProps={{ isPublic: true, channel: channel }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
