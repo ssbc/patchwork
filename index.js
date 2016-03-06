@@ -70,7 +70,7 @@ function fatalError (e) {
   if (e.code === 'EADDRINUSE')
     console.error('\nError: port '+e.port+' isn\'t available. Is Patchwork already running?\n')
   else
-    console.error(e)
+    console.error(e.stack || e.toString())
   process.exit(1)
 }
 process.on('uncaughtException', fatalError)
