@@ -109,23 +109,27 @@ var ServeApp = exports.ServeApp = function (sbot, opts, config) {
     var parsed = URL.parse(req.url, true)
     var pathname = parsed.pathname
     if (pathname == '/')
-      pathname = 'main.html'
+      pathname = '/main.html'
 
+    // dynamic route: manifest.js
+    if (pathname == '/manifest.js') {
+      res.setHeader('Content-Security-Policy', BlobCSP())
+      return respondSource(res, pull.once('window.MANIFEST='+JSON.stringify(sbot.manifest())+';'))
+    } 
+
+    // static files
     var filepath = path.join(opts.uiPath, pathname)
     fs.stat(filepath, function (err, stat) {
       if(err) return next()
       if(!stat.isFile()) return respond(res, 403, 'May only load files')
 
-      if (pathname == 'main.html')
+      // set a special CSP for the main HTML file
+      if (pathname == '/main.html')
         res.setHeader('Content-Security-Policy', AppCSP(req, config)) // only give the open perms to main.html
       else
         res.setHeader('Content-Security-Policy', BlobCSP())
 
-      respondSource(
-        res,
-        toPull.source(fs.createReadStream(filepath)),
-        false
-      )
+      respondSource(res, toPull.source(fs.createReadStream(filepath)))
     })
   }
 }
