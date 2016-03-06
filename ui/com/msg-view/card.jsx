@@ -317,11 +317,11 @@ export default class Card extends React.Component {
           <UserPic id={msg.value.author} />
           <div className="flex-fill">
             <AuthorAndVia id={msg.value.author} />
-            { isListView
-              ? (msg.plaintext
-                  ? <div className="audience"><i className="fa fa-bullhorn" /> network</div>
-                  : <div className="audience"><i className="fa fa-lock" /> private</div>)
-              : <div><Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}><NiceDate ts={msg.value.timestamp} /></Link></div> }
+            <div className="audience">
+              <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}>
+                <i className={`fa fa-${msg.plaintext?'bullhorn':'lock'}`} /> <NiceDate ts={msg.value.timestamp} />
+              </Link>
+            </div>
           </div>
           { isListView
             ? <div>
