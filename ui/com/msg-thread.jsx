@@ -344,7 +344,7 @@ export default class Thread extends React.Component {
                   noReplies
                   noBookmark
                   forceRaw={this.props.forceRaw}
-                  forceExpanded={isViewingReply || !msg._isRead}
+                  forceExpanded={(i === 0 && this.props.forceRootExpanded) || isViewingReply || !msg._isRead}
                   onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
