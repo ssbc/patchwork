@@ -21,7 +21,7 @@ import app from '../lib/app'
 import u from '../lib/util'
 
 // how many messages to fetch in a batch?
-const DEFAULT_BATCH_LOAD_AMT = 60
+const DEFAULT_BATCH_LOAD_AMT = 30
 
 // what's the avg height a message will be?
 // (used in loading calculations, when trying to scroll to a specific spot. doesnt need to be exact)
@@ -151,7 +151,7 @@ export default class MsgList extends React.Component {
   componentDidMount() {
     // load first messages
     var start = Date.now()
-    this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
+    this.loadMore({ amt: this.props.batchLoadAmt||DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
 
     // setup autoresizing
     this.calcContainerHeight()
@@ -182,7 +182,7 @@ export default class MsgList extends React.Component {
   reload(newState) {
     this.setState({ isAtEnd: false, newMsgQueue: [], ...newState }, () => {
       this.botcursor = null
-      this.loadMore({ amt: DEFAULT_BATCH_LOAD_AMT, fresh: true })
+      this.loadMore({ amt: this.props.batchLoadAmt||DEFAULT_BATCH_LOAD_AMT, fresh: true })
     })
   }
 
@@ -232,10 +232,10 @@ export default class MsgList extends React.Component {
 
   // infinite load call
   onInfiniteLoad(scrollingTo) {
-    var amt = DEFAULT_BATCH_LOAD_AMT
+    var amt = this.props.batchLoadAmt||DEFAULT_BATCH_LOAD_AMT
     if (scrollingTo) {
       // trying to reach a dest, increase amount to load with a rough guess of how many are needed
-      amt = Math.max((scrollingTo / AVG_RENDERED_MSG_HEIGHT)|0, DEFAULT_BATCH_LOAD_AMT)
+      amt = Math.max((scrollingTo / AVG_RENDERED_MSG_HEIGHT)|0, this.props.batchLoadAmt||DEFAULT_BATCH_LOAD_AMT)
     }
     this.loadMore({ amt })
   }
