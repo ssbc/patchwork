@@ -6,6 +6,7 @@ import threadlib from 'patchwork-threads'
 import onImageLoaded from 'image-loaded'
 import multicb from 'multicb'
 import ClipboardBtn from 'react-clipboard.js'
+import cls from 'classnames'
 import { MsgLink, UserLink, UserLinks, UserPic, NiceDate } from '../index'
 import { Block as Content, Inline as ContentInline } from '../msg-content'
 import { Inline as MdInline } from '../markdown'
@@ -106,13 +107,16 @@ export default class Card extends React.Component {
     this.markShouldUpdate()
   }
 
-  onClickExpand(e) {
+  onClickOpen(e) {
     if (this.props.listView)
       this.onSelect()
-    else if (!this.isExpanded()) {
-      e.preventDefault()
-      this.setState({ isExpanded: true })
-    }
+  }
+
+  onClickExpand(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    this.setState({ isExpanded: true })
+    this.markShouldUpdate()
   }
 
   onClickCollapse(e) {
@@ -299,12 +303,15 @@ export default class Card extends React.Component {
       )
     ]
 
-    const oversizedCls = ((msg.isOversized||this.state.isOversized)?'oversized':'')
-    const collapsableCls = (this.isCollapsable()?'collapsable':'')
-    const newCls       = (msg.isNew?'new':'')
-    const listViewCls  = (isListView?'list-view':'')
-    const unreadCls    = (msg.hasUnread?'unread':'')
-    return <div className={`msg-view card-post ${oversizedCls} ${collapsableCls} ${newCls} ${listViewCls} ${unreadCls}`} onClick={this.onClickExpand.bind(this)}>
+    const className = cls('msg-view card-post', {
+      oversized: !this.state.isExpanded && (msg.isOversized||this.state.isOversized),
+      collapsable: this.isCollapsable(),
+      'new': msg.isgNew,
+      'list-view': isListView,
+      unread: msg.hasUnread,
+      expanded: this.state.isExpanded
+    })
+    return <div className={className} onClick={this.onClickOpen.bind(this)}>
       <div className="content">
         <div className="header">
           <UserPic id={msg.value.author} />
@@ -329,7 +336,7 @@ export default class Card extends React.Component {
           <Content msg={msg} forceRaw={isViewingRaw||this.props.forceRaw} />
         </div>
         <div className="footer">
-          <div className="read-more">Read more</div>
+          <div className="read-more" onClick={this.onClickExpand.bind(this)}>Read more</div>
           <div className="flex-fill"/>
           <DigBtn onClick={()=>this.props.onToggleStar(msg)} isUpvoted={isUpvoted} upvoters={upvoters} />
         </div>

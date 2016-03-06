@@ -207,6 +207,7 @@ export default class Thread extends React.Component {
       thread.isRead = false
       thread.hasUnread = true
       this.setState(this.state)
+      this.props.onMsgChange && this.props.onMsgChange(thread)
     })
   }
 
@@ -223,6 +224,7 @@ export default class Thread extends React.Component {
       // re-render
       thread.isBookmarked = isBookmarked
       this.setState(this.state)
+      this.props.onMsgChange && this.props.onMsgChange(thread)
     })
   }
 
@@ -241,6 +243,7 @@ export default class Thread extends React.Component {
       // re-render
       msg.votes[app.user.id] = newVote
       this.setState(this.state)
+      this.props.onMsgChange && this.props.onMsgChange(msg)
     }
     if (msg.plaintext)
       app.ssb.publish(voteMsg, done)
@@ -266,6 +269,7 @@ export default class Thread extends React.Component {
       msg.votes = msg.votes || {}
       msg.votes[app.user.id] = (reason === 'unflag') ? 0 : -1
       this.setState(this.state)
+      this.props.onMsgChange && this.props.onMsgChange(msg)
     }
     if (msg.plaintext)
       app.ssb.publish(voteMsg, done)

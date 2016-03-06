@@ -128,6 +128,22 @@ export default class MsgList extends React.Component {
           let recps = mlib.links(msg.value.content.recps).map(l => l.link)
           app.ssb.private.publish(voteMsg, recps, done)
         }
+      },
+      onMsgChange: (msg) => {
+        // find the message
+        for (var i=0; i < this.state.msgs.length; i++) {
+          if (this.state.msgs[i].key === msg.key) {
+            // hold onto some prior state
+            msg.changeCounter = this.state.msgs[i].changeCounter
+            msg.isOpened = this.state.msgs[i].isOpened
+
+            //replace
+            this.state.msgs.splice(i, 1, msg)
+            break
+          }
+        }
+        incMsgChangeCounter(msg)
+        this.setState({ msgs: this.state.msgs })
       }
     }
   }
@@ -385,6 +401,7 @@ export default class MsgList extends React.Component {
           <Thread
             key={m.key}
             id={m.key}
+            onMsgChange={this.handlers.onMsgChange}
             onClose={() => this.handlers.onCloseThread(m)}
             live />
         )
