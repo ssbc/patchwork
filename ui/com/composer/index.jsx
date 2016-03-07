@@ -50,16 +50,14 @@ class CompositionUnit extends React.Component {
     let recps = this.props.recps || []
     this.isThreadPublic = null
     this.threadChannel = null
-    this.threadRoot = null
-    this.threadBranch = null
+    this.threadRootKey = null
     if (this.props.thread) {
       // thread categorization
       this.isThreadPublic = isThreadPublic(this.props.thread)
       this.threadChannel = (this.props.thread.value.content.channel || '').trim()
 
-      // root and branch links
-      this.threadRoot = getThreadRoot(this.props.thread)
-      this.threadBranch = threadlib.getLastThreadPost(this.props.thread).key
+      // root link
+      this.threadRootKey = getThreadRoot(this.props.thread)
 
       // extract encryption recipients from thread
       if (Array.isArray(this.props.thread.value.content.recps)) {
@@ -398,8 +396,8 @@ export default class Composer extends CompositionUnit {
       }
 
       // publish
-      var post = schemas.post(text, this.threadRoot, this.threadBranch, 
-                              mentions, recpLinks, channel)
+      const threadBranchKey = this.props.thread && threadlib.getLastThreadPost(this.props.thread).key
+      var post = schemas.post(text, this.threadRootKey, threadBranchKey, mentions, recpLinks, channel)
       let published = (err, msg) => {
         this.setState({ isSending: false })
         if (err) { 
@@ -420,11 +418,11 @@ export default class Composer extends CompositionUnit {
 
           // mark read (include the thread root because the api will
           // automatically mark the root unread on new reply)
-          app.ssb.patchwork.markRead((this.threadRoot) ? 
-                                     [this.threadRoot, msg.key] : 
+          app.ssb.patchwork.markRead((this.threadRootKey) ? 
+                                     [this.threadRootKey, msg.key] : 
                                      msg.key)
           // auto-bookmark the thread
-          app.ssb.patchwork.bookmark(this.threadRoot || msg.key)
+          app.ssb.patchwork.bookmark(this.threadRootKey || msg.key)
 
           // call handler
           if (this.props.onSend instanceof Function) { this.props.onSend(msg) }
