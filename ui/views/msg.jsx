@@ -15,7 +15,7 @@ export default class Msg extends React.Component {
       <VerticalFilledContainer id="msg-thread-vertical" className="flex">
         <LeftNav location={this.props.location} />
         <div className="flex-fill" style={{padding: 5}}>
-          <Thread id={id} live />
+          <Thread id={id} forceRootExpanded live />
         </div>
         <RightNav />
       </VerticalFilledContainer>
