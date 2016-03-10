@@ -31,7 +31,7 @@ function showLicense(win) {
   })
 }
 
-module.exports = function (configOracle) {
+module.exports = function () {
   var template = [
     {
       label: 'Patchwork',
@@ -279,7 +279,7 @@ module.exports = function (configOracle) {
           accelerator: 'CmdOrCtrl+N',
           click: function (item, win) {
             var newWindow = windows.create()
-            newWindow.loadURL(configOracle.getLocalUrl())
+            newWindow.loadURL('http://localhost:7777')
           }
         },
         {

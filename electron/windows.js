@@ -45,9 +45,11 @@ function create (opts) {
   window.unref = _unref.bind(window)
   window.once('close', window.unref)
   window.webContents.on('new-window', function (e, url) {
-    // open in the browser
-    e.preventDefault()
-    shell.openExternal(url)
+    // open in the browser if it's not localhost
+    if (url.indexOf('localhost') === -1) {
+      e.preventDefault()
+      shell.openExternal(url)
+    }
   })
   return window
 }

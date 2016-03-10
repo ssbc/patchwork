@@ -8,20 +8,15 @@ config.keys = ssbKeys.loadOrCreateSync(path.join(config.path, 'secret'))
 if(config.keys.curve === 'k256')
   throw new Error('k256 curves are no longer supported,'+
                   'please delete' + path.join(config.path, 'secret'))
+config.trustedServePath = path.join(__dirname, 'ui')
+config.userlandServePath = path.join(config.path, 'www')
 
-// validate the config
-var configOracle = require('./config')(config)
-if (configOracle.hasError()) {
-  if (configOracle.allowUnsafe())
-    console.log('\nIgnoring unsafe configuration due to --unsafe flag.')
-  else {
-    console.log('\nAborted due to unsafe config. Run again with --unsafe to override.')
-    return
-  }
-}
-
-logLicense() // per the GPL's recommendation, let ppl know the license
-
+// per the GPL's recommendation, let ppl know the license
+console.log('')
+console.log('Patchwork - Copyright (C) 2015-2016 Secure Scuttlebutt Consortium')
+console.log('This program comes with ABSOLUTELY NO WARRANTY.')
+console.log('This is free software, and you are welcome to redistribute it under certain conditions (GPL-3.0).')
+console.log('')
 console.log('Starting...')
 
 // start sbot
@@ -36,6 +31,7 @@ var sbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/logging'))
   .use(require('scuttlebot/plugins/private'))
   .use(require('scuttlebot/plugins/local'))
+  .use(require('ssb-web-server'))
   .use(require('./api'))
   (config)
 
@@ -46,43 +42,13 @@ fs.writeFileSync(
   JSON.stringify(sbot.getManifest(), null, 2)
 )
 
-// setup server
-var http = require('http')
-var https = require('https')
-var ws = require('pull-ws-server')
-var httpStack = require('./http-server')
-var httpServerFn = httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') }, configOracle)
-var wsServerFn = require('./ws-server')(sbot)
-
-if (configOracle.useTLS()) {
-  var tlsOpts = configOracle.getTLS()
-  https.createServer(tlsOpts, httpServerFn).listen(7777).on('error', fatalError)
-  ws.createServer(tlsOpts, wsServerFn).listen(7778).on('error', fatalError)
-  console.log('Serving at https://localhost:7777')
-} else {
-  http.createServer(httpServerFn).listen(7777).on('error', fatalError)
-  ws.createServer(wsServerFn).listen(7778).on('error', fatalError)
-  console.log('Serving at http://localhost:7777')
-}
-
 // basic error handling
-function fatalError (e) {
-  if (e.code === 'EADDRINUSE')
-    console.error('\nError: port '+e.port+' isn\'t available. Is Patchwork already running?\n')
-  else
-    console.error(e.stack || e.toString())
+process.on('uncaughtException', function (e) {
+  console.error(e.stack || e.toString())
   process.exit(1)
-}
-process.on('uncaughtException', fatalError)
+})
 
 // run electron-specific code, if appropriate
 if (process.versions['electron']) {
-  require('./electron')(configOracle)
-}
-
-function logLicense () {
-  console.log('Patchwork - Copyright (C) 2015-2016 Secure Scuttlebutt Consortium')
-  console.log('This program comes with ABSOLUTELY NO WARRANTY.')
-  console.log('This is free software, and you are welcome to redistribute it under certain conditions (GPL-3.0).')
-  console.log('')
+  require('./electron')()
 }

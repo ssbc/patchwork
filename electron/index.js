@@ -3,7 +3,7 @@ var app = require('electron').app
 var windows = require('./windows')
 var setupMainMenu = require('./menu')
 
-module.exports = function (configOracle) {
+module.exports = function () {
   // Quit when all windows are closed.
   app.on('window-all-closed', function() {
     // On OS X it is common for applications and their menu bar
@@ -15,7 +15,7 @@ module.exports = function (configOracle) {
 
   app.on('ready', function() {
     var mainWindow = windows.create()
-    mainWindow.loadURL(configOracle.getLocalUrl())
-    setupMainMenu(configOracle)
+    mainWindow.loadURL('http://localhost:7777')
+    setupMainMenu()
   });
 }

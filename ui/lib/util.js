@@ -102,7 +102,7 @@ exports.profilePicUrl = function (id) {
   var url = './img/default-prof-pic.png'
   var link = exports.profilePic(id)
   if (link) {
-    url = '/'+link.link
+    url = 'http://localhost:7778/'+link.link
 
     // append the 'backup img' flag, so we always have an image
     url += '?fallback=img'

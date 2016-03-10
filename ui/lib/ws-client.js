@@ -5,11 +5,11 @@ var Serializer = require('pull-serializer')
 
 module.exports = function () {
   // create rpc object
-  var ssb = muxrpc(window.MANIFEST, false, serialize)()
+  var ssb = muxrpc(window.SSB_MANIFEST, false, serialize)()
 
   // setup rpc stream over websockets
   var protocol = (window.location.protocol == 'https:') ? 'wss:' : 'ws:'
-  var stream = ws.connect(protocol+'//'+(window.location.hostname)+':7778', { onClose: onConnectionLost })
+  var stream = ws.connect(protocol+'//'+(window.location.hostname)+':7777', { onClose: onConnectionLost })
   pull(stream, ssb.createStream(), stream)
   return ssb
 }

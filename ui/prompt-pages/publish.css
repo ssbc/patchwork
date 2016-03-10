@@ -1,0 +1,65 @@
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: 300;
+  src: local("Source Sans Pro Light"), local("SourceSansPro-Light"), url(../fonts/SourceSansPro-Light.otf) format("opentype");
+}
+@font-face {
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Source Sans Pro"), local("SourceSansPro-Regular"), url(../fonts/SourceSansPro-Regular.otf) format("opentype");
+}
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Source Code Pro"), local("SourceCodePro-Regular"), url(../fonts/SourceCodePro-Regular.otf) format("opentype");
+}
+
+body {
+  background: #eee;
+  font-family: "Source Sans Pro";
+}
+
+h1 {
+  font-weight: 300;
+  color: #555;
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 3px;
+  padding: 5px 0;
+  min-width: 90px;
+  text-align: center;
+  font-size: 21px;
+  margin-left: 10px;
+}
+
+#yes {
+  background: #06c;
+}
+#yes:hover {
+  background: #17d;
+}
+
+#no {
+  background: #c00;
+}
+#no:hover {
+  background: #d11;
+}
+
+pre {
+  font-family: "Source Code Pro";
+  background: #fefefe;
+  display: inline-block;
+  padding: 10px 40px 10px 20px;
+  border-radius: 6px;
+  border: 5px solid #e6e6e6;
+  margin: 0;
+  color: #444;
+}
