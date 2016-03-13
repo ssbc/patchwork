@@ -331,7 +331,7 @@ export class Pics extends AutoRefreshingComponent {
     const onSelect = image => () => this.setState({ expandedImageLink: (image == this.state.expandedImageLink) ? false : image })
     const renderImage = image => {
       return <div key={image} className={`card pic ${image==current?'current':''} ${image==expanded?'expanded':''}`} onClick={onSelect(image)}>
-        <img src={'/'+image} />
+        <img src={'http://localhost:7778/'+image} />
         { this.state.expandedImageLink == image ? <Pics.ExpandedInfo {...this.state} onSelectImage={this.onSelectImage.bind(this)} /> : '' }
       </div>
     }
