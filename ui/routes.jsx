@@ -3,6 +3,7 @@ import React from 'react'
 import { Router, Route, IndexRoute } from 'react-router'
 import app from './lib/app'
 import Layout from './layout'
+import Home from './views/home'
 import Inbox from './views/inbox'
 import PublicPosts from './views/public'
 import Digs from './views/digs'
@@ -32,7 +33,7 @@ app.history.listenBefore(beforeNavigation)
 export var routes = (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={Inbox} />
+      <IndexRoute component={Home} />
       <Route path="inbox" component={Inbox} />
       <Route path="inbox/:view" component={Inbox} />
       <Route path="activity" component={PublicPosts} />

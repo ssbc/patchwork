@@ -432,13 +432,13 @@ export default class MsgList extends React.Component {
           <div className="flex" style={{position: 'relative'}}>
             { LeftNav ? <LeftNav {...this.props.leftNavProps} /> : '' }
             <div className="flex-fill">
+              { this.props.noTopNav ? '' : <TopNav searchQuery={this.props.searchQuery} composer={this.props.composer} composerProps={this.props.composerProps} {...this.props.topNavProps} /> }
               { Hero ? <Hero/> : '' }
-              { this.props.noTopNav ? '' : <TopNav searchQuery={this.props.searchQuery} contentTypes={this.props.contentTypes} composer={this.props.composer} composerProps={this.props.composerProps} {...this.props.topNavProps} /> }
               { nQueued ?
                 <a className="new-msg-queue" onClick={this.reload.bind(this)}>{nQueued} new update{u.plural(nQueued)}</a>
                 : '' }
               { this.state.msgs.length === 0 && this.state.isLoading ? <div style={{fontWeight: 300, textAlign: 'center'}}>Loading...</div> : '' }
-              { isEmpty ?
+              { isEmpty && (this.props.emptyMsg !== false) ?
                 <div className="empty-msg">
                   { (this.props.emptyMsg || 'No messages.') }
                 </div>

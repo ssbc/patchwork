@@ -100,7 +100,7 @@ export default class LeftNav extends React.Component {
       <Issues/>
       { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
       
-      <LinkGroup pathname={pathname} to="/" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} icon="inbox" group="inbox">
+      <LinkGroup pathname={pathname} to="/inbox" label={`Inbox (${app.indexCounts.inboxUnread})`} icon="inbox" group="inbox">
         <LeftNav.Link pathname={pathname} to="/inbox/private">Private ({app.indexCounts.privateUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/watching">Watching ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>

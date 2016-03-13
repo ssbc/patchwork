@@ -75,7 +75,7 @@ export default class InboxPosts extends React.Component {
     }
     const emptyMsg = showArchived
       ? <div>Your inbox is empty.</div>
-      : <div> You have no unread messages. <Link to={archivedUrl}>View Archived</Link></div>
+      : <div>You have no unread messages. <Link to={archivedUrl}>View Archived</Link></div>
 
     // render
     return <div id="inbox" key={view+(showArchived?'-all':'-unread')}>
