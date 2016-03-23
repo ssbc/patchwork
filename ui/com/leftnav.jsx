@@ -10,7 +10,7 @@ import u from '../lib/util'
 class LinkGroup extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'linkgroup-'+props.group, {
-      isExpanded: false
+      isExpanded: true
     })
   }
   render() {
