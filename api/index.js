@@ -34,8 +34,7 @@ exports.init = function (sbot, opts) {
     inbox: u.index('inbox'),
     bookmarks: u.index('bookmarks'),
     mentions: u.index('mentions'),
-    follows: u.index('follows'),
-    digs: u.index('digs'),
+    notices: u.index('notices'),
     privatePosts: u.index('privatePosts'),
     publicPosts: u.index('publicPosts'),
     // other indexes: channel-* are created as needed
@@ -176,8 +175,7 @@ exports.init = function (sbot, opts) {
         bookmarkUnread: state.bookmarks.filter(function (row) { return !row.isread }).length,
         mentionUnread: state.mentions.filter(function (row) { return !row.isread }).length,
         privateUnread: state.privatePosts.filter(function (row) { return !row.isread }).length,
-        followUnread: state.follows.filter(function (row) { return !row.isread }).length,
-        digsUnread: state.digs.countUntouched()
+        noticesUnread: state.notices.countUntouched()
       }
       cb(null, counts)
     })
@@ -186,8 +184,7 @@ exports.init = function (sbot, opts) {
   api.createInboxStream = indexStreamFn(state.inbox)
   api.createBookmarkStream = indexStreamFn(state.bookmarks)
   api.createMentionStream = indexStreamFn(state.mentions)
-  api.createFollowStream = indexStreamFn(state.follows)
-  api.createDigStream = indexStreamFn(state.digs)
+  api.createNoticeStream = indexStreamFn(state.notices)
   api.createPrivatePostStream = indexStreamFn(state.privatePosts)
   api.createPublicPostStream = indexStreamFn(state.publicPosts)
   api.createChannelStream = function (channel, opts) {

@@ -7,13 +7,13 @@ import MsgList from '../com/msg-list'
 import Notification from '../com/msg-view/notification'
 import app from '../lib/app'
 
-export default class Mentions extends React.Component {
+export default class Notices extends React.Component {
   cursor (msg) {
     if (msg)
       return [msg.ts, false]
   }
   render() {
-    return <div id="digs">
+    return <div id="notices">
       <MsgList
         ref="list"
         threads
@@ -24,7 +24,7 @@ export default class Mentions extends React.Component {
         RightNav={RightNav}
         live={{ gt: [Date.now(), null] }}
         emptyMsg="Nobody has dug any of your posts yet. They will, though!"
-        source={app.ssb.patchwork.createDigStream}
+        source={app.ssb.patchwork.createNoticeStream}
         cursor={this.cursor} />
     </div>
   }
