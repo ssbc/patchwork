@@ -32,7 +32,7 @@ app.history.listenBefore(beforeNavigation)
 export var routes = (
   <Router history={app.history}>
     <Route path="/" component={Layout}>
-      <IndexRoute component={Inbox} />
+      <IndexRoute component={PublicPosts} />
       <Route path="inbox" component={Inbox} />
       <Route path="inbox/:view" component={Inbox} />
       <Route path="activity" component={PublicPosts} />
