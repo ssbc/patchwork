@@ -240,21 +240,6 @@ export default class MsgList extends React.Component {
     this.loadMore({ amt })
   }
 
-  /*onClickAnything(e) {
-    // if the user clicks the background, close the thread
-    for (var node = e.target; node; node = node.parentNode) {
-      if (!node.classList)
-        return
-      if (node.classList.contains('msg-view') || node.classList.contains('items'))
-        return // abort, it's a click within the messages
-      if (node.classList.contains('msg-list')) {
-        // reached our toplevel, lets close the thread
-        this.setState({ currentOpenMsgKey: null })
-        return
-      }
-    }
-  }*/
-
   processMsg(msg, cb) {
     // fetch thread data if not already present (using `related` as an indicator of that)
     if (this.props.threads && msg.value && !('related' in msg)) {
