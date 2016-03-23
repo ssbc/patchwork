@@ -115,3 +115,13 @@ exports.isPub = function (id) {
   }
   return false
 }
+
+// user-sort by popularity
+var sortByPopularity =
+exports.sortByPopularity = function (a, b) {
+  if (followedFlaggers(app.user.id, a, true).length)
+    return 1 // disqualified!
+  if (followedFlaggers(app.user.id, b, true).length)
+    return -1 // disqualified!
+  return followers(b).length - followers(a).length
+}
