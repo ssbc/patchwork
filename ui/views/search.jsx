@@ -7,19 +7,20 @@ import Card from '../com/msg-view/card'
 import app from '../lib/app'
 
 export default class Search extends React.Component {
-  cursor (msg) {
-    if (msg)
-      return [msg.value.timestamp, msg.value.author]
-  }
 
   render() {
     const source = opts => {
       opts.query = this.props.params.query
       return app.ssb.patchwork.createSearchStream(opts)
     }
+    const cursor = msg => {
+      if (msg)
+        return msg.ts
+    }
     return <div id="search" key={this.props.params.query}>
       <MsgList
         ref="list"
+        threads
         dateDividers
         batchLoadAmt={5}
         composerProps={{ isPublic: true }}
@@ -28,7 +29,8 @@ export default class Search extends React.Component {
         RightNav={RightNav}
         ListItem={Card} listItemProps={{ listView: true }}
         emptyMsg="No results found."
-        source={source} />
+        source={source}
+        cursor={cursor} />
     </div>
   }
 }
