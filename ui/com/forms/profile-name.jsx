@@ -24,7 +24,7 @@ export default class ProfileSetup extends React.Component {
   }
 
   validate (name, supressEmit) {
-    let badNameCharsRegex = /[^A-z0-9\._-]/
+    let badNameCharsRegex = /[^A-Za-z0-9\._-]/
     const emit = (b) => { this.props.setIsValid && !supressEmit && this.props.setIsValid(b) }
     if (!name.trim()) {
       emit(false)

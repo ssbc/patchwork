@@ -72,9 +72,12 @@ module.exports = function (sbot, db, state, emit) {
         emit('index-change', { index: 'publicPosts' })
       }
 
-      if (c.channel && typeof c.channel === 'string') {
+      var channel
+      if (c.channel && typeof c.channel === 'string')
+        channel = makeNameSafe(c.channel)
+      if (channel) {
         // channels index: add public posts / replies
-        var indexName = 'channel-'+c.channel
+        var indexName = 'channel-'+channel
         var index = state[indexName] = (state[indexName] || u.index(indexName))
         index.sortedUpsert(msg.value.timestamp, root ? root.link : msg.key)
         emit('index-change', { index: indexName })
@@ -404,9 +407,11 @@ function nonEmptyStr (str) {
   }
 
 // allow A-z0-9._-, dont allow a trailing .
-var badNameCharsRegex = /[^A-z0-9\._-]/g
-function makeNameSafe (str) {
-  str = str.replace(badNameCharsRegex, '_')
+var badNameCharsRegex = /[^A-Za-z0-9\._-]/g
+function makeNameSafe (str, replace) {
+  if (typeof replace === 'undefined')
+    replace = '_'
+  str = str.replace(badNameCharsRegex, replace)
   if (str.charAt(str.length - 1) == '.')
     str = str.slice(0, -1) + '_'
   return str

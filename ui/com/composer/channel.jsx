@@ -13,9 +13,9 @@ function getChannelSuggestions () {
   })
 }
 
-const disallowedCharRegex = /[#\s]/g
+const badNameCharsRegex = /[^A-Za-z0-9\._-]/g
 function sanitize (str) {
-  return str.replace(disallowedCharRegex, '')
+  return str.replace(badNameCharsRegex, '')
 }
 
 export default class ComposerChannel extends React.Component {

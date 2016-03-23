@@ -4,6 +4,7 @@ import ssbref from 'ssb-ref'
 import app from './app'
 import u from './util'
 
+const badNameCharsRegex = /[^A-Za-z0-9\._-]/
 const MAX_CHANNEL_RESULTS = 3
 
 export function getResults (query) {
@@ -41,6 +42,8 @@ function getChannelResults (query) {
   if (query.charAt(0) == '#') // strip off the pound
     query = query.slice(1)
   query = query.toLowerCase()
+  if (badNameCharsRegex.test(query))
+    return []
 
   var hasExact = false
   var results = []
