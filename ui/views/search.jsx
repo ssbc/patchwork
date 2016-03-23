@@ -13,20 +13,22 @@ export default class Search extends React.Component {
   }
 
   render() {
-    const searchRegex = new RegExp(this.props.params.query||'', 'i')
+    const source = opts => {
+      opts.query = this.props.params.query
+      return app.ssb.patchwork.createSearchStream(opts)
+    }
     return <div id="search" key={this.props.params.query}>
       <MsgList
         ref="list"
-        searchQuery={this.props.params.query}
-        searchRegex={searchRegex}
+        dateDividers
+        batchLoadAmt={5}
         composerProps={{ isPublic: true }}
+        searchQuery={this.props.params.query}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={RightNav}
-        dateDividers
-        ListItem={Card}
-        live={{ gt: [Date.now(), null] }}
+        ListItem={Card} listItemProps={{ listView: true }}
         emptyMsg="No results found."
-        source={app.ssb.createLogStream} />
+        source={source} />
     </div>
   }
 }
