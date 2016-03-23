@@ -50,7 +50,7 @@ export default class InboxPosts extends React.Component {
 
   render() {
     // setup params based on view, and whether we're looking at archived items
-    const showArchived = this.props.location.query.archived
+    const showArchived = this.props.location.query.archived || !!this.props.params.view
     const hasUnread = this.getUnreadCount() > 0
     const view = this.props.params.view || 'inbox'
     const viewLabel = view
