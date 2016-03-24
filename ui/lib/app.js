@@ -17,6 +17,7 @@ var SSBClient = require('./ws-client')
 var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')
+var favicon   = require('./favicon')
 var createHashHistory = require('history').createHashHistory
 
 // event streams and listeners
@@ -162,8 +163,10 @@ function pollPeers () {
 }
 
 function updateTitle () {
-  document.title = '('+app.indexCounts.inboxUnread+') Patchwork'
+  // document.title = '('+app.indexCounts.inboxUnread+') Patchwork'
+  favicon.update({ label: app.indexCounts.inboxUnread })
 }
+window.favicon = favicon
 
 function fetchLatestState (cb) {
   if (!patchworkEventStream)
