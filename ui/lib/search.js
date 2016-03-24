@@ -3,8 +3,10 @@ import React from 'react'
 import ssbref from 'ssb-ref'
 import app from './app'
 import u from './util'
+import social from './social-graph'
 
 const MAX_CHANNEL_RESULTS = 3
+const MAX_USER_RESULTS = 3
 
 export function getResults (query) {
   var results = []
@@ -22,18 +24,36 @@ export function getResults (query) {
   // general results
   results = results.concat([
     { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) }
-    // { icon: 'user', label: `Search people for "${query}"`, fn: doSearch({ type: 'users' }) }
   ])
 
   // builtin pages
   // TODO
 
   // known users
-  // TODO
+  results = results.concat(getUserResults(query))
 
   // channels
   results = results.concat(getChannelResults(query))
 
+  return results
+}
+
+function getUserResults (query) {
+  if (query.charAt(0) == '#') // strip off the pound
+    query = query.slice(1)
+  query = query.toLowerCase()
+
+  var results = []
+  for (let id in app.users.names) {
+    var name = app.users.names[id]
+    if (typeof name == 'string' && name.toLowerCase().indexOf(query) !== -1)
+      results.push(id)
+  }
+  // sort by popularity (isnt that just the way of things?)
+  results.sort(social.sortByPopularity)
+  results = results
+    .slice(0, MAX_USER_RESULTS)
+    .map(id => { return { icon: 'user', label: `Open user "${app.users.names[id]}"`, fn: () => openObject(id) } })
   return results
 }
 

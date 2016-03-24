@@ -68,9 +68,9 @@ class AuthorAndVia extends React.Component {
     var via = (app.user.id==author || social.follows(app.user.id, author)) ? false : social.followedFollowers(app.user.id, author)
     if (via && via.length === 0)
       via = false
-    return <div>
+    return <span className="author">
       <UserLink id={author} /> { via ? <small>via <UserLinks ids={via} limit={1} /></small> : '' }
-    </div>
+    </span>
   }
 }
 
@@ -283,6 +283,7 @@ export default class Card extends React.Component {
     const isListView   = this.props.listView
     const isViewingRaw = this.state.isViewingRaw
     const channel = msg && msg.value && msg.value.content && msg.value.content.channel
+    const rootLink = msg && msg.value && msg.value.content && mlib.link(msg.value.content.root)
     
     const dropdownOpts = [
       {
@@ -316,7 +317,12 @@ export default class Card extends React.Component {
         <div className="header">
           <UserPic id={msg.value.author} />
           <div className="flex-fill">
-            <AuthorAndVia id={msg.value.author} />
+            <div>
+              <AuthorAndVia id={msg.value.author} />
+              { isListView && rootLink
+                ? <small> <MsgLink id={rootLink.link}>Reply <i className="fa fa-angle-double-up" /></MsgLink></small>
+                : '' }
+            </div>
             <div className="audience">
               <Link className="date" to={'/msg/'+encodeURIComponent(msg.key)}>
                 <i className={`fa fa-${msg.plaintext?'bullhorn':'lock'}`} /> <NiceDate ts={msg.value.timestamp} />

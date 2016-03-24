@@ -199,7 +199,6 @@ export default class MsgList extends React.Component {
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
-      (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.drain(msg => {
         if (this.props.queueNewMsgs) {
           // suppress if by the local user
@@ -248,26 +247,6 @@ export default class MsgList extends React.Component {
       cb(null, msg) // noop
   }
 
-  searchQueryFilter(thread) {
-    // iterate the thread and its posts, looking for matches
-    const regex = this.props.searchRegex
-    if (checkMatch(thread))
-      return true
-    // if (!thread.related)
-    //   return false
-    // for (var i=0; i < thread.related.length; i++) {
-    //   if (checkMatch(thread.related[i]))
-    //     return true
-    // }
-    return false
-
-    function checkMatch (msg) {
-      if (msg.value.content.type !== 'post')
-        return false
-      return regex.test(''+msg.value.content.text)
-    }
-  }
-
   // load messages from the bottom of the list
   loadMore({ amt = 50, fresh = false } = {}, done) {
     if (this.state.isLoading || this.state.isAtEnd)
@@ -285,7 +264,6 @@ export default class MsgList extends React.Component {
       pull.asyncMap((msg, cb) => threadlib.decryptThread(app.ssb, msg, cb)), // decrypt the message
       (this.props.filter) ? pull.filter(this.props.filter) : undefined, // run the fixed filter
       pull.asyncMap(this.processMsg.bind(this)), // fetch the thread
-      (this.props.searchRegex) ? pull.filter(this.searchQueryFilter.bind(this)) : undefined,
       pull.take(amt), // apply limit
       pull.collect((err, msgs) => {
         if (err)

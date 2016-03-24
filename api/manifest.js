@@ -10,6 +10,7 @@ module.exports = {
   createPrivatePostStream: 'source',
   createPublicPostStream: 'source',
   createChannelStream: 'source',
+  createSearchStream: 'source',
 
   markRead: 'async',
   markUnread: 'async',

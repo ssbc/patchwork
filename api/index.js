@@ -196,6 +196,22 @@ exports.init = function (sbot, opts) {
     var index = getChannelIndex(channel)
     return indexStreamFn(index)(opts)
   }
+  api.createSearchStream = function (opts) {
+    opts = opts || {}
+    var searchRegex = new RegExp(opts.query||'', 'i')
+    opts.type = 'post'
+    return pull(
+      sbot.messagesByType(opts),
+      pull.asyncMap(function (msg, cb) {
+        // decrypt the message, if needed
+        threadlib.decryptThread(sbot, msg, cb)
+      }),
+      pull.filter(function (msg) {
+        // run search filter
+        return searchRegex.test(''+msg.value.content.text)
+      })
+    )
+  }
 
   function indexMarkRead (indexname, key, keyname) {
     if (Array.isArray(key)) {
