@@ -197,7 +197,13 @@ export default class Thread extends React.Component {
   onMarkUnread() {
     // mark unread in db
     let thread = this.state.thread
-    let keys = this.state.flattenedMsgs.filter(m => !m._isRead).map(m => m.key) // mark unread the ones that were unread on expand
+    let keys = this.state.flattenedMsgs
+      .filter(m => {
+        if (mlib.relationsTo(thread, m).indexOf('root') === -1)
+          return false // replies only
+        return !m._isRead // mark unread the ones that were unread on expand
+      })
+      .map(m => m.key)
     keys.push(thread.key)
     app.ssb.patchwork.markUnread(keys, err => {
       if (err)
