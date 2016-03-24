@@ -108,6 +108,12 @@ export default class Card extends React.Component {
   }
 
   onClickOpen(e) {
+    // make sure this wasnt a click on a link
+    for (var node = e.target; node; node = node.parentNode) {
+      if (node.tagName == 'A')
+        return
+    }
+
     if (this.props.listView)
       this.onSelect()
   }
