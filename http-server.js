@@ -29,7 +29,7 @@ var AppCSP = function (req, config) {
   }
 
   return "default-src 'self'; "+
-    "connect-src 'self' ws://"+host+":7778 wss://"+host+":7778; "+
+    "connect-src 'self' ws://"+host+":7777 wss://"+host+":7777; "+
     "img-src 'self' data:; "+
     "object-src 'none'; "+
     "frame-src 'none'; "+

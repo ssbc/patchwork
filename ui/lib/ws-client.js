@@ -9,7 +9,7 @@ module.exports = function () {
 
   // setup rpc stream over websockets
   var protocol = (window.location.protocol == 'https:') ? 'wss:' : 'ws:'
-  var stream = ws.connect(protocol+'//'+(window.location.hostname)+':7778', { onClose: onConnectionLost })
+  var stream = ws.connect(protocol+'//'+(window.location.hostname)+':7777', { onClose: onConnectionLost })
   pull(stream, ssb.createStream(), stream)
   return ssb
 }
