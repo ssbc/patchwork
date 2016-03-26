@@ -5,7 +5,7 @@ import app from './lib/app'
 import Layout from './layout'
 import Inbox from './views/inbox'
 import PublicPosts from './views/public'
-import Digs from './views/digs'
+import Notices from './views/notices'
 import Data from './views/data'
 import Msg from './views/msg'
 import Composer from './views/composer'
@@ -37,7 +37,7 @@ export var routes = (
       <Route path="inbox/:view" component={Inbox} />
       <Route path="activity" component={PublicPosts} />
       <Route path="channel/:channel" component={PublicPosts} />
-      <Route path="digs" component={Digs} />
+      <Route path="notices" component={Notices} />
       <Route path="data" component={Data} />
       <Route path="contacts" component={Contacts} />
       <Route path="profile" component={Contacts} />

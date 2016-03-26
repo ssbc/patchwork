@@ -95,14 +95,10 @@ module.exports = function (sbot, db, state, emit) {
         if (toself) updateSelfContact(msg.value.author, msg)
         else        updateOtherContact(msg.value.author, link.link, msg)
 
-        // follow, inbox index: add follows or blocks
+        // notices index: add follows or blocks
         if (link.link === sbot.id && ('following' in msg.value.content || 'blocking' in msg.value.content)) {
-          var inboxRow = state.inbox.sortedUpsert(msg.received, msg.key)
-          emit('index-change', { index: 'inbox' })
-          attachIsRead(inboxRow)
-          /*var followRow = state.follows.sortedUpsert(ts(msg), msg.key)
-          emit('index-change', { index: 'follows' })
-          attachIsRead(followRow)*/
+          state.notices.sortedUpsert(ts(msg), msg.key)
+          emit('index-change', { index: 'notices' })
         }
       })
     },
@@ -117,11 +113,11 @@ module.exports = function (sbot, db, state, emit) {
     },
 
     vote: function (msg) {
-      // digs index: add upvotes on your messages
+      // notices index: add upvotes on your messages
       var msgLink = mlib.link(msg.value.content.vote, 'msg')
       if (msgLink && state.mymsgs.indexOf(msgLink.link) >= 0 && msgLink.value > 0) {
-        state.digs.sortedUpsert(ts(msg), msg.key)
-        emit('index-change', { index: 'digs' })
+        state.notices.sortedUpsert(ts(msg), msg.key)
+        emit('index-change', { index: 'notices' })
       }
 
       // user flags

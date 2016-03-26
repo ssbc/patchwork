@@ -57,7 +57,7 @@ export default class RightNav extends React.Component {
 
     return <div className="rightnav">
       <div className="toolbar flex">
-        <RightNav.IconLink to="/digs" icon="hand-peace-o" count={app.indexCounts.digsUnread} title="Digs on your posts" hint="bottom" />
+        <RightNav.IconLink to="/notices" icon="hand-peace-o" count={app.indexCounts.noticesUnread} title="Digs on your posts and new followers" hint="bottom" />
         <RightNav.IconLink to="/sync" icon="cloud-download" title="Network sync status" hint="bottom" />
         <Link className="ctrl flex-fill hint--bottom-left user-pic" data-hint="Your Profile" to={`/profile/${encodeURIComponent(app.user.id)}`}><img src={u.profilePicUrl(app.user.id)} /></Link>
       </div>
