@@ -26,33 +26,33 @@ function draw () {
   xOffset    = multiplier
   yOffset    = multiplier * 11
   border     = multiplier
-  shadow     = multiplier * 2
+  shadow     = multiplier * 4
 
   canvas.height = canvas.width = img.width
   context = canvas.getContext('2d')
   context.font = 'bold ' + fontSize + 'px ' + FONT
 
   // draw favicon background
-  if (label) { context.globalAlpha = 0.5 }
+  if (label) { context.globalAlpha = 0.8 }
   context.drawImage(img, 0, 0)
   context.globalAlpha = 1.0
 
   if (label) {
-    // draw white drop shadow
-    context.shadowColor = '#FFF'
+    // draw drop shadow
+    context.shadowColor = '#000'
     context.shadowBlur = shadow
     context.shadowOffsetX = 0
     context.shadowOffsetY = 0
 
-    // draw white border
-    context.fillStyle = '#FFF'
-    context.fillText(label, xOffset, yOffset)
-    context.fillText(label, xOffset + border, yOffset)
-    context.fillText(label, xOffset, yOffset + border)
-    context.fillText(label, xOffset + border, yOffset + border)
+    // draw border
+    // context.fillStyle = '#000'
+    // context.fillText(label, xOffset, yOffset)
+    // context.fillText(label, xOffset + border, yOffset)
+    // context.fillText(label, xOffset, yOffset + border)
+    // context.fillText(label, xOffset + border, yOffset + border)
 
-    // draw black label
-    context.fillStyle = '#000'
+    // draw label
+    context.fillStyle = '#FFF'
     context.fillText(label,
       xOffset + (border / 2.0),
       yOffset + (border / 2.0)
