@@ -6,6 +6,7 @@ import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
 import mime from 'mime-types'
 import multicb from 'multicb'
+import { getDraft, saveDraft, removeDraft } from './drafts'
 import DropdownBtn from '../dropdown'
 import ComposerChannel from './channel'
 import { RECP_LIMIT, ComposerRecps } from './recps'
@@ -76,11 +77,17 @@ class CompositionUnit extends React.Component {
                             // public mode, then they switch to private
       addedFileMeta: {}, // map of file hash -> metadata
       recps: recps,
-      text: ''
+      text: getDraft(this.getDraftId())
     }
   }
 
-  isReply() { return !!this.props.thread }
+  isReply() {
+    return !!this.props.thread
+  }
+
+  getDraftId() {
+    return this.threadRootKey || 'new-thread'
+  }
 
   isPublic() {
     return (this.isReply()) ? this.isThreadPublic : this.state.isPublic
@@ -92,7 +99,10 @@ class CompositionUnit extends React.Component {
     return (this.isReply()) ? this.threadChannel : this.state.channel
   }
 
-  onChangeText(event) { this.setState({ text: event.target.value }) }
+  onChangeText(event) {
+    saveDraft(this.getDraftId(), event.target.value)
+    this.setState({ text: event.target.value })
+  }
 
   onAttach() { this.refs.files.click() } // trigger file-selector
 
@@ -407,6 +417,7 @@ export default class Composer extends CompositionUnit {
         } else {
           // reset form
           this.setState({ text: '', isPreviewing: false })
+          removeDraft(this.getDraftId())
 
           // give user feedback
           if (this.isReply())
