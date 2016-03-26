@@ -59,7 +59,7 @@ export class UserLinks extends React.Component {
 export class UserPic extends React.Component {
   render() {
     const name = app.users.names[this.props.id] || u.shortString(this.props.id, 6)
-    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic" title={name}>
+    return <Link to={'/profile/'+encodeURIComponent(this.props.id)} className="user-pic hint--top" data-hint={name}>
       <img src={u.profilePicUrl(this.props.id)} />
     </Link>
   }
@@ -68,9 +68,24 @@ export class UserPic extends React.Component {
 export class UserPics extends React.Component {
   render() {
     let ids = this.props.ids
-    ids.sort()
+    let n = this.props.ids.length
+
+    // apply limit
+    const limit = this.props.limit
+    let overLimitNames = false
+    let nOver = 0
+    if (n > limit) {
+      overLimitNames = ids.slice(limit).map(id => u.getName(id)).join(', ')
+      nOver = n - limit
+      ids = ids.slice(0, limit)
+      n = limit
+    }
+
     return <span>
-      {ids.map((id, i) => <UserPic id={id} key={`pic-${i}`} />)}
+      {ids.map((id, i) => <UserPic id={id} key={`pic-${i}`} hovertips={this.props.hovertips} />)}
+      {overLimitNames
+        ? <span className="hint--top" data-hint={overLimitNames}> and {nOver} other{u.plural(nOver)}</span>
+        : '' }
     </span>
   }
 }
