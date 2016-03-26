@@ -10,7 +10,7 @@ import u from '../lib/util'
 class LinkGroup extends LocalStoragePersistedComponent {
   constructor(props) {
     super(props, 'linkgroup-'+props.group, {
-      isExpanded: false
+      isExpanded: true
     })
   }
   render() {
@@ -100,13 +100,13 @@ export default class LeftNav extends React.Component {
       <Issues/>
       { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
       
-      <LinkGroup pathname={pathname} to="/" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} icon="inbox" group="inbox">
+      <LinkGroup pathname={pathname} to="/inbox" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} icon="inbox" group="inbox">
         <LeftNav.Link pathname={pathname} to="/inbox/private">Private ({app.indexCounts.privateUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/watching">Watching ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
         <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
       </LinkGroup>
 
-      <LinkGroup pathname={pathname} to="/activity" label="Activity Feed" icon="newspaper-o" group="activity">
+      <LinkGroup pathname={pathname} to="/" label="Activity Feed" icon="newspaper-o" group="activity">
         { pinnedChannels.map(renderChannel) }
         <div className="link">
           <a onClick={this.onOpenChannelList.bind(this)}><i className="fa fa-folder-open-o"/></a>
