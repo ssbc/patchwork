@@ -2,7 +2,7 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import { UserLink, UserPic, NiceDate } from '../index'
+import { UserLinks, UserPics, NiceDate } from '../index'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import app from '../../lib/app'
@@ -37,11 +37,15 @@ export default class Oneline extends React.Component {
     // if (msg.mentionsUser) labelIcons.push(<i className="fa fa-at" />)
     // if (msg.isBookmarked) labelIcons.push(<i className="fa fa-bookmark" />)
     var label = labelIcons.length ? (<div className="label">{labelIcons}</div>) : ''
+    var recps = [msg.value.author]
+    if (Array.isArray(msg.value.content.recps))
+      recps = recps.concat(msg.value.content.recps.map(link => mlib.link(link).link).filter(id => id != msg.value.author))
+    recps = recps.slice(0,4)
 
     return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')+(!msg.plaintext ? ' private' : '')} onClick={this.onClick.bind(this)}>
       <div className="authors">
-        <UserPic id={msg.value.author} />
-        <UserLink id={msg.value.author} />
+        <UserPics ids={recps} hovertips />
+        { recps.length == 1 ? <span>{' '}<UserLinks ids={recps} /></span> : '' }
         <span className="replies">{replies}</span>
       </div>
       <div className="content">
