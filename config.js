@@ -5,8 +5,11 @@ module.exports = function (conf) {
     getHostname: function () {
       return conf.host || 'localhost'
     },
+    getPort: function () {
+      return 7777
+    },
     getLocalUrl: function () {
-      return 'http://localhost:7777/'
+      return (oracle.useTLS()?'https':'http')+'://'+oracle.getHostname()+':'+oracle.getPort()
     },
 
     allowRemoteAccess: function () {
