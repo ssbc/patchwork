@@ -371,12 +371,9 @@ export default class Card extends React.Component {
 }
 
 function getLastTwoPosts (msg) {
-  var lastTwo = threadlib
+  return threadlib
     .flattenThread(msg)
     .filter(reply => mlib.relationsTo(reply, msg).indexOf('root') >= 0)
     .slice(-2)
-  if (lastTwo[0].key === msg.key)
-    return lastTwo.length === 2 ? [lastTwo[1]] : [] // dont let the original be included
-  return lastTwo
 }
 
