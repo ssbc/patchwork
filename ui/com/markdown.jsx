@@ -8,12 +8,14 @@ export class Block extends React.Component {
   render() {
     // extract mention names
     var mentionNames = {}
-    mlib.links(this.props.msg.value.content.mentions, 'feed').forEach(link =>{
-      if (link.name && typeof link.name == 'string') {
-        var name = (link.name.charAt(0) == '@') ? link.name : '@'+link.name
-        mentionNames[name] = link.link
-      }
-    })
+    if (this.props.msg) {
+      mlib.links(this.props.msg.value.content.mentions, 'feed').forEach(link =>{
+        if (link.name && typeof link.name == 'string') {
+          var name = (link.name.charAt(0) == '@') ? link.name : '@'+link.name
+          mentionNames[name] = link.link
+        }
+      })
+    }
 
     const toUrl = function (ref) {
       // @-mentions
