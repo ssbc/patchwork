@@ -85,7 +85,7 @@
     "react-notification": "^4.2.0",
     "react-router": "1.0.2",
     "scuttlebot": "~7.6.4",
-    "ssb-config": "^1.0.3",
+    "ssb-config": "^1.2.1",
     "ssb-keys": "^5.0.0",
     "ssb-markdown": "^3.0.0",
     "ssb-msg-schemas": "~6.1.0",
