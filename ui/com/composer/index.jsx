@@ -42,6 +42,26 @@ class ComposerTextareaFixed extends React.Component {
 }
 const ComposerTextareaVerticalFilled = verticalFilled(ComposerTextareaFixed)
 
+//save drafts temporarily.
+//this is only used for replies,
+//
+
+function get (id, def) {
+  if(!id) return def
+  var data = localStorage['drafts:'+id]
+  if(data) {
+    try {
+      return JSON.parse(data)
+    } catch(err) { return def }
+  }
+  return def
+}
+
+function set (id, value) {
+  if(!id) return
+  localStorage['drafts:'+id] = JSON.stringify(value)
+}
+
 class CompositionUnit extends React.Component {
   constructor(props) {
     super(props)
@@ -66,6 +86,7 @@ class CompositionUnit extends React.Component {
                     .filter(Boolean)
       }
     }
+
     // setup state (pulling from thread)
     this.state = {
       isPreviewing: false,
@@ -76,7 +97,7 @@ class CompositionUnit extends React.Component {
                             // public mode, then they switch to private
       addedFileMeta: {}, // map of file hash -> metadata
       recps: recps,
-      text: ''
+      text: get(this.threadRootKey, {text: ''}).text
     }
   }
 
@@ -92,7 +113,12 @@ class CompositionUnit extends React.Component {
     return (this.isReply()) ? this.threadChannel : this.state.channel
   }
 
-  onChangeText(event) { this.setState({ text: event.target.value }) }
+  onChangeText(event) {
+    if(this.isReply()) {
+      set(this.threadRootKey, {text: event.target.value, mentions: this.state.mentions})
+    }
+    this.setState({ text: event.target.value })
+  }
 
   onAttach() { this.refs.files.click() } // trigger file-selector
 
@@ -340,6 +366,8 @@ export default class Composer extends CompositionUnit {
   }
 
   onSend() {
+    //XXX Clear from local storage.
+
     var text = this.state.text
     if (!text.trim())
       return
@@ -449,3 +477,5 @@ function getThreadRoot (msg) {
   if (root && mlib.link(root, 'msg')) { return mlib.link(root, 'msg').link }
   else return msg.key
 }
+
+
