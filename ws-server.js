@@ -19,7 +19,6 @@ function serialize (stream) {
 
 module.exports.verifyClient = function (config) {
   return function (info) {
-    console.log(info.origin)
     return info.origin === config.getLocalUrl()
   }
 }
