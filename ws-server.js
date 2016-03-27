@@ -16,3 +16,10 @@ module.exports = function (sbot, opts) {
 function serialize (stream) {
   return Serializer(stream, JSON, {split: '\n\n'})
 }
+
+module.exports.verifyClient = function (config) {
+  return function (info) {
+    console.log(info.origin)
+    return info.origin === config.getLocalUrl()
+  }
+}

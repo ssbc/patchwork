@@ -54,15 +54,14 @@ var httpStack = require('./http-server')
 var httpServerFn = httpStack.AppStack(sbot, { uiPath: path.join(__dirname, 'ui') }, configOracle)
 var wsServerFn = require('./ws-server')(sbot)
 
-var server = ws.createServer(configOracle.useTLS() ? configOracle.getTLS() : null)
+var serverOpts = configOracle.useTLS() ? configOracle.getTLS() : {}
+serverOpts.verifyClient = require('./ws-server').verifyClient(configOracle)
+var server = ws.createServer(serverOpts)
 server.on('error', fatalError)
 server.on('connection', wsServerFn)
 server.on('request', httpServerFn)
-server.listen(7777)
-if (configOracle.useTLS())
-  console.log('Serving at https://localhost:7777')
-else
-  console.log('Serving at http://localhost:7777')
+server.listen(configOracle.getPort())
+console.log('Serving at', configOracle.getLocalUrl())
 
 // basic error handling
 function fatalError (e) {
