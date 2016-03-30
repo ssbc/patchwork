@@ -2,7 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import classNames from 'classnames'
-import { UserPic } from './index'
+import { UserPic } from 'patchkit/common'
 import u from '../lib/util'
 import app from '../lib/app'
 

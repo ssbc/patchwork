@@ -2,7 +2,7 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import threadlib from 'patchwork-threads'
-import { UserLinks, UserPics, NiceDate } from '../index'
+import { UserLinks, UserPics, NiceDate } from 'patchkit/common'
 import { Inline as Content } from '../msg-content'
 import { countReplies } from '../../lib/msg-relation'
 import app from '../../lib/app'

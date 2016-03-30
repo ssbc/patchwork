@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import ssbref from 'ssb-ref'
-import { UserLink, MsgLink, BlobLink } from './index'
+import { UserLink, MsgLink, BlobLink } from 'patchkit/common'
 import app from '../lib/app'
 
 class TableRow extends React.Component {

@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import { NotificationStack } from 'react-notification'
 import classNames from 'classnames'
+import PatchKit from 'patchkit'
 import app from './lib/app'
 import ModalFlow from './com/modals/flow'
 import Welcome from './com/forms/welcome'
@@ -35,7 +36,9 @@ export default class Layout extends React.Component {
     return {
       setupIsOpen: app.user.needsSetup,
       isComposerOpen: app.isComposerOpen,
-      notifications: app.notifications
+      notifications: app.notifications,
+      user: app.user,
+      users: app.users
     }
   }
 
@@ -60,13 +63,15 @@ export default class Layout extends React.Component {
   }
 
   render() {
-    return <div className="layout-rows">
-      <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
-      <NotificationStack notifications={this.state.notifications} onDismiss={this.onDismissNotification.bind(this)} />
-      <div className="layout-columns">
-        <div id="mainview">{this.props.children}</div>
+    return <PatchKit user={this.state.user} users={this.state.users}>
+      <div className="layout-rows">
+        <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
+        <NotificationStack notifications={this.state.notifications} onDismiss={this.onDismissNotification.bind(this)} />
+        <div className="layout-columns">
+          <div id="mainview">{this.props.children}</div>
+        </div>
+        <FindBar ref="find" for="mainview" />
       </div>
-      <FindBar ref="find" for="mainview" />
-    </div>
+    </PatchKit>
   }
 }
