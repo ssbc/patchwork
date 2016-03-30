@@ -5,7 +5,7 @@ import schemas from 'ssb-msg-schemas'
 import ssbref from 'ssb-ref'
 import { MsgLink, UserLink } from 'patchkit/common'
 import { Block as MdBlock, Inline as MdInline } from './markdown'
-import { Table as TableRaw, Div as DivRaw } from './pretty-raw'
+import { Table as TableRaw, Div as DivRaw } from 'patchkit/pretty-raw'
 import social from '../lib/social-graph'
 import u from '../lib/util'
 
