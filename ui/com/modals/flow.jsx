@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import SteppedProgressBar from '../stepped-progress-bar'
+import SteppedProgressBar from 'patchkit/stepped-progress-bar'
 import app from '../../lib/app'
 
 export default class ModalFlow extends React.Component {
