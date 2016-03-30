@@ -28,9 +28,20 @@ export default class Oneline extends React.Component {
 
   render() {
     const msg = this.props.msg
-    const lastMsg = !this.props.forceRaw ? threadlib.getLastThreadPost(msg) : false
+    const lastMsg = (!this.props.forceRaw && msg.value) ? threadlib.getLastThreadPost(msg) : false
     let replies = countReplies(msg)
     replies = (replies === 0) ? '' : `(${replies+1})`
+
+    if (!msg.value) {
+      return <div className={'msg-view oneline'+(msg.hasUnread ? ' unread' : '')+(!msg.plaintext ? ' private' : '')} onClick={this.onClick.bind(this)}>
+        <div className="authors">
+          <span className="replies">{replies}</span>
+        </div>
+        <div className="content">
+          <span className="markdown markdown-inline">Missing message</span>
+        </div>
+      </div>
+    }
 
     var labelIcons = []
     if (!msg.plaintext)   labelIcons.push(<i key="lock" className="fa fa-lock" />)
