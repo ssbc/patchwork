@@ -212,7 +212,7 @@ export default class Card extends React.Component {
 
   render() {
     const msg = this.props.msg
-    if (msg.isNotFound)
+    if (msg.isNotFound || !msg.value)
       return this.renderNotFound(msg)
     if (msg.isLink)
       return this.renderLink(msg)
