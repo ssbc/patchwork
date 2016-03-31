@@ -16,18 +16,14 @@ module.exports = function (sbot, db, state, emit) {
       // inbox index:
       // add msgs that mention or address the user
       var inboxRow
-      if (u.findLink(mentions, sbot.id)) {
+      if (u.findLink(mentions, sbot.id) || u.findLink(recps, sbot.id)) {
         // if a reply, make sure we have the root already
         if (root)
           inboxRow = state.inbox.sortedUpdate(msg.received, root.link)
         if (!inboxRow) {
-          // fallback to inserting the mentioning message, if the root isnt available (or its not a reply)
+          // fallback to inserting the current message, if the root isnt available (or its not a reply)
           inboxRow = state.inbox.sortedUpsert(msg.received, msg.key)
         }
-        emit('index-change', { index: 'inbox' })
-        attachChildIsRead(inboxRow, msg.key)
-      } else if (u.findLink(recps, sbot.id)) {
-        inboxRow = state.inbox.sortedUpsert(msg.received, root ? root.link : msg.key)
         emit('index-change', { index: 'inbox' })
         attachChildIsRead(inboxRow, msg.key)
       }
