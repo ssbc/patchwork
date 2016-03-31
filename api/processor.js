@@ -16,7 +16,17 @@ module.exports = function (sbot, db, state, emit) {
       // inbox index:
       // add msgs that mention or address the user
       var inboxRow
-      if (u.findLink(mentions, sbot.id) || u.findLink(recps, sbot.id)) {
+      if (u.findLink(mentions, sbot.id)) {
+        // if a reply, make sure we have the root already
+        if (root)
+          inboxRow = state.inbox.sortedUpdate(msg.received, root.link)
+        if (!inboxRow) {
+          // fallback to inserting the mentioning message, if the root isnt available (or its not a reply)
+          inboxRow = state.inbox.sortedUpsert(msg.received, msg.key)
+        }
+        emit('index-change', { index: 'inbox' })
+        attachChildIsRead(inboxRow, msg.key)
+      } else if (u.findLink(recps, sbot.id)) {
         inboxRow = state.inbox.sortedUpsert(msg.received, root ? root.link : msg.key)
         emit('index-change', { index: 'inbox' })
         attachChildIsRead(inboxRow, msg.key)
@@ -81,9 +91,16 @@ module.exports = function (sbot, db, state, emit) {
 
         // inbox index: add watched channels
         if (index.watched) {
-          var inboxRow = state.inbox.sortedUpsert(ts(msg), root ? root.link : msg.key)
-          emit('index-change', { index: 'inbox' })
-          attachChildIsRead(inboxRow, msg.key)
+          var inboxRow
+          if (root)
+            // only do updates if a reply, we dont want inbox items that dont have a root
+            inboxRow = state.inbox.sortedUpdate(ts(msg), root.link)
+          else
+            inboxRow = state.inbox.sortedInsert(ts(msg), msg.key)
+          if (inboxRow) {
+            emit('index-change', { index: 'inbox' })
+            attachChildIsRead(inboxRow, msg.key)
+          }
         }
       }
     },

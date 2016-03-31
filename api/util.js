@@ -32,7 +32,7 @@ module.exports.index = function (name) {
     return row
   }
 
-  index.sortedUpsert = function (ts, key) {
+  index.sortedUpdate = function (ts, key) {
     var i = index.indexOf(key)
     if (i !== -1) {
       // readd to index at new TS
@@ -47,10 +47,16 @@ module.exports.index = function (name) {
         return row
       } else
         return index.rows[i]
-    } else {
-      // add to index
-      return index.sortedInsert(ts, key)
     }
+  }
+
+  index.sortedUpsert = function (ts, key) {
+    var row = index.sortedUpdate(ts, key)
+    if (!row) {
+      // add to index
+      row = index.sortedInsert(ts, key)
+    }
+    return row
   }
 
   index.remove = function (key, keyname) {
