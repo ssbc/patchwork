@@ -83,6 +83,7 @@ export default class InboxPosts extends React.Component {
         ref="list"
         threads
         dateDividers
+        showMissing
         composer composerProps={{ isPublic: false }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
