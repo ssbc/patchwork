@@ -212,12 +212,12 @@ export default class Card extends React.Component {
 
   render() {
     const msg = this.props.msg
-    if (msg.isNotFound || !msg.value)
-      return this.renderNotFound(msg)
     if (msg.isLink)
       return this.renderLink(msg)
     if (msg.isMention)
       return this.renderMention(msg)
+    if (msg.isNotFound || !msg.value)
+      return this.renderNotFound(msg)
     const upvoters = getVotes(this.props.msg, userId => msg.votes[userId] === 1)
     const downvoters = getVotes(this.props.msg, userId => userIsTrusted(userId) && msg.votes[userId] === -1)
     const isUpvoted = upvoters.indexOf(app.user.id) !== -1
