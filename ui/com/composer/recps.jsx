@@ -56,9 +56,9 @@ export class ComposerRecps extends React.Component {
         <input ref="input" type="text" placeholder="Add recipients here" value={this.state.inputText} onChange={this.onChange.bind(this)} {...this.props} /> :
         '' }
       { isAtLimit ? <div className="warning">Recipient limit reached</div> : '' }
-      { warnings.length ?
-        <div>{warnings.map(id => <div key={id} className="warning">Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)}</div> :
-        '' }
+      { warnings.length
+        ? warnings.map((id, i) => <div key={'warning-'+i} className="warning">Warning: @{u.getName(id)} does not follow you, and may not receive your message.</div>)
+        : '' }
     </div>
   }
 }
