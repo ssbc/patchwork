@@ -340,6 +340,9 @@ export default class MsgList extends React.Component {
     var lastDate = moment().startOf('day').add(1, 'day')
     var listEls = []
     this.state.msgs.forEach((m, i) => {
+      if (!m.value && !this.props.showMissing)
+        return // skip missing msgs
+
       // render a date divider if this post is from a different day than the last
       const oldLastDate = lastDate
       lastDate = moment(m.ts || m.value.timestamp).endOf('day')

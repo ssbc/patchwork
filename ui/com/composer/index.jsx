@@ -51,17 +51,19 @@ class CompositionUnit extends React.Component {
     this.isThreadPublic = null
     this.threadChannel = null
     this.threadRootKey = null
-    if (this.props.thread) {
+    if (this.props.thread && !this.isThreadMissing()) {
+      const thread = this.props.thread
+
       // thread categorization
-      this.isThreadPublic = isThreadPublic(this.props.thread)
-      this.threadChannel = (this.props.thread.value.content.channel || '').trim()
+      this.isThreadPublic = isThreadPublic(thread)
+      this.threadChannel = (thread.value.content.channel || '').trim()
 
       // root link
-      this.threadRootKey = getThreadRoot(this.props.thread)
+      this.threadRootKey = getThreadRoot(thread)
 
       // extract encryption recipients from thread
-      if (Array.isArray(this.props.thread.value.content.recps)) {
-        recps = mlib.links(this.props.thread.value.content.recps)
+      if (thread.value && Array.isArray(thread.value.content.recps)) {
+        recps = mlib.links(thread.value.content.recps)
                     .map(function (recp) { return recp.link })
                     .filter(Boolean)
       }
@@ -82,6 +84,10 @@ class CompositionUnit extends React.Component {
 
   isReply() {
     return !!this.props.thread
+  }
+
+  isThreadMissing() {
+    return this.isReply() && !this.props.thread.value
   }
 
   getDraftId() {
@@ -288,6 +294,9 @@ class CompositionUnit extends React.Component {
   }
 
   renderComposerArea() {
+    if (this.isThreadMissing())
+      return <span/> // dont render
+
     const channel = this.getChannel()
     const vertical = this.props.verticalFilled
     const togglePreviewing = this.togglePreviewing.bind(this)

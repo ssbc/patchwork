@@ -310,14 +310,14 @@ export default class Thread extends React.Component {
     }
 
     const thread = this.state.thread
-    const threadRoot = thread && mlib.link(thread.value.content.root, 'msg')
+    const threadRoot = thread && thread.value && mlib.link(thread.value.content.root, 'msg')
     const isViewingReply = !!threadRoot
     const msgs = (this.state.isHidingHistory) ? this.state.collapsedMsgs : this.state.flattenedMsgs
     const canMarkUnread = thread && (thread.isBookmarked || !thread.plaintext)
     const isPublic = (thread && thread.plaintext)
-    const authorName = thread && u.getName(thread.value.author)
-    const channel = thread && thread.value.content.channel
-    const recps = thread && mlib.links(thread.value.content.recps, 'feed')
+    const authorName = thread && thread.value && u.getName(thread.value.author)
+    const channel = thread && thread.value && thread.value.content.channel
+    const recps = thread && thread.value && mlib.links(thread.value.content.recps, 'feed')
 
     return <div className="msg-thread" ref="container">
       { !thread
