@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import { rainbow } from '../index'
-import ImageSelector from '../form-elements/image-selector'
+import Selector from 'patchkit-selector'
 import app from '../../lib/app'
 
 const OPTIONS = [
@@ -34,7 +34,7 @@ export default class ViewMode extends React.Component {
     return <div className="text-center">
       <h1>Choose your View</h1>
       <h2>Which do you prefer?</h2>
-      <ImageSelector options={OPTIONS} value={this.state.choice} onSelect={this.onSelect.bind(this)} />
+      <Selector options={OPTIONS} value={this.state.choice} onSelect={this.onSelect.bind(this)} />
       <h3 style={{color:'gray'}}>You can change this later.</h3>
     </div>
   }
