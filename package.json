@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build-release": "npm run build-release:js && npm run build-release:css",
-    "build-release:js": "NODE_ENV=production browserify ./ui/main.js --extension=.jsx | uglifyjs > ./ui/main.build.js",
+    "build-release:js": "NODE_ENV=production browserify ./ui/main.js --extension=.jsx -o ./ui/main.build.js",
     "build-release:css": "mkdir -p ./ui/css && lessc ./ui/less/main.less --autoprefix ./ui/css/main.css",
     "build": "npm run build:js && npm run build:css",
     "build:js": "NODE_ENV=development browserify ./ui/main.js --extension=.jsx --debug -o ./ui/main.build.js",
@@ -37,7 +37,6 @@
     "osenv": "~0.1.0",
     "rimraf": "~2.2.8",
     "tape": "~3.0.0",
-    "uglify-js": "^2.6.1",
     "watchify": "^3.7.0"
   },
   "dependencies": {
