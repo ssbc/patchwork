@@ -7,10 +7,11 @@ import PatchKit from 'patchkit'
 import app from './lib/app'
 import ModalFlow from 'patchkit-modal/flow'
 import Welcome from './com/forms/welcome'
-import ProfileName from './com/forms/profile-name'
+import ProfileName from 'patchkit-form-profile-name'
 import ProfileImage from './com/forms/profile-image'
 import FindBar from './com/findbar'
 
+// TODO factor out patchkit-setup-flow
 const SETUP_FORMS = [Welcome, ProfileName, ProfileImage]
 
 export default class Layout extends React.Component {

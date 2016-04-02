@@ -6,7 +6,7 @@ import multicb from 'multicb'
 import Tabs from '../tabs'
 import ModalBtn from 'patchkit-modal/btn'
 import Rename from '../forms/rename'
-import ProfileName from '../forms/profile-name'
+import FormProfileName from 'patchkit-form-profile-name'
 import ProfileImage from '../forms/profile-image'
 import { AutoRefreshingComponent } from '../index'
 import { UserLink, UserPic, UserBtn } from 'patchkit-links'
@@ -247,6 +247,15 @@ export class Names extends AutoRefreshingComponent {
       { !isCurrentName ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectName(props.expandedName)}>Use This Name</a></div> : '' }
     </div>
   }
+  onSubmit(name, cb) {
+    // publish update message
+    if (!name || name == this.state.currentName)
+      return cb()
+    app.ssb.publish(schemas.name(this.state.profile.id, values.name), err => {
+      // update app state
+      app.fetchLatestState(cb)
+    })
+  }
   render() {
     if (!this.state.profile)
       return <span/>
@@ -265,7 +274,15 @@ export class Names extends AutoRefreshingComponent {
       <div className="user-info-cards">
         { Object.keys(this.state.profile.names).map(renderName) }
         <div className="add-new name">
-          <ModalBtn className="fullheight" Form={isMe ? ProfileName : Rename} formProps={{id: this.props.pid}} nextLabel="Publish">
+          <ModalBtn
+            className="fullheight"
+            Form={isMe ? FormProfileName : Rename}
+            formProps={{
+              className: 'text-center vertical-center',
+              currentValue: current,
+              onSubmit: this.onSubmit.bind(this)
+            }}
+            nextLabel="Publish">
             <a><h2><i className="fa fa-plus"/> new name</h2></a>
           </ModalBtn>
         </div>
