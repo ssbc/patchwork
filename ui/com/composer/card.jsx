@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import Composer from './index'
-import { UserPic } from 'patchkit/common'
+import { UserPic } from 'patchkit-links'
 import app from '../../lib/app'
 
 export default class ComposerCard extends React.Component {
