@@ -14,8 +14,7 @@ import NiceDate from 'patchkit-nicedate'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import PubInvite from '../com/forms/pub-invite'
-import Modal from '../com/modals/single'
-import ModalBtn from '../com/modals/btn'
+import ModalBtn from 'patchkit-modal/btn'
 
 function peerId (peer) {
   return peer.host+':'+peer.port+':'+peer.key
@@ -466,7 +465,7 @@ export default class Sync extends React.Component {
         <div className="header">
           <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
           <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Join Pub</ModalBtn>
+          <ModalBtn Form={PubInvite} nextLabel="Submit"><a className="btn"><i className="fa fa-cloud"/> Join Pub</a></ModalBtn>
         </div>
 
         <div className='peer-status-group'>

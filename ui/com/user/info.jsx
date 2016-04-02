@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import Tabs from '../tabs'
-import ModalBtn from '../modals/btn'
+import ModalBtn from 'patchkit-modal/btn'
 import Rename from '../forms/rename'
 import ProfileName from '../forms/profile-name'
 import ProfileImage from '../forms/profile-image'
@@ -266,7 +266,7 @@ export class Names extends AutoRefreshingComponent {
         { Object.keys(this.state.profile.names).map(renderName) }
         <div className="add-new name">
           <ModalBtn className="fullheight" Form={isMe ? ProfileName : Rename} formProps={{id: this.props.pid}} nextLabel="Publish">
-            <h2><i className="fa fa-plus"/> new name</h2>
+            <a><h2><i className="fa fa-plus"/> new name</h2></a>
           </ModalBtn>
         </div>
       </div>
@@ -343,7 +343,7 @@ export class Pics extends AutoRefreshingComponent {
         { Object.keys(this.state.profile.images).map(renderImage) }
         <div className="add-new pic">
           <ModalBtn className="fullheight" Form={ProfileImage} formProps={{id: this.props.pid}} nextLabel="Publish">
-            <h2><i className="fa fa-plus"/> new pic</h2>
+            <a><h2><i className="fa fa-plus"/> new pic</h2></a>
           </ModalBtn>
         </div>
       </div>

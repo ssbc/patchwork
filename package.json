@@ -62,6 +62,7 @@
     "patchkit-hover-shifter": "^1.0.0",
     "patchkit-links": "^1.0.1",
     "patchkit-markdown": "^1.0.1",
+    "patchkit-modal": "^1.0.2",
     "patchkit-msg-content": "^1.0.0",
     "patchkit-nicedate": "^1.0.0",
     "patchkit-niceraw": "^1.0.1",

@@ -2,7 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import PubInvite from '../forms/pub-invite'
-import ModalBtn from '../modals/btn'
+import ModalBtn from 'patchkit-modal/btn'
 import app from '../../lib/app'
 
 export class NewsFeed extends React.Component {
@@ -58,7 +58,7 @@ export class Pubs extends React.Component {
       <h2>{"You're in WiFi mode."}</h2>
       <p>To reach the global network, you need to be followed by a Public Peer.</p>
       <div className="card-well">
-        <ModalBtn className="btn fullheight" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Add Public Peer</ModalBtn>
+        <ModalBtn className="fullheight" Form={PubInvite} nextLabel="Submit"><a className="btn"><i className="fa fa-cloud"/> Add Public Peer</a></ModalBtn>
       </div>
     </div>
   }

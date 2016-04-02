@@ -2,7 +2,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Link } from 'react-router'
-import Modal from 'react-modal'
 import xtend from 'xtend'
 import app from '../lib/app'
 import social from '../lib/social-graph'

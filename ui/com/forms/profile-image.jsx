@@ -3,8 +3,8 @@ import React from 'react'
 import cls from 'classnames'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
+import ImageUploader from 'patchkit-image-uploader'
 import { rainbow } from '../index'
-import ImageInput from '../form-elements/image-input'
 import app from '../../lib/app'
 import u from '../../lib/util'
 
@@ -30,7 +30,7 @@ export default class ProfileSetup extends React.Component {
   getValues(cb) {
     const canvas = this.refs.imageInputContainer.querySelector('canvas')
     if (canvas) {
-      ImageInput.uploadCanvasToBlobstore(canvas, (err, res) => {
+      uploadCanvasToBlobstore(canvas, (err, res) => {
         const imageLink = {
           link: res.hash,
           size: res.size,
@@ -74,9 +74,19 @@ export default class ProfileSetup extends React.Component {
       <h1><span>Would you like to choose a picture?</span></h1>
       <form className="block" onSubmit={e=>e.preventDefault()}>
         <fieldset>
-          <div ref="imageInputContainer"><ImageInput current={(currentImg) ? ('/' + currentImg.link) : false} onChange={this.onChangeImg.bind(this)} /></div>
+          <div ref="imageInputContainer"><ImageUploader current={(currentImg) ? ('/' + currentImg.link) : false} onChange={this.onChangeImg.bind(this)} /></div>
         </fieldset>
       </form>
     </div>
   }
+}
+
+function uploadCanvasToBlobstore(canvas, cb) {
+  ImageUploader.canvasToPng(canvas, function (err, buffer) {
+    if (err) return cb(err)
+    app.ssb.patchwork.addFileToBlobs(buffer.toString('base64'), function (err, hash) {
+      if (err) return cb(err)
+      cb(null, { hash: hash, size: buffer.length })
+    })
+  })
 }
