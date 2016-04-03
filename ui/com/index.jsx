@@ -61,14 +61,6 @@ export class AutoRefreshingComponent extends React.Component {
   }
 }
 
-// helper to create rainbowed-out elements
-export function rainbowSplitter (str) {
-  return str.split('').map((c,i) => <span key={i}>{c}</span>)
-}
-export function rainbow (str) {
-  return <span className="rainbow">{rainbowSplitter(str)}</span>
-}
-
 // higher-order component, adds vertical-filling behavior (take all vertical space possible)
 export function verticalFilled (Component) {
   const VerticalFilledCom = React.createClass({

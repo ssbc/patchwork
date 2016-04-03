@@ -1,6 +1,5 @@
 'use babel'
 import React from 'react'
-import { rainbow } from '../index'
 import Selector from 'patchkit-selector'
 import app from '../../lib/app'
 

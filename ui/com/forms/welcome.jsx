@@ -1,6 +1,5 @@
 'use babel'
 import React from 'react'
-import { rainbow } from '../index'
 
 export default class WelcomePage extends React.Component {
   componentDidMount() {
@@ -12,7 +11,7 @@ export default class WelcomePage extends React.Component {
   }
   render() {
     return <div className="text-center vertical-center">
-      <h1>Welcome to {rainbow('Patchwork')}</h1>
+      <h1>Welcome to Patchwork</h1>
       <h3>{"Let's"} get started.</h3>
     </div>
   }
