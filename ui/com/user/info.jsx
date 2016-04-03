@@ -3,7 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
-import Tabs from '../tabs'
+import Tabs from 'patchkit-tabs'
 import ModalBtn from 'patchkit-modal/btn'
 import Rename from '../forms/rename'
 import FormProfileName from 'patchkit-form-profile-name'
@@ -106,7 +106,7 @@ export class Header extends AutoRefreshingComponent {
         <div className="avatar">
           <img src={u.profilePicUrl(this.props.pid)} />
         </div>
-        <Tabs options={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
+        <Tabs tabs={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
       </div>
     </div>
   }
