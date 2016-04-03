@@ -5,19 +5,13 @@ import { NotificationStack } from 'react-notification'
 import classNames from 'classnames'
 import PatchKit from 'patchkit'
 import app from './lib/app'
-import ModalFlow from 'patchkit-modal/flow'
-import Welcome from './com/forms/welcome'
-import ProfileName from 'patchkit-form-profile-name'
-import ProfileImage from 'patchkit-form-profile-image'
+import SetupFlow from 'patchkit-setup-flow'
 import FindBar from './com/findbar'
-
-// TODO factor out patchkit-setup-flow
-const SETUP_FORMS = [Welcome, ProfileName, ProfileImage]
 
 export default class Layout extends React.Component {
   constructor(props) {
     super(props)
-    this.state = this.buildState()
+    this.state = this.buildState(true)
 
     // listen for app change-events that should update our state
     const refresh = () => { this.setState(this.buildState()) }
@@ -32,10 +26,10 @@ export default class Layout extends React.Component {
     // update state on view changes
     app.fetchLatestState()
   }
-  buildState() {
+  buildState(isFirst) {
     // copy over app state
     return {
-      setupIsOpen: app.user.needsSetup,
+      setupIsOpen: (isFirst) ? app.user.needsSetup : (this.state && this.state.setupIsOpen),
       isComposerOpen: app.isComposerOpen,
       notifications: app.notifications,
       user: app.user,
@@ -56,7 +50,7 @@ export default class Layout extends React.Component {
   }
 
   onSetupClose() {
-    app.fetchLatestState()
+    app.emit('modal:setup', false)
   }
 
   onDismissNotification(notification) {
@@ -64,9 +58,9 @@ export default class Layout extends React.Component {
   }
 
   render() {
-    return <PatchKit user={this.state.user} users={this.state.users}>
+    return <PatchKit user={this.state.user} users={this.state.users} ssb={app.ssb} emit={app.emit}>
       <div className="layout-rows">
-        <ModalFlow className="fullheight" Forms={SETUP_FORMS} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
+        <SetupFlow id={app.user.id} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
         <NotificationStack notifications={this.state.notifications} onDismiss={this.onDismissNotification.bind(this)} />
         <div className="layout-columns">
           <div id="mainview">{this.props.children}</div>
