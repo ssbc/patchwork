@@ -7,7 +7,7 @@ import Tabs from '../tabs'
 import ModalBtn from 'patchkit-modal/btn'
 import Rename from '../forms/rename'
 import FormProfileName from 'patchkit-form-profile-name'
-import ProfileImage from '../forms/profile-image'
+import FormProfileImage from 'patchkit-form-profile-image'
 import { AutoRefreshingComponent } from '../index'
 import { UserLink, UserPic, UserBtn } from 'patchkit-links'
 import HoverShifter from 'patchkit-hover-shifter'
@@ -251,7 +251,7 @@ export class Names extends AutoRefreshingComponent {
     // publish update message
     if (!name || name == this.state.currentName)
       return cb()
-    app.ssb.publish(schemas.name(this.state.profile.id, values.name), err => {
+    app.ssb.publish(schemas.name(this.state.profile.id, name), err => {
       // update app state
       app.fetchLatestState(cb)
     })
@@ -296,8 +296,8 @@ export class Pics extends AutoRefreshingComponent {
     const pid = props ? props.pid : this.props.pid
     return {
       profile: app.users.profiles[pid],
-      expandedImageLink: this.state ? this.state.expandedImageLink : false,
-      currentImageLink: u.profilePicRef(pid)
+      expandedImageRef: this.state ? this.state.expandedImageRef : false,
+      currentImageRef: u.profilePicRef(pid)
     }
   }
   onSelectImage(image) {
@@ -310,16 +310,16 @@ export class Pics extends AutoRefreshingComponent {
   }
   static ExpandedInfo(props) {
     const isMe = props.profile.id === app.user.id 
-    const images = props.profile.images[props.expandedImageLink]
+    const images = props.profile.images[props.expandedImageRef]
 
     // is what the user chose for themselves
-    const isSelfAssigned = (getLinkRef(props.profile.self.image) === props.expandedImageLink)
+    const isSelfAssigned = (getLinkRef(props.profile.self.image) === props.expandedImageRef)
 
     // is an image that I've explicitly chosen for them
-    const isMyChosenImage = (props.expandedImageLink == (isMe ? getLinkRef(props.profile.self.image) : getLinkRef(props.profile.byMe.image)))
+    const isMyChosenImage = (props.expandedImageRef == (isMe ? getLinkRef(props.profile.self.image) : getLinkRef(props.profile.byMe.image)))
 
     // is the image currently in use
-    const isCurrentImage = (props.currentImageLink === props.expandedImageLink)
+    const isCurrentImage = (props.currentImageRef === props.expandedImageRef)
     
     // users (followed and unfollowed) that have chosen this image
     const followedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.user.id, id))
@@ -338,20 +338,41 @@ export class Pics extends AutoRefreshingComponent {
             </ul>
           </div>
         : '' }
-      { !isCurrentImage ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectImage(props.expandedImageLink)}>Use This Image</a></div> : '' }
+      { !isCurrentImage ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectImage(props.expandedImageRef)}>Use This Image</a></div> : '' }
     </div>
+  }
+  onSubmit(buffer, cb) {
+    app.ssb.patchwork.addFileToBlobs(buffer.toString('base64'), (err, hash) => {
+      if (err)
+        return cb(err)
+
+      // publish update message
+      const imageLink = {
+        link: hash,
+        size: buffer.length,
+        type: 'image/png',
+        width: 512,
+        height: 512
+      }
+      app.ssb.publish(schemas.image(this.state.profile.id, imageLink), err => {
+        if (err) return cb(err)
+
+        // update app state
+        app.fetchLatestState(cb)
+      })
+    })
   }
   render() {
     if (!this.state.profile)
       return <span/>
     const isMe = this.state.profile.id === app.user.id 
-    const expanded = this.state.expandedImageLink
-    const current = this.state.currentImageLink
-    const onSelect = image => () => this.setState({ expandedImageLink: (image == this.state.expandedImageLink) ? false : image })
+    const expanded = this.state.expandedImageRef
+    const current = this.state.currentImageRef
+    const onSelect = image => () => this.setState({ expandedImageRef: (image == this.state.expandedImageRef) ? false : image })
     const renderImage = image => {
       return <div key={image} className={`card pic ${image==current?'current':''} ${image==expanded?'expanded':''}`} onClick={onSelect(image)}>
         <img src={'/'+image} />
-        { this.state.expandedImageLink == image ? <Pics.ExpandedInfo {...this.state} onSelectImage={this.onSelectImage.bind(this)} /> : '' }
+        { this.state.expandedImageRef == image ? <Pics.ExpandedInfo {...this.state} onSelectImage={this.onSelectImage.bind(this)} /> : '' }
       </div>
     }
     return <div>
@@ -359,7 +380,15 @@ export class Pics extends AutoRefreshingComponent {
       <div className="user-info-cards">
         { Object.keys(this.state.profile.images).map(renderImage) }
         <div className="add-new pic">
-          <ModalBtn className="fullheight" Form={ProfileImage} formProps={{id: this.props.pid}} nextLabel="Publish">
+          <ModalBtn
+            className="fullheight"
+            Form={FormProfileImage}
+            formProps={{
+              className: 'text-center',
+              currentValue: current ? ('/'+current) : undefined,
+              onSubmit: this.onSubmit.bind(this)
+            }}
+            nextLabel="Publish">
             <a><h2><i className="fa fa-plus"/> new pic</h2></a>
           </ModalBtn>
         </div>

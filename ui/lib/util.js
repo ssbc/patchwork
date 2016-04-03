@@ -99,7 +99,7 @@ exports.profilePicRef = function (id) {
 }
 
 exports.profilePicUrl = function (id) {
-  var url = './img/default-prof-pic.png'
+  var url = './img/fallback.png'
   var link = exports.profilePic(id)
   if (link) {
     url = '/'+link.link
