@@ -2,7 +2,7 @@
 import React from 'react'
 import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
-import DropdownBtn from '../dropdown'
+import DropdownBtn from 'patchkit-dropdown'
 import MsgList from '../msg-list'
 import Notification from '../msg-view/notification'
 import Composer from '../composer'
@@ -110,7 +110,7 @@ export default class UserView extends AutoRefreshingComponent {
           <hr className="labeled" data-label="this user" />
           { (this.state.hasFlagged)
             ? <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> Unflag this user</a> :
-              <DropdownBtn className="btn hint--top-left" data-hint="Warn your followers about this user." items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}>
+              <DropdownBtn className="btn hint--top-left" hint="Warn your followers about this user." items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}>
                 <i className="fa fa-flag" /> Flag this user
               </DropdownBtn>  }
         </div> }
