@@ -41,8 +41,8 @@
     }
   }
   .body {
-    margin: 10px 20px 0;
-    overflow: hidden;
+    margin: 0;
+    padding: 10px 20px 0 20px;
     color: @dark-gray3;
     font-weight: 300;
     font-family: @content-font;
@@ -92,12 +92,12 @@
 
   &.oversized {
     .body {
-      height: 200px;
+      height: 260px;
+      box-shadow: rgba(228, 228, 228, 0.62) 0px -14px 10px -3px inset;
     }
     .footer {
       border-top: 1px dashed #ccc;
       padding-top: 8px;
-      margin-top: 1px;
 
       .read-more {
         display: block;
