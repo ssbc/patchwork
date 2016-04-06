@@ -176,9 +176,9 @@ class CompositionUnit extends React.Component {
     filesInput.value = '' // clear file list
   }
 
-  onSelectPublic(isPublic) {
+  onSelectPublic(opt) {
     if (this.isReply()) { return } // cant change if a reply
-    this.setState({ isPublic: isPublic })
+    this.setState({ isPublic: opt.value })
   }
 
   onChangeChannel(name) {
