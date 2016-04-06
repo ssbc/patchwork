@@ -2,8 +2,9 @@
 import React from 'react'
 import classNames from 'classnames'
 import app from '../lib/app'
-import SearchPalette from './search-palette'
+import SearchPalette from 'patchkit-search-palette'
 import Composer from './composer'
+import { getResults } from '../lib/search'
 
 export default class TopNav extends React.Component {
   constructor(props) {
@@ -52,7 +53,7 @@ export default class TopNav extends React.Component {
     const onClickCompose = this.onClickCompose.bind(this)
     return <div className="topnav">
       <div className="flex topnav-bar">
-        <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} placeholder={this.props.placeholder} /></div>
+        <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} placeholder={this.props.placeholder} getResults={getResults} /></div>
         { this.props.composer
           ? ( this.state.isComposerOpen
             ? <a className="btn" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>

@@ -75,6 +75,7 @@
     "patchkit-niceraw": "^1.0.1",
     "patchkit-radios": "^1.0.1",
     "patchkit-rainbow-text": "^1.0.0",
+    "patchkit-search-palette": "^1.0.0",
     "patchkit-selector": "^1.0.0",
     "patchkit-setup-flow": "^1.0.0",
     "patchkit-stepped-progress-bar": "^1.0.1",
