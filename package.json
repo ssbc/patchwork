@@ -80,6 +80,7 @@
     "patchkit-setup-flow": "^1.0.0",
     "patchkit-stepped-progress-bar": "^1.0.1",
     "patchkit-tabs": "^1.0.0",
+    "patchkit-vertical-filled": "^1.0.0",
     "patchwork-threads": "^2.0.0",
     "pause-offscreen": "^1.0.0",
     "phoenix-router": "~1.0.0",

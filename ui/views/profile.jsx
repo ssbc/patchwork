@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import { VerticalFilledContainer } from '../com'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
 import UserView from '../com/user/view'
 
 export default class Profile extends React.Component {

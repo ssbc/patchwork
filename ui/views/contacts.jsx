@@ -2,7 +2,7 @@
 import React from 'react'
 import pull from 'pull-stream'
 import { Link } from 'react-router'
-import { VerticalFilledContainer } from '../com/index'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
 import { UserSummaries } from '../com/user/summary'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'

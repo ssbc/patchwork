@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import { VerticalFilledContainer } from '../com/index'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
 
 const HELP_SECTIONS = {
   index: ''

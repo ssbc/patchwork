@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import Thread from '../com/msg-thread'
-import { VerticalFilledContainer } from '../com'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import mlib from 'ssb-msgs'

@@ -1,6 +1,6 @@
 'use babel'
 import React from 'react'
-import { verticalFilled } from './index'
+import { verticalFilled } from 'patchkit-vertical-filled'
 
 // SimpleInfinite mimics the interface of react-infinite
 // the main difference is, it doesnt try to do fancy performance improvements, like hiding offscreen elements
