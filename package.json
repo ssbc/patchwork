@@ -78,6 +78,7 @@
     "patchkit-search-palette": "^1.0.0",
     "patchkit-selector": "^1.0.0",
     "patchkit-setup-flow": "^1.0.0",
+    "patchkit-simple-infinite": "^1.0.0",
     "patchkit-stepped-progress-bar": "^1.0.1",
     "patchkit-tabs": "^1.0.0",
     "patchkit-vertical-filled": "^1.0.0",

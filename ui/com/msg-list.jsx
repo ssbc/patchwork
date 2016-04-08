@@ -11,7 +11,7 @@ import ReactInfinite from 'react-infinite'
 import classNames from 'classnames'
 import TopNav from './topnav'
 import ComposerCard from './composer/card'
-import SimpleInfinite from './simple-infinite'
+import SimpleInfinite from 'patchkit-simple-infinite'
 import ResponsiveElement from './responsive-element'
 import Summary from './msg-view/summary'
 import Thread from './msg-thread'
@@ -40,8 +40,7 @@ export default class MsgList extends React.Component {
       msgs: [],
       newMsgQueue: [], // used to store message updates that we dont want to render immediately
       isLoading: false,
-      isAtEnd: false,
-      containerHeight: window.innerHeight
+      isAtEnd: false
     }
     this.liveStream = null
 
@@ -152,11 +151,6 @@ export default class MsgList extends React.Component {
     var start = Date.now()
     this.loadMore({ amt: this.props.batchLoadAmt||DEFAULT_BATCH_LOAD_AMT }, () => console.log(Date.now() - start))
 
-    // setup autoresizing
-    this.calcContainerHeight()
-    this.resizeListener = this.calcContainerHeight.bind(this)
-    window.addEventListener('resize', this.resizeListener)
-
     // listen to isread changes
     app.on('update:isread', this.handlers.onIsread)
 
@@ -166,7 +160,6 @@ export default class MsgList extends React.Component {
   }
   componentWillUnmount() {
     // stop listeners
-    window.removeEventListener('resize', this.resizeListener)
     app.removeListener('update:isread', this.handlers.onIsread)
     if (this.liveStream)
       this.liveStream(true, ()=>{})
@@ -215,17 +208,6 @@ export default class MsgList extends React.Component {
         }
       })
     )
-  }
-
-  calcContainerHeight() {
-    var height = window.innerHeight
-    if (this.refs && this.refs.container) {
-      var rect = ReactDOM.findDOMNode(this.refs.container).getClientRects()[0]
-      if (!rect)
-        return
-      height = window.innerHeight - rect.top
-    }
-    this.setState({ containerHeight: height })
   }
 
   // infinite load call
