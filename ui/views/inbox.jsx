@@ -1,9 +1,11 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import MsgList from '../com/msg-list'
+import MsgList from 'patchkit-msg-list'
+import Thread from '../com/msg-thread'
 import Oneline from 'patchkit-msg-view/oneline'
 import DropdownBtn from 'patchkit-dropdown'
 import app from '../lib/app'
@@ -63,7 +65,7 @@ export default class InboxPosts extends React.Component {
     // components for rightnav and the end of the list
     const Append = (hasUnread && !showArchived)
       ? (props => <div className="empty-msg"><Link to={archivedUrl}>View Archived</Link></div>)
-      : false
+      : undefined
     const ThisRightNav = props => {
       const markAllReadItems = [{ label: 'Are you sure? Click here to confirm.', onSelect: this.onMarkAllRead.bind(this) }]
       return <RightNav>
@@ -84,8 +86,9 @@ export default class InboxPosts extends React.Component {
         threads
         dateDividers
         showMissing
-        composer composerProps={{ isPublic: false }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
+        Thread={Thread}
+        TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: false } }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={ThisRightNav}
         Append={Append}

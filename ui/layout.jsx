@@ -12,6 +12,11 @@ export default class Layout extends React.Component {
   constructor(props) {
     super(props)
     this.state = this.buildState(true)
+    this.events = {
+      emit: app.emit.bind(app),
+      on: app.on.bind(app),
+      removeListener: app.removeListener.bind(app)
+    }
 
     // listen for app change-events that should update our state
     const refresh = () => { this.setState(this.buildState()) }
@@ -65,7 +70,7 @@ export default class Layout extends React.Component {
   }
 
   render() {
-    return <PatchKit user={this.state.user} users={this.state.users} ssb={app.ssb} emit={app.emit.bind(app)}>
+    return <PatchKit user={this.state.user} users={this.state.users} ssb={app.ssb} events={this.events}>
       <div className="layout-rows">
         <SetupFlow id={app.user.id} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
         <NotificationStack notifications={this.state.notifications} onDismiss={this.onDismissNotification.bind(this)} />

@@ -4,8 +4,9 @@ import mlib from 'ssb-msgs'
 import schemas from 'ssb-msg-schemas'
 import DropdownBtn from 'patchkit-dropdown'
 import VerticalFilledContainer from 'patchkit-vertical-filled'
-import MsgList from '../msg-list'
+import MsgList from 'patchkit-msg-list'
 import Notification from 'patchkit-msg-view/notification'
+import Thread from '../msg-thread'
 import Composer from '../composer'
 import { AutoRefreshingComponent } from '../index'
 import * as UserInfo from './info'
@@ -166,14 +167,13 @@ export default class UserView extends AutoRefreshingComponent {
         ref="list"
         key={currentTab.label}
         dateDividers
-        noTopNav
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
         ListItem={Notification} listItemProps={{ listView: true }}
-        Hero={Hero}
+        Thread={Thread}
+        TopNav={Hero}
         source={feed}
-        cursor={cursor}
-        refreshOnReply />
+        cursor={cursor} />
     </div>
   }
 }

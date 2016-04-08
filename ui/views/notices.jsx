@@ -1,9 +1,11 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import MsgList from '../com/msg-list'
+import MsgList from 'patchkit-msg-list'
+import Thread from '../com/msg-thread'
 import Notification from 'patchkit-msg-view/notification'
 import app from '../lib/app'
 
@@ -18,8 +20,9 @@ export default class Notices extends React.Component {
         ref="list"
         threads
         dateDividers
-        composer composerProps={{ isPublic: true }}
         ListItem={Notification} listItemProps={{ userPic: true }}
+        Thread={Thread}
+        TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: true } }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={RightNav}
         live={{ gt: [Date.now(), null] }}

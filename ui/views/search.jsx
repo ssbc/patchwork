@@ -1,9 +1,11 @@
 'use babel'
 import React from 'react'
+import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import MsgList from '../com/msg-list'
+import MsgList from 'patchkit-msg-list'
 import Card from 'patchkit-msg-view/card'
+import Thread from '../com/msg-thread'
 import app from '../lib/app'
 
 export default class Search extends React.Component {
@@ -23,11 +25,11 @@ export default class Search extends React.Component {
         threads
         dateDividers
         batchLoadAmt={5}
-        composerProps={{ isPublic: true }}
-        searchQuery={this.props.params.query}
+        TopNav={TopNav} topNavProps={{ searchQuery: this.props.params.query, composer: true, composerProps: { isPublic: true } }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={RightNav}
         ListItem={Card} listItemProps={{ listView: true }}
+        Thread={Thread}
         emptyMsg="No results found."
         source={source}
         cursor={cursor} />

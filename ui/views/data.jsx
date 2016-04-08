@@ -1,7 +1,10 @@
 'use babel'
 import React from 'react'
-import MsgList from '../com/msg-list'
+import MsgList from 'patchkit-msg-list'
 import Oneline from 'patchkit-msg-view/oneline'
+import Thread from '../com/msg-thread'
+import MsgThread from '../com/msg-thread'
+import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import app from '../lib/app'
@@ -14,8 +17,9 @@ export default class Data extends React.Component {
     return <div id="data">
       <MsgList
         forceRaw
-        composer composerProps={{ isPublic: true }}
+        TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: true } }}
         ListItem={Oneline} listItemProps={{noReplies: true}}
+        Thread={Thread}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={RightNav}
         source={source}
