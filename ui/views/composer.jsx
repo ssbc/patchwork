@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import LeftNav from '../com/leftnav'
-import Composer from '../com/composer'
+import Composer from 'patchkit-post-composer'
 import app from '../lib/app'
 
 export default class ComposerView extends React.Component {
@@ -12,7 +12,7 @@ export default class ComposerView extends React.Component {
     return <div id="composer" className="flex">
       <LeftNav/>
       <div className="flex-fill">
-        <Composer verticalFilled onSend={this.onSend} />
+        <Composer verticalFilled suggestOptions={app.suggestOptions} channels={app.channels} onSend={this.onSend} />
       </div>
     </div>
   }

@@ -9,7 +9,7 @@ import pull from 'pull-stream'
 import { UserLinks } from 'patchkit-links'
 import ResponsiveElement from './responsive-element'
 import Card from 'patchkit-msg-view/card'
-import Composer from './composer'
+import Composer from 'patchkit-post-composer'
 import app from '../lib/app'
 import u from '../lib/util'
 
@@ -351,7 +351,7 @@ export default class Thread extends React.Component {
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
               }) }
-              <div key="composer" className="container"><Composer key={thread.key} thread={thread} onSend={this.onSend.bind(this)} /></div>
+              <div key="composer" className="container"><Composer key={thread.key} thread={thread} suggestOptions={app.suggestOptions} channels={app.channels} onSend={this.onSend.bind(this)} /></div>
             </ReactCSSTransitionGroup>
           </ResponsiveElement>
       }

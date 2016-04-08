@@ -7,7 +7,7 @@ import VerticalFilledContainer from 'patchkit-vertical-filled'
 import MsgList from 'patchkit-msg-list'
 import Notification from 'patchkit-msg-view/notification'
 import Thread from '../msg-thread'
-import Composer from '../composer'
+import Composer from 'patchkit-post-composer'
 import { AutoRefreshingComponent } from '../index'
 import * as UserInfo from './info'
 import LeftNav from '../leftnav'
@@ -98,6 +98,8 @@ export default class UserView extends AutoRefreshingComponent {
               <Composer
                 isPublic={false}
                 recps={[this.props.pid]}
+                suggestOptions={app.suggestOptions}
+                channels={app.channels} 
                 placeholder={'Write a private message to '+name}
                 cancelBtn onCancel={this.onCancelCompose.bind(this)}
                 onSend={this.onSend.bind(this)} />

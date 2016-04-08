@@ -74,6 +74,7 @@ module.exports = extend(new Emitter(), {
   peers: [],
   isWifiMode: false
 })
+app.on('notice', app.notice)
 
 function addIssue (isUrgent, title, err, extraIssueInfo) {
   console.error(title, err, extraIssueInfo)

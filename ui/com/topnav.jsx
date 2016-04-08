@@ -3,7 +3,7 @@ import React from 'react'
 import classNames from 'classnames'
 import app from '../lib/app'
 import SearchPalette from 'patchkit-search-palette'
-import Composer from './composer'
+import Composer from 'patchkit-post-composer'
 import { getResults } from '../lib/search'
 
 export default class TopNav extends React.Component {
@@ -61,7 +61,9 @@ export default class TopNav extends React.Component {
           : '' }
       </div>
       { this.state.isComposerOpen && this.props.composer
-        ? <div ref="composer" className="topnav-composer"><Composer {...this.props.composerProps} onSend={this.onSend.bind(this)} /></div>
+        ? <div ref="composer" className="topnav-composer">
+            <Composer {...this.props.composerProps} suggestOptions={app.suggestOptions} channels={app.channels} onSend={this.onSend.bind(this)} />
+          </div>
         : '' }
     </div>
   }
