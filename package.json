@@ -60,6 +60,7 @@
     "observable": "^2.1.3",
     "once": "~1.3.1",
     "patchkit": "^1.3.0",
+    "patchkit-base-styles": "^1.0.1",
     "patchkit-channel-list": "^1.0.0",
     "patchkit-dropdown": "^1.0.0",
     "patchkit-form-flag-msg": "^1.0.0",
