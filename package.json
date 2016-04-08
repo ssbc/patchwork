@@ -68,6 +68,7 @@
     "patchkit-hover-shifter": "^1.0.0",
     "patchkit-image-uploader": "^1.1.0",
     "patchkit-links": "^1.0.1",
+    "patchkit-ls-persisted": "^1.0.0",
     "patchkit-markdown": "^1.0.1",
     "patchkit-modal": "^1.1.0",
     "patchkit-msg-content": "^1.0.0",

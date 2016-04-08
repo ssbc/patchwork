@@ -2,7 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { rainbowSplitter } from 'patchkit-rainbow-text'
-import { LocalStoragePersistedComponent } from './index'
+import LocalStoragePersistedComponent from 'patchkit-ls-persisted'
 import ChannelList from 'patchkit-channel-list'
 import Issues from './issues'
 import app from '../lib/app'
