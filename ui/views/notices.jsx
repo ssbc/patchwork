@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
-import Notification from '../com/msg-view/notification'
+import Notification from 'patchkit-msg-view/notification'
 import app from '../lib/app'
 
 export default class Notices extends React.Component {

@@ -21,6 +21,7 @@ export default class Layout extends React.Component {
     app.on('modal:setup', isOpen => { this.setState({ setupIsOpen: isOpen }); app.fetchLatestState() })
     app.on('find:next', this.doFind.bind(this, true))
     app.on('find:previous', this.doFind.bind(this, false))
+    app.on('open:msg', this.openMsg.bind(this))
   }
   componentWillReceiveProps() {
     // update state on view changes
@@ -35,6 +36,12 @@ export default class Layout extends React.Component {
       user: app.user,
       users: app.users
     }
+  }
+
+  openMsg(msgKey) {
+    if (msgKey.key)
+      msgKey = msgKey.key
+    app.history.pushState(null, '/msg/' + encodeURIComponent(msgKey))
   }
 
   focusFind() {
@@ -58,7 +65,7 @@ export default class Layout extends React.Component {
   }
 
   render() {
-    return <PatchKit user={this.state.user} users={this.state.users} ssb={app.ssb} emit={app.emit}>
+    return <PatchKit user={this.state.user} users={this.state.users} ssb={app.ssb} emit={app.emit.bind(app)}>
       <div className="layout-rows">
         <SetupFlow id={app.user.id} isOpen={this.state.setupIsOpen} onClose={this.onSetupClose.bind(this)} />
         <NotificationStack notifications={this.state.notifications} onDismiss={this.onDismissNotification.bind(this)} />

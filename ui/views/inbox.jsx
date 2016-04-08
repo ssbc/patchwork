@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
-import Oneline from '../com/msg-view/oneline'
+import Oneline from 'patchkit-msg-view/oneline'
 import DropdownBtn from 'patchkit-dropdown'
 import app from '../lib/app'
 

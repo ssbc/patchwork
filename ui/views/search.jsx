@@ -3,7 +3,7 @@ import React from 'react'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from '../com/msg-list'
-import Card from '../com/msg-view/card'
+import Card from 'patchkit-msg-view/card'
 import app from '../lib/app'
 
 export default class Search extends React.Component {

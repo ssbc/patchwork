@@ -8,8 +8,7 @@ import threadlib from 'patchwork-threads'
 import pull from 'pull-stream'
 import { UserLinks } from 'patchkit-links'
 import ResponsiveElement from './responsive-element'
-import Card from './msg-view/card'
-import { isaReplyTo, relationsTo } from '../lib/msg-relation'
+import Card from 'patchkit-msg-view/card'
 import Composer from './composer'
 import app from '../lib/app'
 import u from '../lib/util'
@@ -347,11 +346,8 @@ export default class Thread extends React.Component {
                 return <Card
                   key={msg.key}
                   msg={msg}
-                  noReplies
-                  noBookmark
                   forceRaw={this.props.forceRaw}
                   forceExpanded={(i === 0 && this.props.forceRootExpanded) || isViewingReply || !msg._isRead}
-                  onSelect={()=>this.openMsg(msg.key)}
                   onToggleStar={()=>this.onToggleStar(msg)}
                   onFlag={(msg, reason)=>this.onFlag(msg, reason)} />
               }) }
