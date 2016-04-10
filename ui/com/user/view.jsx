@@ -6,7 +6,7 @@ import DropdownBtn from 'patchkit-dropdown'
 import VerticalFilledContainer from 'patchkit-vertical-filled'
 import MsgList from 'patchkit-msg-list'
 import Notification from 'patchkit-msg-view/notification'
-import Thread from '../msg-thread'
+import Thread from 'patchkit-flat-msg-thread'
 import Composer from 'patchkit-post-composer'
 import { AutoRefreshingComponent } from '../index'
 import * as UserInfo from './info'
@@ -172,7 +172,7 @@ export default class UserView extends AutoRefreshingComponent {
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
         ListItem={Notification} listItemProps={{ listView: true }}
-        Thread={Thread}
+        Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
         TopNav={Hero}
         source={feed}
         cursor={cursor} />

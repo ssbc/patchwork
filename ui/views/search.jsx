@@ -5,7 +5,7 @@ import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from 'patchkit-msg-list'
 import Card from 'patchkit-msg-view/card'
-import Thread from '../com/msg-thread'
+import Thread from 'patchkit-flat-msg-thread'
 import app from '../lib/app'
 
 export default class Search extends React.Component {
@@ -29,7 +29,7 @@ export default class Search extends React.Component {
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={RightNav}
         ListItem={Card} listItemProps={{ listView: true }}
-        Thread={Thread}
+        Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
         emptyMsg="No results found."
         source={source}
         cursor={cursor} />

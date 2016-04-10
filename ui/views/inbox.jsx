@@ -5,7 +5,7 @@ import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import MsgList from 'patchkit-msg-list'
-import Thread from '../com/msg-thread'
+import Thread from 'patchkit-flat-msg-thread'
 import Oneline from 'patchkit-msg-view/oneline'
 import DropdownBtn from 'patchkit-dropdown'
 import app from '../lib/app'
@@ -87,7 +87,7 @@ export default class InboxPosts extends React.Component {
         dateDividers
         showMissing
         ListItem={Oneline} listItemProps={{ userPic: true }}
-        Thread={Thread}
+        Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
         TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: false } }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={ThisRightNav}

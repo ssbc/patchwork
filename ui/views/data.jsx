@@ -2,8 +2,7 @@
 import React from 'react'
 import MsgList from 'patchkit-msg-list'
 import Oneline from 'patchkit-msg-view/oneline'
-import Thread from '../com/msg-thread'
-import MsgThread from '../com/msg-thread'
+import Thread from 'patchkit-flat-msg-thread'
 import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
@@ -19,7 +18,7 @@ export default class Data extends React.Component {
         forceRaw
         TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: true } }}
         ListItem={Oneline} listItemProps={{noReplies: true}}
-        Thread={Thread}
+        Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={RightNav}
         source={source}

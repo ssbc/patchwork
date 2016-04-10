@@ -63,6 +63,7 @@
     "patchkit-base-styles": "^1.0.1",
     "patchkit-channel-list": "^1.0.0",
     "patchkit-dropdown": "^1.0.0",
+    "patchkit-flat-msg-thread": "^1.0.0",
     "patchkit-form-flag-msg": "^1.0.0",
     "patchkit-form-profile-image": "^1.0.0",
     "patchkit-form-profile-name": "^1.0.0",
