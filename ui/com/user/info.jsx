@@ -5,7 +5,6 @@ import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
 import Tabs from 'patchkit-tabs'
 import ModalBtn from 'patchkit-modal/btn'
-import Rename from '../forms/rename'
 import FormProfileName from 'patchkit-form-profile-name'
 import FormProfileImage from 'patchkit-form-profile-image'
 import { AutoRefreshingComponent } from '../index'
@@ -276,8 +275,9 @@ export class Names extends AutoRefreshingComponent {
         <div className="add-new name">
           <ModalBtn
             className="fullheight"
-            Form={isMe ? FormProfileName : Rename}
+            Form={FormProfileName}
             formProps={{
+              isOtherUser: !isMe,
               className: 'text-center vertical-center',
               currentValue: current,
               onSubmit: this.onSubmit.bind(this)
