@@ -1,8 +1,6 @@
 'use babel'
 import React from 'react'
 import app from '../lib/app'
-import social from '../lib/social-graph'
-import u from '../lib/util'
 
 // parent class for components which should recompute their state every time the app-state changes
 export class AutoRefreshingComponent extends React.Component {

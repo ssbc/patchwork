@@ -6,7 +6,6 @@ import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import mlib from 'ssb-msgs'
 import app from '../lib/app'
-import u from '../lib/util'
 
 export default class Msg extends React.Component {
   render() {

@@ -12,9 +12,9 @@ import { AutoRefreshingComponent } from '../index'
 import * as UserInfo from './info'
 import LeftNav from '../leftnav'
 import RightNav from '../rightnav'
+import u from 'patchkit-util'
+import social from 'patchkit-util/social'
 import app from '../../lib/app'
-import social from '../../lib/social-graph'
-import u from '../../lib/util'
 
 const VIEW_ACTIVITY = { label: <h2>Activity</h2> }
 const VIEW_ABOUT = { label: <h2>About</h2> }
@@ -33,7 +33,7 @@ export default class UserView extends AutoRefreshingComponent {
     return {
       currentTabIndex: (this.state) ? this.state.currentTabIndex : 0,
       isComposerOpen: (this.state) ? this.state.isComposerOpen : false,
-      hasFlagged: social.flags(app.user.id, pid)
+      hasFlagged: social.flags(app.users, app.user.id, pid)
     }
   }
 
@@ -86,7 +86,7 @@ export default class UserView extends AutoRefreshingComponent {
 
   render() {
     const isSelf = this.props.pid == app.user.id
-    const name = u.getName(this.props.pid)
+    const name = u.getName(app.users, this.props.pid)
     const tabs = this.getTabs()
     const currentTab = tabs[this.state.currentTabIndex] || tabs[0]
 

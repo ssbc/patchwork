@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
 import multicb from 'multicb'
+import ip from 'ip'
 import Tabs from 'patchkit-tabs'
 import ModalBtn from 'patchkit-modal/btn'
 import FormProfileName from 'patchkit-form-profile-name'
@@ -12,8 +13,8 @@ import { UserLink, UserPic, UserBtn } from 'patchkit-links'
 import HoverShifter from 'patchkit-hover-shifter'
 import { UserSummaries } from './summary'
 import app from '../../lib/app'
-import u from '../../lib/util'
-import social from '../../lib/social-graph'
+import u from 'patchkit-util'
+import social from 'patchkit-util/social'
 
 export class Header extends AutoRefreshingComponent {
   constructor(props) {
@@ -43,10 +44,10 @@ export class Header extends AutoRefreshingComponent {
     return {
       name:        app.users.names[pid] || u.shortString(pid, 6),
       isSelf:      (pid == app.user.id),
-      isPub:       social.isPub(pid),
-      isFollowing: social.follows(app.user.id, pid),
-      followsYou:  social.follows(pid, app.user.id),
-      followers:   social.followers(pid)
+      isPub:       isPub(pid),
+      isFollowing: social.follows(app.users, app.user.id, pid),
+      followsYou:  social.follows(app.users, pid, app.user.id),
+      followers:   social.followers(app.users, pid)
     }
   }
 
@@ -103,7 +104,7 @@ export class Header extends AutoRefreshingComponent {
       </div>
       <div className="bar">
         <div className="avatar">
-          <img src={u.profilePicUrl(this.props.pid)} />
+          <img src={u.getProfilePicUrl(app.users, this.props.pid)} />
         </div>
         <Tabs tabs={this.props.tabs} selected={this.props.currentTab} onSelect={this.props.onSelectTab} />
       </div>
@@ -113,8 +114,8 @@ export class Header extends AutoRefreshingComponent {
 
 function sortFollowedFirst (a, b) {
   // rank followed followers first
-  const aFollowed = (app.user.id === a || social.follows(app.user.id, a)) ? 1 : 0
-  const bFollowed = (app.user.id === b || social.follows(app.user.id, b)) ? 1 : 0
+  const aFollowed = (app.user.id === a || social.follows(app.users, app.user.id, a)) ? 1 : 0
+  const bFollowed = (app.user.id === b || social.follows(app.users, app.user.id, b)) ? 1 : 0
   return bFollowed - aFollowed  
 }
 
@@ -122,9 +123,9 @@ export class Contacts extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props ? props.pid : this.props.pid
     return { 
-      friends: social.friends(pid).sort(sortFollowedFirst),
-      followers: social.followerNonfriends(pid).sort(sortFollowedFirst),
-      followeds: social.followedNonfriends(pid).sort(sortFollowedFirst),
+      friends: social.friends(app.users, pid).sort(sortFollowedFirst),
+      followers: social.followerNonfriends(app.users, pid).sort(sortFollowedFirst),
+      followeds: social.followedNonfriends(app.users, pid).sort(sortFollowedFirst),
     }
   }
   render() {
@@ -145,7 +146,7 @@ export class Flags extends AutoRefreshingComponent {
     const pid = props ? props.pid : this.props.pid
     return {
       profile: app.users.profiles[pid],
-      flaggers: social.followedFlaggers(app.user.id, pid, true)
+      flaggers: social.followedFlaggers(app.users, app.user.id, pid, true)
     }
   }
   render() {
@@ -182,7 +183,7 @@ export class Type extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      isPub: social.isPub(this.props.pid)
+      isPub: isPub(this.props.pid)
     }
   }
   render() {
@@ -201,7 +202,7 @@ export class Names extends AutoRefreshingComponent {
     return {
       profile: app.users.profiles[pid],
       expandedName: this.state ? this.state.expandedName : false,
-      currentName: u.getName(pid)
+      currentName: u.getName(app.users, pid)
     }
   }
   onSelectName(name) {
@@ -226,10 +227,10 @@ export class Names extends AutoRefreshingComponent {
     const isCurrentName = (props.currentName === props.expandedName)
     
     // users (followed and unfollowed) that have chosen this name
-    const followedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.user.id, id))
-    const unfollowedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.user.id, id))
-    const followedUsersNames = followedUsers.map(id => u.getName(id)).join(', ')
-    const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(id)).join(', ')
+    const followedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.users, app.user.id, id))
+    const unfollowedUsers = names.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.users, app.user.id, id))
+    const followedUsersNames = followedUsers.map(id => u.getName(app.users, id)).join(', ')
+    const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(app.users, id)).join(', ')
 
     return <div className="expanded-card-info">
       <h1>{props.expandedName}</h1>
@@ -297,7 +298,7 @@ export class Pics extends AutoRefreshingComponent {
     return {
       profile: app.users.profiles[pid],
       expandedImageRef: this.state ? this.state.expandedImageRef : false,
-      currentImageRef: u.profilePicRef(pid)
+      currentImageRef: u.getProfilePicRef(app.users, pid)
     }
   }
   onSelectImage(image) {
@@ -322,10 +323,10 @@ export class Pics extends AutoRefreshingComponent {
     const isCurrentImage = (props.currentImageRef === props.expandedImageRef)
     
     // users (followed and unfollowed) that have chosen this image
-    const followedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.user.id, id))
-    const unfollowedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.user.id, id))
-    const followedUsersNames = followedUsers.map(id => u.getName(id)).join(', ')
-    const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(id)).join(', ')
+    const followedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && social.follows(app.users, app.user.id, id))
+    const unfollowedUsers = images.filter(id => id !== props.profile.id && id !== app.user.id && !social.follows(app.users, app.user.id, id))
+    const followedUsersNames = followedUsers.map(id => u.getName(app.users, id)).join(', ')
+    const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(app.users, id)).join(', ')
 
     return <div className="expanded-card-info">
       { isSelfAssigned ? <div><strong>Default image (self-assigned)</strong></div> : '' }
@@ -415,4 +416,15 @@ export class Data extends AutoRefreshingComponent {
       </div>
     </div>
   }
+}
+
+// is `id` a pub?
+function isPub (id) {
+  // try to find the ID in the peerlist, and see if it's a public peer if so
+  for (var i=0; i < app.peers.length; i++) {
+    var peer = app.peers[i]
+    if (peer.key === id && !ip.isPrivate(peer.host))
+      return true
+  }
+  return false
 }

@@ -2,8 +2,8 @@
 import React from 'react'
 import ssbref from 'ssb-ref'
 import app from './app'
-import u from './util'
-import social from './social-graph'
+import u from 'patchkit-util'
+import social from 'patchkit-util/social'
 
 const MAX_CHANNEL_RESULTS = 3
 const MAX_USER_RESULTS = 3

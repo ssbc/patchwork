@@ -6,7 +6,7 @@ import LocalStoragePersistedComponent from 'patchkit-ls-persisted'
 import ChannelList from 'patchkit-channel-list'
 import Issues from './issues'
 import app from '../lib/app'
-import u from '../lib/util'
+import u from 'patchkit-util'
 
 class LinkGroup extends LocalStoragePersistedComponent {
   constructor(props) {
@@ -90,7 +90,7 @@ export default class LeftNav extends React.Component {
     
     // lists
     const pinnedChannels = this.state.channels.filter(isPinned(true)).sort((a, b) => a.name.localeCompare(b.name))
-    const contacts = app.user.friends.map(id => ({ id: id, name: u.getName(id) })).sort((a, b) => a.name.localeCompare(b.name))
+    const contacts = app.user.friends.map(id => ({ id: id, name: u.getName(app.users, id) })).sort((a, b) => a.name.localeCompare(b.name))
 
     // render
     const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}># {c.name}</LeftNav.Link>
