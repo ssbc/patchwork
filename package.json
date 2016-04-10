@@ -72,6 +72,7 @@
     "patchkit-links": "^1.0.1",
     "patchkit-ls-persisted": "^1.0.0",
     "patchkit-markdown": "^1.0.1",
+    "patchkit-mdl-spinner": "^1.0.0",
     "patchkit-modal": "^1.2.0",
     "patchkit-msg-content": "^1.0.0",
     "patchkit-msg-list": "^1.0.0",

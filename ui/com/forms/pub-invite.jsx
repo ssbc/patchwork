@@ -1,7 +1,7 @@
 'use babel'
 import React from 'react'
 import ref from 'ssb-ref'
-import MDLSpinner from '../mdl-spinner'
+import MDLSpinner from 'patchkit-mdl-spinner'
 import { InviteErrorExplanation, InviteErrorHelp } from '../help/forms'
 import app from '../../lib/app'
 
