@@ -13,7 +13,7 @@ import { UserLink } from 'patchkit-links'
 import NiceDate from 'patchkit-nicedate'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import PubInvite from '../com/forms/pub-invite'
+import PubInvite from 'patchkit-form-pub-invite'
 import ModalBtn from 'patchkit-modal/btn'
 
 function peerId (peer) {
@@ -465,7 +465,7 @@ export default class Sync extends React.Component {
         <div className="header">
           <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
           <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn Form={PubInvite} nextLabel="Submit"><a className="btn"><i className="fa fa-cloud"/> Join Pub</a></ModalBtn>
+          <ModalBtn Form={PubInvite} nextLabel="Join"><a className="btn"><i className="fa fa-cloud"/> Join Pub</a></ModalBtn>
         </div>
 
         <div className='peer-status-group'>
