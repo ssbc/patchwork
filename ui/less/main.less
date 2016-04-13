@@ -1,50 +1,44 @@
-@import "fonts/source-sans-pro.less";
-@import "fonts/source-code-pro.less";
+body {
+  background: #eee;
+}
 
-@import "variables.less";
-@import "normalize.less";
-@import "common.less";
-@import "elevations.less";
-@import "buttons.less";
-@import "forms.less";
+@import "node_modules/patchkit-base-styles/all.less";
+@import "elevations.less"; // TODO remove
 @import "layout.less";
-@import "tooltips.less";
-@import "helpers.less";
 
-@import "animations/rainbow.less";
 @import "animations/throb.less";
-@import "animations/rainbow-throb.less";
 @import "animations/explode.less";
 
-@import "com/markdown.less";
-@import "com/help.less";
-@import "com/fab.less";
-@import "com/fnb.less";
+// components
+@import "node_modules/patchkit-rainbow-text/styles.less";
+@import "node_modules/patchkit-tabs/styles.less";
+@import "node_modules/patchkit-dropdown/styles.less";
+@import "node_modules/patchkit-channel-list/styles.less";
+@import "node_modules/patchkit-search-palette/styles.less";
+@import "node_modules/patchkit-mdl-spinner/styles.less";
+
+// message rendering
+@import "node_modules/patchkit-niceraw/styles.less";
+@import "node_modules/patchkit-markdown/styles.less";
+@import "node_modules/patchkit-msg-view/styles.less";
+@import "node_modules/patchkit-msg-list/styles.less";
+@import "node_modules/patchkit-flat-msg-thread/styles.less";
+@import "node_modules/patchkit-post-composer/styles.less";
+
+// modals
+@import "node_modules/patchkit-stepped-progress-bar/styles.less";
+@import "node_modules/patchkit-modal/styles.less";
+
+// form elements
+@import "node_modules/patchkit-image-uploader/styles.less";
+@import "node_modules/patchkit-selector/styles.less";
+
 @import "com/toolbar.less";
-@import "com/tabs.less";
-@import "com/modal.less";
-@import "com/dropdown.less";
-@import "com/search-palette.less";
-@import "com/form-elements/dipswitch.less";
-@import "com/form-elements/follow-list.less";
-@import "com/form-elements/input-plaque.less";
-@import "com/form-elements/image-input.less";
-@import "com/form-elements/image-selector.less";
-@import "com/pretty-raw.less";
-@import "com/hexagons.less";
 @import "com/suggest-box.less";
-@import "com/msg-list.less";
-@import "com/msg-thread.less";
-@import "com/msg-view.less";
 @import "com/user/info.less";
 @import "com/user/profile.less";
 @import "com/user/summary.less";
-@import "com/composer.less";
-@import "com/composer/card.less";
 @import "com/issues.less";
-@import "com/stepped-progress-bar.less";
-@import "com/mdl-spinner.less";
-@import "com/channel-list.less";
 @import "com/findbar.less";
 @import "com/topnav.less";
 @import "com/sidenavs.less";

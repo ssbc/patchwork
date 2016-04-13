@@ -2,8 +2,8 @@
 import React from 'react'
 import ssbref from 'ssb-ref'
 import app from './app'
-import u from './util'
-import social from './social-graph'
+import u from 'patchkit-util'
+import social from 'patchkit-util/social'
 
 const MAX_CHANNEL_RESULTS = 3
 const MAX_USER_RESULTS = 3
@@ -50,7 +50,7 @@ function getUserResults (query) {
       results.push(id)
   }
   // sort by popularity (isnt that just the way of things?)
-  results.sort(social.sortByPopularity)
+  results.sort(social.sortByPopularity.bind(social, app.users))
   results = results
     .slice(0, MAX_USER_RESULTS)
     .map(id => { return { icon: 'user', label: `Open user "${app.users.names[id]}"`, fn: () => openObject(id) } })

@@ -3,42 +3,29 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import pull from 'pull-stream'
 import ip from 'ip'
-import ngraphGraph from 'ngraph.graph'
-import ngraphSvg from 'ngraph.svg'
 import app from '../lib/app'
 import u from '../lib/util'
-import social from '../lib/social-graph'
-import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
+import pu from 'patchkit-util'
+import social from 'patchkit-util/social'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
+import { UserLink } from 'patchkit-links'
+import NiceDate from 'patchkit-nicedate'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import PubInvite from '../com/forms/pub-invite'
-import Modal from '../com/modals/single'
-import ModalBtn from '../com/modals/btn'
+import PubInvite from 'patchkit-form-pub-invite'
+import ModalBtn from 'patchkit-modal/btn'
 
 function peerId (peer) {
   return peer.host+':'+peer.port+':'+peer.key
 }
 
 function peerSorter (a, b) {
-//  return Math.random() - 0.5
-  console.log(a.state, b.state)
-  //return a.stateChanged - b.stateChanged
-  //users that we are connected to, by most recently
   if(a.state === 'connected' && b.state !== 'connected')
     return -1
   else if(a.state !== 'connected' && b.state === 'connected')
     return 1
   //most recent interaction
   return a.stateChanged - b.stateChanged
-
-//  // prioritize peers that follow the user
-
-//  const bBoost = (social.follows(b.key, app.user.id)) ? 1000 : 0
-//  const aBoost = (social.follows(a.key, app.user.id)) ? 1000 : 0
-//  // then sort by # of announcers
-//  try {
-//    return (bBoost + (b.announcers ? b.announcers.length : 0)) - (aBoost + (a.announcers ? a.announcers.length : 0))
-//  } catch(err) { console.log('a', a); console.log('b', b); throw err }
 }
 
 function isLAN (peer) {
@@ -57,258 +44,6 @@ function lastConnected (peer) {
   return (peer.time.connect == 0) ? undefined : peer.time.connect
 }
 
-//class PeerGraph extends React.Component {
-//  constructor (props) {
-//    super(props)
-//    this.state = {
-//      graph: peersToGraph(props.peersForGraph, props.contactedPeerIds),
-//      contactedPeerIds: props.contactedPeerIds
-//    }
-//    this.onSvgRootMouseover = null
-//    this.onSvgRootMouseout = null
-//  }
-//
-//  componentDidMount () {
-//    this.setupRenderer()
-//  }
-//
-//  componentWillReceiveProps (nextProps) {
-//    this.state.graph = updateGraph(this.state, nextProps.peersForGraph, nextProps.contactedPeerIds)
-//  }
-//
-//  componentWillUnmount () {
-//    this.state.renderer.svgRoot.removeEventListener('mouseover', this.onSvgRootMouseover)
-//    this.state.renderer.svgRoot.removeEventListener('mouseout', this.onSvgRootMouseout)
-//    this.state.renderer.dispose()
-//  }
-//
-//  setupRenderer () {
-//    const el = ReactDOM.findDOMNode(this)
-//    const renderer = createRenderer(this.state.graph, el)
-//
-//    renderer.run()
-//
-//    renderer.svgRoot.addEventListener('mouseover', (this.onSvgRootMouseover = function(ev) { 
-//      if (ev.target.nodeName == "circle") {
-//        const name = ev.target.getAttribute('text')
-//        const id = ev.target.getAttribute('id')
-//
-//        document.querySelector("svg g text").innerHTML = name
-//        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(id))
-//      }
-//
-//      ev.stopPropagation()
-//    }))
-//    renderer.svgRoot.addEventListener('mouseout', (this.onSvgRootMouseout = function(ev) { 
-//      if (ev.target.nodeName == "circle") {
-//        document.querySelector("svg g text").innerHTML = ''
-//        document.querySelector("svg g image").setAttribute('xlink:href', '')
-//      }
-//
-//      ev.stopPropagation()
-//    }))
-//
-//
-//    this.setState({
-//      renderer: renderer
-//    })
-//  }
-//
-//  shouldComponentUpdate() {
-//    return false
-//  }
-//
-//  render () {
-//    return <div className="peer-graph-container" />
-//  }
-//}
-//
-//function createRenderer (graph, el) {
-//  let renderer = ngraphSvg(graph, {
-//    container: el,
-//    scrollSpeed: 0.01,
-//    // defaults
-//    //physics: {
-//    //  springLength: 30,
-//    //  springCoeff: 0.0008,
-//    //  dragCoeff: 0.01,
-//    //  gravity: -1.2,
-//    //  theta: 1
-//    //}
-//    physics: {
-//      springLength: 20,
-//      springCoeff: 0.0001,
-//      dragCoeff: 0.01,
-//      gravity: -1.5,
-//      theta: 0.7
-//      //theta: 0.8
-//    }
-//  }).node( function nodeBuilder(node) {
-//    const isFriend = social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)
-//    const isRelayPeer = node.data.isRelayPeer
-//    const isConnectedPeer = node.data.isConnectedPeer
-//
-//    let radius = 5
-//    let nodeClass = new Array
-//
-//    if (node.data.isUser) { 
-//      radius = 15
-//      nodeClass.push('is-user')
-//    }
-//    if (isFriend) nodeClass.push('is-friend')
-//    if (isConnectedPeer) nodeClass.push('is-connected')
-//    if (isRelayPeer) radius = 10
-//
-//    const circle = ngraphSvg.svg("circle", {
-//      r: radius,
-//      cx: 2*radius,
-//      cy: 2*radius,
-//      class: nodeClass.join(' '),
-//      id: node.data.id,
-//      text: node.data ? node.data.name : undefined
-//    })
-//    const link = ngraphSvg.svg("a", { link: '#/profile/'+encodeURIComponent(node.data.id) })
-//    link.append(circle)
-//
-//    return link
-//  }).placeNode( function nodePositionCallback(nodeUI, pos) {
-//    // place the childof the link (which is the circle)
-//    nodeUI.children[0].attr("cx", pos.x).attr("cy", pos.y)
-//  }).link( function linkBuilder(linkUI, pos) {
-//    const fromNode = graph.getNode(linkUI.fromId)
-//    const toNode = graph.getNode(linkUI.toId)
-//
-//    //link is from or to a 'relayPeer'
-//    const involvesRelayPeer = fromNode.data.isRelayPeer || toNode.data.isRelayPeer 
-//    const isLinkingUser = fromNode.data.isUser || toNode.data.isUser 
-//    const isConnected = isLinkingUser && linkUI.data.isConnected
-//
-//    let linkClass = new Array
-//    if (isLinkingUser) linkClass.push('is-linking-user')
-//    if (isConnected) linkClass.push('is-connected')
-//    if (involvesRelayPeer) linkClass.push('involves-relay-peer')
-//
-//    return ngraphSvg.svg("line", {
-//      id: fromNode.id + toNode.id,
-//      class: linkClass.join(' ')
-//    })
-//  })
-//
-//  let group = ngraphSvg.svg("g", {transform: "translate(10 20)"})
-//  let text = ngraphSvg.svg("text", {
-//    fill: '#555',
-//    x: 0,
-//    y: 90
-//  })
-//  let img = ngraphSvg.svg("image", {
-//    link: '',
-//    width: 80,
-//    height: 80,
-//    x: 0,
-//    y: -5
-//  })
-//
-//  group.append(img)
-//  group.append(text)
-//
-//  renderer.svgRoot.append( group )
-//  return renderer
-//}
-//
-//
-//function peersToGraph (peers, contactedPeerIds) {
-//  let graph = ngraphGraph()
-//
-//  if (!peers || !contactedPeerIds) return graph
-//
-//  return updateGraph(state, peers, contactedPeerIds)
-//}
-//
-//function toggleClass(classes, className) {
-//  if ( new RegExp(className).test(classes) ) { 
-//    return classes.replace(className, '')
-//  } else { 
-//    return classes + ' ' + className
-//  }
-//}
-//
-//function updateGraph (state, peers, contactedPeerIds) {
-//  let graph = state.graph
-//  const renderer = state.renderer
-//
-//  if (!peers || !contactedPeerIds) return graph
-//  const remote = contactedPeerIds.remote
-//  const local = contactedPeerIds.local
-//  const connected = contactedPeerIds.connected
-//
-//  //get and update OR create each peer node
-//  peers.forEach( function(peer) {
-//    const isRelayPeer = remote.indexOf(peer.id) != -1
-//    const isLocalPeer = local.indexOf(peer.id) != -1
-//    const isConnectedPeer = connected.indexOf(peer.id) != -1
-//
-//    let node = graph.getNode(peer.id)
-//    if (node) {
-//      if (node.data.isConnectedPeer != isConnectedPeer) { //update node if connected-status has changed
-//        const svgNode = state.renderer.svgRoot.getElementById(node.data.id)
-//        ngraphSvg.svg(svgNode, { class: toggleClass(svgNode.getAttribute('class'), 'is-connected') })
-//      } 
-//      //else if (node.data.isRelayPeer != isRelayPeer) {   //update node if relay-status has changed
-//        //const svgNode = state.renderer.svgRoot.getElementById(node.data.id)
-//        //ngraphSvg.svg(svgNode, { class: toggleClass(svgNode.getAttribute('class'), 'relay-peer') })
-//      //}
-//      
-//    } else {
-//      graph.addNode( peer.id , {
-//        id: peer.id,
-//        name: peer.name,
-//        isUser: peer.isUser,
-//        isLAN: peer.isLAN,
-//        isRelayPeer: isRelayPeer,
-//        isLocalPeer: isLocalPeer,
-//        isConnectedPeer: isConnectedPeer
-//      })
-//    }
-//  })
-//
-//  //add links for each peer
-//  peers.forEach( function(peer) {
-//    peers.forEach( function(otherPeer) {
-//      if (peer === otherPeer) return
-//      // skip if reverse link already exists
-//      //if (graph.getLink(otherPeer.id, peer.id)) return
-//
-//      const involvesRelayPeer = remote.indexOf(peer.id) != -1 || remote.indexOf(otherPeer.id) != -1
-//      const isConnected = (connected.indexOf(peer.id) != -1 && otherPeer.id == app.user.id) || 
-//                          (connected.indexOf(otherPeer.id) != -1 && peer.id == app.user.id)
-//
-//      const areFriends = social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)
-//
-//      const edge = graph.getLink(peer.id, otherPeer.id)
-//      if (edge) {
-//        if (edge.data.isConnected != isConnected) { // update edge if connection has changed
-//          //graph.removeLink(edge)
-//          const svgEdge = state.renderer.svgRoot.getElementById(peer.id + otherPeer.id)
-//          ngraphSvg.svg(svgEdge, { class: toggleClass(svgEdge.getAttribute('class'), 'is-connected') })
-//        } 
-//         
-//        return
-//      }
-//
-//      // skip if not (connected OR (are friends with each other AND one is a relay))
-//      if (!(isConnected || (areFriends && involvesRelayPeer) )) return
-//
-//      graph.addLink(peer.id, otherPeer.id, {
-//        isConnected: isConnected
-//      })
-//    })
-//  })
-//
-//  
-//  //add empty info box
-//  return graph
-//}
-//
 class PeerStatus extends React.Component {
   render() {
     const peer = this.props.peer
@@ -316,18 +51,14 @@ class PeerStatus extends React.Component {
     let failureClass = ''
     let lastConnectedMessage = ''
 
-    if (peer.
-
-state) {
-//      if (lastConnected(peer)) {
-        lastConnectedMessage = <div className="light">{peer.state} <NiceDate ago ts={peer.stateChange} /></div>
+    if (peer.state) {
+      lastConnectedMessage = <div className="light">{peer.state} <NiceDate ago ts={peer.stateChange} /></div>
     } else if (peer.failure) {
-        failureClass = ' failure'
-        lastConnectedMessage = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
-  //    }
+      failureClass = ' failure'
+      lastConnectedMessage = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
     }
 
-    const isMember = social.follows(peer.key, app.user.id)
+    const isMember = social.follows(app.users, peer.key, app.user.id)
     return <div className={'peer flex'+failureClass}>
       <div className='flex-fill'>
         { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> :
@@ -376,13 +107,13 @@ export default class Sync extends React.Component {
     pull(
       app.ssb.latest(),
       pull.map((user) => {
-        user.name = u.getName(user.id)
+        user.name = pu.getName(app.users, user.id)
         user.isUser = user.id === app.user.id
         user.isLAN = isLAN(user)
         //TODO get this working somehow...   user.isConnected = user.connected
-        //user.nfollowers = social.followers(user.id).length
-        user.followed = social.follows(app.user.id, user.id)
-        user.follows = social.follows(user.id, app.user.id)
+        //user.nfollowers = social.followers(app.users, user.id).length
+        user.followed = social.follows(app.users, app.user.id, user.id)
+        user.follows = social.follows(app.users, user.id, app.user.id)
         return user
       }),
       pull.collect((err, users) => {
@@ -478,7 +209,7 @@ export default class Sync extends React.Component {
         <div className="header">
           <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
           <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Join Pub</ModalBtn>
+          <ModalBtn Form={PubInvite} nextLabel="Join"><a className="btn"><i className="fa fa-cloud"/> Join Pub</a></ModalBtn>
         </div>
 
         <div className='peer-status-group'>

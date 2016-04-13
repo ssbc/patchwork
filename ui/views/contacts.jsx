@@ -1,19 +1,17 @@
 'use babel'
 import React from 'react'
 import pull from 'pull-stream'
+import ip from 'ip'
 import { Link } from 'react-router'
-import { VerticalFilledContainer } from '../com/index'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
 import { UserSummaries } from '../com/user/summary'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import FollowNearby from '../com/forms/follow-nearby'
-import FollowFoafs from '../com/forms/follow-foafs'
-import PubInvite from '../com/forms/pub-invite'
-import ModalSingle from '../com/modals/single'
-import InputPlaque from '../com/form-elements/input-plaque'
-import social from '../lib/social-graph'
+import PubInvite from 'patchkit-form-pub-invite'
+import ModalSingle from 'patchkit-modal/single'
+import u from 'patchkit-util'
+import social from 'patchkit-util/social'
 import app from '../lib/app'
-import u from '../lib/util'
 
 export default class Contacts extends React.Component {
   constructor(props) {
@@ -49,7 +47,7 @@ class Pubs extends React.Component {
       app.ssb.friends.createFriendStream({ hops: 1 }),
       pull.filter(id => {
         // filter down to user's pubs
-        return id !== app.user.id && social.follows(id, app.user.id) && social.isPub(id)
+        return id !== app.user.id && social.follows(app.users, id, app.user.id) && isPub(id)
       }),
       pull.collect((err, ids) => {
         if (err)
@@ -88,6 +86,53 @@ class Pubs extends React.Component {
   }
 }
 
+// peers on the wifi
+class FollowNearby extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state ={
+      foundNearbyPeers: [] // array of IDs
+    }
+  }
+  componentDidMount() {
+    // update peers after a delay
+    // (use a delay so the user sees the app "scanning")
+    this.onPeersUpdate = () => {
+      var peers = new Set()
+      app.peers
+        .filter(p => !ip.isLoopback(p.host) && ip.isPrivate(p.host))
+        .filter(p => !social.flags(app.users, app.user.id, p.key))
+        .forEach(p => peers.add(p.key))
+      peers = [...peers]
+      this.setState({ foundNearbyPeers: peers })
+
+      // HACK
+      // I want names to show up on these peers, and the local peers may still be replicating messages
+      // so I'm having the app refresh its state every time the peers have polled
+      // a better solution would be to have the backend state in sync with frontend through a continuous 'change' stream
+      // but that's a future project
+      // -prf
+      app.fetchLatestState()
+    }
+    this.onPeersUpdate()
+    app.on('update:peers', this.onPeersUpdate)
+  }
+
+  componentWillUnmount() {
+    app.removeListener('update:peers', this.onPeersUpdate)
+  }
+
+  render() {
+    const peers = this.state.foundNearbyPeers
+    const hasPeers = (peers.length > 0)
+    return <div>
+      <h1>Nearby</h1>
+      <h3 style={{marginTop: 5}}>{ hasPeers ? 'Potential contacts on your WiFi.' : 'Nobody found on your WiFi.' }</h3>
+      <UserSummaries ids={peers} />
+    </div>
+  }
+}
+
 class Friends extends React.Component {
   constructor(props) {
     super(props)
@@ -97,10 +142,10 @@ class Friends extends React.Component {
   }
 
   componentDidMount() {
-    var friends = social.friends(app.user.id)
+    var friends = social.friends(app.users, app.user.id)
     friends.sort(function (a, b) {
       // sort alphabetically
-      return u.getName(a).localeCompare(u.getName(b))
+      return u.getName(app.users, a).localeCompare(u.getName(app.users, b))
     })
     this.setState({ friends })
   }
@@ -123,13 +168,13 @@ class Follows extends React.Component {
   }
 
   componentDidMount() {
-    var follows = social.followeds(app.user.id).filter(id => {
+    var follows = social.followeds(app.users, app.user.id).filter(id => {
       // remove self and mutual followers
-      return !social.follows(id, app.user.id)
+      return !social.follows(app.users, id, app.user.id)
     })
     follows.sort(function (a, b) {
       // sort alphabetically
-      return u.getName(a).localeCompare(u.getName(b))
+      return u.getName(app.users, a).localeCompare(u.getName(app.users, b))
     })
     this.setState({ follows })
   }
@@ -141,4 +186,58 @@ class Follows extends React.Component {
       <UserSummaries ids={this.state.follows} />
     </div>
   }
+}
+
+class FollowFoafs extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state ={
+      foafs: [] // array of IDs
+    }
+  }
+  componentDidMount() {    
+    // get foafs
+    var hits = {}
+    pull(
+      app.ssb.friends.createFriendStream({ hops: 2 }),
+      pull.filter(id => {
+        // remove already-followed, flagged, self, duplicates, and users w/o names and pics
+        if (hits[id]) return false
+        hits[id] = true
+        return id !== app.user.id
+          && !!app.users.names[id]
+          && !!u.getProfilePic(app.users, id)
+          && !social.follows(app.users, app.user.id, id)
+          && !social.flags(app.users, app.user.id, id)
+      }),
+      pull.collect((err, ids) => {
+        if (err)
+          return app.minorIssue('An error occurred while fetching users', err)
+        ids.sort((a, b) => social.followers(app.users, b).length - social.followers(app.users, a).length)
+        this.setState({ foafs: ids })
+      })
+    )
+  }
+
+  render() {
+    const foafs = this.state.foafs
+    if (foafs.length === 0)
+      return <div/>
+    return <div>
+      <h1>Friends of Friends</h1>
+      <h3 style={{marginTop: 5}}>Potential contacts from your social network.</h3>
+      <UserSummaries ids={foafs} />
+    </div>
+  }
+}
+
+// is `id` a pub?
+function isPub (id) {
+  // try to find the ID in the peerlist, and see if it's a public peer if so
+  for (var i=0; i < app.peers.length; i++) {
+    var peer = app.peers[i]
+    if (peer.key === id && !ip.isPrivate(peer.host))
+      return true
+  }
+  return false
 }

@@ -2,19 +2,22 @@
 import React from 'react'
 import { Link } from 'react-router'
 import schemas from 'ssb-msg-schemas'
-import { AutoRefreshingComponent, UserPic, HoverShifter } from '../index'
+import ip from 'ip'
+import { AutoRefreshingComponent } from '../index'
+import { UserPic } from 'patchkit-links'
+import HoverShifter from 'patchkit-hover-shifter'
+import u from 'patchkit-util'
+import social from 'patchkit-util/social'
 import app from '../../lib/app'
-import u from '../../lib/util'
-import social from '../../lib/social-graph'
 
 export default class UserSummary extends AutoRefreshingComponent {
   computeState(props) {
     const pid = props.pid
     return {
       name:       app.users.names[pid] || u.shortString(pid, 6),
-      following:  social.follows(app.user.id, pid),
-      follower:   social.follows(pid, app.user.id),
-      isPub:      social.isPub(pid)
+      following:  social.follows(app.users, app.user.id, pid),
+      follower:   social.follows(app.users, pid, app.user.id),
+      isPub:      isPub(pid)
     }
   }
 
@@ -66,7 +69,7 @@ export default class UserSummary extends AutoRefreshingComponent {
 
 export class UserSummaries extends React.Component {
   render() {
-    var groups = u.chunk(this.props.ids, 3)
+    var groups = chunk(this.props.ids, 3)
 
     // if the last row is short, add empty items
     var l =groups.length
@@ -87,4 +90,24 @@ export class UserSummaries extends React.Component {
       }) }
     </div>
   }
+}
+
+function chunk (arr, size) {
+  var arrs = [], i=0, s=0
+  while (i < arr.length) {
+    arrs.push(arr.slice(i, i+size))
+    i += size
+  }
+  return arrs
+}
+
+// is `id` a pub?
+function isPub (id) {
+  // try to find the ID in the peerlist, and see if it's a public peer if so
+  for (var i=0; i < app.peers.length; i++) {
+    var peer = app.peers[i]
+    if (peer.key === id && !ip.isPrivate(peer.host))
+      return true
+  }
+  return false
 }
