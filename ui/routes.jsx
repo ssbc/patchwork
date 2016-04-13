@@ -12,7 +12,6 @@ import Composer from './views/composer'
 import Contacts from './views/contacts'
 import Profile from './views/profile'
 import Sync from './views/sync'
-import Help from './views/help'
 import Search from './views/search'
 
 function beforeNavigation (nextState) {
@@ -45,7 +44,6 @@ export var routes = (
       <Route path="msg/:id" component={Msg} />
       <Route path="composer" component={Composer} />
       <Route path="sync" component={Sync} />
-      <Route path="help/:section" component={Help} />
       <Route path="search/:query" component={Search} />
     </Route>
   </Router>

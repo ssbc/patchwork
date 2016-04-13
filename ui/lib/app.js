@@ -17,6 +17,7 @@ var SSBClient = require('./ws-client')
 var emojis    = require('emoji-named-characters')
 var Emitter   = require('events')
 var extend    = require('xtend/mutable')
+var pu        = require('patchkit-util')
 var favicon   = require('./favicon')
 var createHashHistory = require('history').createHashHistory
 
@@ -74,6 +75,7 @@ module.exports = extend(new Emitter(), {
   peers: [],
   isWifiMode: false
 })
+app.on('notice', app.notice)
 
 function addIssue (isUrgent, title, err, extraIssueInfo) {
   console.error(title, err, extraIssueInfo)
@@ -203,23 +205,23 @@ function fetchLatestState (cb) {
     updateTitle()
 
     // get friend list
-    var social = require('./social-graph')
-    app.user.followeds = social.followeds(app.user.id)
-    app.user.friends = app.user.followeds.filter(function (other) { return other !== app.user.id && social.follows(other, app.user.id) })
-    app.user.nonfriendFolloweds = app.user.followeds.filter(function (other) { return other !== app.user.id && !social.follows(other, app.user.id) })
-    app.user.nonfriendFollowers = social.unfollowedFollowers(app.user.id, app.user.id)
+    var social = require('patchkit-util/social')
+    app.user.followeds = social.followeds(app.users, app.user.id)
+    app.user.friends = app.user.followeds.filter(function (other) { return other !== app.user.id && social.follows(app.users, other, app.user.id) })
+    app.user.nonfriendFolloweds = app.user.followeds.filter(function (other) { return other !== app.user.id && !social.follows(app.users, other, app.user.id) })
+    app.user.nonfriendFollowers = social.unfollowedFollowers(app.users, app.user.id, app.user.id)
 
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
     if (app.user.profile) {
       for (var id in app.users.profiles) {
-        if (id == app.user.profile.id || social.follows(app.user.id, id)) {
+        if (id == app.user.profile.id || social.follows(app.users, app.user.id, id)) {
           var name = app.users.names[id]
           app.suggestOptions['@'].push({
             id: id,
             cls: 'user',        
             title: name || id,
-            image: require('./util').profilePicUrl(id),
+            image: pu.getProfilePicUrl(app.users, id),
             subtitle: name || id,
             value: name ? ('@'+name) : id
           })

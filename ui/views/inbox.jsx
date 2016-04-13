@@ -1,11 +1,13 @@
 'use babel'
 import React from 'react'
 import { Link } from 'react-router'
+import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import MsgList from '../com/msg-list'
-import Oneline from '../com/msg-view/oneline'
-import Dropdown from '../com/dropdown'
+import MsgList from 'patchkit-msg-list'
+import Thread from 'patchkit-flat-msg-thread'
+import Oneline from 'patchkit-msg-view/oneline'
+import DropdownBtn from 'patchkit-dropdown'
 import app from '../lib/app'
 
 export default class InboxPosts extends React.Component {
@@ -63,14 +65,14 @@ export default class InboxPosts extends React.Component {
     // components for rightnav and the end of the list
     const Append = (hasUnread && !showArchived)
       ? (props => <div className="empty-msg"><Link to={archivedUrl}>View Archived</Link></div>)
-      : false
+      : undefined
     const ThisRightNav = props => {
       const markAllReadItems = [{ label: 'Are you sure? Click here to confirm.', onSelect: this.onMarkAllRead.bind(this) }]
       return <RightNav>
         <hr className="labeled" data-label={viewLabel} />
-        <Dropdown className="btn hint--top-left" data-hint="Mark all messages on this page as 'read'." items={markAllReadItems} right>
+        <DropdownBtn className="btn hint--top-left" hint="Mark all messages on this page as 'read'." items={markAllReadItems} right>
           <i className="fa fa-envelope" /> Mark all read
-        </Dropdown>
+        </DropdownBtn>
       </RightNav>
     }
     const emptyMsg = showArchived
@@ -84,8 +86,9 @@ export default class InboxPosts extends React.Component {
         threads
         dateDividers
         showMissing
-        composer composerProps={{ isPublic: false }}
         ListItem={Oneline} listItemProps={{ userPic: true }}
+        Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
+        TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: false } }}
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={ThisRightNav}
         Append={Append}

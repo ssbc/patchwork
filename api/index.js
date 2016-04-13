@@ -196,6 +196,10 @@ exports.init = function (sbot, opts) {
   api.createSearchStream = function (opts) {
     opts = opts || {}
     var searchRegex = new RegExp(opts.query||'', 'i')
+    
+    var limit = opts.limit
+    delete opts.limit
+
     opts.type = 'post'
     return pull(
       sbot.messagesByType(opts),
@@ -206,7 +210,8 @@ exports.init = function (sbot, opts) {
       pull.filter(function (msg) {
         // run search filter
         return searchRegex.test(''+msg.value.content.text)
-      })
+      }),
+      limit ? pull.take(limit) : undefined
     )
   }
 

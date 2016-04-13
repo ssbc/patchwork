@@ -1,7 +1,6 @@
 'use babel'
 import React from 'react'
 import TextNodeSearcher from 'text-node-searcher'
-import u from '../lib/util'
 
 export default class FindBar extends React.Component {
   constructor(props) {
@@ -12,7 +11,7 @@ export default class FindBar extends React.Component {
     this.state = {
       isVisible: false
     }
-    this.highlightDebounced = u.debounce(() => {
+    this.highlightDebounced = debounce(() => {
       this.searcher.setQuery(this.refs.input.value)
       this.searcher.highlight()
     }, 75)
@@ -78,6 +77,14 @@ export default class FindBar extends React.Component {
       <a className="btn" onClick={this.search.bind(this, true)}><i className="fa fa-angle-down" /></a>
       <a className="btn close" onClick={this.close.bind(this)}>&times;</a>
     </div>
+  }
+}
+
+function debounce (fn, wait) {
+  var timeout
+  return function() {
+    clearTimeout(timeout)
+    timeout = setTimeout(fn, wait)
   }
 }
 

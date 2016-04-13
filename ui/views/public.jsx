@@ -1,9 +1,11 @@
 'use babel'
 import React from 'react'
+import TopNav from '../com/topnav'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import MsgList from '../com/msg-list'
-import Card from '../com/msg-view/card'
+import MsgList from 'patchkit-msg-list'
+import Thread from 'patchkit-flat-msg-thread'
+import Card from 'patchkit-msg-view/card'
 import app from '../lib/app'
 
 export default class PublicPosts extends React.Component {
@@ -62,10 +64,11 @@ export default class PublicPosts extends React.Component {
         threads
         dateDividers
         batchLoadAmt={5}
-        composer composerProps={{ isPublic: true, channel: channel }}
+        TopNav={TopNav} topNavProps={{ composer: true, composerProps: { isPublic: true, channel: channel } }}
         LeftNav={LeftNav} leftNavProps={{location: this.props.location}}
         RightNav={ThisRightNav}
         ListItem={Card} listItemProps={{ listView: true }}
+        Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
         live={{ gt: [Date.now(), null] }}
         emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your feed is empty.'}
         source={source}

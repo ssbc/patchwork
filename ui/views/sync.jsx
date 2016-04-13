@@ -7,13 +7,15 @@ import ngraphGraph from 'ngraph.graph'
 import ngraphSvg from 'ngraph.svg'
 import app from '../lib/app'
 import u from '../lib/util'
-import social from '../lib/social-graph'
-import { UserLink, NiceDate, VerticalFilledContainer } from '../com/index'
+import pu from 'patchkit-util'
+import social from 'patchkit-util/social'
+import VerticalFilledContainer from 'patchkit-vertical-filled'
+import { UserLink } from 'patchkit-links'
+import NiceDate from 'patchkit-nicedate'
 import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
-import PubInvite from '../com/forms/pub-invite'
-import Modal from '../com/modals/single'
-import ModalBtn from '../com/modals/btn'
+import PubInvite from 'patchkit-form-pub-invite'
+import ModalBtn from 'patchkit-modal/btn'
 
 function peerId (peer) {
   return peer.host+':'+peer.port+':'+peer.key
@@ -21,8 +23,8 @@ function peerId (peer) {
 
 function peerSorter (a, b) {
   // prioritize peers that follow the user
-  const bBoost = (social.follows(b.key, app.user.id)) ? 1000 : 0
-  const aBoost = (social.follows(a.key, app.user.id)) ? 1000 : 0
+  const bBoost = (social.follows(app.users, b.key, app.user.id)) ? 1000 : 0
+  const aBoost = (social.follows(app.users, a.key, app.user.id)) ? 1000 : 0
   // then sort by # of announcers
   try {
     return (bBoost + (b.announcers ? b.announcers.length : 0)) - (aBoost + (a.announcers ? a.announcers.length : 0))
@@ -82,7 +84,7 @@ class PeerGraph extends React.Component {
         const id = ev.target.getAttribute('id')
 
         document.querySelector("svg g text").innerHTML = name
-        document.querySelector("svg g image").setAttribute('xlink:href', u.profilePicUrl(id))
+        document.querySelector("svg g image").setAttribute('xlink:href', pu.getProfilePicUrl(app.users, id))
       }
 
       ev.stopPropagation()
@@ -132,7 +134,7 @@ function createRenderer (graph, el) {
       //theta: 0.8
     }
   }).node( function nodeBuilder(node) {
-    const isFriend = social.follows(app.user.id, node.data.id) && social.follows(node.data.id, app.user.id)
+    const isFriend = social.follows(app.users, app.user.id, node.data.id) && social.follows(app.users, node.data.id, app.user.id)
     const isRelayPeer = node.data.isRelayPeer
     const isConnectedPeer = node.data.isConnectedPeer
 
@@ -270,7 +272,7 @@ function updateGraph (state, peers, contactedPeerIds) {
       const isConnected = (connected.indexOf(peer.id) != -1 && otherPeer.id == app.user.id) || 
                           (connected.indexOf(otherPeer.id) != -1 && peer.id == app.user.id)
 
-      const areFriends = social.follows(otherPeer.id, peer.id) && social.follows(otherPeer.id, peer.id)
+      const areFriends = social.follows(app.users, otherPeer.id, peer.id) && social.follows(app.users, otherPeer.id, peer.id)
 
       const edge = graph.getLink(peer.id, otherPeer.id)
       if (edge) {
@@ -313,7 +315,7 @@ class PeerStatus extends React.Component {
       }
     }
 
-    const isMember = social.follows(peer.key, app.user.id)
+    const isMember = social.follows(app.users, peer.key, app.user.id)
     return <div className={'peer flex'+failureClass}>
       <div className='flex-fill'>
         { isMember ? <i className={'fa fa-star connection-status'+connectionClass} /> :
@@ -362,13 +364,13 @@ export default class Sync extends React.Component {
     pull(
       app.ssb.latest(),
       pull.map((user) => {
-        user.name = u.getName(user.id)
+        user.name = pu.getName(app.users, user.id)
         user.isUser = user.id === app.user.id
         user.isLAN = isLAN(user)
         //TODO get this working somehow...   user.isConnected = user.connected
-        //user.nfollowers = social.followers(user.id).length
-        user.followed = social.follows(app.user.id, user.id)
-        user.follows = social.follows(user.id, app.user.id)
+        //user.nfollowers = social.followers(app.users, user.id).length
+        user.followed = social.follows(app.users, app.user.id, user.id)
+        user.follows = social.follows(app.users, user.id, app.user.id)
         return user
       }),
       pull.collect((err, users) => {
@@ -464,7 +466,7 @@ export default class Sync extends React.Component {
         <div className="header">
           <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
           <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn className="btn" Form={PubInvite} nextLabel="Submit"><i className="fa fa-cloud"/> Join Pub</ModalBtn>
+          <ModalBtn Form={PubInvite} nextLabel="Join"><a className="btn"><i className="fa fa-cloud"/> Join Pub</a></ModalBtn>
         </div>
 
         <div className='peer-status-group'>
