@@ -50,7 +50,7 @@ function getUserResults (query) {
       results.push(id)
   }
   // sort by popularity (isnt that just the way of things?)
-  results.sort(social.sortByPopularity)
+  results.sort(social.sortByPopularity.bind(social, app.users))
   results = results
     .slice(0, MAX_USER_RESULTS)
     .map(id => { return { icon: 'user', label: `Open user "${app.users.names[id]}"`, fn: () => openObject(id) } })
