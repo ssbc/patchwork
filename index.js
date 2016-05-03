@@ -25,7 +25,7 @@ logLicense() // per the GPL's recommendation, let ppl know the license
 console.log('Starting...')
 
 // start sbot
-var sbot = require('scuttlebot')
+var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
   .use(require('scuttlebot/plugins/gossip'))
   .use(require('scuttlebot/plugins/friends'))
@@ -36,8 +36,12 @@ var sbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/logging'))
   .use(require('scuttlebot/plugins/private'))
   .use(require('scuttlebot/plugins/local'))
+  .use(require('scuttlebot/plugins/plugins'))
   .use(require('./api'))
-  (config)
+
+require('scuttlebot/plugins/plugins').loadUserPlugins(createSbot, config)
+
+var sbot = createSbot(config)
 
 // write manifest file
 var fs = require('fs')
