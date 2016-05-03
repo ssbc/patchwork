@@ -36,6 +36,7 @@ var sbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/logging'))
   .use(require('scuttlebot/plugins/private'))
   .use(require('scuttlebot/plugins/local'))
+  .use(require('ssb-notifier'))
   .use(require('./api'))
   (config)
 
