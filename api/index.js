@@ -13,12 +13,7 @@ var mlib        = require('ssb-msgs')
 var threadlib   = require('patchwork-threads')
 var u           = require('./util')
 
-exports.name        = 'patchwork'
-exports.version     = '1.0.0'
-exports.manifest    = require('./manifest')
-exports.permissions = require('./permissions')
-
-exports.init = function (sbot, opts) {
+module.exports = function (sbot, opts) {
 
   var api = {}
   var patchworkdb = sbot.sublevel('patchwork')
