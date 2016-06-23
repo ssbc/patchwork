@@ -29,9 +29,7 @@ function peerSorter (a, b) {
 }
 
 function isLAN (peer) {
-  // TODO this looks like a typo? 
-  //return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
-  return ip.isPrivate(peer.host) || ip.isLoopback(peer.host)
+  return peer.source === 'local'
 }
 
 function isNotLAN (peer) {
