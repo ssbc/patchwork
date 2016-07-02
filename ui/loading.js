@@ -24,6 +24,9 @@ function t(str) {
 window.loadErrorHandler = function (e) {
   console.error(e.error || e)
 
+  // hide spinner
+  document.querySelector('.loading').style.display = 'none'
+
   // render heading
   var h1 = document.createElement('h1')
   h1.innerText = t('LoadingError')
