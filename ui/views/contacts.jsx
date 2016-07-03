@@ -183,7 +183,7 @@ class Follows extends React.Component {
   render() {
     return <div className="user-summaries">
       <h1>{t('Following')}</h1>
-      <h3>(t('FollowingInfo')}</h3>
+      <h3>{t('FollowingInfo')}</h3>
       <UserSummaries ids={this.state.follows} />
     </div>
   }
