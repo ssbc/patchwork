@@ -112,7 +112,7 @@ export default class UserView extends AutoRefreshingComponent {
     const ThisRightNav = props => {
       return <RightNav>
         { isSelf ? '' : <div>
-          <hr className="labeled" data-label={t('this user')} />
+          <hr className="labeled" data-label={t('thisUser')} />
           { (this.state.hasFlagged)
             ? <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> {t('UnflagUser')}</a> :
               <DropdownBtn className="btn hint--top-left" hint={t('FlagUserHint')} items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}>

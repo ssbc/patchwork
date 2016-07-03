@@ -69,7 +69,7 @@ export class Header extends AutoRefreshingComponent {
     const nfollowers = this.state.followers.length
     return <div className="user-info">
       <div className="info">
-        <h1>{this.state.name} { this.state.isPub ? <small><i className="fa fa-laptop"/> {t('pub bot')}</small> : '' }</h1> 
+        <h1>{this.state.name} { this.state.isPub ? <small><i className="fa fa-laptop"/> {t('pubBot')}</small> : '' }</h1>
         { this.state.isSelf
           ? <div>{t('IsYou')}</div>
           : <div>
@@ -265,7 +265,7 @@ export class Names extends AutoRefreshingComponent {
       </div>
     }
     return <div>
-      <hr className="labeled" data-label={t('also known as')}/>
+      <hr className="labeled" data-label={t('alsoKnownAs')}/>
       <div className="user-info-cards">
         { Object.keys(this.state.profile.names).map(renderName) }
         <div className="add-new name">
@@ -279,7 +279,7 @@ export class Names extends AutoRefreshingComponent {
               onSubmit: this.onSubmit.bind(this)
             }}
             nextLabel={t('Publish')}>
-            <a><h2><i className="fa fa-plus"/> {t('new name')}</h2></a>
+            <a><h2><i className="fa fa-plus"/> {t('newName')}</h2></a>
           </ModalBtn>
         </div>
       </div>
@@ -372,7 +372,7 @@ export class Pics extends AutoRefreshingComponent {
       </div>
     }
     return <div>
-      <hr className="labeled" data-label={t('profile pictures')} />
+      <hr className="labeled" data-label={t('profilePictures')} />
       <div className="user-info-cards">
         { Object.keys(this.state.profile.images).map(renderImage) }
         <div className="add-new pic">
@@ -385,7 +385,7 @@ export class Pics extends AutoRefreshingComponent {
               onSubmit: this.onSubmit.bind(this)
             }}
             nextLabel={t('Publish')}>
-            <a><h2><i className="fa fa-plus"/> {t('new pic')}</h2></a>
+            <a><h2><i className="fa fa-plus"/> {t('newPic')}</h2></a>
           </ModalBtn>
         </div>
       </div>
