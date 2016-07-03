@@ -9,20 +9,24 @@ if(config.keys.curve === 'k256')
   throw new Error('k256 curves are no longer supported,'+
                   'please delete' + path.join(config.path, 'secret'))
 
+// load languages
+var t = require('patchwork-translations')
+t.setLocale(require('os-locale').sync())
+
 // validate the config
 var configOracle = require('./config')(config)
 if (configOracle.hasError()) {
   if (configOracle.allowUnsafe())
-    console.log('\nIgnoring unsafe configuration due to --unsafe flag.')
+    console.log('\n' + t('unsafeConfigIgnore'))
   else {
-    console.log('\nAborted due to unsafe config. Run again with --unsafe to override.')
+    console.log('\n' + t('unsafeConfigAbort'))
     return
   }
 }
 
 logLicense() // per the GPL's recommendation, let ppl know the license
 
-console.log('Starting...')
+console.log(t('Starting'))
 
 // start sbot
 var createSbot = require('scuttlebot')
@@ -66,12 +70,12 @@ server.on('error', fatalError)
 server.on('connection', wsServerFn)
 server.on('request', httpServerFn)
 server.listen(configOracle.getPort())
-console.log('Serving at', configOracle.getLocalUrl())
+console.log(t('ServingAt', {url: configOracle.getLocalUrl()}))
 
 // basic error handling
 function fatalError (e) {
   if (e.code === 'EADDRINUSE')
-    console.error('\nError: port '+e.port+' isn\'t available. Is Patchwork already running?\n')
+    console.error('\n' + t('PortInUse', {port}) + '\n')
   else
     console.error(e.stack || e.toString())
   process.exit(1)
@@ -84,8 +88,5 @@ if (process.versions['electron']) {
 }
 
 function logLicense () {
-  console.log('Patchwork - Copyright (C) 2015-2016 Secure Scuttlebutt Consortium')
-  console.log('This program comes with ABSOLUTELY NO WARRANTY.')
-  console.log('This is free software, and you are welcome to redistribute it under certain conditions (GPL-3.0).')
-  console.log('')
+  console.log(t('LicenseConsole', {years: '2015-2016'}) + '\n')
 }

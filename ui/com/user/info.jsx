@@ -15,6 +15,7 @@ import { UserSummaries } from './summary'
 import app from '../../lib/app'
 import u from 'patchkit-util'
 import social from 'patchkit-util/social'
+import t from 'patchwork-translations'
 
 export class Header extends AutoRefreshingComponent {
   constructor(props) {
@@ -28,15 +29,12 @@ export class Header extends AutoRefreshingComponent {
         const willBeFollowing = !this.state.isFollowing
         const msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
         app.ssb.publish(msg, (err) => {
-          if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
+          if (err) return app.issue(t('error.publishContact'), err, 'Profile view onToggleFollow')
           app.fetchLatestState()
-          if (willBeFollowing)
-            app.notice('You are now following '+this.state.name)
-          else
-            app.notice('You are no longer following '+this.state.name)
+          app.notice(t(willBeFollowing ? 'NowFollowing' : 'NoLongerFollowing', this.state))
         })
       }
-    }
+     }
   }
 
   computeState(props) {
@@ -71,36 +69,36 @@ export class Header extends AutoRefreshingComponent {
     const nfollowers = this.state.followers.length
     return <div className="user-info">
       <div className="info">
-        <h1>{this.state.name} { this.state.isPub ? <small><i className="fa fa-laptop"/> pub bot</small> : '' }</h1> 
+        <h1>{this.state.name} { this.state.isPub ? <small><i className="fa fa-laptop"/> {t('pub bot')}</small> : '' }</h1> 
         { this.state.isSelf
-          ? <div>This is you!</div>
+          ? <div>{t('IsYou')}</div>
           : <div>
               <a href="javascript:" onClick={this.on.toggleFollow} className="btn">
                 { this.state.isFollowing && this.state.followsYou
                   ? <HoverShifter>
-                      <span><i className="fa fa-check" /> Friend</span>
-                      <span><i className="fa fa-times" /> Stop following</span>
+                      <span><i className="fa fa-check" /> {t('Friend')}</span>
+                      <span><i className="fa fa-times" /> {t('StopFollowing')}</span>
                     </HoverShifter>
                   : '' }
                 { this.state.isFollowing && !this.state.followsYou
                   ? <HoverShifter>
-                      <span><i className="fa fa-check" /> Following</span>
-                      <span><i className="fa fa-times" /> Stop following</span>
+                      <span><i className="fa fa-check" /> {t('Following')}</span>
+                      <span><i className="fa fa-times" /> {t('StopFollowing')}</span>
                     </HoverShifter>
                   : '' }
                 { !this.state.isFollowing && this.state.followsYou
                   ? <HoverShifter>
-                      <span><i className="fa fa-user-plus" /> Follows you</span>
-                      <span><i className="fa fa-plus" /> Add to friends</span>
+                      <span><i className="fa fa-user-plus" /> {t('FollowsYou')}</span>
+                      <span><i className="fa fa-plus" /> {t('AddFriend')}</span>
                     </HoverShifter>
                   : '' }
                 { !this.state.isFollowing && !this.state.followsYou
-                  ? <span><i className="fa fa-plus" /> Start following</span>
+                  ? <span><i className="fa fa-plus" /> {t('StartFollowing')}</span>
                   : '' }
               </a>
-              <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> Send Message</a>
+              <a href="javascript:" className="btn compose-btn" onClick={this.props.onClickCompose}><i className="fa fa-pencil" /> {t('SendMessage')}</a>
             </div> }
-        <div>{nfollowers} follower{nfollowers===1?'':'s'}</div>
+        <div>{t('NumFollowers', nfollowers)}</div>
       </div>
       <div className="bar">
         <div className="avatar">
@@ -130,11 +128,11 @@ export class Contacts extends AutoRefreshingComponent {
   }
   render() {
     return <div>
-      <hr className="labeled" data-label="Friends" />
+      <hr className="labeled" data-label={t('Friends')} />
       <UserSummaries ids={this.state.friends} />
-      <hr className="labeled" data-label="Followers" />
+      <hr className="labeled" data-label={t('Followers')} />
       <UserSummaries ids={this.state.followers} />
-      <hr className="labeled" data-label="Following" />
+      <hr className="labeled" data-label={t('Following')} />
       <UserSummaries ids={this.state.followeds} />
     </div>
   }
@@ -155,16 +153,13 @@ export class Flags extends AutoRefreshingComponent {
     if (flaggers.length === 0)
       return <span />
     return <div>
-      <hr className="labeled" data-label="warnings" />
+      <hr className="labeled" data-label={t('warnings')} />
       { flaggers.map(flagger => {
         const flag = this.state.profile.flaggers[flagger]
 
-        let reasonLabel
-        if      (flag.reason === 'spam')  reasonLabel = 'Warning! This account is a spammer.'
-        else if (flag.reason === 'abuse') reasonLabel = 'Warning! This account is abusive.'
-        else if (flag.reason === 'dead')  reasonLabel = 'Warning! This account has been discontinued.'
-        else if (flag.reason)             reasonLabel = flag.reason
-        else                              reasonLabel = 'Flagged for personal reasons.'
+        const reasonLabel = flag.reason
+          ? t('warning.' + flag.reason, {_: flag.reason})
+          : t('warning.personal')
 
         const onClick = () => app.history.pushState(null, '/msg/'+encodeURIComponent(flag.msgKey))   
         return <div className="msg-view oneline" onClick={onClick}>
@@ -189,7 +184,7 @@ export class Type extends React.Component {
   render() {
     if (this.state.isPub) {
       return <div>
-        <h2>This user is a public bot. It shares user data with peers across the globe.</h2>
+        <h2>{t('PubInfo')}</h2>
       </div>
     }
     return <span/>
@@ -208,9 +203,9 @@ export class Names extends AutoRefreshingComponent {
   onSelectName(name) {
     app.ssb.publish(schemas.name(this.props.pid, name), err => {
       if (err)
-        return app.issue('Failed to Update Name', err, 'This error occurred while using a name chosen by someone else')
+        return app.issue(t('error.updateName'), err, 'This error occurred while using a name chosen by someone else')
       app.fetchLatestState()
-      app.notice('Name updated')
+      app.notice(t('NameUpdated'))
     })    
   }
   static ExpandedInfo(props) {
@@ -234,17 +229,17 @@ export class Names extends AutoRefreshingComponent {
 
     return <div className="expanded-card-info">
       <h1>{props.expandedName}</h1>
-      { isSelfAssigned ? <div><strong>Default name (self-assigned)</strong></div> : '' }
+      { isSelfAssigned ? <div><strong>{t('DefaultName')}</strong></div> : '' }
       { (isMyChosenName || followedUsers.length || unfollowedUsers.length)
-        ? <div>Chosen by:
+        ? <div>{t('ChosenBy')}
             <ul>
-              { followedUsers.length ? <li><span className="hint--bottom" data-hint={followedUsersNames}>{followedUsers.length} users you follow</span></li> : '' }
-              { unfollowedUsers.length ? <li><span className="hint--bottom" data-hint={unfollowedUsersNames}>{unfollowedUsers.length} users you {"don't"} follow</span></li> : '' }
-              { isMyChosenName ? <li><strong>You</strong></li> : '' }
+              { followedUsers.length ? <li><span className="hint--bottom" data-hint={followedUsersNames}>{t('usersYouFollow', followedUsers.length)}</span></li> : '' }
+              { unfollowedUsers.length ? <li><span className="hint--bottom" data-hint={unfollowedUsersNames}>{t('usersYouFollow', unfollowedUsers.length)}</span></li> : '' }
+              { isMyChosenName ? <li><strong>{t('You')}</strong></li> : '' }
             </ul>
           </div>
         : '' }
-      { !isCurrentName ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectName(props.expandedName)}>Use This Name</a></div> : '' }
+      { !isCurrentName ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectName(props.expandedName)}>{t('UseThisName')}</a></div> : '' }
     </div>
   }
   onSubmit(name, cb) {
@@ -270,7 +265,7 @@ export class Names extends AutoRefreshingComponent {
       </div>
     }
     return <div>
-      <hr className="labeled" data-label="also known as" />
+      <hr className="labeled" data-label={t('also known as')}/>
       <div className="user-info-cards">
         { Object.keys(this.state.profile.names).map(renderName) }
         <div className="add-new name">
@@ -283,8 +278,8 @@ export class Names extends AutoRefreshingComponent {
               currentValue: current,
               onSubmit: this.onSubmit.bind(this)
             }}
-            nextLabel="Publish">
-            <a><h2><i className="fa fa-plus"/> new name</h2></a>
+            nextLabel={t('Publish')}>
+            <a><h2><i className="fa fa-plus"/> {t('new name')}</h2></a>
           </ModalBtn>
         </div>
       </div>
@@ -304,9 +299,9 @@ export class Pics extends AutoRefreshingComponent {
   onSelectImage(image) {
     app.ssb.publish(schemas.image(this.props.pid, image), err => {
       if (err)
-        return app.issue('Failed to Update Image', err, 'This error occurred while using an image chosen by someone else')
+        return app.issue(t('error.updateImage'), err, 'This error occurred while using an image chosen by someone else')
       app.fetchLatestState()
-      app.notice('Profile picture updated')
+      app.notice(t('ProfilePictureUpdated'))
     })    
   }
   static ExpandedInfo(props) {
@@ -329,17 +324,17 @@ export class Pics extends AutoRefreshingComponent {
     const unfollowedUsersNames = unfollowedUsers.map(id => u.getName(app.users, id)).join(', ')
 
     return <div className="expanded-card-info">
-      { isSelfAssigned ? <div><strong>Default image (self-assigned)</strong></div> : '' }
+      { isSelfAssigned ? <div><strong>{t('DefaultImage')}</strong></div> : '' }
       { (isMyChosenImage || followedUsers.length || unfollowedUsers.length)
-        ? <div>Chosen by:
+        ? <div>{t('ChosenBy')}
             <ul>
-              { followedUsers.length ? <li><span className="hint--bottom" data-hint={followedUsersNames}>{followedUsers.length} users you follow</span></li> : '' }
-              { unfollowedUsers.length ? <li><span className="hint--bottom" data-hint={unfollowedUsersNames}>{unfollowedUsers.length} users you {"don't"} follow</span></li> : '' }
-              { isMyChosenImage ? <li><strong>You</strong></li> : '' }
+              { followedUsers.length ? <li><span className="hint--bottom" data-hint={followedUsersNames}>{t('usersYouFollow', followedUsers.length)}</span></li> : '' }
+              { unfollowedUsers.length ? <li><span className="hint--bottom" data-hint={unfollowedUsersNames}>{t('usersYouFollow', unfollowedUsers.length)}</span></li> : '' }
+              { isMyChosenImage ? <li><strong>{t('You')}</strong></li> : '' }
             </ul>
           </div>
         : '' }
-      { !isCurrentImage ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectImage(props.expandedImageRef)}>Use This Image</a></div> : '' }
+      { !isCurrentImage ? <div><a href="javascript:" className="btn" onClick={()=>props.onSelectImage(props.expandedImageRef)}>{t('UseThisImage')}</a></div> : '' }
     </div>
   }
   onSubmit(buffer, cb) {
@@ -377,7 +372,7 @@ export class Pics extends AutoRefreshingComponent {
       </div>
     }
     return <div>
-      <hr className="labeled" data-label="profile pictures" />
+      <hr className="labeled" data-label={t('profile pictures')} />
       <div className="user-info-cards">
         { Object.keys(this.state.profile.images).map(renderImage) }
         <div className="add-new pic">
@@ -389,8 +384,8 @@ export class Pics extends AutoRefreshingComponent {
               currentValue: current ? ('/'+current) : undefined,
               onSubmit: this.onSubmit.bind(this)
             }}
-            nextLabel="Publish">
-            <a><h2><i className="fa fa-plus"/> new pic</h2></a>
+            nextLabel={t('Publish')}>
+            <a><h2><i className="fa fa-plus"/> {t('new pic')}</h2></a>
           </ModalBtn>
         </div>
       </div>
@@ -410,9 +405,9 @@ export class Data extends AutoRefreshingComponent {
   }
   render() {
     return <div>
-      <hr className="labeled" data-label="data" />
+      <hr className="labeled" data-label={t('data')} />
       <div className="user-info-cards">
-        <div className="card data"><span>Public Key</span> <code>{this.props.pid}</code></div>
+        <div className="card data"><span>{t('PublicKey')}</span> <code>{this.props.pid}</code></div>
       </div>
     </div>
   }

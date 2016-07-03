@@ -12,6 +12,7 @@ import ModalSingle from 'patchkit-modal/single'
 import u from 'patchkit-util'
 import social from 'patchkit-util/social'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 export default class Contacts extends React.Component {
   constructor(props) {
@@ -51,7 +52,7 @@ class Pubs extends React.Component {
       }),
       pull.collect((err, ids) => {
         if (err)
-          return app.minorIssue('An error occurred while fetching users', err)
+          return app.minorIssue(t("error.fetchUsers"), err)
 
         // add join pub btn
         ids.unshift({ joinPubBtn: true })
@@ -73,14 +74,14 @@ class Pubs extends React.Component {
   render() {
     const npubs = this.state.pubs.length
     return <div className="user-summaries">
-      <h1>Your Pubs</h1>
+      <h1>{t('YourPubs')}</h1>
       <h3 style={{marginTop: 5}}>
-        Pubs connect you with global peers.
+      {t('pubs.connect')}
         { npubs === 0
-          ? " You should join one! (Until you do, you can only talk to people over WiFi.)"
-          : " Joining more will increase your reach." }
+          ? t('pubs.joinOne')
+          : t('pubs.joinMore') }
       </h3>
-      <ModalSingle className="fullheight" Form={PubInvite} nextLabel="Join" isOpen={this.state.isModalOpen} onClose={this.onCloseModal.bind(this)} />
+      <ModalSingle className="fullheight" Form={PubInvite} nextLabel={t('Join')} isOpen={this.state.isModalOpen} onClose={this.onCloseModal.bind(this)} />
       <UserSummaries ids={this.state.pubs} onClickJoinPub={this.onOpenModal.bind(this)} />
     </div>
   }
@@ -126,8 +127,8 @@ class FollowNearby extends React.Component {
     const peers = this.state.foundNearbyPeers
     const hasPeers = (peers.length > 0)
     return <div>
-      <h1>Nearby</h1>
-      <h3 style={{marginTop: 5}}>{ hasPeers ? 'Potential contacts on your WiFi.' : 'Nobody found on your WiFi.' }</h3>
+      <h1>{t('Nearby')}</h1>
+      <h3 style={{marginTop: 5}}>{ hasPeers ? t('peers.found'): t('peers.none') }</h3>
       <UserSummaries ids={peers} />
     </div>
   }
@@ -152,8 +153,8 @@ class Friends extends React.Component {
 
   render() {
     return <div className="user-summaries">
-      <h1>Friends</h1>
-      <h3>Users you follow, and who follow you back.</h3>
+      <h1>{t('Friends')}</h1>
+      <h3>{t('FriendsInfo')}</h3>
       <UserSummaries ids={this.state.friends} />
     </div>
   }
@@ -181,8 +182,8 @@ class Follows extends React.Component {
 
   render() {
     return <div className="user-summaries">
-      <h1>Following</h1>
-      <h3>Users you follow, but who {"don't"} follow you back. They may not see messages from you.</h3>
+      <h1>{t('Following')}</h1>
+      <h3>(t('FollowingInfo')}</h3>
       <UserSummaries ids={this.state.follows} />
     </div>
   }
@@ -212,7 +213,7 @@ class FollowFoafs extends React.Component {
       }),
       pull.collect((err, ids) => {
         if (err)
-          return app.minorIssue('An error occurred while fetching users', err)
+          return app.minorIssue(t('error.fetchUsers'), err)
         ids.sort((a, b) => social.followers(app.users, b).length - social.followers(app.users, a).length)
         this.setState({ foafs: ids })
       })
@@ -224,8 +225,8 @@ class FollowFoafs extends React.Component {
     if (foafs.length === 0)
       return <div/>
     return <div>
-      <h1>Friends of Friends</h1>
-      <h3 style={{marginTop: 5}}>Potential contacts from your social network.</h3>
+      <h1>{t('FriendsOfFriends')}</h1>
+      <h3 style={{marginTop: 5}}>{t('FriendsOfFriendsInfo')}</h3>
       <UserSummaries ids={foafs} />
     </div>
   }

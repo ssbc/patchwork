@@ -15,16 +15,17 @@ import RightNav from '../rightnav'
 import u from 'patchkit-util'
 import social from 'patchkit-util/social'
 import app from '../../lib/app'
+import t from 'patchwork-translations'
 
-const VIEW_ACTIVITY = { label: <h2>Activity</h2> }
-const VIEW_ABOUT = { label: <h2>About</h2> }
-const VIEW_CONTACTS = { label: <h2>Contacts</h2> }
+const VIEW_ACTIVITY = { label: <h2>{t('Activity')}</h2> }
+const VIEW_ABOUT = { label: <h2>{t('About')}</h2> }
+const VIEW_CONTACTS = { label: <h2>{t('Contacts')}</h2> }
 const TABS = [VIEW_ACTIVITY, VIEW_ABOUT, VIEW_CONTACTS]
 
 const FLAG_DROPDOWN = [
-  { value: 'dead',  label: "Dead Account / Lost Keys" },
-  { value: 'spam',  label: "Spammer" },
-  { value: 'abuse', label: "Abusive Behavior" }
+  { value: 'dead',  label: t('flagLabel.dead') },
+  { value: 'spam',  label: t('flagLabel.spam') },
+  { value: 'abuse', label: t('flagLabel.abuse')}
 ]
 
 export default class UserView extends AutoRefreshingComponent {
@@ -67,8 +68,8 @@ export default class UserView extends AutoRefreshingComponent {
     const voteMsg = schemas.vote(this.props.pid, -1, reason)
     app.ssb.publish(voteMsg, err => {
       if (err)
-        return app.issue('Failed to publish flag', err, 'Happened when the user used the flag modal in the profile')
-      app.notice('Your flag has been published')
+        return app.issue(t('error.publishFlag'), err, 'Happened when the user used the flag modal in the profile')
+      app.notice(t('flagPublished'))
       app.fetchLatestState()
     })
   }
@@ -78,8 +79,8 @@ export default class UserView extends AutoRefreshingComponent {
     const voteMsg = schemas.vote(this.props.pid, 0)
     app.ssb.publish(voteMsg, err => {
       if (err)
-        return app.issue('Failed to publish update', err, 'Happened when the user used the unflag button in the profile')
-      app.notice('Your flag has been removed')
+        return app.issue(t('error.publishUpdate'), err, 'Happened when the user used the unflag button in the profile')
+      app.notice(t('flagRemoved'))
       app.fetchLatestState()
     })
   }
@@ -100,7 +101,7 @@ export default class UserView extends AutoRefreshingComponent {
                 recps={[this.props.pid]}
                 suggestOptions={app.suggestOptions}
                 channels={app.channels} 
-                placeholder={'Write a private message to '+name}
+                placeholder={t('WritePrivateMsgTo', {name: name})}
                 cancelBtn onCancel={this.onCancelCompose.bind(this)}
                 onSend={this.onSend.bind(this)} />
             </div>
@@ -111,11 +112,11 @@ export default class UserView extends AutoRefreshingComponent {
     const ThisRightNav = props => {
       return <RightNav>
         { isSelf ? '' : <div>
-          <hr className="labeled" data-label="this user" />
+          <hr className="labeled" data-label={t('this user')} />
           { (this.state.hasFlagged)
-            ? <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> Unflag this user</a> :
-              <DropdownBtn className="btn hint--top-left" hint="Warn your followers about this user." items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}>
-                <i className="fa fa-flag" /> Flag this user
+            ? <a className="btn" onClick={this.onUnflag.bind(this)}><i className="fa fa-flag" /> {t('UnflagUser')}</a> :
+              <DropdownBtn className="btn hint--top-left" hint={t('FlagUserHint')} items={FLAG_DROPDOWN} right onSelect={this.onFlag.bind(this)}>
+                <i className="fa fa-flag" /> {t('FlagUser')}
               </DropdownBtn>  }
         </div> }
       </RightNav>
