@@ -49,19 +49,19 @@ module.exports = function (configOracle) {
           type: 'separator'
         },
         {
-          label: t('HidePatchwork'),
+          label: t('macApp.HidePatchwork'),
           accelerator: 'Command+H',
           selector: 'hide:',
           role: 'hide'
         },
         {
-          label: t('HideOthers'),
+          label: t('macApp.HideOthers'),
           accelerator: 'Option+Command+H',
           selector: 'hideOtherApplications:',
         role: 'hideothers'
         },
         {
-          label: t('ShowAll'),
+          label: t('macApp.ShowAll'),
           selector: 'unhideAllApplications:',
           role: 'unhide'
         },
@@ -300,7 +300,7 @@ module.exports = function (configOracle) {
           type: 'separator'
         },
         {
-          label: t('BringAllToFront'),
+          label: t('macApp.BringAllToFront'),
           selector: 'arrangeInFront:',
           role: 'front'
         }
