@@ -75,7 +75,7 @@ console.log(t('ServingAt', {url: configOracle.getLocalUrl()}))
 // basic error handling
 function fatalError (e) {
   if (e.code === 'EADDRINUSE')
-    console.error('\n' + t('PortInUse', {port}) + '\n')
+    console.error('\n' + t('PortInUse', {port: e.port}) + '\n')
   else
     console.error(e.stack || e.toString())
   process.exit(1)
