@@ -4,7 +4,13 @@
 
 var locales = {
   en: {
-    "LoadingError": "We're sorry! Patchwork experienced an error while loading."
+    LoadingError: "We're sorry! Patchwork experienced an error while loading."
+  },
+  "pt-BR": {
+    LoadingError: "Lamentamos! Ocorreu um erro ao carregar o Patchwork.",
+  },
+  "pt-PT": {
+    LoadingError: "Pedimos desculpa! Ocorreu um erro ao carregar o Patchwork.",
   }
 }
 
