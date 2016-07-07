@@ -9,6 +9,7 @@ import HoverShifter from 'patchkit-hover-shifter'
 import u from 'patchkit-util'
 import social from 'patchkit-util/social'
 import app from '../../lib/app'
+import t from 'patchwork-translations'
 
 export default class UserSummary extends AutoRefreshingComponent {
   computeState(props) {
@@ -32,12 +33,9 @@ export default class UserSummary extends AutoRefreshingComponent {
     const willBeFollowing = !this.state.following
     const msg = willBeFollowing ? schemas.follow(this.props.pid) : schemas.unfollow(this.props.pid)
     app.ssb.publish(msg, (err) => {
-      if (err) return app.issue('Failed to publish contact msg', err, 'Profile view onToggleFollow')
+      if (err) return app.issue(t('error.publishContact'), err, 'Profile view onToggleFollow')
       app.fetchLatestState()
-      if (willBeFollowing)
-        app.notice('You are now following '+this.state.name)
-      else
-        app.notice('You are no longer following '+this.state.name)
+      app.notice(t(willBeFollowing ? 'NowFollowing' : 'NoLongerFollowing', this.state))
     })
   }
 
@@ -45,19 +43,19 @@ export default class UserSummary extends AutoRefreshingComponent {
     return <div className="user-summary" onClick={this.onClick.bind(this)}>
       <UserPic id={this.props.pid} />
       <div className="user-name">
-        <div>{ this.state.name }{ this.state.isPub ? <small> pub</small> : '' }</div>
+        <div>{ this.state.name }{ this.state.isPub ? <small> {t('pub')}</small> : '' }</div>
         { this.props['follow-btn'] && this.props.pid !== app.user.id
           ? (this.state.following
             ? <a className="btn follow-btn unfollow" onClick={this.onToggleFollow.bind(this)}>
                 <HoverShifter>
-                  <span><i className="fa fa-check" /> { this.state.follower ? 'Friend' : 'Following' }</span>
-                  <span><i className="fa fa-times" /> Unfollow</span>
+                  <span><i className="fa fa-check" /> { t(this.state.follower ? 'Friend' : 'Following') }</span>
+                  <span><i className="fa fa-times" /> {t('Unfollow')}</span>
                 </HoverShifter>
               </a>
             : <a className="btn follow-btn" onClick={this.onToggleFollow.bind(this)}>
                 <HoverShifter>
-                  <span><i className="fa fa-plus" /> Follow</span>
-                  <span><i className="fa fa-plus" /> Follow</span>
+                  <span><i className="fa fa-plus" /> {t('Follow')}</span>
+                  <span><i className="fa fa-plus" /> {t('Follow')}</span>
                 </HoverShifter>
               </a>)
           : ''
@@ -80,9 +78,9 @@ export class UserSummaries extends React.Component {
       { groups.map(ids => {
         return <div className="user-summaries-row">{ ids.map(id => {
           if (id.addContactBtn)
-            return <a className="user-add hint--bottom" data-hint="Add Friends" href='#/add-contact'><i className="fa fa-user-plus" /></a>
+            return <a className="user-add hint--bottom" data-hint={t('AddFriends')} href='#/add-contact'><i className="fa fa-user-plus" /></a>
           if (id.joinPubBtn)
-            return <a className="user-add hint--bottom" data-hint="Join a Pub" onClick={this.props.onClickJoinPub}><i className="fa fa-laptop" /></a>
+            return <a className="user-add hint--bottom" data-hint={t('JoinAPub')} onClick={this.props.onClickJoinPub}><i className="fa fa-laptop" /></a>
           if (id.placeholder)
             return <div className="user-summary placeholder" />
           return <UserSummary key={id} pid={id} follow-btn />

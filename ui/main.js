@@ -13,6 +13,10 @@ window.pull = pull // pull is useful for debugging
 // toplevel events
 window.addEventListener('error', onError)
 
+// init language
+var t = require('patchwork-translations')
+t.setLocale(localStorage.locale || navigator.language)
+
 // render
 app.fetchLatestState(function () {
   // redirect to contacts page if new-user setup is occurring

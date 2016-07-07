@@ -7,6 +7,8 @@ import ChannelList from 'patchkit-channel-list'
 import Issues from './issues'
 import app from '../lib/app'
 import u from 'patchkit-util'
+import LanguageMenu from './langmenu'
+import t from 'patchwork-translations'
 
 class LinkGroup extends LocalStoragePersistedComponent {
   constructor(props) {
@@ -96,18 +98,18 @@ export default class LeftNav extends React.Component {
     const renderChannel = c => <LeftNav.Link pathname={pathname} key={c.name} to={'/channel/'+c.name}># {c.name}</LeftNav.Link>
     const renderContact = c => <LeftNav.Link pathname={pathname} key={c.id} to={'/profile/'+encodeURIComponent(c.id)}>{c.name}</LeftNav.Link>
     return <div className="leftnav">
-      <div className="logo"><Link to="/">{rainbowSplitter('Patchwork')}</Link></div>
+      <div className="logo"><Link to="/">{rainbowSplitter(t('Patchwork'))}</Link></div>
 
       <Issues/>
       { this.state.isChannelListOpen ? <ChannelList channels={this.state.channels} onSelect={this.onSelectChannel.bind(this)} /> : '' }
       
-      <LinkGroup pathname={pathname} to="/inbox" label={<strong>Inbox ({app.indexCounts.inboxUnread})</strong>} icon="inbox" group="inbox">
-        <LeftNav.Link pathname={pathname} to="/inbox/private">Private ({app.indexCounts.privateUnread})</LeftNav.Link>
-        <LeftNav.Link pathname={pathname} to="/inbox/watching">Watching ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
-        <LeftNav.Link pathname={pathname} to="/inbox/mentions">Mentioned ({app.indexCounts.mentionUnread})</LeftNav.Link>
+      <LinkGroup pathname={pathname} to="/inbox" label={<strong>{t('Inbox')} ({app.indexCounts.inboxUnread})</strong>} icon="inbox" group="inbox">
+        <LeftNav.Link pathname={pathname} to="/inbox/private">{t('Private')} ({app.indexCounts.privateUnread})</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/inbox/watching">{t('Watching')} ({app.indexCounts.bookmarkUnread})</LeftNav.Link>
+        <LeftNav.Link pathname={pathname} to="/inbox/mentions">{t('Mentioned')} ({app.indexCounts.mentionUnread})</LeftNav.Link>
       </LinkGroup>
 
-      <LinkGroup pathname={pathname} to="/" label="Activity Feed" icon="newspaper-o" group="activity">
+      <LinkGroup pathname={pathname} to="/" label={t('ActivityFeed')} icon="newspaper-o" group="activity">
         { pinnedChannels.map(renderChannel) }
         <div className="link">
           <a onClick={this.onOpenChannelList.bind(this)}><i className="fa fa-folder-open-o"/></a>
@@ -115,15 +117,16 @@ export default class LeftNav extends React.Component {
         </div>
       </LinkGroup>
 
-      <LinkGroup pathname={pathname} to="/contacts" label="Contacts" group="contacts">
+      <LinkGroup pathname={pathname} to="/contacts" label={t('Contacts')} group="contacts">
         { contacts.map(renderContact) }
       </LinkGroup>
 
       <hr/>
-      <LeftNav.Link className="thin" pathname={pathname} to={`/profile/${encodeURIComponent(app.user.id)}`}>Your Profile</LeftNav.Link>
-      <LeftNav.Link className="thin" pathname={pathname} to="/sync">Network Sync</LeftNav.Link>
-      <LeftNav.Link className="thin" pathname={pathname} to="/data">Data Feed</LeftNav.Link>
+      <LeftNav.Link className="thin" pathname={pathname} to={`/profile/${encodeURIComponent(app.user.id)}`}>{t('YourProfile')}</LeftNav.Link>
+      <LeftNav.Link className="thin" pathname={pathname} to="/sync">{t('NetworkSync')}</LeftNav.Link>
+      <LeftNav.Link className="thin" pathname={pathname} to="/data">{t('DataFeed')}</LeftNav.Link>
       
+      <LanguageMenu/>
     </div>
   }
 }

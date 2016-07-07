@@ -5,6 +5,7 @@ import app from '../lib/app'
 import SearchPalette from 'patchkit-search-palette'
 import Composer from 'patchkit-post-composer'
 import { getResults } from '../lib/search'
+import t from 'patchwork-translations'
 
 export default class TopNav extends React.Component {
   constructor(props) {
@@ -56,8 +57,8 @@ export default class TopNav extends React.Component {
         <div className="flex-fill"><SearchPalette ref="search" query={this.props.searchQuery} placeholder={this.props.placeholder} getResults={getResults} /></div>
         { this.props.composer
           ? ( this.state.isComposerOpen
-            ? <a className="btn" onClick={onClickCompose}><i className="fa fa-times" /> Cancel</a>
-            : <a className="btn highlighted" onClick={onClickCompose}><i className="fa fa-plus" /> Compose</a> )
+            ? <a className="btn" onClick={onClickCompose}><i className="fa fa-times" /> {t('Cancel')}</a>
+            : <a className="btn highlighted" onClick={onClickCompose}><i className="fa fa-plus" /> {t('Compose')}</a> )
           : '' }
       </div>
       { this.state.isComposerOpen && this.props.composer
