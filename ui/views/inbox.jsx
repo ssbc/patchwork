@@ -9,6 +9,7 @@ import Thread from 'patchkit-flat-msg-thread'
 import Oneline from 'patchkit-msg-view/oneline'
 import DropdownBtn from 'patchkit-dropdown'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 export default class InboxPosts extends React.Component {
   getIndexName() {
@@ -46,7 +47,7 @@ export default class InboxPosts extends React.Component {
   onMarkAllRead() {
     app.ssb.patchwork.markAllRead(this.getIndexName(), err => {
       if (err)
-        app.issue('Failed to mark all read', err)
+        app.issue(t('MarkAllReadFail'), err)
     })
   }
 
@@ -54,7 +55,7 @@ export default class InboxPosts extends React.Component {
     // setup params based on view, and whether we're looking at archived items
     const showArchived = this.props.location.query.archived || !!this.props.params.view
     const hasUnread = this.getUnreadCount() > 0
-    const view = this.props.params.view || 'inbox'
+    const view = t(this.props.params.view || 'inbox')
     const viewLabel = view
     const archivedUrl = this.props.location.pathname + '?archived=1'
     const source = opts => {
@@ -64,20 +65,20 @@ export default class InboxPosts extends React.Component {
 
     // components for rightnav and the end of the list
     const Append = (hasUnread && !showArchived)
-      ? (props => <div className="empty-msg"><Link to={archivedUrl}>View Archived</Link></div>)
+      ? (props => <div className="empty-msg"><Link to={archivedUrl}>{t('View Archived')}</Link></div>)
       : undefined
     const ThisRightNav = props => {
-      const markAllReadItems = [{ label: 'Are you sure? Click here to confirm.', onSelect: this.onMarkAllRead.bind(this) }]
+      const markAllReadItems = [{ label: t('MarkAllReadConfirm'), onSelect: this.onMarkAllRead.bind(this) }]
       return <RightNav>
         <hr className="labeled" data-label={viewLabel} />
-        <DropdownBtn className="btn hint--top-left" hint="Mark all messages on this page as 'read'." items={markAllReadItems} right>
-          <i className="fa fa-envelope" /> Mark all read
+        <DropdownBtn className="btn hint--top-left" hint={t('MarkAllReadHint')} items={markAllReadItems} right>
+          <i className="fa fa-envelope" /> {t('MarkAllRead')}
         </DropdownBtn>
       </RightNav>
     }
     const emptyMsg = showArchived
-      ? <div>Your inbox is empty.</div>
-      : <div> You have no unread messages. <Link to={archivedUrl}>View Archived</Link></div>
+      ? <div>{t('InboxEmpty')}</div>
+      : <div> {t('NoUnread')} <Link to={archivedUrl}>{t('ViewArchived')}</Link></div>
 
     // render
     return <div id="inbox" key={view+(showArchived?'-all':'-unread')}>

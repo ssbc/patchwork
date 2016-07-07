@@ -2,20 +2,21 @@
 import React from 'react'
 import Modal from 'react-modal'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 class Issue extends React.Component {
   render() {
     const issue = this.props.issue
     return <div className={'issue'+(issue.isRead ? ' dismissed' : '')}>
-      <h1>{issue.title} <small>{issue.isRead ? 'dismissed' : ''}</small></h1>
+      <h1>{issue.title} <small>{issue.isRead ? t('issue.dismissed') : ''}</small></h1>
       <div>{issue.message}</div>
       {issue.stack ? <pre><code>{issue.stack}</code></pre> : ''}
       <div className="toolbar flex">
         { issue.isRead ?
           '' :
-          <a className="btn" onClick={() => this.props.onDismiss(issue)}><i className="fa fa-times" /> Dismiss</a> }
+          <a className="btn" onClick={() => this.props.onDismiss(issue)}><i className="fa fa-times" /> {t('Dismiss')}</a> }
         <div className="flex-fill" />
-        <a className="btn" href={issue.issueUrl} target="_blank"><i className="fa fa-exclamation-circle" /> File an Issue</a>
+        <a className="btn" href={issue.issueUrl} target="_blank"><i className="fa fa-exclamation-circle" /> {t('issue.File')}</a>
       </div>
     </div>
   }
@@ -90,7 +91,7 @@ export default class Issues extends React.Component {
       return <span/>
     return <div className="link">
       <a className="ctrl" onClick={open}>
-        <i className="fa fa-exclamation-triangle" /> Issues ({this.state.numUnread})
+        <i className="fa fa-exclamation-triangle" /> {t('Issues')} ({this.state.numUnread})
       </a>
       <Modal isOpen={this.state.isOpen} onRequestClose={close} style={modalStyle}>
         {this.state.issues.map((issue, i) => <Issue key={'issue'+i} issue={issue} onDismiss={this.onDismiss.bind(this)} />)}

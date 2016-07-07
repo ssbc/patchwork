@@ -20,6 +20,7 @@ var extend    = require('xtend/mutable')
 var pu        = require('patchkit-util')
 var favicon   = require('./favicon')
 var createHashHistory = require('history').createHashHistory
+var t         = require('patchwork-translations')
 
 // event streams and listeners
 var patchworkEventStream = null
@@ -165,7 +166,7 @@ function pollPeers () {
 }
 
 function updateTitle () {
-  // document.title = '('+app.indexCounts.inboxUnread+') Patchwork'
+  document.title = t('Patchwork')
   favicon.update({ label: app.indexCounts.inboxUnread })
 }
 window.favicon = favicon

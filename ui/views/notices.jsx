@@ -8,6 +8,7 @@ import MsgList from 'patchkit-msg-list'
 import Thread from 'patchkit-flat-msg-thread'
 import Notification from 'patchkit-msg-view/notification'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 export default class Notices extends React.Component {
   cursor (msg) {
@@ -26,7 +27,7 @@ export default class Notices extends React.Component {
         LeftNav={LeftNav} leftNavProps={{ location: this.props.location }}
         RightNav={RightNav}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg="Nobody has dug any of your posts yet. They will, though!"
+        emptyMsg={t('NoDigs')}
         source={app.ssb.patchwork.createNoticeStream}
         cursor={this.cursor} />
     </div>

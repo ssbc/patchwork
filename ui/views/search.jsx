@@ -7,6 +7,7 @@ import MsgList from 'patchkit-msg-list'
 import Card from 'patchkit-msg-view/card'
 import Thread from 'patchkit-flat-msg-thread'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 export default class Search extends React.Component {
 
@@ -30,7 +31,7 @@ export default class Search extends React.Component {
         RightNav={RightNav}
         ListItem={Card} listItemProps={{ listView: true }}
         Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
-        emptyMsg="No results found."
+        emptyMsg={t('NoResults')}
         source={source}
         cursor={cursor} />
     </div>
