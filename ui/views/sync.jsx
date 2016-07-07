@@ -14,6 +14,7 @@ import LeftNav from '../com/leftnav'
 import RightNav from '../com/rightnav'
 import PubInvite from 'patchkit-form-pub-invite'
 import ModalBtn from 'patchkit-modal/btn'
+import t from 'patchwork-translations'
 
 function peerId (peer) {
   return peer.host+':'+peer.port+':'+peer.key
@@ -29,9 +30,7 @@ function peerSorter (a, b) {
 }
 
 function isLAN (peer) {
-  // TODO this looks like a typo? 
-  //return peer.host == ip.isLoopback(peer.host) || ip.isPrivate(peer.host)
-  return ip.isPrivate(peer.host) || ip.isLoopback(peer.host)
+  return peer.source === 'local'
 }
 
 function isNotLAN (peer) {
@@ -52,7 +51,8 @@ class PeerStatus extends React.Component {
     let lastConnectedMessage = ''
 
     if (peer.state) {
-      lastConnectedMessage = <div className="light">{peer.state} <NiceDate ago ts={peer.stateChange} /></div>
+      const stateMsg = t('peerState.' + peer.state)
+      lastConnectedMessage = <div className="light">{stateMsg} <NiceDate ago ts={peer.stateChange} /></div>
     } else if (peer.failure) {
       failureClass = ' failure'
       lastConnectedMessage = ''//<i className="fa fa-close connection-status" title="last attempted connection: " />
@@ -91,7 +91,7 @@ export default class Sync extends React.Component {
 
     // fetch peers list
     app.ssb.gossip.peers((err, peers) => {
-      if (err) return app.minorIssue('Failed to fetch peers list', err, 'This happened while loading the sync page')
+      if (err) return app.minorIssue(t('error.fetchPeers'), err, 'This happened while loading the sync page')
       peers = peers || []
       peers.sort(peerSorter)
       this.setState({
@@ -118,7 +118,7 @@ export default class Sync extends React.Component {
       }),
       pull.collect((err, users) => {
         if (err)
-          return app.minorIssue('An error occurred while fetching known users', err)
+          return app.minorIssue('error.fetchUsers', err)
 
         users.sort(function (a, b) {
           return b.nfollowers - a.nfollowers
@@ -207,15 +207,15 @@ export default class Sync extends React.Component {
       <LeftNav location={this.props.location} />
       <div className="flex-fill">
         <div className="header">
-          <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> Public Peers</div>
-          <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> Local Peers</div>
-          <ModalBtn Form={PubInvite} nextLabel="Join"><a className="btn"><i className="fa fa-cloud"/> Join Pub</a></ModalBtn>
+          <div className="connection-counter">{globalConnectionsCount} <i className="fa fa-globe" /> {t('PublicPeers')}</div>
+          <div className="connection-counter">{localConnectionsCount}  <i className="fa fa-wifi" /> {t('LocalPeers')}</div>
+          <ModalBtn Form={PubInvite} nextLabel={t('Join')}><a className="btn"><i className="fa fa-cloud"/> {t('JoinPub')}</a></ModalBtn>
         </div>
 
         <div className='peer-status-group'>
           <div className="peer-status-group-header">
-            <h2><i className="fa fa-wifi" /> Local</h2>
-            { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>There are currently no peers on your local network</div> : '' }
+            <h2><i className="fa fa-wifi" /> {t('Local')}</h2>
+            { (this.state.peers.filter(isLAN).length == 0) ? <div className='explanatory-text'>{t('NoPeers')}</div> : '' }
           </div>
           {
             this.state.peers.filter(isLAN).
@@ -225,11 +225,11 @@ export default class Sync extends React.Component {
 
         <div className='peer-status-group'>
           <div className="peer-status-group-header">
-            <h2><i className="fa fa-globe" /> Public</h2>
-            <div className='explanatory-text'>Public Peers are just users with static addresses, which means they are easy to find. {"They're"} commonly servers which have been set up to share data.</div>
+            <h2><i className="fa fa-globe" /> {t('Public')}</h2>
+            <div className='explanatory-text'>{t('PublicPeersInfo')}</div>
             <div className='explanatory-text'>
-              <i className='fa fa-star' /> Is following you - they will replicate your data. <br />
-              <i className='fa fa-circle' /> Is not following you, but you might share data about mutual aquantances.
+              <i className='fa fa-star' /> {t('IsFollowingYouInfo')} <br />
+              <i className='fa fa-circle' /> {t('IsNotFollowingYouInfo')}
             </div>
           </div>
           {

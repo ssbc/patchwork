@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import { UserPic } from 'patchkit-links'
 import u from 'patchkit-util'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 export default class RightNav extends React.Component {
   constructor(props) {
@@ -57,12 +58,12 @@ export default class RightNav extends React.Component {
 
     return <div className="rightnav">
       <div className="toolbar flex">
-        <RightNav.IconLink to="/notices" icon="hand-peace-o" count={app.indexCounts.noticesUnread} title="Digs on your posts and new followers" hint="bottom" />
-        <RightNav.IconLink to="/sync" icon="cloud-download" title="Network sync status" hint="bottom" />
-        <Link className="ctrl flex-fill hint--bottom-left user-pic" data-hint="Your Profile" to={`/profile/${encodeURIComponent(app.user.id)}`}><img src={u.getProfilePicUrl(app.users, app.user.id)} /></Link>
+        <RightNav.IconLink to="/notices" icon="hand-peace-o" count={app.indexCounts.noticesUnread} title={t('NoticesHint')} hint="bottom" />
+        <RightNav.IconLink to="/sync" icon="cloud-download" title={t('SyncHint')} hint="bottom" />
+        <Link className="ctrl flex-fill hint--bottom-left user-pic" data-hint={t('YourProfile')} to={`/profile/${encodeURIComponent(app.user.id)}`}><img src={u.getProfilePicUrl(app.users, app.user.id)} /></Link>
       </div>
       { this.props.children ? <div style={{paddingBottom: 30}}>{this.props.children}</div> : '' }
-      <hr className="labeled" data-label="active channels" style={{marginBottom: 15}} />
+      <hr className="labeled" data-label={t('activeChannels')} style={{marginBottom: 15}} />
       { channels.map(renderChannel) }
     </div>
   }

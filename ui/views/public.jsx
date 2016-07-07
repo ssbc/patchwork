@@ -7,6 +7,7 @@ import MsgList from 'patchkit-msg-list'
 import Thread from 'patchkit-flat-msg-thread'
 import Card from 'patchkit-msg-view/card'
 import app from '../lib/app'
+import t from 'patchwork-translations'
 
 export default class PublicPosts extends React.Component {
   constructor(props) {
@@ -25,7 +26,7 @@ export default class PublicPosts extends React.Component {
   onToggleWatch(channel) {
     app.ssb.patchwork.toggleChannelWatched(channel, err => {
       if (err)
-        app.issue('Failed to watch channel', err)
+        app.issue(t('error.watchChannel'), err)
     })
   }
 
@@ -35,11 +36,11 @@ export default class PublicPosts extends React.Component {
     const ThisRightNav = props => {
       if (channel) {
         const watched = (channelData && channelData.watched)
-        const watchHint = watched ? 'Stop receiving updates to this channel in your inbox.' : 'Receive updates to this channel in your inbox.'
+        const watchHint = watched ? t('UnwatchChannelHint') : t('WatchChannelHint')
         return <RightNav>
-          <hr className="labeled" data-label="channel" />
+          <hr className="labeled" data-label={t('channel')} />
           <a className="btn hint--top-left" data-hint={watchHint} onClick={this.onToggleWatch.bind(this, channel)}>
-            <i className={'fa fa-eye'+(watched?'-slash':'')} /> { watched ? 'Unwatch' : 'Watch' } channel
+            <i className={'fa fa-eye'+(watched?'-slash':'')} /> { t(watched ? 'UnwatchChannel' : 'WatchChannel') }
           </a>
         </RightNav>
       }
@@ -70,7 +71,7 @@ export default class PublicPosts extends React.Component {
         ListItem={Card} listItemProps={{ listView: true }}
         Thread={Thread} threadProps={{ suggestOptions: app.suggestOptions, channels: app.channels }}
         live={{ gt: [Date.now(), null] }}
-        emptyMsg={(channel) ? ('No posts on "'+channel+'"... yet!') : 'Your feed is empty.'}
+        emptyMsg={(channel) ? t('NoPosts', {channel}) : t('EmptyFeed')}
         source={source}
         cursor={cursor} />
     </div>

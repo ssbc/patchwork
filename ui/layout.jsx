@@ -20,6 +20,7 @@ export default class Layout extends React.Component {
 
     // listen for app change-events that should update our state
     const refresh = () => { this.setState(this.buildState()) }
+    app.on('update', this.forceUpdate.bind(this))
     app.on('update:all', refresh)
     app.on('update:notifications', refresh)
     app.on('focus:find', this.focusFind.bind(this))

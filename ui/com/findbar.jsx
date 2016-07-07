@@ -1,6 +1,7 @@
 'use babel'
 import React from 'react'
 import TextNodeSearcher from 'text-node-searcher'
+import t from 'patchwork-translations'
 
 export default class FindBar extends React.Component {
   constructor(props) {
@@ -72,7 +73,7 @@ export default class FindBar extends React.Component {
 
   render() {
     return <div ref="bar" className={'findbar '+(this.state.isVisible?'':'hidden')}>
-      <div className="search"><i className="fa fa-search" /><input ref="input" placeholder="Find" onKeyDown={this.onFindKeyDown.bind(this)} /></div>
+      <div className="search"><i className="fa fa-search" /><input ref="input" placeholder={t('Find')} onKeyDown={this.onFindKeyDown.bind(this)} /></div>
       <a className="btn" onClick={this.search.bind(this, false)}><i className="fa fa-angle-up" /></a>
       <a className="btn" onClick={this.search.bind(this, true)}><i className="fa fa-angle-down" /></a>
       <a className="btn close" onClick={this.close.bind(this)}>&times;</a>
