@@ -101,7 +101,7 @@ class FollowNearby extends React.Component {
     this.onPeersUpdate = () => {
       var peers = new Set()
       app.peers
-        .filter(p => !ip.isLoopback(p.host) && ip.isPrivate(p.host))
+        .filter(p => p.source === 'local')
         .filter(p => !social.flags(app.users, app.user.id, p.key))
         .forEach(p => peers.add(p.key))
       peers = [...peers]
