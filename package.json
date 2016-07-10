@@ -92,7 +92,7 @@
     "patchkit-util": "^1.0.1",
     "patchkit-vertical-filled": "^1.0.0",
     "patchwork-threads": "^2.2.0",
-    "patchwork-translations": "^1.1.0",
+    "patchwork-translations": "^1.2.1",
     "pause-offscreen": "^1.0.0",
     "published-working-tree": "~0.0.0",
     "pull-cat": "^1.1.7",

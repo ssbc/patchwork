@@ -8,7 +8,7 @@ export default class LanguageMenu extends React.Component {
     var locale = e.target.value
     localStorage.locale = locale
     t.setLocale(locale)
-    app.emit('update')
+    app.emit('update:locale')
   }
 
   render() {
