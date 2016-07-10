@@ -4,6 +4,7 @@ import ssbref from 'ssb-ref'
 import app from './app'
 import u from 'patchkit-util'
 import social from 'patchkit-util/social'
+import t from 'patchwork-translations'
 
 const MAX_CHANNEL_RESULTS = 3
 const MAX_USER_RESULTS = 3
@@ -14,16 +15,16 @@ export function getResults (query) {
   // ssb references
   if (ssbref.isLink(query)) {
     var shortened = u.shortString(query)
-    if (ssbref.isFeedId(query))      results = [{ icon: 'user',     label: `Open user "${shortened}"`,    fn: openObject }]
-    else if (ssbref.isMsgId(query))  results = [{ icon: 'envelope', label: `Open message "${shortened}"`, fn: openObject }]
-    else if (ssbref.isBlobId(query)) results = [{ icon: 'file',     label: `Open file "${shortened}"`,    fn: openObject }]
-    results.push({ icon: 'search', label: `Search for references to "${shortened}"`, fn: doSearch({ type: 'mentions' }) })
+    if (ssbref.isFeedId(query))      results = [{ icon: 'user',     label: t('search.OpenUser', {id: shortened}),   fn: openObject }]
+    else if (ssbref.isMsgId(query))  results = [{ icon: 'envelope', label: t('search.OpenMessage', {id: shortened}), fn: openObject }]
+    else if (ssbref.isBlobId(query)) results = [{ icon: 'file',     label: t('search.OpenFile', {id: shortened}),    fn: openObject }]
+    results.push({ icon: 'search', label: t('search.SearchForReferences', {id: shortened}), fn: doSearch({ type: 'mentions' }) })
     return results
   }
 
   // general results
   results = results.concat([
-    { icon: 'envelope', label: `Search messages for "${query}"`, fn: doSearch({ type: 'posts' }) }
+    { icon: 'envelope', label: t('search.SearchMessages', {query}), fn: doSearch({ type: 'posts' }) }
   ])
 
   // builtin pages
@@ -53,7 +54,7 @@ function getUserResults (query) {
   results.sort(social.sortByPopularity.bind(social, app.users))
   results = results
     .slice(0, MAX_USER_RESULTS)
-    .map(id => { return { icon: 'user', label: `Open user "${app.users.names[id]}"`, fn: () => openObject(id) } })
+    .map(id => { return { icon: 'user', label: t('search.OpenUser', {id: app.users.names[id]}), fn: () => openObject(id) } })
   return results
 }
 
@@ -71,13 +72,13 @@ function getChannelResults (query) {
         hasExact = (ch.name == query)
       results.push({
         icon: 'hashtag',
-        label: <span>Open channel #{ch.name}</span>,
+        label: <span>{t('search.OpenChannel', {name: ch.name})}</span>,
         fn: openChannel(ch.name)
       })
     }
   }
   if (!hasExact)
-    results.push({ icon: 'hashtag', label: `Open channel #${query}`, fn: openChannel(query) })
+    results.push({ icon: 'hashtag', label: t('search.OpenChannel', {name: query}), fn: openChannel(query) })
   return results
 }
 
