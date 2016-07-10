@@ -16,7 +16,6 @@ window.addEventListener('error', onError)
 // init language
 var t = require('patchwork-translations')
 t.setLocale(localStorage.locale || navigator.language)
-document.body.lang = t.locale
 
 // render
 app.fetchLatestState(function () {

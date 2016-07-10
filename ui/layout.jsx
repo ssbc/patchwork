@@ -85,7 +85,6 @@ export default class Layout extends React.Component {
   }
 
   updateLocale() {
-    document.body.lang = t.locale
     this.forceUpdate()
   }
 }

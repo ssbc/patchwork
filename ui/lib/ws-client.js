@@ -2,6 +2,7 @@ var muxrpc     = require('muxrpc')
 var pull       = require('pull-stream')
 var ws         = require('pull-ws-server')
 var Serializer = require('pull-serializer')
+var t          = require('patchwork-translations')
 
 module.exports = function () {
   // create rpc object
@@ -19,5 +20,8 @@ function serialize (stream) {
 }
 
 function onConnectionLost () {
-  document.body.classList.add('connection-lost')
+  var el = document.createElement('div')
+  el.className = 'connection-lost'
+  el.appendChild(document.createTextNode(t('connectionLost')))
+  document.body.insertBefore(el, document.body.firstChild)
 }
