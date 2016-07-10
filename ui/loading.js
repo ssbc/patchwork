@@ -3,6 +3,9 @@
 (function () {
 
 var locales = {
+  da: {
+    LoadingError: "Beklager! Patchwork løbt ind i den fejl under indlæsning."
+  },
   en: {
     LoadingError: "We're sorry! Patchwork experienced an error while loading."
   },
