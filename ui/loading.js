@@ -4,16 +4,24 @@
 
 var locales = {
   da: {
-    LoadingError: "Beklager! Patchwork løbt ind i den fejl under indlæsning."
+    LoadingError: "Beklager! Patchwork løbt ind i den fejl under indlæsning.",
+    Loading: "Indlæser..."
   },
   en: {
-    LoadingError: "We're sorry! Patchwork experienced an error while loading."
+    LoadingError: "We're sorry! Patchwork experienced an error while loading.",
+    Loading: "Loading..."
   },
   "pt-BR": {
     LoadingError: "Lamentamos! Ocorreu um erro ao carregar o Patchwork.",
+    Loading: "Carregando..."
   },
   "pt-PT": {
     LoadingError: "Pedimos desculpa! Ocorreu um erro ao carregar o Patchwork.",
+    Loading: "Carregando..."
+  },
+  "zh-cn": {
+    LoadingError: "We're sorry! Patchwork experienced an error while loading.",
+    Loading: "载入中..."
   }
 }
 
@@ -51,5 +59,7 @@ window.loadErrorHandler = function (e) {
   document.body.appendChild(pre)
 }
 window.addEventListener('error', window.loadErrorHandler)
+
+document.querySelector('.loading').title = t('Loading')
 
 })()
