@@ -20,7 +20,7 @@ var locales = {
     Loading: "Carregando..."
   },
   "zh-cn": {
-    LoadingError: "We're sorry! Patchwork experienced an error while loading.",
+    LoadingError: "抱歉！Patchwork加载时出现问题。",
     Loading: "载入中..."
   }
 }
