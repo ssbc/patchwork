@@ -6,8 +6,6 @@
 
 Download the latest .dmg file from [patchwork-electron/releases](https://github.com/ssbc/patchwork-electron/releases)
 
-you will need to [enable installing from "unknown sources"](http://ccm.net/faq/29619-mac-os-x-run-apps-downloaded-from-unknown-sources)
-
 ### For Ubuntu/debian
 
 Download the latest .deb file from [patchwork-electron/releases](https://github.com/ssbc/patchwork-electron/releases)
