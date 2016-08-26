@@ -114,11 +114,11 @@
     "react-modal": "^0.6.0",
     "react-notification": "^4.2.0",
     "react-router": "1.0.2",
-    "scuttlebot": "^8.1.0",
+    "scuttlebot": "^8.4.3",
     "shx": "^0.1.2",
     "ssb-blobs": "0.0.5",
     "ssb-config": "^2.0.0",
-    "ssb-keys": "^5.0.0",
+    "ssb-keys": "^6.1.1",
     "ssb-markdown": "^3.0.0",
     "ssb-msg-schemas": "~6.1.0",
     "ssb-msgs": "~5.2.0",
@@ -154,3 +154,4 @@
     ]
   }
 }
+
