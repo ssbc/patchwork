@@ -15,7 +15,7 @@ function showAbout(win) {
     icon: path.join(__dirname, '../ui/img/icon.png'),
     message: pkg.name + ' v' + pkg.version,
     detail: pkg.description + '\n\n' +
-      t('Copyright', {year: '2016-2016'}) + '\n\n' +
+      t('Copyright', {years: '2016-2016'}) + '\n\n' +
       'http://ssbc.github.io/patchwork/'
   }, function (btn) {
     if (btn == 1)
