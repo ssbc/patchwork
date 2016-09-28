@@ -91,7 +91,7 @@
     "patchkit-tabs": "^1.0.0",
     "patchkit-util": "^1.0.1",
     "patchkit-vertical-filled": "^1.0.0",
-    "patchwork-threads": "^2.2.0",
+    "patchwork-threads": "^2.2.1",
     "patchwork-translations": "^1.4.2",
     "pause-offscreen": "^1.0.0",
     "published-working-tree": "~0.0.0",
