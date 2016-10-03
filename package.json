@@ -116,7 +116,7 @@
     "react-router": "1.0.2",
     "scuttlebot": "^9.0.0",
     "shx": "^0.1.2",
-    "ssb-blobs": "0.0.5",
+    "ssb-blobs": "^0.1.6",
     "ssb-config": "^2.0.0",
     "ssb-keys": "^6.1.1",
     "ssb-markdown": "^3.0.0",
