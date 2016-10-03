@@ -40,11 +40,8 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/logging'))
   .use(require('scuttlebot/plugins/private'))
   .use(require('scuttlebot/plugins/local'))
-  .use(require('scuttlebot/plugins/plugins'))
   .use(require('ssb-notifier'))
   .use(require('./api'))
-
-require('scuttlebot/plugins/plugins').loadUserPlugins(createSbot, config)
 
 var sbot = createSbot(config)
 
@@ -90,3 +87,4 @@ if (process.versions['electron']) {
 function logLicense () {
   console.log(t('LicenseConsole', {years: '2015-2016'}) + '\n')
 }
+
