@@ -19,8 +19,22 @@ exports.screen_view = function (path, sbot) {
   if (path === '/public') {
     var sync = Value(false)
     var events = Value([])
+    var updates = Value(0)
+
+    var updateLoader = m('a', {
+      href: '#',
+      style: {
+        'padding': '10px',
+        'display': 'block',
+        'background': '#d6e4ec',
+        'border': '1px solid #bbc9d2',
+        'text-align': 'center'
+      },
+      'ev-click': refresh
+    }, [ 'Load ', h('strong', [updates]), ' update(s)' ])
 
     var content = h('div.column.scroller__content', [
+      when(updates, updateLoader),
       MutantMap(events, (group) => {
         if (group.type === 'message') {
           var meta = null
@@ -85,20 +99,14 @@ exports.screen_view = function (path, sbot) {
       ])
     ])
 
+    refresh()
+
     pull(
-      sbot_log({reverse: true, limit: 500, live: false}),
-      pull.collect((err, values) => {
-        if (err) throw err
-        events.set(groupMessages(values))
-        sync.set(true)
+      sbot_log({old: false}),
+      pull.drain((item) => {
+        updates.set(updates() + 1)
       })
     )
-
-
-    // pull(
-    //   sbot_log({old: false}),
-    //   Scroller(div, content, message_render, true, false)
-    // )
 
     // pull(
     //   u.next(sbot_log, {reverse: true, limit: 100, live: false}),
@@ -106,6 +114,20 @@ exports.screen_view = function (path, sbot) {
     // )
 
     return div
+
+    // scoped
+
+    function refresh () {
+      pull(
+        sbot_log({reverse: true, limit: 500, live: false}),
+        pull.collect((err, values) => {
+          if (err) throw err
+          events.set(groupMessages(values))
+          sync.set(true)
+          updates.set(0)
+        })
+      )
+    }
   }
 }
 

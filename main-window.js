@@ -113,18 +113,15 @@ module.exports = function (ssbClient, config) {
 
   function setView (view, ...args) {
     var newView = [view, ...args]
+    views[view] = screenView(view, ...args)
     if (!isSame(newView, currentView())) {
-      if (!views[view]) {
-        views[view] = screenView(view, ...args)
-      }
-
       canGoForward.set(false)
       canGoBack.set(true)
       forwardHistory.length = 0
       backHistory.push(currentView())
-      currentView.set(newView)
-      currentView().scrollTop = 0
     }
+    currentView.set(newView)
+    currentView().scrollTop = 0
   }
 
   function selected (view) {
