@@ -32,16 +32,16 @@ MainWindow {
     span {
       a {
         padding: 2px 8px;
-        border: 2px solid #bbbbbb;
+        border: 2px solid #c7c6c6;
         border-radius: 4px;
-        background: #a7a6a6;
-        color: #000000;
+        background: #dedede;
+        color: #656565;
         font-size: 120%;
         cursor: pointer;
         margin-left: 5px;
+        text-decoration: none !important
 
         :hover {
-          text-decoration: none
           color: black
           border-color: #888
         }

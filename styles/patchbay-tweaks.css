@@ -15,3 +15,8 @@
 a.avatar {
   display: inline
 }
+
+div.avatar > a.avatar {
+  display: flex;
+  font-size: 120%;
+}
