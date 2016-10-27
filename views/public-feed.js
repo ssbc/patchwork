@@ -55,7 +55,7 @@ exports.screen_view = function (path, sbot) {
               meta,
               renderedMessage,
               when(replies.length, [
-                when(group.replies > replies.length,
+                when(group.replies.length > replies.length,
                   m('a.full', {href: `#${group.messageId}`}, ['View full thread'])
                 ),
                 m('div.replies', replies)
