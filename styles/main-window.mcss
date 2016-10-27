@@ -25,7 +25,7 @@ MainWindow {
     display: flex;
     background: #fff;
     padding: 10px;
-    border-bottom: 2px solid #e2e2e2;
+    border-bottom: 2px solid #e4edff;
     box-shadow: 0 0 3px #7f7f7f;
     position: relative;
 

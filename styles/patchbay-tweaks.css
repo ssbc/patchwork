@@ -1,0 +1,17 @@
+.message {
+  background-color: white;
+}
+
+.scroller__wrapper {
+  width: 600px;
+  padding: 20px;
+}
+
+.compose__controls > input[type=file] {
+  flex: 1;
+  padding: 5px;
+}
+
+a.avatar {
+  display: inline
+}

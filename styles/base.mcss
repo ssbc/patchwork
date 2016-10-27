@@ -1,5 +1,5 @@
 html, body {
-  background: #ccc
+  background: #f5f5f5
   margin: 0
   font-family: caption, sans-serif
   overflow: hidden
@@ -16,11 +16,9 @@ body {
 }
 
 h1 {
-  color: #C0C0C0
   font-size: 200%
   margin: 4px 0
   font-weight: normal
-  text-shadow: 0px 0px 2px black
   flex: 1
 }
 
@@ -76,7 +74,7 @@ input {
 }
 
 a {
-  color: #ebf7b1
+  color: #286bc3
   text-decoration: none
 
   code {
