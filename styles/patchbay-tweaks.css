@@ -1,5 +1,6 @@
 .message {
   background-color: white;
+  padding: 10px;
 }
 
 .scroller__wrapper {
@@ -13,7 +14,8 @@
 }
 
 a.avatar {
-  display: inline
+  display: inline;
+  font-weight: bold;
 }
 
 div.avatar > a.avatar {

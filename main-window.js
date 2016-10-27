@@ -12,6 +12,7 @@ module.exports = function (ssbClient, config) {
   var api = SbotApi(ssbClient, config)
   var modules = combine(extend(Modules, {
     'sbot-api.js': api,
+    'public.js': require('./views/public-feed.js'),
     'blob-url.js': {
       blob_url: function (link) {
         var prefix = config.blobsPrefix != null ? config.blobsPrefix : `http://localhost:${config.blobsPort}`
