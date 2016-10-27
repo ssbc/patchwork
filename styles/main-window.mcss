@@ -1,0 +1,158 @@
+MainWindow {
+  height: 100%
+  display: flex
+  flex-direction: column
+
+  -darwin {
+    div.top {
+      padding-left: 70px
+    }
+    div.top {
+      span.appTitle {
+        margin-right: 40px;
+      }
+    }
+  }
+
+  -win32 {
+    div.top {
+      padding-right: 70px
+    }
+  }
+
+  div.top {
+    -webkit-app-region: drag;
+    display: flex;
+    background: #fff;
+    padding: 10px;
+    border-bottom: 2px solid #e2e2e2;
+    box-shadow: 0 0 3px #7f7f7f;
+    position: relative;
+
+    span {
+      a {
+        padding: 2px 8px;
+        border: 2px solid #bbbbbb;
+        border-radius: 4px;
+        background: #a7a6a6;
+        color: #000000;
+        font-size: 120%;
+        cursor: pointer;
+        margin-left: 5px;
+
+        :hover {
+          text-decoration: none
+          color: black
+          border-color: #888
+        }
+
+        -selected {
+          border-color: #444
+          background: #CCC
+          color: black
+        }
+
+        -add {
+          border-color: #498849
+          background-color: #255D24
+          text-shadow: 1px 1px 1px #000
+          color: white
+
+          :active {
+            background-color: #1F331F !important
+          }
+
+          :hover {
+            background-color: #356D34
+            border-color: #4CB54C
+          }
+        }
+      }
+    }
+
+    span.history {
+      a {
+        opacity: 0.3
+
+        -active {
+          opacity: 1
+        }
+      }
+
+      a + a {
+        margin-left: 0
+      }
+    }
+
+    span.appTitle {
+      flex: 1;
+      text-align: center;
+      font-size: 130%;
+      color: #757575;
+      letter-spacing: 0.1em;
+      font-weight: bold;
+      font-weight: normal;
+    }
+  }
+
+  div.info {
+    a.message {
+      display: block
+      padding: 10px
+      background: #314427
+      transition: color 0.2s, background-color 0.2s
+
+      :hover {
+        text-decoration: none
+        color: white
+        background: #315427
+      }
+    }
+    box-shadow: 0 0 3px black
+    overflow: hidden
+    animation: 0.5s slide-in
+    position: relative
+  }
+
+  div.main {
+    flex: 1
+    overflow: auto
+    display: flex
+
+    div {
+      flex: 1
+    }
+  }
+
+  div.bottom {
+    position: relative
+    box-shadow: 0 0 3px #222
+    background: #222
+    align-items: center
+    display: flex
+    padding: 5px
+
+    audio {
+      color: #EEE
+
+      ::-webkit-media-controls-panel {
+        background: transparent
+      }
+
+      ::-webkit-media-controls-current-time-display {
+        color: inherit
+      }
+
+      width: 100%
+    }
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    max-height: 0
+  }
+  100% {
+    max-height: 100px
+  }
+}
