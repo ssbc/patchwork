@@ -39,7 +39,10 @@ module.exports = function (ssbClient, config) {
   })
 
   window.onhashchange = function (ev) {
-    setView(window.location.hash.substring(1))
+    var path = window.location.hash.substring(1)
+    if (path) {
+      setView(path)
+    }
   }
 
   var mainElement = h('div.main', [
@@ -60,7 +63,29 @@ module.exports = function (ssbClient, config) {
           classList: [ when(canGoForward, '-active') ]
         }, '>')
       ]),
-      h('span.appTitle', ['Patchwork'])
+      h('span.nav', [
+        h('a', {
+          href: '#/public',
+          classList: [
+            when(selected('/public'), '-selected')
+          ]
+        }, 'Feed'),
+        h('a', {
+          href: '#/private',
+          classList: [
+            when(selected('/private'), '-selected')
+          ]
+        }, 'Private')
+      ]),
+      h('span.appTitle', ['Patchwork']),
+      h('span.nav', [
+        h('a', {
+          href: `#${ssbClient.id}`,
+          classList: [
+            when(selected(`${ssbClient.id}`), '-selected')
+          ]
+        }, 'Profile')
+      ])
     ]),
     mainElement
   ])
@@ -99,6 +124,12 @@ module.exports = function (ssbClient, config) {
       currentView.set(newView)
       currentView().scrollTop = 0
     }
+  }
+
+  function selected (view) {
+    return computed([currentView, view], (currentView, view) => {
+      return currentView && currentView[0] === view
+    })
   }
 }
 
