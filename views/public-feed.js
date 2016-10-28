@@ -169,13 +169,17 @@ function groupMessages (messages) {
       updateContact(msg, follows)
     } else if (c.type === 'vote') {
       if (c.vote && c.vote.link) {
-        const group = ensureMessage(c.root, messageUpdates)
-        if (c.vote.value > 1) {
-          group.lastUpdateType = 'dig'
-          group.digs.add(msg.value.author)
-          group.updated = msg.timestamp
-        } else {
-          group.digs.delete(msg.value.author)
+        // only show digs of posts added in the current window
+        // and only for the main post
+        const group = messageUpdates[c.vote.link]
+        if (group) {
+          if (c.vote.value > 0) {
+            group.lastUpdateType = 'dig'
+            group.digs.add(msg.value.author)
+            group.updated = msg.timestamp
+          } else {
+            group.digs.delete(msg.value.author)
+          }
         }
       }
     } else {
@@ -233,6 +237,7 @@ function updateContact (msg, groups) {
     if (!group) {
       group = groups[id] = {
         type: 'follow',
+        lastUpdateType: null,
         contacts: new Set(),
         updated: 0,
         id: id
