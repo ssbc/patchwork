@@ -58,9 +58,9 @@ function openMainWindow () {
       width: 1024,
       height: 768,
       titleBarStyle: 'hidden-inset',
-      title: 'Ferment',
+      title: 'Patchwork',
       show: true,
-      backgroundColor: '#444',
+      backgroundColor: '#EEE',
       webPreferences: {
         experimentalFeatures: true
       },

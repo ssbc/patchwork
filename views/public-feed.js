@@ -114,20 +114,19 @@ exports.screen_view = function (path, sbot) {
     // )
 
     return div
+  }
 
-    // scoped
-
-    function refresh () {
-      pull(
-        sbot_log({reverse: true, limit: 500, live: false}),
-        pull.collect((err, values) => {
-          if (err) throw err
-          events.set(groupMessages(values))
-          sync.set(true)
-          updates.set(0)
-        })
-      )
-    }
+  // scoped
+  function refresh () {
+    pull(
+      sbot_log({reverse: true, limit: 500, live: false}),
+      pull.collect((err, values) => {
+        if (err) throw err
+        events.set(groupMessages(values))
+        sync.set(true)
+        updates.set(0)
+      })
+    )
   }
 }
 
