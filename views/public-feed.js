@@ -171,7 +171,7 @@ function groupMessages (messages) {
       if (c.vote && c.vote.link) {
         const group = ensureMessage(c.root, messageUpdates)
         if (c.vote.value > 1) {
-          group.lastUpdateType = 'vote'
+          group.lastUpdateType = 'dig'
           group.digs.add(msg.value.author)
           group.updated = msg.timestamp
         } else {
