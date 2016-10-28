@@ -54,5 +54,11 @@ function create (opts) {
 
 module.exports = {
   create: create,
-  windows: _windows
+  windows: _windows,
+  hasVisibleWindows: function () {
+    Object.keys(_windows).some(function (id) {
+      var window = _windows[id]
+      return window.isVisible()
+    })
+  }
 }
