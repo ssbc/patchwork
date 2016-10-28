@@ -121,6 +121,7 @@ MainWindow {
 
     div {
       flex: 1
+      -webkit-user-select: text
     }
   }
 
