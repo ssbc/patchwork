@@ -231,7 +231,7 @@ module.exports = function (configOracle) {
         },
 
         {
-          label: 'NoticesMenuItem',
+          label: t('NoticesMenuItem'),
           accelerator: 'CmdOrCtrl+Shift+D',
           click: function (item, win) {
             win.webContents.executeJavaScript('app.history.pushState(null, "notices")')
