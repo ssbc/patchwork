@@ -16,11 +16,13 @@ $ npm start
 
 ## TODO
 
+- [x] Main navigation buttons
+- [x] Compressed feed (the algorithm :wink:)
+- [ ] Endless scrolling (or load more) on main feed
+- [ ] Power user tabs (right-click, Open in New Tab -> tab interface appears safari style)
 - [ ] Preserve scroll on back button
-- [ ] Main navigation buttons
+- [ ] Search
 - [ ] Easy navigation sidebar
 - [ ] Contacts sidebar
-- [ ] Lots of styling
-- [ ] Compressed feed (the algorithm :wink:)
-  - [ ] Thread previews in feed [figure out how to do this streaming]
+- [ ] Show digs on posts in a nicer way (make it clear that you've dug something)
 - [ ] Add more todos!
