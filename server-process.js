@@ -26,7 +26,7 @@ module.exports = function (config, cb) {
   // start sbot
   var createSbot = require('scuttlebot')
     .use(require('scuttlebot/plugins/master'))
-    .use(require('scuttlebot/plugins/gossip'))
+    .use(require('./lib/gossip-with-slow-rollout'))
     .use(require('scuttlebot/plugins/friends'))
     .use(require('scuttlebot/plugins/replicate'))
     .use(require('ssb-blobs'))
