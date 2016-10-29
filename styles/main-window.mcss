@@ -21,7 +21,6 @@ MainWindow {
   }
 
   div.top {
-    -webkit-app-region: drag;
     display: flex;
     background: #fff;
     padding: 10px;
@@ -92,6 +91,7 @@ MainWindow {
       letter-spacing: 0.1em;
       font-weight: bold;
       font-weight: normal;
+      -webkit-app-region: drag;
     }
   }
 

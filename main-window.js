@@ -1,9 +1,5 @@
-var combine = require('depject')
-var Modules = require('patchbay/modules')
-var SbotApi = require('./api')
-var extend = require('xtend')
+var Modules = require('./modules')
 var h = require('./lib/h')
-var plugs = require('patchbay/plugs')
 var Value = require('@mmckegg/mutant/value')
 var when = require('@mmckegg/mutant/when')
 var computed = require('@mmckegg/mutant/computed')
@@ -12,21 +8,10 @@ var MutantDict = require('@mmckegg/mutant/dict')
 var MutantMap = require('@mmckegg/mutant/map')
 var watch = require('@mmckegg/mutant/watch')
 
+var plugs = require('patchbay/plugs')
+
 module.exports = function (config, ssbClient) {
-  var api = SbotApi(ssbClient, config)
-  var modules = combine(extend(Modules, {
-    'sbot-api.js': api,
-    'public.js': require('./views/public-feed.js'),
-    'blob-url.js': {
-      blob_url: function (link) {
-        var prefix = config.blobsPrefix != null ? config.blobsPrefix : `http://localhost:${config.blobsPort}`
-        if (typeof link.link === 'string') {
-          link = link.link
-        }
-        return `${prefix}/${encodeURIComponent(link)}`
-      }
-    }
-  }))
+  var modules = Modules(config, ssbClient)
 
   var screenView = plugs.first(modules.plugs.screen_view)
   var forwardHistory = []
@@ -76,7 +61,7 @@ module.exports = function (config, ssbClient) {
           classList: [
             when(selected('/public'), '-selected')
           ]
-        }, 'Feed'),
+        }, 'Public'),
         h('a', {
           href: '#/private',
           classList: [

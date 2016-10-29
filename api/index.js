@@ -44,6 +44,9 @@ module.exports = function (sbot, opts) {
 
   return {
     connection_status: connection_status,
+    get_id: function () {
+      return sbot.id
+    },
     sbot_blobs_add: function (cb) {
       return pull(
         Hash(function (err, id) {
