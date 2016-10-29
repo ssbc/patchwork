@@ -14,6 +14,24 @@ module.exports = function (config, ssbClient) {
   var modules = Modules(config, ssbClient)
 
   var screenView = plugs.first(modules.plugs.screen_view)
+
+  var searchTimer = null
+  var searchBox = h('input.search', {
+    type: 'search',
+    placeholder: 'word, @key, #channel'
+  })
+
+  searchBox.oninput = function () {
+    clearTimeout(searchTimer)
+    searchTimer = setTimeout(doSearch, 500)
+  }
+
+  searchBox.onfocus = function () {
+    if (searchBox.value) {
+      doSearch()
+    }
+  }
+
   var forwardHistory = []
   var backHistory = []
   var views = MutantDict({
@@ -70,6 +88,7 @@ module.exports = function (config, ssbClient) {
         }, 'Private')
       ]),
       h('span.appTitle', ['Patchwork']),
+      h('span', [ searchBox ]),
       h('span.nav', [
         h('a', {
           href: `#${ssbClient.id}`,
@@ -112,6 +131,17 @@ module.exports = function (config, ssbClient) {
       forwardHistory.length = 0
       backHistory.push(currentView())
       currentView.set(view)
+    }
+  }
+
+  function doSearch () {
+    var value = searchBox.value.trim()
+    if (value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
+      setView(value)
+    } else if (value.trim()) {
+      setView(`?${value.trim()}`)
+    } else {
+      setView('/public')
     }
   }
 

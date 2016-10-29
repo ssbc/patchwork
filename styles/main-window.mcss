@@ -29,6 +29,18 @@ MainWindow {
     position: relative;
 
     span {
+
+      input.search {
+        padding: 2px 4px;
+        border: 01px solid #c7c6c6;
+        border-radius: 4px;
+        background: #ffffff;
+        color: #656565;
+        font-size: 120%;
+        margin-top: -3px;
+        width: 180px;
+      }
+
       a {
         padding: 2px 8px;
         border: 2px solid #c7c6c6;
