@@ -5,16 +5,10 @@ process.on('uncaughtException', function (err) {
 
 var electron = require('electron')
 var openWindow = require('./lib/window')
-var createSbot = require('./lib/ssb-server')
-var serveBlobs = require('./lib/serve-blobs')
-var makeSingleInstance = require('./lib/make-single-instance')
-var pull = require('pull-stream')
-var pullFile = require('pull-file')
+
 var Path = require('path')
-var fs = require('fs')
 var defaultMenu = require('electron-default-menu')
 var Menu = electron.Menu
-var dataUriToBuffer = require('data-uri-to-buffer')
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
 
@@ -22,38 +16,24 @@ var windows = {
   dialogs: new Set()
 }
 
-var context = null
-if (process.argv.includes('--use-global-ssb') || process.argv.includes('-g')) {
-  context = setupContext('ssb', {
-    server: false
+var ssbConfig = null
+
+electron.app.on('ready', () => {
+  setupContext('ssb', {
+    server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+  }, () => {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(defaultMenu(electron.app, electron.shell)))
+    openMainWindow()
   })
-} else {
-  makeSingleInstance(windows, openMainWindow)
-  context = setupContext('ssb')
-}
 
-electron.ipcMain.on('add-blob', (ev, id, path, cb) => {
-  pull(
-    path.startsWith('data:') ? pull.values([dataUriToBuffer(path)]) : pullFile(path),
-    context.sbot.blobs.add((err, hash) => {
-      if (err) return ev.sender.send('response', id, err)
-      ev.sender.send('response', id, null, hash)
-    })
-  )
-})
-
-electron.app.on('ready', function () {
-  Menu.setApplicationMenu(Menu.buildFromTemplate(defaultMenu(electron.app, electron.shell)))
-  openMainWindow()
-})
-
-electron.app.on('activate', function (e) {
-  openMainWindow()
+  electron.app.on('activate', function (e) {
+    openMainWindow()
+  })
 })
 
 function openMainWindow () {
   if (!windows.main) {
-    windows.main = openWindow(context, Path.join(__dirname, 'main-window.js'), {
+    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'main-window.js'), {
       minWidth: 800,
       width: 1024,
       height: 768,
@@ -73,28 +53,35 @@ function openMainWindow () {
   }
 }
 
-function setupContext (appName, opts) {
-  var ssbConfig = require('ssb-config/inject')(appName, extend({
+function setupContext (appName, opts, cb) {
+  ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
     blobsPort: 7777
   }, opts))
 
-  if (opts && opts.server === false) {
-    return {
-      config: ssbConfig
-    }
-  } else {
-    ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
-    var context = {
-      sbot: createSbot(ssbConfig),
-      config: ssbConfig
-    }
-    ssbConfig.manifest = context.sbot.getManifest()
-    serveBlobs(context)
-    fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
-    console.log(`Address: ${context.sbot.getAddress()}`)
-    return context
-  }
+  ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
 
-  return ssbConfig
+  if (opts.server === false) {
+    cb && cb()
+  } else {
+    electron.ipcMain.once('server-started', function (ev, config) {
+      ssbConfig = config
+      cb && cb()
+    })
+    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'server-process.js'), {
+      connect: false,
+      center: true,
+      fullscreen: false,
+      fullscreenable: false,
+      height: 150,
+      maximizable: false,
+      minimizable: false,
+      resizable: false,
+      show: false,
+      skipTaskbar: true,
+      title: 'patchwork-server',
+      useContentSize: true,
+      width: 150
+    })
+  }
 }

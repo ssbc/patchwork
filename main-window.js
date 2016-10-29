@@ -8,7 +8,7 @@ var Value = require('@mmckegg/mutant/value')
 var when = require('@mmckegg/mutant/when')
 var computed = require('@mmckegg/mutant/computed')
 
-module.exports = function (ssbClient, config) {
+module.exports = function (config, ssbClient) {
   var api = SbotApi(ssbClient, config)
   var modules = combine(extend(Modules, {
     'sbot-api.js': api,
