@@ -136,7 +136,7 @@ module.exports = function (config, ssbClient) {
 
   function doSearch () {
     var value = searchBox.value.trim()
-    if (value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
+    if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
       setView(value)
     } else if (value.trim()) {
       setView(`?${value.trim()}`)
