@@ -7,6 +7,10 @@ var plugs = require('patchbay/plugs')
 var Value = require('@mmckegg/mutant/value')
 var when = require('@mmckegg/mutant/when')
 var computed = require('@mmckegg/mutant/computed')
+var toCollection = require('@mmckegg/mutant/dict-to-collection')
+var MutantDict = require('@mmckegg/mutant/dict')
+var MutantMap = require('@mmckegg/mutant/map')
+var watch = require('@mmckegg/mutant/watch')
 
 module.exports = function (config, ssbClient) {
   var api = SbotApi(ssbClient, config)
@@ -27,16 +31,16 @@ module.exports = function (config, ssbClient) {
   var screenView = plugs.first(modules.plugs.screen_view)
   var forwardHistory = []
   var backHistory = []
-  var views = {
+  var views = MutantDict({
     '/public': screenView('/public')
-  }
+  })
+
   var canGoForward = Value(false)
   var canGoBack = Value(false)
-  var currentView = Value(['/public'])
-  var rootElement = computed(currentView, (data) => {
-    if (Array.isArray(data)) {
-      return views[data[0]]
-    }
+  var currentView = Value('/public')
+
+  watch(currentView, (view) => {
+    window.location.hash = `#${view}`
   })
 
   window.onhashchange = function (ev) {
@@ -46,9 +50,11 @@ module.exports = function (config, ssbClient) {
     }
   }
 
-  var mainElement = h('div.main', [
-    rootElement
-  ])
+  var mainElement = h('div.main', MutantMap(toCollection(views), (item) => {
+    return h('div.view', {
+      hidden: computed([item.key, currentView], (a, b) => a !== b)
+    }, [ item.value ])
+  }))
 
   return h('MainWindow', {
     classList: [ '-' + process.platform ]
@@ -111,22 +117,22 @@ module.exports = function (config, ssbClient) {
     }
   }
 
-  function setView (view, ...args) {
-    var newView = [view, ...args]
-    views[view] = screenView(view, ...args)
-    if (!isSame(newView, currentView())) {
+  function setView (view) {
+    if (!views.has(view)) {
+      views.put(view, screenView(view))
+    }
+    if (view !== currentView()) {
       canGoForward.set(false)
       canGoBack.set(true)
       forwardHistory.length = 0
       backHistory.push(currentView())
+      currentView.set(view)
     }
-    currentView.set(newView)
-    currentView().scrollTop = 0
   }
 
   function selected (view) {
     return computed([currentView, view], (currentView, view) => {
-      return currentView && currentView[0] === view
+      return currentView === view
     })
   }
 }

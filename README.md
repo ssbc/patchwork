@@ -18,9 +18,12 @@ $ npm start
 
 - [x] Main navigation buttons
 - [x] Compressed feed (the algorithm :wink:)
-- [ ] Endless scrolling (or load more) on main feed
-- [ ] Power user tabs (right-click, Open in New Tab -> tab interface appears safari style)
-- [ ] Preserve scroll on back button
+- [x] Endless scrolling (or load more) on main feed [fake paginate, add a new section, leave the current one and remove the top most]
+- [x] Display fixed banner at top of view when there are new updates [scrolls to top of page and reloads view when clicked]
+- [x] Preserve scroll on back button
+- [ ] Notifications drop down (show unread mentions, digs, replies)
+  - [ ] to support this, we need to track subscriptions and read status
+- [ ] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
 - [ ] Search
 - [ ] Easy navigation sidebar
 - [ ] Contacts sidebar

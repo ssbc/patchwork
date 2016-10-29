@@ -1,8 +1,14 @@
 var SortedArray = require('sorted-array-functions')
 var Value = require('@mmckegg/mutant/value')
-var MutantMap = require('@mmckegg/mutant/map')
 var h = require('@mmckegg/mutant/html-element')
 var when = require('@mmckegg/mutant/when')
+var computed = require('@mmckegg/mutant/computed')
+var MutantArray = require('@mmckegg/mutant/array')
+var pullPushable = require('pull-pushable')
+var pullNext = require('pull-next')
+var Scroller = require('../lib/pull-scroll')
+var Abortable = require('pull-abortable')
+
 var m = require('../lib/h')
 
 var pull = require('pull-stream')
@@ -18,77 +24,20 @@ var message_link = plugs.first(exports.message_link = [])
 exports.screen_view = function (path, sbot) {
   if (path === '/public') {
     var sync = Value(false)
-    var events = Value([])
     var updates = Value(0)
 
-    var updateLoader = m('a', {
+    var updateLoader = m('a.loader', {
       href: '#',
-      style: {
-        'padding': '10px',
-        'display': 'block',
-        'background': '#d6e4ec',
-        'border': '1px solid #bbc9d2',
-        'text-align': 'center'
-      },
       'ev-click': refresh
-    }, [ 'Load ', h('strong', [updates]), ' update(s)' ])
-
-    var content = h('div.column.scroller__content', [
-      when(updates, updateLoader),
-      MutantMap(events, (group) => {
-        if (group.type === 'message') {
-          var meta = null
-          var replies = group.replies.slice(-3).map(message_render)
-          var renderedMessage = group.message ? message_render(group.message) : null
-          if (renderedMessage) {
-            if (group.lastUpdateType === 'reply') {
-              meta = m('div.meta', [
-                manyPeople(group.repliesFrom), ' replied'
-              ])
-            } else if (group.lastUpdateType === 'dig') {
-              meta = m('div.meta', [
-                manyPeople(group.digs), ' dug this message'
-              ])
-            }
-
-            return m('FeedEvent', [
-              meta,
-              renderedMessage,
-              when(replies.length, [
-                when(group.replies.length > replies.length,
-                  m('a.full', {href: `#${group.messageId}`}, ['View full thread'])
-                ),
-                m('div.replies', replies)
-              ])
-            ])
-          } else {
-            if (group.lastUpdateType === 'reply') {
-              meta = m('div.meta', [
-                manyPeople(group.repliesFrom), ' replied to ', message_link(group.messageId)
-              ])
-            } else if (group.lastUpdateType === 'dig') {
-              meta = m('div.meta', [
-                manyPeople(group.digs), ' dug ', message_link(group.messageId)
-              ])
-            }
-
-            if (meta || replies.length) {
-              return m('FeedEvent', [
-                meta, m('div.replies', replies)
-              ])
-            }
-          }
-        } else if (group.type === 'follow') {
-          return m('FeedEvent -follow', [
-            m('div.meta', [
-              person(group.id), ' followed ', manyPeople(group.contacts)
-            ])
-          ])
-        }
-      }, {maxTime: 5})
+    }, [
+      'Show ',
+      h('strong', [updates]), ' ',
+      when(computed(updates, a => a === 1), 'update', 'updates')
     ])
 
-    var div = h('div.column.scroller', {
+    var content = h('div.column.scroller__content')
+
+    var scrollElement = h('div.column.scroller', {
       style: {
         'overflow': 'auto'
       }
@@ -99,35 +48,123 @@ exports.screen_view = function (path, sbot) {
       ])
     ])
 
-    refresh()
+    setTimeout(refresh, 10)
 
     pull(
       sbot_log({old: false}),
       pull.drain((item) => {
-        updates.set(updates() + 1)
+        if (!item.value.content.type === 'vote') {
+          updates.set(updates() + 1)
+        }
       })
     )
 
-    // pull(
-    //   u.next(sbot_log, {reverse: true, limit: 100, live: false}),
-    //   Scroller(div, content, message_render, false, false)
-    // )
+    var abortLastFeed = null
 
-    return div
+    return MutantArray([
+      when(updates, updateLoader),
+      when(sync, scrollElement, m('Loading -large'))
+    ])
   }
 
   // scoped
   function refresh () {
+    if (abortLastFeed) {
+      abortLastFeed()
+    }
+    updates.set(0)
+    sync.set(false)
+    content.innerHTML = ''
+
+    var abortable = Abortable()
+    abortLastFeed = abortable.abort
+
     pull(
-      sbot_log({reverse: true, limit: 500, live: false}),
-      pull.collect((err, values) => {
-        if (err) throw err
-        events.set(groupMessages(values))
+      FeedSummary(sbot_log, 100, () => {
         sync.set(true)
-        updates.set(0)
-      })
+      }),
+      abortable,
+      Scroller(scrollElement, content, renderItem, false, false)
     )
   }
+}
+
+function FeedSummary (stream, windowSize, cb) {
+  var last = null
+  var returned = false
+  return pullNext(() => {
+    var next = {reverse: true, limit: windowSize, live: false}
+    if (last) {
+      next.lt = last.timestamp
+    }
+    var pushable = pullPushable()
+    pull(
+      sbot_log(next),
+      pull.collect((err, values) => {
+        if (err) throw err
+        groupMessages(values).forEach(v => pushable.push(v))
+        last = values[values.length - 1]
+        pushable.end()
+        if (!returned) cb && cb()
+        returned = true
+      })
+    )
+    return pushable
+  })
+}
+
+function renderItem (item) {
+  if (item.type === 'message') {
+    var meta = null
+    var replies = item.replies.slice(-3).map(message_render)
+    var renderedMessage = item.message ? message_render(item.message) : null
+    if (renderedMessage) {
+      if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
+        meta = m('div.meta', [
+          manyPeople(item.repliesFrom), ' replied'
+        ])
+      } else if (item.lastUpdateType === 'dig' && item.digs.size) {
+        meta = m('div.meta', [
+          manyPeople(item.digs), ' dug this message'
+        ])
+      }
+
+      return m('FeedEvent', [
+        meta,
+        renderedMessage,
+        when(replies.length, [
+          when(item.replies.length > replies.length,
+            m('a.full', {href: `#${item.messageId}`}, ['View full thread'])
+          ),
+          m('div.replies', replies)
+        ])
+      ])
+    } else {
+      if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
+        meta = m('div.meta', [
+          manyPeople(item.repliesFrom), ' replied to ', message_link(item.messageId)
+        ])
+      } else if (item.lastUpdateType === 'dig' && item.digs.size) {
+        meta = m('div.meta', [
+          manyPeople(item.digs), ' dug ', message_link(item.messageId)
+        ])
+      }
+
+      if (meta || replies.length) {
+        return m('FeedEvent', [
+          meta, m('div.replies', replies)
+        ])
+      }
+    }
+  } else if (item.type === 'follow') {
+    return m('FeedEvent -follow', [
+      m('div.meta', [
+        person(item.id), ' followed ', manyPeople(item.contacts)
+      ])
+    ])
+  }
+
+  return h('div')
 }
 
 function person (id) {
@@ -138,25 +175,27 @@ function manyPeople (ids) {
   ids = Array.from(ids)
   var featuredIds = ids.slice(-3).reverse()
 
-  if (ids.length > 3) {
-    return [
-      person(featuredIds[0]), ', ',
-      person(featuredIds[1]),
-      ' and ', ids.length - 2, ' others'
-    ]
-  } else if (ids.length === 3) {
-    return [
-      person(featuredIds[0]), ', ',
-      person(featuredIds[1]), ' and ',
-      person(featuredIds[2])
-    ]
-  } else if (ids.length === 2) {
-    return [
-      person(featuredIds[0]), ' and ',
-      person(featuredIds[1])
-    ]
-  } else {
-    return person(featuredIds[0])
+  if (ids.length) {
+    if (ids.length > 3) {
+      return [
+        person(featuredIds[0]), ', ',
+        person(featuredIds[1]),
+        ' and ', ids.length - 2, ' others'
+      ]
+    } else if (ids.length === 3) {
+      return [
+        person(featuredIds[0]), ', ',
+        person(featuredIds[1]), ' and ',
+        person(featuredIds[2])
+      ]
+    } else if (ids.length === 2) {
+      return [
+        person(featuredIds[0]), ' and ',
+        person(featuredIds[1])
+      ]
+    } else {
+      return person(featuredIds[0])
+    }
   }
 }
 
@@ -179,6 +218,9 @@ function groupMessages (messages) {
             group.updated = msg.timestamp
           } else {
             group.digs.delete(msg.value.author)
+            if (group.lastUpdateType === 'dig' && !group.digs.size && !group.replies.length) {
+              group.lastUpdateType = 'reply'
+            }
           }
         }
       }
