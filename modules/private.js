@@ -15,6 +15,7 @@ exports.screen_view = function (path, sbot) {
     return feed_summary((opts) => {
       return pull(
         sbot_log(opts),
+        loosen(10), // release tight loops if they continue too long (avoid scroll jank)
         unbox()
       )
     }, [
@@ -48,12 +49,25 @@ function unbox () {
       return typeof msg.value.content === 'string'
     }),
     pull.map(function (msg) {
-      return message_unbox(msg)
-    }),
-    pull.filter(Boolean)
+      return message_unbox(msg) || { timestamp: msg.timestamp }
+    })
   )
 }
 
 function map (ary, iter) {
-  if(Array.isArray(ary)) return ary.map(iter)
+  if (Array.isArray(ary)) return ary.map(iter)
+}
+
+function loosen (max) {
+  var lastRelease = Date.now()
+  return pull.asyncMap(function (item, cb) {
+    if (Date.now() - lastRelease > max) {
+      setImmediate(() => {
+        lastRelease = Date.now()
+        cb(null, item)
+      })
+    } else {
+      cb(null, item)
+    }
+  })
 }
