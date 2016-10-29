@@ -1,6 +1,7 @@
 var pull = require('pull-stream')
 var ssbKeys = require('ssb-keys')
 var ref = require('ssb-ref')
+var LikeCache = require('./like-cache')
 
 function Hash (onHash) {
   var buffers = []
@@ -26,6 +27,7 @@ var cache = CACHE = {}
 module.exports = function (sbot, opts) {
   var connection_status = []
   var keys = opts.keys
+  var likeCache = LikeCache()
 
   var internal = {
     getLatest: function (id, cb) {
@@ -46,6 +48,9 @@ module.exports = function (sbot, opts) {
     connection_status: connection_status,
     get_id: function () {
       return sbot.id
+    },
+    get_likes: function (id) {
+      return likeCache.get(id)
     },
     sbot_blobs_add: function (cb) {
       return pull(
@@ -80,6 +85,7 @@ module.exports = function (sbot, opts) {
         sbot.createLogStream(opts),
         pull.through(function (e) {
           CACHE[e.key] = CACHE[e.key] || e.value
+          likeCache.updateFrom(e)
         })
       )
     },
