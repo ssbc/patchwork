@@ -47,7 +47,7 @@ exports.feed_summary = function (getStream, prefix) {
   pull(
     getStream({old: false}),
     pull.drain((item) => {
-      if (item.value.content.type !== 'vote') {
+      if (item && item.value && item.value.content.type !== 'vote') {
         updates.set(updates() + 1)
       }
     })
@@ -86,8 +86,8 @@ exports.feed_summary = function (getStream, prefix) {
 function renderItem (item) {
   if (item.type === 'message') {
     var meta = null
-    var replies = item.replies.slice(-3).map(message_render)
-    var renderedMessage = item.message ? message_render(item.message) : null
+    var replies = item.replies.slice(-3).map(m => message_render(m, true))
+    var renderedMessage = item.message ? message_render(item.message, true) : null
     if (renderedMessage) {
       if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
         meta = m('div.meta', [

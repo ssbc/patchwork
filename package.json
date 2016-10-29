@@ -12,7 +12,7 @@
   "author": "",
   "license": "GPL",
   "dependencies": {
-    "@mmckegg/mutant": "~3.7.0",
+    "@mmckegg/mutant": "~3.7.1",
     "data-uri-to-buffer": "0.0.4",
     "electron": "~1.4.4",
     "electron-default-menu": "~1.0.0",

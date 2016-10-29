@@ -1,4 +1,4 @@
-var h = require('@mmckegg/mutant/html-element')
+var h = require('../lib/h')
 var computed = require('@mmckegg/mutant/computed')
 var when = require('@mmckegg/mutant/when')
 var plugs = require('patchbay/plugs')
@@ -17,12 +17,13 @@ exports.message_content = exports.message_content_mini = function (msg, sbot) {
 }
 
 exports.message_meta = function (msg, sbot) {
-  return h('span.likes', [computed(get_likes(msg.key), likeCount)])
+  return computed(get_likes(msg.key), likeCount)
 }
 
 exports.message_action = function (msg, sbot) {
   var id = get_id()
   var dug = computed([get_likes(msg.key), id], doesLike)
+  dug(() => {})
 
   if (msg.value.content.type !== 'vote') {
     return h('a.dig', {
@@ -53,11 +54,8 @@ function doesLike (likes, userId) {
 
 function likeCount (data) {
   var likes = getLikes(data)
-  if (likes.length === 1) {
-    return '1 Dig'
-  }
-  if (likes.length > 1) {
-    return likes.length + ' Digs'
+  if (likes.length) {
+    return [' ', h('span.likes', ['+', h('strong', `${likes.length}`)])]
   }
 }
 
