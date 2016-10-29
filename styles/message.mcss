@@ -62,6 +62,7 @@ Message {
         padding: 5px 8px;
         border-radius: 10px;
         display: inline-block;
+        vertical-align: top;
       }
     }
   }

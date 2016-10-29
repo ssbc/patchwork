@@ -52,6 +52,9 @@ module.exports = function (sbot, opts) {
     get_likes: function (id) {
       return likeCache.get(id)
     },
+    update_likes: function (msg) {
+      likeCache.updateFrom(msg)
+    },
     sbot_blobs_add: function (cb) {
       return pull(
         Hash(function (err, id) {

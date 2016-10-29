@@ -7,6 +7,7 @@ var feed_summary = plugs.first(exports.feed_summary = [])
 var message_unbox = plugs.first(exports.message_unbox = [])
 var get_id = plugs.first(exports.get_id = [])
 var avatar_image_link = plugs.first(exports.avatar_image_link = [])
+var update_likes = plugs.first(exports.update_likes = [])
 
 exports.screen_view = function (path, sbot) {
   if (path === '/private') {
@@ -16,7 +17,12 @@ exports.screen_view = function (path, sbot) {
       return pull(
         sbot_log(opts),
         loosen(10), // release tight loops if they continue too long (avoid scroll jank)
-        unbox()
+        unbox(),
+        pull.through((item) => {
+          if (item.value) {
+            update_likes(item)
+          }
+        })
       )
     }, [
       message_compose({type: 'post', recps: [], private: true}, {
