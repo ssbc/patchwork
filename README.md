@@ -21,6 +21,8 @@ $ npm start
 - [x] Endless scrolling (or load more) on main feed [fake paginate, add a new section, leave the current one and remove the top most]
 - [x] Display fixed banner at top of view when there are new updates [scrolls to top of page and reloads view when clicked]
 - [x] Preserve scroll on back button
+- [ ] Roll-up about messages
+- [ ] Join Pub interface
 - [ ] Notifications drop down (show unread mentions, digs, replies)
   - [ ] to support this, we need to track subscriptions and read status
 - [ ] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
