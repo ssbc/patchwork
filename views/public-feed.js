@@ -53,7 +53,7 @@ exports.screen_view = function (path, sbot) {
     pull(
       sbot_log({old: false}),
       pull.drain((item) => {
-        if (!item.value.content.type === 'vote') {
+        if (item.value.content.type !== 'vote') {
           updates.set(updates() + 1)
         }
       })
