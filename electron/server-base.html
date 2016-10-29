@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Patchwork Server Process</title>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    Hidden server window
+    <script>
+      var electron = require('electron')
+      console.log = electron.remote.getGlobal('console').log
+      console.error = electron.remote.getGlobal('console').error
+      process.exit = electron.remote.app.quit
+      // redirect errors to stderr
+      window.addEventListener('error', function (e) {
+        e.preventDefault()
+        console.error(e.error.stack || 'Uncaught ' + e.error)
+      })
+    </script>
+  </body>
+</html>

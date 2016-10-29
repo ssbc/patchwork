@@ -15,7 +15,7 @@ module.exports = function (conf) {
     allowRemoteAccess: function () {
       return conf.allowRemoteAccess
     },
-    
+
     requiresPassword: function () {
       return isString(conf.singleUserPassword)
     },
