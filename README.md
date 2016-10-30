@@ -21,13 +21,16 @@ $ npm start
 - [x] Endless scrolling (or load more) on main feed [fake paginate, add a new section, leave the current one and remove the top most]
 - [x] Display fixed banner at top of view when there are new updates [scrolls to top of page and reloads view when clicked]
 - [x] Preserve scroll on back button
+- [x] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
+- [x] Show digs on posts in a nicer way (make it clear that you've dug something)
+- [ ] Improve UI on profiles
+  - [ ] Move contacts to sidebar
+  - [ ] Better selection of names / avatar
+- [ ] Display number of updates available on Feed buttons. Clicking reloads page.
+- [ ] Figure out when to automatically reload / or inject changes into feeds
 - [ ] Roll-up about messages
-- [ ] Join Pub interface
-- [ ] Notifications drop down (show unread mentions, digs, replies)
-  - [ ] to support this, we need to track subscriptions and read status
-- [ ] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
-- [ ] Search
+- [ ] "Join Pub" interface
+- [ ] Improve search UI
 - [ ] Easy navigation sidebar
 - [ ] Contacts sidebar
-- [ ] Show digs on posts in a nicer way (make it clear that you've dug something)
 - [ ] Add more todos!
