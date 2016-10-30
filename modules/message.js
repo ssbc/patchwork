@@ -23,7 +23,7 @@ exports.message_render = function (msg, inContext) {
           avatar_link(msg.value.author, avatar_name(msg.value.author), ''),
           ' ', elMini
         ]),
-        h('div.message_meta.row', message_meta(msg))
+        h('div.message_meta.row', [message_meta(msg)])
       ])
     ])
     div.setAttribute('tabindex', '0')
