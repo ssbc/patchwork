@@ -23,6 +23,7 @@ $ npm start
 - [x] Preserve scroll on back button
 - [x] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
 - [x] Show digs on posts in a nicer way (make it clear that you've dug something)
+- [ ] Hovering "+1" like values and "x other people" messages should show who
 - [ ] Improve UI on profiles
   - [ ] Move contacts to sidebar
   - [ ] Better selection of names / avatar
