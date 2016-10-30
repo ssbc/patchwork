@@ -7,11 +7,6 @@ MainWindow {
     div.top {
       padding-left: 70px
     }
-    div.top {
-      span.appTitle {
-        margin-right: 40px;
-      }
-    }
   }
 
   -win32 {

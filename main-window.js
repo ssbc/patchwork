@@ -95,7 +95,13 @@ module.exports = function (config, ssbClient) {
           classList: [
             when(selected(`${ssbClient.id}`), '-selected')
           ]
-        }, 'Profile')
+        }, 'Profile'),
+        h('a', {
+          href: `#/notifications`,
+          classList: [
+            when(selected(`/notifications`), '-selected')
+          ]
+        }, 'Mentions')
       ])
     ]),
     mainElement
