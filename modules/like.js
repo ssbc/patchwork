@@ -6,6 +6,7 @@ var message_link = plugs.first(exports.message_link = [])
 var get_id = plugs.first(exports.get_id = [])
 var get_likes = plugs.first(exports.get_likes = [])
 var publish = plugs.first(exports.sbot_publish = [])
+var people_names = plugs.first(exports.people_names = [])
 
 exports.message_content = exports.message_content_mini = function (msg, sbot) {
   if (msg.value.content.type !== 'vote') return
@@ -55,7 +56,9 @@ function doesLike (likes, userId) {
 function likeCount (data) {
   var likes = getLikes(data)
   if (likes.length) {
-    return [' ', h('span.likes', ['+', h('strong', `${likes.length}`)])]
+    return [' ', h('span.likes', {
+      title: people_names(likes)
+    }, ['+', h('strong', `${likes.length}`)])]
   }
 }
 

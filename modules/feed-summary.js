@@ -16,6 +16,7 @@ var message_render = plugs.first(exports.message_render = [])
 var message_link = plugs.first(exports.message_link = [])
 var person = plugs.first(exports.person = [])
 var many_people = plugs.first(exports.many_people = [])
+var people_names = plugs.first(exports.people_names = [])
 
 exports.feed_summary = function (getStream, prefix) {
   var sync = Value(false)
@@ -91,11 +92,15 @@ function renderItem (item) {
     var renderedMessage = item.message ? message_render(item.message, true) : null
     if (renderedMessage) {
       if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
-        meta = m('div.meta', [
+        meta = m('div.meta', {
+          title: people_names(item.repliesFrom)
+        }, [
           many_people(item.repliesFrom), ' replied'
         ])
       } else if (item.lastUpdateType === 'dig' && item.digs.size) {
-        meta = m('div.meta', [
+        meta = m('div.meta', {
+          title: people_names(item.digs)
+        }, [
           many_people(item.digs), ' dug this message'
         ])
       }
@@ -112,11 +117,15 @@ function renderItem (item) {
       ])
     } else {
       if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
-        meta = m('div.meta', [
+        meta = m('div.meta', {
+          title: people_names(item.repliesFrom)
+        }, [
           many_people(item.repliesFrom), ' replied to ', message_link(item.messageId)
         ])
       } else if (item.lastUpdateType === 'dig' && item.digs.size) {
-        meta = m('div.meta', [
+        meta = m('div.meta', {
+          title: people_names(item.digs)
+        }, [
           many_people(item.digs), ' dug ', message_link(item.messageId)
         ])
       }
@@ -129,7 +138,9 @@ function renderItem (item) {
     }
   } else if (item.type === 'follow') {
     return m('FeedEvent -follow', [
-      m('div.meta', [
+      m('div.meta', {
+        title: people_names(item.contacts)
+      }, [
         person(item.id), ' followed ', many_people(item.contacts)
       ])
     ])
