@@ -1,8 +1,3 @@
-.message {
-  background-color: white;
-  padding: 10px;
-}
-
 .scroller__wrapper {
   width: 600px;
   padding: 20px;
@@ -28,4 +23,8 @@ img.emoji {
   height: 1.5em;
   align-content: center;
   margin-top: -0.2em;
+}
+
+div.compose textarea {
+  transition: height 0.1s
 }

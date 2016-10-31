@@ -7,7 +7,7 @@ var feed_summary = plugs.first(exports.feed_summary = [])
 var message_unbox = plugs.first(exports.message_unbox = [])
 var get_id = plugs.first(exports.get_id = [])
 var avatar_image_link = plugs.first(exports.avatar_image_link = [])
-var update_likes = plugs.first(exports.update_likes = [])
+var update_cache = plugs.first(exports.update_cache = [])
 
 exports.screen_view = function (path, sbot) {
   if (path === '/private') {
@@ -20,7 +20,7 @@ exports.screen_view = function (path, sbot) {
         unbox(),
         pull.through((item) => {
           if (item.value) {
-            update_likes(item)
+            update_cache(item)
           }
         })
       )
@@ -37,7 +37,9 @@ exports.screen_view = function (path, sbot) {
         },
         placeholder: 'Write a private message'
       })
-    ])
+    ], {
+      windowSize: 1000
+    })
   }
 }
 

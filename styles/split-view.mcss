@@ -1,0 +1,27 @@
+SplitView {
+  display: flex
+  flex: 3
+  div.main {
+    display: flex
+    flex-direction: column
+    flex: 1
+  }
+  div.side {
+    min-width: 280px;
+    padding: 20px;
+    background: linear-gradient(100deg, #cee4ef, #efebeb);
+    border-right: 1px solid #dcdcdc;
+    overflow-y: auto;
+
+    h2 {
+      margin-top: 20px
+      color: #527b90;
+      text-shadow: 0px 0px 3px #fff;
+      font-weight: normal;
+      span.sub {
+        font-weight: normal
+        font-size: 90%
+      }
+    }
+  }
+}

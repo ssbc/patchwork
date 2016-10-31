@@ -6,6 +6,7 @@ var MutantArray = require('@mmckegg/mutant/array')
 var Abortable = require('pull-abortable')
 var Scroller = require('../lib/pull-scroll')
 var FeedSummary = require('../lib/feed-summary')
+var onceTrue = require('../lib/once-true')
 
 var m = require('../lib/h')
 
@@ -17,12 +18,17 @@ var message_link = plugs.first(exports.message_link = [])
 var person = plugs.first(exports.person = [])
 var many_people = plugs.first(exports.many_people = [])
 var people_names = plugs.first(exports.people_names = [])
+var sbot_get = plugs.first(exports.sbot_get = [])
 
-exports.feed_summary = function (getStream, prefix) {
+exports.feed_summary = function (getStream, prefix, opts) {
   var sync = Value(false)
   var updates = Value(0)
 
-  var updateLoader = m('a.loader', {
+  var filter = opts && opts.filter
+  var windowSize = opts && opts.windowSize
+  var waitFor = opts && opts.waitFor || true
+
+  var updateLoader = m('a Notifier -loader', {
     href: '#',
     'ev-click': refresh
   }, [
@@ -45,15 +51,38 @@ exports.feed_summary = function (getStream, prefix) {
 
   setTimeout(refresh, 10)
 
-  pull(
-    getStream({old: false}),
-    pull.drain((item) => {
-      var type = item && item.value && item.value.content.type
-      if (type && type !== 'vote') {
-        updates.set(updates() + 1)
-      }
-    })
-  )
+  onceTrue(waitFor, () => {
+    pull(
+      getStream({old: false}),
+      pull.drain((item) => {
+        var type = item && item.value && item.value.content.type
+        if (type && type !== 'vote') {
+          if (filter) {
+            var update = (item.value.content.type === 'post' && item.value.content.root) ? {
+              type: 'message',
+              messageId: item.value.content.root,
+              channel: item.value.content.channel
+            } : {
+              type: 'message',
+              author: item.value.author,
+              channel: item.value.content.channel,
+              messageId: item.key
+            }
+
+            ensureAuthor(update, (err, update) => {
+              if (!err) {
+                if (filter(update)) {
+                  updates.set(updates() + 1)
+                }
+              }
+            })
+          } else {
+            updates.set(updates() + 1)
+          }
+        }
+      })
+    )
+  })
 
   var abortLastFeed = null
 
@@ -76,12 +105,33 @@ exports.feed_summary = function (getStream, prefix) {
     abortLastFeed = abortable.abort
 
     pull(
-      FeedSummary(getStream, 1000, () => {
+      FeedSummary(getStream, windowSize, () => {
         sync.set(true)
+      }),
+      pull.asyncMap(ensureAuthor),
+      pull.filter((item) => {
+        if (filter) {
+          return filter(item)
+        } else {
+          return true
+        }
       }),
       abortable,
       Scroller(scrollElement, content, renderItem, false, false)
     )
+  }
+}
+
+function ensureAuthor (item, cb) {
+  if (item.type === 'message' && !item.message) {
+    sbot_get(item.messageId, (_, value) => {
+      if (value) {
+        item.author = value.author
+      }
+      cb(null, item)
+    })
+  } else {
+    cb(null, item)
   }
 }
 

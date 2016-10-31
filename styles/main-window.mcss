@@ -9,12 +9,6 @@ MainWindow {
     }
   }
 
-  -win32 {
-    div.top {
-      padding-right: 70px
-    }
-  }
-
   div.top {
     display: flex;
     background: #fff;
@@ -135,21 +129,6 @@ MainWindow {
       display: flex
       flex-direction: column
       flex: 1
-
-      a.loader {
-        padding: 10px;
-        display: block;
-        background: rgb(214, 228, 236);
-        border: 1px solid rgb(187, 201, 210);
-        text-align: center;
-
-        :hover {
-          background: rgb(220, 242, 255);
-        }
-
-        animation: 0.5s slide-in
-        position: relative
-      }
 
       div {
         -webkit-user-select: text

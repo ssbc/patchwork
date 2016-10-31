@@ -1,7 +1,7 @@
 var pull = require('pull-stream')
 var ssbKeys = require('ssb-keys')
 var ref = require('ssb-ref')
-var LikeCache = require('./like-cache')
+var InfoCache = require('./info-cache')
 
 function Hash (onHash) {
   var buffers = []
@@ -27,7 +27,7 @@ var cache = CACHE = {}
 module.exports = function (sbot, opts) {
   var connection_status = []
   var keys = opts.keys
-  var likeCache = LikeCache()
+  var infoCache = InfoCache()
 
   var internal = {
     getLatest: function (id, cb) {
@@ -50,10 +50,13 @@ module.exports = function (sbot, opts) {
       return sbot.id
     },
     get_likes: function (id) {
-      return likeCache.get(id)
+      return infoCache.getLikes(id)
     },
-    update_likes: function (msg) {
-      likeCache.updateFrom(msg)
+    obs_channels: function () {
+      return infoCache.channels
+    },
+    update_cache: function (msg) {
+      infoCache.updateFrom(msg)
     },
     sbot_blobs_add: function (cb) {
       return pull(
@@ -88,7 +91,7 @@ module.exports = function (sbot, opts) {
         sbot.createLogStream(opts),
         pull.through(function (e) {
           CACHE[e.key] = CACHE[e.key] || e.value
-          likeCache.updateFrom(e)
+          infoCache.updateFrom(e)
         })
       )
     },
@@ -96,10 +99,11 @@ module.exports = function (sbot, opts) {
       return sbot.createUserStream(opts)
     },
     sbot_get: function (key, cb) {
-      if(CACHE[key]) cb(null, CACHE[key])
+      if(CACHE[key] && CACHE[key].value) cb(null, CACHE[key].value)
       else sbot.get(key, function (err, value) {
         if(err) return cb(err)
-        cb(null, CACHE[key] = value)
+        CACHE[key] = {key, value}
+        cb(null, value)
       })
     },
     sbot_gossip_peers: function (cb) {
