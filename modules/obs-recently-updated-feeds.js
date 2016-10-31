@@ -4,6 +4,7 @@ var computed = require('@mmckegg/mutant/computed')
 var MutantPullReduce = require('../lib/mutant-pull-reduce')
 var plugs = require('patchbay/plugs')
 var sbot_log = plugs.first(exports.sbot_log = [])
+var hr = 60 * 60 * 1000
 
 exports.obs_recently_updated_feeds = function (limit) {
   var stream = pull(
@@ -14,7 +15,9 @@ exports.obs_recently_updated_feeds = function (limit) {
   )
 
   var result = MutantPullReduce(stream, (result, msg) => {
-    result.add(msg.value.author)
+    if (msg.value.timestamp && Date.now() - msg.value.timestamp < 24 * hr) {
+      result.add(msg.value.author)
+    }
     return result
   }, {
     startValue: new Set(),
