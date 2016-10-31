@@ -36,11 +36,11 @@ exports.screen_view = function (path, sbot) {
             h('a -unsubscribe', {
               'href': '#',
               'title': 'Click to unsubscribe',
-              'ev-click': send(unsubscribe, channel.id)
+              'ev-click': send(unsubscribe, channel)
             }, 'Subscribed'),
             h('a -subscribe', {
               'href': '#',
-              'ev-click': send(subscribe, channel.id)
+              'ev-click': send(subscribe, channel)
             }, 'Subscribe')
           )
         ])
