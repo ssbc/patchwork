@@ -15,6 +15,7 @@ SplitView {
 
     h2 {
       margin-top: 20px
+      margin-bottom: 8px
       color: #527b90;
       text-shadow: 0px 0px 3px #fff;
       font-weight: normal;
