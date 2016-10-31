@@ -12,12 +12,13 @@ FeedEvent {
   }
 
   a.full {
-    display: block
+    display: block;
     padding: 10px;
-    background: #d6e4ec;
+    background: #daecd6;
     border-top: 1px solid #bbc9d2;
     border-bottom: 1px solid #bbc9d2;
     text-align: center;
+    color: #759053;
   }
 
   div.replies {
