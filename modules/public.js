@@ -96,7 +96,10 @@ exports.screen_view = function (path, sbot) {
             subscribedChannels.sync
           ], x => x.every(Boolean)),
           filter: (item) => {
-            return id === item.author || following().has(item.author) || subscribedChannels().has(item.channel)
+            return id === item.author ||
+              following().has(item.author) ||
+              subscribedChannels().has(item.channel) ||
+              (item.repliesFrom && item.repliesFrom.has(id))
           }
         })
       ])
