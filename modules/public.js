@@ -95,15 +95,44 @@ exports.screen_view = function (path, sbot) {
             following.sync,
             subscribedChannels.sync
           ], x => x.every(Boolean)),
+          windowSize: 200,
           filter: (item) => {
-            return id === item.author ||
+            return (
+              id === item.author ||
               following().has(item.author) ||
               subscribedChannels().has(item.channel) ||
               (item.repliesFrom && item.repliesFrom.has(id))
+            )
+          },
+          bumpFilter: (msg, group) => {
+            if (!group.message) {
+              return (
+                isMentioned(id, msg.value.content.mentions) ||
+                msg.value.author === id || (
+                  fromDay(msg, group.fromTime) && (
+                    following().has(msg.value.author) ||
+                    group.repliesFrom.has(id)
+                  )
+                )
+              )
+            }
+            return true
           }
         })
       ])
     ])
+  }
+}
+
+function fromDay (msg, fromTime) {
+  return (fromTime - msg.timestamp) < (24 * 60 * 60e3)
+}
+
+function isMentioned (id, list) {
+  if (Array.isArray(list)) {
+    return list.includes(id)
+  } else {
+    return false
   }
 }
 

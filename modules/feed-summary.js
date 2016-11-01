@@ -25,6 +25,7 @@ exports.feed_summary = function (getStream, prefix, opts) {
   var updates = Value(0)
 
   var filter = opts && opts.filter
+  var bumpFilter = opts && opts.bumpFilter
   var windowSize = opts && opts.windowSize
   var waitFor = opts && opts.waitFor || true
 
@@ -105,7 +106,7 @@ exports.feed_summary = function (getStream, prefix, opts) {
     abortLastFeed = abortable.abort
 
     pull(
-      FeedSummary(getStream, windowSize, () => {
+      FeedSummary(getStream, {windowSize, bumpFilter}, () => {
         sync.set(true)
       }),
       pull.asyncMap(ensureAuthor),
