@@ -17,7 +17,6 @@ exports.obs_local = function () {
         if (err) throw console.log(err)
         peers.filter((peer) => {
           if (ip.isPrivate(peer.host) && (peer.source === 'local')) {
-            console.log(peer)
             result.add(peer.key)
           }
         })
