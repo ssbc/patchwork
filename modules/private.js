@@ -8,6 +8,7 @@ var message_unbox = plugs.first(exports.message_unbox = [])
 var get_id = plugs.first(exports.get_id = [])
 var avatar_image_link = plugs.first(exports.avatar_image_link = [])
 var update_cache = plugs.first(exports.update_cache = [])
+var h = require('../lib/h')
 
 exports.screen_view = function (path, sbot) {
   if (path === '/private') {
@@ -44,10 +45,12 @@ exports.screen_view = function (path, sbot) {
 }
 
 exports.message_meta = function (msg) {
-  if(msg.value.content.recps || msg.value.private) {
-    return h('span.row', 'PRIVATE', map(msg.value.content.recps, function (id) {
-      return avatar_image_link('string' == typeof id ? id : id.link, 'thumbnail')
-    }))
+  if (msg.value.content.recps || msg.value.private) {
+    return h('span.private', [
+      map(msg.value.content.recps, function (id) {
+        return avatar_image_link(typeof id === 'string' ? id : id.link, 'thumbnail')
+      })
+    ])
   }
 }
 

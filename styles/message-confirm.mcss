@@ -1,0 +1,18 @@
+MessageConfirm {
+  section {
+    max-height: 80vh;
+    overflow: auto;
+    margin: -20px;
+    padding: 20px;
+    margin-bottom: 0;
+  }
+  footer {
+    text-align: right;
+    background: #e2e2e2;
+    margin: 0px -20px -20px;
+    padding: 5px;
+    border-top: 1px solid #d6d6d6;
+    position: relative;
+    box-shadow: 0 0 6px rgba(51, 51, 51, 0.47);
+  }
+}

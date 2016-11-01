@@ -1,4 +1,5 @@
 var h = require('../lib/h')
+var when = require('@mmckegg/mutant/when')
 
 var plugs = require('patchbay/plugs')
 var message_content = plugs.first(exports.message_content = [])
@@ -69,12 +70,12 @@ exports.message_render = function (msg, inContext) {
       h('div.meta', message_meta(msg))
     ]),
     h('section', [el]),
-    h('footer', [
+    when(msg.key, h('footer', [
       h('div.actions', [
         message_action(msg),
         h('a', {href: '#' + msg.key}, 'Reply')
       ])
-    ])
+    ]))
   ])
 
   // ); hyperscript does not seem to set attributes correctly.

@@ -28,3 +28,31 @@ img.emoji {
 div.compose textarea {
   transition: height 0.1s
 }
+
+div.lightbox {
+  box-shadow: #5f5f5f 1px 2px 100px;
+  bottom: inherit !important;
+  overflow: hidden !important;
+}
+
+div.suggest-box {
+  background: #333;
+}
+
+div.suggest-box ul {
+  left: 390px;
+  top: 87px;
+  position: fixed;
+  padding: 5px;
+  border-radius: 3px;
+  background: #fdfdfd;
+  border: 1px solid #CCC;
+}
+
+div.suggest-box li {
+  padding: 3px;
+}
+
+div.suggest-box strong {
+  font-weight: normal;
+}
