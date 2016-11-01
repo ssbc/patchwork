@@ -61,7 +61,7 @@ exports.screen_view = function (path, sbot) {
 exports.message_meta = function (msg) {
   var chan = msg.value.content.channel
   if (chan) {
-    return h('a', {href: '##' + chan}, '#' + chan)
+    return h('a.channel', {href: '##' + chan}, '#' + chan)
   }
 }
 

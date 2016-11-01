@@ -56,6 +56,17 @@ Message {
     }
 
     div.meta {
+
+      em {
+        display: inline-block
+        padding: 4px
+      }
+
+      a.channel {
+        display: inline-block
+        padding: 4px
+      }
+
       span.likes {
         color: #ffffff;
         background: linear-gradient(45deg, #859c88, #87d47d);
