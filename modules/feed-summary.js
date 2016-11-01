@@ -138,7 +138,12 @@ function ensureAuthor (item, cb) {
 function renderItem (item) {
   if (item.type === 'message') {
     var meta = null
-    var replies = item.replies.slice(-4).map(m => message_render(m, true))
+    var lastId = item.messageId
+    var replies = item.replies.slice(-4).map((msg) => {
+      var result = message_render(msg, true, lastId)
+      lastId = msg.key
+      return result
+    })
     var renderedMessage = item.message ? message_render(item.message, true) : null
     if (renderedMessage) {
       if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {

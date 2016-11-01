@@ -13,7 +13,7 @@ var message_main_meta = plugs.map(exports.message_main_meta = [])
 var message_action = plugs.map(exports.message_action = [])
 var contextMenu = require('../lib/context-menu')
 
-exports.message_render = function (msg, inContext) {
+exports.message_render = function (msg, inContext, previousId) {
   var elMini = message_content_mini(msg)
   if (elMini) {
     var div = h('Message', {
@@ -41,6 +41,8 @@ exports.message_render = function (msg, inContext) {
     classList.push('-reply')
     if (!inContext) {
       replyInfo = h('span', ['in reply to ', message_link(msg.value.content.root)])
+    } else if (previousId && last(msg.value.content.branch) && previousId !== last(msg.value.content.branch)) {
+      replyInfo = h('span', ['in reply to ', message_link(last(msg.value.content.branch))])
     }
   }
 
@@ -82,4 +84,12 @@ exports.message_render = function (msg, inContext) {
   element.setAttribute('tabindex', '0')
 
   return element
+}
+
+function last (array) {
+  if (Array.isArray(array)) {
+    return array[array.length - 1]
+  } else {
+    return array
+  }
 }

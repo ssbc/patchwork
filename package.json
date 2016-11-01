@@ -33,6 +33,7 @@
     "ssb-keys": "~7.0.0",
     "ssb-links": "~2.0.0",
     "ssb-query": "~0.1.1",
-    "ssb-ref": "~2.6.2"
+    "ssb-ref": "~2.6.2",
+    "ssb-sort": "^1.0.0"
   }
 }
