@@ -19,7 +19,7 @@
     "insert-css": "~1.0.0",
     "is-visible": "^2.1.1",
     "micro-css": "~0.6.2",
-    "patchbay": "~3.5.0",
+    "patchbay": "~3.6.1",
     "pull-abortable": "^4.1.0",
     "pull-file": "~1.0.0",
     "pull-identify-filetype": "^1.1.0",

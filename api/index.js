@@ -135,6 +135,9 @@ module.exports = function (sbot, opts) {
     },
     sbot_whoami: function (cb) {
       sbot.whoami(cb)
+    },
+    sbot_progress: function () {
+      return sbot.replicate.changes()
     }
   }
 }
