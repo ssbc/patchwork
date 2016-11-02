@@ -19,7 +19,7 @@ exports.message_name = function (id, cb) {
 
 function titleFromMarkdown (text, max) {
   text = text.trim().split('\n', 2).join('\n')
-  text = text.replace(/\#|\[.*?\]|\(\S*?\)/g, '').trim()
+  text = text.replace(/_|`|\*|\#|\[.*?\]|\(\S*?\)/g, '').trim()
   text = text.replace(/\:$/, '')
   text = text.trim().split('\n', 1)[0].trim()
   if (text.length > max) {
