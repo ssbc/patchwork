@@ -50,7 +50,7 @@ exports.screen_view = function (path) {
       windowSize: 200,
       filter: (group) => {
         return (
-          ((group.message || group.type !== 'message') && (group.author !== id || group.digs.size)) || (
+          ((group.message || group.type !== 'message') && (group.author !== id || group.digs && group.digs.size)) || (
             group.repliesFrom && group.repliesFrom.size && (
               !group.repliesFrom.has(id) || group.repliesFrom.size > 1
             )
