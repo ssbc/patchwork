@@ -13,6 +13,8 @@ exports.screen_view = function (id) {
       return sbot_user_feed(extend(opts, {id: id}))
     }, [
       h('div', [avatar_profile(id)])
-    ])
+    ], {
+      windowSize: 50
+    })
   }
 }
