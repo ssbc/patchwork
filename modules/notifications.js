@@ -46,7 +46,9 @@ exports.screen_view = function (path) {
           })
         )
       }
-    }, [])
+    }, [], {
+      windowSize: 100
+    })
   }
 }
 
