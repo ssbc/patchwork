@@ -47,7 +47,16 @@ exports.screen_view = function (path) {
         )
       }
     }, [], {
-      windowSize: 100
+      windowSize: 200,
+      filter: (group) => {
+        return (
+          ((group.message || group.type !== 'message') && (group.author !== id || group.digs.size)) || (
+            group.repliesFrom && group.repliesFrom.size && (
+              !group.repliesFrom.has(id) || group.repliesFrom.size > 1
+            )
+          )
+        )
+      }
     })
   }
 }
@@ -96,7 +105,7 @@ function notifications (ourIds) {
   return paramap(function (msg, cb) {
     var c = msg.value && msg.value.content
     if (!c || typeof c !== 'object') return cb()
-    if (msg.value.author in ourIds) return cb()
+    if (msg.value.author in ourIds) return cb(null, msg)
 
     if (c.mentions && Array.isArray(c.mentions) && c.mentions.some(linksToUs)) {
       return cb(null, msg)
