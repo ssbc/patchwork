@@ -29,6 +29,12 @@ electron.app.on('ready', () => {
   electron.app.on('activate', function (e) {
     openMainWindow()
   })
+
+  electron.ipcMain.on('open-background-devtools', function (ev, config) {
+    if (windows.background) {
+      windows.background.webContents.openDevTools({detach: true})
+    }
+  })
 })
 
 function openMainWindow () {
@@ -82,6 +88,10 @@ function setupContext (appName, opts, cb) {
       title: 'patchwork-server',
       useContentSize: true,
       width: 150
+    })
+    windows.background.on('close', (ev) => {
+      ev.preventDefault()
+      windows.background.hide()
     })
   }
 }
