@@ -89,9 +89,9 @@ function setupContext (appName, opts, cb) {
       useContentSize: true,
       width: 150
     })
-    windows.background.on('close', (ev) => {
-      ev.preventDefault()
-      windows.background.hide()
-    })
+    // windows.background.on('close', (ev) => {
+    //   ev.preventDefault()
+    //   windows.background.hide()
+    // })
   }
 }
