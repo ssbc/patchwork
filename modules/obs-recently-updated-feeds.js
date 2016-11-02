@@ -4,6 +4,7 @@ var computed = require('@mmckegg/mutant/computed')
 var MutantPullReduce = require('../lib/mutant-pull-reduce')
 var plugs = require('patchbay/plugs')
 var sbot_log = plugs.first(exports.sbot_log = [])
+var throttle = require('@mmckegg/mutant/throttle')
 var hr = 60 * 60 * 1000
 
 exports.obs_recently_updated_feeds = function (limit) {
@@ -24,9 +25,12 @@ exports.obs_recently_updated_feeds = function (limit) {
     nextTick: true
   })
 
-  result.has = function (value) {
-    return computed(result, x => x.has(value))
+  var instance = throttle(result, 2000)
+  instance.sync = result.sync
+
+  instance.has = function (value) {
+    return computed(instance, x => x.has(value))
   }
 
-  return result
+  return instance
 }

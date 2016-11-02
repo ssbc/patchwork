@@ -4,6 +4,7 @@ var MutantPullReduce = require('../lib/mutant-pull-reduce')
 var plugs = require('patchbay/plugs')
 var sbot_user_feed = plugs.first(exports.sbot_user_feed = [])
 var cache = {}
+var throttle = require('@mmckegg/mutant/throttle')
 
 exports.obs_following = function (userId) {
   if (cache[userId]) {
@@ -33,11 +34,14 @@ exports.obs_following = function (userId) {
       nextTick: true
     })
 
-    result.has = function (value) {
-      return computed(result, x => x.has(value))
+    var instance = throttle(result, 2000)
+    instance.sync = result.sync
+
+    instance.has = function (value) {
+      return computed(instance, x => x.has(value))
     }
 
-    cache[userId] = result
-    return result
+    cache[userId] = instance
+    return instance
   }
 }
