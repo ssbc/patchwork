@@ -10,6 +10,23 @@ Message {
     z-index: 1
   }
 
+  -data {
+    header {
+      div.main {
+        font-size: 80%
+        a.avatar {
+          img {
+            width: 25px
+          }
+        }
+      }
+    }
+    (pre) {
+      overflow: auto
+      max-height: 200px
+    }
+  }
+
   -reply {
     header {
       div.main {

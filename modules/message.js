@@ -13,6 +13,20 @@ var message_main_meta = plugs.map(exports.message_main_meta = [])
 var message_action = plugs.map(exports.message_action = [])
 var contextMenu = require('../lib/context-menu')
 
+exports.data_render = function (msg) {
+  var div = h('Message -data', {
+    'ev-contextmenu': contextMenu.bind(null, msg)
+  }, [
+    messageHeader(msg),
+    h('section', [
+      h('pre', [
+        JSON.stringify(msg.value, null, 2)
+      ])
+    ])
+  ])
+  return div
+}
+
 exports.message_render = function (msg, inContext, previousId) {
   var elMini = message_content_mini(msg)
   if (elMini) {
@@ -56,21 +70,7 @@ exports.message_render = function (msg, inContext, previousId) {
       }
     }
   }, [
-    h('header', [
-      h('div.main', [
-        h('a.avatar', {href: `#${msg.value.author}`}, avatar_image(msg.value.author)),
-        h('div.main', [
-          h('div.name', [
-            h('a', {href: `#${msg.value.author}`}, avatar_name(msg.value.author))
-          ]),
-          h('div.meta', [
-            message_main_meta(msg),
-            ' ', replyInfo
-          ])
-        ])
-      ]),
-      h('div.meta', message_meta(msg))
-    ]),
+    messageHeader(msg, replyInfo),
     h('section', [el]),
     when(msg.key, h('footer', [
       h('div.actions', [
@@ -84,6 +84,24 @@ exports.message_render = function (msg, inContext, previousId) {
   element.setAttribute('tabindex', '0')
 
   return element
+}
+
+function messageHeader (msg, replyInfo) {
+  return h('header', [
+    h('div.main', [
+      h('a.avatar', {href: `#${msg.value.author}`}, avatar_image(msg.value.author)),
+      h('div.main', [
+        h('div.name', [
+          h('a', {href: `#${msg.value.author}`}, avatar_name(msg.value.author))
+        ]),
+        h('div.meta', [
+          message_main_meta(msg),
+          ' ', replyInfo
+        ])
+      ])
+    ]),
+    h('div.meta', message_meta(msg))
+  ])
 }
 
 function last (array) {
