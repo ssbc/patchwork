@@ -7,8 +7,6 @@ FeedEvent {
 
   div {
     flex: 1
-    margin: 0
-    font-size: 120%
   }
 
   a.full {

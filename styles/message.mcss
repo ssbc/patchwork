@@ -5,6 +5,7 @@ Message {
   border: 1px solid #f5f5f5
   background: white
   position: relative
+  font-size: 120%
 
   :focus {
     z-index: 1
@@ -28,6 +29,7 @@ Message {
   }
 
   -reply {
+    font-size: 100%
     header {
       div.main {
         a.avatar {
