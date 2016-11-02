@@ -138,6 +138,15 @@ module.exports = function (sbot, opts) {
     },
     sbot_progress: function () {
       return sbot.replicate.changes()
+    },
+    sbot_feed: function (opts) {
+      return pull(
+        sbot.createFeedStream(opts),
+        pull.through(function (e) {
+          CACHE[e.key] = CACHE[e.key] || e.value
+          infoCache.updateFrom(e)
+        })
+      )
     }
   }
 }

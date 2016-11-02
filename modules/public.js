@@ -2,11 +2,16 @@ var MutantMap = require('@mmckegg/mutant/map')
 var computed = require('@mmckegg/mutant/computed')
 var when = require('@mmckegg/mutant/when')
 var send = require('@mmckegg/mutant/send')
+var pull = require('pull-stream')
+var extend = require('xtend')
 
 var plugs = require('patchbay/plugs')
 var h = require('../lib/h')
 var message_compose = plugs.first(exports.message_compose = [])
 var sbot_log = plugs.first(exports.sbot_log = [])
+var sbot_feed = plugs.first(exports.sbot_feed = [])
+var sbot_user_feed = plugs.first(exports.sbot_user_feed = [])
+
 var feed_summary = plugs.first(exports.feed_summary = [])
 var obs_channels = plugs.first(exports.obs_channels = [])
 var obs_subscribed_channels = plugs.first(exports.obs_subscribed_channels = [])
@@ -26,6 +31,16 @@ exports.screen_view = function (path, sbot) {
     var loading = computed(subscribedChannels.sync, x => !x)
     var localPeers = obs_local()
     var following = obs_following(id)
+
+    var oldest = Date.now() - (2 * 24 * 60 * 60e3)
+    getFirstMessage(id, (err, msg) => {
+      if (msg) {
+        // fall back to timestamp stream before this, give 48 hrs for feeds to stabilize
+        if (msg.value.timestamp > oldest) {
+          oldest = Date.now()
+        }
+      }
+    })
 
     var whoToFollow = computed([obs_following(id), obs_recently_updated_feeds(200)], (following, recent) => {
       return Array.from(recent).filter(x => x !== id && !following.has(x)).slice(0, 20)
@@ -88,14 +103,14 @@ exports.screen_view = function (path, sbot) {
         ])
       ]),
       h('div.main', [
-        feed_summary(sbot_log, [
+        feed_summary(getFeed, [
           message_compose({type: 'post'}, {placeholder: 'Write a public message'})
         ], {
           waitUntil: computed([
             following.sync,
             subscribedChannels.sync
           ], x => x.every(Boolean)),
-          windowSize: 200,
+          windowSize: 500,
           filter: (item) => {
             return (
               id === item.author ||
@@ -121,6 +136,27 @@ exports.screen_view = function (path, sbot) {
         })
       ])
     ])
+  }
+
+  // scoped
+
+  function getFeed (opts) {
+    if (opts.lt && opts.lt < oldest) {
+      opts = extend(opts, {lt: parseInt(opts.lt, 10)})
+      console.log('using old feed', opts)
+      return pull(
+        sbot_feed(opts),
+        pull.map((msg) => {
+          if (msg.sync) {
+            return msg
+          } else {
+            return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
+          }
+        })
+      )
+    } else {
+      return sbot_log(opts)
+    }
   }
 }
 
@@ -156,4 +192,8 @@ function arrayEq (a, b) {
   if (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a !== b) {
     return a.every((value, i) => value === b[i])
   }
+}
+
+function getFirstMessage (feedId, cb) {
+  sbot_user_feed({id: feedId, gte: 0, limit: 1})(null, cb)
 }
