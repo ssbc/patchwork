@@ -5,7 +5,7 @@ var electron = require('electron')
 
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
-  .use(require('./lib/gossip-with-slow-rollout')) // override
+  .use(require('./lib/persistent-gossip')) // override
   .use(require('scuttlebot/plugins/friends'))
   .use(require('scuttlebot/plugins/replicate'))
   .use(require('ssb-blobs'))
