@@ -116,7 +116,8 @@ exports.screen_view = function (path, sbot) {
               id === item.author ||
               following().has(item.author) ||
               subscribedChannels().has(item.channel) ||
-              (item.repliesFrom && item.repliesFrom.has(id))
+              (item.repliesFrom && item.repliesFrom.has(id)) ||
+              item.digs && item.digs.has(id)
             )
           },
           bumpFilter: (msg, group) => {
