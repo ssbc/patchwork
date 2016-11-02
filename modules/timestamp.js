@@ -7,12 +7,12 @@ function updateTimestampEl(el) {
 }
 
 setInterval(function () {
-  var els = [].slice.call(document.querySelectorAll('.timestamp'))
+  var els = [].slice.call(document.querySelectorAll('.pw__timestamp'))
   els.forEach(updateTimestampEl)
 }, 60e3)
 
 exports.message_main_meta = function (msg) {
-  return updateTimestampEl(h('a.enter.timestamp', {
+  return updateTimestampEl(h('a.enter.pw__timestamp', {
     href: '#'+msg.key,
     timestamp: msg.value.timestamp,
     title: new Date(msg.value.timestamp)
