@@ -32,6 +32,7 @@ exports.screen_view = function (path, sbot) {
     var loading = computed(subscribedChannels.sync, x => !x)
     var connectedPeers = obs_connected()
     var localPeers = obs_local()
+    var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
     var following = obs_following(id)
 
     var oldest = Date.now() - (2 * 24 * 60 * 60e3)
@@ -105,6 +106,21 @@ exports.screen_view = function (path, sbot) {
               ])
             ])
           })
+        ]),
+
+        when(computed(connectedPubs, x => x.length), h('h2', 'Connected Pubs')),
+        h('ProfileList', [
+          MutantMap(connectedPubs, (id) => {
+            return h('a.profile', {
+              classList: [ '-connected' ],
+              href: `#${id}`
+            }, [
+              h('div.avatar', [avatar_image(id)]),
+              h('div.main', [
+                h('div.name', [ avatar_name(id) ])
+              ])
+            ])
+          })
         ])
       ]),
       h('div.main', [
@@ -149,7 +165,6 @@ exports.screen_view = function (path, sbot) {
   function getFeed (opts) {
     if (opts.lt && opts.lt < oldest) {
       opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-      console.log('using old feed', opts)
       return pull(
         sbot_feed(opts),
         pull.map((msg) => {
