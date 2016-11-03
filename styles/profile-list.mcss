@@ -13,8 +13,18 @@ ProfileList {
     background-repeat: no-repeat
     background-position: right
 
+    -connected {
+      background-image: svg(connected)
+    }
+
+    @svg connected {
+      width: 20px
+      height: 12px
+      content: "<circle cx='6' stroke='none' fill='green' cy='6' r='5' />"
+    }
+
     :hover {
-      background: rgba(255, 255, 255, 0.4);
+      background-color: rgba(255, 255, 255, 0.4);
     }
 
     div.avatar {

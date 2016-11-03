@@ -147,6 +147,9 @@ module.exports = function (sbot, opts) {
           infoCache.updateFrom(e)
         })
       )
+    },
+    sbot_list_local: function (cb) {
+      return sbot.local.list(cb)
     }
   }
 }

@@ -22,18 +22,20 @@ var obs_recently_updated_feeds = plugs.first(exports.obs_recently_updated_feeds 
 var avatar_image = plugs.first(exports.avatar_image = [])
 var avatar_name = plugs.first(exports.avatar_name = [])
 var obs_local = plugs.first(exports.obs_local = [])
+var obs_connected = plugs.first(exports.obs_connected = [])
 
 exports.screen_view = function (path, sbot) {
   if (path === '/public') {
     var id = get_id()
-    var channels = computed(obs_channels(), items => items.slice(0, 6), {comparer: arrayEq})
+    var channels = computed(obs_channels(), items => items.slice(0, 8), {comparer: arrayEq})
     var subscribedChannels = obs_subscribed_channels(id)
     var loading = computed(subscribedChannels.sync, x => !x)
+    var connectedPeers = obs_connected()
     var localPeers = obs_local()
     var following = obs_following(id)
 
     var oldest = Date.now() - (2 * 24 * 60 * 60e3)
-    getFirstMessage(id, (err, msg) => {
+    getFirstMessage(id, (_, msg) => {
       if (msg) {
         // fall back to timestamp stream before this, give 48 hrs for feeds to stabilize
         if (msg.value.timestamp > oldest) {
@@ -43,7 +45,7 @@ exports.screen_view = function (path, sbot) {
     })
 
     var whoToFollow = computed([obs_following(id), obs_recently_updated_feeds(200)], (following, recent) => {
-      return Array.from(recent).filter(x => x !== id && !following.has(x)).slice(0, 20)
+      return Array.from(recent).filter(x => x !== id && !following.has(x)).slice(0, 10)
     })
 
     return h('SplitView', [
@@ -78,6 +80,9 @@ exports.screen_view = function (path, sbot) {
         h('ProfileList', [
           MutantMap(localPeers, (id) => {
             return h('a.profile', {
+              classList: [
+                when(computed([connectedPeers, id], (p, id) => p.includes(id)), '-connected')
+              ],
               href: `#${id}`
             }, [
               h('div.avatar', [avatar_image(id)]),

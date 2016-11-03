@@ -1,10 +1,10 @@
 var MutantSet = require('@mmckegg/mutant/set')
 var plugs = require('patchbay/plugs')
-var sbot_list_local = plugs.first(exports.sbot_list_local = [])
+var sbot_gossip_peers = plugs.first(exports.sbot_gossip_peers = [])
 
 var cache = null
 
-exports.obs_local = function () {
+exports.obs_connected = function () {
   if (cache) {
     return cache
   } else {
@@ -21,9 +21,9 @@ exports.obs_local = function () {
   // scope
 
   function refresh () {
-    sbot_list_local((err, keys) => {
+    sbot_gossip_peers((err, peers) => {
       if (err) throw console.log(err)
-      result.set(keys)
+      result.set(peers.filter(x => x.state === 'connected').map(x => x.key))
     })
   }
 }
