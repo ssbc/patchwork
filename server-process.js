@@ -6,7 +6,7 @@ var electron = require('electron')
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
   .use(require('./lib/persistent-gossip')) // override
-  .use(require('scuttlebot/plugins/friends'))
+  .use(require('./lib/friends-with-gossip-priority'))
   .use(require('scuttlebot/plugins/replicate'))
   .use(require('ssb-blobs'))
   .use(require('scuttlebot/plugins/invite'))
