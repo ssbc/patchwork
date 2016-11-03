@@ -36,7 +36,7 @@ exports.screen_view = function (path, sbot) {
           }
           return msg
         },
-        placeholder: 'Write a private message'
+        placeholder: `Write a private message \n\n\n\nThis can only be read by yourself and people you have @mentioned.`
       })
     ], {
       windowSize: 1000
