@@ -49,7 +49,40 @@ exports.screen_view = function (path, sbot) {
       return Array.from(recent).filter(x => x !== id && !following.has(x)).slice(0, 10)
     })
 
-    return h('SplitView', [
+    var feedSummary = feed_summary(getFeed, [
+      message_compose({type: 'post'}, {placeholder: 'Write a public message'})
+    ], {
+      waitUntil: computed([
+        following.sync,
+        subscribedChannels.sync
+      ], x => x.every(Boolean)),
+      windowSize: 500,
+      filter: (item) => {
+        return (
+          id === item.author ||
+          following().has(item.author) ||
+          subscribedChannels().has(item.channel) ||
+          (item.repliesFrom && item.repliesFrom.has(id)) ||
+          item.digs && item.digs.has(id)
+        )
+      },
+      bumpFilter: (msg, group) => {
+        if (!group.message) {
+          return (
+            isMentioned(id, msg.value.content.mentions) ||
+            msg.value.author === id || (
+              fromDay(msg, group.fromTime) && (
+                following().has(msg.value.author) ||
+                group.repliesFrom.has(id)
+              )
+            )
+          )
+        }
+        return true
+      }
+    })
+
+    var result = h('SplitView', [
       h('div.side', [
         h('h2', 'Active Channels'),
         when(loading, [ h('Loading') ]),
@@ -123,41 +156,13 @@ exports.screen_view = function (path, sbot) {
           })
         ])
       ]),
-      h('div.main', [
-        feed_summary(getFeed, [
-          message_compose({type: 'post'}, {placeholder: 'Write a public message'})
-        ], {
-          waitUntil: computed([
-            following.sync,
-            subscribedChannels.sync
-          ], x => x.every(Boolean)),
-          windowSize: 500,
-          filter: (item) => {
-            return (
-              id === item.author ||
-              following().has(item.author) ||
-              subscribedChannels().has(item.channel) ||
-              (item.repliesFrom && item.repliesFrom.has(id)) ||
-              item.digs && item.digs.has(id)
-            )
-          },
-          bumpFilter: (msg, group) => {
-            if (!group.message) {
-              return (
-                isMentioned(id, msg.value.content.mentions) ||
-                msg.value.author === id || (
-                  fromDay(msg, group.fromTime) && (
-                    following().has(msg.value.author) ||
-                    group.repliesFrom.has(id)
-                  )
-                )
-              )
-            }
-            return true
-          }
-        })
-      ])
+      h('div.main', [ feedSummary ])
     ])
+
+    result.pendingUpdates = feedSummary.pendingUpdates
+    result.reload = feedSummary.reload
+
+    return result
   }
 
   // scoped

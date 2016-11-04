@@ -34,8 +34,13 @@ module.exports = function (config, ssbClient) {
 
   var forwardHistory = []
   var backHistory = []
+
   var views = MutantDict({
-    '/public': screenView('/public')
+    // preload tabs (and subscribe to update notifications)
+    '/public': screenView('/public'),
+    '/private': screenView('/private'),
+    [ssbClient.id]: screenView(ssbClient.id),
+    '/notifications': screenView('/notifications')
   })
 
   var canGoForward = Value(false)
@@ -74,40 +79,40 @@ module.exports = function (config, ssbClient) {
         }, '>')
       ]),
       h('span.nav', [
-        h('a', {
-          href: '#/public',
-          classList: [
-            when(selected('/public'), '-selected')
-          ]
-        }, 'Public'),
-        h('a', {
-          href: '#/private',
-          classList: [
-            when(selected('/private'), '-selected')
-          ]
-        }, 'Private')
+        tab('Public', '/public'),
+        tab('Private', '/private')
       ]),
       h('span.appTitle', ['Patchwork']),
       h('span', [ searchBox ]),
       h('span.nav', [
-        h('a', {
-          href: `#${ssbClient.id}`,
-          classList: [
-            when(selected(`${ssbClient.id}`), '-selected')
-          ]
-        }, 'Profile'),
-        h('a', {
-          href: `#/notifications`,
-          classList: [
-            when(selected(`/notifications`), '-selected')
-          ]
-        }, 'Mentions')
+        tab('Profile', ssbClient.id),
+        tab('Mentions', '/notifications')
       ])
     ]),
     mainElement
   ])
 
   // scoped
+
+  function tab (name, view) {
+    var instance = views.get(view)
+    return h('a', {
+      'ev-click': function (ev) {
+        if (instance.pendingUpdates && instance.pendingUpdates() && instance.reload) {
+          instance.reload()
+        }
+      },
+      href: `#${view}`,
+      classList: [
+        when(selected(view), '-selected')
+      ]
+    }, [
+      name,
+      when(instance.pendingUpdates, [
+        ' (', instance.pendingUpdates, ')'
+      ])
+    ])
+  }
 
   function goBack () {
     if (backHistory.length) {

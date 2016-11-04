@@ -87,10 +87,15 @@ exports.feed_summary = function (getStream, prefix, opts) {
 
   var abortLastFeed = null
 
-  return MutantArray([
+  var result = MutantArray([
     when(updates, updateLoader),
     when(sync, scrollElement, m('Loading -large'))
   ])
+
+  result.reload = refresh
+  result.pendingUpdates = updates
+
+  return result
 
   // scoped
 
