@@ -8,7 +8,7 @@ var sbot_log = plugs.first(exports.sbot_log = [])
 var data_render = plugs.first(exports.data_render = [])
 
 exports.screen_view = function (path, sbot) {
-  if(path === '/data-feed') {
+  if(path === '/data-feed' || path === '/data') {
     var content = h('div.column.scroller__content')
     var div = h('div.column.scroller',
       {style: {'overflow':'auto'}},
