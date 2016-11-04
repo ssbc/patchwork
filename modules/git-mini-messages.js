@@ -7,7 +7,7 @@ exports.message_content = exports.message_content_mini = function (msg, sbot) {
   if (msg.value.content.type === 'git-update') {
     var commits = msg.value.content.commits || []
     return [
-      h('a', {href: `#${msg.key}`}, [
+      h('a', {href: `#${msg.key}`, title: commitSummary(commits)}, [
         'pushed',
         when(commits, [' ', pluralizeCommits(commits)])
       ]),
@@ -19,4 +19,8 @@ exports.message_content = exports.message_content_mini = function (msg, sbot) {
 
 function pluralizeCommits (commits) {
   return when(commits.length === 1, '1 commit', `${commits.length} commits`)
+}
+
+function commitSummary (commits) {
+  return commits.map(commit => `- ${commit.title}`).join('\n')
 }
