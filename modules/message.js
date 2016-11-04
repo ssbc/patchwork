@@ -28,6 +28,7 @@ exports.data_render = function (msg) {
 }
 
 exports.message_render = function (msg, opts) {
+  opts = opts || {}
   var inContext = opts.inContext
   var previousId = opts.previousId
   var inSummary = opts.inSummary
