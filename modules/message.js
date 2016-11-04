@@ -20,7 +20,7 @@ exports.data_render = function (msg) {
     messageHeader(msg),
     h('section', [
       h('pre', [
-        JSON.stringify(msg.value, null, 2)
+        JSON.stringify(msg, null, 2)
       ])
     ])
   ])
