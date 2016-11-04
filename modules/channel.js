@@ -45,7 +45,7 @@ exports.screen_view = function (path, sbot) {
           )
         ])
       ]),
-      message_compose({type: 'post', channel: channel})
+      message_compose({type: 'post', channel: channel}, {placeholder: 'Write a message in this channel\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.'})
     ])
   }
 
