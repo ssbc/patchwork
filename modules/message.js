@@ -27,9 +27,15 @@ exports.data_render = function (msg) {
   return div
 }
 
-exports.message_render = function (msg, inContext, previousId) {
+exports.message_render = function (msg, opts) {
+  var inContext = opts.inContext
+  var previousId = opts.previousId
+  var inSummary = opts.inSummary
+
   var elMini = message_content_mini(msg)
-  if (elMini) {
+  var el = message_content(msg)
+
+  if (elMini && (!el || inSummary)) {
     var div = h('Message', {
       'ev-contextmenu': contextMenu.bind(null, msg)
     }, [
@@ -45,7 +51,6 @@ exports.message_render = function (msg, inContext, previousId) {
     return div
   }
 
-  var el = message_content(msg)
   if (!el) return
 
   var classList = []

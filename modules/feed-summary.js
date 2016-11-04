@@ -139,13 +139,13 @@ function ensureAuthor (item, cb) {
 function renderItem (item) {
   if (item.type === 'message') {
     var meta = null
-    var lastId = item.messageId
+    var previousId = item.messageId
     var replies = item.replies.slice(-4).map((msg) => {
-      var result = message_render(msg, true, lastId)
-      lastId = msg.key
+      var result = message_render(msg, {inContext: true, inSummary: true, previousId})
+      previousId = msg.key
       return result
     })
-    var renderedMessage = item.message ? message_render(item.message, true) : null
+    var renderedMessage = item.message ? message_render(item.message, {inContext: true}) : null
     if (renderedMessage) {
       if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
         meta = m('div.meta', {

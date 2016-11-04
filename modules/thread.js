@@ -61,7 +61,7 @@ exports.screen_view = function (id) {
       branch: id //mutated when thread is loaded.
     }
 
-    var lastId = id
+    var previousId = id
     var content = h('div.column.scroller__content')
     var div = h('div.column.scroller',
       {style: {'overflow-y': 'auto'}},
@@ -98,8 +98,8 @@ exports.screen_view = function (id) {
 
         if(err) return content.appendChild(h('pre', err.stack))
         sort(thread).map((msg) => {
-          var result = message_render(msg, true, lastId)
-          lastId = msg.key
+          var result = message_render(msg, {inContext: true, previousId})
+          previousId = msg.key
           return result
         }).filter(Boolean).forEach(function (el) {
           content.appendChild(el)
