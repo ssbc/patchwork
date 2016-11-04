@@ -45,6 +45,10 @@ Message {
     margin: 15px 15px
     display: flex
 
+    div.mini {
+      flex: 1
+    }
+
     div.main {
       display: flex
       flex: 1

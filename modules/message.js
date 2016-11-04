@@ -34,11 +34,11 @@ exports.message_render = function (msg, inContext, previousId) {
       'ev-contextmenu': contextMenu.bind(null, msg)
     }, [
       h('header', [
-        h('div', [
+        h('div.mini', [
           avatar_link(msg.value.author, avatar_name(msg.value.author), ''),
           ' ', elMini
         ]),
-        h('div.message_meta.row', [message_meta(msg)])
+        h('div.meta', [message_main_meta(msg)])
       ])
     ])
     div.setAttribute('tabindex', '0')
