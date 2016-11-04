@@ -1,13 +1,11 @@
 var when = require('@mmckegg/mutant/when')
 var send = require('@mmckegg/mutant/send')
 var plugs = require('patchbay/plugs')
-var extend = require('xtend')
 var message_compose = plugs.first(exports.message_compose = [])
 var sbot_log = plugs.first(exports.sbot_log = [])
 var feed_summary = plugs.first(exports.feed_summary = [])
 var h = require('../lib/h')
 var pull = require('pull-stream')
-var sbot_query = plugs.first(exports.sbot_query = [])
 var obs_subscribed_channels = plugs.first(exports.obs_subscribed_channels = [])
 var get_id = plugs.first(exports.get_id = [])
 var publish = plugs.first(exports.sbot_publish = [])
@@ -39,7 +37,7 @@ exports.screen_view = function (path, sbot) {
           )
         ])
       ]),
-      message_compose({type: 'post', channel: channel}, {placeholder: 'Write a message in this channel\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.'})
+      message_compose({type: 'post', channel: channel}, {placeholder: 'Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics'})
     ])
   }
 
