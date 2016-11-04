@@ -18,16 +18,10 @@ exports.screen_view = function (path, sbot) {
     var subscribedChannels = obs_subscribed_channels(get_id())
 
     return feed_summary((opts) => {
-      if (opts.old === false) {
-        return pull(
-          sbot_log(opts),
-          pull.filter(matchesChannel)
-        )
-      } else {
-        return sbot_query(extend(opts, {query: [
-          {$filter: {value: {content: {channel: channel}}}}
-        ]}))
-      }
+      return pull(
+        sbot_log(opts),
+        pull.map(matchesChannel)
+      )
     }, [
       h('PageHeading', [
         h('h1', `#${channel}`),
@@ -54,7 +48,11 @@ exports.screen_view = function (path, sbot) {
   function matchesChannel (msg) {
     if (msg.sync) console.error('SYNC', msg)
     var c = msg && msg.value && msg.value.content
-    return c && c.channel === channel
+    if (c && c.channel === channel) {
+      return msg
+    } else {
+      return {timestamp: msg.timestamp}
+    }
   }
 }
 
