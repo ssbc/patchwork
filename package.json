@@ -1,7 +1,8 @@
 {
   "name": "patchwork-next",
-  "version": "0.0.0",
-  "description": "",
+  "productName": "Patchwork",
+  "version": "3.0.0",
+  "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,26 +10,26 @@
     "postinstall": "npm run rebuild",
     "rebuild": "npm rebuild --runtime=electron --target=1.4.3 --abi=50 --disturl=https://atom.io/download/atom-shell"
   },
-  "author": "",
+  "author": "Secure Scuttlebutt Consortium",
   "license": "GPL",
   "dependencies": {
     "@mmckegg/mutant": "~3.7.1",
     "atomic-file": "^0.1.0",
     "data-uri-to-buffer": "0.0.4",
     "deep-equal": "^1.0.1",
-    "electron": "~1.4.4",
     "electron-default-menu": "~1.0.0",
     "graphmitter": "^1.6.3",
     "has-network": "0.0.0",
     "insert-css": "~1.0.0",
     "is-visible": "^2.1.1",
-    "level-memview": "0.0.0",
     "level": "~1.4.0",
+    "level-memview": "0.0.0",
     "micro-css": "~0.6.2",
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
     "on-wakeup": "^1.0.1",
     "patchbay": "~4.0.1",
+    "prebuild": "github:mmckegg/prebuild#use-npm-conf",
     "pull-abortable": "^4.1.0",
     "pull-file": "~1.0.0",
     "pull-identify-filetype": "^1.1.0",
@@ -48,5 +49,8 @@
     "ssb-ref": "~2.6.2",
     "ssb-sort": "^1.0.0",
     "statistics": "^3.3.0"
+  },
+  "devDependencies": {
+    "electron": "~1.4.4"
   }
 }
