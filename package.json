@@ -23,6 +23,7 @@
     "insert-css": "~1.0.0",
     "is-visible": "^2.1.1",
     "level-memview": "0.0.0",
+    "level": "~1.4.0",
     "micro-css": "~0.6.2",
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
