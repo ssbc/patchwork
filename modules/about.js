@@ -14,7 +14,7 @@ var avatar_name = plugs.first(exports.avatar_name = [])
 var avatar_link = plugs.first(exports.avatar_link = [])
 
 exports.message_content = function (msg) {
-  if(msg.value.content.type !== 'about') return
+  if(msg.value.content.type !== 'about' || !msg.value.content.about) return
 
   if(!msg.value.content.image && !msg.value.content.name)
     return
