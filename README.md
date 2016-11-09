@@ -23,12 +23,12 @@ $ npm start
 - [x] Preserve scroll on back button
 - [x] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
 - [x] Show digs on posts in a nicer way (make it clear that you've dug something)
+- [x] Hovering "+1" like values and "x other people" messages should show who
+- [x] Display number of updates available on Feed buttons. Clicking reloads page.
 - [ ] Reload should remember current page
-- [ ] Hovering "+1" like values and "x other people" messages should show who
 - [ ] Improve UI on profiles
   - [ ] Move contacts to sidebar
   - [ ] Better selection of names / avatar
-- [ ] Display number of updates available on Feed buttons. Clicking reloads page.
 - [ ] Figure out when to automatically reload / or inject changes into feeds
 - [ ] Roll-up about messages
 - [ ] "Join Pub" interface
