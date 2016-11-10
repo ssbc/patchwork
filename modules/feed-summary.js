@@ -19,6 +19,7 @@ var person = plugs.first(exports.person = [])
 var many_people = plugs.first(exports.many_people = [])
 var people_names = plugs.first(exports.people_names = [])
 var sbot_get = plugs.first(exports.sbot_get = [])
+var get_id = plugs.first(exports.get_id = [])
 
 exports.feed_summary = function (getStream, prefix, opts) {
   var sync = Value(false)
@@ -57,7 +58,7 @@ exports.feed_summary = function (getStream, prefix, opts) {
       getStream({old: false}),
       pull.drain((item) => {
         var type = item && item.value && item.value.content.type
-        if (item.value && item.value.author && !updates()) {
+        if (item.value && item.value.author === get_id() && !updates()) {
           return refresh()
         }
         if (type && type !== 'vote') {
