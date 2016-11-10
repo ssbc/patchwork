@@ -57,6 +57,9 @@ exports.feed_summary = function (getStream, prefix, opts) {
       getStream({old: false}),
       pull.drain((item) => {
         var type = item && item.value && item.value.content.type
+        if (item.value && item.value.author && !updates()) {
+          return refresh()
+        }
         if (type && type !== 'vote') {
           if (filter) {
             var update = (item.value.content.type === 'post' && item.value.content.root) ? {
