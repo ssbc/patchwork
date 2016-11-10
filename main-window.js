@@ -43,6 +43,17 @@ module.exports = function (config, ssbClient) {
     '/notifications': screenView('/notifications')
   })
 
+  var lastViewed = {}
+
+  // delete cached view after 30 mins of last seeing
+  setInterval(() => {
+    views.keys().forEach((view) => {
+      if (lastViewed[view] !== true && Date.now() - lastViewed[view] > (30 * 60e3) && view !== currentView()) {
+        views.delete(view)
+      }
+    })
+  }, 60e3)
+
   var canGoForward = Value(false)
   var canGoBack = Value(false)
   var currentView = Value('/public')
@@ -96,6 +107,7 @@ module.exports = function (config, ssbClient) {
 
   function tab (name, view) {
     var instance = views.get(view)
+    lastViewed[view] = true
     return h('a', {
       'ev-click': function (ev) {
         if (instance.pendingUpdates && instance.pendingUpdates() && instance.reload) {
@@ -136,6 +148,15 @@ module.exports = function (config, ssbClient) {
     if (!views.has(view)) {
       views.put(view, screenView(view))
     }
+
+    if (lastViewed[view] !== true) {
+      lastViewed[view] = Date.now()
+    }
+
+    if (currentView() && lastViewed[currentView()] !== true) {
+      lastViewed[currentView()] = Date.now()
+    }
+
     if (view !== currentView()) {
       canGoForward.set(false)
       canGoBack.set(true)
