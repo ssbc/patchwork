@@ -1,6 +1,6 @@
 {
   "name": "ssb-patchwork",
-  "version": "2.12.3",
+  "version": "2.12.4",
   "description": "safe secure sharing",
   "main": "app/index.js",
   "repository": {
