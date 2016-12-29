@@ -1,5 +1,7 @@
 # Patchwork
 
+Patchwork is no longer maintained. For actively developed clients, please see [Patchbay](https://github.com/ssbc/patchbay) and [Patchwork-Next](https://github.com/mmckegg/patchwork-next)
+
 ![screenshot](./screenshot.png)
 
 **Patchwork is a decentralized messaging and sharing app.**
