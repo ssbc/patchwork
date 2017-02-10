@@ -29,7 +29,10 @@ var cache = CACHE = {}
 
 exports.needs = {
   connection_status: 'map',
-  config: 'first'
+  config: 'first',
+  cache: {
+    update_from: 'first'
+  }
 }
 
 exports.gives = {
@@ -50,7 +53,9 @@ exports.gives = {
     whoami: true,
 
     // additional
-    get_id: true
+    get_id: true,
+    feed: true,
+    list_local: true
   }
 }
 
@@ -125,6 +130,7 @@ exports.create = function (api) {
           sbot.createLogStream(opts),
           pull.through(function (e) {
             CACHE[e.key] = CACHE[e.key] || e.value
+            api.cache.update_from(e)
           })
         )
       }),
@@ -179,9 +185,23 @@ exports.create = function (api) {
 
       // ADDITIONAL:
 
+      feed: rec.source(function (opts) {
+        return pull(
+          sbot.createFeedStream(opts),
+          pull.through(function (e) {
+            CACHE[e.key] = CACHE[e.key] || e.value
+            api.cache.update_from(e)
+          })
+        )
+      }),
+
       get_id: function () {
         return keys.id
-      }
+      },
+
+      list_local: rec.async(function (cb) {
+        return sbot.local.list(cb)
+      })
     }
   }
 }

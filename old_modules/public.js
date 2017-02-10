@@ -1,7 +1,7 @@
-var MutantMap = require('@mmckegg/mutant/map')
-var computed = require('@mmckegg/mutant/computed')
-var when = require('@mmckegg/mutant/when')
-var send = require('@mmckegg/mutant/send')
+var MutantMap = require('mutant/map')
+var computed = require('mutant/computed')
+var when = require('mutant/when')
+var send = require('mutant/send')
 var pull = require('pull-stream')
 var extend = require('xtend')
 

@@ -1,3 +1,5 @@
+var insertCss = require('insert-css')
+
 module.exports = function (config) {
   var modules = require('depject')(
     overrideConfig(config),
@@ -6,6 +8,10 @@ module.exports = function (config) {
     require('patchbay/modules_core'),
     require('./modules')
   )
+
+  process.nextTick(() => {
+    insertCss(modules.styles[0]() + require('./styles'))
+  })
 
   return modules.app[0]()
 }

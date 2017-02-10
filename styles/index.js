@@ -3,7 +3,6 @@ var path = require('path')
 var compile = require('micro-css')
 var result = ''
 var additional = ''
-var baseStyles = require('patchbay/styles')
 
 fs.readdirSync(__dirname).forEach(function (file) {
   if (/\.mcss$/i.test(file)) {
@@ -15,4 +14,4 @@ fs.readdirSync(__dirname).forEach(function (file) {
   }
 })
 
-module.exports = baseStyles + compile(result) + additional
+module.exports = compile(result) + additional

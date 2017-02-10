@@ -1,5 +1,5 @@
-var when = require('@mmckegg/mutant/when')
-var send = require('@mmckegg/mutant/send')
+var when = require('mutant/when')
+var send = require('mutant/send')
 var plugs = require('patchbay/plugs')
 var message_compose = plugs.first(exports.message_compose = [])
 var sbot_log = plugs.first(exports.sbot_log = [])

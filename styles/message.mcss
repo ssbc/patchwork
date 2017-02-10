@@ -97,6 +97,7 @@ Message {
         border-radius: 10px;
         display: inline-block;
         vertical-align: top;
+        margin: -4px 0;
       }
 
       span.private {

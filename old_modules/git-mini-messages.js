@@ -1,5 +1,5 @@
 var h = require('../lib/h')
-var when = require('@mmckegg/mutant/when')
+var when = require('mutant/when')
 var plugs = require('patchbay/plugs')
 var message_link = plugs.first(exports.message_link = [])
 
