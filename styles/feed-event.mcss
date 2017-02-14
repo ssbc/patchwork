@@ -3,7 +3,8 @@ FeedEvent {
   flex: 1
   flex-direction: column
   background: white
-  margin-top: 10px
+  max-width: 700px
+  margin: 10px auto
 
   div {
     flex: 1
