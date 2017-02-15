@@ -1,6 +1,6 @@
 var pull = require('pull-stream')
 var computed = require('mutant/computed')
-var MutantPullReduce = require('../../../lib/mutant-pull-reduce')
+var MutantPullReduce = require('mutant-pull-reduce')
 var nest = require('depnest')
 
 var throttle = require('mutant/throttle')

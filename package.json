@@ -29,6 +29,7 @@
     "level-memview": "0.0.0",
     "micro-css": "^1.0.0",
     "mutant": "^3.14.0",
+    "mutant-pull-reduce": "^1.0.0",
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
     "on-wakeup": "^1.0.1",

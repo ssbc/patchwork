@@ -1,7 +1,7 @@
 var pull = require('pull-stream')
 var pullCat = require('pull-cat')
 var computed = require('mutant/computed')
-var MutantPullReduce = require('../../../lib/mutant-pull-reduce')
+var MutantPullReduce = require('mutant-pull-reduce')
 var throttle = require('mutant/throttle')
 var nest = require('depnest')
 var hr = 60 * 60 * 1000
