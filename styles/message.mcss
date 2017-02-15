@@ -6,6 +6,7 @@ Message {
   background: white
   position: relative
   font-size: 120%
+  flex-shrink: 0
 
   :focus {
     z-index: 1

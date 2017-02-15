@@ -25,10 +25,11 @@ exports.create = function (api) {
 
     if (msg.value.content.root) {
       classList.push('-reply')
-      if (!opts.previousId) {
-        replyInfo = h('span', ['in reply to ', api.message.html.link(msg.value.content.root)])
-      } else if (opts.previousId && last(msg.value.content.branch) && opts.previousId !== last(msg.value.content.branch)) {
-        replyInfo = h('span', ['in reply to ', api.message.html.link(last(msg.value.content.branch))])
+      var branch = msg.value.content.branch
+      if (branch) {
+        if (!opts.previousId || (opts.previousId && last(branch) && opts.previousId !== last(branch))) {
+          replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
+        }
       }
     }
 
