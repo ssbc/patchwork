@@ -1,0 +1,21 @@
+ProfileHeader {
+  display: flex;
+  width: 100%;
+  max-width: 700px;
+  margin: 20px auto;
+
+  div.image {
+    width: 200px;
+    padding: 5px;
+    background: white;
+    box-shadow: 0 0 10px #AAA;
+    margin-right: 20px;
+    img {
+      width: 100%
+    }
+  }
+
+  div.title {
+    flex: 1
+  }
+}
