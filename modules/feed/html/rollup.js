@@ -55,15 +55,17 @@ exports.create = function (api) {
       when(computed(updates, a => a === 1), 'update', 'updates')
     ])
 
-    var content = h('section.content')
+    var content = h('section.content', {
+      hidden: computed(sync, s => !s)
+    })
 
     var container = h('div', {
       className: 'Scroller',
       style: { overflow: 'auto' },
-      hidden: computed(sync, s => !s)
     }, [
       h('div.wrapper', [
         h('section.prepend', opts.prepend),
+        when(sync, null, h('div', {className: 'Loading -large'})),
         content
       ])
     ])
@@ -110,7 +112,6 @@ exports.create = function (api) {
 
     var result = MutantArray([
       when(updates, updateLoader),
-      when(sync, null, h('div', {className: 'Loading -large'})),
       container
     ])
 
