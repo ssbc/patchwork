@@ -125,10 +125,10 @@ exports.create = function (api) {
             }, [
               h('span.name', '#' + channel.id),
               when(subscribed,
-                h('a -unsubscribe', {
+                h('a.-unsubscribe', {
                   'ev-click': send(unsubscribe, channel.id)
                 }, 'Unsubscribe'),
-                h('a -subscribe', {
+                h('a.-subscribe', {
                   'ev-click': send(subscribe, channel.id)
                 }, 'Subscribe')
               )
