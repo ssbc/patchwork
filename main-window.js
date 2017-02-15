@@ -48,7 +48,7 @@ module.exports = function (config) {
   var views = MutantDict({
     // preload tabs (and subscribe to update notifications)
     '/public': renderPage('/public'),
-    // '/private': renderPage('/private'),
+    '/private': renderPage('/private'),
     // [ssbClient.id]: renderPage(ssbClient.id),
     // '/notifications': renderPage('/notifications')
   })
@@ -95,7 +95,7 @@ module.exports = function (config) {
       ]),
       h('span.nav', [
         tab('Public', '/public'),
-        //tab('Private', '/private')
+        tab('Private', '/private')
       ]),
       h('span.appTitle', ['Patchwork']),
       h('span', [ searchBox ]),
