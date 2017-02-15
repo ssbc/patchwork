@@ -128,7 +128,7 @@ module.exports = function (config) {
     if (href) {
       var url = Url.parse(href)
       if (url.host) {
-        electron.shell.openUrl(href)
+        electron.shell.openExternal(href)
       } else if (href !== '#') {
         setView(href)
       }
