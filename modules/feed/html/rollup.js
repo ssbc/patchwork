@@ -57,7 +57,10 @@ exports.create = function (api) {
 
     var content = h('section.content')
 
-    var container = h('Scroller', { style: { overflow: 'auto' } }, [
+    var container = h('Scroller', {
+      style: { overflow: 'auto' },
+      hidden: computed(sync, s => !s)
+    }, [
       h('div.wrapper', [
         h('section.prepend', opts.prepend),
         content
@@ -106,8 +109,8 @@ exports.create = function (api) {
 
     var result = MutantArray([
       when(updates, updateLoader),
+      when(sync, null, h('div', {className: 'Loading -large'})),
       container
-      //when(sync, container, h('div', {className: 'Loading -large'}))
     ])
 
     result.reload = refresh
@@ -189,7 +192,7 @@ exports.create = function (api) {
           renderedMessage,
           when(replies.length, [
             when(item.replies.length > replies.length,
-              h('a.full', {href: `#${item.messageId}`}, ['View full thread'])
+              h('a.full', {href: item.messageId}, ['View full thread'])
             ),
             h('div.replies', replies)
           ])
