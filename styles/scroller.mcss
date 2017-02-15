@@ -9,7 +9,8 @@ Scroller {
 
   div.wrapper {
     flex: 1
-    width: 600px
+    width: 100%
+    max-width: 700px
     margin-left: auto
     margin-right: auto
   }

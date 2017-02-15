@@ -57,7 +57,8 @@ exports.create = function (api) {
 
     var content = h('section.content')
 
-    var container = h('Scroller', {
+    var container = h('div', {
+      className: 'Scroller',
       style: { overflow: 'auto' },
       hidden: computed(sync, s => !s)
     }, [
