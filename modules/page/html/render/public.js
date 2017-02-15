@@ -62,47 +62,47 @@ exports.create = function (api) {
       }
     })
 
-    return h('div.SplitView', [
+    var feedView = api.feed.html.rollup(getFeed, {
+      waitUntil: computed([
+        following.sync,
+        subscribedChannels.sync
+      ], (...x) => x.every(Boolean)),
+      windowSize: 500,
+      filter: (item) => {
+        return !item.boxed && (
+          id === item.author ||
+          following().has(item.author) ||
+          subscribedChannels().has(item.channel) ||
+          (item.repliesFrom && item.repliesFrom.has(id)) ||
+          item.digs && item.digs.has(id)
+        )
+      },
+      bumpFilter: (msg, group) => {
+        if (!group.message) {
+          return (
+            isMentioned(id, msg.value.content.mentions) ||
+            msg.value.author === id || (
+              fromDay(msg, group.fromTime) && (
+                following().has(msg.value.author) ||
+                group.repliesFrom.has(id)
+              )
+            )
+          )
+        }
+        return true
+      }
+    })
+
+    var result = h('div.SplitView', [
       h('div.side', [
         getSidebar()
       ]),
-      h('div.main', [
-        getFeedView()
-      ])
+      h('div.main', feedView)
     ])
 
-    function getFeedView () {
-      return api.feed.html.rollup(getFeed, {
-        waitUntil: computed([
-          following.sync,
-          subscribedChannels.sync
-        ], (...x) => x.every(Boolean)),
-        windowSize: 500,
-        filter: (item) => {
-          return !item.boxed && (
-            id === item.author ||
-            following().has(item.author) ||
-            subscribedChannels().has(item.channel) ||
-            (item.repliesFrom && item.repliesFrom.has(id)) ||
-            item.digs && item.digs.has(id)
-          )
-        },
-        bumpFilter: (msg, group) => {
-          if (!group.message) {
-            return (
-              isMentioned(id, msg.value.content.mentions) ||
-              msg.value.author === id || (
-                fromDay(msg, group.fromTime) && (
-                  following().has(msg.value.author) ||
-                  group.repliesFrom.has(id)
-                )
-              )
-            )
-          }
-          return true
-        }
-      })
-    }
+    result.pendingUpdates = feedView.pendingUpdates
+
+    return result
 
     function getSidebar () {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(200)], (following, recent) => {
