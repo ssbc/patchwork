@@ -118,7 +118,7 @@ exports.create = function (api) {
           map(channels, (channel) => {
             var subscribed = subscribedChannels.has(channel.id)
             return h('a.channel', {
-              href: `##${channel.id}`,
+              href: `#${channel.id}`,
               classList: [
                 when(subscribed, '-subscribed')
               ]
@@ -145,7 +145,7 @@ exports.create = function (api) {
               classList: [
                 when(computed([connectedPeers, id], (p, id) => p.includes(id)), '-connected')
               ],
-              href: `#${id}`
+              href: id
             }, [
               h('div.avatar', [api.about.html.image(id)]),
               h('div.main', [
@@ -161,7 +161,7 @@ exports.create = function (api) {
         }, [
           map(whoToFollow, (id) => {
             return h('a.profile', {
-              href: `#${id}`
+              href: id
             }, [
               h('div.avatar', [api.about.html.image(id)]),
               h('div.main', [
@@ -178,7 +178,7 @@ exports.create = function (api) {
           map(connectedPubs, (id) => {
             return h('a.profile', {
               classList: [ '-connected' ],
-              href: `#${id}`
+              href: id
             }, [
               h('div.avatar', [api.about.html.image(id)]),
               h('div.main', [
