@@ -24,12 +24,12 @@ exports.create = function (api) {
         h('h1', `#${channel}`),
         h('div.meta', [
           when(subscribedChannels.has(channel),
-            h('a -unsubscribe', {
+            h('a.ToggleButton.-unsubscribe', {
               'href': '#',
               'title': 'Click to unsubscribe',
               'ev-click': send(unsubscribe, channel)
             }, 'Subscribed'),
-            h('a -subscribe', {
+            h('a.ToggleButton.-subscribe', {
               'href': '#',
               'ev-click': send(subscribe, channel)
             }, 'Subscribe')
