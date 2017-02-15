@@ -129,6 +129,7 @@ MainWindow {
       display: flex
       flex-direction: column
       flex: 1
+      max-width: 100%
 
       div {
         -webkit-user-select: text
