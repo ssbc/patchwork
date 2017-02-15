@@ -18,7 +18,7 @@ exports.create = function (api) {
   return nest('message.html.layout', layout)
 
   function layout (msg, opts) {
-    if (!(opts.layout === undefined || opts.layout === 'default' || opts.layout === 'mini')) return
+    if (!(opts.layout === undefined || opts.layout === 'default')) return
 
     var classList = ['Message']
     var replyInfo = null
