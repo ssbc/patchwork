@@ -23,6 +23,12 @@ ToggleButton {
     padding-right: 25px
   }
 
+  -disabled {
+    cursor: default
+    opacity: 0.4 !important
+    text-decoration: none !important
+  }
+
   :hover {
     opacity: 1
   }

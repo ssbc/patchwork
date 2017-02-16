@@ -106,7 +106,7 @@ exports.create = function (api) {
           h('h1', ['@', name]),
           h('div.meta', [
             when(id === yourId, [
-              h('a.-disabled', 'This is you!')
+              h('a.ToggleButton.-disabled', 'This is you!')
             ], [
               when(youFollow,
                 h('a.ToggleButton.-unsubscribe', {
