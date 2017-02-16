@@ -1,10 +1,16 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var {Value, h, when, computed, map, send} = require('mutant')
+var {Value, h, when, computed, map, send, dictToCollection} = require('mutant')
 var extend = require('xtend')
 
 exports.needs = nest({
-  'about.obs.name': 'first',
+  'about.obs': {
+    name: 'first',
+    names: 'first',
+    images: 'first',
+    color: 'first'
+  },
+  'blob.sync.url': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
   'sbot.pull.userFeed': 'first',
@@ -12,7 +18,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'profile.obs': {
     followers: 'first',
-    following: 'first'
+    following: 'first',
+    names: 'first'
   }
 })
 exports.gives = nest('page.html.render')
@@ -54,28 +61,69 @@ exports.create = function (api) {
       return youFollow.has(id)
     })
 
+    var names = api.about.obs.names(id)
+    var images = api.about.obs.images(id)
+
+    var namePicker = h('div', {className: 'Picker'}, [
+      map(dictToCollection(names), (item) => {
+        var isSelf = computed(item.value, (ids) => ids.includes(id))
+        var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
+        return h('a.name', {
+          classList: [
+            when(isSelf, '-self'),
+            when(isAssigned, '-assigned')
+          ],
+          title: nameList(when(isSelf, 'Self Assigned', 'Assigned By'), item.value)
+        }, [
+          item.key
+        ])
+      })
+    ])
+
+    var imagePicker = h('div', {className: 'Picker'}, [
+      map(dictToCollection(images), (item) => {
+        var isSelf = computed(item.value, (ids) => ids.includes(id))
+        var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
+        return h('a.name', {
+          classList: [
+            when(isSelf, '-self'),
+            when(isAssigned, '-assigned')
+          ],
+          title: nameList(when(isSelf, 'Self Assigned', 'Assigned By'), item.value)
+        }, [
+          h('img', {
+            className: 'Avatar',
+            style: { 'background-color': api.about.obs.color(id) },
+            src: computed(item.key, api.blob.sync.url)
+          })
+        ])
+      })
+    ])
+
     var prepend = h('header', {className: 'ProfileHeader'}, [
       h('div.image', api.about.html.image(id)),
-      h('div.title', [
-        h('h1', ['@', name])
-      ]),
-      h('div.meta', [
-        when(id === yourId, [
-          h('a.-disabled', 'This is you!')
-        ], [
-          when(youFollow,
-            h('a.ToggleButton.-unsubscribe', {
-              'href': '#',
-              'title': 'Click to unfollow',
-              'ev-click': send(unfollow, id)
-            }, when(isFriends, 'Friends', 'Following')),
-            h('a.ToggleButton.-subscribe', {
-              'href': '#',
-              'ev-click': send(follow, id)
-            }, when(followsYou, 'Follow Back', 'Follow'))
-          )
-        ])
-
+      h('div.main', [
+        h('div.title', [
+          h('h1', ['@', name]),
+          h('div.meta', [
+            when(id === yourId, [
+              h('a.-disabled', 'This is you!')
+            ], [
+              when(youFollow,
+                h('a.ToggleButton.-unsubscribe', {
+                  'href': '#',
+                  'title': 'Click to unfollow',
+                  'ev-click': send(unfollow, id)
+                }, when(isFriends, 'Friends', 'Following')),
+                h('a.ToggleButton.-subscribe', {
+                  'href': '#',
+                  'ev-click': send(follow, id)
+                }, when(followsYou, 'Follow Back', 'Follow'))
+              )
+            ])
+          ])
+        ]),
+        h('section', [ namePicker, imagePicker ])
       ])
     ])
 
@@ -110,7 +158,7 @@ exports.create = function (api) {
           }, [
             h('div.avatar', [api.about.html.image(id)]),
             h('div.main', [
-              h('div.name', [ api.about.obs.name(id) ])
+              h('div.name', [ '@', api.about.obs.name(id) ])
             ])
           ])
         }, {
@@ -133,6 +181,13 @@ exports.create = function (api) {
       type: 'contact',
       contact: id,
       following: false
+    })
+  }
+
+  function nameList (prefix, ids) {
+    var items = map(ids, api.about.obs.name)
+    return computed([prefix, items], (prefix, names) => {
+      return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
     })
   }
 }

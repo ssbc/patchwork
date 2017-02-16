@@ -15,7 +15,13 @@ ProfileHeader {
     }
   }
 
-  div.title {
+  div.main {
     flex: 1
+    div.title {
+      display: flex
+      h1 {
+        flex: 1
+      }
+    }
   }
 }

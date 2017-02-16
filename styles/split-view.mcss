@@ -10,14 +10,14 @@ SplitView {
   div.side {
     width: 280px;
     padding: 20px;
-    background: linear-gradient(100deg, #cee4ef, #efebeb);
+    background: linear-gradient(81deg, #d2f0ff, #ffffff);
     border-right: 1px solid #dcdcdc;
     overflow-y: auto;
 
     -right {
       border: none
       border-left: 1px solid #dcdcdc
-      background: linear-gradient(100deg, #ffffff, #efebeb)
+      background: linear-gradient(100deg, #ffffff, #f9ecca);
     }
 
     h2 {
