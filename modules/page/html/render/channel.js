@@ -1,10 +1,10 @@
 var { h, when, send } = require('mutant')
-var pull = require('pull-stream')
 var nest = require('depnest')
 
 exports.needs = nest({
   'channel.obs.subscribed': 'first',
   'feed.html.rollup': 'first',
+  'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first'
@@ -39,24 +39,7 @@ exports.create = function (api) {
       //api.message.html.compose({type: 'post', channel: channel}, {placeholder: 'Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics'})
     ]
 
-    return api.feed.html.rollup((opts) => {
-      return pull(
-        api.sbot.pull.log(opts),
-        pull.map(matchesChannel)
-      )
-    }, { prepend })
-
-    // scoped
-
-    function matchesChannel (msg) {
-      if (msg.sync) return
-      var c = msg && msg.value && msg.value.content
-      if (c && c.channel === channel) {
-        return msg
-      } else {
-        return {timestamp: msg.timestamp}
-      }
-    }
+    return api.feed.html.rollup(api.feed.pull.channel(channel), { prepend })
   })
 
   function subscribe (id) {
