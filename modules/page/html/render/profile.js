@@ -18,8 +18,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'profile.obs': {
     followers: 'first',
-    following: 'first',
-    names: 'first'
+    following: 'first'
   }
 })
 exports.gives = nest('page.html.render')
