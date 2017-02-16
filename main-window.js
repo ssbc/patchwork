@@ -20,10 +20,12 @@ module.exports = function (config) {
     require('patchcore')
   )
   var api = entry(sockets, nest({
-    'page.html.render': 'first'
+    'page.html.render': 'first',
+    'keys.sync.id': 'first'
   }))
 
   var renderPage = api.page.html.render
+  var id = api.keys.sync.id()
 
   var searchTimer = null
   var searchBox = h('input.search', {
@@ -49,7 +51,7 @@ module.exports = function (config) {
     // preload tabs (and subscribe to update notifications)
     '/public': renderPage('/public'),
     '/private': renderPage('/private'),
-    // [ssbClient.id]: renderPage(ssbClient.id),
+    [id]: renderPage(id),
     // '/notifications': renderPage('/notifications')
   })
 
@@ -100,7 +102,7 @@ module.exports = function (config) {
       h('span.appTitle', ['Patchwork']),
       h('span', [ searchBox ]),
       h('span.nav', [
-        // tab('Profile', ssbClient.id),
+        tab('Profile', id),
         // tab('Mentions', '/notifications')
       ])
     ]),
