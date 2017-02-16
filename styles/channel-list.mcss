@@ -4,7 +4,7 @@ ChannelList {
     padding: 8px 10px;
     font-size: 110%;
     margin: 4px 0;
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.66);
     border-radius: 5px;
     position: relative
     transition: background-color 0.2s
@@ -38,7 +38,7 @@ ChannelList {
     span.name {
       flex: 1
       white-space: nowrap;
-      min-width: 0; 
+      min-width: 0;
     }
 
     a {
