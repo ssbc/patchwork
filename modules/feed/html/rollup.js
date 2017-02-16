@@ -4,6 +4,7 @@ var computed = require('mutant/computed')
 var h = require('mutant/h')
 var MutantArray = require('mutant/array')
 var Abortable = require('pull-abortable')
+var map = require('mutant/map')
 var pull = require('pull-stream')
 var nest = require('depnest')
 
@@ -17,14 +18,14 @@ exports.needs = nest({
   },
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
+  'about.obs.name': 'first',
   feed: {
     'html.rollup': 'first',
     'pull.summary': 'first'
   },
   profile: {
     'html.person': 'first',
-    'html.manyPeople': 'first',
-    'obs.names': 'first'
+    'html.manyPeople': 'first'
   }
 })
 
@@ -177,13 +178,13 @@ exports.create = function (api) {
       if (renderedMessage) {
         if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
           meta = h('div.meta', {
-            title: api.profile.obs.names(item.repliesFrom)
+            title: names(item.repliesFrom)
           }, [
             api.profile.html.manyPeople(item.repliesFrom), ' replied'
           ])
         } else if (item.lastUpdateType === 'dig' && item.digs.size) {
           meta = h('div.meta', {
-            title: api.profile.obs.names(item.digs)
+            title: names(item.digs)
           }, [
             api.profile.html.manyPeople(item.digs), ' dug this message'
           ])
@@ -202,13 +203,13 @@ exports.create = function (api) {
       } else {
         if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
           meta = h('div.meta', {
-            title: api.profile.obs.names(item.repliesFrom)
+            title: names(item.repliesFrom)
           }, [
             api.profile.html.manyPeople(item.repliesFrom), ' replied to ', api.message.html.link(item.messageId)
           ])
         } else if (item.lastUpdateType === 'dig' && item.digs.size) {
           meta = h('div.meta', {
-            title: api.profile.obs.names(item.digs)
+            title: names(item.digs)
           }, [
             api.profile.html.manyPeople(item.digs), ' dug ', api.message.html.link(item.messageId)
           ])
@@ -223,7 +224,7 @@ exports.create = function (api) {
     } else if (item.type === 'follow') {
       return h('div', {className: 'FeedEvent -follow'}, [
         h('div.meta', {
-          title: api.profile.obs.names(item.contacts)
+          title: names(item.contacts)
         }, [
           api.profile.html.person(item.id), ' followed ', api.profile.html.manyPeople(item.contacts)
         ])
@@ -231,5 +232,10 @@ exports.create = function (api) {
     }
 
     return h('div')
+  }
+
+  function names (ids) {
+    var items = map(ids, api.about.obs.name)
+    return computed([items], (names) => names.map((n) => `- ${n}`).join('\n'))
   }
 }
