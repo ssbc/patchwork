@@ -26,10 +26,8 @@ exports.needs = nest({
   'about.obs.name': 'first',
 
   'feed.html.rollup': 'first',
-  'profile.obs': {
-    following: 'first',
-    recentlyUpdated: 'first'
-  },
+  'profile.obs.recentlyUpdated': 'first',
+  'contact.obs.following': 'first',
   'channel.obs': {
     subscribed: 'first',
     recent: 'first'
@@ -44,7 +42,7 @@ exports.create = function (api) {
     if (path !== '/public') return // "/" is a sigil for "page"
 
     var id = api.keys.sync.id()
-    var following = api.profile.obs.following(id)
+    var following = api.contact.obs.following(id)
     var subscribedChannels = api.channel.obs.subscribed(id)
     var loading = computed(subscribedChannels.sync, x => !x)
     var channels = computed(api.channel.obs.recent(), items => items.slice(0, 8), {comparer: arrayEq})

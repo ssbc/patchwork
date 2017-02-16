@@ -16,7 +16,7 @@ exports.needs = nest({
   'sbot.pull.userFeed': 'first',
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first',
-  'profile.obs': {
+  'contact.obs': {
     followers: 'first',
     following: 'first'
   }
@@ -29,9 +29,9 @@ exports.create = function (api) {
 
     var name = api.about.obs.name(id)
     var yourId = api.keys.sync.id()
-    var yourFollows = api.profile.obs.following(yourId)
-    var rawFollowers = api.profile.obs.followers(id)
-    var rawFollowing = api.profile.obs.following(id)
+    var yourFollows = api.contact.obs.following(yourId)
+    var rawFollowers = api.contact.obs.followers(id)
+    var rawFollowing = api.contact.obs.following(id)
     var doneWaiting = Value(false)
     setTimeout(() => doneWaiting.set(true), 1e3)
     var friendsLoaded = computed([rawFollowers, rawFollowing, doneWaiting], (...x) => x.every(Boolean))
