@@ -17,8 +17,10 @@ module.exports = function (config) {
     overrideConfig(config),
     require('./modules'),
     require('./plugs'),
-    require('patchcore')
+    require('patchcore'),
+    require('./overrides')
   )
+
   var api = entry(sockets, nest({
     'page.html.render': 'first',
     'keys.sync.id': 'first'
