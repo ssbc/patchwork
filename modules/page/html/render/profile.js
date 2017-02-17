@@ -153,11 +153,13 @@ exports.create = function (api) {
       ])
     ])
 
-    return h('div', {className: 'SplitView'}, [
+    var feedView = api.feed.html.rollup((opts) => {
+      return api.sbot.pull.userFeed(extend(opts, {id}))
+    }, { prepend })
+
+    var container = h('div', {className: 'SplitView'}, [
       h('div.main', [
-        api.feed.html.rollup((opts) => {
-          return api.sbot.pull.userFeed(extend(opts, {id}))
-        }, { prepend })
+        feedView
       ]),
       h('div.side.-right', [
         when(friendsLoaded,
@@ -170,6 +172,10 @@ exports.create = function (api) {
         )
       ])
     ])
+
+    container.pendingUpdates = feedView.pendingUpdates
+    container.reload = feedView.reload
+    return container
   })
 
   function renderContactBlock (title, profiles) {
