@@ -6,6 +6,21 @@ Picker {
     margin: 3px;
     border: 1px solid #EEE;
     color: #222;
+    vertical-align: top;
+
+    -add {
+      padding: 0 5px
+      font-size: 20px
+      border-color: #DDD
+      background: #EEE
+    }
+
+    :hover {
+      border-color: #deb250;
+      color: #deb250;
+      background: #faf3e8;
+      text-decoration: none
+    }
 
     img {
       width: 50px
@@ -27,4 +42,37 @@ Picker {
       font-weight: bold;
     }
   }
+
+  span.add {
+    position: relative
+    display: inline-block;
+    border: 1px solid #DDD
+    background: #EEE
+    margin: 3px;
+    color: #222;
+    vertical-align: top;
+    :hover {
+      border-color: #deb250;
+      color: #deb250;
+      background: #faf3e8;
+    }
+    ::before {
+      font-size: 30px;
+      content: '+';
+      position: absolute;
+      top: 13px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+    input[type="file"] {
+      height: 62px
+      width: 62px
+      display: block
+      cursor: pointer
+      opacity: 0
+    }
+  }
+
+
 }

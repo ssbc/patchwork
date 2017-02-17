@@ -1,6 +1,6 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var {Value, h, when, computed, map, send, dictToCollection} = require('mutant')
+var {h, when, computed, map, send, dictToCollection, resolve} = require('mutant')
 var extend = require('xtend')
 
 exports.needs = nest({
@@ -11,11 +11,14 @@ exports.needs = nest({
     color: 'first'
   },
   'blob.sync.url': 'first',
+  'blob.html.input': 'first',
+  'message.async.publish': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
   'sbot.pull.userFeed': 'first',
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first',
+  'sheet.display': 'first',
   'contact.obs': {
     followers: 'first',
     following: 'first'
@@ -66,6 +69,12 @@ exports.create = function (api) {
         var isSelf = computed(item.value, (ids) => ids.includes(id))
         var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
         return h('a.name', {
+          'ev-click': () => {
+            if (!isAssigned()) {
+              assignName(id, resolve(item.key))
+            }
+          },
+          href: '#',
           classList: [
             when(isSelf, '-self'),
             when(isAssigned, '-assigned')
@@ -74,7 +83,13 @@ exports.create = function (api) {
         }, [
           item.key
         ])
-      })
+      }),
+      h('a -add', {
+        'ev-click': () => {
+          rename(id)
+        },
+        href: '#',
+      }, ['+'])
     ])
 
     var imagePicker = h('div', {className: 'Picker'}, [
@@ -82,6 +97,12 @@ exports.create = function (api) {
         var isSelf = computed(item.value, (ids) => ids.includes(id))
         var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
         return h('a.name', {
+          'ev-click': () => {
+            if (!isAssigned()) {
+              assignImage(id, resolve(item.key))
+            }
+          },
+          href: '#',
           classList: [
             when(isSelf, '-self'),
             when(isAssigned, '-assigned')
@@ -94,7 +115,15 @@ exports.create = function (api) {
             src: computed(item.key, api.blob.sync.url)
           })
         ])
-      })
+      }),
+      h('span.add', [
+        api.blob.html.input(file => {
+          assignImage(id, file.link)
+        }, {
+          accept: 'image/*',
+          resize: { width: 500, height: 500 }
+        })
+      ])
     ])
 
     var prepend = h('header', {className: 'ProfileHeader'}, [
@@ -178,6 +207,69 @@ exports.create = function (api) {
       type: 'contact',
       contact: id,
       following: false
+    })
+  }
+
+  function assignImage (id, image) {
+    api.message.async.publish({
+      type: 'about',
+      about: id,
+      image
+    })
+  }
+
+  function assignName (id, name) {
+    api.message.async.publish({
+      type: 'about',
+      about: id,
+      name
+    })
+  }
+
+  function rename (id) {
+    api.sheet.display(close => {
+      var currentName = api.about.obs.name(id)
+      var input = h('input', {
+        style: {'font-size': '150%'},
+        value: currentName()
+      })
+      setTimeout(() => {
+        input.focus()
+        input.select()
+      }, 5)
+      return {
+        content: h('div', {
+          style: {
+            padding: '20px',
+            'text-align': 'center'
+          }
+        }, [
+          h('h2', {
+            style: {
+              'font-weight': 'normal'
+            }
+          }, ['What whould you like to call ', h('strong', ['@', currentName]), '?']),
+          input
+        ]),
+        footer: [
+          h('button -save', {
+            'ev-click': () => {
+              if (input.value.trim() && input.value !== currentName()) {
+                // no confirm
+                api.sbot.async.publish({
+                  type: 'about',
+                  about: id,
+                  name: input.value.trim()
+                })
+              }
+              close()
+            }
+          }, 'Confirm'),
+          h('button -cancel', {
+            'ev-click': close
+          }, 'Cancel')
+        ]
+      }
     })
   }
 
