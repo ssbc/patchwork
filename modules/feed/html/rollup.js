@@ -148,6 +148,75 @@ exports.create = function (api) {
         Scroller(container, content, renderItem, false, false)
       )
     }
+
+    function renderItem (item) {
+      if (item.type === 'message') {
+        var meta = null
+        var previousId = item.messageId
+        var replies = item.replies.slice(-4).map((msg) => {
+          var result = api.message.html.render(msg, {inContext: true, inSummary: true, previousId})
+          previousId = msg.key
+          return result
+        })
+        var renderedMessage = item.message ? api.message.html.render(item.message, {inContext: true}) : null
+        if (renderedMessage) {
+          if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
+            meta = h('div.meta', {
+              title: names(item.repliesFrom)
+            }, [
+              api.profile.html.manyPeople(item.repliesFrom), ' replied'
+            ])
+          } else if (item.lastUpdateType === 'dig' && item.digs.size) {
+            meta = h('div.meta', {
+              title: names(item.digs)
+            }, [
+              api.profile.html.manyPeople(item.digs), ' dug this message'
+            ])
+          }
+
+          return h('FeedEvent', [
+            meta,
+            renderedMessage,
+            when(replies.length, [
+              when(item.replies.length > replies.length || opts.partial,
+                h('a.full', {href: item.messageId}, ['View full thread'])
+              ),
+              h('div.replies', replies)
+            ])
+          ])
+        } else {
+          if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
+            meta = h('div.meta', {
+              title: names(item.repliesFrom)
+            }, [
+              api.profile.html.manyPeople(item.repliesFrom), ' replied to ', api.message.html.link(item.messageId)
+            ])
+          } else if (item.lastUpdateType === 'dig' && item.digs.size) {
+            meta = h('div.meta', {
+              title: names(item.digs)
+            }, [
+              api.profile.html.manyPeople(item.digs), ' dug ', api.message.html.link(item.messageId)
+            ])
+          }
+
+          if (meta || replies.length) {
+            return h('FeedEvent', [
+              meta, h('div.replies', replies)
+            ])
+          }
+        }
+      } else if (item.type === 'follow') {
+        return h('FeedEvent -follow', [
+          h('div.meta', {
+            title: names(item.contacts)
+          }, [
+            api.profile.html.person(item.id), ' followed ', api.profile.html.manyPeople(item.contacts)
+          ])
+        ])
+      }
+
+      return h('div')
+    }
   }
 
   function ensureAuthor (item, cb) {
@@ -161,75 +230,6 @@ exports.create = function (api) {
     } else {
       cb(null, item)
     }
-  }
-
-  function renderItem (item) {
-    if (item.type === 'message') {
-      var meta = null
-      var previousId = item.messageId
-      var replies = item.replies.slice(-4).map((msg) => {
-        var result = api.message.html.render(msg, {inContext: true, inSummary: true, previousId})
-        previousId = msg.key
-        return result
-      })
-      var renderedMessage = item.message ? api.message.html.render(item.message, {inContext: true}) : null
-      if (renderedMessage) {
-        if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
-          meta = h('div.meta', {
-            title: names(item.repliesFrom)
-          }, [
-            api.profile.html.manyPeople(item.repliesFrom), ' replied'
-          ])
-        } else if (item.lastUpdateType === 'dig' && item.digs.size) {
-          meta = h('div.meta', {
-            title: names(item.digs)
-          }, [
-            api.profile.html.manyPeople(item.digs), ' dug this message'
-          ])
-        }
-
-        return h('FeedEvent', [
-          meta,
-          renderedMessage,
-          when(replies.length, [
-            when(item.replies.length > replies.length,
-              h('a.full', {href: item.messageId}, ['View full thread'])
-            ),
-            h('div.replies', replies)
-          ])
-        ])
-      } else {
-        if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
-          meta = h('div.meta', {
-            title: names(item.repliesFrom)
-          }, [
-            api.profile.html.manyPeople(item.repliesFrom), ' replied to ', api.message.html.link(item.messageId)
-          ])
-        } else if (item.lastUpdateType === 'dig' && item.digs.size) {
-          meta = h('div.meta', {
-            title: names(item.digs)
-          }, [
-            api.profile.html.manyPeople(item.digs), ' dug ', api.message.html.link(item.messageId)
-          ])
-        }
-
-        if (meta || replies.length) {
-          return h('FeedEvent', [
-            meta, h('div.replies', replies)
-          ])
-        }
-      }
-    } else if (item.type === 'follow') {
-      return h('FeedEvent -follow', [
-        h('div.meta', {
-          title: names(item.contacts)
-        }, [
-          api.profile.html.person(item.id), ' followed ', api.profile.html.manyPeople(item.contacts)
-        ])
-      ])
-    }
-
-    return h('div')
   }
 
   function names (ids) {

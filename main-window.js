@@ -54,7 +54,7 @@ module.exports = function (config) {
     '/public': renderPage('/public'),
     '/private': renderPage('/private'),
     [id]: renderPage(id),
-    // '/notifications': renderPage('/notifications')
+    '/mentions': renderPage('/mentions')
   })
 
   var lastViewed = {}
@@ -107,7 +107,7 @@ module.exports = function (config) {
       h('span', [ searchBox ]),
       h('span.nav', [
         tab('Profile', id),
-        // tab('Mentions', '/notifications')
+        tab('Mentions', '/mentions')
       ])
     ]),
     mainElement
