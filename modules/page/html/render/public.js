@@ -105,6 +105,7 @@ exports.create = function (api) {
     ])
 
     result.pendingUpdates = feedView.pendingUpdates
+    result.reload = feedView.reload
 
     return result
 
