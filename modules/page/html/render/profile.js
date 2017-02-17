@@ -32,9 +32,7 @@ exports.create = function (api) {
     var yourFollows = api.contact.obs.following(yourId)
     var rawFollowers = api.contact.obs.followers(id)
     var rawFollowing = api.contact.obs.following(id)
-    var doneWaiting = Value(false)
-    setTimeout(() => doneWaiting.set(true), 1e3)
-    var friendsLoaded = computed([rawFollowers, rawFollowing, doneWaiting], (...x) => x.every(Boolean))
+    var friendsLoaded = computed([rawFollowers.sync, rawFollowing.sync], (...x) => x.every(Boolean))
 
     var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
       return Array.from(following).filter(follow => followers.has(follow))

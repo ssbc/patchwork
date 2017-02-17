@@ -154,20 +154,23 @@ exports.create = function (api) {
         ]),
 
         when(computed(whoToFollow, x => x.length), h('h2', 'Who to follow')),
-        h('div', {
-          classList: 'ProfileList'
-        }, [
-          map(whoToFollow, (id) => {
-            return h('a.profile', {
-              href: id
-            }, [
-              h('div.avatar', [api.about.html.image(id)]),
-              h('div.main', [
-                h('div.name', [ '@', api.about.obs.name(id) ])
+        when(following.sync,
+          h('div', {
+            classList: 'ProfileList'
+          }, [
+            map(whoToFollow, (id) => {
+              return h('a.profile', {
+                href: id
+              }, [
+                h('div.avatar', [api.about.html.image(id)]),
+                h('div.main', [
+                  h('div.name', [ '@', api.about.obs.name(id) ])
+                ])
               ])
-            ])
-          })
-        ]),
+            })
+          ]),
+          h('div', {classList: 'Loading'})
+        ),
 
         when(computed(connectedPubs, x => x.length), h('h2', 'Connected Pubs')),
         h('div', {
