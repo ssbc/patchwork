@@ -77,7 +77,7 @@ exports.create = function (api) {
         pull.drain((item) => {
           var type = item && item.value && item.value.content.type
           if (type && type !== 'vote') {
-            if (item.value && item.value.author === api.keys.sync.id() && !updates()) {
+            if (item.value && item.value.author === api.keys.sync.id() && !updates() && type !== 'git-update') {
               return refresh()
             }
             if (filter) {
