@@ -5,6 +5,7 @@ Picker {
     background: #fff;
     margin: 3px;
     border: 1px solid #EEE;
+    color: #222;
 
     img {
       width: 50px
