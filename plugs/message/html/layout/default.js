@@ -1,8 +1,10 @@
-const { when, h } = require('mutant')
+const { when, h, map } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
   'profile.html.person': 'first',
+  'message.obs.backlinks': 'first',
+  'message.obs.name': 'first',
   'message.html': {
     link: 'first',
     meta: 'map',
@@ -20,6 +22,7 @@ exports.create = function (api) {
   function layout (msg, opts) {
     if (!(opts.layout === undefined || opts.layout === 'default')) return
 
+    var backlinks = opts.backlinks ? api.message.obs.backlinks(msg.key) : []
     var classList = ['Message']
     var replyInfo = null
 
@@ -38,6 +41,14 @@ exports.create = function (api) {
     }, [
       messageHeader(msg, replyInfo),
       h('section', [opts.content]),
+      map(backlinks, backlink => {
+        return h('a.backlink', {
+          href: backlink,
+          title: backlink
+        }, [
+          h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
+        ])
+      }),
       when(msg.key, h('footer', [
         h('div.actions', [
           api.message.html.action(msg)

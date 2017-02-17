@@ -142,6 +142,23 @@ Message {
     }
   }
 
+  a.backlink {
+    display: block;
+    border-top: 1px solid #d1d0d0;
+    margin: 0 -1px;
+    padding: 10px 15px;
+    background: #e8e6e6;
+    border-bottom: 1px solid #d1d0d0;
+    color: #8f8f8f;
+    margin-top: -1px;
+    font-size: 9pt;
+
+    :hover {
+      text-decoration: none
+      color: #777
+    }
+  }
+
   footer {
     background: #fdfdfd
     padding: 15px 15px
