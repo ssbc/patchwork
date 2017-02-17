@@ -58,12 +58,15 @@ module.exports = function (config) {
   })
 
   var lastViewed = {}
+  var defaultViews = views.keys()
 
   // delete cached view after 30 mins of last seeing
   setInterval(() => {
     views.keys().forEach((view) => {
-      if (lastViewed[view] !== true && Date.now() - lastViewed[view] > (30 * 60e3) && view !== currentView()) {
-        views.delete(view)
+      if (!defaultViews.includes(view)) {
+        if (lastViewed[view] !== true && Date.now() - lastViewed[view] > (5 * 60e3) && view !== currentView()) {
+          views.delete(view)
+        }
       }
     })
   }, 60e3)
