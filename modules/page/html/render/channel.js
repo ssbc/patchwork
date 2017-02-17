@@ -3,6 +3,7 @@ var nest = require('depnest')
 
 exports.needs = nest({
   'channel.obs.subscribed': 'first',
+  'message.html.compose': 'first',
   'feed.html.rollup': 'first',
   'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
@@ -36,7 +37,10 @@ exports.create = function (api) {
           )
         ])
       ]),
-      //api.message.html.compose({type: 'post', channel: channel}, {placeholder: 'Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics'})
+      api.message.html.compose({
+        meta: {type: 'post', channel},
+        placeholder: 'Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics'
+      })
     ]
 
     return api.feed.html.rollup(api.feed.pull.channel(channel), { prepend })

@@ -24,6 +24,7 @@ exports.needs = nest({
   },
   'about.html.image': 'first',
   'about.obs.name': 'first',
+  'message.html.compose': 'first',
 
   'feed.html.rollup': 'first',
   'profile.obs.recentlyUpdated': 'first',
@@ -60,7 +61,12 @@ exports.create = function (api) {
       }
     })
 
+    var prepend = [
+      api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
+    ]
+
     var feedView = api.feed.html.rollup(getFeed, {
+      prepend,
       waitUntil: computed([
         following.sync,
         subscribedChannels.sync

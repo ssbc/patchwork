@@ -50,6 +50,7 @@
     "ssb-blobs": "~0.1.7",
     "ssb-keys": "~7.0.0",
     "ssb-links": "~2.0.0",
+    "ssb-mentions": "^0.1.1",
     "ssb-msgs": "^5.2.0",
     "ssb-query": "~0.1.1",
     "ssb-ref": "~2.6.2",
