@@ -1,1 +1,3 @@
-module.exports = require('bulk-require')(__dirname, ['**/!(index).js'])
+module.exports = {
+  patchwork: require('bulk-require')(__dirname, ['**/!(index).js'])
+}
