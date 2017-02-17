@@ -1,0 +1,11 @@
+AboutImage {
+  display: block
+  width: 400px;
+  padding: 5px;
+  background: white;
+  box-shadow: 0 0 10px #AAA;
+  margin: 20px auto;
+  img {
+    width: 100%
+  }
+}
