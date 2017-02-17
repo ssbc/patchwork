@@ -12,7 +12,7 @@ exports.create = function (api) {
   return nest('feed.html.thread', function (rootId) {
     var thread = api.feed.obs.thread(rootId)
 
-    var container = h('div', {className: 'Thread'}, [
+    var container = h('Thread', [
       map(thread.messages, (msg) => {
         return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
           return api.message.html.render(msg, {previousId})

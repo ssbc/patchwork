@@ -78,8 +78,7 @@ module.exports = function (config) {
 
   insertCss(require('./styles'))
 
-  return h('div', {
-    classList: `MainWindow -${process.platform}`,
+  return h(`MainWindow -${process.platform}`, {
     events: {
       click: catchLinks
     }

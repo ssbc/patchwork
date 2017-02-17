@@ -46,8 +46,7 @@ exports.create = function (api) {
     var windowSize = opts && opts.windowSize
     var waitFor = opts && opts.waitFor || true
 
-    var updateLoader = h('a', {
-      className: 'Notifier -loader',
+    var updateLoader = h('a Notifier -loader', {
       href: '#',
       'ev-click': refresh
     }, [
@@ -60,13 +59,12 @@ exports.create = function (api) {
       hidden: computed(sync, s => !s)
     })
 
-    var container = h('div', {
-      className: 'Scroller',
-      style: { overflow: 'auto' },
+    var container = h('Scroller', {
+      style: { overflow: 'auto' }
     }, [
       h('div.wrapper', [
         h('section.prepend', opts.prepend),
-        when(sync, null, h('div', {className: 'Loading -large'})),
+        when(sync, null, h('Loading -large')),
         content
       ])
     ])
@@ -190,7 +188,7 @@ exports.create = function (api) {
           ])
         }
 
-        return h('div', {className: 'FeedEvent'}, [
+        return h('FeedEvent', [
           meta,
           renderedMessage,
           when(replies.length, [
@@ -216,13 +214,13 @@ exports.create = function (api) {
         }
 
         if (meta || replies.length) {
-          return h('div', {className: 'FeedEvent'}, [
+          return h('FeedEvent', [
             meta, h('div.replies', replies)
           ])
         }
       }
     } else if (item.type === 'follow') {
-      return h('div', {className: 'FeedEvent -follow'}, [
+      return h('FeedEvent -follow', [
         h('div.meta', {
           title: names(item.contacts)
         }, [
