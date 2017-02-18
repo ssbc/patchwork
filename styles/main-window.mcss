@@ -118,18 +118,22 @@ MainWindow {
 
   div.main {
     flex: 1
-    display: flex
+    position: relative
 
     div.view {
 
+      position: absolute
+      top: 0
+      bottom: 0
+      left: 0
+      right: 0
+
       [hidden] {
-        display: none
+        visibility: hidden
       }
 
       display: flex
       flex-direction: column
-      flex: 1
-      max-width: 100%
 
       div {
         -webkit-user-select: text
