@@ -121,20 +121,20 @@ exports.create = function (api) {
           hidden: loading
         }, [
           map(channels, (channel) => {
-            var subscribed = subscribedChannels.has(channel.id)
+            var subscribed = subscribedChannels.has(channel)
             return h('a.channel', {
-              href: `#${channel.id}`,
+              href: `#${channel}`,
               classList: [
                 when(subscribed, '-subscribed')
               ]
             }, [
-              h('span.name', '#' + channel.id),
+              h('span.name', '#' + channel),
               when(subscribed,
                 h('a.-unsubscribe', {
-                  'ev-click': send(unsubscribe, channel.id)
+                  'ev-click': send(unsubscribe, channel)
                 }, 'Unsubscribe'),
                 h('a.-subscribe', {
-                  'ev-click': send(subscribe, channel.id)
+                  'ev-click': send(subscribe, channel)
                 }, 'Subscribe')
               )
             ])

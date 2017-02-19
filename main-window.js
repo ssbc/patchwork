@@ -11,6 +11,7 @@ var MutantMap = require('mutant/map')
 var Url = require('url')
 var insertCss = require('insert-css')
 var nest = require('depnest')
+var addSuggest = require('suggest-box')
 
 module.exports = function (config) {
   var sockets = combine(
@@ -24,16 +25,24 @@ module.exports = function (config) {
   var api = entry(sockets, nest({
     'page.html.render': 'first',
     'keys.sync.id': 'first',
-    'blob.sync.url': 'first'
+    'blob.sync.url': 'first',
+    'profile.async.suggest': 'first',
+    'channel.async.suggest': 'first'
   }))
 
   var renderPage = api.page.html.render
   var id = api.keys.sync.id()
+  var getProfileSuggestions = api.profile.async.suggest()
+  var getChannelSuggestions = api.channel.async.suggest()
 
   var searchTimer = null
   var searchBox = h('input.search', {
     type: 'search',
-    placeholder: 'word, @key, #channel'
+    placeholder: 'word, @key, #channel',
+    'ev-suggestselect': (ev) => {
+      setView(ev.detail.id)
+      searchBox.value = ev.detail.id
+    }
   })
 
   searchBox.oninput = function () {
@@ -84,7 +93,7 @@ module.exports = function (config) {
 
   insertCss(require('./styles'))
 
-  return h(`MainWindow -${process.platform}`, {
+  var container = h(`MainWindow -${process.platform}`, {
     events: {
       click: catchLinks
     }
@@ -113,6 +122,16 @@ module.exports = function (config) {
     ]),
     mainElement
   ])
+
+  addSuggest(searchBox, (inputText, cb) => {
+    if (inputText[0] === '@') {
+      cb(null, getProfileSuggestions(inputText.slice(1)), {idOnly: true})
+    } else if (inputText[0] === '#') {
+      cb(null, getChannelSuggestions(inputText.slice(1)))
+    }
+  }, {cls: 'SuggestBox'})
+
+  return container
 
   // scoped
 
@@ -211,9 +230,15 @@ module.exports = function (config) {
   function doSearch () {
     var value = searchBox.value.trim()
     if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
-      setView(value)
+      if (value.startsWith('@') && value.length < 30) {
+        return // probably not a key
+      } else if (value.length > 2) {
+        setView(value)
+      }
     } else if (value.trim()) {
-      setView(`?${value.trim()}`)
+      if (value.length > 2) {
+        setView(`?${value.trim()}`)
+      }
     } else {
       setView('/public')
     }

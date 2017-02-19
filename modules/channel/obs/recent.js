@@ -10,7 +10,7 @@ exports.create = function (api) {
   var channelsLookup = Dict()
 
   var recentChannels = computed(channelsLookup, (lookup) => {
-    var values = Object.keys(lookup).map(x => lookup[x]).sort((a, b) => b.updatedAt - a.updatedAt)
+    var values = Object.keys(lookup).map(x => lookup[x]).sort((a, b) => b.updatedAt - a.updatedAt).map(x => x.id)
     return values
   }, {nextTick: true})
 
@@ -20,7 +20,7 @@ exports.create = function (api) {
         var c = msg.value.content
         if (c.type === 'post' && typeof c.channel === 'string') {
           var name = c.channel.trim()
-          if (name) {
+          if (name && name.length < 30) {
             var channel = channelsLookup.get(name)
             if (!channel) {
               channel = Struct({

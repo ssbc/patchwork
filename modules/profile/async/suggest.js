@@ -54,6 +54,7 @@ exports.create = function (api) {
     var name = api.about.obs.name(id)
     return Struct({
       title: name,
+      id,
       subtitle: id.substring(0, 10),
       value: computed([name, id], mention),
       image: api.about.obs.imageUrl(id),

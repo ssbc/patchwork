@@ -12,6 +12,7 @@ var addSuggest = require('suggest-box')
 exports.needs = nest({
   'blob.html.input': 'first',
   'profile.async.suggest': 'first',
+  'channel.async.suggest': 'first',
   'message.async.publish': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first'
@@ -26,6 +27,8 @@ exports.create = function (api) {
     var focused = Value(false)
     var hasContent = Value(false)
     var getProfileSuggestions = api.profile.async.suggest()
+    var getChannelSuggestions = api.channel.async.suggest()
+
     var blurTimeout = null
 
     var expanded = computed([shrink, focused, hasContent], (shrink, focused, hasContent) => {
@@ -81,6 +84,8 @@ exports.create = function (api) {
     addSuggest(textArea, (inputText, cb) => {
       if (inputText[0] === '@') {
         cb(null, getProfileSuggestions(inputText.slice(1)))
+      } else if (inputText[0] === '#') {
+        cb(null, getChannelSuggestions(inputText.slice(1)))
       } else if (inputText[0] === ':') {
         // suggest emojis
         var word = inputText.slice(1)

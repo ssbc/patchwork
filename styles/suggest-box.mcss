@@ -18,6 +18,7 @@ SuggestBox {
 
       padding-right: .2rem;
       margin-bottom: .2rem;
+      cursor: pointer
 
       img {
         height: 36px;
