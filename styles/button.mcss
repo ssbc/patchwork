@@ -1,0 +1,50 @@
+button {
+  color: #5f5f5f;
+  padding: 3px 6px;
+  background: white;
+  border: 2px solid #DDD;
+  border-radius: 4px;
+  font-size: 130%
+  cursor: pointer
+
+  :hover {
+    color: black
+    border-color: #8B8B8B
+  }
+
+  :focus {
+    outline: 1px dotted rgba(255, 255, 255, 0.45)
+  }
+
+  :active {
+    background-color: #DDD !important
+  }
+
+  -pub {
+    color: #6a7e6a;
+    background-color: #ecfff0;
+    border-color: #8ba289;
+  }
+
+  -save {
+    border-color: #a7c7a6;
+    background-color: #eeffee;
+    color: #255D24;
+
+    :active {
+      background-color: #c6e0c5 !important
+    }
+
+    :hover {
+      border-color: #3ac737;
+      background-color: #d4ffd4;
+      color: #21921f;
+    }
+  }
+
+  -full {
+    display: block
+    width: 100%
+    margin: 15px 0
+  }
+}

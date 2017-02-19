@@ -6,6 +6,11 @@ Message {
   background: white
   position: relative
   font-size: 120%
+  flex-shrink: 0
+
+  (highlight) {
+    background-color: yellow
+  }
 
   :focus {
     z-index: 1
@@ -97,6 +102,7 @@ Message {
         border-radius: 10px;
         display: inline-block;
         vertical-align: top;
+        margin: -2px 0;
       }
 
       span.private {
@@ -137,6 +143,23 @@ Message {
     margin: 0 15px
     (img) {
       max-width: 100%
+    }
+  }
+
+  a.backlink {
+    display: block;
+    border-top: 1px solid #d1d0d0;
+    margin: 0 -1px;
+    padding: 10px 15px;
+    background: #e8e6e6;
+    border-bottom: 1px solid #d1d0d0;
+    color: #8f8f8f;
+    margin-top: -1px;
+    font-size: 9pt;
+
+    :hover {
+      text-decoration: none
+      color: #777
     }
   }
 

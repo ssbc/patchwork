@@ -55,7 +55,7 @@ function openMainWindow () {
     windows.main.setSheetOffset(40)
     windows.main.on('closed', function () {
       windows.main = null
-      if (process.platform != 'darwin') electron.app.quit()
+      if (process.platform !== 'darwin') electron.app.quit()
     })
   }
 }

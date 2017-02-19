@@ -1,0 +1,9 @@
+Markdown {
+  word-break: break-word
+  (pre) {
+    overflow: auto;
+    padding: 10px;
+    background: #fbfbfb;
+    border: 1px solid #EEE;
+  }
+}

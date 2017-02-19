@@ -4,7 +4,7 @@ ProfileList {
     padding: 4px;
     font-size: 110%;
     margin: 4px 0;
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.74);
     border-radius: 5px;
     position: relative
     text-decoration: none
@@ -31,6 +31,7 @@ ProfileList {
       img {
         width: 40px
         height: 40px
+        display: block
       }
     }
 
@@ -43,7 +44,7 @@ ProfileList {
       div.name {
         font-weight: bold
         font-size: 110%
-        color: #333
+        color: #636363
         -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0))
       }
     }

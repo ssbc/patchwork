@@ -1,24 +1,48 @@
-var Modules = require('./modules')
-var h = require('./lib/h')
-var Value = require('@mmckegg/mutant/value')
-var when = require('@mmckegg/mutant/when')
-var computed = require('@mmckegg/mutant/computed')
-var toCollection = require('@mmckegg/mutant/dict-to-collection')
-var MutantDict = require('@mmckegg/mutant/dict')
-var MutantMap = require('@mmckegg/mutant/map')
-var watch = require('@mmckegg/mutant/watch')
+var combine = require('depject')
+var entry = require('depject/entry')
+var electron = require('electron')
+var h = require('mutant/h')
+var Value = require('mutant/value')
+var when = require('mutant/when')
+var computed = require('mutant/computed')
+var toCollection = require('mutant/dict-to-collection')
+var MutantDict = require('mutant/dict')
+var MutantMap = require('mutant/map')
+var Url = require('url')
+var insertCss = require('insert-css')
+var nest = require('depnest')
+var addSuggest = require('suggest-box')
 
-var plugs = require('patchbay/plugs')
+module.exports = function (config) {
+  var sockets = combine(
+    overrideConfig(config),
+    require('./modules'),
+    require('./plugs'),
+    require('patchcore'),
+    require('./overrides')
+  )
 
-module.exports = function (config, ssbClient) {
-  var modules = Modules(config, ssbClient)
+  var api = entry(sockets, nest({
+    'page.html.render': 'first',
+    'keys.sync.id': 'first',
+    'blob.sync.url': 'first',
+    'profile.async.suggest': 'first',
+    'channel.async.suggest': 'first'
+  }))
 
-  var screenView = plugs.first(modules.plugs.screen_view)
+  var renderPage = api.page.html.render
+  var id = api.keys.sync.id()
+  var getProfileSuggestions = api.profile.async.suggest()
+  var getChannelSuggestions = api.channel.async.suggest()
 
   var searchTimer = null
   var searchBox = h('input.search', {
     type: 'search',
-    placeholder: 'word, @key, #channel'
+    placeholder: 'word, @key, #channel',
+    'ev-suggestselect': (ev) => {
+      setView(ev.detail.id)
+      searchBox.value = ev.detail.id
+    }
   })
 
   searchBox.oninput = function () {
@@ -37,19 +61,22 @@ module.exports = function (config, ssbClient) {
 
   var views = MutantDict({
     // preload tabs (and subscribe to update notifications)
-    '/public': screenView('/public'),
-    '/private': screenView('/private'),
-    [ssbClient.id]: screenView(ssbClient.id),
-    '/notifications': screenView('/notifications')
+    '/public': renderPage('/public'),
+    '/private': renderPage('/private'),
+    [id]: renderPage(id),
+    '/mentions': renderPage('/mentions')
   })
 
   var lastViewed = {}
+  var defaultViews = views.keys()
 
   // delete cached view after 30 mins of last seeing
   setInterval(() => {
     views.keys().forEach((view) => {
-      if (lastViewed[view] !== true && Date.now() - lastViewed[view] > (30 * 60e3) && view !== currentView()) {
-        views.delete(view)
+      if (!defaultViews.includes(view)) {
+        if (lastViewed[view] !== true && Date.now() - lastViewed[view] > (5 * 60e3) && view !== currentView()) {
+          views.delete(view)
+        }
       }
     })
   }, 60e3)
@@ -58,25 +85,18 @@ module.exports = function (config, ssbClient) {
   var canGoBack = Value(false)
   var currentView = Value('/public')
 
-  watch(currentView, (view) => {
-    window.location.hash = `#${view}`
-  })
-
-  window.onhashchange = function (ev) {
-    var path = window.location.hash.substring(1)
-    if (path) {
-      setView(path)
-    }
-  }
-
   var mainElement = h('div.main', MutantMap(toCollection(views), (item) => {
     return h('div.view', {
       hidden: computed([item.key, currentView], (a, b) => a !== b)
     }, [ item.value ])
   }))
 
-  return h('MainWindow', {
-    classList: [ '-' + process.platform ]
+  insertCss(require('./styles'))
+
+  var container = h(`MainWindow -${process.platform}`, {
+    events: {
+      click: catchLinks
+    }
   }, [
     h('div.top', [
       h('span.history', [
@@ -96,14 +116,55 @@ module.exports = function (config, ssbClient) {
       h('span.appTitle', ['Patchwork']),
       h('span', [ searchBox ]),
       h('span.nav', [
-        tab('Profile', ssbClient.id),
-        tab('Mentions', '/notifications')
+        tab('Profile', id),
+        tab('Mentions', '/mentions')
       ])
     ]),
     mainElement
   ])
 
+  addSuggest(searchBox, (inputText, cb) => {
+    if (inputText[0] === '@') {
+      cb(null, getProfileSuggestions(inputText.slice(1)), {idOnly: true})
+    } else if (inputText[0] === '#') {
+      cb(null, getChannelSuggestions(inputText.slice(1)))
+    }
+  }, {cls: 'SuggestBox'})
+
+  return container
+
   // scoped
+
+  function catchLinks (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.defaultPrevented) {
+      return true
+    }
+
+    var anchor = null
+    for (var n = ev.target; n.parentNode; n = n.parentNode) {
+      if (n.nodeName === 'A') {
+        anchor = n
+        break
+      }
+    }
+    if (!anchor) return true
+
+    var href = anchor.getAttribute('href')
+
+    if (href) {
+      var url = Url.parse(href)
+      if (url.host) {
+        electron.shell.openExternal(href)
+      } else if (href.charAt(0) === '&') {
+        electron.shell.openExternal(api.blob.sync.url(href))
+      } else if (href !== '#') {
+        setView(href)
+      }
+    }
+
+    ev.preventDefault()
+    ev.stopPropagation()
+  }
 
   function tab (name, view) {
     var instance = views.get(view)
@@ -114,7 +175,7 @@ module.exports = function (config, ssbClient) {
           instance.reload()
         }
       },
-      href: `#${view}`,
+      href: view,
       classList: [
         when(selected(view), '-selected')
       ]
@@ -146,7 +207,7 @@ module.exports = function (config, ssbClient) {
 
   function setView (view) {
     if (!views.has(view)) {
-      views.put(view, screenView(view))
+      views.put(view, renderPage(view))
     }
 
     if (lastViewed[view] !== true) {
@@ -169,9 +230,15 @@ module.exports = function (config, ssbClient) {
   function doSearch () {
     var value = searchBox.value.trim()
     if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
-      setView(value)
+      if (value.startsWith('@') && value.length < 30) {
+        return // probably not a key
+      } else if (value.length > 2) {
+        setView(value)
+      }
     } else if (value.trim()) {
-      setView(`?${value.trim()}`)
+      if (value.length > 2) {
+        setView(`?${value.trim()}`)
+      }
     } else {
       setView('/public')
     }
@@ -184,15 +251,11 @@ module.exports = function (config, ssbClient) {
   }
 }
 
-function isSame (a, b) {
-  if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) {
-        return false
-      }
+function overrideConfig (config) {
+  return [{
+    gives: nest('config.sync.load'),
+    create: function (api) {
+      return nest('config.sync.load', () => config)
     }
-    return true
-  } else if (a === b) {
-    return true
-  }
+  }]
 }
