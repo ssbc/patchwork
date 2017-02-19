@@ -8,6 +8,10 @@ Message {
   font-size: 120%
   flex-shrink: 0
 
+  (highlight) {
+    background-color: yellow
+  }
+
   :focus {
     z-index: 1
   }

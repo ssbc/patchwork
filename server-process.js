@@ -16,6 +16,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/private'))
   .use(require('ssb-links'))
   .use(require('ssb-query'))
+  .use(require('ssb-fulltext'))
 
 module.exports = function (ssbConfig) {
   var context = {
