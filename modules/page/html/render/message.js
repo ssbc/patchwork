@@ -26,6 +26,7 @@ exports.create = function (api) {
       type: 'post',
       root: Proxy(id),
       branch: Proxy(id),
+      channel: Value(undefined),
       recps: Value(undefined)
     })
 
@@ -48,6 +49,7 @@ exports.create = function (api) {
       var isReply = !!value.content.root
       var thread = api.feed.obs.thread(id, {branch: isReply})
 
+      meta.channel.set(value.content.channel)
       meta.root.set(thread.rootId)
 
       // if root thread, reply to last post
