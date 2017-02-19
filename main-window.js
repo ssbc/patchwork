@@ -23,7 +23,8 @@ module.exports = function (config) {
 
   var api = entry(sockets, nest({
     'page.html.render': 'first',
-    'keys.sync.id': 'first'
+    'keys.sync.id': 'first',
+    'blob.sync.url': 'first'
   }))
 
   var renderPage = api.page.html.render
@@ -135,6 +136,8 @@ module.exports = function (config) {
       var url = Url.parse(href)
       if (url.host) {
         electron.shell.openExternal(href)
+      } else if (href.charAt(0) === '&') {
+        electron.shell.openExternal(api.blob.sync.url(href))
       } else if (href !== '#') {
         setView(href)
       }
