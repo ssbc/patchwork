@@ -13,6 +13,8 @@ var insertCss = require('insert-css')
 var nest = require('depnest')
 var addSuggest = require('suggest-box')
 
+require('./lib/context-menu-and-spellcheck.js')
+
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
