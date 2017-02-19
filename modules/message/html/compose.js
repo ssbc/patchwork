@@ -7,10 +7,14 @@ var computed = require('mutant/computed')
 var nest = require('depnest')
 var mentions = require('ssb-mentions')
 var extend = require('xtend')
+var addSuggest = require('suggest-box')
 
 exports.needs = nest({
   'blob.html.input': 'first',
-  'message.async.publish': 'first'
+  'profile.async.suggest': 'first',
+  'message.async.publish': 'first',
+  'emoji.sync.names': 'first',
+  'emoji.sync.url': 'first'
 })
 
 exports.gives = nest('message.html.compose')
@@ -21,6 +25,7 @@ exports.create = function (api) {
     var filesById = {}
     var focused = Value(false)
     var hasContent = Value(false)
+    var getProfileSuggestions = api.profile.async.suggest()
     var blurTimeout = null
 
     var expanded = computed([shrink, focused, hasContent], (shrink, focused, hasContent) => {
@@ -72,6 +77,29 @@ exports.create = function (api) {
       textArea,
       actions
     ])
+
+    addSuggest(textArea, (inputText, cb) => {
+      if (inputText[0] === '@') {
+        cb(null, getProfileSuggestions(inputText.slice(1)))
+      } else if (inputText[0] === ':') {
+        // suggest emojis
+        var word = inputText.slice(1)
+        if (word[word.length - 1] === ':') {
+          word = word.slice(0, -1)
+        }
+        // TODO: when no emoji typed, list some default ones
+        cb(null, api.emoji.sync.names().filter(function (name) {
+          return name.slice(0, word.length) === word
+        }).slice(0, 100).map(function (emoji) {
+          return {
+            image: api.emoji.sync.url(emoji),
+            title: emoji,
+            subtitle: emoji,
+            value: ':' + emoji + ':'
+          }
+        }))
+      }
+    }, {cls: 'SuggestBox'})
 
     return composer
 
