@@ -34,7 +34,6 @@
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
     "on-wakeup": "^1.0.1",
-    "packet-stream": "github:ssbc/packet-stream#lite-destroy",
     "prebuild": "github:mmckegg/prebuild#use-npm-conf",
     "pull-abortable": "^4.1.0",
     "pull-file": "~1.0.0",
