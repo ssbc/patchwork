@@ -20,6 +20,12 @@ button {
     background-color: #DDD !important
   }
 
+  -pub {
+    color: #6a7e6a;
+    background-color: #ecfff0;
+    border-color: #8ba289;
+  }
+
   -save {
     border-color: #a7c7a6;
     background-color: #eeffee;

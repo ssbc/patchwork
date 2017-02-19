@@ -24,6 +24,8 @@ exports.needs = nest({
   },
   'about.html.image': 'first',
   'about.obs.name': 'first',
+  'invite.sheet': 'first',
+
   'message.html.compose': 'first',
 
   'feed.html.rollup': 'first',
@@ -114,6 +116,9 @@ exports.create = function (api) {
         return Array.from(recent).filter(x => x !== id && !following.has(x)).slice(0, 10)
       })
       return [
+        h('button -pub -full', {
+          'ev-click': api.invite.sheet
+        }, '+ Join Pub'),
         h('h2', 'Active Channels'),
         when(loading, [ h('Loading') ]),
         h('div', {
