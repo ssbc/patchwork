@@ -1,7 +1,7 @@
 patchwork-next
 ===
 
-Very early **work-in-progress** attempt at remaking [Patchwork](https://github.com/ssbc/patchwork) using [patchbay](https://github.com/dominictarr/patchbay) and UX/ideas from [ferment](https://github.com/mmckegg/ferment).
+A work-in-progress remake of [Patchwork](https://github.com/ssbc/patchwork) using [patchcore](https://github.com/ssbc/patchcore) and UX/ideas from [ferment](https://github.com/mmckegg/ferment).
 
 The goal is to make a standalone, easy to install, "social" view into the ssb world.
 
