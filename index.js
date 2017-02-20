@@ -50,7 +50,7 @@ function openMainWindow () {
       webPreferences: {
         experimentalFeatures: true
       },
-      icon: './ferment-logo.png'
+      icon: './assets/icon.png'
     })
     windows.main.setSheetOffset(40)
     windows.main.on('closed', function () {
