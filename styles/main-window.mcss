@@ -99,21 +99,22 @@ MainWindow {
 
   div.info {
     a.message {
-      display: block
-      padding: 10px
-      background: #314427
-      transition: color 0.2s, background-color 0.2s
+      display: block;
+      padding: 10px;
+      background: #deffde;
+      transition: color 0.2s, background-color 0.2s;
+      color: #217720;
 
       :hover {
         text-decoration: none
-        color: white
-        background: #315427
+        background: #c0ffae
       }
     }
-    box-shadow: 0 0 3px black
+    box-shadow: 0 0 3px #618b63
     overflow: hidden
     animation: 0.5s slide-in
     position: relative
+    z-index: 1
   }
 
   div.main {

@@ -16,6 +16,7 @@
     "atomic-file": "^0.1.0",
     "bulk-require": "^1.0.0",
     "catch-links": "^2.0.1",
+    "compare-version": "^0.1.2",
     "data-uri-to-buffer": "0.0.4",
     "deep-equal": "^1.0.1",
     "depject": "github:mmckegg/depject#mattject",

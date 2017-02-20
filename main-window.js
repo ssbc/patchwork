@@ -12,6 +12,7 @@ var Url = require('url')
 var insertCss = require('insert-css')
 var nest = require('depnest')
 var addSuggest = require('suggest-box')
+var LatestUpdate = require('./lib/latest-update')
 
 require('./lib/context-menu-and-spellcheck.js')
 
@@ -36,6 +37,7 @@ module.exports = function (config) {
   var id = api.keys.sync.id()
   var getProfileSuggestions = api.profile.async.suggest()
   var getChannelSuggestions = api.channel.async.suggest()
+  var latestUpdate = LatestUpdate()
 
   var searchTimer = null
   var searchBox = h('input.search', {
@@ -124,6 +126,13 @@ module.exports = function (config) {
         tab('Mentions', '/mentions')
       ])
     ]),
+    when(latestUpdate,
+      h('div.info', [
+        h('a.message -update', { href: 'https://github.com/mmckegg/patchwork-next/releases' }, [
+          h('strong', ['Patchwork ', latestUpdate, ' has been released.']), ' Click here for more info!'
+        ])
+      ])
+    ),
     mainElement
   ])
 
