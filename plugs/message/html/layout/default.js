@@ -34,6 +34,8 @@ exports.create = function (api) {
           replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
         }
       }
+    } else if (msg.value.content.project) {
+      replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
     }
 
     return h('div', {
