@@ -72,7 +72,7 @@ module.exports = function (config) {
   var lastViewed = {}
   var defaultViews = views.keys()
 
-  // delete cached view after 30 mins of last seeing
+  // delete cached view after 5 mins of last seeing
   setInterval(() => {
     views.keys().forEach((view) => {
       if (!defaultViews.includes(view)) {
@@ -87,7 +87,9 @@ module.exports = function (config) {
   var canGoBack = Value(false)
   var currentView = Value('/public')
 
-  var mainElement = h('div.main', MutantMap(toCollection(views), (item) => {
+  var viewCollection = toCollection(views)
+
+  var mainElement = h('div.main', MutantMap(viewCollection, (item) => {
     return h('div.view', {
       hidden: computed([item.key, currentView], (a, b) => a !== b)
     }, [ item.value ])
@@ -191,9 +193,16 @@ module.exports = function (config) {
 
   function goBack () {
     if (backHistory.length) {
+
       canGoForward.set(true)
       forwardHistory.push(currentView())
-      currentView.set(backHistory.pop())
+
+      var view = backHistory.pop()
+      if (!views.has(view)) {
+        views.put(view, renderPage(view))
+      }
+
+      currentView.set(view)
       canGoBack.set(backHistory.length > 0)
     }
   }
@@ -201,7 +210,13 @@ module.exports = function (config) {
   function goForward () {
     if (forwardHistory.length) {
       backHistory.push(currentView())
-      currentView.set(forwardHistory.pop())
+
+      var view = forwardHistory.pop()
+      if (!views.has(view)) {
+        views.put(view, renderPage(view))
+      }
+
+      currentView.set(view)
       canGoForward.set(forwardHistory.length > 0)
       canGoBack.set(true)
     }

@@ -29,7 +29,7 @@
     "level": "~1.4.0",
     "level-memview": "0.0.0",
     "micro-css": "^1.0.0",
-    "mutant": "^3.15.1",
+    "mutant": "^3.15.2",
     "mutant-pull-reduce": "^1.0.1",
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
