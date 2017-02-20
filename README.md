@@ -25,15 +25,15 @@ $ npm start
 - [x] Show digs on posts in a nicer way (make it clear that you've dug something)
 - [x] Hovering "+1" like values and "x other people" messages should show who
 - [x] Display number of updates available on Feed buttons. Clicking reloads page.
+- [x] Improve UI on profiles
+  - [x] Move contacts to sidebar
+  - [x] Better selection of names / avatar
+- [x] Figure out when to automatically reload / or inject changes into feeds
+- [x] "Join Pub" interface
+- [x] Improve search UI
 - [ ] Reload should remember current page
-- [ ] Improve UI on profiles
-  - [ ] Move contacts to sidebar
-  - [ ] Better selection of names / avatar
-- [ ] Figure out when to automatically reload / or inject changes into feeds
 - [ ] Roll-up about messages
-- [ ] "Join Pub" interface
 - [ ] Handle initial sync more gracefully
-- [ ] Improve search UI
 - [ ] Easy navigation sidebar
 - [ ] Contacts sidebar
 - [ ] Add more todos!
