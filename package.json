@@ -19,7 +19,7 @@
     "compare-version": "^0.1.2",
     "data-uri-to-buffer": "0.0.4",
     "deep-equal": "^1.0.1",
-    "depject": "github:mmckegg/depject#mattject",
+    "depject": "^3.2.0",
     "depnest": "^1.0.2",
     "electron-default-menu": "~1.0.0",
     "electron-spellchecker": "^1.0.4",
