@@ -11,7 +11,6 @@ var MutantMap = require('mutant/map')
 var Url = require('url')
 var insertCss = require('insert-css')
 var nest = require('depnest')
-var addSuggest = require('suggest-box')
 var LatestUpdate = require('./lib/latest-update')
 
 require('./lib/context-menu-and-spellcheck.js')
@@ -29,36 +28,12 @@ module.exports = function (config) {
     'page.html.render': 'first',
     'keys.sync.id': 'first',
     'blob.sync.url': 'first',
-    'profile.async.suggest': 'first',
-    'channel.async.suggest': 'first'
+    'app.html.search': 'first'
   }))
 
   var renderPage = api.page.html.render
   var id = api.keys.sync.id()
-  var getProfileSuggestions = api.profile.async.suggest()
-  var getChannelSuggestions = api.channel.async.suggest()
   var latestUpdate = LatestUpdate()
-
-  var searchTimer = null
-  var searchBox = h('input.search', {
-    type: 'search',
-    placeholder: 'word, @key, #channel',
-    'ev-suggestselect': (ev) => {
-      setView(ev.detail.id)
-      searchBox.value = ev.detail.id
-    }
-  })
-
-  searchBox.oninput = function () {
-    clearTimeout(searchTimer)
-    searchTimer = setTimeout(doSearch, 500)
-  }
-
-  searchBox.onfocus = function () {
-    if (searchBox.value) {
-      doSearch()
-    }
-  }
 
   var forwardHistory = []
   var backHistory = []
@@ -120,7 +95,7 @@ module.exports = function (config) {
         tab('Private', '/private')
       ]),
       h('span.appTitle', ['Patchwork']),
-      h('span', [ searchBox ]),
+      h('span', [ api.app.html.search(setView) ]),
       h('span.nav', [
         tab('Profile', id),
         tab('Mentions', '/mentions')
@@ -135,14 +110,6 @@ module.exports = function (config) {
     ),
     mainElement
   ])
-
-  addSuggest(searchBox, (inputText, cb) => {
-    if (inputText[0] === '@') {
-      cb(null, getProfileSuggestions(inputText.slice(1)), {idOnly: true})
-    } else if (inputText[0] === '#') {
-      cb(null, getChannelSuggestions(inputText.slice(1)))
-    }
-  }, {cls: 'SuggestBox'})
 
   return container
 
@@ -202,7 +169,6 @@ module.exports = function (config) {
 
   function goBack () {
     if (backHistory.length) {
-
       canGoForward.set(true)
       forwardHistory.push(currentView())
 
@@ -250,23 +216,6 @@ module.exports = function (config) {
       forwardHistory.length = 0
       backHistory.push(currentView())
       currentView.set(view)
-    }
-  }
-
-  function doSearch () {
-    var value = searchBox.value.trim()
-    if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
-      if (value.startsWith('@') && value.length < 30) {
-        return // probably not a key
-      } else if (value.length > 2) {
-        setView(value)
-      }
-    } else if (value.trim()) {
-      if (value.length > 2) {
-        setView(`?${value.trim()}`)
-      }
-    } else {
-      setView('/public')
     }
   }
 
