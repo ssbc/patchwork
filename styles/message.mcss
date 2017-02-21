@@ -148,10 +148,10 @@ Message {
 
   a.backlink {
     display: block;
-    border-top: 1px solid #d1d0d0;
+    border-top: 1px solid #e2e0e0;
     margin: 0 -1px;
     padding: 10px 15px;
-    background: #e8e6e6;
+    background: #f3f2f2;
     border-bottom: 1px solid #d1d0d0;
     color: #8f8f8f;
     margin-top: -1px;
