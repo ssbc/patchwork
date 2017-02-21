@@ -3,10 +3,6 @@ var { h, send, when, computed, map } = require('mutant')
 var extend = require('xtend')
 var pull = require('pull-stream')
 
-exports.gives = nest({
-  'page.html.render': true
-})
-
 exports.needs = nest({
   sbot: {
     pull: {
@@ -36,6 +32,10 @@ exports.needs = nest({
     recent: 'first'
   },
   'keys.sync.id': 'first'
+})
+
+exports.gives = nest({
+  'page.html.render': true
 })
 
 exports.create = function (api) {
