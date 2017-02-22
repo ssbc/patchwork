@@ -14,6 +14,12 @@ $ npm install
 $ npm start
 ```
 
+On linux you'll need some more dependencies for the spell-checker. On debian: 
+
+```sh
+sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev
+```
+
 ## TODO
 
 - [x] Main navigation buttons
