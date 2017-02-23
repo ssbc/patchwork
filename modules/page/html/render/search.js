@@ -67,20 +67,30 @@ exports.create = function (api) {
       Scroller(container, content, renderMsg, true, false)
     )
 
+    // pull(
+    //   nextStepper(api.sbot.pull.search, {query: queryStr, reverse: true, limit: 500, live: false}),
+    //   fallback((err) => {
+    //     if (err === true) {
+    //       search.fulltext.isDone.set(true)
+    //     } else if (/^no source/.test(err.message)) {
+    //       search.isLinear.set(true)
+    //       return pull(
+    //         nextStepper(api.sbot.pull.log, {reverse: true, limit: 500, live: false}),
+    //         pull.through((msg) => search.linear.checked.set(search.linear.checked() + 1)),
+    //         pull.filter(matchesQuery)
+    //       )
+    //     }
+    //   }),
+    //   pull.through(() => search.matches.set(search.matches() + 1)),
+    //   Scroller(container, content, renderMsg, false, false)
+    // )
+
+    // disable full text for now
+    search.isLinear.set(true)
     pull(
-      nextStepper(api.sbot.pull.search, {query: queryStr, reverse: true, limit: 500, live: false}),
-      fallback((err) => {
-        if (err === true) {
-          search.fulltext.isDone.set(true)
-        } else if (/^no source/.test(err.message)) {
-          search.isLinear.set(true)
-          return pull(
-            nextStepper(api.sbot.pull.log, {reverse: true, limit: 500, live: false}),
-            pull.through((msg) => search.linear.checked.set(search.linear.checked() + 1)),
-            pull.filter(matchesQuery)
-          )
-        }
-      }),
+      nextStepper(api.sbot.pull.log, {reverse: true, limit: 500, live: false}),
+      pull.through((msg) => search.linear.checked.set(search.linear.checked() + 1)),
+      pull.filter(matchesQuery),
       pull.through(() => search.matches.set(search.matches() + 1)),
       Scroller(container, content, renderMsg, false, false)
     )
