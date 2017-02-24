@@ -17,6 +17,13 @@ Loading {
     }
   }
 
+  -small {
+    ::before {
+      height: 30px
+      width: 30px
+    }
+  }
+
   -large {
     ::before {
       height: 100px

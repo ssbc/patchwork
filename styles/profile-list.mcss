@@ -48,5 +48,14 @@ ProfileList {
         -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0))
       }
     }
+
+    div.progress {
+      display: flex
+      flex-direction: column
+      svg {
+        width: 20px
+      flex: 1
+      }
+    }
   }
 }

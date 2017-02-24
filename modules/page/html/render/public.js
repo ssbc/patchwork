@@ -23,6 +23,7 @@ exports.needs = nest({
   'invite.sheet': 'first',
 
   'message.html.compose': 'first',
+  'progress.html.peer': 'first',
 
   'feed.html.rollup': 'first',
   'profile.obs.recentlyUpdated': 'first',
@@ -195,7 +196,10 @@ exports.create = function (api) {
             }, [
               h('div.avatar', [api.about.html.image(id)]),
               h('div.main', [
-                h('div.name', [ '@', api.about.obs.name(id) ])
+                h('div.name', [ api.about.obs.name(id) ])
+              ]),
+              h('div.progress', [
+                api.progress.html.peer(id)
               ])
             ])
           })

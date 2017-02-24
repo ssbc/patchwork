@@ -25,7 +25,8 @@ module.exports = function (config) {
     'blob.sync.url': 'first',
     'page.html.render': 'first',
     'app.html.search': 'first',
-    'app.views': 'first'
+    'app.views': 'first',
+    'app.html.progressNotifier': 'first'
   }))
 
   var id = api.keys.sync.id()
@@ -67,6 +68,7 @@ module.exports = function (config) {
         ])
       ])
     ),
+    api.app.html.progressNotifier(),
     views.html
   ])
 

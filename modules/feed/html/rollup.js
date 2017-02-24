@@ -76,7 +76,7 @@ exports.create = function (api) {
         getStream({old: false}),
         pull.drain((item) => {
           var type = item && item.value && item.value.content.type
-          if (type && type !== 'vote') {
+          if (type && type !== 'vote' && typeof item.value.content === 'object') {
             if (item.value && item.value.author === api.keys.sync.id() && !updates() && type !== 'git-update') {
               return refresh()
             }

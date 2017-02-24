@@ -110,8 +110,27 @@ MainWindow {
         background: #c0ffae
       }
     }
-    box-shadow: 0 0 3px #618b63
+
+    div.status {
+      padding: 5px
+      background: #7c7c7c
+      color: white
+      (svg) {
+        width: 20px
+        height: 20px
+      }
+    }
+
+    [hidden] {
+      display: block
+      max-height: 0
+      animation: none
+    }
+
+    max-height: 100px
+    box-shadow: 0 0 3px #616161
     overflow: hidden
+    transition: 0.5s max-height
     animation: 0.5s slide-in
     position: relative
     z-index: 1
