@@ -36,12 +36,12 @@ exports.create = function (api) {
     })
 
     var hidden = computed([progress.incomplete, progress.feeds, queryProgress.pending], (incomplete, feeds, indexing) => {
-      return incomplete <= 5 && !indexing && feeds
+      return incomplete <= 10 && indexing <= 10 && feeds
     })
 
     var hasDownloadProgress = computed([progress.feeds, progress.incomplete], (feeds, incomplete) => {
       if (feeds) {
-        return incomplete > 5
+        return incomplete > 10
       }
     })
 
