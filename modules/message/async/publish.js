@@ -37,5 +37,6 @@ exports.create = function (api) {
         cb && cb(null, false)
       }
     })
+    return true
   })
 }
