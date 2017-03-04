@@ -5,6 +5,8 @@ A work-in-progress remake of [Patchwork](https://github.com/ssbc/patchwork) usin
 
 The goal is to make a standalone, easy to install, "social" view into the ssb world.
 
+![](screenshot.jpg)
+
 ## Install and run
 
 ```shell
@@ -14,7 +16,7 @@ $ npm install
 $ npm start
 ```
 
-On linux you'll need some more dependencies for the spell-checker. On debian: 
+On linux you'll need some more dependencies for the spell-checker. On debian:
 
 ```sh
 sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev
