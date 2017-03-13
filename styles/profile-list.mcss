@@ -53,6 +53,11 @@ ProfileList {
       display: flex
       flex-direction: column
       svg {
+        transition: opacity 0.2s
+        opacity: 0
+        -pending {
+          opacity: 1
+        }
         width: 20px
       flex: 1
       }

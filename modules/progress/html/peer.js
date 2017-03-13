@@ -18,6 +18,6 @@ exports.create = function (api) {
       return (feeds - pending) / feeds
     })
 
-    return when(progress, api.progress.html.render(value))
+    return api.progress.html.render(value, when(progress, '-pending'))
   })
 }

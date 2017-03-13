@@ -5,9 +5,10 @@ var nest = require('depnest')
 exports.gives = nest('progress.html.render')
 
 exports.create = function (api) {
-  return nest('progress.html.render', function (pos) {
+  return nest('progress.html.render', function (pos, classList) {
     return svg('svg RadialProgress', {
-      viewBox: '-20 -20 240 240'
+      viewBox: '-20 -20 240 240',
+      classList
     }, [
       svg('path', {
         d: 'M100,0 a100,100 0 0 1 0,200 a100,100 0 0 1 0,-200',
