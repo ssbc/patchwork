@@ -1,7 +1,7 @@
 SuggestBox {
   width: max-content;
   max-height: 50vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   background-color: #fff;
   border: 1px gainsboro solid;
 
