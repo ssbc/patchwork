@@ -113,14 +113,14 @@ exports.create = function (api) {
     return result
 
     function getSidebar () {
-      var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(200)], (following, recent) => {
-        return Array.from(recent).filter(x => x !== id && !following.has(x)).slice(0, 10)
+      var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(200), localPeers], (following, recent, peers) => {
+        return Array.from(recent).filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
       })
       return [
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, '+ Join Pub'),
-        h('h2', 'Active Channels'),
+        when(computed(channels, x => x.length), h('h2', 'Active Channels')),
         when(loading, [ h('Loading') ]),
         h('div', {
           classList: 'ChannelList',
@@ -165,8 +165,7 @@ exports.create = function (api) {
                 ])
               ])
             })
-          ]),
-          h('div', {classList: 'Loading'})
+          ])
         )
       ]
     }
