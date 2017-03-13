@@ -10,12 +10,13 @@ exports.create = function (api) {
       viewBox: '-20 -20 240 240'
     }, [
       svg('path', {
-        d: 'M100,0 a100,100 0 0 1 0,200 a100,100 0 0 1 0,-200,0',
-        'stroke': '#DADADA',
+        d: 'M100,0 a100,100 0 0 1 0,200 a100,100 0 0 1 0,-200',
+        'stroke-width': 40,
+        'stroke': '#CEC',
         'fill': 'none'
       }),
       svg('path', {
-        d: 'M100,0 a100,100 0 0 1 0,200 a100,100 0 0 1 0,-200,0',
+        d: 'M100,0 a100,100 0 0 1 0,200 a100,100 0 0 1 0,-200',
         'stroke-dashoffset': computed(pos, (pos) => {
           pos = Math.min(Math.max(pos, 0), 1)
           return (1 - pos) * 629
