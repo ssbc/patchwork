@@ -26,6 +26,7 @@ exports.create = function (api) {
     var filesById = {}
     var focused = Value(false)
     var hasContent = Value(false)
+    var publishing = Value(false)
     var getProfileSuggestions = api.profile.async.suggest()
     var getChannelSuggestions = api.channel.async.suggest()
 
@@ -48,6 +49,7 @@ exports.create = function (api) {
         blurTimeout = setTimeout(() => focused.set(false), 200)
       },
       'ev-focus': send(focused.set, true),
+      disabled: publishing,
       placeholder
     })
 
@@ -65,7 +67,10 @@ exports.create = function (api) {
       hasContent.set(true)
     }
 
-    var publishBtn = h('button', { 'ev-click': publish }, 'Publish')
+    var publishBtn = h('button', {
+      'ev-click': publish,
+      disabled: publishing
+    }, when(publishing, 'Publishing...', 'Publish'))
 
     var actions = h('section.actions', [
       fileInput,
@@ -111,7 +116,7 @@ exports.create = function (api) {
     // scoped
 
     function publish () {
-      publishBtn.disabled = true
+      publishing.set(true)
 
       meta = extend(resolve(meta), {
         text: textArea.value,
@@ -131,7 +136,7 @@ exports.create = function (api) {
           meta = prepublish(meta)
         }
       } catch (err) {
-        publishBtn.disabled = false
+        publishing.set(false)
         if (cb) cb(err)
         else throw err
       }
@@ -139,7 +144,7 @@ exports.create = function (api) {
       return api.message.async.publish(meta, done)
 
       function done (err, msg) {
-        publishBtn.disabled = false
+        publishing.set(false)
         if (err) throw err
         else if (msg) textArea.value = ''
         if (cb) cb(err, msg)

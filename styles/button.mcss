@@ -20,6 +20,12 @@ button {
     background-color: #DDD !important
   }
 
+  [disabled] {
+    color: #999797 !important;
+    background: #e3e2e2 !important;
+    border-color: #DDD !important;
+  }
+
   -pub {
     color: #6a7e6a;
     background-color: #ecfff0;

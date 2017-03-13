@@ -13,6 +13,10 @@ Compose {
     background: transparent
     border: none
     padding: 10px
+    [disabled] {
+      color: #AAA;
+      background: #ebf7ee;
+    }
   }
 
   section.actions {
