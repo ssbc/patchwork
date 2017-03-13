@@ -35,7 +35,7 @@
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
     "on-wakeup": "^1.0.1",
-    "patchcore": "~0.3.3",
+    "patchcore": "~0.3.5",
     "prebuild": "github:mmckegg/prebuild#use-npm-conf",
     "pull-abortable": "^4.1.0",
     "pull-file": "~1.0.0",
