@@ -22,7 +22,18 @@ electron.app.on('ready', () => {
   setupContext('ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
-    Menu.setApplicationMenu(Menu.buildFromTemplate(defaultMenu(electron.app, electron.shell)))
+    var menu = defaultMenu(electron.app, electron.shell)
+    var view = menu.find(x => x.label === 'View')
+    view.submenu.push({
+      label: 'Zoom In',
+      accelerator: 'CmdOrCtrl+=',
+      role: 'zoomin'
+    }, {
+      label: 'Zoom Out',
+      accelerator: 'CmdOrCtrl+-',
+      role: 'zoomout'
+    })
+    Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
     openMainWindow()
   })
 
