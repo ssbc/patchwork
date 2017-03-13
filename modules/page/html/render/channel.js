@@ -43,7 +43,7 @@ exports.create = function (api) {
       })
     ]
 
-    return api.feed.html.rollup(api.feed.pull.channel(channel), { prepend })
+    return api.feed.html.rollup(api.feed.pull.channel(channel), { prepend, windowSize: 100 })
   })
 
   function subscribe (id) {
