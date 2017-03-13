@@ -81,7 +81,7 @@ exports.create = function (api) {
           following().has(item.author) ||
           subscribedChannels().has(item.channel) ||
           (item.repliesFrom && item.repliesFrom.has(id)) ||
-          item.digs && item.digs.has(id)
+          item.likes && item.likes.has(id)
         )
       },
       bumpFilter: (msg, group) => {

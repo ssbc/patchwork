@@ -166,11 +166,11 @@ exports.create = function (api) {
             }, [
               api.profile.html.manyPeople(item.repliesFrom), ' replied'
             ])
-          } else if (item.lastUpdateType === 'dig' && item.digs.size) {
+          } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
-              title: names(item.digs)
+              title: names(item.likes)
             }, [
-              api.profile.html.manyPeople(item.digs), ' dug this message'
+              api.profile.html.manyPeople(item.likes), ' like this message'
             ])
           }
 
@@ -191,11 +191,11 @@ exports.create = function (api) {
             }, [
               api.profile.html.manyPeople(item.repliesFrom), ' replied to ', api.message.html.link(item.messageId)
             ])
-          } else if (item.lastUpdateType === 'dig' && item.digs.size) {
+          } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
-              title: names(item.digs)
+              title: names(item.likes)
             }, [
-              api.profile.html.manyPeople(item.digs), ' dug ', api.message.html.link(item.messageId)
+              api.profile.html.manyPeople(item.likes), ' likes ', api.message.html.link(item.messageId)
             ])
           }
 

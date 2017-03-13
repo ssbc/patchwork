@@ -64,20 +64,20 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
       updateContact(msg, follows)
     } else if (c.type === 'vote') {
       if (c.vote && c.vote.link) {
-        // only show digs of posts added in the current window
+        // only show likes of posts added in the current window
         // and only for the main post
         const group = messageUpdates[c.vote.link]
         if (group) {
           if (c.vote.value > 0) {
-            group.lastUpdateType = 'dig'
-            group.digs.add(msg.value.author)
+            group.lastUpdateType = 'like'
+            group.likes.add(msg.value.author)
             // only bump when filter passes
             if (!bumpFilter || bumpFilter(msg, group)) {
               group.updated = msg.timestamp
             }
           } else {
-            group.digs.delete(msg.value.author)
-            if (group.lastUpdateType === 'dig' && !group.digs.size && !group.replies.length) {
+            group.likes.delete(msg.value.author)
+            if (group.lastUpdateType === 'like' && !group.likes.size && !group.replies.length) {
               group.lastUpdateType = 'reply'
             }
           }
@@ -186,7 +186,7 @@ function ensureMessage (id, groups) {
       replies: [],
       message: null,
       messageId: id,
-      digs: new Set(),
+      likes: new Set(),
       updated: 0
     }
   }

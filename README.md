@@ -30,7 +30,7 @@ sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev
 - [x] Display fixed banner at top of view when there are new updates [scrolls to top of page and reloads view when clicked]
 - [x] Preserve scroll on back button
 - [x] Treat the different "views" more like tabs. They preserve their state when switched between [scroll position, forms].
-- [x] Show digs on posts in a nicer way (make it clear that you've dug something)
+- [x] Show likes on posts in a nicer way (make it clear that you've liked something)
 - [x] Hovering "+1" like values and "x other people" messages should show who
 - [x] Display number of updates available on Feed buttons. Clicking reloads page.
 - [x] Improve UI on profiles
