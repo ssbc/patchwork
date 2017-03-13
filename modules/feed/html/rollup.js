@@ -76,7 +76,7 @@ exports.create = function (api) {
         getStream({old: false}),
         pull.drain((item) => {
           var type = item && item.value && item.value.content.type
-          if (type && type !== 'vote' && typeof item.value.content === 'object') {
+          if (type && type !== 'vote' && typeof item.value.content === 'object' && item.value.timestamp > twoDaysAgo()) {
             if (item.value && item.value.author === api.keys.sync.id() && !updates() && type !== 'git-update') {
               return refresh()
             }
@@ -236,4 +236,8 @@ exports.create = function (api) {
     var items = map(ids, api.about.obs.name)
     return computed([items], (names) => names.map((n) => `- ${n}`).join('\n'))
   }
+}
+
+function twoDaysAgo () {
+  return Date.now() - (2 * 24 * 60 * 60 * 1000)
 }
