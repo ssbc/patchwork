@@ -35,8 +35,8 @@ exports.create = function (api) {
       }
     })
 
-    var hidden = computed([progress.incomplete, progress.feeds, queryProgress.pending], (incomplete, feeds, indexing) => {
-      return incomplete <= 10 && indexing <= 10 && feeds
+    var hidden = computed([progress.incomplete, queryProgress.pending], (incomplete, indexing) => {
+      return incomplete <= 10 && indexing <= 10
     })
 
     var hasDownloadProgress = computed([progress.feeds, progress.incomplete], (feeds, incomplete) => {
@@ -52,7 +52,7 @@ exports.create = function (api) {
             ['Downloading new messages', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
             when(queryProgress.pending, [
               ['Indexing database', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
-            ], 'Checking for changes...')
+            ], 'Scuttling...')
           )
         ])
       ])
