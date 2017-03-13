@@ -7,7 +7,7 @@ var nest = require('depnest')
 var hr = 60 * 60 * 1000
 
 exports.needs = nest({
-  'sbot.pull.log': 'first'
+  'sbot.pull.feed': 'first'
 })
 
 exports.gives = nest('profile.obs.recentlyUpdated')
@@ -16,8 +16,8 @@ exports.create = function (api) {
   return nest('profile.obs.recentlyUpdated', function (limit) {
     var stream = pull(
       pullCat([
-        api.sbot.pull.log({reverse: true, limit: limit || 500}),
-        api.sbot.pull.log({old: false})
+        api.sbot.pull.feed({reverse: true, limit: limit || 500}),
+        api.sbot.pull.feed({old: false})
       ])
     )
 
