@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var { Value, Dict, Struct, computed } = require('mutant')
+var { Value, Dict, Struct, computed, throttle } = require('mutant')
 
 exports.gives = nest({
   'sbot.hook.feed': true,
@@ -9,7 +9,7 @@ exports.gives = nest({
 exports.create = function (api) {
   var channelsLookup = Dict()
 
-  var recentChannels = computed(channelsLookup, (lookup) => {
+  var recentChannels = computed(throttle(channelsLookup, 1000), (lookup) => {
     var values = Object.keys(lookup).map(x => lookup[x]).sort((a, b) => b.updatedAt - a.updatedAt).map(x => x.id)
     return values
   }, {nextTick: true})
