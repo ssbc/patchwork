@@ -147,24 +147,8 @@ exports.create = function (api) {
           }, {maxTime: 5})
         ]),
 
-        when(computed(localPeers, x => x.length), h('h2', 'Local')),
-        h('div', {
-          classList: 'ProfileList'
-        }, [
-          map(localPeers, (id) => {
-            return h('a.profile', {
-              classList: [
-                when(computed([connectedPeers, id], (p, id) => p.includes(id)), '-connected')
-              ],
-              href: id
-            }, [
-              h('div.avatar', [api.about.html.image(id)]),
-              h('div.main', [
-                h('div.name', [ '@', api.about.obs.name(id) ])
-              ])
-            ])
-          })
-        ]),
+        PeerList(localPeers, 'Local'),
+        PeerList(connectedPubs, 'Connected Pubs'),
 
         when(computed(whoToFollow, x => x.length), h('h2', 'Who to follow')),
         when(following.sync,
@@ -183,13 +167,17 @@ exports.create = function (api) {
             })
           ]),
           h('div', {classList: 'Loading'})
-        ),
+        )
+      ]
+    }
 
-        when(computed(connectedPubs, x => x.length), h('h2', 'Connected Pubs')),
+    function PeerList (ids, title) {
+      return [
+        when(computed(ids, x => x.length), h('h2', title)),
         h('div', {
           classList: 'ProfileList'
         }, [
-          map(connectedPubs, (id) => {
+          map(ids, (id) => {
             return h('a.profile', {
               classList: [ '-connected' ],
               href: id
