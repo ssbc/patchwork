@@ -13,7 +13,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/block'))
   .use(require('scuttlebot/plugins/local'))
   .use(require('scuttlebot/plugins/logging'))
-  .use(require('scuttlebot/plugins/private'))
+  .use(require('./lib/private-with-index'))
   .use(require('./lib/query-with-progress'))
 //.use(require('ssb-fulltext')) // disabled for now
 
