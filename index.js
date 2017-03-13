@@ -24,15 +24,16 @@ electron.app.on('ready', () => {
   }, () => {
     var menu = defaultMenu(electron.app, electron.shell)
     var view = menu.find(x => x.label === 'View')
-    view.submenu.push({
-      label: 'Zoom In',
-      accelerator: 'CmdOrCtrl+=',
-      role: 'zoomin'
-    }, {
-      label: 'Zoom Out',
-      accelerator: 'CmdOrCtrl+-',
-      role: 'zoomout'
-    })
+    view.submenu = [
+      { role: 'reload' },
+      { role: 'toggledevtools' },
+      { type: 'separator' },
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
     openMainWindow()
   })
