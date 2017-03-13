@@ -1,5 +1,6 @@
 var {computed, when, h, throttle} = require('mutant')
 var nest = require('depnest')
+var sustained = require('../../../lib/sustained')
 
 exports.gives = nest('app.html.progressNotifier')
 
@@ -45,7 +46,7 @@ exports.create = function (api) {
       }
     })
 
-    return h('div.info', { hidden: throttle(hidden, 5000) }, [
+    return h('div.info', { hidden: sustained(hidden, 1000) }, [
       h('div.status', [
         h('Loading -small', [
           when(hasDownloadProgress,
