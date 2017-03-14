@@ -195,7 +195,7 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              api.profile.html.manyPeople(item.likes), ' likes ', api.message.html.link(item.messageId)
+              api.profile.html.manyPeople(item.likes), ' liked ', api.message.html.link(item.messageId)
             ])
           }
 
