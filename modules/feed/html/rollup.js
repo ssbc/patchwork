@@ -170,7 +170,7 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              api.profile.html.manyPeople(item.likes), ' like this message'
+              api.profile.html.manyPeople(item.likes), ' liked this message'
             ])
           }
 
