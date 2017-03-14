@@ -19,6 +19,7 @@ exports.needs = nest({
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first',
   'sheet.display': 'first',
+  'profile.obs.rank': 'first',
   'contact.obs': {
     followers: 'first',
     following: 'first'
@@ -179,6 +180,7 @@ exports.create = function (api) {
   })
 
   function renderContactBlock (title, profiles) {
+    profiles = api.profile.obs.rank(profiles)
     return [
       when(computed(profiles, x => x.length), h('h2', title)),
       h('div', {
