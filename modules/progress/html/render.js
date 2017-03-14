@@ -1,11 +1,13 @@
 var svg = require('mutant/svg-element')
 var computed = require('mutant/computed')
+var when = require('mutant/when')
 var nest = require('depnest')
 
 exports.gives = nest('progress.html.render')
 
 exports.create = function (api) {
   return nest('progress.html.render', function (pos, classList) {
+    var pending = computed(pos, x => x > 0 && x < 1)
     return svg('svg RadialProgress', {
       viewBox: '-20 -20 240 240',
       classList
@@ -22,6 +24,9 @@ exports.create = function (api) {
           pos = Math.min(Math.max(pos, 0), 1)
           return (1 - pos) * 629
         }),
+        'style': {
+          transition: when(pending, 'stroke-dashoffset 0.1s', 'stroke-dashoffset 0')
+        },
         'stroke-width': 40,
         'stroke-dasharray': 629,
         'stroke': '#33DA33',
