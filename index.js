@@ -56,6 +56,7 @@ function openMainWindow () {
       width: 1024,
       height: 768,
       titleBarStyle: 'hidden-inset',
+      autoHideMenuBar: true,
       title: 'Patchwork',
       show: true,
       backgroundColor: '#EEE',
