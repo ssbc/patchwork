@@ -55,9 +55,7 @@ exports.create = function (api) {
       when(computed(updates, a => a === 1), 'update', 'updates')
     ])
 
-    var content = h('section.content', {
-      hidden: computed(sync, s => !s)
-    })
+    var content = Value()
 
     var container = h('Scroller', {
       style: { overflow: 'auto' }
@@ -127,7 +125,12 @@ exports.create = function (api) {
       }
       updates.set(0)
       sync.set(false)
-      content.innerHTML = ''
+
+      content.set(
+        h('section.content', {
+          hidden: computed(sync, s => !s)
+        })
+      )
 
       var abortable = Abortable()
       abortLastFeed = abortable.abort
@@ -145,7 +148,7 @@ exports.create = function (api) {
           }
         }),
         abortable,
-        Scroller(container, content, renderItem, false, false)
+        Scroller(container, content(), renderItem, false, false)
       )
     }
 
