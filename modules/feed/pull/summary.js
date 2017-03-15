@@ -1,5 +1,5 @@
 var pull = require('pull-stream')
-var pullPushable = require('pull-pushable')
+var pullDefer = require('pull-defer')
 var pullNext = require('pull-next')
 var SortedArray = require('sorted-array-functions')
 var nest = require('depnest')
@@ -26,14 +26,14 @@ function summary (source, opts, cb) {
       if (last) {
         next.lt = last.timestamp || last.value.sequence
       }
-      var pushable = pullPushable()
+      var deferred = pullDefer.source()
       pull(
         source(next),
         pull.collect((err, values) => {
           if (err) throw err
           if (!values.length) {
             done = true
-            pushable.end()
+            deferred.resolve(pull.values([]))
             if (!returned) cb && cb()
             returned = true
           } else {
@@ -41,8 +41,9 @@ function summary (source, opts, cb) {
             last = values[values.length - 1]
             groupMessages(values, fromTime, bumpFilter, (err, result) => {
               if (err) throw err
-              result.forEach(v => pushable.push(v))
-              pushable.end()
+              deferred.resolve(
+                pull.values(result)
+              )
               if (!returned) cb && cb()
               returned = true
             })
@@ -50,7 +51,7 @@ function summary (source, opts, cb) {
         })
       )
     }
-    return pushable
+    return deferred
   })
 }
 
