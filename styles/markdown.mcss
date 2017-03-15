@@ -7,4 +7,9 @@ Markdown {
     border: 1px solid #EEE;
     max-height: 300px;
   }
+  (ul) {
+    (p) {
+      margin: 0;
+    }
+  }
 }
