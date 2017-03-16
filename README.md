@@ -1,8 +1,9 @@
 <h1 align="center">
   <img
     alt="Patchwork icon"
-    src="https://rawgit.com/ssbc/patchwork-builder/bf7a1d0c4be416fda67e0906ebbe3a035e7284f8/build/icon.svg"
-    width="300"
+    src="https://github.com/ssbc/patchwork-icons/raw/master/rainbow-hermies/256x256.png"
+    width="256"
+    height="256"
   />
   <br />
   Patchwork
