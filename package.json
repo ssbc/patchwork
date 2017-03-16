@@ -29,7 +29,7 @@
     "is-visible": "^2.1.1",
     "level": "~1.4.0",
     "level-memview": "0.0.0",
-    "map-filter-reduce": "github:mmckegg/map-filter-reduce#48173d3e328df8c4d8ea04f1b3ffca9f2597853e",
+    "map-filter-reduce": "~3.0.3",
     "micro-css": "^2.0.0",
     "mutant": "^3.18.0",
     "mutant-pull-reduce": "^1.1.0",
