@@ -23,5 +23,10 @@ ProfileHeader {
         flex: 1
       }
     }
+    section {
+      -description {
+        font-size: 120%
+      }
+    }
   }
 }

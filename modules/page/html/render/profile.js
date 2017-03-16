@@ -6,6 +6,7 @@ var extend = require('xtend')
 exports.needs = nest({
   'about.obs': {
     name: 'first',
+    description: 'first',
     names: 'first',
     images: 'first',
     color: 'first'
@@ -13,6 +14,7 @@ exports.needs = nest({
   'blob.sync.url': 'first',
   'blob.html.input': 'first',
   'message.async.publish': 'first',
+  'message.html.markdown': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
   'sbot.pull.userFeed': 'first',
@@ -20,6 +22,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'sheet.display': 'first',
   'profile.obs.rank': 'first',
+  'profile.sheet.edit': 'first',
   'contact.obs': {
     followers: 'first',
     following: 'first'
@@ -32,6 +35,7 @@ exports.create = function (api) {
     if (!ref.isFeed(id)) return
 
     var name = api.about.obs.name(id)
+    var description = api.about.obs.description(id)
     var yourId = api.keys.sync.id()
     var yourFollows = api.contact.obs.following(yourId)
     var rawFollowers = api.contact.obs.followers(id)
@@ -134,7 +138,7 @@ exports.create = function (api) {
           h('h1', ['@', name]),
           h('div.meta', [
             when(id === yourId, [
-              h('a.ToggleButton.-disabled', 'This is you!')
+              h('button', {'ev-click': api.profile.sheet.edit}, 'Edit Your Profile')
             ], [
               when(youFollow,
                 h('a.ToggleButton.-unsubscribe', {
@@ -149,6 +153,13 @@ exports.create = function (api) {
               )
             ])
           ])
+        ]),
+        h('section -description', [
+          computed(description, (text) => {
+            if (typeof text === 'string') {
+              return api.message.html.markdown(text)
+            }
+          })
         ]),
         h('section', [ namePicker, imagePicker ])
       ])

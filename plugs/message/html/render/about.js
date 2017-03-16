@@ -6,7 +6,8 @@ var extend = require('xtend')
 exports.needs = nest({
   'message.html': {
     decorate: 'reduce',
-    layout: 'first'
+    layout: 'first',
+    markdown: 'first'
   },
   'keys.sync.id': 'first',
   'about.html.link': 'first',
@@ -52,10 +53,25 @@ exports.create = function (api) {
       ]))
     }
 
-    var element = api.message.html.layout(msg, extend({
-      content, layout: 'mini'
-    }, opts))
+    var elements = []
 
-    return api.message.html.decorate(element, { msg })
+    if (content.length) {
+      var element = api.message.html.layout(msg, extend({
+        content, layout: 'mini'
+      }, opts))
+      elements.push(api.message.html.decorate(element, { msg }))
+    }
+
+    if (c.description) {
+      elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
+        content: [
+          self ? 'self assigned a description' : ['assigned a description to ', api.about.html.link(c.about)],
+          api.message.html.markdown(c.description)
+        ],
+        layout: 'mini'
+      }, opts)), { msg }))
+    }
+
+    return elements
   })
 }

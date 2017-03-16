@@ -3,6 +3,7 @@ var entry = require('depject/entry')
 var electron = require('electron')
 var h = require('mutant/h')
 var when = require('mutant/when')
+var onceTrue = require('mutant/once-true')
 var computed = require('mutant/computed')
 var catchLinks = require('./lib/catch-links')
 var insertCss = require('insert-css')
@@ -22,15 +23,26 @@ module.exports = function (config) {
 
   var api = entry(sockets, nest({
     'keys.sync.id': 'first',
+    'sbot.obs.connection': 'first',
     'blob.sync.url': 'first',
     'page.html.render': 'first',
     'app.html.search': 'first',
     'app.views': 'first',
-    'app.html.progressNotifier': 'first'
+    'app.html.progressNotifier': 'first',
+    'profile.sheet.edit': 'first'
   }))
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
+
+  // prompt to setup profile on first use
+  onceTrue(api.sbot.obs.connection, (sbot) => {
+    sbot.latestSequence(sbot.id, (_, key) => {
+      if (key == null) {
+        api.profile.sheet.edit()
+      }
+    })
+  })
 
   var views = api.app.views(api.page.html.render, [
     '/public', '/private', id, '/mentions'
