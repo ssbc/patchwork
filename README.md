@@ -16,10 +16,11 @@
 ![Patchwork screenshot](screenshot.jpg)
 
 <details>
-  <summary>table of contents</summary>
-  <li><a href="#features">features</a></li>
-  <li><a href="#install">demos</a></li>
-  <li><a href="#concepts">concepts</a></li>
+  <summary>Table of Contents</summary>
+  <li><a href="#features">Features</a></li>
+  <li><a href="#pubs">Pubs</a></li>
+  <li><a href="#install">Install</a></li>
+  <li><a href="#docs">Docs</a></li>
 </details>
 
 ## Features
