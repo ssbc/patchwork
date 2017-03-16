@@ -66,7 +66,7 @@ exports.create = function (api) {
                 hooks: [ValueHook(chosenName), FocusHook()]
               }),
               h('textarea.description', {
-                placeholder: 'Describe yourself',
+                placeholder: 'Describe yourself (if you want)',
                 hooks: [ValueHook(chosenDescription)]
               })
             ])

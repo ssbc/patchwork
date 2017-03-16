@@ -6,6 +6,7 @@ ProfileHeader {
 
   div.image {
     width: 200px;
+    max-height: 200px;
     padding: 5px;
     background: white;
     box-shadow: 0 0 10px #AAA;
