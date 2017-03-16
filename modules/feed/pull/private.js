@@ -15,7 +15,7 @@ exports.create = function (api) {
     if (opts.lt != null) {
       opts.query = [
         {$filter: {
-          timestamp: {$gte: 0, $lte: opts.lt - 0.000000001}
+          timestamp: {$gte: 0, $lt: opts.lt}
         }}
       ]
       delete opts.lt
