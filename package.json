@@ -1,5 +1,5 @@
 {
-  "name": "patchwork-next",
+  "name": "ssb-patchwork",
   "productName": "Patchwork",
   "version": "3.2.0",
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
