@@ -1,17 +1,16 @@
-patchwork-next
-===
+# patchwork
 
-A work-in-progress remake of [Patchwork](https://github.com/ssbc/patchwork) using [patchcore](https://github.com/ssbc/patchcore) and UX/ideas from [ferment](https://github.com/mmckegg/ferment).
+A remake of [Patchwork Classic](https://github.com/ssbc/patchwork-classic) using [patchcore](https://github.com/ssbc/patchcore) and UX/ideas from [ferment](https://github.com/mmckegg/ferment).
 
 The goal is to make a standalone, easy to install, "social" view into the ssb world.
 
-![](screenshot.jpg)
+![Patchwork screenshot](screenshot.jpg)
 
 ## Install and run
 
 ```shell
-$ git clone https://github.com/mmckegg/patchwork-next
-$ cd patchwork-next
+$ git clone https://github.com/ssbc/patchwork
+$ cd patchwork
 $ npm install
 $ npm start
 ```
