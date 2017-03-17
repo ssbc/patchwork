@@ -8,7 +8,9 @@ exports.needs = nest({
 
 exports.create = function (api) {
   return nest('message.html.meta', function likes (msg) {
-    return computed(api.message.obs.likes(msg.key), likeCount)
+    if (msg.key) {
+      return computed(api.message.obs.likes(msg.key), likeCount)
+    }
   })
 
   function likeCount (likes) {

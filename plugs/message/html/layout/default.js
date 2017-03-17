@@ -1,5 +1,6 @@
-const { when, h, map } = require('mutant')
+const { when, h, map, computed } = require('mutant')
 var nest = require('depnest')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'profile.html.person': 'first',
@@ -51,11 +52,15 @@ exports.create = function (api) {
           h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
         ])
       }),
-      when(msg.key, h('footer', [
-        h('div.actions', [
-          api.message.html.action(msg)
-        ])
-      ]))
+      computed(msg.key, (key) => {
+        if (ref.isMsg(key)) {
+          return h('footer', [
+            h('div.actions', [
+              api.message.html.action(msg)
+            ])
+          ])
+        }
+      })
     ])
 
     // scoped
