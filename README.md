@@ -1,7 +1,7 @@
 <h1 align="center">
   <img
     alt="Patchwork icon"
-    src="https://github.com/ssbc/patchwork-icons/raw/8086e64a200534bea87b29dccc886d5e31bc053a/hermies-rainbow-inverted/256x256.png"
+    src="https://github.com/ssbc/patchwork/blob/0465f406357cec9cdb8d821f68758d7ab8ef41cf/assets/icon.png"
     width="256"
     height="256"
   />
@@ -40,7 +40,7 @@ It's better than twitter and facebook because:
  - The software runs on your device, so there's nobody tracking your browsing.
  - The application-code is FOSS, so you're free to fork or write new applications without a gatekeeper setting terms.
  - Data is saved to your disk, and so the application works offline.
- - You can sync directly with friends over the wifi. 
+ - You can sync directly with friends over the wifi.
 
 ## Pubs
 
