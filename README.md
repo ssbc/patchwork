@@ -1,7 +1,7 @@
 <h1 align="center">
   <img
     alt="Patchwork icon"
-    src="https://github.com/ssbc/patchwork-icons/raw/master/rainbow-hermies/256x256.png"
+    src="https://github.com/ssbc/patchwork-icons/raw/8086e64a200534bea87b29dccc886d5e31bc053a/hermies-rainbow-inverted/256x256.png"
     width="256"
     height="256"
   />
