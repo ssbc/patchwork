@@ -10,9 +10,6 @@ exports.needs = nest({
       feed: 'first',
       userFeed: 'first'
     },
-    async: {
-      publish: 'first'
-    },
     obs: {
       connectedPeers: 'first',
       localPeers: 'first'
@@ -23,6 +20,7 @@ exports.needs = nest({
   'invite.sheet': 'first',
 
   'message.html.compose': 'first',
+  'message.async.publish': 'first',
   'progress.html.peer': 'first',
 
   'feed.html.rollup': 'first',
@@ -217,7 +215,7 @@ exports.create = function (api) {
     }
 
     function subscribe (id) {
-      api.sbot.async.publish({
+      api.message.async.publish({
         type: 'channel',
         channel: id,
         subscribed: true
@@ -225,7 +223,7 @@ exports.create = function (api) {
     }
 
     function unsubscribe (id) {
-      api.sbot.async.publish({
+      api.message.async.publish({
         type: 'channel',
         channel: id,
         subscribed: false

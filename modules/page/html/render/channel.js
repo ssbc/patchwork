@@ -7,7 +7,7 @@ exports.needs = nest({
   'feed.html.rollup': 'first',
   'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
-  'sbot.async.publish': 'first',
+  'message.async.publish': 'first',
   'keys.sync.id': 'first'
 })
 
@@ -47,7 +47,8 @@ exports.create = function (api) {
   })
 
   function subscribe (id) {
-    api.sbot.async.publish({
+    // confirm
+    api.message.async.publish({
       type: 'channel',
       channel: id,
       subscribed: true
@@ -55,7 +56,8 @@ exports.create = function (api) {
   }
 
   function unsubscribe (id) {
-    api.sbot.async.publish({
+    // confirm
+    api.message.async.publish({
       type: 'channel',
       channel: id,
       subscribed: false
