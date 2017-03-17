@@ -3,6 +3,7 @@ var pullDefer = require('pull-defer')
 var pullNext = require('pull-next')
 var SortedArray = require('sorted-array-functions')
 var nest = require('depnest')
+var ref = require('ssb-ref')
 
 exports.gives = nest({
   'feed.pull': [ 'summary' ]
@@ -153,7 +154,7 @@ function updateContact (msg, groups) {
   var c = msg.value.content
   var id = msg.value.author
   var group = groups[id]
-  if (c.contact) {
+  if (ref.isFeed(c.contact)) {
     if (c.following) {
       if (!group) {
         group = groups[id] = {
