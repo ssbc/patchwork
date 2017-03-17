@@ -16,7 +16,7 @@ MainWindow {
     border-bottom: 2px solid #e4edff;
     box-shadow: 0 0 3px #7f7f7f;
     position: relative;
-    z-index: 2;
+    z-index: 100
 
     span {
 

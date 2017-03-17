@@ -4,6 +4,7 @@ SuggestBox {
   overflow-y: auto;
   background-color: #fff;
   border: 1px gainsboro solid;
+  z-index: 1000
 
   padding: .2rem .5rem;
   margin-top: .35rem;
