@@ -30,11 +30,11 @@ exports.create = function (api) {
       var target = api.profile.html.person(c.about, c.name)
       content.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
-          return ['self identifies as ', target]
+          return ['self identifies as "', target, '"']
         } else if (a === b) {
           return ['identified ', api.profile.html.person(c.about)]
         } else {
-          return ['identifies ', api.profile.html.person(c.about), ' as ', target]
+          return ['identifies ', api.profile.html.person(c.about), ' as "', target, '"']
         }
       }))
     }
