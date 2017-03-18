@@ -255,14 +255,22 @@ function twoDaysAgo () {
 
 function many (ids, fn) {
   ids = Array.from(ids)
-  var featuredIds = ids.slice(-3).reverse()
+  var featuredIds = ids.slice(-4).reverse()
 
   if (ids.length) {
-    if (ids.length > 3) {
+    if (ids.length > 4) {
       return [
         fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]),
-        ' and ', ids.length - 2, ' others'
+        fn(featuredIds[1]), ', ',
+        fn(featuredIds[2]), ' and ',
+        ids.length - 3, ' others'
+      ]
+    } else if (ids.length === 4) {
+      return [
+        fn(featuredIds[0]), ', ',
+        fn(featuredIds[1]), ', ',
+        fn(featuredIds[2]), ' and ',
+        fn(featuredIds[3])
       ]
     } else if (ids.length === 3) {
       return [
