@@ -3,8 +3,10 @@ const pull = require('pull-stream')
 const Scroller = require('pull-scroll')
 const TextNodeSearcher = require('text-node-searcher')
 const whitespace = /\s+/
+const pullAbortable = require('pull-abortable')
 var nest = require('depnest')
 var Next = require('pull-next')
+var defer = require('pull-defer')
 
 exports.needs = nest({
   'sbot.pull.search': 'first',
@@ -61,9 +63,12 @@ exports.create = function (api) {
       ])
     ])
 
+    var realtimeAborter = pullAbortable()
+
     pull(
       api.sbot.pull.log({old: false}),
       pull.filter(matchesQuery),
+      realtimeAborter,
       Scroller(container, content, renderMsg, true, false)
     )
 
@@ -86,23 +91,35 @@ exports.create = function (api) {
     // )
 
     // disable full text for now
+    var aborter = pullAbortable()
     search.isLinear.set(true)
     pull(
-      nextStepper(api.sbot.pull.log, {reverse: true, limit: 500, live: false}),
+      nextStepper(api.sbot.pull.log, {reverse: true, limit: 1000, live: false}),
       pull.through((msg) => search.linear.checked.set(search.linear.checked() + 1)),
       pull.filter(matchesQuery),
       pull.through(() => search.matches.set(search.matches() + 1)),
+      aborter,
       Scroller(container, content, renderMsg, false, false)
     )
 
-    return h('div', {className: 'SplitView'}, [
+    return h('SplitView', {
+      hooks: [
+        RemoveHook(() => {
+          // terminate search if removed from dom
+          // this is triggered whenever a new search is started
+          realtimeAborter.abort()
+          aborter.abort()
+        })
+      ],
+      uniqueKey: 'search'
+    }, [
       h('div.main', container)
     ])
 
     // scoped
 
     function renderMsg (msg) {
-      var el = api.message.html.render(msg)
+      var el = h('div.result', api.message.html.render(msg))
       highlight(el, createOrRegExp(query))
       return el
     }
@@ -178,23 +195,29 @@ function nextStepper (createStream, opts, property, range) {
       if (value == null) return
       last = null
     }
-    return pull(
-      createStream(clone(opts)),
-      pull.through(function (msg) {
-        count++
-        if (!msg.sync) {
-          last = msg
-        }
-      }, function (err) {
-        // retry on errors...
-        if (err) {
-          count = -1
-          return count
-        }
-        // end stream if there were no results
-        if (last == null) last = {}
-      })
-    )
+    var result = defer.source()
+
+    window.requestIdleCallback(() => {
+      result.resolve(pull(
+        createStream(clone(opts)),
+        pull.through(function (msg) {
+          count++
+          if (!msg.sync) {
+            last = msg
+          }
+        }, function (err) {
+          // retry on errors...
+          if (err) {
+            count = -1
+            return count
+          }
+          // end stream if there were no results
+          if (last == null) last = {}
+        })
+      ))
+    })
+
+    return result
   })
 }
 
@@ -213,4 +236,10 @@ function clone (obj) {
   var _obj = {}
   for (var k in obj) _obj[k] = obj[k]
   return _obj
+}
+
+function RemoveHook (fn) {
+  return function (element) {
+    return fn
+  }
 }

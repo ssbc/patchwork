@@ -63,9 +63,7 @@ exports.create = function (api) {
         forwardHistory.push(currentView())
 
         var view = backHistory.pop()
-        if (!views.has(view)) {
-          views.put(view, renderPage(view))
-        }
+        loadView(view)
 
         currentView.set(view)
         canGoBack.set(backHistory.length > 0)
@@ -77,9 +75,7 @@ exports.create = function (api) {
         backHistory.push(currentView())
 
         var view = forwardHistory.pop()
-        if (!views.has(view)) {
-          views.put(view, renderPage(view))
-        }
+        loadView(view)
 
         currentView.set(view)
         canGoForward.set(forwardHistory.length > 0)
@@ -87,10 +83,22 @@ exports.create = function (api) {
       }
     }
 
-    function setView (view) {
+    function loadView (view) {
       if (!views.has(view)) {
-        views.put(view, renderPage(view))
+        var page = renderPage(view)
+        if (page.uniqueKey) {
+          views.keys().forEach(k => {
+            if (views.get(k).uniqueKey === page.uniqueKey) {
+              views.delete(k)
+            }
+          })
+        }
+        views.put(view, page)
       }
+    }
+
+    function setView (view) {
+      loadView(view)
 
       if (lastViewed[view] !== true) {
         lastViewed[view] = Date.now()
