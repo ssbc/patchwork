@@ -15,8 +15,8 @@ exports.create = function (api) {
   })
 
   function person (id) {
-    return h('a', {classList: 'ProfileLink', href: id}, [
-      '@', api.about.obs.name(id)
+    return h('a ProfileLink', {href: id, title: id}, [
+      api.about.obs.name(id)
     ])
   }
 }

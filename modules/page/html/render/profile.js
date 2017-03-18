@@ -135,7 +135,7 @@ exports.create = function (api) {
       h('div.image', api.about.html.image(id)),
       h('div.main', [
         h('div.title', [
-          h('h1', ['@', name]),
+          h('h1', [name]),
           h('div.meta', [
             when(id === yourId, [
               h('button', {'ev-click': api.profile.sheet.edit}, 'Edit Your Profile')
@@ -203,7 +203,7 @@ exports.create = function (api) {
           }, [
             h('div.avatar', [api.about.html.image(id)]),
             h('div.main', [
-              h('div.name', [ '@', api.about.obs.name(id) ])
+              h('div.name', [ api.about.obs.name(id) ])
             ])
           ])
         }, {
@@ -267,7 +267,7 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, ['What whould you like to call ', h('strong', ['@', currentName]), '?']),
+          }, ['What whould you like to call ', h('strong', [currentName]), '?']),
           input
         ]),
         footer: [

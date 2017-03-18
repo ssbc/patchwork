@@ -159,7 +159,7 @@ exports.create = function (api) {
               }, [
                 h('div.avatar', [api.about.html.image(id)]),
                 h('div.main', [
-                  h('div.name', [ '@', api.about.obs.name(id) ])
+                  h('div.name', [ api.about.obs.name(id) ])
                 ])
               ])
             })

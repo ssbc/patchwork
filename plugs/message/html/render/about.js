@@ -28,7 +28,7 @@ exports.create = function (api) {
     var content = []
 
     if (c.name) {
-      var target = api.about.html.link(c.about, `@${c.name}`)
+      var target = api.about.html.link(c.about, c.name)
       content.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
           return ['self identifies as ', target]
