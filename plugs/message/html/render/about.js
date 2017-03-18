@@ -10,10 +10,9 @@ exports.needs = nest({
     markdown: 'first'
   },
   'keys.sync.id': 'first',
-  'about.html.link': 'first',
+  'profile.html.person': 'first',
   'about.obs.name': 'first',
   'blob.sync.url': 'first'
-
 })
 
 exports.gives = nest('message.html.render')
@@ -28,21 +27,21 @@ exports.create = function (api) {
     var content = []
 
     if (c.name) {
-      var target = api.about.html.link(c.about, c.name)
+      var target = api.profile.html.person(c.about, c.name)
       content.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
           return ['self identifies as ', target]
         } else if (a === b) {
-          return ['identified ', api.about.html.link(c.about)]
+          return ['identified ', api.profile.html.person(c.about)]
         } else {
-          return ['identifies ', api.about.html.link(c.about), ' as ', target]
+          return ['identifies ', api.profile.html.person(c.about), ' as ', target]
         }
       }))
     }
 
     if (c.image) {
       if (!content.length) {
-        var imageAction = self ? 'self assigned a display image' : ['assigned a display image to ', api.about.html.link(c.about)]
+        var imageAction = self ? 'self assigned a display image' : ['assigned a display image to ', api.profile.html.person(c.about)]
         content.push(imageAction)
       }
 
@@ -65,7 +64,7 @@ exports.create = function (api) {
     if (c.description) {
       elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
         content: [
-          self ? 'self assigned a description' : ['assigned a description to ', api.about.html.link(c.about)],
+          self ? 'self assigned a description' : ['assigned a description to ', api.profile.html.person(c.about)],
           api.message.html.markdown(c.description)
         ],
         layout: 'mini'
