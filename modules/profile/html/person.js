@@ -14,9 +14,9 @@ exports.create = function (api) {
     'profile.html': {person}
   })
 
-  function person (id) {
+  function person (id, altName) {
     return h('a ProfileLink', {href: id, title: id}, [
-      api.about.obs.name(id)
+      altName || api.about.obs.name(id)
     ])
   }
 }
