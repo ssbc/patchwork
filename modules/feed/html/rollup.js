@@ -67,9 +67,8 @@ exports.create = function (api) {
       ])
     ])
 
-    setTimeout(refresh, 10)
-
     onceTrue(waitFor, () => {
+      refresh()
       pull(
         getStream({old: false}),
         pull.drain((item) => {

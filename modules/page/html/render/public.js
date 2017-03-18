@@ -68,7 +68,7 @@ exports.create = function (api) {
 
     var feedView = api.feed.html.rollup(getFeed, {
       prepend,
-      waitUntil: computed([
+      waitFor: computed([
         following.sync,
         subscribedChannels.sync
       ], (...x) => x.every(Boolean)),
