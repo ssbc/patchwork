@@ -24,8 +24,7 @@ exports.needs = nest({
     'pull.summary': 'first'
   },
   profile: {
-    'html.person': 'first',
-    'html.manyPeople': 'first'
+    'html.person': 'first'
   }
 })
 
@@ -166,13 +165,13 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
-              api.profile.html.manyPeople(item.repliesFrom), ' replied'
+              many(item.repliesFrom, api.profile.html.person), ' replied'
             ])
           } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              api.profile.html.manyPeople(item.likes), ' liked this message'
+              many(item.likes, api.profile.html.person), ' liked this message'
             ])
           }
 
@@ -191,13 +190,13 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
-              api.profile.html.manyPeople(item.repliesFrom), ' replied to ', api.message.html.link(item.messageId)
+              many(item.repliesFrom, api.profile.html.person), ' replied to ', api.message.html.link(item.messageId)
             ])
           } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              api.profile.html.manyPeople(item.likes), ' liked ', api.message.html.link(item.messageId)
+              many(item.likes, api.profile.html.person), ' liked ', api.message.html.link(item.messageId)
             ])
           }
 
@@ -212,7 +211,17 @@ exports.create = function (api) {
           h('div.meta', {
             title: names(item.contacts)
           }, [
-            api.profile.html.person(item.id), ' followed ', api.profile.html.manyPeople(item.contacts)
+            api.profile.html.person(item.id), ' followed ', many(item.contacts, api.profile.html.person)
+          ])
+        ])
+      } else if (item.type === 'subscribe') {
+        return h('FeedEvent -subscribe', [
+          h('div.meta', {
+            title: Array.from(item.channels).map(c => `#${c}`).join('\n')
+          }, [
+            api.profile.html.person(item.id), ' subscribed to ', many(item.channels, (channel) => {
+              return h('a', {href: `#${channel}`}, `#${channel}`)
+            })
           ])
         ])
       }
@@ -235,11 +244,39 @@ exports.create = function (api) {
   }
 
   function names (ids) {
-    var items = map(ids, api.about.obs.name)
+    var items = map(Array.from(ids), api.about.obs.name)
     return computed([items], (names) => names.map((n) => `- ${n}`).join('\n'))
   }
 }
 
 function twoDaysAgo () {
   return Date.now() - (2 * 24 * 60 * 60 * 1000)
+}
+
+function many (ids, fn) {
+  ids = Array.from(ids)
+  var featuredIds = ids.slice(-3).reverse()
+
+  if (ids.length) {
+    if (ids.length > 3) {
+      return [
+        fn(featuredIds[0]), ', ',
+        fn(featuredIds[1]),
+        ' and ', ids.length - 2, ' others'
+      ]
+    } else if (ids.length === 3) {
+      return [
+        fn(featuredIds[0]), ', ',
+        fn(featuredIds[1]), ' and ',
+        fn(featuredIds[2])
+      ]
+    } else if (ids.length === 2) {
+      return [
+        fn(featuredIds[0]), ' and ',
+        fn(featuredIds[1])
+      ]
+    } else {
+      return fn(featuredIds[0])
+    }
+  }
 }

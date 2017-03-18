@@ -57,6 +57,7 @@ function summary (source, opts, cb) {
 }
 
 function groupMessages (messages, fromTime, bumpFilter, cb) {
+  var subscribes = {}
   var follows = {}
   var messageUpdates = {}
   reverseForEach(messages, function (msg) {
@@ -64,6 +65,8 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
     var c = msg.value.content
     if (c.type === 'contact') {
       updateContact(msg, follows)
+    } else if (c.type === 'channel') {
+      updateChannel(msg, subscribes)
     } else if (c.type === 'vote') {
       if (c.vote && c.vote.link) {
         // only show likes of posts added in the current window
@@ -73,10 +76,7 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
           if (c.vote.value > 0) {
             group.lastUpdateType = 'like'
             group.likes.add(msg.value.author)
-            // only bump when filter passes
-            if (!bumpFilter || bumpFilter(msg, group)) {
-              group.updated = msg.timestamp
-            }
+            bumpIfNeeded(group, msg, bumpFilter)
           } else {
             group.likes.delete(msg.value.author)
             if (group.lastUpdateType === 'like' && !group.likes.size && !group.replies.length) {
@@ -92,13 +92,8 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
         group.lastUpdateType = 'reply'
         group.repliesFrom.add(msg.value.author)
         SortedArray.add(group.replies, msg, compareUserTimestamp)
-        //group.replies.push(msg)
         group.channel = group.channel || msg.value.content.channel
-
-        // only bump when filter passes
-        if (!bumpFilter || bumpFilter(msg, group)) {
-          group.updated = msg.timestamp || msg.value.sequence
-        }
+        bumpIfNeeded(group, msg, bumpFilter)
       } else {
         const group = ensureMessage(msg.key, messageUpdates)
         group.fromTime = fromTime
@@ -117,6 +112,11 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
         SortedArray.add(result, follows[key], compareUpdated)
       }
     })
+    Object.keys(subscribes).forEach((key) => {
+      if (subscribes[key].updated) {
+        SortedArray.add(result, subscribes[key], compareUpdated)
+      }
+    })
     Object.keys(messageUpdates).forEach((key) => {
       if (messageUpdates[key].updated) {
         SortedArray.add(result, messageUpdates[key], compareUpdated)
@@ -124,6 +124,14 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
     })
     cb(null, result)
   })
+}
+
+function bumpIfNeeded (group, msg, bumpFilter) {
+  // only bump when filter passes
+  var newUpdated = msg.timestamp || msg.value.sequence
+  if (!group.updated || ((!bumpFilter || bumpFilter(msg, group)) && newUpdated > group.updated)) {
+    group.updated = newUpdated
+  }
 }
 
 function compareUpdated (a, b) {
@@ -172,6 +180,35 @@ function updateContact (msg, groups) {
       if (group) {
         group.contacts.delete(c.contact)
         if (!group.contacts.size) {
+          delete groups[id]
+        }
+      }
+    }
+  }
+}
+
+function updateChannel (msg, groups) {
+  var c = msg.value.content
+  var id = msg.value.author
+  var group = groups[id]
+  if (typeof c.channel === 'string') {
+    if (c.subscribed) {
+      if (!group) {
+        group = groups[id] = {
+          type: 'subscribe',
+          lastUpdateType: null,
+          channels: new Set(),
+          updated: 0,
+          author: id,
+          id: id
+        }
+      }
+      group.channels.add(c.channel)
+      group.updated = msg.timestamp || msg.value.sequence
+    } else {
+      if (group) {
+        group.channels.delete(c.channel)
+        if (!group.channels.size) {
           delete groups[id]
         }
       }
