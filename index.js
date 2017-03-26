@@ -8,6 +8,7 @@ var openWindow = require('./lib/window')
 
 var Path = require('path')
 var defaultMenu = require('electron-default-menu')
+var WindowState = require('electron-window-state')
 var Menu = electron.Menu
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
@@ -15,7 +16,6 @@ var ssbKeys = require('ssb-keys')
 var windows = {
   dialogs: new Set()
 }
-
 var ssbConfig = null
 
 electron.app.on('ready', () => {
@@ -51,10 +51,16 @@ electron.app.on('ready', () => {
 
 function openMainWindow () {
   if (!windows.main) {
+    var windowState = WindowState({
+      defaultWidth: 1024,
+      defaultHeight: 768
+    })
     windows.main = openWindow(ssbConfig, Path.join(__dirname, 'main-window.js'), {
       minWidth: 800,
-      width: 1024,
-      height: 768,
+      x: windowState.x,
+      y: windowState.y,
+      width: windowState.width,
+      height: windowState.height,
       titleBarStyle: 'hidden-inset',
       autoHideMenuBar: true,
       title: 'Patchwork',
@@ -65,6 +71,7 @@ function openMainWindow () {
       },
       icon: './assets/icon.png'
     })
+    windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('closed', function () {
       windows.main = null

@@ -23,6 +23,7 @@
     "depnest": "^1.0.2",
     "electron-default-menu": "~1.0.0",
     "electron-spellchecker": "^1.0.4",
+    "electron-window-state": "^4.1.0",
     "graphmitter": "^1.6.3",
     "has-network": "0.0.0",
     "insert-css": "~1.0.0",
