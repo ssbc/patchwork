@@ -2,6 +2,7 @@ var h = require('mutant/h')
 var computed = require('mutant/computed')
 var nest = require('depnest')
 var extend = require('xtend')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'message.html': {
@@ -20,7 +21,7 @@ exports.gives = nest('message.html.render')
 exports.create = function (api) {
   return nest('message.html.render', function about (msg, opts) {
     if (msg.value.content.type !== 'about') return
-    if (!msg.value.content.about) return
+    if (!ref.isFeed(msg.value.content.about)) return
 
     var c = msg.value.content
     var self = msg.value.author === c.about
