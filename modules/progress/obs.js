@@ -50,9 +50,8 @@ exports.create = function (api) {
   function load () {
     if (!syncStatus) {
       syncStatus = ProgressStatus(x => x.replicate.changes, {
-        incomplete: 0,
+        incompleteFeeds: 0,
         pendingPeers: Dict({}, {fixedIndexing: true}),
-        pending: 0,
         feeds: null,
         rate: 0
       })

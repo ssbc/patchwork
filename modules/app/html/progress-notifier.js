@@ -34,7 +34,7 @@ exports.create = function (api) {
       }
     })
 
-    var downloadProgress = computed([progress.feeds, progress.incomplete], (feeds, incomplete) => {
+    var downloadProgress = computed([progress.feeds, progress.incompleteFeeds], (feeds, incomplete) => {
       if (feeds) {
         return clamp((feeds - incomplete) / feeds)
       } else {
@@ -42,14 +42,14 @@ exports.create = function (api) {
       }
     })
 
-    var hidden = computed([progress.incomplete, indexing], (incomplete, indexing) => {
+    var hidden = computed([progress.incompleteFeeds, indexing], (incomplete, indexing) => {
       return incomplete < 5 && !indexing
     })
 
     return h('div.info', { hidden: sustained(hidden, 2000) }, [
       h('div.status', [
         h('Loading -small', [
-          when(computed(progress.incomplete, (v) => v > 5),
+          when(computed(progress.incompleteFeeds, (v) => v > 5),
             ['Downloading new messages', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
             when(indexing, [
               ['Indexing database', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
