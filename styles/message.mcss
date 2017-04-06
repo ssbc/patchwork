@@ -49,9 +49,9 @@ Message {
             width: 30px
           }
         }
-        div.meta {
-          display: none
-        }
+      }
+      div.meta {
+        display: none
       }
     }
 
