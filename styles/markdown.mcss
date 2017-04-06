@@ -1,7 +1,7 @@
 Markdown {
   word-break: break-word
 
-  *:first-child {
+  :first-child {
     margin-top: 0
   }
   (pre) {
