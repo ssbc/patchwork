@@ -5,6 +5,8 @@ FeedEvent {
   max-width: 700px
   width: 100%
   margin: 10px auto
+  border-radius: 3px
+  overflow: hidden
 
   div {
     flex: 1
