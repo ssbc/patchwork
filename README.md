@@ -65,7 +65,7 @@ $ npm install
 $ npm start
 ```
 
-On linux you'll need some more dependencies for the spell-checker. On debian:
+On Linux you'll need some more dependencies. On Debian:
 
 ```shell
 sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev g++ m4 automake libtool
