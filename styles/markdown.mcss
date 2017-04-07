@@ -1,5 +1,12 @@
 Markdown {
   word-break: break-word
+  (blockquote) {
+    margin: 1rem 0;
+    padding: 5px 20px;
+    border-left: 4px gainsboro solid;
+    background: #fafafa;
+    color: #7c7c7c;
+  }
   (pre) {
     overflow: auto;
     padding: 10px;
