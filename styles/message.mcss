@@ -33,6 +33,12 @@ Message {
     }
   }
 
+  -mini {
+    header {
+      margin-bottom: 15px
+    }
+  }
+
   -reply {
     font-size: 100%
     header {

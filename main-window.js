@@ -24,10 +24,12 @@ module.exports = function (config) {
   var api = entry(sockets, nest({
     'keys.sync.id': 'first',
     'sbot.obs.connection': 'first',
+    'sbot.async.get': 'first',
     'blob.sync.url': 'first',
     'page.html.render': 'first',
     'app.html.search': 'first',
     'app.views': 'first',
+    'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first'
   }))
@@ -89,6 +91,15 @@ module.exports = function (config) {
       electron.shell.openExternal(href)
     } else if (href[0] === '&') {
       electron.shell.openExternal(api.blob.sync.url(href))
+    } else if (href[0] === '%') {
+      getExternalHandler(href, (err, handler) => {
+        if (err) throw err
+        if (handler) {
+          handler(href)
+        } else {
+          views.setView(href)
+        }
+      })
     } else {
       views.setView(href)
     }
@@ -97,6 +108,13 @@ module.exports = function (config) {
   return container
 
   // scoped
+
+  function getExternalHandler (key, cb) {
+    api.sbot.async.get(key, function (err, value) {
+      if (err) return cb(err)
+      cb(null, api.app.sync.externalHandler({key, value}))
+    })
+  }
 
   function tab (name, view) {
     var instance = views.get(view)

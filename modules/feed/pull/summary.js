@@ -86,8 +86,8 @@ function groupMessages (messages, fromTime, bumpFilter, cb) {
         }
       }
     } else {
-      if (c.root || (c.type === 'git-update' && c.repo)) {
-        const group = ensureMessage(c.root || c.repo, messageUpdates)
+      if (c.root) {
+        const group = ensureMessage(c.root, messageUpdates)
         group.fromTime = fromTime
         group.lastUpdateType = 'reply'
         group.repliesFrom.add(msg.value.author)

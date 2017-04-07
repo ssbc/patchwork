@@ -16,6 +16,7 @@ exports.needs = nest({
     render: 'first',
     link: 'first'
   },
+  'app.sync.externalHandler': 'first',
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
   'about.obs.name': 'first',
@@ -72,8 +73,12 @@ exports.create = function (api) {
         getStream({old: false}),
         pull.drain((item) => {
           var type = item && item.value && item.value.content.type
+
+          // ignore message handled by another app
+          if (api.app.sync.externalHandler(item)) return
+
           if (type && type !== 'vote' && typeof item.value.content === 'object' && item.value.timestamp > twoDaysAgo()) {
-            if (item.value && item.value.author === api.keys.sync.id() && !updates() && type !== 'git-update') {
+            if (item.value && item.value.author === api.keys.sync.id() && !updates()) {
               return refresh()
             }
             if (filter) {
@@ -137,8 +142,10 @@ exports.create = function (api) {
         api.feed.pull.summary(getStream, {windowSize, bumpFilter}, () => {
           sync.set(true)
         }),
-        pull.asyncMap(ensureAuthor),
+        pull.asyncMap(ensureMessageAndAuthor),
         pull.filter((item) => {
+          // ignore messages that are handled by other apps
+          if (item.rootMessage && api.app.sync.externalHandler(item.rootMessage)) return
           if (filter) {
             return filter(item)
           } else {
@@ -230,14 +237,20 @@ exports.create = function (api) {
     }
   }
 
-  function ensureAuthor (item, cb) {
+  function ensureMessageAndAuthor (item, cb) {
     if (item.type === 'message' && !item.message) {
-      api.sbot.async.get(item.messageId, (_, value) => {
-        if (value) {
-          item.author = value.author
-        }
+      if (item.message) {
+        item.rootMessage = item.message
         cb(null, item)
-      })
+      } else {
+        api.sbot.async.get(item.messageId, (_, value) => {
+          if (value) {
+            item.author = value.author
+            item.rootMessage = {key: item.messageId, value}
+          }
+          cb(null, item)
+        })
+      }
     } else {
       cb(null, item)
     }
