@@ -9,6 +9,7 @@ var catchLinks = require('./lib/catch-links')
 var insertCss = require('insert-css')
 var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
+var ref = require('ssb-ref')
 
 require('./lib/context-menu-and-spellcheck.js')
 
@@ -89,9 +90,9 @@ module.exports = function (config) {
   catchLinks(container, (href, external) => {
     if (external) {
       electron.shell.openExternal(href)
-    } else if (href[0] === '&') {
+    } else if (ref.isBlob(href)) {
       electron.shell.openExternal(api.blob.sync.url(href))
-    } else if (href[0] === '%') {
+    } else if (ref.isMsg(href)) {
       getExternalHandler(href, (err, handler) => {
         if (err) throw err
         if (handler) {
