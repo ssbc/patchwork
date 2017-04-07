@@ -82,24 +82,26 @@ exports.create = function (api) {
               return refresh()
             }
             if (filter) {
-              var update = (item.value.content.type === 'post' && item.value.content.root) ? {
-                type: 'message',
-                messageId: item.value.content.root,
-                channel: item.value.content.channel
-              } : {
-                type: 'message',
-                author: item.value.author,
-                channel: item.value.content.channel,
-                messageId: item.key
-              }
-
-              ensureMessageAndAuthor(update, (err, update) => {
-                if (!err) {
-                  if (filter(update)) {
-                    updates.set(updates() + 1)
-                  }
+              if (item.value.content.type === 'post') {
+                var update = (item.value.content.root) ? {
+                  type: 'message',
+                  messageId: item.value.content.root,
+                  channel: item.value.content.channel
+                } : {
+                  type: 'message',
+                  author: item.value.author,
+                  channel: item.value.content.channel,
+                  messageId: item.key
                 }
-              })
+
+                ensureMessageAndAuthor(update, (err, update) => {
+                  if (!err) {
+                    if (filter(update)) {
+                      updates.set(updates() + 1)
+                    }
+                  }
+                })
+              }
             } else {
               updates.set(updates() + 1)
             }
