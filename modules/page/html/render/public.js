@@ -74,10 +74,20 @@ exports.create = function (api) {
       ], (...x) => x.every(Boolean)),
       windowSize: 500,
       filter: (item) => {
+        if (item.type === 'subscribe') {
+          // HACK: hide people you don't follow from subscribe notifications:
+          Array.from(item.subscribers).forEach(id => {
+            if (!following().has(id)) {
+              item.subscribers.delete(id)
+            }
+          })
+        }
+
         return !item.boxed && (
           id === item.author ||
-          following().has(item.author) ||
-          subscribedChannels().has(item.channel) ||
+          (item.author && following().has(item.author)) ||
+          (item.type === 'message' && subscribedChannels().has(item.channel)) ||
+          (item.type === 'subscribe' && item.subscribers.size) ||
           (item.repliesFrom && item.repliesFrom.has(id)) ||
           item.likes && item.likes.has(id)
         )
