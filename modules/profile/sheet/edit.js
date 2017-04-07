@@ -29,7 +29,9 @@ exports.create = function (api) {
 
       var publishing = Value(false)
       var chosenImage = Value(currentImage())
-      var chosenName = Value(currentName())
+
+      // don't display if name is default
+      var chosenName = Value(currentName() === id.slice(1, 10) ? '' : currentName())
       var chosenDescription = Value(currentDescription())
 
       return {
@@ -86,9 +88,10 @@ exports.create = function (api) {
       function save () {
         // no confirm
         var update = {}
+        var newName = chosenName().trim() || currentName()
 
         if (chosenImage() !== currentImage()) update.image = chosenImage()
-        if (chosenName() !== currentName()) update.name = chosenName()
+        if (newName !== currentName()) update.name = newName
         if (chosenDescription() !== currentDescription()) update.description = chosenDescription()
 
         if (Object.keys(update).length) {
