@@ -47,7 +47,7 @@
     "pull-pause": "0.0.0",
     "pull-ping": "^2.0.2",
     "pull-pushable": "^2.0.1",
-    "pull-scroll": "github:mmckegg/pull-scroll#0fddc085fc82cfce9f3ccfd4096fce99843a1e51",
+    "pull-scroll": "^1.0.4",
     "pull-stream": "~3.4.5",
     "scuttlebot": "github:ssbc/scuttlebot#6c16948e4f8487e5bf2c4df17b0564391d4b0ddf",
     "sorted-array-functions": "~1.0.0",
