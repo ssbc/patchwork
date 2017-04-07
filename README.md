@@ -56,7 +56,7 @@ This will cause you to follow the Pub and vise versa. If you haven't synchronize
 
 **Recommended**: Download installers for Windows, macOS and Linux from [patchwork/releases](https://github.com/ssbc/patchwork/releases)
 
-Or you can build from source with node and npm installed:
+Or you can build from source with node (>= 4) and npm (>= 2) installed:
 
 ```shell
 $ git clone https://github.com/ssbc/patchwork
