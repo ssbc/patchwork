@@ -93,7 +93,7 @@ exports.create = function (api) {
                 messageId: item.key
               }
 
-              ensureAuthor(update, (err, update) => {
+              ensureMessageAndAuthor(update, (err, update) => {
                 if (!err) {
                   if (filter(update)) {
                     updates.set(updates() + 1)
