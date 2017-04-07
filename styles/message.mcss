@@ -48,6 +48,7 @@ Message {
 
   header {
     margin: 15px 15px
+    margin-bottom: 5px;
     display: flex
 
     div.mini {
@@ -164,18 +165,18 @@ Message {
   }
 
   footer {
-    background: #fdfdfd
-    padding: 15px 15px
-    text-align: right
+    margin: 10px 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 5px;
+    padding-left: 5px;
 
     div.actions {
       a {
-        margin-left: 5px;
-        color: #5f5f5f;
-        padding: 3px 6px;
-        background: white;
-        border: 2px solid #DDD;
-        border-radius: 4px;
+        margin-right: 10px;
+        color: #9a9a9a;
+        font-weight: bold;
+        padding: 5px
 
         :hover {
           background: #cbeeff;
