@@ -205,19 +205,31 @@ exports.create = function (api) {
     function getFeed (opts) {
       if (opts.lt && opts.lt < oldest) {
         opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-        return pull(
-          api.sbot.pull.feed(opts),
-          pull.map((msg) => {
-            if (msg.sync) {
-              return msg
-            } else {
-              return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
-            }
-          })
-        )
-      } else {
-        return api.sbot.pull.log(opts)
       }
+
+      return pull(
+        api.sbot.pull.feed(opts),
+        pull.map((msg) => {
+          if (msg.sync) return msg
+          return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
+        })
+      )
+
+      // if (opts.lt && opts.lt < oldest) {
+      //   opts = extend(opts, {lt: parseInt(opts.lt, 10)})
+      //   return pull(
+      //     api.sbot.pull.feed(opts),
+      //     pull.map((msg) => {
+      //       if (msg.sync) {
+      //         return msg
+      //       } else {
+      //         return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
+      //       }
+      //     })
+      //   )
+      // } else {
+      //   return api.sbot.pull.log(opts)
+      // }
     }
 
     function getFirstMessage (feedId, cb) {
