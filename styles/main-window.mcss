@@ -2,6 +2,7 @@ MainWindow {
   height: 100%
   display: flex
   flex-direction: column
+  background-color: rgb(220, 220, 222)
 
   -darwin {
     div.top {

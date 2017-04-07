@@ -32,7 +32,7 @@ exports.create = function (api) {
       var branch = msg.value.content.branch
       if (branch) {
         if (!opts.previousId || (opts.previousId && last(branch) && opts.previousId !== last(branch))) {
-          replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
+          replyInfo = h('div', { classList: ['reply-to'] }, ['in reply to ', api.message.html.link(last(branch))])
         }
       }
     } else if (msg.value.content.project) {

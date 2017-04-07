@@ -7,6 +7,7 @@ Message {
   position: relative
   font-size: 120%
   flex-shrink: 0
+  padding: 12px
 
   (highlight) {
     background-color: yellow
@@ -35,7 +36,13 @@ Message {
 
   -reply {
     font-size: 100%
+    background-color: rgb(246,247,249)
+    flex-direction: row
+    flex-wrap: wrap
+
     header {
+      margin-right: 10px
+
       div.main {
         a.avatar {
           img {
@@ -43,11 +50,18 @@ Message {
           }
         }
       }
+      div.meta {
+        display: none
+      }
+    }
+
+    footer {
+      flex-basis: 100%
     }
   }
 
   header {
-    margin: 15px 15px
+    margin: 0
     display: flex
 
     div.mini {
@@ -140,7 +154,7 @@ Message {
   }
 
   section {
-    margin: 0 15px
+    margin: 0
     (img) {
       max-width: 100%
     }
@@ -164,13 +178,15 @@ Message {
   }
 
   footer {
-    background: #fdfdfd
-    padding: 15px 15px
-    text-align: right
+    padding: 10px 0 0
+    text-align: left
+    border-top: 1px solid rgba(230, 230, 230,1)
 
     div.actions {
+      display: flex
+
       a {
-        margin-left: 5px;
+        margin-right: 5px;
         color: #5f5f5f;
         padding: 3px 6px;
         background: white;

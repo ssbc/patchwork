@@ -1,5 +1,9 @@
 Markdown {
   word-break: break-word
+
+  :first-child {
+    margin-top: 0
+  }
   (pre) {
     overflow: auto;
     padding: 10px;
