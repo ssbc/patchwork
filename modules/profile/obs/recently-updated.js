@@ -13,16 +13,25 @@ exports.needs = nest({
 exports.gives = nest('profile.obs.recentlyUpdated')
 
 exports.create = function (api) {
-  return nest('profile.obs.recentlyUpdated', function (limit) {
+  var instance = null
+
+  return nest('profile.obs.recentlyUpdated', function () {
+    load()
+    return instance
+  })
+
+  function load () {
+    if (instance) return
+
     var stream = pull(
       pullCat([
-        api.sbot.pull.feed({reverse: true, limit: limit || 500}),
+        api.sbot.pull.feed({reverse: true, limit: 4000}),
         api.sbot.pull.feed({old: false})
       ])
     )
 
     var result = MutantPullReduce(stream, (result, msg) => {
-      if (msg.value.timestamp && Date.now() - msg.value.timestamp < 24 * hr) {
+      if (msg.value.timestamp && Date.now() - msg.value.timestamp < (7 * 24 * hr)) {
         result.add(msg.value.author)
       }
       return result
@@ -31,13 +40,11 @@ exports.create = function (api) {
       nextTick: true
     })
 
-    var instance = throttle(result, 2000)
+    instance = throttle(result, 2000)
     instance.sync = result.sync
 
     instance.has = function (value) {
       return computed(instance, x => x.has(value))
     }
-
-    return instance
-  })
+  }
 }
