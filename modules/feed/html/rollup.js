@@ -224,11 +224,11 @@ exports.create = function (api) {
       } else if (item.type === 'subscribe') {
         return h('FeedEvent -subscribe', [
           h('div.meta', {
-            title: Array.from(item.channels).map(c => `#${c}`).join('\n')
+            title: names(item.subscribers)
           }, [
-            api.profile.html.person(item.id), ' subscribed to ', many(item.channels, (channel) => {
-              return h('a', {href: `#${channel}`}, `#${channel}`)
-            })
+            many(item.subscribers, api.profile.html.person),
+            ' subscribed to ',
+            h('a', {href: `#${item.channel}`}, `#${item.channel}`)
           ])
         ])
       }

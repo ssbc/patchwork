@@ -189,27 +189,26 @@ function updateContact (msg, groups) {
 
 function updateChannel (msg, groups) {
   var c = msg.value.content
-  var id = msg.value.author
-  var group = groups[id]
-  if (typeof c.channel === 'string') {
+  var channel = c.channel
+  var group = groups[channel]
+  if (typeof channel === 'string') {
     if (c.subscribed) {
       if (!group) {
-        group = groups[id] = {
+        group = groups[channel] = {
           type: 'subscribe',
           lastUpdateType: null,
-          channels: new Set(),
+          subscribers: new Set(),
           updated: 0,
-          author: id,
-          id: id
+          channel
         }
       }
-      group.channels.add(c.channel)
+      group.subscribers.add(msg.value.author)
       group.updated = msg.timestamp || msg.value.sequence
     } else {
       if (group) {
-        group.channels.delete(c.channel)
-        if (!group.channels.size) {
-          delete groups[id]
+        group.subscribers.delete(msg.value.author)
+        if (!group.subscribers.size) {
+          delete groups[channel]
         }
       }
     }
