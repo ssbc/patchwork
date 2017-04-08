@@ -44,14 +44,6 @@ exports.create = function (api) {
     }, [
       messageHeader(msg, replyInfo),
       h('section', [opts.content]),
-      map(backlinks, backlink => {
-        return h('a.backlink', {
-          href: backlink,
-          title: backlink
-        }, [
-          h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
-        ])
-      }),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
           return h('footer', [
@@ -60,6 +52,14 @@ exports.create = function (api) {
             ])
           ])
         }
+      }),
+      map(backlinks, backlink => {
+        return h('a.backlink', {
+          href: backlink,
+          title: backlink
+        }, [
+          h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
+        ])
       })
     ])
 
