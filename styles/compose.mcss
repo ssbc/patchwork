@@ -10,6 +10,7 @@ Compose {
   background: white
 
   textarea {
+    font-size: 120%
     background: transparent
     border: none
     padding: 10px

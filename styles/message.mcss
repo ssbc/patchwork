@@ -5,7 +5,7 @@ Message {
   border: 1px solid #f5f5f5
   background: white
   position: relative
-  font-size: 120%
+  font-size: 130%
   flex-shrink: 0
 
   (highlight) {
@@ -40,12 +40,12 @@ Message {
   }
 
   -reply {
-    font-size: 100%
+    font-size: 120%
     header {
       div.main {
         a.avatar {
           img {
-            width: 30px
+            width: 35px
           }
         }
       }
