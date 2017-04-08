@@ -176,9 +176,9 @@ exports.create = function (api) {
       h('div.side.-right', [
         when(friendsLoaded,
           h('div', [
-            renderContactBlock('Friends', friends),
-            renderContactBlock('Followers', followers),
-            renderContactBlock('Following', following)
+            renderContactBlock('Friends', friends, yourFollows),
+            renderContactBlock('Followers', followers, yourFollows),
+            renderContactBlock('Following', following, yourFollows)
           ]),
           h('div', {className: 'Loading'})
         )
@@ -190,7 +190,7 @@ exports.create = function (api) {
     return container
   })
 
-  function renderContactBlock (title, profiles) {
+  function renderContactBlock (title, profiles, yourFollows) {
     profiles = api.profile.obs.rank(profiles)
     return [
       when(computed(profiles, x => x.length), h('h2', title)),
@@ -198,8 +198,12 @@ exports.create = function (api) {
         classList: 'ProfileList'
       }, [
         map(profiles, (id) => {
+          var following = computed(yourFollows, f => f.has(id))
           return h('a.profile', {
-            href: id
+            href: id,
+            classList: [
+              when(following, '-following')
+            ]
           }, [
             h('div.avatar', [api.about.html.image(id)]),
             h('div.main', [
