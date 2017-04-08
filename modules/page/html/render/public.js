@@ -74,16 +74,7 @@ exports.create = function (api) {
       ], (...x) => x.every(Boolean)),
       windowSize: 500,
       filter: (item) => {
-        if (item.type === 'subscribe') {
-          // HACK: hide people you don't follow from subscribe notifications:
-          Array.from(item.subscribers).forEach(id => {
-            if (!following().has(id)) {
-              item.subscribers.delete(id)
-            }
-          })
-        }
-
-        return !item.boxed && (
+        return !item.boxed && (item.lastUpdateType !== 'post' || item.message) && (
           id === item.author ||
           (item.author && following().has(item.author)) ||
           (item.type === 'message' && subscribedChannels().has(item.channel)) ||
@@ -93,6 +84,22 @@ exports.create = function (api) {
         )
       },
       bumpFilter: (msg, group) => {
+        if (group.type === 'subscribe') {
+          removeStrangers(group.subscribers)
+        }
+
+        if (group.type === 'message') {
+          removeStrangers(group.likes)
+          removeStrangers(group.repliesFrom)
+
+          if (!group.message) {
+            // if message is old, only show replies from friends
+            group.replies = group.replies.filter(x => {
+              return (x.value.author === id || following().has(x.value.author))
+            })
+          }
+        }
+
         if (!group.message) {
           return (
             isMentioned(id, msg.value.content.mentions) ||
@@ -119,6 +126,16 @@ exports.create = function (api) {
     result.reload = feedView.reload
 
     return result
+
+    function removeStrangers (set) {
+      if (set) {
+        Array.from(set).forEach(key => {
+          if (!following().has(key) && key !== id) {
+            set.delete(key)
+          }
+        })
+      }
+    }
 
     function getSidebar () {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {

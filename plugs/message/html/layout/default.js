@@ -39,10 +39,14 @@ exports.create = function (api) {
       replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
     }
 
+    if (opts.priority === 2) {
+      classList.push('-new')
+    }
+
     return h('div', {
       classList
     }, [
-      messageHeader(msg, replyInfo),
+      messageHeader(msg, replyInfo, opts.priority),
       h('section', [opts.content]),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
@@ -65,7 +69,11 @@ exports.create = function (api) {
 
     // scoped
 
-    function messageHeader (msg, replyInfo) {
+    function messageHeader (msg, replyInfo, priority) {
+      var additionalMeta = []
+      if (opts.priority >= 2) {
+        additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
+      }
       return h('header', [
         h('div.main', [
           h('a.avatar', {href: `${msg.value.author}`}, [
@@ -80,7 +88,10 @@ exports.create = function (api) {
             ])
           ])
         ]),
-        h('div.meta', api.message.html.meta(msg))
+        h('div.meta', [
+          api.message.html.meta(msg),
+          additionalMeta
+        ])
       ])
     }
   }

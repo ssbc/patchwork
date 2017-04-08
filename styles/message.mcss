@@ -52,6 +52,10 @@ Message {
     }
   }
 
+  -new {
+    border-color: #ffe794
+  }
+
   header {
     margin: 15px 15px
     margin-bottom: 5px;
@@ -84,13 +88,30 @@ Message {
         }
         margin-left: 10px
       }
-
-      div.meta {
-
-      }
     }
 
     div.meta {
+
+      span.flag {
+        width: 12px
+        height: 12px
+
+        background-repeat: no-repeat
+        background-position: center
+        display: inline-block
+        vertical-align: middle;
+        margin-top: -3px;
+
+        -new {
+          background-image: svg(new)
+        }
+
+        @svg new {
+          width: 12px
+          height: 12px
+          content: "<circle cx='6' stroke='none' fill='#62baff' cy='6' r='5' />"
+        }
+      }
 
       em {
         display: inline-block

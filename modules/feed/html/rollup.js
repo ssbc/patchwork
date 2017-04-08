@@ -46,6 +46,10 @@ exports.create = function (api) {
     var windowSize = opts && opts.windowSize
     var waitFor = opts && opts.waitFor || true
 
+    var newSinceRefresh = new Set()
+    var newInSession = new Set()
+    var prioritized = {}
+
     var updateLoader = h('a Notifier -loader', {
       href: '#',
       'ev-click': refresh
@@ -73,6 +77,10 @@ exports.create = function (api) {
         getStream({old: false}),
         pull.drain((item) => {
           var type = item && item.value && item.value.content.type
+
+          // prioritize new messages on next refresh
+          newInSession.add(item.key)
+          newSinceRefresh.add(item.key)
 
           // ignore message handled by another app
           if (api.app.sync.externalHandler(item)) return
@@ -140,8 +148,13 @@ exports.create = function (api) {
       var abortable = Abortable()
       abortLastFeed = abortable.abort
 
+      prioritized = {}
+      newSinceRefresh.forEach(x => {
+        prioritized[x] = 2
+      })
+
       pull(
-        api.feed.pull.summary(getStream, {windowSize, bumpFilter}, () => {
+        api.feed.pull.summary(getStream, {windowSize, bumpFilter, prioritized}, () => {
           sync.set(true)
         }),
         pull.asyncMap(ensureMessageAndAuthor),
@@ -157,6 +170,9 @@ exports.create = function (api) {
         abortable,
         Scroller(container, content(), renderItem, false, false)
       )
+
+      // clear high prioritized items
+      newSinceRefresh.clear()
     }
 
     function renderItem (item) {
@@ -164,7 +180,12 @@ exports.create = function (api) {
         var meta = null
         var previousId = item.messageId
         var replies = item.replies.slice(-4).map((msg) => {
-          var result = api.message.html.render(msg, {inContext: true, inSummary: true, previousId})
+          var result = api.message.html.render(msg, {
+            inContext: true,
+            inSummary: true,
+            previousId,
+            priority: prioritized[msg.key]
+          })
           previousId = msg.key
           return result
         })
@@ -195,7 +216,9 @@ exports.create = function (api) {
             ])
           ])
         } else {
-          if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
+          // when there is no root message in this window,
+          // try and show reply message, only show like message if we have nothing else to give
+          if (item.repliesFrom.size) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
@@ -209,7 +232,8 @@ exports.create = function (api) {
             ])
           }
 
-          if (meta || replies.length) {
+          // only show this event if it has a meta description
+          if (meta) {
             return h('FeedEvent', [
               meta, h('div.replies', replies)
             ])
