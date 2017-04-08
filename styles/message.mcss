@@ -109,7 +109,7 @@ Message {
         @svg new {
           width: 12px
           height: 12px
-          content: "<circle cx='6' stroke='none' fill='#62baff' cy='6' r='5' />"
+          content: "<circle cx='6' stroke='none' fill='#ffcf04' cy='6' r='5' />"
         }
       }
 

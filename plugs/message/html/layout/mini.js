@@ -17,16 +17,23 @@ exports.create = (api) => {
   return nest('message.html.layout', mini)
 
   function mini (msg, opts) {
+    var classList = []
+    var additionalMeta = []
+    if (opts.priority >= 2) {
+      classList.push('-new')
+      additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
+    }
     if (opts.layout !== 'mini') return
-    return h('div', {
-      classList: 'Message -mini'
-    }, [
+    return h('Message -mini', {classList}, [
       h('header', [
         h('div.mini', [
           api.profile.html.person(msg.value.author), ' ',
           opts.content
         ]),
-        h('div.meta', {}, api.message.html.timestamp(msg))
+        h('div.meta', {}, [
+          api.message.html.timestamp(msg),
+          additionalMeta
+        ])
       ])
     ])
   }

@@ -176,6 +176,11 @@ exports.create = function (api) {
     }
 
     function renderItem (item) {
+      var classList = []
+      if (item.priority >= 2) {
+        classList.push('-new')
+      }
+
       if (item.type === 'message') {
         var meta = null
         var previousId = item.messageId
@@ -240,7 +245,7 @@ exports.create = function (api) {
           }
         }
       } else if (item.type === 'follow') {
-        return h('FeedEvent -follow', [
+        return h('FeedEvent -follow', {classList}, [
           h('div.meta', {
             title: names(item.contacts)
           }, [
@@ -248,7 +253,7 @@ exports.create = function (api) {
           ])
         ])
       } else if (item.type === 'subscribe') {
-        return h('FeedEvent -subscribe', [
+        return h('FeedEvent -subscribe', {classList}, [
           h('div.meta', {
             title: names(item.subscribers)
           }, [
