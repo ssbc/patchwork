@@ -36,6 +36,15 @@ Message {
   -mini {
     header {
       margin-bottom: 15px
+      div.meta {
+        span.likes {
+          margin-top: -5px
+        }
+        a {
+          display: inline-block
+          margin-left: 3px
+        }
+      }
     }
   }
 

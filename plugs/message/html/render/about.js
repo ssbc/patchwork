@@ -57,13 +57,16 @@ exports.create = function (api) {
 
     if (content.length) {
       var element = api.message.html.layout(msg, extend({
-        content, layout: 'mini'
+        showActions: true,
+        content,
+        layout: 'mini'
       }, opts))
       elements.push(api.message.html.decorate(element, { msg }))
     }
 
     if (c.description) {
       elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
+        showActions: true,
         content: [
           self ? 'self assigned a description' : ['assigned a description to ', api.profile.html.person(c.about)],
           api.message.html.markdown(c.description)
