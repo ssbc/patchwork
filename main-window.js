@@ -16,9 +16,9 @@ require('./lib/context-menu-and-spellcheck.js')
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
-    require('patch-intl'),
     require('./modules'),
     require('./plugs'),
+    require('patch-intl'),
     require('patchcore'),
     require('./overrides')
   )
