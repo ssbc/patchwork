@@ -3,6 +3,7 @@ var nest = require('depnest')
 var addSuggest = require('suggest-box')
 
 exports.needs = nest({
+  'intl.sync.format': 'first',
   'profile.async.suggest': 'first',
   'channel.async.suggest': 'first'
 })
@@ -10,13 +11,14 @@ exports.needs = nest({
 exports.gives = nest('app.html.search')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('app.html.search', function (setView) {
     var getProfileSuggestions = api.profile.async.suggest()
     var getChannelSuggestions = api.channel.async.suggest()
     var searchTimer = null
     var searchBox = h('input.search', {
       type: 'search',
-      placeholder: 'word, @key, #channel',
+      placeholder: format('searchPlaceholder'),
       'ev-suggestselect': (ev) => {
         setView(ev.detail.id)
         searchBox.value = ev.detail.id

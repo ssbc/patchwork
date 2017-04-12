@@ -26,11 +26,13 @@ exports.needs = nest({
   'contact.obs': {
     followers: 'first',
     following: 'first'
-  }
+  },
+  'intl.sync.format': 'first'
 })
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('page.html.render', function profile (id) {
     if (!ref.isFeed(id)) return
 
@@ -84,7 +86,7 @@ exports.create = function (api) {
             when(isSelf, '-self'),
             when(isAssigned, '-assigned')
           ],
-          title: nameList(when(isSelf, 'Self Assigned', 'Assigned By'), item.value)
+          title: nameList(when(isSelf, format('selfAssigned'), format('assignedBy')), item.value)
         }, [
           item.key
         ])
@@ -112,7 +114,7 @@ exports.create = function (api) {
             when(isSelf, '-self'),
             when(isAssigned, '-assigned')
           ],
-          title: nameList(when(isSelf, 'Self Assigned', 'Assigned By'), item.value)
+          title: nameList(when(isSelf, format('selfAssigned'), format('assignedBy')), item.value)
         }, [
           h('img', {
             className: 'Avatar',
@@ -138,18 +140,18 @@ exports.create = function (api) {
           h('h1', [name]),
           h('div.meta', [
             when(id === yourId, [
-              h('button', {'ev-click': api.profile.sheet.edit}, 'Edit Your Profile')
+              h('button', {'ev-click': api.profile.sheet.edit}, format('editProfile'))
             ], [
               when(youFollow,
                 h('a.ToggleButton.-unsubscribe', {
                   'href': '#',
-                  'title': 'Click to unfollow',
+                  'title': format('clickUnfollow'),
                   'ev-click': send(unfollow, id)
-                }, when(isFriends, 'Friends', 'Following')),
+                }, when(isFriends, format('friends'), format('following'))),
                 h('a.ToggleButton.-subscribe', {
                   'href': '#',
                   'ev-click': send(follow, id)
-                }, when(followsYou, 'Follow Back', 'Follow'))
+                }, when(followsYou, format('followBack'), format('follow')))
               )
             ])
           ])
@@ -176,9 +178,9 @@ exports.create = function (api) {
       h('div.side.-right', [
         when(friendsLoaded,
           h('div', [
-            renderContactBlock('Friends', friends, yourFollows),
-            renderContactBlock('Followers', followers, yourFollows),
-            renderContactBlock('Following', following, yourFollows)
+            renderContactBlock(format('friends'), friends, yourFollows),
+            renderContactBlock(format('followers'), followers, yourFollows),
+            renderContactBlock(format('following'), following, yourFollows)
           ]),
           h('div', {className: 'Loading'})
         )
@@ -271,7 +273,7 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, ['What whould you like to call ', h('strong', [currentName]), '?']),
+          }, [format('likeToCall'), ' ', h('strong', [currentName]), '?']),
           input
         ]),
         footer: [
@@ -287,10 +289,10 @@ exports.create = function (api) {
               }
               close()
             }
-          }, 'Confirm'),
+          }, format('confirm')),
           h('button -cancel', {
             'ev-click': close
-          }, 'Cancel')
+          }, format('Cancel'))
         ]
       }
     })

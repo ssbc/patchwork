@@ -30,7 +30,8 @@ exports.needs = nest({
     subscribed: 'first',
     recent: 'first'
   },
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest({
@@ -38,6 +39,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('page.html.render', page)
 
   function page (path) {
@@ -63,7 +65,7 @@ exports.create = function (api) {
     })
 
     var prepend = [
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
+      api.message.html.compose({ meta: { type: 'post' }, placeholder: format('writePublicMessage') })
     ]
 
     var feedView = api.feed.html.rollup(getFeed, {
@@ -144,8 +146,8 @@ exports.create = function (api) {
       return [
         h('button -pub -full', {
           'ev-click': api.invite.sheet
-        }, '+ Join Pub'),
-        when(computed(channels, x => x.length), h('h2', 'Active Channels')),
+        }, format('joinPub')),
+        when(computed(channels, x => x.length), h('h2', format('activeChannels'))),
         when(loading, [ h('Loading') ]),
         h('div', {
           classList: 'ChannelList',
@@ -163,19 +165,19 @@ exports.create = function (api) {
               when(subscribed,
                 h('a.-unsubscribe', {
                   'ev-click': send(unsubscribe, channel)
-                }, 'Unsubscribe'),
+                }, format('unsubscribe')),
                 h('a.-subscribe', {
                   'ev-click': send(subscribe, channel)
-                }, 'Subscribe')
+                }, format('subscribe'))
               )
             ])
           }, {maxTime: 5})
         ]),
 
-        PeerList(localPeers, 'Local'),
-        PeerList(connectedPubs, 'Connected Pubs'),
+        PeerList(localPeers, format('local')),
+        PeerList(connectedPubs, format('connectedPubs')),
 
-        when(computed(whoToFollow, x => x.length), h('h2', 'Who to follow')),
+        when(computed(whoToFollow, x => x.length), h('h2', format('whoToFollow'))),
         when(following.sync,
           h('div', {
             classList: 'ProfileList'

@@ -8,12 +8,14 @@ exports.needs = nest({
     meta: 'map',
     timestamp: 'first'
   },
-  'profile.html.person': 'first'
+  'profile.html.person': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('message.html.layout')
 
 exports.create = (api) => {
+  var format = api.intl.sync.format;
   return nest('message.html.layout', mini)
 
   function mini (msg, opts) {
@@ -21,7 +23,7 @@ exports.create = (api) => {
     var additionalMeta = []
     if (opts.priority >= 2) {
       classList.push('-new')
-      additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
+      additionalMeta.push(h('span.flag -new', {title: format('newMessage')}))
     }
     if (opts.layout !== 'mini') return
     return h('Message -mini', {classList}, [

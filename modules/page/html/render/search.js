@@ -12,12 +12,14 @@ exports.needs = nest({
   'sbot.pull.search': 'first',
   'sbot.pull.log': 'first',
   'keys.sync.id': 'first',
-  'message.html.render': 'first'
+  'message.html.render': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '?') return
 
@@ -44,10 +46,10 @@ exports.create = function (api) {
 
     const searchHeader = h('Search', [
       h('div', {className: 'PageHeading'}, [
-        h('h1', [h('strong', 'Search Results:'), ' ', query.join(' ')]),
+        h('h1', [h('strong', format('searchResults')), ' ', query.join(' ')]),
         when(search.isLinear,
-          h('div.meta', ['Searched: ', search.linear.checked]),
-          h('section.details', when(hasNoFulltextMatches, h('div.matches', 'No matches')))
+          h('div.meta', [format('searched'), ' ', search.linear.checked]),
+          h('section.details', when(hasNoFulltextMatches, h('div.matches', format('noMatches'))))
         )
       ]),
       when(search.matches, null, h('Loading -large'))

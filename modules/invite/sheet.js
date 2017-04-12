@@ -4,12 +4,14 @@ var electron = require('electron')
 
 exports.needs = nest({
   'sheet.display': 'first',
+  'intl.sync.format': 'first',
   'invite.async.accept': 'first'
 })
 
 exports.gives = nest('invite.sheet')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('invite.sheet', function () {
     api.sheet.display(close => {
       var publishing = Value()
@@ -21,7 +23,7 @@ exports.create = function (api) {
           'margin-top': '20px',
           'width': '100%'
         },
-        placeholder: 'paste invite code here'
+        placeholder: format('pasteCode')
       })
       setTimeout(() => {
         input.focus()
@@ -37,9 +39,9 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, ['By default, Patchwork will only see other users that are on the same local area network as you.']),
+          }, [format('seeLocalUsers')]),
           h('div', [
-            'In order to share with users on the internet, you need to be invited to a pub server.'
+            format('needPub')
           ]),
           input
         ]),
@@ -53,9 +55,9 @@ exports.create = function (api) {
                   publishing.set(false)
                   showDialog({
                     type: 'error',
-                    title: 'Error',
-                    buttons: ['OK'],
-                    message: 'An error occured while attempting to redeem invite.',
+                    title: format('error'),
+                    buttons: [format('ok')],
+                    message: format('errorRedeemInvite'),
                     detail: err.message
                   })
                 } else {
@@ -63,10 +65,10 @@ exports.create = function (api) {
                 }
               }))
             }
-          }, [ when(publishing, publishStatus, 'Redeem Invite') ]),
+          }, [ when(publishing, publishStatus, format('redeemInvite')) ]),
           h('button -cancel', {
             'ev-click': close
-          }, 'Cancel')
+          }, format('Cancel'))
         ]
       }
     })

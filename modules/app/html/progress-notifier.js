@@ -5,6 +5,7 @@ var sustained = require('../../../lib/sustained')
 exports.gives = nest('app.html.progressNotifier')
 
 exports.needs = nest({
+  'intl.sync.format': 'first',
   'progress.html.render': 'first',
   'progress.obs': {
     global: 'first',
@@ -14,6 +15,7 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
+  var format = api.intl.sync.format
   return nest('app.html.progressNotifier', function (id) {
     var progress = api.progress.obs.global()
     var indexing = computed([
@@ -50,10 +52,10 @@ exports.create = function (api) {
       h('div.status', [
         h('Loading -small', [
           when(computed(progress.incompleteFeeds, (v) => v > 5),
-            ['Downloading new messages', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
+            [format('downloadingMessages'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
             when(indexing, [
-              ['Indexing database', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
-            ], 'Scuttling...')
+              [format('indexingDatabase'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
+            ], format('scuttling'))
           )
         ])
       ])

@@ -82,7 +82,7 @@ module.exports = function (config) {
     when(latestUpdate,
       h('div.info', [
         h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases' }, [
-          h('strong', ['Patchwork ', latestUpdate, ' has been released.']), ' Click here for more info!'
+          h('strong', ['Patchwork ', latestUpdate, ' ', format('hasBeenReleased')]), ' ', format('clickInfo')
         ])
       ])
     ),

@@ -8,12 +8,14 @@ exports.needs = nest({
   'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '#') return
 
@@ -27,19 +29,19 @@ exports.create = function (api) {
           when(subscribedChannels.has(channel),
             h('a.ToggleButton.-unsubscribe', {
               'href': '#',
-              'title': 'Click to unsubscribe',
+              'title': format('clickUnsubscribe'),
               'ev-click': send(unsubscribe, channel)
-            }, 'Subscribed'),
+            }, format('subscribed')),
             h('a.ToggleButton.-subscribe', {
               'href': '#',
               'ev-click': send(subscribe, channel)
-            }, 'Subscribe')
+            }, format('subscribe'))
           )
         ])
       ]),
       api.message.html.compose({
         meta: {type: 'post', channel},
-        placeholder: 'Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics'
+        placeholder: format('writeMessageChannel')
       })
     ]
 
