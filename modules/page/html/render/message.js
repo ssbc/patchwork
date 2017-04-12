@@ -10,12 +10,14 @@ exports.needs = nest({
     render: 'first',
     compose: 'first'
   },
-  'sbot.async.get': 'first'
+  'sbot.async.get': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('page.html.render', function channel (id) {
     if (!ref.isMsg(id)) return
     var loader = h('div', {className: 'Loading -large'})
@@ -33,11 +35,11 @@ exports.create = function (api) {
     var compose = api.message.html.compose({
       meta,
       shrink: false,
-      placeholder: when(meta.recps, 'Write a private reply', 'Write a public reply')
+      placeholder: when(meta.recps, format('writePrivate'), format('writePublic'))
     })
 
     api.sbot.async.get(id, (err, value) => {
-      if (err) return result.set(h('div', {className: 'Error'}, ['Cannot load thead']))
+      if (err) return result.set(h('div', {className: 'Error'}, [format('cannotLoadThead')]))
 
       if (typeof value.content === 'string') {
         value = api.message.sync.unbox(value)
@@ -56,7 +58,7 @@ exports.create = function (api) {
       meta.branch.set(isReply ? thread.branchId : thread.lastId)
 
       var container = h('Thread', [
-        when(thread.branchId, h('a.full', {href: thread.rootId}, ['View full thread'])),
+        when(thread.branchId, h('a.full', {href: thread.rootId}, [format('viewFullThread')])),
         map(thread.messages, (msg) => {
           return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
             return api.message.html.render(msg, {previousId, backlinks: true})

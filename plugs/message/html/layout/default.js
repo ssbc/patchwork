@@ -12,12 +12,14 @@ exports.needs = nest({
     action: 'map',
     timestamp: 'first'
   },
-  'about.html.image': 'first'
+  'about.html.image': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('message.html.layout')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('message.html.layout', layout)
 
   function layout (msg, opts) {
@@ -32,11 +34,11 @@ exports.create = function (api) {
       var branch = msg.value.content.branch
       if (branch) {
         if (!opts.previousId || (opts.previousId && last(branch) && opts.previousId !== last(branch))) {
-          replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
+          replyInfo = h('span', [format('inReplyTo'), ' ', api.message.html.link(last(branch))])
         }
       }
     } else if (msg.value.content.project) {
-      replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
+      replyInfo = h('span', [format('on'), ' ', api.message.html.link(msg.value.content.project)])
     }
 
     if (opts.priority === 2) {
@@ -62,7 +64,7 @@ exports.create = function (api) {
           href: backlink,
           title: backlink
         }, [
-          h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
+          h('strong', format('referencedFrom')), ' ', api.message.obs.name(backlink)
         ])
       })
     ])
@@ -72,7 +74,7 @@ exports.create = function (api) {
     function messageHeader (msg, replyInfo, priority) {
       var additionalMeta = []
       if (opts.priority >= 2) {
-        additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
+        additionalMeta.push(h('span.flag -new', {title: format('newMessage')}))
       }
       return h('header', [
         h('div.main', [

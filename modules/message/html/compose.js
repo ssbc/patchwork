@@ -15,13 +15,15 @@ exports.needs = nest({
   'channel.async.suggest': 'first',
   'message.async.publish': 'first',
   'emoji.sync.names': 'first',
-  'emoji.sync.url': 'first'
+  'emoji.sync.url': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
-  return nest('message.html.compose', function ({shrink = true, meta, prepublish, placeholder = 'Write a message'}, cb) {
+  var format = api.intl.sync.format;
+  return nest('message.html.compose', function ({shrink = true, meta, prepublish, placeholder = format('writeMessage')}, cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
@@ -70,7 +72,7 @@ exports.create = function (api) {
     var publishBtn = h('button', {
       'ev-click': publish,
       disabled: publishing
-    }, when(publishing, 'Publishing...', 'Publish'))
+    }, when(publishing, format('publishing'), format('Publish')))
 
     var actions = h('section.actions', [
       fileInput,

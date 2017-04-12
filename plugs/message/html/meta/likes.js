@@ -3,10 +3,12 @@ var { h, computed, map } = require('mutant')
 exports.gives = nest('message.html.meta')
 exports.needs = nest({
   'message.obs.likes': 'first',
-  'about.obs.name': 'first'
+  'about.obs.name': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('message.html.meta', function likes (msg) {
     if (msg.key) {
       return computed(api.message.obs.likes(msg.key), likeCount)
@@ -24,7 +26,7 @@ exports.create = function (api) {
   function names (ids) {
     var items = map(ids, api.about.obs.name)
     return computed([items], (names) => {
-      return 'Liked by\n' + names.map((n) => `- ${n}`).join('\n')
+      return format('likedBy'), '\n' + names.map((n) => `- ${n}`).join('\n')
     })
   }
 }

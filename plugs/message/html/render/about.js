@@ -13,12 +13,14 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'profile.html.person': 'first',
   'about.obs.name': 'first',
-  'blob.sync.url': 'first'
+  'blob.sync.url': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('message.html.render')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('message.html.render', function about (msg, opts) {
     if (msg.value.content.type !== 'about') return
     if (!ref.isFeed(msg.value.content.about)) return
@@ -31,18 +33,18 @@ exports.create = function (api) {
       var target = api.profile.html.person(c.about, c.name)
       content.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
-          return ['self identifies as "', target, '"']
+          return [format('selfIdentifiesAs'), ' "', target, '"']
         } else if (a === b) {
-          return ['identified ', api.profile.html.person(c.about)]
+          return [format('identified'), ' ', api.profile.html.person(c.about)]
         } else {
-          return ['identifies ', api.profile.html.person(c.about), ' as "', target, '"']
+          return [format('identifies'), ' ', api.profile.html.person(c.about), ' ', format('as'), ' "', target, '"']
         }
       }))
     }
 
     if (c.image) {
       if (!content.length) {
-        var imageAction = self ? 'self assigned a display image' : ['assigned a display image to ', api.profile.html.person(c.about)]
+        var imageAction = self ? format('selfAssignedImage') : [format('assignedImageTo'), ' ', api.profile.html.person(c.about)]
         content.push(imageAction)
       }
 
@@ -65,7 +67,7 @@ exports.create = function (api) {
     if (c.description) {
       elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
         content: [
-          self ? 'self assigned a description' : ['assigned a description to ', api.profile.html.person(c.about)],
+          self ? format('selfAssignedDescription') : [format('assignedDescriptionTo'), ' ', api.profile.html.person(c.about)],
           api.message.html.markdown(c.description)
         ],
         layout: 'mini'

@@ -16,6 +16,7 @@ exports.needs = nest({
     render: 'first',
     link: 'first'
   },
+  'intl.sync.format': 'first',
   'app.sync.externalHandler': 'first',
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
@@ -34,6 +35,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest({
     'feed.html': { rollup }
   })
@@ -54,9 +56,9 @@ exports.create = function (api) {
       href: '#',
       'ev-click': refresh
     }, [
-      'Show ',
+      format('show'), ' ',
       h('strong', [updates]), ' ',
-      when(computed(updates, a => a === 1), 'update', 'updates')
+      when(computed(updates, a => a === 1), format('update'), format('updates'))
     ])
 
     var content = Value()
@@ -200,13 +202,13 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
-              many(item.repliesFrom, api.profile.html.person), ' replied'
+              many(item.repliesFrom, api.profile.html.person), ' ', format('replied')
             ])
           } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              many(item.likes, api.profile.html.person), ' liked this message'
+              many(item.likes, api.profile.html.person), ' ', format('liked')
             ])
           }
 
@@ -215,7 +217,7 @@ exports.create = function (api) {
             renderedMessage,
             when(replies.length, [
               when(item.replies.length > replies.length || opts.partial,
-                h('a.full', {href: item.messageId}, ['View full thread'])
+                h('a.full', {href: item.messageId}, [format('viewFullThread')])
               ),
               h('div.replies', replies)
             ])
@@ -227,13 +229,13 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
-              many(item.repliesFrom, api.profile.html.person), ' replied to ', api.message.html.link(item.messageId)
+              many(item.repliesFrom, api.profile.html.person), ' ',format('repliedTo'),' ', api.message.html.link(item.messageId)
             ])
           } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              many(item.likes, api.profile.html.person), ' liked ', api.message.html.link(item.messageId)
+              many(item.likes, api.profile.html.person), ' ', format('liked'), ' ', api.message.html.link(item.messageId)
             ])
           }
 
@@ -249,7 +251,7 @@ exports.create = function (api) {
           h('div.meta', {
             title: names(item.contacts)
           }, [
-            api.profile.html.person(item.id), ' followed ', many(item.contacts, api.profile.html.person)
+            api.profile.html.person(item.id), ' ', format('followed'),' ', many(item.contacts, api.profile.html.person)
           ])
         ])
       } else if (item.type === 'subscribe') {
@@ -258,7 +260,7 @@ exports.create = function (api) {
             title: names(item.subscribers)
           }, [
             many(item.subscribers, api.profile.html.person),
-            ' subscribed to ',
+            ' ', format('subscribedTo'), ' ',
             h('a', {href: `#${item.channel}`}, `#${item.channel}`)
           ])
         ])
@@ -291,44 +293,46 @@ exports.create = function (api) {
     var items = map(Array.from(ids), api.about.obs.name)
     return computed([items], (names) => names.map((n) => `- ${n}`).join('\n'))
   }
-}
 
-function twoDaysAgo () {
-  return Date.now() - (2 * 24 * 60 * 60 * 1000)
-}
 
-function many (ids, fn) {
-  ids = Array.from(ids)
-  var featuredIds = ids.slice(-4).reverse()
+  function twoDaysAgo () {
+    return Date.now() - (2 * 24 * 60 * 60 * 1000)
+  }
 
-  if (ids.length) {
-    if (ids.length > 4) {
-      return [
-        fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
-        ids.length - 3, ' others'
-      ]
-    } else if (ids.length === 4) {
-      return [
-        fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
-        fn(featuredIds[3])
-      ]
-    } else if (ids.length === 3) {
-      return [
-        fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ' and ',
-        fn(featuredIds[2])
-      ]
-    } else if (ids.length === 2) {
-      return [
-        fn(featuredIds[0]), ' and ',
-        fn(featuredIds[1])
-      ]
-    } else {
-      return fn(featuredIds[0])
+  function many (ids, fn) {
+    ids = Array.from(ids)
+    var featuredIds = ids.slice(-4).reverse()
+
+    if (ids.length) {
+      if (ids.length > 4) {
+        return [
+          fn(featuredIds[0]), ', ',
+          fn(featuredIds[1]), ', ',
+          fn(featuredIds[2]), ' ', format('and'), ' ',
+          ids.length - 3, ' ', format('others'), ' ',
+        ]
+      } else if (ids.length === 4) {
+        return [
+          fn(featuredIds[0]), ', ',
+          fn(featuredIds[1]), ', ',
+          fn(featuredIds[2]), ' ', format('and'), ' ',
+          fn(featuredIds[3])
+        ]
+      } else if (ids.length === 3) {
+        return [
+          fn(featuredIds[0]), ', ',
+          fn(featuredIds[1]), ' ', format('and'), ' ',
+          fn(featuredIds[2])
+        ]
+      } else if (ids.length === 2) {
+        return [
+          fn(featuredIds[0]), ' ', format('and'), ' ',
+          fn(featuredIds[1])
+        ]
+      } else {
+        return fn(featuredIds[0])
+      }
     }
   }
+
 }

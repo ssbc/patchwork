@@ -5,12 +5,14 @@ exports.needs = nest({
   'feed.html.rollup': 'first',
   'feed.pull.private': 'first',
   'message.html.compose': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.format': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  var format = api.intl.sync.format;
   return nest('page.html.render', function channel (path) {
     if (path !== '/private') return
 
@@ -24,7 +26,7 @@ exports.create = function (api) {
           })
           return msg
         },
-        placeholder: `Write a private message \n\n\n\nThis can only be read by yourself and people you have @mentioned.`
+        placeholder: format('writePrivateMessage')
       })
     ]
 
