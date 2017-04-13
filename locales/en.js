@@ -46,7 +46,7 @@ module.exports = {
    writeMessageChannel : "Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics",
    writePrivate : "Write a private reply",
    writePublic : "Write a public reply",
-   cannotLoadThead : "Cannot load thead",
+   cannotLoadThread : "Cannot load thread",
    thread : "Thread",
    viewFullThread : "View full thread",
    writePrivateMessage : "Write a private message \n\n\n\nThis can only be read by yourself and people you have @mentioned.",
