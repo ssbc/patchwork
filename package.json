@@ -11,7 +11,7 @@
     "rebuild": "npm rebuild --runtime=electron --target=1.4.3 --abi=50 --disturl=https://atom.io/download/atom-shell"
   },
   "author": "Secure Scuttlebutt Consortium",
-  "license": "GPL",
+  "license": "GPL-3.0",
   "dependencies": {
     "atomic-file": "^0.1.0",
     "bulk-require": "^1.0.0",
