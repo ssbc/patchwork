@@ -25,11 +25,13 @@ exports.create = function (api) {
 
     var c = msg.value.content
     var self = msg.value.author === c.about
+
+    var miniContent = []
     var content = []
 
     if (c.name) {
       var target = api.profile.html.person(c.about, c.name)
-      content.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
+      miniContent.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
           return ['self identifies as "', target, '"']
         } else if (a === b) {
@@ -41,9 +43,9 @@ exports.create = function (api) {
     }
 
     if (c.image) {
-      if (!content.length) {
+      if (!miniContent.length) {
         var imageAction = self ? 'self assigned a display image' : ['assigned a display image to ', api.profile.html.person(c.about)]
-        content.push(imageAction)
+        miniContent.push(imageAction)
       }
 
       content.push(h('a AboutImage', {
@@ -55,9 +57,10 @@ exports.create = function (api) {
 
     var elements = []
 
-    if (content.length) {
+    if (miniContent.length) {
       var element = api.message.html.layout(msg, extend({
         showActions: true,
+        miniContent,
         content,
         layout: 'mini'
       }, opts))
@@ -67,10 +70,8 @@ exports.create = function (api) {
     if (c.description) {
       elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
         showActions: true,
-        content: [
-          self ? 'self assigned a description' : ['assigned a description to ', api.profile.html.person(c.about)],
-          api.message.html.markdown(c.description)
-        ],
+        miniContent: self ? 'self assigned a description' : ['assigned a description to ', api.profile.html.person(c.about)],
+        content: api.message.html.markdown(c.description),
         layout: 'mini'
       }, opts)), { msg }))
     }
