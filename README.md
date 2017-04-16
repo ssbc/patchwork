@@ -75,6 +75,11 @@ On Linux you'll need some more dependencies. On Debian:
 sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev g++ m4 automake libtool
 ```
 
+## Code of conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](code-of-conduct.md). By participating in this project you agree to abide by its terms.
+
+
 ## Docs
 
 - [scuttlebutt.nz](https://www.scuttlebutt.nz)
