@@ -48,7 +48,7 @@ exports.create = (api) => {
       h('header', [
         h('div.mini', [
           api.profile.html.person(msg.value.author), ' ',
-          opts.content
+          opts.miniContent
         ]),
         h('div.meta', {}, [
           api.message.html.meta(msg),
@@ -56,6 +56,7 @@ exports.create = (api) => {
           additionalMeta
         ])
       ]),
+      h('section', [opts.content]),
       footer
     ])
   }
