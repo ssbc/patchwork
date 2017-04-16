@@ -5,6 +5,7 @@ ChannelList {
     font-size: 110%;
     margin: 4px 0;
     background: rgba(255, 255, 255, 0.66);
+    color: #333;
     border-radius: 5px;
     position: relative
     transition: background-color 0.2s
