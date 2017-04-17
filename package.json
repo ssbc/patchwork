@@ -57,6 +57,7 @@
     "ssb-keys": "~7.0.0",
     "ssb-mentions": "^0.1.1",
     "ssb-msgs": "^5.2.0",
+    "ssb-notifier": "^2.2.2",
     "ssb-query": "~0.1.1",
     "ssb-ref": "~2.6.2",
     "ssb-sort": "^1.0.0",
