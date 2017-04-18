@@ -106,7 +106,7 @@ exports.create = function (api) {
                 type: 'error',
                 title: 'Error',
                 buttons: ['OK'],
-                message: 'An error occured while attempting to publish about message.',
+                message: 'An error occurred while attempting to publish about message.',
                 detail: err.message
               })
             } else {
