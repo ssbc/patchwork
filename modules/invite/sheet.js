@@ -55,7 +55,7 @@ exports.create = function (api) {
                     type: 'error',
                     title: 'Error',
                     buttons: ['OK'],
-                    message: 'An error occured while attempting to redeem invite.',
+                    message: 'An error occurred while attempting to redeem invite.',
                     detail: err.message
                   })
                 } else {
