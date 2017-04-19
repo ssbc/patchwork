@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron index.js",
     "postinstall": "npm run rebuild",
-    "rebuild": "npm rebuild --runtime=electron --target=1.4.3 --abi=50 --disturl=https://atom.io/download/atom-shell"
+    "rebuild": "npm rebuild --runtime=electron --target=$(electron -v) --abi=$(electron --abi) --disturl=https://atom.io/download/atom-shell"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "GPL-3.0",
@@ -68,3 +68,4 @@
     "electron": "~1.4.4"
   }
 }
+
