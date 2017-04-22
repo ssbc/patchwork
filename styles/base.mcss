@@ -1,7 +1,7 @@
 html, body {
   background: #f5f5f5
   margin: 0
-  font-family: -apple-system, BlinkMacSystemFont, 'avenir next', avenir, 'helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif
+  font: caption
   overflow: hidden
   height: 100%
   font-size: 12px
