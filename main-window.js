@@ -59,11 +59,11 @@ module.exports = function (config) {
         h('a', {
           'ev-click': views.goBack,
           classList: [ when(views.canGoBack, '-active') ]
-        }, '<'),
+        }),
         h('a', {
           'ev-click': views.goForward,
           classList: [ when(views.canGoForward, '-active') ]
-        }, '>')
+        })
       ]),
       h('span.nav', [
         tab('Public', '/public'),

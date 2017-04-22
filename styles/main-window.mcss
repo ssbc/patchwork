@@ -11,46 +11,97 @@ MainWindow {
 
   div.top {
     display: flex;
+    align-items: center;
     background: #fff;
-    padding: 10px;
+    padding: 6px;
     border-bottom: 2px solid #e4edff;
     box-shadow: 0 0 3px #7f7f7f;
     position: relative;
     z-index: 100
 
     span {
-
       input.search {
-        padding: 2px 4px;
-        border: 01px solid #c7c6c6;
-        border-radius: 4px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        border: 0 none;
         background: #ffffff;
         color: #656565;
         font-size: 120%;
-        margin-top: -3px;
         width: 180px;
+        box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
+        :focus {
+          outline: 0;
+          box-shadow: inset 0 0 0px 1px #286bc3
+        }
+      }
+    }
+
+    span.history {
+      padding-left: 6px
+      height: 26px;
+      display: inline-block
+      a {
+        cursor: pointer;
+        text-decoration: none !important
+        display: inline-block
+        width: 28px
+        height: 100%
+        border-radius: 2px
+        background: svg(backArrow) no-repeat center
+        opacity: 0.4
+        -active {
+          opacity: 1
+        }
+        :hover {
+          background-color: #E8E8E8
+        }
       }
 
+      a + a {
+        transform: rotate(180deg)
+      }
+
+      @svg backArrow {
+        width: 14px
+        height: 14px
+        content: '<g stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 7h11M7 13L1 7l6-6"/></g>'
+
+        path {
+          stroke: #979797
+        }
+
+        -active {
+          path {
+            fill: #DDD
+          }
+        }
+      }
+    }
+
+    span.nav {
+      display: inline-block
       a {
-        padding: 2px 8px;
-        border: 2px solid #c7c6c6;
-        border-radius: 4px;
-        background: #dedede;
+        padding: 4px 10px;
+        border-radius: 3px;
+        background: #f3f3f3;
         color: #656565;
         font-size: 120%;
+        font-weight: 200;
         cursor: pointer;
-        margin-left: 5px;
+        margin-left: 8px;
         text-decoration: none !important
 
         :hover {
           color: black
-          border-color: #888
+          background: #E8E8E8
         }
 
         -selected {
-          border-color: #444
-          background: #CCC
+          background: #d2d2d2
           color: black
+          :hover {
+            background: #d2d2d2
+          }
         }
 
         -add {
@@ -71,28 +122,13 @@ MainWindow {
       }
     }
 
-    span.history {
-      a {
-        opacity: 0.3
-
-        -active {
-          opacity: 1
-        }
-      }
-
-      a + a {
-        margin-left: 0
-      }
-    }
-
     span.appTitle {
       flex: 1;
       text-align: center;
-      font-size: 130%;
+      font-size: 20px;
       color: #757575;
-      letter-spacing: 0.1em;
-      font-weight: bold;
-      font-weight: normal;
+      letter-spacing: 1px;
+      font-weight: 200;
       -webkit-app-region: drag;
     }
   }
