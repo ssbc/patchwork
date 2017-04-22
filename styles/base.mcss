@@ -1,7 +1,7 @@
 html, body {
   background: #f5f5f5
   margin: 0
-  font-family: caption, sans-serif
+  font-family: -apple-system, BlinkMacSystemFont, 'avenir next', avenir, 'helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif
   overflow: hidden
   height: 100%
   font-size: 12px
@@ -66,6 +66,20 @@ input {
     color: #FFF
     padding-right: 12px
     border-radius: 0
+  }
+  [type='search'] {
+    padding: 4px 8px;
+    border-radius: 3px;
+    border: 0 none;
+    background: #ffffff;
+    color: #656565;
+    font-size: 120%;
+    width: 180px;
+    box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
+    :focus {
+      outline: 0;
+      box-shadow: inset 0 0 0px 1px #286bc3
+    }
   }
 }
 
