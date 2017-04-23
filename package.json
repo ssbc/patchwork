@@ -50,7 +50,7 @@
     "pull-pushable": "^2.0.1",
     "pull-scroll": "^1.0.4",
     "pull-stream": "~3.4.5",
-    "scuttlebot": "github:ssbc/scuttlebot#d0126d02cfcce2d28b036680cc90cc0a233acdba",
+    "scuttlebot": "~9.7.1",
     "sorted-array-functions": "~1.0.0",
     "ssb-avatar": "^0.2.0",
     "ssb-blobs": "~0.1.7",
@@ -68,4 +68,3 @@
     "electron": "~1.4.4"
   }
 }
-
