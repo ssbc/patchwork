@@ -69,10 +69,19 @@ $ npm install
 $ npm start
 ```
 
-On Linux you'll need some more dependencies. On Debian:
+You'll need some more dependencies to build.
+
+On Debian Linux:
 
 ```shell
-sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev g++ m4 automake libtool
+sudo apt-get install g++ m4 libtool automake # build tools
+sudo apt-get libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
+```
+
+On macOS:
+
+```shell
+brew install libtool automake # build tools
 ```
 
 ## Code of conduct
