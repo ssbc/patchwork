@@ -9,6 +9,8 @@ exports.needs = nest({
 
 exports.gives = nest('app.html.search')
 
+var pages = ['/public', '/private', '/mentions', '/all']
+
 exports.create = function (api) {
   return nest('app.html.search', function (setView) {
     var getProfileSuggestions = api.profile.async.suggest()
@@ -34,6 +36,8 @@ exports.create = function (api) {
           cb(null, getProfileSuggestions(inputText.slice(1)), {idOnly: true})
         } else if (inputText[0] === '#') {
           cb(null, getChannelSuggestions(inputText.slice(1)))
+        } else if (inputText[0] === '/') {
+          cb(null, getPageSuggestions(inputText))
         }
       }, {cls: 'SuggestBox'})
     })
@@ -53,6 +57,16 @@ exports.create = function (api) {
           setView(`?${value.trim()}`)
         }
       }
+    }
+
+    function getPageSuggestions (input) {
+      return pages.sort().filter(p => p.startsWith(input.toLowerCase())).map(p => {
+        return {
+          id: p,
+          value: p,
+          title: p
+        }
+      })
     }
   })
 }
