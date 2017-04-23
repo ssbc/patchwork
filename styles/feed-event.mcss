@@ -19,7 +19,7 @@ FeedEvent {
   a.full {
     display: block;
     padding: 10px;
-    background: f3fafd;
+    background: #f3fafd;
     border-top: 1px solid #bbc9d2;
     border-bottom: 1px solid #bbc9d2;
     text-align: center;
