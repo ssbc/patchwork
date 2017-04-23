@@ -12,6 +12,10 @@ FeedEvent {
     background: #fffdf7;
   }
 
+  div + div {
+    border-top: 1px solid #EEE
+  }
+
   div {
     flex: 1
   }
@@ -33,14 +37,16 @@ FeedEvent {
       flex: 1
       margin: 0
     }
+
+    div + div {
+      border-top: 1px solid #EEE
+    }
   }
 
   div.meta {
     font-size: 100%
     padding: 10px 20px
-    opacity: 0.4
-    :hover {
-      opacity: 0.8
-    }
+    opacity: 0.8
   }
+
 }

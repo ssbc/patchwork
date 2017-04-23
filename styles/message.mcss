@@ -34,6 +34,7 @@ Message {
 
   -mini {
     header {
+      font-size: 100%
       margin-bottom: 15px
       div.meta {
         a.likes {
@@ -50,6 +51,7 @@ Message {
   -reply {
     font-size: 120%
     header {
+      font-size: 100%
       div.meta {
         a.channel {
           display: none;
@@ -67,10 +69,12 @@ Message {
   }
 
   -new {
-    border-color: #ffe794
+    box-shadow: 0 0 1px #ffc600;
+    z-index: 1;
   }
 
   header {
+    font-size: 120%
     margin: 15px 20px 0
     display: flex
 
@@ -210,6 +214,10 @@ Message {
     div.actions {
       a {
         opacity: 0.4
+        transition: opacity 0.2s
+        font-weight: bold
+        color: #333
+
         :hover {
           opacity: 1
           text-decoration: none;
