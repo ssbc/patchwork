@@ -13,7 +13,6 @@ exports.create = function (api) {
   return nest('app.html.search', function (setView) {
     var getProfileSuggestions = api.profile.async.suggest()
     var getChannelSuggestions = api.channel.async.suggest()
-    var searchTimer = null
     var searchBox = h('input.search', {
       type: 'search',
       placeholder: 'word, @key, #channel',
@@ -21,13 +20,10 @@ exports.create = function (api) {
         setView(ev.detail.id)
         searchBox.value = ev.detail.id
       },
-      'ev-input': (ev) => {
-        clearTimeout(searchTimer)
-        searchTimer = setTimeout(doSearch, 500)
-      },
-      'ev-focus': (ev) => {
-        if (searchBox.value) {
+      'ev-keydown': (ev) => {
+        if (ev.code === 'Enter') {
           doSearch()
+          ev.preventDefault()
         }
       }
     })
@@ -56,8 +52,6 @@ exports.create = function (api) {
         if (value.length > 2) {
           setView(`?${value.trim()}`)
         }
-      } else {
-        setView('/public')
       }
     }
   })
