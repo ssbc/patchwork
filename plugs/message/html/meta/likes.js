@@ -1,8 +1,9 @@
 var nest = require('depnest')
-var { h, computed, map } = require('mutant')
+var { h, computed, map, send } = require('mutant')
 exports.gives = nest('message.html.meta')
 exports.needs = nest({
   'message.obs.likes': 'first',
+  'message.sheet.likes': 'first',
   'about.obs.name': 'first'
 })
 
@@ -15,8 +16,10 @@ exports.create = function (api) {
 
   function likeCount (likes) {
     if (likes.length) {
-      return [' ', h('span.likes', {
-        title: names(likes)
+      return [' ', h('a.likes', {
+        title: names(likes),
+        href: '#',
+        'ev-click': send(api.message.sheet.likes, likes)
       }, [`${likes.length} ${likes.length === 1 ? 'like' : 'likes'}`])]
     }
   }

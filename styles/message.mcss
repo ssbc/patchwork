@@ -36,7 +36,7 @@ Message {
     header {
       margin-bottom: 15px
       div.meta {
-        span.likes {
+        a.likes {
           margin-top: -5px
         }
         a {
@@ -139,7 +139,7 @@ Message {
         font-weight: bold;
       }
 
-      span.likes {
+      a.likes {
         color: #286bc3;
         font-size:90%;
       }
