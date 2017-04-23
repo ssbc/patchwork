@@ -51,7 +51,9 @@ ProfileList {
       flex: 1
       margin-left: 10px
       justify-content: center
+      min-width: 0px
       div.name {
+        white-space: nowrap
         font-weight: bold
         font-size: 110%
         color: #636363
