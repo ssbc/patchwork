@@ -52,16 +52,6 @@ exports.create = function (api) {
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
 
-    var oldest = Date.now() - (2 * 24 * 60 * 60e3)
-    getFirstMessage(id, (_, msg) => {
-      if (msg) {
-        // fall back to timestamp stream before this, give 48 hrs for feeds to stabilize
-        if (msg.value.timestamp > oldest) {
-          oldest = Date.now()
-        }
-      }
-    })
-
     var prepend = [
       api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
     ]
@@ -72,7 +62,7 @@ exports.create = function (api) {
         following.sync,
         subscribedChannels.sync
       ], (...x) => x.every(Boolean)),
-      windowSize: 500,
+      windowSize: 1000,
       filter: (item) => {
         return !item.boxed && (item.lastUpdateType !== 'post' || item.message) && (
           id === item.author ||
@@ -220,7 +210,7 @@ exports.create = function (api) {
     }
 
     function getFeed (opts) {
-      if (opts.lt && opts.lt < oldest) {
+      if (opts.lt) {
         opts = extend(opts, {lt: parseInt(opts.lt, 10)})
       }
 
@@ -231,22 +221,6 @@ exports.create = function (api) {
           return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
         })
       )
-
-      // if (opts.lt && opts.lt < oldest) {
-      //   opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-      //   return pull(
-      //     api.sbot.pull.feed(opts),
-      //     pull.map((msg) => {
-      //       if (msg.sync) {
-      //         return msg
-      //       } else {
-      //         return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
-      //       }
-      //     })
-      //   )
-      // } else {
-      //   return api.sbot.pull.log(opts)
-      // }
     }
 
     function getFirstMessage (feedId, cb) {

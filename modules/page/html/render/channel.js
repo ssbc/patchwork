@@ -21,7 +21,7 @@ exports.create = function (api) {
     var subscribedChannels = api.channel.obs.subscribed(api.keys.sync.id())
 
     var prepend = [
-      h('div', {className: 'PageHeading'}, [
+      h('PageHeading', [
         h('h1', `#${channel}`),
         h('div.meta', [
           when(subscribedChannels.has(channel),
