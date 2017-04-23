@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var { h, send, when, computed, map } = require('mutant')
+var { h, send, when, computed, map, onceTrue, Value } = require('mutant')
 var extend = require('xtend')
 var pull = require('pull-stream')
 
@@ -52,6 +52,15 @@ exports.create = function (api) {
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
 
+    var timestampsLoaded = Value(false)
+    var timestamps = getTimestamps(api.sbot, () => timestampsLoaded.set(true))
+
+    var waitFor = computed([
+      following.sync,
+      subscribedChannels.sync,
+      timestampsLoaded
+    ], (...x) => x.every(Boolean))
+
     var oldest = Date.now() - (2 * 24 * 60 * 60e3)
     getFirstMessage(id, (_, msg) => {
       if (msg) {
@@ -66,54 +75,8 @@ exports.create = function (api) {
       api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
     ]
 
-    var feedView = api.feed.html.rollup(getFeed, {
-      prepend,
-      waitFor: computed([
-        following.sync,
-        subscribedChannels.sync
-      ], (...x) => x.every(Boolean)),
-      windowSize: 500,
-      filter: (item) => {
-        return !item.boxed && (item.lastUpdateType !== 'post' || item.message) && (
-          id === item.author ||
-          (item.author && following().has(item.author)) ||
-          (item.type === 'message' && subscribedChannels().has(item.channel)) ||
-          (item.type === 'subscribe' && item.subscribers.size) ||
-          (item.repliesFrom && item.repliesFrom.has(id)) ||
-          item.likes && item.likes.has(id)
-        )
-      },
-      bumpFilter: (msg, group) => {
-        if (group.type === 'subscribe') {
-          removeStrangers(group.subscribers)
-        }
-
-        if (group.type === 'message') {
-          removeStrangers(group.likes)
-          removeStrangers(group.repliesFrom)
-
-          if (!group.message) {
-            // if message is old, only show replies from friends
-            group.replies = group.replies.filter(x => {
-              return (x.value.author === id || following().has(x.value.author))
-            })
-          }
-        }
-
-        if (!group.message) {
-          return (
-            isMentioned(id, msg.value.content.mentions) ||
-            msg.value.author === id || (
-              fromDay(msg, group.fromTime) && (
-                following().has(msg.value.author) ||
-                group.repliesFrom.has(id)
-              )
-            )
-          )
-        }
-        return true
-      }
-    })
+    var pendingUpdates = Value(0)
+    var feedView = Value()
 
     var result = h('div.SplitView', [
       h('div.side', [
@@ -123,17 +86,57 @@ exports.create = function (api) {
     ])
 
     result.pendingUpdates = feedView.pendingUpdates
-    result.reload = feedView.reload
+    result.reload = reload
+
+    reload()
 
     return result
 
-    function removeStrangers (set) {
-      if (set) {
-        Array.from(set).forEach(key => {
-          if (!following().has(key) && key !== id) {
-            set.delete(key)
-          }
+    function reload () {
+      // don't load feed until after following and channels have loaded
+      onceTrue(waitFor, () => {
+        feedView.set(
+          api.feed.html.rollup(feed, {
+            prepend,
+            messageFilter,
+            windowSize: 2000,
+            compareMessages
+          })
+        )
+      })
+    }
+
+    function feed (opts) {
+      return pull(
+        api.sbot.pull.feed(opts),
+        pull.map((msg) => {
+          if (msg.sync) return msg
+          return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
         })
+      )
+    }
+
+    function messageFilter (grouped, cb) {
+      cb(null, grouped)
+    }
+
+    function compareMessages (messageA, messageB) {
+      var timestampA = timestamps[messageA.key]
+      var timestampB = timestamps[messageB.key]
+
+      if (timestampA && timestampB) {
+        if (Math.abs(timestampA - timestampB) > 5 * 60e3) {
+          // timestamps are less than 5 mins apart, might as well just use user stamps
+          return messageB.value.timestamp - messageA.value.timestamp
+        } else {
+          return timestampB - timestampA
+        }
+      } else if (timestampA) {
+        return 1
+      } else if (timestampB) {
+        return -1
+      } else {
+        return messageB.value.timestamp - messageA.value.timestamp
       }
     }
 
@@ -219,36 +222,6 @@ exports.create = function (api) {
       ]
     }
 
-    function getFeed (opts) {
-      if (opts.lt && opts.lt < oldest) {
-        opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-      }
-
-      return pull(
-        api.sbot.pull.feed(opts),
-        pull.map((msg) => {
-          if (msg.sync) return msg
-          return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
-        })
-      )
-
-      // if (opts.lt && opts.lt < oldest) {
-      //   opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-      //   return pull(
-      //     api.sbot.pull.feed(opts),
-      //     pull.map((msg) => {
-      //       if (msg.sync) {
-      //         return msg
-      //       } else {
-      //         return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
-      //       }
-      //     })
-      //   )
-      // } else {
-      //   return api.sbot.pull.log(opts)
-      // }
-    }
-
     function getFirstMessage (feedId, cb) {
       api.sbot.pull.userFeed({id: feedId, gte: 0, limit: 1})(null, cb)
     }
@@ -279,12 +252,27 @@ function isMentioned (id, list) {
   }
 }
 
-function fromDay (msg, fromTime) {
-  return (fromTime - msg.timestamp) < (24 * 60 * 60e3)
-}
-
 function arrayEq (a, b) {
   if (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a !== b) {
     return a.every((value, i) => value === b[i])
   }
+}
+
+function getTimestamps (sbot, cb) {
+  var result = {}
+
+  pull(
+    sbot.pull.log({limit: 4000, keys: true, values: false, reverse: true}),
+    pull.drain(msg => {
+      result[msg.key] = msg.timestamp
+    }, cb)
+  )
+
+  pull(
+    sbot.pull.log({keys: true, values: false, old: false}),
+    pull.drain(msg => {
+      result[msg.key] = msg.timestamp
+    })
+  )
+  return result
 }
