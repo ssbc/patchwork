@@ -17,7 +17,7 @@ exports.create = function (api) {
     if (likes.length) {
       return [' ', h('span.likes', {
         title: names(likes)
-      }, ['+', h('strong', `${likes.length}`)])]
+      }, [`${likes.length} ${likes.length === 1 ? 'like' : 'likes'}`])]
     }
   }
 

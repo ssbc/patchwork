@@ -50,6 +50,11 @@ Message {
   -reply {
     font-size: 120%
     header {
+      div.meta {
+        a.channel {
+          display: none;
+        }
+      }
       div.main {
         a.avatar {
           img {
@@ -66,7 +71,7 @@ Message {
   }
 
   header {
-    margin: 10px 20px 0
+    margin: 15px 20px 0
     display: flex
 
     div.mini {
@@ -86,7 +91,6 @@ Message {
 
       div.main {
         div.name {
-          font-size: 120%
           a {
             color: #444
             font-weight: bold
@@ -100,6 +104,10 @@ Message {
     }
 
     div.meta {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: flex-end;
+      justify-content: flex-end;
 
       span.flag {
         width: 12px
@@ -128,18 +136,12 @@ Message {
       }
 
       a.channel {
-        display: inline-block
-        padding: 4px
+        font-weight: bold;
       }
 
       span.likes {
-        margin-right: 10px;
         color: #286bc3;
-        font-weight: 200;
-        strong {
-          color: #286bc3;
-          font-weight: 200;
-        }
+        font-size:90%;
       }
 
       span.private {
@@ -177,7 +179,8 @@ Message {
   }
 
   section {
-    margin: 0 15px
+    margin: 0
+    padding: 0 20px
     (img) {
       max-width: 100%
     }
@@ -201,24 +204,19 @@ Message {
   }
 
   footer {
-    margin: 5px 10px 20px;
+    margin: 5px 0 20px;
+    padding: 0 20px
 
     div.actions {
       a {
-        color: #9a9a9a;
-        font-weight: 200;
-        padding: 5px 10px;
-        border-radius:2px;
-
+        opacity: 0.4
         :hover {
-          background: #cbeeff;
-          color: #3b7ba2;
+          opacity: 1
           text-decoration: none;
-          border-color: #8eafc1;
         }
       }
       a + a {
-        margin-left: 15px;
+        margin-left: 25px;
       }
     }
   }
