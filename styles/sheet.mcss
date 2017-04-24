@@ -3,7 +3,7 @@ Sheet {
   max-height: 80vh;
   max-width: 700px;
   margin: auto;
-  top: 40px;
+  top: 38px;
   left: 0;
   right: 0;
   width: 80vw;
