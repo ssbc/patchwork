@@ -1,11 +1,10 @@
 Message {
   display: flex
   flex-direction: column
-  box-shadow: #dadada 1px 2px 8px
-  border: 1px solid #f5f5f5
   background: white
   position: relative
-  font-size: 130%
+  font-size: 120%
+  line-height: 1.4
   flex-shrink: 0
 
   (highlight) {
@@ -35,26 +34,35 @@ Message {
 
   -mini {
     header {
+      font-size: 100%
       margin-bottom: 15px
-      div.meta {
-        span.likes {
-          margin-top: -5px
-        }
-        a {
-          display: inline-block
-          margin-left: 3px
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
         }
       }
     }
   }
 
   -reply {
-    font-size: 120%
     header {
+      font-size: 100%
+      div.meta {
+        a.channel {
+          display: none;
+        }
+        span.private {
+          display: none
+        }
+      }
       div.main {
         a.avatar {
           img {
-            width: 35px
+            width: 40px
+            height: 40px
           }
         }
       }
@@ -62,12 +70,13 @@ Message {
   }
 
   -new {
-    border-color: #ffe794
+    box-shadow: 0 0 1px #ffc600;
+    z-index: 1;
   }
 
   header {
-    margin: 15px 15px
-    margin-bottom: 5px;
+    font-size: 120%
+    margin: 15px 20px 0
     display: flex
 
     div.mini {
@@ -81,12 +90,12 @@ Message {
       a.avatar {
         img {
           width: 50px
+          height: 50px
         }
       }
 
       div.main {
         div.name {
-          font-size: 120%
           a {
             color: #444
             font-weight: bold
@@ -100,6 +109,10 @@ Message {
     }
 
     div.meta {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: flex-end;
+      justify-content: flex-end;
 
       span.flag {
         width: 12px
@@ -128,23 +141,17 @@ Message {
       }
 
       a.channel {
-        display: inline-block
-        padding: 4px
+        font-weight: bold;
       }
 
-      span.likes {
-        color: #ffffff;
-        background: linear-gradient(45deg, #859c88, #87d47d);
-        padding: 5px 8px;
-        border-radius: 10px;
-        display: inline-block;
-        vertical-align: top;
-        margin: -2px 0;
+      a.likes {
+        color: #286bc3;
+        font-size:90%;
       }
 
       span.private {
         display: inline-block;
-        margin: -3px -3px -3px 4px;
+        margin: -3px -3px 3px 4px;
         border: 4px solid #525050;
         position: relative;
 
@@ -177,7 +184,8 @@ Message {
   }
 
   section {
-    margin: 0 15px
+    margin: 0
+    padding: 0 20px
     (img) {
       max-width: 100%
     }
@@ -201,25 +209,23 @@ Message {
   }
 
   footer {
-    margin: 10px 10px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-    margin-top: 5px;
-    padding-left: 5px;
+    margin: 5px 0 20px;
+    padding: 0 20px
 
     div.actions {
       a {
-        margin-right: 10px;
-        color: #9a9a9a;
-        font-weight: bold;
-        padding: 5px
+        opacity: 0.4
+        transition: opacity 0.2s
+        font-weight: bold
+        color: #333
 
         :hover {
-          background: #cbeeff;
-          color: #3b7ba2;
+          opacity: 1
           text-decoration: none;
-          border-color: #8eafc1;
         }
+      }
+      a + a {
+        margin-left: 25px;
       }
     }
   }

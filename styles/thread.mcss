@@ -4,13 +4,21 @@ Thread {
   width: 100%
   margin: 10px auto
 
-  a.full {
-    display: block;
-    padding: 10px;
-    background: #daecd6;
-    border-top: 1px solid #bbc9d2;
-    border-bottom: 1px solid #bbc9d2;
-    text-align: center;
-    color: #759053;
+  div.messages {
+    div + div {
+      border-top: 1px solid #EEE
+    }
+
+    a.full {
+      display: block;
+      padding: 10px;
+      background: #daecd6;
+      border-top: 1px solid #bbc9d2;
+      border-bottom: 1px solid #bbc9d2;
+      text-align: center;
+      color: #759053;
+    }
+
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1)
   }
 }

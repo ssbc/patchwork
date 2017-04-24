@@ -56,12 +56,14 @@ exports.create = function (api) {
       meta.branch.set(isReply ? thread.branchId : thread.lastId)
 
       var container = h('Thread', [
-        when(thread.branchId, h('a.full', {href: thread.rootId}, ['View full thread'])),
-        map(thread.messages, (msg) => {
-          return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
-            return api.message.html.render(msg, {previousId, backlinks: true})
+        h('div.messages', [
+          when(thread.branchId, h('a.full', {href: thread.rootId}, ['View full thread'])),
+          map(thread.messages, (msg) => {
+            return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
+              return api.message.html.render(msg, {previousId, backlinks: true})
+            })
           })
-        }),
+        ]),
         compose
       ])
       result.set(when(thread.sync, container, loader))

@@ -16,6 +16,7 @@ require('./lib/context-menu-and-spellcheck.js')
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
+    addCommand('app.navigate', setView),
     require('./modules'),
     require('./plugs'),
     require('patchcore'),
@@ -32,7 +33,8 @@ module.exports = function (config) {
     'app.views': 'first',
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
-    'profile.sheet.edit': 'first'
+    'profile.sheet.edit': 'first',
+    'app.navigate': 'first'
   }))
 
   var id = api.keys.sync.id()
@@ -70,7 +72,7 @@ module.exports = function (config) {
         tab('Private', '/private')
       ]),
       h('span.appTitle', ['Patchwork']),
-      h('span', [ api.app.html.search(views.setView) ]),
+      h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
         tab('Profile', id),
         tab('Mentions', '/mentions')
@@ -98,17 +100,21 @@ module.exports = function (config) {
         if (handler) {
           handler(href)
         } else {
-          views.setView(href)
+          api.app.navigate(href)
         }
       })
     } else {
-      views.setView(href)
+      api.app.navigate(href)
     }
   })
 
   return container
 
   // scoped
+
+  function setView (href) {
+    views.setView(href)
+  }
 
   function getExternalHandler (key, cb) {
     api.sbot.async.get(key, function (err, value) {
@@ -145,10 +151,23 @@ module.exports = function (config) {
 }
 
 function overrideConfig (config) {
-  return [{
-    gives: nest('config.sync.load'),
-    create: function (api) {
-      return nest('config.sync.load', () => config)
+  return {
+    'patchwork/config': {
+      gives: nest('config.sync.load'),
+      create: function (api) {
+        return nest('config.sync.load', () => config)
+      }
     }
-  }]
+  }
+}
+
+function addCommand (id, cb) {
+  return {
+    [`patchwork/command/${id}`]: {
+      gives: nest(id),
+      create: function (api) {
+        return nest(id, cb)
+      }
+    }
+  }
 }
