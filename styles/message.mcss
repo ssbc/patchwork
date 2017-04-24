@@ -54,6 +54,9 @@ Message {
         a.channel {
           display: none;
         }
+        span.private {
+          display: none
+        }
       }
       div.main {
         a.avatar {
