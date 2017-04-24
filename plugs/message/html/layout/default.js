@@ -46,7 +46,10 @@ exports.create = function (api) {
     return h('div', {
       classList
     }, [
-      messageHeader(msg, replyInfo, opts.priority),
+      messageHeader(msg, {
+        replyInfo,
+        priority: opts.priority
+      }),
       h('section', [opts.content]),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
@@ -69,7 +72,7 @@ exports.create = function (api) {
 
     // scoped
 
-    function messageHeader (msg, replyInfo, priority) {
+    function messageHeader (msg, {replyInfo, priority}) {
       var additionalMeta = []
       if (opts.priority >= 2) {
         additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
@@ -84,7 +87,8 @@ exports.create = function (api) {
               api.profile.html.person(msg.value.author)
             ]),
             h('div.meta', [
-              api.message.html.timestamp(msg), ' ', replyInfo
+              api.message.html.timestamp(msg), ' ',
+              replyInfo
             ])
           ])
         ]),
