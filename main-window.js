@@ -10,8 +10,7 @@ var insertCss = require('insert-css')
 var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
-
-require('./lib/context-menu-and-spellcheck.js')
+var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 
 module.exports = function (config) {
   var sockets = combine(
@@ -24,6 +23,7 @@ module.exports = function (config) {
   )
 
   var api = entry(sockets, nest({
+    'config.sync.load': 'first',
     'keys.sync.id': 'first',
     'sbot.obs.connection': 'first',
     'sbot.async.get': 'first',
@@ -36,6 +36,8 @@ module.exports = function (config) {
     'profile.sheet.edit': 'first',
     'app.navigate': 'first'
   }))
+
+  setupContextMenuAndSpellCheck(api.config.sync.load())
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
