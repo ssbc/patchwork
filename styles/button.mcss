@@ -2,9 +2,11 @@ button {
   color: #5f5f5f;
   padding: 3px 6px;
   background: white;
-  border: 2px solid #DDD;
-  border-radius: 4px;
-  font-size: 130%
+  border-bottom: 2px solid #DDD;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 2px;
   cursor: pointer
 
   :hover {
@@ -27,9 +29,16 @@ button {
   }
 
   -pub {
-    color: #6a7e6a;
-    background-color: #ecfff0;
-    border-color: #8ba289;
+    background-color: #63e6be;
+    color: #03593f;
+    border-color: #20c997;
+    text-align: left;
+    padding: 5px 10px;
+    :hover {
+      color: #03593f;
+      border-color: #38d9a9;
+      background-color: #96f2d7;
+    }
   }
 
   -save {
@@ -50,7 +59,8 @@ button {
 
   -full {
     display: block
-    width: 100%
+    width: 100%;
+    font-size: 130%;
     margin: 15px 0
   }
 }

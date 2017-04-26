@@ -197,11 +197,8 @@ module.exports = function (config) {
         }, {maxTime: 5})
       ]),
 
-      h('button -pub -full', {
-        'ev-click': api.invite.sheet
-      }, '+ Join Pub'),
-      PeerList(localPeers, 'Local'),
-      PeerList(connectedPubs, 'Connected Pubs'),
+      PeerList(connectedPubs, 'Servers', true),
+      PeerList(localPeers, 'Around you', false),
 
       when(computed(whoToFollow, x => x.length), h('h2', 'Who to follow')),
       when(following.sync,
@@ -223,12 +220,24 @@ module.exports = function (config) {
     ]
   }
 
-  function PeerList (ids, title) {
+  function PeerList (ids, title, showAddBtn) {
     return [
-      when(computed(ids, x => x.length), h('h2', title)),
+      when(computed(ids, x => x.length || showAddBtn), h('h2.PeerList', [
+        title,
+        when(computed(ids, x => x.length && showAddBtn),
+          h('button -pub', {
+            'ev-click': api.invite.sheet
+          }, '+ Join Server')
+        )
+      ])),
       h('div', {
         classList: 'ProfileList'
       }, [
+        when(computed(ids, x => x.length === 0 && showAddBtn),
+          h('button -pub -full', {
+            'ev-click': api.invite.sheet
+          }, '+ Join Server')
+        ),
         map(ids, (id) => {
           return h('a.profile', {
             classList: [ '-connected' ],
