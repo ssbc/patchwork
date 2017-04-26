@@ -163,9 +163,6 @@ module.exports = function (config) {
         tab('Public', '/public'),
         tab('Private', '/private')
       ]),
-      h('button -pub -full', {
-        'ev-click': api.invite.sheet
-      }, '+ Join Pub'),
       when(computed(channels, x => x.length), h('h2', 'Active Channels')),
       when(loading, [ h('Loading') ]),
       h('div', {
@@ -193,6 +190,9 @@ module.exports = function (config) {
         }, {maxTime: 5})
       ]),
 
+      h('button -pub -full', {
+        'ev-click': api.invite.sheet
+      }, '+ Join Pub'),
       PeerList(localPeers, 'Local'),
       PeerList(connectedPubs, 'Connected Pubs'),
 
