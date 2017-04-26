@@ -17,7 +17,7 @@ exports.create = function (api) {
     var getChannelSuggestions = api.channel.async.suggest()
     var searchBox = h('input.search', {
       type: 'search',
-      placeholder: 'word, @key, #channel',
+      placeholder: 'Search a word, @key, or #channel',
       'ev-suggestselect': (ev) => {
         setView(ev.detail.id)
         searchBox.value = ev.detail.id
