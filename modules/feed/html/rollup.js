@@ -50,13 +50,15 @@ exports.create = function (api) {
     var newInSession = new Set()
     var prioritized = {}
 
-    var updateLoader = h('a Notifier -loader', {
-      href: '#',
-      'ev-click': refresh
-    }, [
-      'Show ',
-      h('strong', [updates]), ' ',
-      when(computed(updates, a => a === 1), 'update', 'updates')
+    var updateLoader = h('NotifierWrapper', [
+        h('a Notifier -loader', {
+        href: '#',
+        'ev-click': refresh
+      }, [
+        'Show ',
+        h('strong', [updates]), ' ',
+        when(computed(updates, a => a === 1), 'update', 'updates')
+      ])
     ])
 
     var content = Value()

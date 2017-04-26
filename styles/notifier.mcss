@@ -1,24 +1,36 @@
-Notifier {
-  padding: 10px;
-  display: block;
-  background: rgb(214, 228, 236);
-  border-bottom: 1px solid rgb(187, 201, 210);
-  text-align: center;
+NotifierWrapper {
+  width: 100%;
+  max-width: 640px;
+  min-width: 510px;
+  padding: 0 6px;
 
-  :hover {
-    background: rgb(220, 242, 255);
-  }
-
-  animation: 0.5s slide-in
-  position: relative
-
-  -loader {
-    background: rgb(255, 239, 217);
-    border-bottom: 1px solid rgb(228, 220, 195);
-    color: #10100c !important;
+  a.Notifier {
+    padding: 10px;
+    display: block;
+    background: rgb(214, 228, 236);
+    text-align: center;
+    width: 100%;
+    max-width: 160px;
+    margin: 6px auto 0;
+    border-radius: 100px;
+    color: black;
+    margin-top: 6px;
 
     :hover {
-      background: rgb(245, 229, 207);
+      background: rgb(220, 242, 255);
+    }
+
+    animation: 0.5s slide-in
+    position: relative
+
+    -loader {
+      background: #63e6be;
+      color: #03593f !important;
+
+      :hover {
+        background: #96f2d7;
+        text-decoration: none;
+      }
     }
   }
 }
