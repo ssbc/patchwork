@@ -94,6 +94,7 @@ MainWindow {
         position: relative;
         flex-direction: row;
         align-items: center;
+        padding: 0 6px;
 
         input.search {
           padding: 0 8px;
