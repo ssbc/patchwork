@@ -4,14 +4,11 @@ SplitView {
   div.main {
     display: flex
     flex-direction: column
-    flex: 1
     overflow-y: auto
   }
   div.side {
-    width: 280px;
+    width: 25vw;
     padding: 20px;
-    background: linear-gradient(81deg, #d6ecff, rgb(248, 253, 253));
-    border-right: 1px solid #dcdcdc;
     overflow-y: auto;
 
     -right {
