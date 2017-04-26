@@ -1,12 +1,12 @@
 html, body {
-  background: #f5f5f5
+  background: #f1f3f5;
   margin: 0
   font: caption
   overflow: hidden
   height: 100%
   font-size: 12px
   -webkit-user-select: none
-  color: #2b2b2b
+  color: #212529;
 }
 
 body {
@@ -74,7 +74,7 @@ input {
 }
 
 a {
-  color: #286bc3
+  color: #364fc7;
   text-decoration: none
 
   code {

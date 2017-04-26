@@ -65,7 +65,7 @@ function openMainWindow () {
       autoHideMenuBar: true,
       title: 'Patchwork',
       show: true,
-      backgroundColor: '#EEE',
+      backgroundColor: '#f1f3f5',
       webPreferences: {
         experimentalFeatures: true
       },
