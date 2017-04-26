@@ -75,7 +75,7 @@ On Debian Linux:
 
 ```shell
 sudo apt-get install g++ m4 libtool automake # build tools
-sudo apt-get libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
+sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
 ```
 
 On macOS:
