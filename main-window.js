@@ -100,9 +100,11 @@ module.exports = function (config) {
           }, 'MMMMM')
         ]),
         h('div.main', [
-          api.app.html.search(api.app.navigate),
-          tab('Profile', id),
-          tab('Mentions', '/mentions')
+          h('div.wrapper', [
+            api.app.html.search(api.app.navigate),
+            tab('Mentions', '/mentions'),
+            tab('Profile', id)
+          ])
         ])
       ]),
     ]),

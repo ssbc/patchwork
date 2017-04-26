@@ -94,65 +94,55 @@ MainWindow {
         position: relative;
         flex-direction: row;
         align-items: center;
-        padding: 0 6px;
 
-        input.search {
-          padding: 0 8px;
-          height: 24px;
-          line-height: 24px;
-          border-radius: 2px;
-          border: 0 none;
-          background: #ffffff;
-          color: #656565;
-          font-size: 120%;
-          width: 400px;
-          box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
-          :focus {
-            outline: 0;
-            box-shadow: 0 0 0 2px #bac8ff;
+        div.wrapper {
+          padding: 0 6px;
+          width: 100%;
+          max-width: 640px;
+          min-width: 510px;
+          justify-content: space-between;
+          display: flex;
+
+          input.search {
+            flex: 1;
+            height: 24px;
+            line-height: 24px;
+            padding: 0 8px;
+            margin-right: 80px;
+            background: #ffffff;
+            color: #656565;
+            border-radius: 2px;
+            border: 0 none;
+            font-size: 120%;
+            box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
+            :focus {
+              outline: 0;
+              box-shadow: 0 0 0 2px #bac8ff;
+            }
+          }
+
+          a {
+            padding: 4px 10px;
+            border-radius: 3px;
+            color: #bac8ff;
+            font-size: 120%;
+            font-weight: 200;
+            cursor: pointer;
+            margin-left: 8px;
+            text-decoration: none !important
+
+            :hover {
+              color: #dbe4ff;
+              background: #748ffc;
+            }
+
+            -selected {
+              color: white;
+              background: #5c7cfa;
+            }
           }
         }
 
-        a {
-          padding: 4px 10px;
-          border-radius: 3px;
-          background: #f3f3f3;
-          color: #656565;
-          font-size: 120%;
-          font-weight: 200;
-          cursor: pointer;
-          margin-left: 8px;
-          text-decoration: none !important
-
-          :hover {
-            color: black
-            background: #E8E8E8
-          }
-
-          -selected {
-            background: #d2d2d2
-            color: black
-            :hover {
-              background: #d2d2d2
-            }
-          }
-
-          -add {
-            border-color: #498849
-            background-color: #255D24
-            text-shadow: 1px 1px 1px #000
-            color: white
-
-            :active {
-              background-color: #1F331F !important
-            }
-
-            :hover {
-              background-color: #356D34
-              border-color: #4CB54C
-            }
-          }
-        }
       }
     }
 
