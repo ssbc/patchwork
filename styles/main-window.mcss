@@ -48,7 +48,7 @@ MainWindow {
               opacity: 1
             }
             :hover {
-              background-color: #E8E8E8
+              background-color: rgba(255,255,255,0.2);
             }
           }
 
@@ -62,12 +62,12 @@ MainWindow {
             content: '<g stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 7h11M7 13L1 7l6-6"/></g>'
 
             path {
-              stroke: #979797
+              stroke: rgba(255,255,255,0.5);
             }
 
             -active {
               path {
-                fill: #DDD
+                fill: rgba(255,255,255,0.9);
               }
             }
           }
