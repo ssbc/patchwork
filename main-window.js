@@ -159,11 +159,13 @@ module.exports = function (config) {
       return Array.from(recent).filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
     })
     return [
-      h('span.nav', [
+      h('h2', 'News feed'),
+      h('NewsfeedList', [
         tab('Public', '/public'),
         tab('Private', '/private')
       ]),
-      when(computed(channels, x => x.length), h('h2', 'Active Channels')),
+
+      when(computed(channels, x => x.length), h('h2', 'Channels')),
       when(loading, [ h('Loading') ]),
       h('div', {
         classList: 'ChannelList',
@@ -172,8 +174,9 @@ module.exports = function (config) {
         map(channels, (channel) => {
           var subscribed = subscribedChannels.has(channel)
           return h('a.channel', {
-            href: `#${channel}`,
+            href: '#' + channel,
             classList: [
+              when(selected('#' + channel), '-selected'),
               when(subscribed, '-subscribed')
             ]
           }, [

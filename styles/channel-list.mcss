@@ -3,16 +3,34 @@ ChannelList {
     display: flex;
     padding: 8px 10px;
     font-size: 110%;
-    margin: 4px 0;
-    background: rgba(255, 255, 255, 0.66);
-    color: #333;
-    border-radius: 5px;
+    color: #343a40;
+    border-radius: 2px;
+    font-weight: 500;
     position: relative
     transition: background-color 0.2s
     max-width: 250px;
 
     background-repeat: no-repeat
     background-position: right
+
+    :hover {
+      background: rgba(255,255,255,0.8);
+      text-decoration: none;
+      a {
+        transition: opacity 0.05s
+        opacity: 1
+      }
+    }
+
+    -selected {
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 100;
+      :hover {
+        background: white;
+        text-decoration: none;
+      }
+    }
 
     -subscribed {
       background-image: svg(subscribed)
@@ -25,15 +43,6 @@ ChannelList {
       width: 20px
       height: 12px
       content: "<circle cx='6' stroke='#888' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#888'/>"
-    }
-
-    :hover {
-      background: rgba(255, 255, 255, 0.4);
-      text-decoration: none;
-      a {
-        transition: opacity 0.05s
-        opacity: 1
-      }
     }
 
     span.name {
