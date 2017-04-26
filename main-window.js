@@ -95,7 +95,9 @@ module.exports = function (config) {
               classList: [ when(views.canGoForward, '-active') ]
             })
           ]),
-          h('span.logo', 'MMMMM')
+          h('span.logo', {
+            'ev-click': function () { views.setView('/public')}
+          }, 'MMMMM')
         ]),
         h('div.main', [
           api.app.html.search(api.app.navigate),
