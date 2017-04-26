@@ -18,7 +18,7 @@ NewsfeedList {
     -selected {
       background-color: white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      z-index: 100;
+      z-index: 40;
       :hover {
         background: white;
         text-decoration: none;
