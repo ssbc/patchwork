@@ -85,7 +85,7 @@ Compose {
 
   -contracted {
     textarea {
-      height: 50px
+      height: 54px
       transition: height .15s ease-in
     }
 
