@@ -18,6 +18,10 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
+
+
 exports.needs = nest({
   'about.obs.name': 'first',
   'app.sync.externalHandler': 'first',
@@ -47,7 +51,7 @@ exports.create = function (api) {
     var yourId = api.keys.sync.id()
     var throttledUpdates = throttle(updates, 200)
     var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
-      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, 'update', 'updates')
+      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, i18n.__('update'), i18n.__('updates'))
     ])
 
     var abortLastFeed = null
@@ -254,25 +258,25 @@ function many (ids, fn) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
-        ids.length - 3, ' others'
+        fn(featuredIds[2]), i18n.__(' and '),
+        ids.length - 3, i18n.__(' others')
       ]
     } else if (ids.length === 4) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
+        fn(featuredIds[2]), i18n.__(' and '),
         fn(featuredIds[3])
       ]
     } else if (ids.length === 3) {
       return [
         fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ' and ',
+        fn(featuredIds[1]), i18n.__(' and '),
         fn(featuredIds[2])
       ]
     } else if (ids.length === 2) {
       return [
-        fn(featuredIds[0]), ' and ',
+        fn(featuredIds[0]), i18n.__(' and '),
         fn(featuredIds[1])
       ]
     } else {

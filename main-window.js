@@ -12,6 +12,8 @@ var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
+var i18n = require('./lib/i18n').i18n
+
 
 module.exports = function (config) {
   var sockets = combine(
@@ -91,8 +93,8 @@ module.exports = function (config) {
         })
       ]),
       h('span.nav', [
-        tab('Public', '/public'),
-        tab('Private', '/private'),
+        tab(i18n.__("Public"), '/public'),
+        tab(i18n.__("Private"), '/private'),
         dropTab('More', [
           getSubscribedChannelMenu,
           ['Gatherings', '/gatherings'],
@@ -102,13 +104,13 @@ module.exports = function (config) {
         ])
       ]),
       h('span.appTitle', [
-        h('span.title', 'Patchwork'),
+        h('span.title', i18n.__("Patchwork")),
         api.app.html.progressNotifier()
       ]),
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
-        tab('Profile', id),
-        tab('Mentions', '/mentions')
+        tab(i18n.__('Profile'), id),
+        tab(i18n.__('Mentions'), '/mentions')
       ])
     ]),
     when(latestUpdate,

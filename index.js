@@ -3,6 +3,8 @@ process.on('uncaughtException', function (err) {
   process.exit()
 })
 
+var i18n = require('./lib/i18n').i18n
+
 var electron = require('electron')
 var openWindow = require('./lib/window')
 
@@ -18,6 +20,7 @@ var windows = {
 }
 var ssbConfig = null
 var quitting = false
+
 
 electron.app.on('ready', () => {
   setupContext('ssb', {
@@ -80,7 +83,7 @@ function openMainWindow () {
       height: windowState.height,
       titleBarStyle: 'hidden-inset',
       autoHideMenuBar: true,
-      title: 'Patchwork',
+      title: i18n.__("Patchwork"),
       show: true,
       backgroundColor: '#EEE',
       webPreferences: {
