@@ -1,7 +1,7 @@
 ProfileList {
   a.profile {
     display: flex;
-    padding: 5px 5px 5px 10px;
+    padding: 5px 4px 5px 10px;
     font-size: 110%;
     border-radius: 2px;
     position: relative
