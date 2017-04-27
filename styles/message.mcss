@@ -145,8 +145,7 @@ Message {
       }
 
       a.likes {
-        color: #286bc3;
-        font-size:90%;
+      display: none;
       }
 
       span.private {
@@ -205,6 +204,22 @@ Message {
     :hover {
       text-decoration: none
       color: #777
+    }
+  }
+
+  div.FooterMeta {
+    padding-left: 20px;
+
+    a.channel {
+      display: none;
+    }
+
+    a.likes {
+      color: #364fc7;
+    }
+
+    span.private {
+      display: none;
     }
   }
 

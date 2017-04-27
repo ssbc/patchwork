@@ -51,6 +51,9 @@ exports.create = function (api) {
         priority: opts.priority
       }),
       h('section', [opts.content]),
+      h('FooterMeta', [
+        api.message.html.meta(msg)
+      ]),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
           return h('footer', [
