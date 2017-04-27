@@ -166,7 +166,13 @@ module.exports = function (config) {
       h('h2', 'News feed'),
       h('NewsfeedList', [
         tab('Public', '/public'),
-        tab('Private', '/private')
+        tab('Private', '/private'),
+        h('a', {
+          href: '/all',
+          classList: [
+            when(selected('/all'), '-selected')
+          ]
+        }, 'Everything')
       ]),
 
       when(computed(channels, x => x.length), h('h2', 'Channels')),
