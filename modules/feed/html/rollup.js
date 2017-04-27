@@ -186,7 +186,7 @@ exports.create = function (api) {
       if (item.type === 'message') {
         var meta = null
         var previousId = item.messageId
-        var replies = item.replies.slice(-4).map((msg) => {
+        var latestReplies = item.replies.slice(-2).map((msg) => {
           var result = api.message.html.render(msg, {
             inContext: true,
             inSummary: true,
@@ -215,11 +215,11 @@ exports.create = function (api) {
           return h('FeedEvent', [
             meta,
             renderedMessage,
-            when(replies.length, [
-              when(item.replies.length > replies.length || opts.partial,
+            when(latestReplies.length, [
+              when(item.replies.length > latestReplies.length || opts.partial,
                 h('a.full', {href: item.messageId}, ['View full thread'])
               ),
-              h('div.replies', replies)
+              h('div.replies', latestReplies)
             ])
           ])
         } else {
@@ -242,7 +242,7 @@ exports.create = function (api) {
           // only show this event if it has a meta description
           if (meta) {
             return h('FeedEvent', [
-              meta, h('div.replies', replies)
+              meta, h('div.replies', latestReplies)
             ])
           }
         }
