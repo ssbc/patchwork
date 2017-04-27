@@ -11,6 +11,8 @@ var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
+var i18n = require('./lib/i18n').i18n
+
 
 module.exports = function (config) {
   var sockets = combine(
@@ -70,14 +72,14 @@ module.exports = function (config) {
         })
       ]),
       h('span.nav', [
-        tab('Public', '/public'),
-        tab('Private', '/private')
+        tab(i18n.__("Public"), '/public'),
+        tab(i18n.__("Private"), '/private')
       ]),
-      h('span.appTitle', ['Patchwork']),
+      h('span.appTitle', [i18n.__("Patchwork")]),
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
-        tab('Profile', id),
-        tab('Mentions', '/mentions')
+        tab(i18n.__('Profile'), id),
+        tab(i18n.__('Mentions'), '/mentions')
       ])
     ]),
     when(latestUpdate,
