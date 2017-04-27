@@ -2,7 +2,7 @@ Thread {
   flex: 1
   max-width: 700px
   width: 100%
-  margin: 10px auto
+  margin: 10px 6px
 
   div.messages {
     div + div {

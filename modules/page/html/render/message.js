@@ -69,10 +69,6 @@ exports.create = function (api) {
       result.set(when(thread.sync, container, loader))
     })
 
-    return h('div', {className: 'SplitView'}, [
-      h('div.main', [
-        result
-      ])
-    ])
+    return result
   })
 }
