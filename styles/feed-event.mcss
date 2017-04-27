@@ -32,11 +32,21 @@ FeedEvent {
 
   a.full {
     display: block;
-    padding: 10px;
-    background: #f3fafd;
-    border-top: 1px solid #bbc9d2;
-    border-bottom: 1px solid #bbc9d2;
+    height: 45px;
+    line-height: 45px;
+    background: white;
+    border-top: 1px solid #EEE
+    border-bottom: 1px solid #EEE
     text-align: center;
+    text-shadow: 1px 0 white, -1px 0 white, 0 1px white, 0 -1px white;
+    background-image: svg(stacked);
+    background-position-y: -1px;
+  }
+
+  @svg stacked {
+    width: 20px;
+    height: 15px;
+    content: "<line x1='0' y1='0' x2='20' y2='0' stroke-width='2' stroke='#EEE'/>"
   }
 
   div.replies {
