@@ -2,6 +2,9 @@ var { h, when, map, Proxy, Struct, Value, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
+
 exports.needs = nest({
   'keys.sync.id': 'first',
   'feed.obs.thread': 'first',
@@ -33,11 +36,11 @@ exports.create = function (api) {
     var compose = api.message.html.compose({
       meta,
       shrink: false,
-      placeholder: when(meta.recps, 'Write a private reply', 'Write a public reply')
+      placeholder: when(meta.recps, i18n.__('Write a private reply'), i18n.__('Write a public reply'))
     })
 
     api.sbot.async.get(id, (err, value) => {
-      if (err) return result.set(h('div', {className: 'Error'}, ['Cannot load thead']))
+      if (err) return result.set(h('div', {className: 'Error'}, [i18n.__('Cannot load thead')]))
 
       if (typeof value.content === 'string') {
         value = api.message.sync.unbox(value)
@@ -57,7 +60,7 @@ exports.create = function (api) {
 
       var container = h('Thread', [
         h('div.messages', [
-          when(thread.branchId, h('a.full', {href: thread.rootId}, ['View full thread'])),
+          when(thread.branchId, h('a.full', {href: thread.rootId}, [i18n.__('View full thread')])),
           map(thread.messages, (msg) => {
             return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
               return api.message.html.render(msg, {previousId, backlinks: true})
