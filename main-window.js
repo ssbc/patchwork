@@ -197,8 +197,8 @@ module.exports = function (config) {
         }, {maxTime: 5})
       ]),
 
-      PeerList(connectedPubs, 'Servers', true),
-      PeerList(localPeers, 'Around you', false),
+      PubList(connectedPubs),
+      LocalPeerList(localPeers),
 
       when(computed(whoToFollow, x => x.length), h('h2', 'Who to follow')),
       when(following.sync,
@@ -220,24 +220,52 @@ module.exports = function (config) {
     ]
   }
 
-  function PeerList (ids, title, showAddBtn) {
+  function PubList (ids) {
     return [
-      when(computed(ids, x => x.length || showAddBtn), h('h2.PeerList', [
-        title,
-        when(computed(ids, x => x.length && showAddBtn),
-          h('button -pub', {
-            'ev-click': api.invite.sheet
+      h('h2.PeerList', [
+        'Servers',
+        when(computed(ids, x => x.length),
+          h('button', {
+            'ev-click': api.invite.sheet,
+            classList: [
+              when(computed(ids, x => x.length >= 3), '-mildpub'),
+              when(computed(ids, x => x.length < 3), '-pub'),
+            ]
           }, '+ Join Server')
         )
-      ])),
+      ]),
       h('div', {
         classList: 'ProfileList'
       }, [
-        when(computed(ids, x => x.length === 0 && showAddBtn),
+        when(computed(ids, x => x.length === 0),
           h('button -pub -full', {
             'ev-click': api.invite.sheet
           }, '+ Join Server')
         ),
+        map(ids, (id) => {
+          return h('a.profile', {
+            classList: [ '-connected' ],
+            href: id
+          }, [
+            h('div.avatar', [api.about.html.image(id)]),
+            h('div.main', [
+              h('div.name', [ api.about.obs.name(id) ])
+            ]),
+            h('div.progress', [
+              api.progress.html.peer(id)
+            ])
+          ])
+        })
+      ])
+    ]
+  }
+
+  function LocalPeerList (ids) {
+    return [
+      when(computed(ids, x => x.length), h('h2', 'Around you')),
+      h('div', {
+        classList: 'ProfileList'
+      }, [
         map(ids, (id) => {
           return h('a.profile', {
             classList: [ '-connected' ],

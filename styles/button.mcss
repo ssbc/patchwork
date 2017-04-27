@@ -41,6 +41,21 @@ button {
     }
   }
 
+  -mildpub {
+    color: #495057;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    text-align: left;
+    padding: 5px 10px;
+    transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+    :hover {
+      color: #343a40;
+      border-color: #e9ecef;
+      background-color: white;
+      transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+    }
+  }
+
   -save {
     border-color: #a7c7a6;
     background-color: #eeffee;
