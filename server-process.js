@@ -1,5 +1,3 @@
-global.i18n = require('./lib/i18n').i18n
-
 var serveBlobs = require('./lib/serve-blobs')
 var fs = require('fs')
 var Path = require('path')
