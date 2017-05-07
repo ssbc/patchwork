@@ -34,6 +34,16 @@ electron.app.on('ready', () => {
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
+    if (process.platform === 'darwin') {
+      var win = menu.find(x => x.label === 'Window')
+      win.submenu = [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        { role: 'close', label: 'Close' },
+        { type: 'separator' },
+        { role: 'front' }
+      ]
+    }
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
     openMainWindow()
   })
