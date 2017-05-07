@@ -77,6 +77,10 @@ On Debian Linux:
 sudo apt-get install g++ m4 libtool automake # build tools
 sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
 ```
+On Fedora Linux:
+```shell
+sudo dnr install libXext-devel libXtst-devel libxkbfile-devel gcc-c++ m4 automake libtool
+```
 
 On macOS:
 
