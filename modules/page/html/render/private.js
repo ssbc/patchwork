@@ -17,7 +17,7 @@ exports.create = function (api) {
     var id = api.keys.sync.id()
     var prepend = [
       api.message.html.compose({
-        meta: {type: 'post'},
+        meta: {type: 'post', private: true, recps: []},
         prepublish: function (msg) {
           msg.recps = [id].concat(msg.mentions).filter(function (e) {
             return ref.isFeed(typeof e === 'string' ? e : e.link)

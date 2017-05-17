@@ -21,7 +21,8 @@ exports.needs = nest({
 exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
-  return nest('message.html.compose', function ({shrink = true, meta, prepublish, placeholder = 'Write a message'}, cb) {
+  return nest('message.html.compose', function (opts = {}, cb) {
+    var {shrink = true, meta, prepublish, placeholder = 'Write a message'} = opts
     var files = []
     var filesById = {}
     var focused = Value(false)
