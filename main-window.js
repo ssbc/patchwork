@@ -16,6 +16,8 @@ module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
     addCommand('app.navigate', setView),
+    require('patchwork-gatherings'),
+    require('patch-gatherings'),
     require('./modules'),
     require('./plugs'),
     require('patchcore'),
