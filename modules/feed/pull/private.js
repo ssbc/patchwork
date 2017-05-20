@@ -21,7 +21,9 @@ exports.create = function (api) {
       delete opts.lt
     }
 
-    return StreamWhenConnected(api.sbot.obs.connection, (sbot) => sbot.private.read(opts))
+    return StreamWhenConnected(api.sbot.obs.connection, (sbot) => {
+      return (sbot.private.read || pull.empty)(opts)
+    })
   })
 }
 
