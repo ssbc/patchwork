@@ -65,7 +65,13 @@ exports.create = function (api) {
 
     watch(api.sbot.obs.connection, (sbot) => {
       if (sbot) {
-        var source = keyFn(sbot)
+        var source
+        try {
+          source = keyFn(sbot)
+        } catch (err) {
+          progress.set(err)
+          return progress
+        }
         if (source) {
           pull(
             source(),
@@ -80,3 +86,4 @@ exports.create = function (api) {
     return progress
   }
 }
+

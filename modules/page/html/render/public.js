@@ -201,7 +201,8 @@ exports.create = function (api) {
                 h('div.name', [ api.about.obs.name(id) ])
               ]),
               h('div.progress', [
-                api.progress.html.peer(id)
+//PROGRESS. this is where replication progress is shown?
+//                api.progress.html.peer(id)
               ])
             ])
           })

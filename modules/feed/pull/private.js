@@ -22,7 +22,7 @@ exports.create = function (api) {
     }
 
     return StreamWhenConnected(api.sbot.obs.connection, (sbot) => {
-      return (sbot.private.read || pull.empty)(opts)
+      return (sbot.private && sbot.private.read || pull.empty)(opts)
     })
   })
 }
