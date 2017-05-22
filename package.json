@@ -28,7 +28,7 @@
     "has-network": "0.0.0",
     "insert-css": "~1.0.0",
     "is-visible": "^2.1.1",
-    "level": "~1.6.0",
+    "level": "~1.7.0",
     "level-memview": "0.0.0",
     "map-filter-reduce": "~3.0.3",
     "micro-css": "^2.0.0",
