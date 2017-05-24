@@ -23,7 +23,7 @@ exports.create = function (api) {
         searchBox.value = ev.detail.id
       },
       'ev-keydown': (ev) => {
-        if (ev.code === 'Enter') {
+        if (ev.key === 'Enter') {
           doSearch()
           ev.preventDefault()
         }
