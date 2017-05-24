@@ -17,7 +17,6 @@ module.exports = function (config) {
     overrideConfig(config),
     addCommand('app.navigate', setView),
     require('patchwork-gatherings'),
-    require('patch-gatherings'),
     require('./modules'),
     require('./plugs'),
     require('patchcore'),
