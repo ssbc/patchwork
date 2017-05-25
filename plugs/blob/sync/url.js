@@ -10,7 +10,7 @@ exports.create = function (api) {
   return nest('blob.sync.url', function (link) {
     var config = api.config.sync.load()
     var prefix = config.blobsPrefix != null ? config.blobsPrefix : `http://localhost:${config.blobsPort}`
-    if (typeof link.link === 'string') {
+    if (link && typeof link.link === 'string') {
       link = link.link
     }
     return `${prefix}/${encodeURIComponent(link)}`
