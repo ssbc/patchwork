@@ -10,6 +10,7 @@ var nest = require('depnest')
 
 var onceTrue = require('mutant/once-true')
 var Scroller = require('pull-scroll')
+var ipc = require('electron').ipcRenderer;
 
 exports.needs = nest({
   'message.html': {
@@ -49,6 +50,11 @@ exports.create = function (api) {
     var newSinceRefresh = new Set()
     var newInSession = new Set()
     var prioritized = {}
+
+    //Pass the message to the server process to update badge count
+    updates(function(numUpdates) {
+        ipc.send('update-badge-count', numUpdates);
+    });
 
     var updateLoader = h('a Notifier -loader', {
       href: '#',
