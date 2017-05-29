@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron index.js",
     "postinstall": "npm run rebuild",
-    "rebuild": "cross-script npm rebuild --runtime=electron --target=$(electron -v) --abi=$(electron --abi) --disturl=https://atom.io/download/atom-shell"
+    "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "GPL-3.0",
