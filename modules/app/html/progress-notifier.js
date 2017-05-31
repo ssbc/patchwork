@@ -42,20 +42,23 @@ exports.create = function (api) {
       }
     })
 
-    var hidden = computed([progress.incompleteFeeds, indexing], (incomplete, indexing) => {
+    var hidden = sustained(computed([progress.incompleteFeeds, indexing], (incomplete, indexing) => {
       return incomplete < 5 && !indexing
-    })
+    }), 200)
 
-    return h('div.info', { hidden: sustained(hidden, 2000) }, [
+    // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
+    var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)
+
+    return h('div.info', { hidden }, [
       h('div.status', [
-        h('Loading -small', [
+        when(displaying, h('Loading -small', [
           when(computed(progress.incompleteFeeds, (v) => v > 5),
             ['Downloading new messages', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
             when(indexing, [
               ['Indexing database', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
             ], 'Scuttling...')
           )
-        ])
+        ]))
       ])
     ])
   })

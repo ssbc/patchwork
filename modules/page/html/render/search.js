@@ -7,6 +7,7 @@ const pullAbortable = require('pull-abortable')
 var nest = require('depnest')
 var Next = require('pull-next')
 var defer = require('pull-defer')
+var pullCat = require('pull-cat')
 
 exports.needs = nest({
   'sbot.pull.search': 'first',
@@ -28,7 +29,8 @@ exports.create = function (api) {
     const search = Struct({
       isLinear: Value(),
       linear: Struct({
-        checked: Value(0)
+        checked: Value(0),
+        isDone: Value(false)
       }),
       fulltext: Struct({
         isDone: Value(false)
@@ -49,8 +51,7 @@ exports.create = function (api) {
           h('div.meta', ['Searched: ', search.linear.checked]),
           h('section.details', when(hasNoFulltextMatches, h('div.matches', 'No matches')))
         )
-      ]),
-      when(search.matches, null, h('Loading -large'))
+      ])
     ])
 
     var content = h('section.content')
@@ -59,7 +60,8 @@ exports.create = function (api) {
     }, [
       h('div.wrapper', [
         searchHeader,
-        content
+        content,
+        when(search.linear.isDone, null, h('Loading -search'))
       ])
     ])
 
@@ -94,12 +96,15 @@ exports.create = function (api) {
     var aborter = pullAbortable()
     search.isLinear.set(true)
     pull(
-      nextStepper(api.sbot.pull.log, {reverse: true, limit: 1000, live: false}),
+      nextStepper(api.sbot.pull.log, {reverse: true, limit: 500, live: false, delay: 100}),
       pull.through((msg) => search.linear.checked.set(search.linear.checked() + 1)),
       pull.filter(matchesQuery),
       pull.through(() => search.matches.set(search.matches() + 1)),
       aborter,
-      Scroller(container, content, renderMsg, false, false)
+      Scroller(container, content, renderMsg, false, false, err => {
+        if (err) console.log(err)
+        search.linear.isDone.set(true)
+      })
     )
 
     return h('SplitView', {
@@ -217,7 +222,7 @@ function nextStepper (createStream, opts, property, range) {
       ))
     })
 
-    return result
+    return pauseAfter(result, opts.delay)
   })
 }
 
@@ -241,5 +246,29 @@ function clone (obj) {
 function RemoveHook (fn) {
   return function (element) {
     return fn
+  }
+}
+
+function pauseAfter (stream, delay) {
+  if (!delay) {
+    return stream
+  } else {
+    return pullCat([
+      stream,
+      wait(delay)
+    ])
+  }
+}
+
+function wait (delay) {
+  return function (abort, cb) {
+    if (abort) {
+      cb(true)
+    } else {
+      setTimeout(() => {
+        cb(true)
+        console.log('delay')
+      }, delay)
+    }
   }
 }

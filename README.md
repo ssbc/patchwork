@@ -79,7 +79,7 @@ sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev # spellchecker heade
 ```
 On Fedora Linux:
 ```shell
-sudo dnr install libXext-devel libXtst-devel libxkbfile-devel gcc-c++ m4 automake libtool
+sudo dnf install libXext-devel libXtst-devel libxkbfile-devel gcc-c++ m4 automake libtool
 ```
 
 On macOS:

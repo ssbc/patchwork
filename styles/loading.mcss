@@ -36,6 +36,20 @@ Loading {
     }
   }
 
+  -search {
+    height: 200px
+
+    ::before {
+      height: 100px
+      width: 100px
+    }
+    ::after {
+      color: #CCC;
+      content: 'Seaching...'
+      font-size: 200%
+    }
+  }
+
   ::before {
     content: ' '
     height: 50px

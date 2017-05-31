@@ -9,7 +9,7 @@ exports.needs = nest({
 
 exports.gives = nest('app.html.search')
 
-var pages = ['/public', '/private', '/mentions', '/all']
+var pages = ['/public', '/private', '/mentions', '/all', '/gatherings']
 
 exports.create = function (api) {
   return nest('app.html.search', function (setView) {
@@ -23,7 +23,7 @@ exports.create = function (api) {
         searchBox.value = ev.detail.id
       },
       'ev-keydown': (ev) => {
-        if (ev.code === 'Enter') {
+        if (ev.key === 'Enter') {
           doSearch()
           ev.preventDefault()
         }
