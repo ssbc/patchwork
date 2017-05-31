@@ -10,7 +10,7 @@ var insertCss = require('insert-css')
 var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
-var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
+//var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 
 module.exports = function (config) {
   var sockets = combine(
@@ -38,7 +38,7 @@ module.exports = function (config) {
     'app.navigate': 'first'
   }))
 
-  setupContextMenuAndSpellCheck(api.config.sync.load())
+  //setupContextMenuAndSpellCheck(api.config.sync.load())
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
