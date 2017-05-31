@@ -11,6 +11,10 @@ var nest = require('depnest')
 var onceTrue = require('mutant/once-true')
 var Scroller = require('pull-scroll')
 
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
+
+
 exports.needs = nest({
   'message.html': {
     render: 'first',
@@ -54,9 +58,9 @@ exports.create = function (api) {
       href: '#',
       'ev-click': refresh
     }, [
-      'Show ',
+      i18n.__('Show '),
       h('strong', [updates]), ' ',
-      when(computed(updates, a => a === 1), 'update', 'updates')
+      when(computed(updates, a => a === 1), i18n.__('update'), i18n.__('updates'))
     ])
 
     var content = Value()
@@ -200,13 +204,13 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
-              many(item.repliesFrom, api.profile.html.person), ' replied'
+              many(item.repliesFrom, api.profile.html.person), i18n.__(' replied')
             ])
           } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              many(item.likes, api.profile.html.person), ' liked this message'
+              many(item.likes, api.profile.html.person), i18n.__(' liked this message')
             ])
           }
 
@@ -215,7 +219,7 @@ exports.create = function (api) {
             renderedMessage,
             when(replies.length, [
               when(item.replies.length > replies.length || opts.partial,
-                h('a.full', {href: item.messageId}, ['View full thread'])
+                h('a.full', {href: item.messageId}, [i18n.__('View full thread')])
               ),
               h('div.replies', replies)
             ])
@@ -227,13 +231,13 @@ exports.create = function (api) {
             meta = h('div.meta', {
               title: names(item.repliesFrom)
             }, [
-              many(item.repliesFrom, api.profile.html.person), ' replied to ', api.message.html.link(item.messageId)
+              many(item.repliesFrom, api.profile.html.person), i18n.__(' replied to '), api.message.html.link(item.messageId)
             ])
           } else if (item.lastUpdateType === 'like' && item.likes.size) {
             meta = h('div.meta', {
               title: names(item.likes)
             }, [
-              many(item.likes, api.profile.html.person), ' liked ', api.message.html.link(item.messageId)
+              many(item.likes, api.profile.html.person), i18n.__(' liked '), api.message.html.link(item.messageId)
             ])
           }
 
@@ -249,7 +253,7 @@ exports.create = function (api) {
           h('div.meta', {
             title: names(item.contacts)
           }, [
-            api.profile.html.person(item.id), ' followed ', many(item.contacts, api.profile.html.person)
+            api.profile.html.person(item.id), i18n.__(' followed '), many(item.contacts, api.profile.html.person)
           ])
         ])
       } else if (item.type === 'subscribe') {
@@ -258,7 +262,7 @@ exports.create = function (api) {
             title: names(item.subscribers)
           }, [
             many(item.subscribers, api.profile.html.person),
-            ' subscribed to ',
+            i18n.__(' subscribed to '),
             h('a', {href: `#${item.channel}`}, `#${item.channel}`)
           ])
         ])
@@ -306,25 +310,25 @@ function many (ids, fn) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
-        ids.length - 3, ' others'
+        fn(featuredIds[2]), i18n.__(' and '),
+        ids.length - 3, i18n.__(' others')
       ]
     } else if (ids.length === 4) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
+        fn(featuredIds[2]), i18n.__(' and '),
         fn(featuredIds[3])
       ]
     } else if (ids.length === 3) {
       return [
         fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ' and ',
+        fn(featuredIds[1]), i18n.__(' and '),
         fn(featuredIds[2])
       ]
     } else if (ids.length === 2) {
       return [
-        fn(featuredIds[0]), ' and ',
+        fn(featuredIds[0]), i18n.__(' and '),
         fn(featuredIds[1])
       ]
     } else {

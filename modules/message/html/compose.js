@@ -9,6 +9,9 @@ var mentions = require('ssb-mentions')
 var extend = require('xtend')
 var addSuggest = require('suggest-box')
 
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
+
 exports.needs = nest({
   'blob.html.input': 'first',
   'profile.async.suggest': 'first',
@@ -70,7 +73,7 @@ exports.create = function (api) {
     var publishBtn = h('button', {
       'ev-click': publish,
       disabled: publishing
-    }, when(publishing, 'Publishing...', 'Publish'))
+    }, when(publishing, i18n.__('Publishing...'), i18n.__('Publish')))
 
     var actions = h('section.actions', [
       fileInput,

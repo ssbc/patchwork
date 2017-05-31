@@ -2,6 +2,9 @@ var {h, when, map, computed} = require('mutant')
 var nest = require('depnest')
 var catchLinks = require('../../../lib/catch-links')
 
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
+
 exports.needs = nest({
   'sheet.display': 'first',
   'keys.sync.id': 'first',
@@ -22,7 +25,7 @@ exports.create = function (api) {
       }, [
         h('h2', {
           style: { 'font-weight': 'normal' }
-        }, ['Liked by']),
+        }, [i18n.__('Liked by')]),
         renderContactBlock(ids)
       ])
 
@@ -38,7 +41,7 @@ exports.create = function (api) {
         footer: [
           h('button -close', {
             'ev-click': close
-          }, 'Close')
+          }, i18n.__('Close'))
         ]
       }
     })

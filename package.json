@@ -14,6 +14,7 @@
   "author": "Secure Scuttlebutt Consortium",
   "license": "GPL-3.0",
   "dependencies": {
+    "app-root-path": "^2.0.1",
     "atomic-file": "^0.1.0",
     "bulk-require": "^1.0.0",
     "catch-links": "^2.0.1",
@@ -27,6 +28,7 @@
     "electron-spellchecker": "^1.0.4",
     "electron-window-state": "^4.1.0",
     "has-network": "0.0.0",
+    "i18n": "^0.8.3",
     "insert-css": "~1.0.0",
     "is-visible": "^2.1.1",
     "level": "~1.7.0",
