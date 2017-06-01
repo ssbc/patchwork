@@ -21,6 +21,7 @@ module.exports = function (config) {
     require('patchwork-gatherings'),
     require('./modules'),
     require('./plugs'),
+    require('patch-intl'),
     require('patchcore'),
     require('./overrides')
   )
@@ -31,6 +32,7 @@ module.exports = function (config) {
     'sbot.obs.connection': 'first',
     'sbot.async.get': 'first',
     'blob.sync.url': 'first',
+    'intl.sync.format': 'first',
     'page.html.render': 'first',
     'app.html.search': 'first',
     'app.views': 'first',
@@ -44,6 +46,7 @@ module.exports = function (config) {
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
+  var format = api.intl.sync.format
 
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
@@ -85,14 +88,14 @@ module.exports = function (config) {
         })
       ]),
       h('span.nav', [
-        tab('Public', '/public'),
-        tab('Private', '/private')
+        tab(format('Public'), '/public'),
+        tab(format('Private'), '/private')
       ]),
       h('span.appTitle', ['Patchwork']),
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
-        tab('Profile', id),
-        tab('Mentions', '/mentions')
+        tab(format('Profile'), id),
+        tab(format('Mentions'), '/mentions')
       ])
     ]),
     when(latestUpdate,
