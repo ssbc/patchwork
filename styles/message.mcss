@@ -193,11 +193,9 @@ Message {
 
   a.backlink {
     display: block;
-    border-top: 1px solid #e2e0e0;
-    margin: 0 -1px;
+    border-top: 1px solid #EEE;
     padding: 10px 15px;
-    background: #f3f2f2;
-    border-bottom: 1px solid #d1d0d0;
+    background: #ffffff;
     color: #8f8f8f;
     margin-top: -1px;
     font-size: 9pt;

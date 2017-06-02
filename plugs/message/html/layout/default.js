@@ -1,4 +1,4 @@
-const { when, h, map, computed } = require('mutant')
+const { h, map, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 
@@ -6,6 +6,8 @@ exports.needs = nest({
   'profile.html.person': 'first',
   'message.obs.backlinks': 'first',
   'message.obs.name': 'first',
+  'message.obs.forks': 'first',
+  'message.obs.author': 'first',
   'message.html': {
     link: 'first',
     meta: 'map',
@@ -24,6 +26,8 @@ exports.create = function (api) {
     if (!(opts.layout === undefined || opts.layout === 'default')) return
 
     var backlinks = opts.backlinks ? api.message.obs.backlinks(msg.key) : []
+    var forks = msg.value.content.root ? api.message.obs.forks(msg.key) : []
+
     var classList = ['Message']
     var replyInfo = null
 
@@ -60,12 +64,26 @@ exports.create = function (api) {
           ])
         }
       }),
-      map(backlinks, backlink => {
+      map(forks, msgId => {
         return h('a.backlink', {
-          href: backlink,
-          title: backlink
+          href: msgId,
+          title: msgId
         }, [
-          h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
+          h('strong', [
+            authorLink(msgId), ' forked this discussion:'
+          ]), ' ',
+          api.message.obs.name(msgId)
+        ])
+      }),
+      map(backlinks, msgId => {
+        return h('a.backlink', {
+          href: msgId,
+          title: msgId
+        }, [
+          h('strong', [
+            authorLink(msgId), ' referenced this message:'
+          ]), ' ',
+          api.message.obs.name(msgId)
         ])
       })
     ])
@@ -97,6 +115,17 @@ exports.create = function (api) {
           additionalMeta
         ])
       ])
+    }
+
+    function authorLink (msgId) {
+      var author = api.message.obs.author(msgId)
+      return computed(author, author => {
+        if (author) {
+          return api.profile.html.person(author)
+        } else {
+          return 'Someone'
+        }
+      })
     }
   }
 }
