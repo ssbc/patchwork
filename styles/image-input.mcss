@@ -25,7 +25,7 @@ ImageInput {
     left: 0
     right: 0
     bottom: 0
-    margin: 20px
+    margin: 15px
     background: #444
     padding: 4px 8px
     border-radius: 5px
