@@ -38,7 +38,7 @@
     "non-private-ip": "^1.4.1",
     "on-change-network": "0.0.2",
     "on-wakeup": "^1.0.1",
-    "patchcore": "~0.6.0",
+    "patchcore": "~0.7.0",
     "patchwork-gatherings": "^1.0.2",
     "pull-abortable": "^4.1.0",
     "pull-defer": "^0.2.2",
