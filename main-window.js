@@ -33,6 +33,7 @@ module.exports = function (config) {
     'blob.sync.url': 'first',
     'page.html.render': 'first',
     'app.html.search': 'first',
+    'app.html.channels': 'first',
     'app.views': 'first',
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',

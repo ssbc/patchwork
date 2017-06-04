@@ -159,7 +159,8 @@ exports.create = function (api) {
                 }, 'Subscribe')
               )
             ])
-          }, {maxTime: 5})
+          }, {maxTime: 5}),
+          h('a.channel', {href: '/channels'}, 'More channels..')
         ]),
 
         PeerList(localPeers, 'Local'),
