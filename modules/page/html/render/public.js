@@ -160,7 +160,7 @@ exports.create = function (api) {
               )
             ])
           }, {maxTime: 5}),
-          h('a.channel', {href: '/channels'}, 'More channels..')
+          h('a.channel -more', {href: '/channels'}, 'More Channels...')
         ]),
 
         PeerList(localPeers, 'Local'),

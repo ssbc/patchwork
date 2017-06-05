@@ -14,6 +14,11 @@ ChannelList {
     background-repeat: no-repeat
     background-position: right
 
+    -more {
+      color: #658aaf;
+      background: rgb(255, 255, 255);
+    }
+
     -subscribed {
       background-image: svg(subscribed)
       span.name {
