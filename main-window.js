@@ -11,6 +11,8 @@ var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
+var watch = require('mutant/watch')
+
 
 module.exports = function (config) {
   var sockets = combine(
@@ -31,6 +33,7 @@ module.exports = function (config) {
     'blob.sync.url': 'first',
     'page.html.render': 'first',
     'app.html.search': 'first',
+    'app.html.channels': 'first',
     'app.views': 'first',
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
@@ -55,6 +58,18 @@ module.exports = function (config) {
   var views = api.app.views(api.page.html.render, [
     '/public', '/private', id, '/mentions'
   ])
+
+  var pendingCount = computed([
+    views.get('/public').pendingUpdates,
+    views.get('/private').pendingUpdates
+  ], (...counts) => {
+    return counts.reduce((a, b) => a + b)
+  })
+
+  watch(pendingCount, count => {
+    electron.remote.app.setBadgeCount(count)
+  })
+
 
   insertCss(require('./styles'))
 

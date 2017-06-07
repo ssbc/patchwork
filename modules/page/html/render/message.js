@@ -16,7 +16,7 @@ exports.needs = nest({
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
-  return nest('page.html.render', function channel (id) {
+  return nest('page.html.render', function (id) {
     if (!ref.isMsg(id)) return
     var loader = h('div', {className: 'Loading -large'})
 
@@ -50,7 +50,7 @@ exports.create = function (api) {
       var thread = api.feed.obs.thread(id, {branch: isReply})
 
       meta.channel.set(value.content.channel)
-      meta.root.set(thread.rootId)
+      meta.root.set(value.content.root || thread.rootId)
 
       // if root thread, reply to last post
       meta.branch.set(isReply ? thread.branchId : thread.lastId)

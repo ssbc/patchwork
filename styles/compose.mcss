@@ -32,7 +32,7 @@ Compose {
     input[type="file"] {
       padding: .5rem 0
 
-      width: 29px
+      width: 95px
       height: 29px
 
       color: transparent
@@ -56,7 +56,7 @@ Compose {
         border-radius: 4px;
         cursor: pointer
         padding-top: .3rem
-        content: '📎'
+        content: '📎 Attach File'
         font-size: 1rem
         outline: none
         white-space: nowrap

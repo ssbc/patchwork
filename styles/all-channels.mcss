@@ -1,23 +1,26 @@
-ChannelList {
+AllChannels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow-y: auto
+  padding: 10px;
+
   a.channel {
     display: flex;
     padding: 8px 10px;
     font-size: 110%;
-    margin: 4px 0;
+    margin: 4px;
     background: rgba(255, 255, 255, 0.66);
     color: #333;
     border-radius: 5px;
     position: relative
     transition: background-color 0.2s
-    max-width: 250px;
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     background-repeat: no-repeat
     background-position: right
-
-    -more {
-      color: #658aaf;
-      background: rgb(255, 255, 255);
-    }
 
     -subscribed {
       background-image: svg(subscribed)
@@ -76,4 +79,5 @@ ChannelList {
       }
     }
   }
+}
 }

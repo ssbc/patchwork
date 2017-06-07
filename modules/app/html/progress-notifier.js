@@ -44,7 +44,7 @@ exports.create = function (api) {
 
     var hidden = sustained(computed([progress.incompleteFeeds, indexing], (incomplete, indexing) => {
       return incomplete < 5 && !indexing
-    }), 200)
+    }), 2000)
 
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
     var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)

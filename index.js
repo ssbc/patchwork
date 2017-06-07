@@ -17,6 +17,7 @@ var windows = {
   dialogs: new Set()
 }
 var ssbConfig = null
+var quitting = false
 
 electron.app.on('ready', () => {
   setupContext('ssb', {
@@ -49,7 +50,13 @@ electron.app.on('ready', () => {
   })
 
   electron.app.on('activate', function (e) {
-    openMainWindow()
+    if (windows.main) {
+      windows.main.show()
+    }
+  })
+
+  electron.app.on('before-quit', function () {
+    quitting = true
   })
 
   electron.ipcMain.on('open-background-devtools', function (ev, config) {
@@ -83,6 +90,12 @@ function openMainWindow () {
     })
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
+    windows.main.on('close', function (e) {
+      if (!quitting && process.platform === 'darwin') {
+        e.preventDefault()
+        windows.main.hide()
+      }
+    })
     windows.main.on('closed', function () {
       windows.main = null
       if (process.platform !== 'darwin') electron.app.quit()
