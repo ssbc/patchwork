@@ -9,7 +9,7 @@ exports.needs = nest({
 
 exports.gives = nest('app.html.search')
 
-var pages = ['/public', '/private', '/mentions', '/all', '/gatherings']
+var pages = ['/public', '/private', '/mentions', '/all', '/gatherings', '/channels']
 
 exports.create = function (api) {
   return nest('app.html.search', function (setView) {
