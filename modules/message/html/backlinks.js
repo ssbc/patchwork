@@ -1,10 +1,10 @@
 var nest = require('depnest')
+var ref = require('ssb-ref')
 var { h, map, computed } = require('mutant')
 
 exports.needs = nest({
   'message.obs': {
     backlinks: 'first',
-    forks: 'first',
     name: 'first',
     author: 'first'
   },
@@ -15,42 +15,47 @@ exports.gives = nest('message.html.backlinks')
 
 exports.create = function (api) {
   return nest('message.html.backlinks', function (msg, {includeReferences = true, includeForks = true} = {}) {
-    var references = includeReferences ? api.message.obs.backlinks(msg.key) : []
-    var forks = (includeForks && msg.value.content.root) ? api.message.obs.forks(msg.key) : []
+    if (!ref.type(msg.key)) return []
+    var backlinks = api.message.obs.backlinks(msg.key)
+    var references = includeReferences ? computed([backlinks, msg], onlyReferences) : []
+    var forks = (includeForks && msg.value.content.root) ? computed([backlinks, msg], onlyForks) : []
     return [
-      map(forks, msgId => {
+      map(forks, link => {
         return h('a.backlink', {
-          href: msgId,
-          title: msgId
+          href: link.id, title: link.id
         }, [
           h('strong', [
-            authorLink(msgId), ' forked this discussion:'
+            api.profile.html.person(link.author), ' forked this discussion:'
           ]), ' ',
-          api.message.obs.name(msgId)
+          api.message.obs.name(link.id)
         ])
       }),
-      map(references, msgId => {
+      map(references, link => {
         return h('a.backlink', {
-          href: msgId,
-          title: msgId
+          href: link.id, title: link.id
         }, [
           h('strong', [
-            authorLink(msgId), ' referenced this message:'
+            api.profile.html.person(link.author), ' referenced this message:'
           ]), ' ',
-          api.message.obs.name(msgId)
+          api.message.obs.name(link.id)
         ])
       })
     ]
   })
+}
 
-  function authorLink (msgId) {
-    var author = api.message.obs.author(msgId)
-    return computed(author, author => {
-      if (author) {
-        return api.profile.html.person(author)
-      } else {
-        return 'Someone'
-      }
-    })
+function onlyReferences (backlinks, msg) {
+  return backlinks.filter(link => link.root !== msg.key && !includeOrEqual(link.branch, msg.key))
+}
+
+function onlyForks (backlinks, msg) {
+  return backlinks.filter(link => link.root === msg.key && msg.value.content && msg.value.content.root)
+}
+
+function includeOrEqual (valueOrArray, item) {
+  if (Array.isArray(valueOrArray)) {
+    return valueOrArray.includes(item)
+  } else {
+    return valueOrArray === item
   }
 }
