@@ -10,7 +10,8 @@ exports.needs = nest({
     link: 'first',
     meta: 'map',
     action: 'map',
-    timestamp: 'first'
+    timestamp: 'first',
+    backlinks: 'first'
   },
   'about.html.image': 'first'
 })
@@ -20,10 +21,9 @@ exports.gives = nest('message.html.layout')
 exports.create = function (api) {
   return nest('message.html.layout', layout)
 
-  function layout (msg, opts) {
-    if (!(opts.layout === 'mini')) return
+  function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences}) {
+    if (!(layout === 'mini')) return
 
-    var backlinks = opts.backlinks ? api.message.obs.backlinks(msg.key) : []
     var classList = ['Message -mini']
     var replyInfo = null
 
@@ -31,7 +31,7 @@ exports.create = function (api) {
       classList.push('-reply')
       var branch = msg.value.content.branch
       if (branch) {
-        if (!opts.previousId || (opts.previousId && last(branch) && opts.previousId !== last(branch))) {
+        if (!previousId || (previousId && last(branch) && previousId !== last(branch))) {
           replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
         }
       }
@@ -39,7 +39,7 @@ exports.create = function (api) {
       replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
     }
 
-    if (opts.priority === 2) {
+    if (priority === 2) {
       classList.push('-new')
     }
 
@@ -47,11 +47,9 @@ exports.create = function (api) {
       classList
     }, [
       messageHeader(msg, {
-        replyInfo,
-        priority: opts.priority,
-        miniContent: opts.miniContent
+        replyInfo, priority, miniContent
       }),
-      h('section', [opts.content]),
+      h('section', [content]),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
           return h('footer', [
@@ -61,21 +59,14 @@ exports.create = function (api) {
           ])
         }
       }),
-      map(backlinks, backlink => {
-        return h('a.backlink', {
-          href: backlink,
-          title: backlink
-        }, [
-          h('strong', 'Referenced from'), ' ', api.message.obs.name(backlink)
-        ])
-      })
+      api.message.html.backlinks(msg, {includeReferences})
     ])
 
     // scoped
 
     function messageHeader (msg, {replyInfo, priority, miniContent}) {
       var additionalMeta = []
-      if (opts.priority >= 2) {
+      if (priority >= 2) {
         additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
       }
       return h('header', [
