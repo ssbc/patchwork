@@ -145,17 +145,12 @@ exports.create = function (api) {
         }, [
           map(realSubscribedChannels, (channel) => {
             return h('a.channel', {
-              href: `#${channel}`,
-              classList: [
-                when(channel, '-subscribed')
-              ]
+              href: `#${channel}`
             }, [
               h('span.name', '#' + channel),
-              when(channel,
-                h('a.-unsubscribe', {
-                  'ev-click': send(unsubscribe, channel)
-                }, 'Unsubscribe')
-              )
+              h('a.-unsubscribe', {
+                'ev-click': send(unsubscribe, channel)
+              }, 'Unsubscribe')
             ])
           }, {maxTime: 5}),
         ]),
