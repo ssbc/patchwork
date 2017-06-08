@@ -60,7 +60,7 @@ exports.create = function (api) {
           when(thread.branchId, h('a.full', {href: thread.rootId}, ['View full thread'])),
           map(thread.messages, (msg) => {
             return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
-              return api.message.html.render(msg, {pageId: id, previousId, backlinks: true})
+              return api.message.html.render(msg, {pageId: id, previousId, includeReferences: true})
             })
           })
         ]),

@@ -12,7 +12,8 @@ exports.needs = nest({
     link: 'first',
     meta: 'map',
     action: 'map',
-    timestamp: 'first'
+    timestamp: 'first',
+    backlinks: 'first'
   },
   'about.html.image': 'first'
 })
@@ -22,11 +23,8 @@ exports.gives = nest('message.html.layout')
 exports.create = function (api) {
   return nest('message.html.layout', layout)
 
-  function layout (msg, opts) {
-    if (!(opts.layout === undefined || opts.layout === 'default')) return
-
-    var backlinks = opts.backlinks ? api.message.obs.backlinks(msg.key) : []
-    var forks = msg.value.content.root ? api.message.obs.forks(msg.key) : []
+  function layout (msg, {layout, previousId, priority, content, includeReferences}) {
+    if (!(layout === undefined || layout === 'default')) return
 
     var classList = ['Message']
     var replyInfo = null
@@ -35,7 +33,7 @@ exports.create = function (api) {
       classList.push('-reply')
       var branch = msg.value.content.branch
       if (branch) {
-        if (!opts.previousId || (opts.previousId && last(branch) && opts.previousId !== last(branch))) {
+        if (!previousId || (previousId && last(branch) && previousId !== last(branch))) {
           replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
         }
       }
@@ -43,18 +41,15 @@ exports.create = function (api) {
       replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
     }
 
-    if (opts.priority === 2) {
+    if (priority === 2) {
       classList.push('-new')
     }
 
     return h('div', {
       classList
     }, [
-      messageHeader(msg, {
-        replyInfo,
-        priority: opts.priority
-      }),
-      h('section', [opts.content]),
+      messageHeader(msg, { replyInfo, priority }),
+      h('section', [content]),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
           return h('footer', [
@@ -64,35 +59,14 @@ exports.create = function (api) {
           ])
         }
       }),
-      map(forks, msgId => {
-        return h('a.backlink', {
-          href: msgId,
-          title: msgId
-        }, [
-          h('strong', [
-            authorLink(msgId), ' forked this discussion:'
-          ]), ' ',
-          api.message.obs.name(msgId)
-        ])
-      }),
-      map(backlinks, msgId => {
-        return h('a.backlink', {
-          href: msgId,
-          title: msgId
-        }, [
-          h('strong', [
-            authorLink(msgId), ' referenced this message:'
-          ]), ' ',
-          api.message.obs.name(msgId)
-        ])
-      })
+      api.message.html.backlinks(msg, {includeReferences})
     ])
 
     // scoped
 
     function messageHeader (msg, {replyInfo, priority}) {
       var additionalMeta = []
-      if (opts.priority >= 2) {
+      if (priority >= 2) {
         additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
       }
       return h('header', [
@@ -115,17 +89,6 @@ exports.create = function (api) {
           additionalMeta
         ])
       ])
-    }
-
-    function authorLink (msgId) {
-      var author = api.message.obs.author(msgId)
-      return computed(author, author => {
-        if (author) {
-          return api.profile.html.person(author)
-        } else {
-          return 'Someone'
-        }
-      })
     }
   }
 }
