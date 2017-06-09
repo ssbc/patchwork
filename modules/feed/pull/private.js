@@ -1,6 +1,5 @@
 const pull = require('pull-stream')
 const nest = require('depnest')
-const extend = require('xtend')
 const defer = require('pull-defer')
 const onceTrue = require('mutant/once-true')
 
@@ -11,18 +10,22 @@ exports.needs = nest({
 
 exports.create = function (api) {
   return nest('feed.pull.private', function (opts) {
-    // HACK: handle lt/gt
-    if (opts.lt != null) {
-      opts.query = [
-        {$filter: {
-          timestamp: {$gte: 0, $lt: opts.lt}
-        }}
-      ]
-      delete opts.lt
-    }
+    // HACK: needed to select correct index and handle lt
+
+    opts.query = [
+      {$filter: {
+        timestamp: opts.lt
+          ? {$lt: opts.lt}
+          : {$gt: 0}
+      }}
+    ]
+
+    delete opts.lt
 
     return StreamWhenConnected(api.sbot.obs.connection, (sbot) => {
-      return (sbot.private && sbot.private.read || pull.empty)(opts)
+      return pull(
+        sbot.private.read(opts)
+      )
     })
   })
 }
