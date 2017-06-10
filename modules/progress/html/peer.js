@@ -12,7 +12,17 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest('progress.html.peer', function (id) {
     var progress = api.progress.obs.peer(id)
-    var feeds = api.progress.obs.global().feeds
+
+    var max = 0
+    var feeds = computed([api.progress.obs.global().feeds, progress], function (feeds, progress) {
+      // handle when feeds hasn't finished loading yet, take max from progress
+      if (progress) {
+        max = Math.max(max, feeds || 0, progress)
+      } else {
+        max = feeds
+      }
+      return max
+    })
 
     var value = computed([progress, feeds], (pending, feeds) => {
       return (feeds - pending) / feeds
