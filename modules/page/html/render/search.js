@@ -267,7 +267,6 @@ function wait (delay) {
     } else {
       setTimeout(() => {
         cb(true)
-        console.log('delay')
       }, delay)
     }
   }

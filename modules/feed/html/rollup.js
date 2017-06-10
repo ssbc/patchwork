@@ -1,4 +1,5 @@
 var Value = require('mutant/value')
+var Proxy = require('mutant/proxy')
 var when = require('mutant/when')
 var computed = require('mutant/computed')
 var h = require('mutant/h')
@@ -38,13 +39,14 @@ exports.create = function (api) {
     'feed.html': { rollup }
   })
   function rollup (getStream, opts) {
-    var sync = Value(false)
+    var loading = Proxy(true)
     var updates = Value(0)
 
     var filter = opts && opts.filter
     var bumpFilter = opts && opts.bumpFilter
     var windowSize = opts && opts.windowSize
     var waitFor = opts && opts.waitFor || true
+    var getSequence = opts && opts.getSequence
 
     var newSinceRefresh = new Set()
     var newInSession = new Set()
@@ -66,8 +68,8 @@ exports.create = function (api) {
     }, [
       h('div.wrapper', [
         h('section.prepend', opts.prepend),
-        when(sync, null, h('Loading -large')),
-        content
+        content,
+        when(loading, h('Loading -large'))
       ])
     ])
 
@@ -137,12 +139,9 @@ exports.create = function (api) {
         abortLastFeed()
       }
       updates.set(0)
-      sync.set(false)
 
       content.set(
-        h('section.content', {
-          hidden: computed(sync, s => !s)
-        })
+        h('section.content')
       )
 
       var abortable = Abortable()
@@ -153,10 +152,11 @@ exports.create = function (api) {
         prioritized[x] = 2
       })
 
+      var stream = api.feed.pull.summary(getStream, {windowSize, bumpFilter, prioritized, getSequence})
+      loading.set(stream.loading)
+
       pull(
-        api.feed.pull.summary(getStream, {windowSize, bumpFilter, prioritized}, () => {
-          sync.set(true)
-        }),
+        stream,
         pull.asyncMap(ensureMessageAndAuthor),
         pull.filter((item) => {
           // ignore messages that are handled by other apps
