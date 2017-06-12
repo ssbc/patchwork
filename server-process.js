@@ -15,6 +15,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/local'))
   .use(require('scuttlebot/plugins/logging'))
   .use(require('ssb-query'))
+  .use(require('ssb-about'))
   .use(require('./lib/progress-stream'))
 
 module.exports = function (ssbConfig) {
