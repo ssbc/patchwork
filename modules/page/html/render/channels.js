@@ -45,7 +45,7 @@ exports.create = function(api){
                 }, 'Subscribe')
               )
             ])
-          }, {maxTime: 5})
+          }, {maxTime: 5, idle: true})
         ])
     ])
 

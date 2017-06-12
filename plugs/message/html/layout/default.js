@@ -6,7 +6,6 @@ exports.needs = nest({
   'profile.html.person': 'first',
   'message.obs.backlinks': 'first',
   'message.obs.name': 'first',
-  'message.obs.forks': 'first',
   'message.obs.author': 'first',
   'message.html': {
     link: 'first',
@@ -23,7 +22,7 @@ exports.gives = nest('message.html.layout')
 exports.create = function (api) {
   return nest('message.html.layout', layout)
 
-  function layout (msg, {layout, previousId, priority, content, includeReferences}) {
+  function layout (msg, {layout, previousId, priority, content, includeReferences = false}) {
     if (!(layout === undefined || layout === 'default')) return
 
     var classList = ['Message']

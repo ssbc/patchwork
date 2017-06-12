@@ -25,6 +25,7 @@ Loading {
   }
 
   -large {
+    height: 25vh
     ::before {
       height: 100px
       width: 100px

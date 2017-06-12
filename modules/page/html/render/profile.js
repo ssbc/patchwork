@@ -167,7 +167,7 @@ exports.create = function (api) {
 
     var feedView = api.feed.html.rollup((opts) => {
       return api.sbot.pull.userFeed(extend(opts, {id}))
-    }, { prepend })
+    }, { prepend, getSequence: x => x.value.sequence })
 
     var container = h('div', {className: 'SplitView'}, [
       h('div.main', [

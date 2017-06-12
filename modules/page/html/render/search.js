@@ -10,7 +10,6 @@ var defer = require('pull-defer')
 var pullCat = require('pull-cat')
 
 exports.needs = nest({
-  'sbot.pull.search': 'first',
   'sbot.pull.log': 'first',
   'keys.sync.id': 'first',
   'message.html.render': 'first'
@@ -267,7 +266,6 @@ function wait (delay) {
     } else {
       setTimeout(() => {
         cb(true)
-        console.log('delay')
       }, delay)
     }
   }

@@ -4,6 +4,8 @@ var pullNext = require('pull-next')
 var SortedArray = require('sorted-array-functions')
 var nest = require('depnest')
 var ref = require('ssb-ref')
+var sustained = require('../../../lib/sustained')
+var Value = require('mutant/value')
 
 exports.gives = nest({
   'feed.pull': [ 'summary' ]
@@ -19,19 +21,26 @@ function summary (source, opts, cb) {
   var bumpFilter = opts && opts.bumpFilter
   var windowSize = opts && opts.windowSize || 1000
   var prioritized = opts && opts.prioritized || {}
+  var getSequence = opts && opts.getSequence
+
+  var loading = Value(true)
+
   var last = null
   var returned = false
   var done = false
-  return pullNext(() => {
+
+  var result = pullNext(() => {
     if (!done) {
+      loading.set(true)
       var next = {reverse: true, limit: windowSize, live: false}
       if (last) {
-        next.lt = last.timestamp || last.value.sequence
+        next.lt = typeof getSequence === 'function' ? getSequence(last) : last.timestamp
       }
       var deferred = pullDefer.source()
       pull(
         source(next),
         pull.collect((err, values) => {
+          loading.set(false)
           if (err) throw err
           if (!values.length) {
             done = true
@@ -55,6 +64,11 @@ function summary (source, opts, cb) {
     }
     return deferred
   })
+
+  // switch to loading state immediately, only revert after no loading for > 200 ms
+  result.loading = sustained(loading, 500, x => x)
+
+  return result
 }
 
 function groupMessages (messages, fromTime, opts, cb) {

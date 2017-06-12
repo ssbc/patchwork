@@ -1,13 +1,15 @@
 var nest = require('depnest')
 var pull = require('pull-stream')
-var {Struct, Dict, computed, watch} = require('mutant')
+var {Struct, Dict, Value, computed, watch, onceTrue} = require('mutant')
 
 exports.gives = nest({
   'progress.obs': [
     'global',
-    'peer',
-    'query',
-    'private']
+    'indexes',
+    'replicate',
+    'migration',
+    'peer'
+  ]
 })
 
 exports.needs = nest({
@@ -16,12 +18,17 @@ exports.needs = nest({
 
 exports.create = function (api) {
   var syncStatus = null
-  var queryProgress = null
-  var privateProgress = null
+  var progress = null
+
+  setInterval(() => {
+    onceTrue(api.sbot.obs.connection(), sbot => {
+      sbot.progress
+    })
+  }, 1000)
 
   return nest({
     'progress.obs': {
-      global () {
+      replicate () {
         load()
         return syncStatus
       },
@@ -32,28 +39,34 @@ exports.create = function (api) {
         })
         return result
       },
-      query () {
-        if (!queryProgress) {
-          queryProgress = ProgressStatus(x => x.query.progress)
-        }
-        return queryProgress
+      indexes () {
+        load()
+        return progress.indexes
       },
-      private () {
-        if (!privateProgress) {
-          privateProgress = ProgressStatus(x => x.private.progress)
-        }
-        return privateProgress
+      migration () {
+        load()
+        return progress.migration
+      },
+      global () {
+        load()
+        return progress
       }
     }
   })
 
   function load () {
     if (!syncStatus) {
-      syncStatus = ProgressStatus(x => x.replicate.changes, {
+      syncStatus = ProgressStatus(x => x.replicate.changes(), {
         incompleteFeeds: 0,
         pendingPeers: Dict({}, {fixedIndexing: true}),
         feeds: null,
         rate: 0
+      })
+    }
+    if (!progress) {
+      progress = ProgressStatus(x => x.progressStream.read(), {
+        indexes: Status(),
+        migration: Status()
       })
     }
   }
@@ -65,10 +78,16 @@ exports.create = function (api) {
 
     watch(api.sbot.obs.connection, (sbot) => {
       if (sbot) {
-        var source = keyFn(sbot)
+        var source
+        try {
+          source = keyFn(sbot)
+        } catch (err) {
+          progress.set(err)
+          return progress
+        }
         if (source) {
           pull(
-            source(),
+            source,
             pull.drain((event) => {
               progress.set(event)
             })
@@ -79,4 +98,12 @@ exports.create = function (api) {
 
     return progress
   }
+}
+
+function Status () {
+  return Struct({
+    start: Value(),
+    current: Value(),
+    target: Value()
+  })
 }
