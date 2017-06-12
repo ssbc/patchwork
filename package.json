@@ -12,7 +12,7 @@
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
   },
   "author": "Secure Scuttlebutt Consortium",
-  "license": "GPL-3.0",
+  "license": "AGPL-3.0",
   "dependencies": {
     "atomic-file": "^0.1.0",
     "bulk-require": "^1.0.0",
