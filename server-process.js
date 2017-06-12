@@ -14,10 +14,8 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/invite'))
   .use(require('scuttlebot/plugins/local'))
   .use(require('scuttlebot/plugins/logging'))
-  .use(require('ssb-query')) //using this instead of query-with-progress
-//  .use(require('./lib/private-with-index'))
-//  .use(require('./lib/query-with-progress'))
-//.use(require('ssb-fulltext')) // disabled for now
+  .use(require('ssb-query'))
+  .use(require('./lib/progress-stream'))
 
 module.exports = function (ssbConfig) {
   var context = {
