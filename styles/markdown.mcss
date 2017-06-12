@@ -1,5 +1,26 @@
 Markdown {
   word-break: break-word
+  (img) {
+    -pending {
+      border: 1px solid #DDD
+      background-color: #EEE
+      width: 120px
+      height: 40px
+      background-image: svg(fetching)
+      background-position: center
+      background-repeat: no-repeat
+
+      @svg fetching {
+        width: 100px
+        height: 20px
+        content: '<text x='0' y='12'>Fetching image...</text>'
+        text {
+          font: caption
+          font-size: 12px
+        }
+      }
+    }
+  }
   (blockquote) {
     margin: 1rem 0;
     padding: 5px 20px;
