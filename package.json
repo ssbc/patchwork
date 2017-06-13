@@ -52,7 +52,7 @@
     "ssb-keys": "~7.0.9",
     "ssb-mentions": "^0.4.0",
     "ssb-msgs": "^5.2.0",
-    "ssb-private": "0.1.0",
+    "ssb-private": "0.1.1",
     "ssb-query": "^1.0.0",
     "ssb-ref": "~2.7.1",
     "ssb-sort": "^1.0.0",
