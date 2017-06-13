@@ -269,7 +269,7 @@ exports.create = function (api) {
   }
 
   function ensureMessageAndAuthor (item, cb) {
-    if (item.type === 'message' && !item.message) {
+    if (item.type === 'message' && !item.rootMessage) {
       if (item.message) {
         item.rootMessage = item.message
         cb(null, item)
