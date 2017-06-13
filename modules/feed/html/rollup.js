@@ -10,7 +10,7 @@ var pull = require('pull-stream')
 var nest = require('depnest')
 
 var onceTrue = require('mutant/once-true')
-var Scroller = require('pull-scroll')
+var Scroller = require('../../../lib/pull-scroll')
 
 exports.needs = nest({
   'message.html': {

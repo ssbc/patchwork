@@ -28,6 +28,7 @@
     "micro-css": "^2.0.0",
     "mutant": "^3.20.1",
     "mutant-pull-reduce": "^1.1.0",
+    "obv": "0.0.1",
     "patchcore": "~1.0.2",
     "patchwork-gatherings": "^1.0.2",
     "pull-abortable": "^4.1.0",

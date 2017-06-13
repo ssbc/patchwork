@@ -1,6 +1,6 @@
 const { h, Struct, Value, when, computed } = require('mutant')
 const pull = require('pull-stream')
-const Scroller = require('pull-scroll')
+const Scroller = require('../../../../lib/pull-scroll')
 const TextNodeSearcher = require('text-node-searcher')
 const whitespace = /\s+/
 const pullAbortable = require('pull-abortable')
