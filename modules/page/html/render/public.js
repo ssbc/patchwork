@@ -1,20 +1,14 @@
 var nest = require('depnest')
 var { h, send, when, computed, map } = require('mutant')
-var extend = require('xtend')
-var pull = require('pull-stream')
 
 exports.needs = nest({
   sbot: {
-    pull: {
-      log: 'first',
-      feed: 'first',
-      userFeed: 'first'
-    },
     obs: {
       connectedPeers: 'first',
       localPeers: 'first'
     }
   },
+  'feed.pull.public': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'invite.sheet': 'first',
@@ -57,7 +51,7 @@ exports.create = function (api) {
       api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
     ]
 
-    var feedView = api.feed.html.rollup(getFeed, {
+    var feedView = api.feed.html.rollup(api.feed.pull.public, {
       prepend,
       waitFor: computed([
         following.sync,
@@ -209,24 +203,6 @@ exports.create = function (api) {
           })
         ])
       ]
-    }
-
-    function getFeed (opts) {
-      if (opts.lt) {
-        opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-      }
-
-      return pull(
-        api.sbot.pull.feed(opts),
-        pull.map((msg) => {
-          if (msg.sync) return msg
-          return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
-        })
-      )
-    }
-
-    function getFirstMessage (feedId, cb) {
-      api.sbot.pull.userFeed({id: feedId, gte: 0, limit: 1})(null, cb)
     }
 
     function subscribe (id) {

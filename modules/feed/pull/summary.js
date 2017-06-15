@@ -21,7 +21,6 @@ function summary (source, opts, cb) {
   var bumpFilter = opts && opts.bumpFilter
   var windowSize = opts && opts.windowSize || 1000
   var prioritized = opts && opts.prioritized || {}
-  var getSequence = opts && opts.getSequence
 
   var loading = Value(true)
 
@@ -34,7 +33,7 @@ function summary (source, opts, cb) {
       loading.set(true)
       var next = {reverse: true, limit: windowSize, live: false}
       if (last) {
-        next.lt = typeof getSequence === 'function' ? getSequence(last) : last.timestamp
+        next.lt = last
       }
       var deferred = pullDefer.source()
       pull(

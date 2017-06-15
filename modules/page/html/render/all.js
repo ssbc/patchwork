@@ -1,10 +1,8 @@
 var nest = require('depnest')
 var { h } = require('mutant')
-var extend = require('xtend')
-var pull = require('pull-stream')
 
 exports.needs = nest({
-  'sbot.pull.feed': 'first',
+  'feed.pull.public': 'first',
   'message.html.compose': 'first',
   'message.async.publish': 'first',
   'feed.html.rollup': 'first'
@@ -30,7 +28,7 @@ exports.create = function (api) {
       api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
     ]
 
-    var feedView = api.feed.html.rollup(getFeed, {
+    var feedView = api.feed.html.rollup(api.feed.pull.public, {
       prepend,
       windowSize: 1000
     })
@@ -43,19 +41,5 @@ exports.create = function (api) {
     result.reload = feedView.reload
 
     return result
-
-    function getFeed (opts) {
-      if (opts.lt) {
-        opts = extend(opts, {lt: parseInt(opts.lt, 10)})
-      }
-
-      return pull(
-        api.sbot.pull.feed(opts),
-        pull.map((msg) => {
-          if (msg.sync) return msg
-          return {key: msg.key, value: msg.value, timestamp: msg.value.timestamp}
-        })
-      )
-    }
   }
 }

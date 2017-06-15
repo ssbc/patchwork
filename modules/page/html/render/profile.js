@@ -17,7 +17,7 @@ exports.needs = nest({
   'message.html.markdown': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
-  'sbot.pull.userFeed': 'first',
+  'feed.pull.profile': 'first',
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first',
   'sheet.display': 'first',
@@ -165,9 +165,7 @@ exports.create = function (api) {
       ])
     ])
 
-    var feedView = api.feed.html.rollup((opts) => {
-      return api.sbot.pull.userFeed(extend(opts, {id}))
-    }, { prepend, getSequence: x => x.value.sequence })
+    var feedView = api.feed.html.rollup(api.feed.pull.profile(id), { prepend })
 
     var container = h('div', {className: 'SplitView'}, [
       h('div.main', [

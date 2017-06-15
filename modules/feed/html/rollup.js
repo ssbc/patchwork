@@ -46,7 +46,6 @@ exports.create = function (api) {
     var bumpFilter = opts && opts.bumpFilter
     var windowSize = opts && opts.windowSize
     var waitFor = opts && opts.waitFor || true
-    var getSequence = opts && opts.getSequence
 
     var newSinceRefresh = new Set()
     var newInSession = new Set()
@@ -152,7 +151,7 @@ exports.create = function (api) {
         prioritized[x] = 2
       })
 
-      var stream = api.feed.pull.summary(getStream, {windowSize, bumpFilter, prioritized, getSequence})
+      var stream = api.feed.pull.summary(getStream, {windowSize, bumpFilter, prioritized})
       loading.set(stream.loading)
 
       pull(
