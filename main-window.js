@@ -20,7 +20,6 @@ module.exports = function (config) {
     addCommand('app.navigate', setView),
     require('./modules'),
     require('./plugs'),
-    require('patchwork-gatherings'),
     require('patchcore'),
     require('./overrides')
   )
