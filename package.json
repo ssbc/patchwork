@@ -27,6 +27,7 @@
     "insert-css": "~2.0.0",
     "level": "~1.7.0",
     "micro-css": "^2.0.0",
+    "mime-types": "^2.1.15",
     "moment": "^2.18.1",
     "mutant": "^3.20.2",
     "mutant-pull-reduce": "^1.1.0",
