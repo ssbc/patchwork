@@ -14,4 +14,7 @@ fs.readdirSync(__dirname).forEach(function (file) {
   }
 })
 
+const flatpickr = require.resolve('flatpickr/dist/flatpickr.css')
+additional += fs.readFileSync(flatpickr) + '\n'
+
 module.exports = compile(result) + additional

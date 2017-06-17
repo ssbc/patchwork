@@ -46,6 +46,7 @@ exports.create = function (api) {
     var bumpFilter = opts && opts.bumpFilter
     var windowSize = opts && opts.windowSize
     var waitFor = opts && opts.waitFor || true
+    var autoRefresh = opts && opts.autoRefresh
 
     var newSinceRefresh = new Set()
     var newInSession = new Set()
@@ -87,7 +88,7 @@ exports.create = function (api) {
           if (api.app.sync.externalHandler(item)) return
 
           if (type && type !== 'vote' && typeof item.value.content === 'object' && item.value.timestamp > twoDaysAgo()) {
-            if (item.value && item.value.author === api.keys.sync.id() && !updates()) {
+            if (autoRefresh && item.value && item.value.author === api.keys.sync.id() && !updates()) {
               return refresh()
             }
             if (filter) {
