@@ -46,7 +46,7 @@
     "sorted-array-functions": "~1.0.0",
     "ssb-about": "0.1.0",
     "ssb-avatar": "^0.2.0",
-    "ssb-backlinks": "~0.3.0",
+    "ssb-backlinks": "~0.4.0",
     "ssb-blobs": "~1.1.0",
     "ssb-contacts": "0.0.2",
     "ssb-friends": "^2.0.3",
