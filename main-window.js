@@ -56,7 +56,7 @@ module.exports = function (config) {
   })
 
   var views = api.app.views(api.page.html.render, [
-    '/public', '/private', id, '/mentions'
+    '/public', '/private', '/gatherings', id, '/mentions'
   ])
 
   var pendingCount = computed([
@@ -87,7 +87,8 @@ module.exports = function (config) {
       ]),
       h('span.nav', [
         tab('Public', '/public'),
-        tab('Private', '/private')
+        tab('Private', '/private'),
+        tab('Gatherings', '/gatherings')
       ]),
       h('span.appTitle', ['Patchwork']),
       h('span', [ api.app.html.search(api.app.navigate) ]),
