@@ -17,10 +17,9 @@ exports.create = function (api) {
       h('PageHeading', [
         h('h1', [h('strong', 'Gatherings'), ' from your extended network']),
         h('div.meta', [
-          h('a.ToggleButton', {
-            'href': '#',
+          h('button -add', {
             'ev-click': createGathering
-          }, 'Create')
+          }, '+ Add Gathering')
         ])
       ])
     ]

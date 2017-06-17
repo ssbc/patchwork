@@ -26,6 +26,12 @@ button {
     border-color: #DDD !important;
   }
 
+  -add {
+    color: #6a7e6a;
+    background-color: #ecfff0;
+    border-color: #8ba289;
+  }
+
   -pub {
     color: #6a7e6a;
     background-color: #ecfff0;
