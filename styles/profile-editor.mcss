@@ -13,6 +13,7 @@ ProfileEditor {
       padding: 10px
     }
     textarea {
+      resize: vertical
       margin-top: 10px
       border: 1px solid #CCC
       padding: 10px

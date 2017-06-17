@@ -10,6 +10,7 @@ Compose {
   background: white
 
   textarea {
+    resize: vertical
     font-size: 120%
     background: transparent
     border: none
