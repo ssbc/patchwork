@@ -155,9 +155,13 @@ function compareTime (a, b) {
 }
 
 function compareImage (a, b) {
-  a = typeof a === 'object' ? a.link : a
-  b = typeof b === 'object' ? b.link : b
+  a = isObject(a) ? a.link : a
+  b = isObject(b) ? b.link : b
   return a === b
+}
+
+function isObject (value) {
+  return value && typeof value === 'object'
 }
 
 function FocusHook () {
