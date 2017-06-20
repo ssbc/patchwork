@@ -1,19 +1,24 @@
 var h = require('mutant/h')
 var nest = require('depnest')
 var extend = require('xtend')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'message.html': {
     decorate: 'reduce',
     layout: 'first'
-  }
+  },
+  'profile.html.person': 'first'
 })
 
 exports.gives = nest('message.html.render')
 
 exports.create = function (api) {
   return nest('message.html.render', function renderMessage (msg, opts) {
-    if (msg.value.content.type !== 'channel') return
+    if (msg.value.content.type !== 'contact') return
+    if (!ref.isFeed(msg.value.content.contact)) return
+    if (typeof msg.value.content.following !== 'boolean') return
+
     var element = api.message.html.layout(msg, extend({
       miniContent: messageContent(msg),
       layout: 'mini'
@@ -23,11 +28,10 @@ exports.create = function (api) {
   })
 
   function messageContent (msg) {
-    var channel = `#${msg.value.content.channel}`
-    var subscribed = msg.value.content.subscribed
+    var following = msg.value.content.following
     return [
-      subscribed ? 'subscribed to ' : 'unsubscribed from ',
-      h('a', {href: channel}, channel)
+      following ? 'followed ' : 'unfollowed ',
+      api.profile.html.person(msg.value.content.contact)
     ]
   }
 }

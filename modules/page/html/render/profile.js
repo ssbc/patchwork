@@ -165,7 +165,11 @@ exports.create = function (api) {
       ])
     ])
 
-    var feedView = api.feed.html.rollup(api.feed.pull.profile(id), { prepend, autoRefresh: true })
+    var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
+      prepend,
+      displayFilter: (msg) => msg.value.author === id,
+      bumpFilter: (msg) => msg.value.author === id,
+    })
 
     var container = h('div', {className: 'SplitView'}, [
       h('div.main', [

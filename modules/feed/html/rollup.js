@@ -1,73 +1,61 @@
-var Value = require('mutant/value')
-var Proxy = require('mutant/proxy')
-var when = require('mutant/when')
-var computed = require('mutant/computed')
-var h = require('mutant/h')
-var MutantArray = require('mutant/array')
-var Abortable = require('pull-abortable')
-var map = require('mutant/map')
-var pull = require('pull-stream')
 var nest = require('depnest')
-
-var onceTrue = require('mutant/once-true')
+var {Value, Proxy, Array: MutantArray, h, computed, map, when, onceTrue, throttle} = require('mutant')
+var pull = require('pull-stream')
+var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/pull-scroll')
+var nextStepper = require('../../../lib/next-stepper')
+var extend = require('xtend')
+var paramap = require('pull-paramap')
+
+var bumpMessages = {
+  'vote': 'liked this message',
+  'post': 'replied to this message',
+  'about': 'added changes',
+  'mention': 'mentioned you'
+}
 
 exports.needs = nest({
-  'message.html': {
-    render: 'first',
-    link: 'first'
-  },
-  'app.sync.externalHandler': 'first',
-  'sbot.async.get': 'first',
-  'keys.sync.id': 'first',
   'about.obs.name': 'first',
-  feed: {
-    'html.rollup': 'first',
-    'pull.summary': 'first'
-  },
-  profile: {
-    'html.person': 'first'
-  }
+  'app.sync.externalHandler': 'first',
+  'message.html.render': 'first',
+  'profile.html.person': 'first',
+  'message.html.link': 'first',
+  'message.sync.root': 'first',
+  'feed.pull.rollup': 'first',
+  'sbot.async.get': 'first',
+  'keys.sync.id': 'first'
 })
 
 exports.gives = nest({
-  'feed.html': ['rollup']
+  'feed.html.rollup': true
 })
 
 exports.create = function (api) {
-  return nest({
-    'feed.html': { rollup }
-  })
-  function rollup (getStream, opts) {
-    var loading = Proxy(true)
+  return nest('feed.html.rollup', function (getStream, {
+    prepend,
+    rootFilter = returnTrue,
+    bumpFilter = returnTrue,
+    displayFilter = returnTrue,
+    waitFor = true
+  }) {
     var updates = Value(0)
-
-    var filter = opts && opts.filter
-    var bumpFilter = opts && opts.bumpFilter
-    var windowSize = opts && opts.windowSize
-    var waitFor = opts && opts.waitFor || true
-    var autoRefresh = opts && opts.autoRefresh
-
-    var newSinceRefresh = new Set()
-    var newInSession = new Set()
-    var prioritized = {}
-
-    var updateLoader = h('a Notifier -loader', {
-      href: '#',
-      'ev-click': refresh
-    }, [
-      'Show ',
-      h('strong', [updates]), ' ',
-      when(computed(updates, a => a === 1), 'update', 'updates')
+    var yourId = api.keys.sync.id()
+    var throttledUpdates = throttle(updates, 200)
+    var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
+      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, 'update', 'updates')
     ])
 
+    var abortLastFeed = null
     var content = Value()
+    var loading = Proxy(true)
+    var newSinceRefresh = new Set()
+    var highlightItems = new Set()
 
     var container = h('Scroller', {
       style: { overflow: 'auto' }
     }, [
       h('div.wrapper', [
-        h('section.prepend', opts.prepend),
+        h('section.prepend', prepend),
         content,
         when(loading, h('Loading -large'))
       ])
@@ -75,231 +63,160 @@ exports.create = function (api) {
 
     onceTrue(waitFor, () => {
       refresh()
+
+      // display pending updates
       pull(
         getStream({old: false}),
-        pull.drain((item) => {
-          var type = item && item.value && item.value.content.type
+        LookupRoot(),
+        pull.filter((msg) => {
+          return rootFilter(msg.root || msg) && bumpFilter(msg)
+        }),
+        pull.drain((msg) => {
+          if (msg.value.content.type === 'vote') return
+          if (api.app.sync.externalHandler(msg)) return
+          newSinceRefresh.add(msg.key)
 
-          // prioritize new messages on next refresh
-          newInSession.add(item.key)
-          newSinceRefresh.add(item.key)
-
-          // ignore message handled by another app
-          if (api.app.sync.externalHandler(item)) return
-
-          if (type && type !== 'vote' && typeof item.value.content === 'object' && item.value.timestamp > twoDaysAgo()) {
-            if (autoRefresh && item.value && item.value.author === api.keys.sync.id() && !updates()) {
-              return refresh()
-            }
-            if (filter) {
-              if (item.value.content.type === 'post') {
-                var update = (item.value.content.root) ? {
-                  type: 'message',
-                  messageId: item.value.content.root,
-                  channel: item.value.content.channel
-                } : {
-                  type: 'message',
-                  author: item.value.author,
-                  channel: item.value.content.channel,
-                  messageId: item.key
-                }
-
-                ensureMessageAndAuthor(update, (err, update) => {
-                  if (!err) {
-                    if (filter(update)) {
-                      updates.set(updates() + 1)
-                    }
-                  }
-                })
-              }
-            } else {
-              updates.set(updates() + 1)
-            }
+          if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
+            refresh()
+          } else {
+            updates.set(updates() + 1)
           }
         })
       )
     })
-
-    var abortLastFeed = null
 
     var result = MutantArray([
       when(updates, updateLoader),
       container
     ])
 
+    result.pendingUpdates = throttledUpdates
     result.reload = refresh
-    result.pendingUpdates = updates
 
     return result
 
-    // scoped
-
     function refresh () {
-      if (abortLastFeed) {
-        abortLastFeed()
-      }
+      if (abortLastFeed) abortLastFeed()
       updates.set(0)
-
-      content.set(
-        h('section.content')
-      )
+      content.set(h('section.content'))
 
       var abortable = Abortable()
       abortLastFeed = abortable.abort
 
-      prioritized = {}
-      newSinceRefresh.forEach(x => {
-        prioritized[x] = 2
-      })
+      highlightItems = newSinceRefresh
+      newSinceRefresh = new Set()
 
-      var stream = api.feed.pull.summary(getStream, {windowSize, bumpFilter, prioritized})
-      loading.set(stream.loading)
+      var done = Value(false)
+      var stream = nextStepper(getStream, {reverse: true, limit: 50})
+      var scroller = Scroller(container, content(), renderItem, false, false, () => done.set(true))
+
+      // track loading state
+      loading.set(computed([done, scroller.queue], (done, queue) => {
+        return !done && queue < 5
+      }))
 
       pull(
         stream,
-        pull.asyncMap(ensureMessageAndAuthor),
-        pull.filter((item) => {
-          // ignore messages that are handled by other apps
-          if (item.rootMessage && api.app.sync.externalHandler(item.rootMessage)) return
-          if (filter) {
-            return filter(item)
-          } else {
-            return true
-          }
-        }),
+        pull.filter(bumpFilter),
         abortable,
-        Scroller(container, content(), renderItem, false, false)
+        api.feed.pull.rollup(rootFilter),
+        scroller
       )
-
-      // clear high prioritized items
-      newSinceRefresh.clear()
     }
 
-    function renderItem (item) {
-      var classList = []
-      if (item.priority >= 2) {
-        classList.push('-new')
-      }
+    function renderItem (item, opts) {
+      var partial = opts && opts.partial
+      var meta = null
+      var previousId = item.key
 
-      if (item.type === 'message') {
-        var meta = null
-        var previousId = item.messageId
-        var replies = item.replies.slice(-4).map((msg) => {
-          var result = api.message.html.render(msg, {
-            inContext: true,
-            inSummary: true,
-            previousId,
-            priority: prioritized[msg.key]
-          })
-          previousId = msg.key
-          return result
-        })
-        var renderedMessage = item.message ? api.message.html.render(item.message, {inContext: true}) : null
-        if (renderedMessage) {
-          if (item.lastUpdateType === 'reply' && item.repliesFrom.size) {
-            meta = h('div.meta', {
-              title: names(item.repliesFrom)
-            }, [
-              many(item.repliesFrom, api.profile.html.person), ' replied'
-            ])
-          } else if (item.lastUpdateType === 'like' && item.likes.size) {
-            meta = h('div.meta', {
-              title: names(item.likes)
-            }, [
-              many(item.likes, api.profile.html.person), ' liked this message'
-            ])
-          }
+      var groupedBumps = {}
+      var lastBumpType = null
 
-          return h('FeedEvent', [
-            meta,
-            renderedMessage,
-            when(replies.length, [
-              when(item.replies.length > replies.length || opts.partial,
-                h('a.full', {href: item.messageId}, ['View full thread'])
-              ),
-              h('div.replies', replies)
-            ])
-          ])
-        } else {
-          // when there is no root message in this window,
-          // try and show reply message, only show like message if we have nothing else to give
-          if (item.repliesFrom.size) {
-            meta = h('div.meta', {
-              title: names(item.repliesFrom)
-            }, [
-              many(item.repliesFrom, api.profile.html.person), ' replied to ', api.message.html.link(item.messageId)
-            ])
-          } else if (item.lastUpdateType === 'like' && item.likes.size) {
-            meta = h('div.meta', {
-              title: names(item.likes)
-            }, [
-              many(item.likes, api.profile.html.person), ' liked ', api.message.html.link(item.messageId)
-            ])
-          }
-
-          // only show this event if it has a meta description
-          if (meta) {
-            return h('FeedEvent', [
-              meta, h('div.replies', replies)
-            ])
-          }
+      item.replies.forEach(msg => {
+        var value = bumpFilter(msg)
+        if (value) {
+          var type = typeof value === 'string' ? value : getType(msg)
+          ;(groupedBumps[type] = groupedBumps[type] || []).push(msg)
+          lastBumpType = type
         }
-      } else if (item.type === 'follow') {
-        return h('FeedEvent -follow', {classList}, [
-          h('div.meta', {
-            title: names(item.contacts)
-          }, [
-            api.profile.html.person(item.id), ' followed ', many(item.contacts, api.profile.html.person)
-          ])
-        ])
-      } else if (item.type === 'subscribe') {
-        return h('FeedEvent -subscribe', {classList}, [
-          h('div.meta', {
-            title: names(item.subscribers)
-          }, [
-            many(item.subscribers, api.profile.html.person),
-            ' subscribed to ',
-            h('a', {href: `#${item.channel}`}, `#${item.channel}`)
-          ])
-        ])
-      }
+      })
 
-      return h('div')
-    }
-  }
-
-  function ensureMessageAndAuthor (item, cb) {
-    if (item.type === 'message' && !item.rootMessage) {
-      if (item.message) {
-        item.rootMessage = item.message
-        cb(null, item)
-      } else {
-        api.sbot.async.get(item.messageId, (_, value) => {
-          if (value) {
-            item.author = value.author
-            item.rootMessage = {key: item.messageId, value}
-          }
-          cb(null, item)
+      var replies = item.replies.filter(isReply)
+      var replyElements = replies.filter(displayFilter).sort(byAssertedTime).slice(-3).map((msg) => {
+        var result = api.message.html.render(msg, {
+          inContext: true,
+          inSummary: true,
+          previousId,
+          priority: highlightItems.has(msg.key) ? 2 : 0
         })
+        previousId = msg.key
+        return result
+      })
+
+      var renderedMessage = api.message.html.render(item, {inContext: true})
+      if (!renderedMessage) return h('div')
+      if (lastBumpType) {
+        var bumps = lastBumpType === 'vote'
+          ? getLikeAuthors(groupedBumps[lastBumpType])
+          : getAuthors(groupedBumps[lastBumpType])
+
+        var description = bumpMessages[lastBumpType] || 'added changes'
+        meta = h('div.meta', { title: names(bumps) }, [
+          many(bumps, api.profile.html.person), ' ', description
+        ])
       }
-    } else {
-      cb(null, item)
+
+      return h('FeedEvent -post', {
+        attributes: {
+          'data-root-id': item.key
+        }
+      }, [
+        meta,
+        renderedMessage,
+        when(replyElements.length, [
+          when(replies.length > replyElements.length || partial,
+            h('a.full', {href: item.key}, ['View full thread (', replies.length, ')'])
+          ),
+          h('div.replies', replyElements)
+        ])
+      ])
     }
-  }
+  })
 
   function names (ids) {
     var items = map(Array.from(ids), api.about.obs.name)
     return computed([items], (names) => names.map((n) => `- ${n}`).join('\n'))
   }
+
+  function LookupRoot () {
+    return paramap((msg, cb) => {
+      var rootId = api.message.sync.root(msg)
+      if (rootId) {
+        api.sbot.async.get(rootId, (_, value) => {
+          cb(null, extend(msg, {
+            root: {key: rootId, value}
+          }))
+        })
+      } else {
+        cb(null, msg)
+      }
+    })
+  }
 }
 
-function twoDaysAgo () {
-  return Date.now() - (2 * 24 * 60 * 60 * 1000)
+function plural (value, single, many) {
+  return computed(value, (value) => {
+    if (value === 1) {
+      return single
+    } else {
+      return many
+    }
+  })
 }
 
 function many (ids, fn) {
   ids = Array.from(ids)
-  var featuredIds = ids.slice(-4).reverse()
+  var featuredIds = ids.slice(0, 4)
 
   if (ids.length) {
     if (ids.length > 4) {
@@ -331,4 +248,50 @@ function many (ids, fn) {
       return fn(featuredIds[0])
     }
   }
+}
+
+function getAuthors (items) {
+  return items.reduce((result, msg) => {
+    result.add(msg.value.author)
+    return result
+  }, new Set())
+}
+
+function getLikeAuthors (items) {
+  return items.reduce((result, msg) => {
+    if (msg.value.content.type === 'vote') {
+      if (msg.value.content && msg.value.content.vote && msg.value.content.vote.value === 1) {
+        result.add(msg.value.author)
+      } else {
+        result.delete(msg.value.author)
+      }
+    }
+    return result
+  }, new Set())
+}
+
+function isUpdate (msg) {
+  if (msg.value && msg.value.content) {
+    var type = msg.value.content.type
+    return type === 'about'
+  }
+}
+
+function isReply (msg) {
+  if (msg.value && msg.value.content) {
+    var type = msg.value.content.type
+    return type === 'post' || (type === 'about' && msg.value.content.attendee)
+  }
+}
+
+function getType (msg) {
+  return msg && msg.value && msg.value.content && msg.value.content.type
+}
+
+function returnTrue () {
+  return true
+}
+
+function byAssertedTime (a, b) {
+  return a.value.timestamp - b.value.timestamp
 }

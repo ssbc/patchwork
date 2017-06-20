@@ -29,8 +29,7 @@ exports.create = function (api) {
     ]
 
     var feedView = api.feed.html.rollup(api.feed.pull.public, {
-      prepend,
-      windowSize: 1000
+      prepend
     })
 
     var result = h('div.SplitView', [
