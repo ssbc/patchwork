@@ -126,10 +126,29 @@ exports.create = function (api) {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {
         return Array.from(recent).filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
       })
+      var realSubscribedChannels = computed([subscribedChannels], (channels) => {
+        return Array.from(channels).filter(x => subscribedChannels().has(x))
+      })
       return [
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, '+ Join Pub'),
+        when(computed(realSubscribedChannels, x => x.length), h('h2', 'Subscribed Channels')),
+        h('div', {
+          classList: 'ChannelList',
+          hidden: loading
+        }, [
+          map(realSubscribedChannels, (channel) => {
+            return h('a.channel', {
+              href: `#${channel}`
+            }, [
+              h('span.name', '#' + channel),
+              h('a.-unsubscribe', {
+                'ev-click': send(unsubscribe, channel)
+              }, 'Unsubscribe')
+            ])
+          }, {maxTime: 5}),
+        ]),
         when(computed(channels, x => x.length), h('h2', 'Active Channels')),
         when(loading, [ h('Loading') ]),
         h('div', {
