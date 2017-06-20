@@ -69,7 +69,6 @@ module.exports = function (config) {
     electron.remote.app.setBadgeCount(count)
   })
 
-
   insertCss(require('./styles'))
 
   var container = h(`MainWindow -${process.platform}`, [

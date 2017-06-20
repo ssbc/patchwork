@@ -28,6 +28,6 @@ exports.create = function (api) {
       })
     ]
 
-    return api.feed.html.rollup(api.feed.pull.private, { prepend, windowSize: 200 })
+    return api.feed.html.rollup(api.feed.pull.private, { prepend })
   })
 }

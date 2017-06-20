@@ -57,46 +57,26 @@ exports.create = function (api) {
         following.sync,
         subscribedChannels.sync
       ], (...x) => x.every(Boolean)),
-      windowSize: 1000,
-      filter: (item) => {
-        return !item.boxed && (item.lastUpdateType !== 'post' || item.message) && (
-          id === item.author ||
-          (item.author && following().has(item.author)) ||
-          (item.type === 'message' && subscribedChannels().has(item.channel)) ||
-          (item.type === 'subscribe' && item.subscribers.size) ||
-          (item.repliesFrom && item.repliesFrom.has(id)) ||
-          item.likes && item.likes.has(id)
-        )
-      },
-      bumpFilter: (msg, group) => {
-        if (group.type === 'subscribe') {
-          removeStrangers(group.subscribers)
-        }
 
-        if (group.type === 'message') {
-          removeStrangers(group.likes)
-          removeStrangers(group.repliesFrom)
+      rootFilter: function (msg) {
+        if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
+          var author = msg.value.author
+          var type = msg.value.content.type
+          var channel = msg.value.content.channel
 
-          if (!group.message) {
-            // if message is old, only show replies from friends
-            group.replies = group.replies.filter(x => {
-              return (x.value.author === id || following().has(x.value.author))
-            })
-          }
-        }
-
-        if (!group.message) {
           return (
-            isMentioned(id, msg.value.content.mentions) ||
-            msg.value.author === id || (
-              fromDay(msg, group.fromTime) && (
-                following().has(msg.value.author) ||
-                group.repliesFrom.has(id)
-              )
-            )
+            id === author ||
+            following().has(author) ||
+            (type === 'message' && subscribedChannels().has(channel))
           )
         }
-        return true
+      },
+
+      bumpFilter: function (msg) {
+        if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
+          var author = msg.value.author
+          return id === author || following().has(author)
+        }
       }
     })
 
@@ -112,16 +92,6 @@ exports.create = function (api) {
 
     return result
 
-    function removeStrangers (set) {
-      if (set) {
-        Array.from(set).forEach(key => {
-          if (!following().has(key) && key !== id) {
-            set.delete(key)
-          }
-        })
-      }
-    }
-
     function getSidebar () {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {
         return Array.from(recent).filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
@@ -130,32 +100,33 @@ exports.create = function (api) {
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, '+ Join Pub'),
-        when(computed(channels, x => x.length), h('h2', 'Active Channels')),
-        when(loading, [ h('Loading') ]),
-        h('div', {
-          classList: 'ChannelList',
-          hidden: loading
-        }, [
-          map(channels, (channel) => {
-            var subscribed = subscribedChannels.has(channel)
-            return h('a.channel', {
-              href: `#${channel}`,
-              classList: [
-                when(subscribed, '-subscribed')
-              ]
-            }, [
-              h('span.name', '#' + channel),
-              when(subscribed,
-                h('a.-unsubscribe', {
-                  'ev-click': send(unsubscribe, channel)
-                }, 'Unsubscribe'),
-                h('a.-subscribe', {
-                  'ev-click': send(subscribe, channel)
-                }, 'Subscribe')
-              )
-            ])
-          }, {maxTime: 5}),
-          h('a.channel -more', {href: '/channels'}, 'More Channels...')
+        when(loading, [ h('Loading') ], [
+          when(computed(channels, x => x.length), h('h2', 'Active Channels')),
+          h('div', {
+            classList: 'ChannelList',
+            hidden: loading
+          }, [
+            map(channels, (channel) => {
+              var subscribed = subscribedChannels.has(channel)
+              return h('a.channel', {
+                href: `#${channel}`,
+                classList: [
+                  when(subscribed, '-subscribed')
+                ]
+              }, [
+                h('span.name', '#' + channel),
+                when(subscribed,
+                  h('a.-unsubscribe', {
+                    'ev-click': send(unsubscribe, channel)
+                  }, 'Unsubscribe'),
+                  h('a.-subscribe', {
+                    'ev-click': send(subscribe, channel)
+                  }, 'Subscribe')
+                )
+              ])
+            }, {maxTime: 5}),
+            h('a.channel -more', {href: '/channels'}, 'More Channels...')
+          ])
         ]),
 
         PeerList(localPeers, 'Local'),
@@ -221,18 +192,6 @@ exports.create = function (api) {
       })
     }
   }
-}
-
-function isMentioned (id, list) {
-  if (Array.isArray(list)) {
-    return list.includes(id)
-  } else {
-    return false
-  }
-}
-
-function fromDay (msg, fromTime) {
-  return (fromTime - msg.timestamp) < (24 * 60 * 60e3)
 }
 
 function arrayEq (a, b) {
