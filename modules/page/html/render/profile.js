@@ -213,6 +213,7 @@ exports.create = function (api) {
             ])
           ])
         }, {
+          maxTime: 5,
           idle: true
         })
       ])
