@@ -26,6 +26,10 @@ GatheringCard {
       margin: 0 5px
       a {
         margin-right: 4px
+        img {
+          height: 45px
+          width: 45px
+        }
       }
     }
     div.actions {
