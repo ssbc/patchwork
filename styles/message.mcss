@@ -55,7 +55,10 @@ Message {
           display: none;
         }
         span.private {
-          display: none
+          (img) {
+            width: 40px
+            height: 40px
+          }
         }
       }
       div.main {
