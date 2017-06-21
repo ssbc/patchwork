@@ -5,7 +5,9 @@
   "version": "3.8.10",
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
-  "bin": "start",
+  "bin": {
+    "patchwork": "start"
+  },
   "scripts": {
     "test": "standard",
     "start": "electron index.js",
