@@ -13,7 +13,6 @@ var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 
-
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
@@ -98,7 +97,8 @@ module.exports = function (config) {
     when(latestUpdate,
       h('div.info', [
         h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases' }, [
-          h('strong', ['Patchwork ', latestUpdate, ' has been released.']), ' Click here to download and view more info!'
+          h('strong', ['Patchwork ', latestUpdate, ' has been released.']), ' Click here to download and view more info!',
+          h('a.ignore', {'ev-click': latestUpdate.ignore}, 'X')
         ])
       ])
     ),

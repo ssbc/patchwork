@@ -141,6 +141,18 @@ MainWindow {
       transition: color 0.2s, background-color 0.2s;
       color: #217720;
 
+      a.ignore {
+        float: right
+        border-radius: 10px
+        padding: 2px 5px
+        margin-top: -2px
+        :hover {
+          text-decoration: none
+          background: #c0c0c0
+          color: white
+        }
+      }
+
       :hover {
         text-decoration: none
         background: #c0ffae
