@@ -17,7 +17,7 @@ exports.create = function (api) {
     loadSuggestions()
     return function (word) {
       if (!word) {
-        return suggestions().slice(0, 100)
+        return suggestions().slice(0, 200)
       } else {
         return suggestions().filter((item) => {
           return item.title.toLowerCase().startsWith(word.toLowerCase())
