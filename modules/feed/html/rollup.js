@@ -11,8 +11,12 @@ var bumpMessages = {
   'vote': 'liked this message',
   'post': 'replied to this message',
   'about': 'added changes',
-  'mention': 'mentioned you'
+  'mention': 'mentioned you',
+  'channel-mention': 'mentioned this channel'
 }
+
+// bump even for first message
+var rootBumpTypes = ['mention', 'channel-mention']
 
 exports.needs = nest({
   'about.obs.name': 'first',
@@ -131,6 +135,12 @@ exports.create = function (api) {
 
       var groupedBumps = {}
       var lastBumpType = null
+
+      var rootBumpType = bumpFilter(item)
+      if (rootBumpTypes.includes(rootBumpType)) {
+        lastBumpType = rootBumpType
+        groupedBumps[lastBumpType] = [item]
+      }
 
       item.replies.forEach(msg => {
         var value = bumpFilter(msg)

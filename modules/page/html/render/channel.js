@@ -43,7 +43,22 @@ exports.create = function (api) {
       })
     ]
 
-    return api.feed.html.rollup(api.feed.pull.channel(channel), { prepend, windowSize: 100 })
+    return api.feed.html.rollup(api.feed.pull.channel(channel), {
+      prepend,
+      displayFilter: mentionFilter,
+      bumpFilter: mentionFilter
+    })
+
+    function mentionFilter (msg) {
+      if (msg.value.content.channel === channel) return true
+      if (Array.isArray(msg.value.content.mentions)) {
+        if (msg.value.content.mentions.some(mention => {
+          return mention && mention.link === `#${channel}`
+        })) {
+          return 'channel-mention'
+        }
+      }
+    }
   })
 
   function subscribe (id) {
