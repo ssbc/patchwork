@@ -5,6 +5,7 @@
   "version": "3.8.10",
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
+  "bin": "start",
   "scripts": {
     "test": "standard",
     "start": "electron index.js",
@@ -41,6 +42,7 @@
     "moment": "^2.18.1",
     "mutant": "^3.21.2",
     "mutant-pull-reduce": "^1.1.0",
+    "npm-run-path-compat": "^2.0.3",
     "obv": "0.0.1",
     "patch-settings": "~1.1.0",
     "patchcore": "~1.23.4",

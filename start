@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+const { join } = require('path')
+const childProcess = require('child_process')
+const npmRunPath = require('npm-run-path-compat')
+
+childProcess.execFileSync('electron', [
+  join(__dirname, 'index.js')
+], {
+  env: npmRunPath.env()
+})
