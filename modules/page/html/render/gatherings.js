@@ -4,6 +4,7 @@ var nest = require('depnest')
 exports.needs = nest({
   'feed.pull.type': 'first',
   'feed.html.rollup': 'first',
+  'feed.pull.public': 'first',
   'gathering.sheet.edit': 'first'
 })
 
@@ -24,7 +25,11 @@ exports.create = function (api) {
       ])
     ]
 
-    return api.feed.html.rollup(api.feed.pull.type('gathering'), { prepend, windowSize: 100 })
+    return api.feed.html.rollup(api.feed.pull.type('gathering'), {
+      prepend,
+      rootFilter: (msg) => msg.value.content.type === 'gathering',
+      updateStream: api.feed.pull.public
+    })
   })
 
   function createGathering () {

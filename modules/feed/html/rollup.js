@@ -40,6 +40,7 @@ exports.create = function (api) {
     rootFilter = returnTrue,
     bumpFilter = returnTrue,
     displayFilter = returnTrue,
+    updateStream = getStream, // override the stream used for realtime updates
     waitFor = true
   }) {
     var updates = Value(0)
@@ -70,7 +71,7 @@ exports.create = function (api) {
 
       // display pending updates
       pull(
-        getStream({old: false}),
+        updateStream({old: false}),
         LookupRoot(),
         pull.filter((msg) => {
           return rootFilter(msg.root || msg) && bumpFilter(msg)
