@@ -74,7 +74,7 @@ exports.create = function (api) {
         updateStream({old: false}),
         LookupRoot(),
         pull.filter((msg) => {
-          return rootFilter(msg.root || msg) && bumpFilter(msg)
+          return msg && msg.value && msg.value.content && rootFilter(msg.root || msg) && bumpFilter(msg)
         }),
         pull.drain((msg) => {
           if (msg.value.content.type === 'vote') return
