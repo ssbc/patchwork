@@ -74,7 +74,9 @@ exports.create = function (api) {
         updateStream({old: false}),
         LookupRoot(),
         pull.filter((msg) => {
-          return msg && msg.value && msg.value.content && rootFilter(msg.root || msg) && bumpFilter(msg)
+          // only render posts that have a root message
+          var root = msg.root || msg
+          return root && root.value && root.value.content && rootFilter(root) && bumpFilter(msg)
         }),
         pull.drain((msg) => {
           if (msg.value.content.type === 'vote') return
