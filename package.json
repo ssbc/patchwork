@@ -44,7 +44,7 @@
     "pull-pushable": "^2.0.1",
     "pull-scroll": "^1.0.4",
     "pull-stream": "~3.6.0",
-    "scuttlebot": "github:ssbc/scuttlebot#7631c51207229346467d70e5b00b51c6f860c61b",
+    "scuttlebot": "~10.0.6",
     "secure-scuttlebutt": "^16.3.4",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
