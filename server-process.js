@@ -18,8 +18,7 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-query'))
   .use(require('ssb-about'))
   .use(require('ssb-contacts'))
-  .use(require('./lib/flumeview-channels'))
-  .use(require('./lib/progress-stream'))
+  .use(require('./sbot'))
 
 module.exports = function (ssbConfig) {
   var context = {

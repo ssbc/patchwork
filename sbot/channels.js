@@ -1,14 +1,7 @@
 var FlumeReduce = require('flumeview-reduce')
 
-exports.name = 'channels'
-exports.version = require('../package.json').version
-exports.manifest = {
-  stream: 'source',
-  get: 'async'
-}
-
-exports.init = function (ssb, config) {
-  return ssb._flumeUse('channels', FlumeReduce(1, reduce, map))
+module.exports = function (ssb, config) {
+  return ssb._flumeUse('patchwork-channels', FlumeReduce(1, reduce, map))
 }
 
 function reduce (result, item) {

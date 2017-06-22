@@ -64,7 +64,7 @@ exports.create = function (api) {
       })
     }
     if (!progress) {
-      progress = ProgressStatus(x => x.progressStream.read(), {
+      progress = ProgressStatus(x => x.patchwork.progress(), {
         indexes: Status(),
         migration: Status()
       })

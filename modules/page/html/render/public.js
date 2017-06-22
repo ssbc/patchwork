@@ -1,4 +1,6 @@
 var nest = require('depnest')
+var extend = require('xtend')
+var pull = require('pull-stream')
 var { h, send, when, computed, map } = require('mutant')
 
 exports.needs = nest({
@@ -8,6 +10,7 @@ exports.needs = nest({
       localPeers: 'first'
     }
   },
+  'sbot.pull.stream': 'first',
   'feed.pull.public': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
@@ -51,33 +54,28 @@ exports.create = function (api) {
       api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
     ]
 
-    var feedView = api.feed.html.rollup(api.feed.pull.public, {
+    var getStream = (opts) => {
+      if (opts.lt != null && !opts.lt.marker) {
+        // if an lt has been specified that is not a marker, assume stream is finished
+        return pull.empty()
+      } else {
+        return api.sbot.pull.stream(sbot => sbot.patchwork.roots(extend(opts, { ids: [id] })))
+      }
+    }
+
+    var feedView = api.feed.html.rollup(getStream, {
       prepend,
-      waitFor: computed([
-        following.sync,
-        subscribedChannels.sync
-      ], (...x) => x.every(Boolean)),
-
-      rootFilter: function (msg) {
-        if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
-          var author = msg.value.author
-          var type = msg.value.content.type
-          var channel = msg.value.content.channel
-
-          return (
-            id === author ||
-            following().has(author) ||
-            (type === 'message' && subscribedChannels().has(channel))
-          )
-        }
-      },
-
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
       bumpFilter: function (msg) {
         if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
           var author = msg.value.author
           return id === author || following().has(author)
         }
-      }
+      },
+      waitFor: computed([
+        following.sync,
+        subscribedChannels.sync
+      ], (...x) => x.every(Boolean))
     })
 
     var result = h('div.SplitView', [

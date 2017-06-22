@@ -30,7 +30,7 @@ exports.create = function (api) {
       channelsLookup = Dict()
 
       pull(
-        api.sbot.pull.stream(sbot => sbot.channels.stream({live: true})),
+        api.sbot.pull.stream(sbot => sbot.patchwork.channels({live: true})),
         pull.drain(msg => {
           if (!sync()) {
             channelsLookup.transaction(() => {

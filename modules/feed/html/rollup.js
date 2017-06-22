@@ -40,7 +40,7 @@ exports.create = function (api) {
     rootFilter = returnTrue,
     bumpFilter = returnTrue,
     displayFilter = returnTrue,
-    updateStream = getStream, // override the stream used for realtime updates
+    updateStream, // override the stream used for realtime updates
     waitFor = true
   }) {
     var updates = Value(0)
@@ -71,12 +71,14 @@ exports.create = function (api) {
 
       // display pending updates
       pull(
-        updateStream({old: false}),
-        LookupRoot(),
+        updateStream || pull(
+          getStream({old: false}),
+          LookupRoot()
+        ),
         pull.filter((msg) => {
           // only render posts that have a root message
           var root = msg.root || msg
-          return root && root.value && root.value.content && rootFilter(root) && bumpFilter(msg)
+          return root && root.value && root.value.content && rootFilter(root) && bumpFilter(msg) && displayFilter(msg)
         }),
         pull.drain((msg) => {
           if (msg.value.content.type === 'vote') return
