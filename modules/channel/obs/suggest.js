@@ -51,7 +51,7 @@ exports.create = function (api) {
       title: id,
       id: `#${id}`,
       subtitle: computed([id, subscribed], subscribedCaption),
-      value: computed([id], mention)
+      value: `#${id}`
     })
   }
 }
@@ -60,8 +60,4 @@ function subscribedCaption (id, subscribed) {
   if (subscribed.has(id)) {
     return 'subscribed'
   }
-}
-
-function mention (id) {
-  return `[#${id}](#${id})`
 }
