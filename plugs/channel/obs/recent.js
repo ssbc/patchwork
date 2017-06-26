@@ -32,30 +32,21 @@ exports.create = function (api) {
       pull(
         api.sbot.pull.stream(sbot => sbot.patchwork.channels({live: true})),
         pull.drain(msg => {
-          if (!sync()) {
-            channelsLookup.transaction(() => {
-              for (var channel in msg) {
-                var obs = ChannelRef(channel)
-                obs.set({
-                  id: channel,
-                  updatedAt: msg[channel].timestamp,
-                  count: msg[channel].count
-                })
+          channelsLookup.transaction(() => {
+            for (var channel in msg) {
+              var obs = channelsLookup.get(channel)
+              if (!obs) {
+                obs = ChannelRef(channel)
                 channelsLookup.put(channel, obs)
               }
-              sync.set(true)
-            })
-          } else {
-            var obs = channelsLookup.get(msg.channel)
-            if (!obs) {
-              obs = ChannelRef(msg.dest)
-              channelsLookup.put(msg.dest, obs)
+              var count = msg.count != null ? msg.count : obs.count() + 1
+              var updatedAt = msg[channel].timestamp
+
+              obs.set({ id: channel, updatedAt, count })
             }
-            obs.set({
-              id: msg.channel,
-              updatedAt: Math.max(resolve(obs.updatedAt), msg.timestamp),
-              count: resolve(obs.count) + 1
-            })
+          })
+          if (!sync()) {
+            sync.set(true)
           }
         })
       )
