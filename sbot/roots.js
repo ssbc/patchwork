@@ -67,7 +67,6 @@ module.exports = function (ssb, config) {
 
         // FILTER
         pull.filter(item => {
-          console.log('filter', item)
           var root = item.root || item
           if (filter && root && root.value && !getRoot(root)) {
             return filter(ids, root)
