@@ -52,15 +52,14 @@ module.exports = function (ssb, config) {
 
         // LOOKUP ROOTS
         pull.asyncMap((item, cb) => {
+          var msg = item.value
           var key = item.key[1]
-          if (key === item.value.key) {
+          if (key === msg.key) {
             // already a root
-            cb(null, extend(item.value, {
-              root: item.value
-            }))
+            cb(null, msg)
           }
           getThruCache(key, (_, value) => {
-            cb(null, extend(item.value, {
+            cb(null, extend(msg, {
               root: value
             }))
           })
@@ -68,20 +67,10 @@ module.exports = function (ssb, config) {
 
         // FILTER
         pull.filter(item => {
-          if (filter && item.root && item.root.value && !getRoot(item.root)) {
-            return filter(ids, item.root)
-          }
-        }),
-
-        // MAP
-        pull.map(item => {
-          if (item.root && !item.root.key) {
-            console.log('WRONG:', item)
-          }
-          if (item.root && item.root.key !== item.value.key) {
-            return extend(item.value, { root: item.root })
-          } else {
-            return item.value
+          console.log('filter', item)
+          var root = item.root || item
+          if (filter && root && root.value && !getRoot(root)) {
+            return filter(ids, root)
           }
         })
       )
