@@ -6,7 +6,7 @@ module.exports = function (ssb, config) {
 
 function reduce (result, item) {
   if (!result) result = {}
-  if (items) {
+  if (item) {
     for (var channel in item) {
       var value = result[channel]
       if (!value) {
