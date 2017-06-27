@@ -118,7 +118,7 @@ exports.create = function (api) {
     function publish () {
       publishing.set(true)
 
-      meta = extend(resolve(meta), {
+      var content = extend(resolve(meta), {
         text: textArea.value,
         mentions: mentions(textArea.value).map(mention => {
           // merge markdown-detected mention with file info
@@ -133,7 +133,7 @@ exports.create = function (api) {
 
       try {
         if (typeof prepublish === 'function') {
-          meta = prepublish(meta)
+          content = prepublish(content)
         }
       } catch (err) {
         publishing.set(false)
@@ -141,7 +141,7 @@ exports.create = function (api) {
         else throw err
       }
 
-      return api.message.async.publish(meta, done)
+      return api.message.async.publish(content, done)
 
       function done (err, msg) {
         publishing.set(false)
