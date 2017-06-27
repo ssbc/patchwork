@@ -31,17 +31,16 @@ exports.create = function (api) {
 
       pull(
         api.sbot.pull.stream(sbot => sbot.patchwork.channels({live: true})),
-        pull.drain(msg => {
+        pull.drain(data => {
           channelsLookup.transaction(() => {
-            for (var channel in msg) {
+            for (var channel in data) {
               var obs = channelsLookup.get(channel)
               if (!obs) {
                 obs = ChannelRef(channel)
                 channelsLookup.put(channel, obs)
               }
-              var count = msg.count != null ? msg.count : obs.count() + 1
-              var updatedAt = msg[channel].timestamp
-
+              var count = data[channel].count != null ? data[channel].count : obs.count() + 1
+              var updatedAt = data[channel].timestamp
               obs.set({ id: channel, updatedAt, count })
             }
           })

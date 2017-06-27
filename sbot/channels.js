@@ -25,9 +25,9 @@ function map (msg) {
   if (msg.value.content && typeof msg.value.content.channel === 'string') {
     var channel = msg.value.content.channel
     if (channel.length > 0 && channel.length < 30) {
-      return [{
+      return {
         [channel.replace(/\s/g, '')]: {timestamp: msg.timestamp}
-      }]
+      }
     }
   }
 }
