@@ -150,15 +150,24 @@ module.exports = function (ssb, config) {
 
       // TRUNCATE
       if (typeof limit === 'number') {
+        var count = 0
         return pullCat([
           pull(
             stream,
-            pull.take(limit)
+            pull.take(limit),
+            pull.through(() => {
+              count += 1
+            })
           ),
 
           // send truncated marker for resuming search
-          pull.values([marker])
+          pull(
+            pull.values([marker]),
+            pull.filter(() => count === limit)
+          )
         ])
+      } else {
+        return stream
       }
     }
   }
