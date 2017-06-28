@@ -1,6 +1,6 @@
 const { h, Struct, Value, when, computed } = require('mutant')
 const pull = require('pull-stream')
-const Scroller = require('../../../../lib/pull-scroll')
+const Scroller = require('../../../../lib/scroller')
 const TextNodeSearcher = require('text-node-searcher')
 const whitespace = /\s+/
 const pullAbortable = require('pull-abortable')
@@ -70,7 +70,7 @@ exports.create = function (api) {
       api.sbot.pull.log({old: false}),
       pull.filter(matchesQuery),
       realtimeAborter,
-      Scroller(container, content, renderMsg, true, false)
+      Scroller(container, content, renderMsg)
     )
 
     // pull(

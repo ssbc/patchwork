@@ -45,7 +45,6 @@
     "pull-pause": "~0.0.1",
     "pull-ping": "^2.0.2",
     "pull-pushable": "^2.0.1",
-    "pull-scroll": "^1.0.4",
     "pull-stream": "~3.6.0",
     "scuttlebot": "^10.0.7",
     "secure-scuttlebutt": "^16.3.4",

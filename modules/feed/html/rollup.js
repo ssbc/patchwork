@@ -2,7 +2,7 @@ var nest = require('depnest')
 var {Value, Proxy, Array: MutantArray, h, computed, map, when, onceTrue, throttle} = require('mutant')
 var pull = require('pull-stream')
 var Abortable = require('pull-abortable')
-var Scroller = require('../../../lib/pull-scroll')
+var Scroller = require('../../../lib/scroller')
 var nextStepper = require('../../../lib/next-stepper')
 var extend = require('xtend')
 var paramap = require('pull-paramap')
@@ -57,7 +57,19 @@ exports.create = function (api) {
     var highlightItems = new Set()
 
     var container = h('Scroller', {
-      style: { overflow: 'auto' }
+      style: { overflow: 'auto' },
+      hooks: [(element) => {
+        // don't activate until added to DOM
+        refresh()
+
+        // deactivate when removed from DOM
+        return () => {
+          if (abortLastFeed) {
+            abortLastFeed()
+            abortLastFeed = null
+          }
+        }
+      }]
     }, [
       h('div.wrapper', [
         h('section.prepend', prepend),
@@ -67,8 +79,6 @@ exports.create = function (api) {
     ])
 
     onceTrue(waitFor, () => {
-      refresh()
-
       // display pending updates
       pull(
         updateStream || pull(
@@ -105,32 +115,34 @@ exports.create = function (api) {
     return result
 
     function refresh () {
-      if (abortLastFeed) abortLastFeed()
-      updates.set(0)
-      content.set(h('section.content'))
+      onceTrue(waitFor, () => {
+        if (abortLastFeed) abortLastFeed()
+        updates.set(0)
+        content.set(h('section.content'))
 
-      var abortable = Abortable()
-      abortLastFeed = abortable.abort
+        var abortable = Abortable()
+        abortLastFeed = abortable.abort
 
-      highlightItems = newSinceRefresh
-      newSinceRefresh = new Set()
+        highlightItems = newSinceRefresh
+        newSinceRefresh = new Set()
 
-      var done = Value(false)
-      var stream = nextStepper(getStream, {reverse: true, limit: 50})
-      var scroller = Scroller(container, content(), renderItem, false, false, () => done.set(true))
+        var done = Value(false)
+        var stream = nextStepper(getStream, {reverse: true, limit: 50})
+        var scroller = Scroller(container, content(), renderItem, () => done.set(true))
 
-      // track loading state
-      loading.set(computed([done, scroller.queue], (done, queue) => {
-        return !done && queue < 5
-      }))
+        // track loading state
+        loading.set(computed([done, scroller.queue], (done, queue) => {
+          return !done && queue < 5
+        }))
 
-      pull(
-        stream,
-        pull.filter(bumpFilter),
-        abortable,
-        api.feed.pull.rollup(rootFilter),
-        scroller
-      )
+        pull(
+          stream,
+          pull.filter(bumpFilter),
+          abortable,
+          api.feed.pull.rollup(rootFilter),
+          scroller
+        )
+      })
     }
 
     function renderItem (item, opts) {
