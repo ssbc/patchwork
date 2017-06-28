@@ -87,7 +87,10 @@ module.exports = function (config) {
         tab('Private', '/private'),
         tab('Gatherings', '/gatherings')
       ]),
-      h('span.appTitle', ['Patchwork']),
+      h('span.appTitle', [
+        h('span.title', 'Patchwork'),
+        api.app.html.progressNotifier()
+      ]),
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
         tab('Profile', id),
@@ -102,7 +105,6 @@ module.exports = function (config) {
         ])
       ])
     ),
-    api.app.html.progressNotifier(),
     views.html
   ])
 

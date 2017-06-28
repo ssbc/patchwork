@@ -44,11 +44,11 @@ exports.create = function (api) {
       h('div.status', [
         when(displaying, h('Loading -small', [
           when(pendingMigration,
-            ['Upgrading database', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
+            [h('span.info', 'Upgrading database'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
             when(computed(replicateProgress.incompleteFeeds, (v) => v > 5),
-              ['Downloading new messages', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
+              [h('span.info', 'Downloading new messages'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
               when(pending, [
-                ['Indexing database', h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
+                [h('span.info', 'Indexing database'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
               ], 'Scuttling...')
             )
           )

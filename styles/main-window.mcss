@@ -130,6 +130,27 @@ MainWindow {
       letter-spacing: 1px;
       font-weight: 200;
       -webkit-app-region: drag;
+      position: relative
+
+      div.info {
+        display: block
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        margin-top: -3px;
+        opacity: 1;
+        transition: opacity 0.1s;
+        max-height: 25px;
+        padding: 0 10px;
+        font-size: 13px;
+        letter-spacing: 0;
+        [hidden] {
+          opacity: 0
+        }
+      }
     }
   }
 

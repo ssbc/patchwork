@@ -3,6 +3,13 @@ Loading {
   display: flex
   align-items: center
   justify-content: center
+  whitespace: no-wrap
+
+  span.info {
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  }
 
   -inline {
     height: 16px
