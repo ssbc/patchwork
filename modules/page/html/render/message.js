@@ -62,6 +62,9 @@ exports.create = function (api) {
             return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
               return api.message.html.render(msg, {pageId: id, previousId, includeReferences: true})
             })
+          }, {
+            maxTime: 5,
+            idle: true
           })
         ]),
         compose
