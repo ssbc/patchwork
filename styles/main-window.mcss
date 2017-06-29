@@ -6,6 +6,11 @@ MainWindow {
   -darwin {
     div.top {
       padding-left: 70px
+      span.appTitle {
+        span.title {
+          visibility: visible
+        }
+      }
     }
   }
 
@@ -149,6 +154,10 @@ MainWindow {
       font-weight: 200;
       -webkit-app-region: drag;
       position: relative
+
+      span.title {
+        visibility: hidden
+      }
 
       div.info {
         display: block
