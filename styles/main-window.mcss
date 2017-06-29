@@ -104,6 +104,24 @@ MainWindow {
           }
         }
 
+        -drop {
+
+          :after {
+            background-image: svg(dropArrow)
+            background-repeat: no-repeat;
+            background-position: center right;
+            width: 10px;
+            height: 14px;
+            display: inline-block;
+            content: ' ';
+            margin-left: 6px;
+            margin-right: -6px;
+            border-left: 1px solid #d2d2d2;
+            padding-left: 5px;
+            margin-bottom: -2px;
+          }
+        }
+
         -add {
           border-color: #498849
           background-color: #255D24
@@ -260,5 +278,21 @@ MainWindow {
   }
   100% {
     max-height: 100px
+  }
+}
+
+@svg dropArrow {
+  width: 12px
+  height: 6px
+  content: "<path d='M2,0 L10,0 L6,6 Z' />"
+
+  path {
+    fill: #888
+  }
+
+  -active {
+    path {
+      fill: #DDD
+    }
   }
 }

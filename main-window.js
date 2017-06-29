@@ -54,7 +54,7 @@ module.exports = function (config) {
   })
 
   var views = api.app.views(api.page.html.render, [
-    '/public', '/private', '/gatherings', id, '/mentions'
+    '/public', '/private', id, '/mentions'
   ])
 
   var pendingCount = computed([
@@ -85,7 +85,11 @@ module.exports = function (config) {
       h('span.nav', [
         tab('Public', '/public'),
         tab('Private', '/private'),
-        tab('Gatherings', '/gatherings')
+        dropTab('More', [
+          ['Channels', '/channels'],
+          ['Gatherings', '/gatherings'],
+          ['Extended Network', '/all'],
+        ])
       ]),
       h('span.appTitle', [
         h('span.title', 'Patchwork'),
@@ -130,6 +134,31 @@ module.exports = function (config) {
   return container
 
   // scoped
+
+  function dropTab (title, items) {
+    var menu = electron.remote.Menu.buildFromTemplate(items.map(item => {
+      return {
+        label: item[0],
+        click () {
+          setView(item[1])
+        }
+      }
+    }))
+
+    var element = h('a -drop', {
+      'ev-click': (ev) => {
+        var rects = element.getBoundingClientRect()
+        electron.remote.getCurrentWindow().webContents.getZoomFactor((factor) => {
+          menu.popup(electron.remote.getCurrentWindow(), {
+            x: Math.round(rects.left * factor),
+            y: Math.round(rects.bottom * factor) + 4,
+            async: true
+          })
+        })
+      }
+    }, title)
+    return element
+  }
 
   function setView (href) {
     views.setView(href)
