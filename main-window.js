@@ -88,7 +88,7 @@ module.exports = function (config) {
         dropTab('More', [
           ['Channels', '/channels'],
           ['Gatherings', '/gatherings'],
-          ['Extended Network', '/all'],
+          ['Extended Network', '/all']
         ])
       ]),
       h('span.appTitle', [
