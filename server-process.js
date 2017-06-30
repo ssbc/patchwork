@@ -18,6 +18,7 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-query'))
   .use(require('ssb-about'))
   .use(require('ssb-contacts'))
+  //.use(require('ssb-ebt')) // enable at your own risk!
   .use(require('./sbot'))
 
 module.exports = function (ssbConfig) {
