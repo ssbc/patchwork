@@ -32,6 +32,10 @@ exports.create = function (api) {
       h('h1', [h('strong', 'Search Results:'), ' ', query.join(' ')])
     ])
 
+    var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
+      'Show ', h('strong', [updates]), ' ', plural(updates, 'update', 'updates')
+    ])
+
     var content = Proxy()
     var container = h('Scroller', {
       style: { overflow: 'auto' }
@@ -73,7 +77,10 @@ exports.create = function (api) {
       ],
       uniqueKey: 'search'
     }, [
-      h('div.main', container)
+      h('div.main', [
+        when(updates, updateLoader),
+        container
+      ])
     ])
 
     // scoped
