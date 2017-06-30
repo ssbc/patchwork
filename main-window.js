@@ -36,13 +36,15 @@ module.exports = function (config) {
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first',
-    'app.navigate': 'first'
+    'app.navigate': 'first',
+    'channel.obs.subscribed': 'first'
   }))
 
   setupContextMenuAndSpellCheck(api.config.sync.load())
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
+  var subscribedChannels = api.channel.obs.subscribed(id)
 
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
@@ -86,7 +88,7 @@ module.exports = function (config) {
         tab('Public', '/public'),
         tab('Private', '/private'),
         dropTab('More', [
-          ['Channels', '/channels'],
+          getSubscribedChannelMenu,
           ['Gatherings', '/gatherings'],
           ['Extended Network', '/all']
         ])
@@ -135,20 +137,55 @@ module.exports = function (config) {
 
   // scoped
 
-  function dropTab (title, items) {
-    var menu = electron.remote.Menu.buildFromTemplate(items.map(item => {
+  function getSubscribedChannelMenu () {
+    var channels = Array.from(subscribedChannels()).sort(localeCompare)
+
+    if (channels.length) {
       return {
-        label: item[0],
+        label: 'Channels',
+        submenu: [
+          { label: 'Browse All',
+            click () {
+              setView('/channels')
+            }
+          },
+          {type: 'separator'}
+        ].concat(channels.map(channel => {
+          return {
+            label: `#${channel}`,
+            click () {
+              setView(`#${channel}`)
+            }
+          }
+        }))
+      }
+    } else {
+      return {
+        label: 'Browse Channels',
         click () {
-          setView(item[1])
+          setView('/channels')
         }
       }
-    }))
+    }
+  }
 
+  function dropTab (title, items) {
     var element = h('a -drop', {
       'ev-click': (ev) => {
         var rects = element.getBoundingClientRect()
         electron.remote.getCurrentWindow().webContents.getZoomFactor((factor) => {
+          var menu = electron.remote.Menu.buildFromTemplate(items.map(item => {
+            if (typeof item === 'function') {
+              return item()
+            } else {
+              return {
+                label: item[0],
+                click () {
+                  setView(item[1])
+                }
+              }
+            }
+          }))
           menu.popup(electron.remote.getCurrentWindow(), {
             x: Math.round(rects.left * factor),
             y: Math.round(rects.bottom * factor) + 4,
@@ -218,4 +255,8 @@ function addCommand (id, cb) {
       }
     }
   }
+}
+
+function localeCompare (a, b) {
+  return a.localeCompare(b)
 }
