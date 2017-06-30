@@ -48,7 +48,7 @@
     "pull-pushable": "^2.0.1",
     "pull-stream": "~3.6.0",
     "scuttlebot": "github:ssbc/scuttlebot#fad838c961d0cecac69aa3aee2cb4c1189419032",
-    "secure-scuttlebutt": "github:ssbc/secure-scuttlebutt#1ccda7026b7b15509e3da63065dd0416077782ea",
+    "secure-scuttlebutt": "github:ssbc/secure-scuttlebutt#f1d451605ea42b1354226f39ae4fa0474ad4f163",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
     "ssb-about": "0.1.0",
