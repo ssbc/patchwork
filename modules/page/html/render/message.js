@@ -37,7 +37,11 @@ exports.create = function (api) {
     })
 
     api.sbot.async.get(id, (err, value) => {
-      if (err) return result.set(h('div', {className: 'Error'}, ['Cannot load thead']))
+      if (err) {
+        return result.set(h('PageHeading', [
+          h('h1', 'Cannot load thread. Root message missing.')
+        ]))
+      }
 
       if (typeof value.content === 'string') {
         value = api.message.sync.unbox(value)
