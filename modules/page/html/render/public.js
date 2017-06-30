@@ -157,8 +157,11 @@ exports.create = function (api) {
           classList: 'ProfileList'
         }, [
           map(ids, (id) => {
+            var connected = computed([connectedPeers, id], (peers, id) => peers.includes(id))
             return h('a.profile', {
-              classList: [ '-connected' ],
+              classList: [
+                when(connected, '-connected')
+              ],
               href: id
             }, [
               h('div.avatar', [api.about.html.image(id)]),
