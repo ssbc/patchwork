@@ -111,6 +111,10 @@ function setupContext (appName, opts, cb) {
 
   ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
 
+  // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
+  var id = ssbConfig.keys.id
+  ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${id.slice(1).replace('.ed25519', '')}`
+
   if (opts.server === false) {
     cb && cb()
   } else {
