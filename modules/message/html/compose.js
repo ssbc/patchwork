@@ -66,7 +66,7 @@ exports.create = function (api) {
       if (before && !before.endsWith(spacer)) before += spacer
       if (!after.startsWith(spacer)) after = spacer + after
 
-      textArea.value = `${before}![${file.name}](${file.link})${after}`
+      textArea.value = `${before}${embed}[${file.name}](${file.link})${after}`
       console.log('added:', file)
     })
 
