@@ -69,7 +69,11 @@ exports.create = function (api) {
       bumpFilter: function (msg) {
         if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
           var author = msg.value.author
-          return id === author || following().has(author)
+
+          // TODO: should normalize this channel
+          var channel = msg.value.content.channel
+          var isSubscribed = channel ? subscribedChannels().has(channel) : false
+          return isSubscribed || id === author || following().has(author)
         }
       },
       waitFor: computed([

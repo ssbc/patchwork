@@ -1,4 +1,5 @@
 var FlumeReduce = require('flumeview-reduce')
+var normalizeChannel = require('../lib/normalize-channel')
 
 module.exports = function (ssb, config) {
   return ssb._flumeUse('patchwork-channels', FlumeReduce(1, reduce, map))
@@ -22,11 +23,11 @@ function reduce (result, item) {
 }
 
 function map (msg) {
-  if (msg.value.content && typeof msg.value.content.channel === 'string') {
-    var channel = msg.value.content.channel
-    if (channel.length > 0 && channel.length < 30) {
+  if (msg.value.content) {
+    var channel = normalizeChannel(msg.value.content.channel)
+    if (channel) {
       return {
-        [channel.replace(/\s/g, '')]: {timestamp: msg.timestamp}
+        [channel]: {timestamp: msg.timestamp}
       }
     }
   }

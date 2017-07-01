@@ -4,6 +4,7 @@ var FlumeViewLevel = require('flumeview-level')
 var pullCat = require('pull-cat')
 var HLRU = require('hashlru')
 var extend = require('xtend')
+var normalizeChannel = require('../lib/normalize-channel')
 
 // HACK: pull it out of patchcore
 var getRoot = require('patchcore/message/sync/root').create().message.sync.root
@@ -195,8 +196,8 @@ module.exports = function (ssb, config) {
         cb(null, function (ids, msg) {
           return (
             ids.includes(msg.value.author) ||
-            checkFollowing(contacts, ids, msg.value.author) ||
-            checkChannel(subscriptions, ids, msg.value.content.channel)
+            checkChannel(subscriptions, ids, msg.value.content.channel) ||
+            checkFollowing(contacts, ids, msg.value.author)
           )
         })
       })
@@ -211,9 +212,9 @@ function checkFollowing (lookup, ids, target) {
 }
 
 function checkChannel (lookup, ids, channel) {
-  channel = typeof channel === 'string' ? channel.replace(/\s/g, '') : null
+  channel = normalizeChannel(channel)
   if (channel) {
-    var value = mostRecentValue(ids.map(id => lookup[`${id}:channel`]))
+    var value = mostRecentValue(ids.map(id => lookup[`${id}:${channel}`]))
     return value && value[1]
   }
 }
