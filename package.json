@@ -56,7 +56,7 @@
     "ssb-backlinks": "~0.4.0",
     "ssb-blobs": "~1.1.0",
     "ssb-contacts": "0.0.2",
-    "ssb-friends": "^2.0.3",
+    "ssb-friends": "^2.1.0",
     "ssb-keys": "~7.0.9",
     "ssb-mentions": "^0.4.0",
     "ssb-msgs": "^5.2.0",
