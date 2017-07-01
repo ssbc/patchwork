@@ -58,8 +58,11 @@ exports.create = function (api) {
       filesById[file.link] = file
 
       var embed = file.type.indexOf('image/') === 0 ? '!' : ''
+      var spacer = embed ? '\n' : ' '
+      var insertLink = `${spacer}${embed}[${file.name}](${file.link})${spacer}`
 
-      textArea.value += embed + `[${file.name}](${file.link})`
+      var pos = textArea.selectionStart
+      textArea.value = `${textArea.value.slice(0, pos)}${insertLink}${textArea.value.slice(pos)}`
       console.log('added:', file)
     })
 
