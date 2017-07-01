@@ -47,6 +47,12 @@ exports.create = function (api) {
         value = api.message.sync.unbox(value)
       }
 
+      if (!value) {
+        return result.set(h('PageHeading', [
+          h('h1', 'Cannot display message.')
+        ]))
+      }
+
       // what happens in private stays in private!
       meta.recps.set(value.content.recps)
 
