@@ -194,11 +194,9 @@ module.exports = function (ssb, config) {
       ssb.patchwork.getSubscriptions((err, subscriptions) => {
         if (err) return cb(err)
         cb(null, function (ids, msg) {
-          return (
-            ids.includes(msg.value.author) ||
-            checkChannel(subscriptions, ids, msg.value.content.channel) ||
-            checkFollowing(contacts, ids, msg.value.author)
-          )
+          var type = msg.value.content.type
+          var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, ids, msg.value.content.channel))
+          return ids.includes(msg.value.author) || matchesChannel || checkFollowing(contacts, ids, msg.value.author)
         })
       })
     })
