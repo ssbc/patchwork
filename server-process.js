@@ -3,6 +3,7 @@ var fs = require('fs')
 var Path = require('path')
 var electron = require('electron')
 var spawn = require('child_process').spawn
+var fixPath = require('fix-path')
 
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
@@ -20,6 +21,8 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-contacts'))
   //.use(require('ssb-ebt')) // enable at your own risk!
   .use(require('./sbot'))
+
+fixPath()
 
 module.exports = function (ssbConfig) {
   var context = {
