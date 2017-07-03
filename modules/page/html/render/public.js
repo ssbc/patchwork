@@ -96,7 +96,7 @@ exports.create = function (api) {
 
     function getSidebar () {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {
-        return Array.from(recent).filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
+        return recent.filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
       })
       return [
         h('button -pub -full', {

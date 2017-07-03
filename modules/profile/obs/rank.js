@@ -14,12 +14,12 @@ exports.create = function (api) {
     var result = computed([ids, recent], (ids, recent) => {
       var result = []
       ids.forEach((id) => {
-        if (recent.has(id)) {
+        if (recent.includes(id)) {
           result.push(id)
         }
       })
       ids.forEach((id) => {
-        if (!recent.has(id)) {
+        if (!recent.includes(id)) {
           result.push(id)
         }
       })
@@ -33,16 +33,4 @@ exports.create = function (api) {
 
     return result
   })
-}
-
-function compare (a, b, recent) {
-  var hasA = recent.has(a)
-  var hasB = recent.has(b)
-  if (hasA && hasB) {
-    return 0
-  } else if (hasA && !hasB) {
-    return -1
-  } else {
-    return 1
-  }
 }
