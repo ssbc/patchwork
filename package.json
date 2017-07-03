@@ -37,7 +37,7 @@
     "mutant-pull-reduce": "^1.1.0",
     "obv": "0.0.1",
     "packet-stream": "github:ssbc/packet-stream#c358f319390f9deaf2a015ae276fbdcc965cb4a8",
-    "patchcore": "~1.8.0",
+    "patchcore": "~1.8.1",
     "pull-abortable": "^4.1.0",
     "pull-defer": "^0.2.2",
     "pull-file": "~1.0.0",
