@@ -44,4 +44,15 @@ module.exports = function (ssbConfig) {
   process.on('exit', () => {
     gitSsb.kill()
   })
+  
+   // attempt to run ssb-notifier if it is installed and in path
+  var ssbNotifier = spawn('ssb-notifier', {
+    stdio: 'inherit'
+  })
+  ssbNotifier.on('error', () => {
+    console.log('ssb-notifier is not installed, or not available in path')
+  })
+  process.on('exit', () => {
+    ssbNotifier.kill()
+  })
 }
