@@ -4,6 +4,7 @@ var Roots = require('./roots')
 var Progress = require('./progress')
 var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
+var LiveBacklinks = require('./live-backlinks')
 
 exports.name = 'patchwork'
 exports.version = require('../package.json').version
@@ -16,7 +17,12 @@ exports.manifest = {
   progress: 'source',
   recentFeeds: 'source',
   getSubscriptions: 'async',
-  getChannels: 'async'
+  getChannels: 'async',
+  liveBacklinks: {
+    subscribe: 'sync',
+    unsubscribe: 'sync',
+    stream: 'source'
+  }
 }
 
 exports.init = function (ssb, config) {
@@ -36,6 +42,7 @@ exports.init = function (ssb, config) {
     recentFeeds: recentFeeds.stream,
     linearSearch: search.linear,
     getSubscriptions: subscriptions.get,
-    getChannels: channels.get
+    getChannels: channels.get,
+    liveBacklinks: LiveBacklinks(ssb, config)
   }
 }
