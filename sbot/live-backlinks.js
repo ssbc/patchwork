@@ -4,11 +4,9 @@ module.exports = function (ssb, config) {
   return {
     subscribe: function (id) {
       subscriptions.add(id)
-      console.log('subscribe', id)
     },
     unsubscribe: function (id) {
       subscriptions.delete(id)
-      console.log('unsubscribe', id)
     },
     stream: function (id) {
       return pull(
