@@ -5,6 +5,7 @@ var computed = require('mutant/computed')
 var resolve = require('mutant/resolve')
 var pull = require('pull-stream')
 var onceIdle = require('mutant/once-idle')
+var sorted = require('sorted-array-functions')
 
 exports.needs = nest({
   'sbot.pull.backlinks': 'first',
@@ -65,7 +66,7 @@ exports.create = function (api) {
           }),
           pull.drain((msg) => {
             var value = resolve(collection)
-            value.push(msg)
+            sorted.add(value, msg, compareAsserted)
             collection.set(value)
           }, () => {
             sync.set(true)
@@ -116,5 +117,27 @@ exports.create = function (api) {
 
   function unsubscribe (id) {
     onceTrue(api.sbot.obs.connection(), (sbot) => sbot.patchwork.liveBacklinks.unsubscribe(id))
+  }
+}
+
+function compareAsserted (a, b) {
+  if (isReplyTo(a, b)) {
+    return -1
+  } else if (isReplyTo(b, a)) {
+    return 1
+  } else {
+    return a.value.timestamp - b.value.timestamp
+  }
+}
+
+function isReplyTo (maybeReply, msg) {
+  return (includesOrEquals(maybeReply.branch, msg.key))
+}
+
+function includesOrEquals (array, value) {
+  if (Array.isArray(array)) {
+    return array.includes(value)
+  } else {
+    return array === value
   }
 }
