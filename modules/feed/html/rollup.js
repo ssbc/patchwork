@@ -163,7 +163,7 @@ exports.create = function (api) {
         var value = bumpFilter(msg)
         if (value) {
           var type = typeof value === 'string' ? value : getType(msg)
-          ;(groupedBumps[type] = groupedBumps[type] || []).push(msg)
+          ;(groupedBumps[type] = groupedBumps[type] || []).unshift(msg)
           lastBumpType = type
         }
       })
@@ -295,13 +295,6 @@ function getLikeAuthors (items) {
     }
     return result
   }, new Set())
-}
-
-function isUpdate (msg) {
-  if (msg.value && msg.value.content) {
-    var type = msg.value.content.type
-    return type === 'about'
-  }
 }
 
 function isReply (msg) {
