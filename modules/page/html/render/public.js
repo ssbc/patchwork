@@ -1,6 +1,7 @@
 var nest = require('depnest')
 var extend = require('xtend')
 var pull = require('pull-stream')
+var normalizeChannel = require('../../../../lib/normalize-channel')
 var { h, send, when, computed, map } = require('mutant')
 
 exports.needs = nest({
@@ -68,10 +69,11 @@ exports.create = function (api) {
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
       bumpFilter: function (msg) {
         if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
-          var author = msg.value.author
+          var type = msg.value.content.type
+          if (type === 'vote') return false
 
-          // TODO: should normalize this channel
-          var channel = msg.value.content.channel
+          var author = msg.value.author
+          var channel = normalizeChannel(msg.value.content.channel)
           var isSubscribed = channel ? subscribedChannels().has(channel) : false
           return isSubscribed || id === author || following().has(author)
         }
