@@ -48,7 +48,7 @@
     "pull-pushable": "^2.0.1",
     "pull-stream": "~3.6.0",
     "scuttlebot": "^10.4.2",
-    "secret-stack": "github:ssbc/secret-stack#901c79c841d9a4ee771ce6d9f3951459f8f8079b",
+    "secret-stack": "github:ssbc/secret-stack#7b0e9c1bebc675a25f78cd9315e01b0b97c506f2",
     "secure-scuttlebutt": "^16.3.7",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
