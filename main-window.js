@@ -60,7 +60,7 @@ module.exports = function (config) {
   ])
 
   var pendingCount = computed([
-    views.get('/public').pendingUpdates,
+    views.get('/mentions').pendingUpdates,
     views.get('/private').pendingUpdates
   ], (...counts) => {
     return counts.reduce((a, b) => a + b)
