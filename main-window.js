@@ -59,11 +59,7 @@ module.exports = function (config) {
     '/public', '/private', id, '/mentions'
   ])
 
-  var pendingCount = computed([
-    views.get('/mentions').pendingUpdates
-  ], (...counts) => {
-    return counts.reduce((a, b) => a + b)
-  })
+  var pendingCount = views.get('/mentions').pendingUpdates
 
   watch(pendingCount, count => {
     electron.remote.app.setBadgeCount(count)
