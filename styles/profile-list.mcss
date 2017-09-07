@@ -4,11 +4,11 @@ ProfileList {
     padding: 4px;
     font-size: 110%;
     margin: 4px 0;
-    background: rgba(255, 255, 255, 0.74);
-    border-radius: 5px;
+    background: #2d2c2c;
+    border-radius: 3px;
     position: relative
     text-decoration: none
-    transition: background-color 0.2s
+    transition: background-color 0.25s
 
     background-repeat: no-repeat
     background-position: right
@@ -24,7 +24,7 @@ ProfileList {
     @svg connected {
       width: 20px
       height: 12px
-      content: "<circle cx='6' stroke='none' fill='green' cy='6' r='5' />"
+      content: "<circle cx='6' stroke='none' fill='#45b754' cy='6' r='5' />"
     }
 
     @svg following {
@@ -34,7 +34,7 @@ ProfileList {
     }
 
     :hover {
-      background-color: rgba(255, 255, 255, 0.4);
+      background-color: #434141;
     }
 
     div.avatar {
@@ -42,6 +42,7 @@ ProfileList {
         width: 40px
         height: 40px
         display: block
+        border-radius: 3px
       }
     }
 
@@ -54,9 +55,7 @@ ProfileList {
       min-width: 0px
       div.name {
         white-space: nowrap
-        font-weight: bold
-        font-size: 110%
-        color: #636363
+        color: #ccc
         -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0))
       }
     }

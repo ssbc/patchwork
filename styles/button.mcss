@@ -3,7 +3,7 @@ button {
   padding: 3px 6px;
   background: white;
   border: 2px solid #DDD;
-  border-radius: 4px;
+  border-radius: 3px;
   font-size: 130%
   cursor: pointer
 
@@ -33,9 +33,17 @@ button {
   }
 
   -pub {
-    color: #6a7e6a;
-    background-color: #ecfff0;
-    border-color: #8ba289;
+    color: #aaa
+    background-color: #2d2c2c
+    border: 0
+    margin-top: 0
+    padding: 10px
+    transition: background-color 0.25s ease, color 0.25s ease
+
+    :hover {
+      color: white
+      background-color: #45b754
+    }
   }
 
   -save {
@@ -57,6 +65,6 @@ button {
   -full {
     display: block
     width: 100%
-    margin: 15px 0
+    margin: 0 0 15px
   }
 }

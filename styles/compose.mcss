@@ -6,8 +6,9 @@ Compose {
   width: 100%
 
   margin: 20px auto;
-  border: 1px solid gainsboro
-  background: white
+  box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
+  border-radius: 3px
+  background: #2d2c2c
 
   textarea {
     resize: vertical
@@ -15,9 +16,16 @@ Compose {
     background: transparent
     border: none
     padding: 10px
+    color: #ccc
     [disabled] {
       color: #AAA;
       background: #ebf7ee;
+    }
+    :focus {
+      outline: 0
+    }
+    ::-webkit-input-placeholder {
+      color: #757474
     }
   }
 
@@ -54,7 +62,7 @@ Compose {
         padding: 3px 6px;
         background: white;
         border: 2px solid #DDD;
-        border-radius: 4px;
+        border-radius: 3px;
         cursor: pointer
         padding-top: .3rem
         content: '📎 Attach File'
@@ -75,7 +83,6 @@ Compose {
     textarea {
       height: 200px
       transition: height .15s ease-out
-      border-bottom: 1px solid gainsboro
     }
 
     section.actions {

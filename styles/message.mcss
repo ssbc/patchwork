@@ -1,7 +1,7 @@
 Message {
   display: flex
   flex-direction: column
-  background: white
+  background: transparent
   position: relative
   font-size: 120%
   line-height: 1.4
@@ -92,6 +92,7 @@ Message {
 
       a.avatar {
         img {
+          border-radius: 3px
           width: 50px
           height: 50px
         }
@@ -100,12 +101,16 @@ Message {
       div.main {
         div.name {
           a {
-            color: #444
+            color: #757474
             font-weight: bold
+
+            :hover {
+              color: #aaa
+            }
           }
         }
         div.meta {
-          font-size: 90%
+          font-size: 75%
         }
         margin-left: 10px
       }
@@ -144,12 +149,11 @@ Message {
       }
 
       a.channel {
-        font-weight: bold;
+        font-size: 75%;
       }
 
       a.likes {
-        color: #286bc3;
-        font-size:90%;
+        font-size: 75%;
       }
 
       span.private {

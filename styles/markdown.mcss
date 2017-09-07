@@ -64,4 +64,20 @@ Markdown {
     align-content: center;
     margin-bottom: -0.3em;
   }
+
+  p {
+    a {
+      color: #6f74e5
+      :hover {
+        text-decoration: underline;
+      }
+      [href^="@"] {
+        color: #45b754
+        border-bottom: 1px dotted #45b754
+        :hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
 }

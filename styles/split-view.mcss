@@ -10,8 +10,8 @@ SplitView {
   div.side {
     width: 280px;
     padding: 20px;
-    background: linear-gradient(81deg, #d6ecff, rgb(248, 253, 253));
-    border-right: 1px solid #dcdcdc;
+    background: #383736;
+    border-right: 1px solid #2d2c2c;
     overflow-y: auto;
 
     -right {
@@ -23,9 +23,8 @@ SplitView {
     h2 {
       margin-top: 20px
       margin-bottom: 8px
-      color: #527b90;
-      text-shadow: 0px 0px 3px #fff;
-      font-weight: normal;
+      color: #6e6d6d;
+      font-weight: lighter;
       span.sub {
         font-weight: normal
         font-size: 90%
