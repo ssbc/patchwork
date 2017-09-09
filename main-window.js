@@ -19,6 +19,7 @@ module.exports = function (config) {
     addCommand('app.navigate', setView),
     require('./modules'),
     require('./plugs'),
+    require('patch-settings'),
     require('patchcore'),
     require('./overrides')
   )
@@ -37,7 +38,8 @@ module.exports = function (config) {
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first',
     'app.navigate': 'first',
-    'channel.obs.subscribed': 'first'
+    'channel.obs.subscribed': 'first',
+    'settings.obs.get': 'first',
   }))
 
   setupContextMenuAndSpellCheck(api.config.sync.load())
@@ -65,7 +67,15 @@ module.exports = function (config) {
     electron.remote.app.setBadgeCount(count)
   })
 
-  insertCss(require('./styles'))
+
+  watch(api.settings.obs.get('patchwork.theme', 'light'), name => {
+    Array.from(document.head.children)
+      .filter(c => c.tagName == 'STYLE')
+      .forEach(c => c.innerText = '')
+
+    const theme = require('./styles')[name]
+    insertCss(theme)
+  })
 
   var container = h(`MainWindow -${process.platform}`, [
     h('div.top', [
@@ -85,7 +95,8 @@ module.exports = function (config) {
         dropTab('More', [
           getSubscribedChannelMenu,
           ['Gatherings', '/gatherings'],
-          ['Extended Network', '/all']
+          ['Extended Network', '/all'],
+          ['Settings', '/settings']
         ])
       ]),
       h('span.appTitle', [
