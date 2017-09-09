@@ -1,0 +1,67 @@
+Markdown {
+  word-break: break-word
+  (img) {
+    -pending {
+      border: 1px solid #DDD
+      background-color: #EEE
+      width: 120px
+      height: 40px
+      background-image: svg(fetching)
+      background-position: center
+      background-repeat: no-repeat
+
+      @svg fetching {
+        width: 100px
+        height: 20px
+        content: '<text x='0' y='12'>Fetching image...</text>'
+        text {
+          font: caption
+          font-size: 12px
+        }
+      }
+    }
+  }
+
+  (table) {
+    margin: 10px 0
+    border-collapse: collapse
+    (th) {
+      text-align: left
+      border-bottom: 1px solid #DDD
+      padding: 3px
+    }
+    (td) {
+      padding: 3px
+    }
+  }
+
+  (blockquote) {
+    margin: 1rem 0;
+    padding: 5px 20px;
+    border-left: 4px gainsboro solid;
+    background: #fafafa;
+    color: #7c7c7c;
+  }
+  (hr) {
+    border: none;
+    border-top: 1px solid #7e7e7e;
+  }
+  (pre) {
+    overflow: auto;
+    padding: 10px;
+    background: #fbfbfb;
+    border: 1px solid #EEE;
+    max-height: 300px;
+  }
+  (ul) {
+    (p) {
+      margin: 0;
+    }
+  }
+  (img.emoji) {
+    width: 1.5em;
+    height: 1.5em;
+    align-content: center;
+    margin-bottom: -0.3em;
+  }
+}

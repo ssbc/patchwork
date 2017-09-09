@@ -1,0 +1,50 @@
+SuggestBox {
+  width: max-content;
+  max-height: 50vh;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px gainsboro solid;
+  z-index: 1000
+
+  padding: .2rem .5rem;
+  margin-top: .35rem;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+
+      padding-right: .2rem;
+      margin-bottom: .2rem;
+      cursor: pointer
+
+      img {
+        height: 36px;
+        width: 36px;
+        padding: .2rem;
+      }
+
+      strong {
+        flex-grow: 1;
+        margin-left: .5rem;
+        font-weight: 300;
+      }
+
+      small {
+        font-family: monospace;
+        margin-left: .5rem;
+        padding-right: .2rem;
+        font-size: 1rem;
+      }
+    }
+
+    li.selected {
+      color: #fff;
+      background: #0caaf9;
+    }
+  }
+
+}
