@@ -1,0 +1,104 @@
+Compose {
+  display: flex
+  flex-direction: column
+  flex-shrink: 0
+  max-width: 700px
+  width: 100%
+
+  margin: 20px auto;
+  box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
+  border-radius: 3px
+  background: #2d2c2c
+
+  textarea {
+    resize: vertical
+    font-size: 120%
+    background: transparent
+    border: none
+    padding: 10px
+    color: #ccc
+    [disabled] {
+      color: #AAA;
+      background: #ebf7ee;
+    }
+    :focus {
+      outline: 0
+    }
+    ::-webkit-input-placeholder {
+      color: #757474
+    }
+  }
+
+  section.actions {
+    display: flex
+    flex-direction: row
+    align-items: baseline
+    justify-content: space-between
+    background: #fafafa
+
+    padding: .4rem
+
+    input[type="file"] {
+      padding: .5rem 0
+
+      width: 95px
+      height: 29px
+
+      color: transparent
+
+      :hover {
+        ::before {
+          color: black
+          border-color: #8B8B8B
+        }
+      }
+
+      ::-webkit-file-upload-button {
+        display: none
+      }
+
+      ::before {
+        color: #5f5f5f;
+        padding: 3px 6px;
+        background: white;
+        border: 2px solid #DDD;
+        border-radius: 3px;
+        cursor: pointer
+        padding-top: .3rem
+        content: '📎 Attach File'
+        font-size: 1rem
+        outline: none
+        white-space: nowrap
+        -webkit-user-select: none
+      }
+
+      :active, :focus {
+        outline: none
+        box-shadow: none
+      }
+    }
+  }
+
+  -expanded {
+    textarea {
+      height: 200px
+      transition: height .15s ease-out
+    }
+
+    section.actions {
+      display: flex
+    }
+  }
+
+  -contracted {
+    textarea {
+      height: 50px
+      transition: height .15s ease-in
+    }
+
+    section.actions {
+      display: none
+    }
+  }
+
+}
