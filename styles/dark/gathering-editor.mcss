@@ -1,0 +1,35 @@
+GatheringEditor {
+  display: flex
+  flex-direction: column
+  input.date {
+    background: white;
+    font-size: 150%;
+    color: #333;
+    padding: 10px;
+    height: auto;
+    margin-top: 10px;
+  }
+  div.banner {
+    margin-top: 10px
+    border: 1px solid #AAA
+    box-shadow: none
+    height: 250px
+    width: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  }
+  input {
+    border: 1px solid #CCC
+    font-size: 150%
+    padding: 10px
+  }
+  textarea {
+    resize: vertical
+    margin-top: 10px
+    border: 1px solid #CCC
+    padding: 10px
+    font-size: 120%
+    flex: 1
+  }
+}

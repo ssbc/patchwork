@@ -1,0 +1,7 @@
+SearchPage {
+  section.content {
+    div.result {
+      margin: 10px 0
+    }
+  }
+}
