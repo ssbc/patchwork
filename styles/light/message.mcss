@@ -1,0 +1,233 @@
+Message {
+  display: flex
+  flex-direction: column
+  background: white
+  position: relative
+  font-size: 120%
+  line-height: 1.4
+  flex-shrink: 0
+
+  (highlight) {
+    background-color: yellow
+  }
+
+  :focus {
+    z-index: 1
+  }
+
+  -data {
+    header {
+      div.main {
+        font-size: 80%
+        a.avatar {
+          img {
+            width: 25px
+          }
+        }
+      }
+    }
+    (pre) {
+      overflow: auto
+      max-height: 200px
+    }
+  }
+
+  -mini {
+    header {
+      font-size: 100%
+      margin-bottom: 15px
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+
+  -reply {
+    header {
+      font-size: 100%
+      div.meta {
+        a.channel {
+          display: none;
+        }
+        span.private {
+          (img) {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+
+  -new {
+    box-shadow: 0 0 1px #ffc600;
+    z-index: 1;
+  }
+
+  header {
+    font-size: 120%
+    margin: 15px 20px 0
+    display: flex
+
+    div.mini {
+      flex: 1
+    }
+
+    div.main {
+      display: flex
+      flex: 1
+
+      a.avatar {
+        img {
+          width: 50px
+          height: 50px
+        }
+      }
+
+      div.main {
+        div.name {
+          a {
+            color: #444
+            font-weight: bold
+          }
+        }
+        div.meta {
+          font-size: 90%
+        }
+        margin-left: 10px
+      }
+    }
+
+    div.meta {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: flex-end;
+      justify-content: flex-end;
+
+      span.flag {
+        width: 12px
+        height: 12px
+
+        background-repeat: no-repeat
+        background-position: center
+        display: inline-block
+        vertical-align: middle;
+        margin-top: -3px;
+
+        -new {
+          background-image: svg(new)
+        }
+
+        @svg new {
+          width: 12px
+          height: 12px
+          content: "<circle cx='6' stroke='none' fill='#ffcf04' cy='6' r='5' />"
+        }
+      }
+
+      em {
+        display: inline-block
+        padding: 4px
+      }
+
+      a.channel {
+        font-weight: bold;
+      }
+
+      a.likes {
+        color: #286bc3;
+        font-size:90%;
+      }
+
+      span.private {
+        display: inline-block;
+        margin: -3px -3px 3px 4px;
+        border: 4px solid #525050;
+        position: relative;
+
+        a {
+          display: inline-block
+
+          img {
+            margin: 0
+            vertical-align: bottom
+            border: none
+          }
+        }
+
+        :after {
+          content: 'private';
+          position: absolute;
+          background: #525050;
+          bottom: 0;
+          left: -1px;
+          font-size: 10px;
+          padding: 2px 4px 0 2px;
+          border-top-right-radius: 5px;
+          color: white;
+          font-weight: bold;
+          pointer-events: none;
+          white-space: nowrap
+        }
+      }
+    }
+  }
+
+  section {
+    margin: 0
+    padding: 0 20px
+    (img) {
+      max-width: 100%
+    }
+  }
+
+  a.backlink {
+    display: block;
+    border-top: 1px solid #EEE;
+    padding: 10px 15px;
+    background: #ffffff;
+    color: #8f8f8f;
+    margin-top: -1px;
+    font-size: 9pt;
+
+    :hover {
+      text-decoration: none
+      color: #777
+    }
+  }
+
+  footer {
+    margin: 5px 0 20px;
+    padding: 0 20px
+
+    div.actions {
+      a {
+        opacity: 0.4
+        transition: opacity 0.2s
+        font-weight: bold
+        color: #333
+
+        :hover {
+          opacity: 1
+          text-decoration: none;
+        }
+      }
+      a + a {
+        margin-left: 25px;
+      }
+    }
+  }
+}

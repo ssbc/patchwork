@@ -1,0 +1,36 @@
+ProfileHeader {
+  display: flex;
+  width: 100%;
+  max-width: 700px;
+  margin: 20px auto;
+
+  div.image {
+    width: 200px;
+    max-height: 200px;
+    padding: 5px;
+    background: white;
+    box-shadow: 0 0 10px #AAA;
+    margin-right: 20px;
+    img {
+      width: 100%
+    }
+  }
+
+  div.main {
+    flex: 1
+    div.title {
+      display: flex
+      h1 {
+        flex: 1
+      }
+    }
+    section {
+      -description {
+        font-size: 120%
+        max-height: 350px
+        overflow: auto
+        -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
+      }
+    }
+  }
+}

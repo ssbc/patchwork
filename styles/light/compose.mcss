@@ -1,0 +1,97 @@
+Compose {
+  display: flex
+  flex-direction: column
+  flex-shrink: 0
+  max-width: 700px
+  width: 100%
+
+  margin: 20px auto;
+  border: 1px solid gainsboro
+  background: white
+
+  textarea {
+    resize: vertical
+    font-size: 120%
+    background: transparent
+    border: none
+    padding: 10px
+    [disabled] {
+      color: #AAA;
+      background: #ebf7ee;
+    }
+  }
+
+  section.actions {
+    display: flex
+    flex-direction: row
+    align-items: baseline
+    justify-content: space-between
+    background: #fafafa
+
+    padding: .4rem
+
+    input[type="file"] {
+      padding: .5rem 0
+
+      width: 95px
+      height: 29px
+
+      color: transparent
+
+      :hover {
+        ::before {
+          color: black
+          border-color: #8B8B8B
+        }
+      }
+
+      ::-webkit-file-upload-button {
+        display: none
+      }
+
+      ::before {
+        color: #5f5f5f;
+        padding: 3px 6px;
+        background: white;
+        border: 2px solid #DDD;
+        border-radius: 4px;
+        cursor: pointer
+        padding-top: .3rem
+        content: '📎 Attach File'
+        font-size: 1rem
+        outline: none
+        white-space: nowrap
+        -webkit-user-select: none
+      }
+
+      :active, :focus {
+        outline: none
+        box-shadow: none
+      }
+    }
+  }
+
+  -expanded {
+    textarea {
+      height: 200px
+      transition: height .15s ease-out
+      border-bottom: 1px solid gainsboro
+    }
+
+    section.actions {
+      display: flex
+    }
+  }
+
+  -contracted {
+    textarea {
+      height: 50px
+      transition: height .15s ease-in
+    }
+
+    section.actions {
+      display: none
+    }
+  }
+
+}

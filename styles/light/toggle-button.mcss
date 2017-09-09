@@ -1,0 +1,42 @@
+ToggleButton {
+  font-size: 90%;
+  background: rgb(112, 112, 112);
+  border: 2px solid #313131;
+  transition: opacity 0.2s;
+  opacity: 0.6;
+  padding: 6px 12px;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+  display: block;
+
+  -subscribe {
+    background-color: rgb(88, 171, 204);
+    border-color: #20699c;
+  }
+
+  -unsubscribe {
+    background-repeat: no-repeat
+    background-position: right
+    background-image: svg(subscribed)
+    padding-right: 25px
+  }
+
+  -disabled {
+    cursor: default
+    opacity: 0.4 !important
+    text-decoration: none !important
+  }
+
+  :hover {
+    opacity: 1
+    text-decoration: none
+  }
+
+  @svg subscribed {
+    width: 20px
+    height: 12px
+    content: "<circle cx='6' stroke='#FFF' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#FFF'/>"
+  }
+}
