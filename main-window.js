@@ -67,17 +67,15 @@ module.exports = function (config) {
     electron.remote.app.setBadgeCount(count)
   })
 
-  watch(api.settings.obs.get('theme'), applyTheme)
-  function applyTheme (name) {
+
+  watch(api.settings.obs.get('patchwork.theme', 'light'), name => {
     Array.from(document.head.children)
       .filter(c => c.tagName == 'STYLE')
-      .forEach(c => c.remove())
+      .forEach(c => c.innerText = '')
 
-    console.log('theme name', name)
-    name = name || 'light'
-
-    insertCss(require('./styles')[name])
-  }
+    const theme = require('./styles')[name]
+    insertCss(theme)
+  })
 
   var container = h(`MainWindow -${process.platform}`, [
     h('div.top', [
@@ -97,7 +95,7 @@ module.exports = function (config) {
         dropTab('More', [
           getSubscribedChannelMenu,
           ['Gatherings', '/gatherings'],
-          ['Extended Network', '/all']
+          ['Extended Network', '/all'],
           ['Settings', '/settings']
         ])
       ]),

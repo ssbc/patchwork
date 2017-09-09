@@ -1,4 +1,4 @@
-var { h } = require('mutant')
+var { h, computed } = require('mutant')
 var nest = require('depnest')
 
 var themeNames = Object.keys(require('../../../../styles'))
@@ -14,8 +14,7 @@ exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (path !== '/settings') return
 
-    var id = api.keys.sync.id()
-    var following = api.contact.obs.following(id)
+    const currentTheme = api.settings.obs.get('patchwork.theme')
 
     var prepend = [
       h('PageHeading', [
@@ -31,10 +30,19 @@ exports.create = function (api) {
         h('section.content', [
           h('section', [
             h('h2', 'Theme'),
-            themeNames.map(name => {
-              return h('button', {
-                'ev-click': () => api.settings.sync.set({ theme: name })
-              }, name)
+            computed(currentTheme, currentTheme => {
+              return themeNames.map(name => {
+                const style = currentTheme == name
+                  ? { 'margin-right': '1rem', 'border-color': 'teal' }
+                  : { 'margin-right': '1rem' }
+
+                return h('button', {
+                  'ev-click': () => api.settings.sync.set({ 
+                    patchwork: {theme: name}
+                  }),
+                  style
+                }, name)
+              })
             })
           ])
         ])
