@@ -66,14 +66,20 @@ Markdown {
   }
 
   p {
-    a {
+    (a) {
       color: #6f74e5
       :hover {
         text-decoration: underline;
       }
       [href^="@"] {
-        color: #45b754
-        border-bottom: 1px dotted #45b754
+        color: #efef00
+        border-bottom: 1px dotted #efef00
+        :hover {
+          text-decoration: none;
+        }
+      }
+      [href^="#"] {
+        color: #c1cdf0
         :hover {
           text-decoration: none;
         }

@@ -1,7 +1,7 @@
 Message {
   display: flex
   flex-direction: column
-  background: transparent
+  background: #383736
   position: relative
   font-size: 120%
   line-height: 1.4
@@ -79,7 +79,7 @@ Message {
 
   header {
     font-size: 120%
-    margin: 15px 20px 0
+    margin: 20px 20px 0
     display: flex
 
     div.mini {
@@ -150,10 +150,18 @@ Message {
 
       a.channel {
         font-size: 75%;
+
+        :hover {
+          color: #c1cdf0
+        }
       }
 
       a.likes {
         font-size: 75%;
+
+        :hover {
+          color: #ff2f92
+        }
       }
 
       span.private {
@@ -218,19 +226,43 @@ Message {
     padding: 0 20px
 
     div.actions {
-      a {
-        opacity: 0.4
-        transition: opacity 0.2s
-        font-weight: bold
-        color: #333
-
+      a.like {
+        :before {
+          content: "❤ "
+        }
         :hover {
-          opacity: 1
-          text-decoration: none;
+          background: #ff2f92
+        }
+      }
+      a.unlike {
+        :before {
+          content: ""
+        }
+        :hover {
+          background: #434141
+        }
+      }
+      a {
+        font-size: 13px
+        background: #2d2c2c
+        padding: 6px 10px
+        border-radius: 3px
+        color: #ccc
+        min-width: 60px
+        display: inline-block
+        text-align: center
+        transition: background-color 0.25s ease, color 0.25s ease
+
+        :before {
+          content: "↩ "
+        }
+        :hover {
+          background: #45b754
+          color: white
         }
       }
       a + a {
-        margin-left: 25px;
+        margin-left: 10px;
       }
     }
   }

@@ -16,7 +16,6 @@ FeedEvent {
   }
 
   div + div {
-    border-top: 1px solid #EEE
   }
 
   div {
@@ -26,9 +25,7 @@ FeedEvent {
   a.full {
     display: block;
     padding: 10px;
-    background: #f3fafd;
-    border-top: 1px solid #bbc9d2;
-    border-bottom: 1px solid #bbc9d2;
+    background: #2d2c2c;
     text-align: center;
   }
 
@@ -36,20 +33,23 @@ FeedEvent {
     font-size: 100%
     display: flex
     flex-direction: column
+    border-top: 1px solid #2d2c2c
+
     div {
       flex: 1
       margin: 0
     }
 
     div + div {
-      border-top: 1px solid #EEE
+      border-top: 1px solid #2d2c2c
     }
   }
 
   div.meta {
     font-size: 100%
-    padding: 10px 20px
-    opacity: 0.8
+    color: #757474
+    padding: 8px 20px
+    text-align: right
   }
 
 }
