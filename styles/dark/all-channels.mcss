@@ -10,20 +10,32 @@ AllChannels {
     padding: 8px 10px;
     font-size: 110%;
     margin: 4px;
-    background: rgba(255, 255, 255, 0.66);
-    color: #333;
+    background: #2d2c2c;
+    color: #ccc;
     border-radius: 3px;
     position: relative
-    transition: background-color 0.2s
+    transition: background-color 0.25s
     width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
 
     background-repeat: no-repeat
     background-position: right
 
+    -more {
+      background-color: transparent
+      color: #6e6d6d
+
+      :hover {
+        background-color: transparent
+        color: #ccc
+      }
+    }
+
     -subscribed {
       background-image: svg(subscribed)
+      border-left: 2px solid #51c067;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+
       span.name {
         font-weight: bold
       }
@@ -36,7 +48,7 @@ AllChannels {
     }
 
     :hover {
-      background: rgba(255, 255, 255, 0.4);
+      background: #383736;
       text-decoration: none;
       a {
         transition: opacity 0.05s
@@ -59,7 +71,6 @@ AllChannels {
       padding: 9px 10px;
       color: white;
       border-radius: 3px;
-      font-weight: bold;
       margin: -8px -10px -8px 4px;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
@@ -68,7 +79,7 @@ AllChannels {
 
       -subscribe {
         :hover {
-          background-color: rgb(112, 184, 212);
+          background-color: #51c067;
         }
       }
 
@@ -79,5 +90,4 @@ AllChannels {
       }
     }
   }
-}
 }
