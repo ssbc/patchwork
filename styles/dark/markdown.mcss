@@ -2,13 +2,13 @@ Markdown {
   word-break: break-word
   (img) {
     -pending {
-      border: 1px solid #DDD
-      background-color: #EEE
+      background-color: #2d2c2c
       width: 120px
       height: 40px
       background-image: svg(fetching)
       background-position: center
       background-repeat: no-repeat
+      border-radius: 3px
 
       @svg fetching {
         width: 100px
@@ -17,6 +17,7 @@ Markdown {
         text {
           font: caption
           font-size: 12px
+          fill: #757474
         }
       }
     }
@@ -44,7 +45,8 @@ Markdown {
   }
   (hr) {
     border: none;
-    border-top: 1px solid #7e7e7e;
+    border-top: 1px solid #2d2c2c
+    margin: 1em 0
   }
   (pre) {
     overflow: auto;

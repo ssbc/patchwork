@@ -34,7 +34,7 @@ Compose {
     flex-direction: row
     align-items: baseline
     justify-content: space-between
-    background: #fafafa
+    background: #383736
 
     padding: .4rem
 
@@ -48,8 +48,7 @@ Compose {
 
       :hover {
         ::before {
-          color: black
-          border-color: #8B8B8B
+          color: #ccc
         }
       }
 
@@ -58,13 +57,10 @@ Compose {
       }
 
       ::before {
-        color: #5f5f5f;
+        color: #6e6d6d;
         padding: 3px 6px;
-        background: white;
-        border: 2px solid #DDD;
-        border-radius: 3px;
+        background: transparent;
         cursor: pointer
-        padding-top: .3rem
         content: '📎 Attach File'
         font-size: 1rem
         outline: none
