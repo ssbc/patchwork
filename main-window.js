@@ -73,7 +73,8 @@ module.exports = function (config) {
       .filter(c => c.tagName == 'STYLE')
       .forEach(c => c.innerText = '')
 
-    const theme = require('./styles')[name]
+    var theme = require('./styles')[name]
+    if (!theme) theme = require('./styles')['light']
     insertCss(theme)
   })
 

@@ -21,6 +21,33 @@ Compose {
     }
   }
 
+  section.warning {
+    color: #fff
+    font-size: 1.2rem
+    background-color: #ff00b6
+
+    height: 0
+    padding: 0 .5rem
+    transition: all ease-in .1s
+
+    display: flex
+    justify-content: space-between
+
+
+    -open {
+      padding: .5rem
+      height: initial
+    }
+
+    i.fa { margin-right: .5rem }
+    div.warning {
+      strong { margin-right: .3rem }
+    }
+    div.close {
+      cursor: pointer
+    }
+  }
+
   section.actions {
     display: flex
     flex-direction: row
