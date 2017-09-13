@@ -1,15 +1,16 @@
 button {
-  color: #5f5f5f;
-  padding: 3px 6px;
-  background: white;
-  border: 2px solid #DDD;
-  border-radius: 3px;
-  font-size: 130%
+  color: #ccc
+  padding: 8px 10px
+  background: #2d2c2c
+  border: 0
+  border-radius: 3px
+  font-size: 13px
   cursor: pointer
+  transition: background-color 0.25s ease, color 0.25s ease
 
   :hover {
-    color: black
-    border-color: #8B8B8B
+    color: white
+    border-color: #434141
   }
 
   :focus {

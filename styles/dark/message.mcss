@@ -248,7 +248,6 @@ Message {
         padding: 6px 10px
         border-radius: 3px
         color: #ccc
-        min-width: 60px
         display: inline-block
         text-align: center
         transition: background-color 0.25s ease, color 0.25s ease

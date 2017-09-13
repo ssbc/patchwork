@@ -35,15 +35,13 @@ Compose {
     align-items: baseline
     justify-content: space-between
     background: #383736
-
-    padding: .4rem
+    padding: 10px
+    border-bottom-left-radius: 3px
+    border-bottom-right-radius: 3px
 
     input[type="file"] {
-      padding: .5rem 0
-
-      width: 95px
-      height: 29px
-
+      width: 85px
+      height: 20px
       color: transparent
 
       :hover {
@@ -71,6 +69,12 @@ Compose {
       :active, :focus {
         outline: none
         box-shadow: none
+      }
+    }
+
+    button {
+      :hover {
+        background: #6f74e5
       }
     }
   }
