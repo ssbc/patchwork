@@ -98,7 +98,7 @@ exports.create = function (api) {
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
             refresh()
           } else {
-            updates.set(updates() + 1)
+            updates.set(newSinceRefresh.size)
           }
         })
       )
