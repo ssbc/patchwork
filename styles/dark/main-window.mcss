@@ -168,7 +168,7 @@ MainWindow {
         bottom: 0;
         left: 0;
         right: 0;
-        background: white;
+        background: #2d2c2c;
         margin-top: -3px;
         opacity: 1;
         transition: opacity 0.1s;

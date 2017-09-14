@@ -16,8 +16,8 @@ SplitView {
 
     -right {
       border: none
-      border-left: 1px solid #dcdcdc
-      background: linear-gradient(100deg, #ffffff, #f9ecca);
+      border-left: 1px solid #2d2c2c
+      background: #383736
     }
 
     h2 {

@@ -18,8 +18,7 @@ Compose {
     padding: 10px
     color: #ccc
     [disabled] {
-      color: #AAA;
-      background: #ebf7ee;
+      opacity: 0.5
     }
     :focus {
       outline: 0
@@ -73,6 +72,9 @@ Compose {
     }
 
     button {
+      ::before {
+        content: '☉ '
+      }
       :hover {
         background: #6f74e5
       }

@@ -22,9 +22,7 @@ button {
   }
 
   [disabled] {
-    color: #999797 !important;
-    background: #e3e2e2 !important;
-    border-color: #DDD !important;
+    opacity: 0.5
   }
 
   -add {
@@ -48,18 +46,13 @@ button {
   }
 
   -save {
-    border-color: #a7c7a6;
-    background-color: #eeffee;
-    color: #255D24;
-
-    :active {
-      background-color: #c6e0c5 !important
+    ::before {
+      content: '✔ '
     }
 
     :hover {
-      border-color: #3ac737;
-      background-color: #d4ffd4;
-      color: #21921f;
+      background-color: #45b754;
+      color: white;
     }
   }
 
@@ -67,5 +60,9 @@ button {
     display: block
     width: 100%
     margin: 0 0 15px
+  }
+
+  -cancel {
+    background: transparent
   }
 }
