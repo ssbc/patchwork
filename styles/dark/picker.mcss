@@ -39,7 +39,7 @@ Picker {
   span.add {
     position: relative
     display: inline-block;
-    background: #2d2c2c
+    background: #383736
     margin: 0 5px 5px 0
     border: 2px solid transparent
     border-radius: 3px
