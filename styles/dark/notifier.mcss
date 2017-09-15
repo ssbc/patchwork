@@ -13,6 +13,7 @@ Notifier {
 
   -loader {
     background: #ebebeb
+    color: #383736
 
     :hover {
       background: #f7f7f7
