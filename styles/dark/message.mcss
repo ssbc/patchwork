@@ -73,7 +73,7 @@ Message {
   }
 
   -new {
-    box-shadow: 0 0 1px #ffc600;
+    box-shadow: 0 0 1px #efef00;
     z-index: 1;
   }
 
@@ -139,7 +139,7 @@ Message {
         @svg new {
           width: 12px
           height: 12px
-          content: "<circle cx='6' stroke='none' fill='#ffcf04' cy='6' r='5' />"
+          content: "<circle cx='6' stroke='none' fill='#efef00' cy='6' r='5' />"
         }
       }
 
@@ -172,11 +172,24 @@ Message {
       span.private {
         display: inline-block;
         margin: -3px -3px 3px 4px;
-        border: 4px solid #525050;
         position: relative;
 
         a {
           display: inline-block
+
+          :first-child {
+            img {
+              border-top-left-radius: 3px
+              border-bottom-left-radius: 3px
+            }
+          }
+
+          :last-child {
+            img {
+              border-top-right-radius: 3px
+              border-bottom-right-radius: 3px
+            }
+          }
 
           img {
             margin: 0
@@ -188,14 +201,13 @@ Message {
         :after {
           content: 'private';
           position: absolute;
-          background: #525050;
+          background: rgba(0,0,0,0.75);
           bottom: 0;
           left: -1px;
           font-size: 10px;
-          padding: 2px 4px 0 2px;
-          border-top-right-radius: 5px;
-          color: white;
-          font-weight: bold;
+          padding: 1px 4px;
+          border-top-right-radius: 3px;
+          color: #ccc;
           pointer-events: none;
           white-space: nowrap
         }
