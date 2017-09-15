@@ -1,19 +1,24 @@
 ToggleButton {
-  font-size: 90%;
-  background: rgb(112, 112, 112);
-  border: 2px solid #313131;
-  transition: opacity 0.2s;
-  opacity: 0.6;
-  padding: 6px 12px;
-  color: white;
-  border-radius: 3px;
-  font-weight: bold;
-  text-decoration: none;
-  display: block;
+  display: inline-block
+  color: #757474
+  padding: 8px 10px
+  background: #2d2c2c
+  border: 0
+  border-radius: 3px
+  font-size: 13px
+  cursor: pointer
+  transition: background-color 0.25s ease, color 0.25s ease
 
   -subscribe {
-    background-color: rgb(88, 171, 204);
-    border-color: #20699c;
+    color: #ccc
+
+    :before {
+      content: '★ '
+    }
+    :hover {
+      background-color: #45b754;
+      color: white;
+    }
   }
 
   -unsubscribe {
@@ -21,6 +26,10 @@ ToggleButton {
     background-position: right
     background-image: svg(subscribed)
     padding-right: 25px
+
+    :hover {
+      background-image: svg(subscribed-hover)
+    }
   }
 
   -disabled {
@@ -37,6 +46,12 @@ ToggleButton {
   @svg subscribed {
     width: 20px
     height: 12px
-    content: "<circle cx='6' stroke='#FFF' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#FFF'/>"
+    content: "<circle cx='6' stroke='#757474' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#757474'/>"
+  }
+
+  @svg subscribed-hover {
+    width: 20px
+    height: 12px
+    content: "<circle cx='6' stroke='#aaa' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#aaa'/>"
   }
 }
