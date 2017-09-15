@@ -39,9 +39,9 @@ Markdown {
   (blockquote) {
     margin: 1rem 0;
     padding: 5px 20px;
-    border-left: 4px gainsboro solid;
-    background: #fafafa;
-    color: #7c7c7c;
+    border-left: 4px #aeaeae solid;
+    background: #434141;
+    color: #aaa;
   }
   (hr) {
     border: none;
