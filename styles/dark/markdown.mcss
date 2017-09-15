@@ -51,8 +51,7 @@ Markdown {
   (pre) {
     overflow: auto;
     padding: 10px;
-    background: #fbfbfb;
-    border: 1px solid #EEE;
+    background: #2d2c2c;
     max-height: 300px;
   }
   (ul) {
