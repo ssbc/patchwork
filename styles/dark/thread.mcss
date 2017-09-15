@@ -5,20 +5,11 @@ Thread {
   margin: 10px auto
 
   div.messages {
-    div + div {
-      border-top: 1px solid #2d2c2c
-    }
-
     a.full {
       display: block;
       padding: 10px;
-      background: #daecd6;
-      border-top: 1px solid #bbc9d2;
-      border-bottom: 1px solid #bbc9d2;
+      background: #2d2c2c
       text-align: center;
-      color: #759053;
     }
-
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1)
   }
 }
