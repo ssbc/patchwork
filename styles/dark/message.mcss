@@ -225,16 +225,15 @@ Message {
 
   a.backlink {
     display: block;
-    border-top: 1px solid #EEE;
-    padding: 10px 15px;
-    background: #ffffff;
-    color: #8f8f8f;
+    padding: 10px 20px
+    background: #2d2c2c
+    color: #757474;
     margin-top: -1px;
     font-size: 9pt;
 
     :hover {
       text-decoration: none
-      color: #777
+      color: #aaa
     }
   }
 
