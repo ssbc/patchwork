@@ -180,7 +180,11 @@ exports.create = function (api) {
         return result
       })
 
-      var renderedMessage = api.message.html.render(item, {inContext: true})
+      var renderedMessage = api.message.html.render(item, {
+        inContext: true,
+        priority: highlightItems.has(item.key) ? 2 : 0
+      })
+
       if (!renderedMessage) return h('div')
       if (lastBumpType) {
         var bumps = lastBumpType === 'vote'
