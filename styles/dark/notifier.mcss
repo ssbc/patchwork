@@ -16,6 +16,7 @@ Notifier {
 
     :hover {
       background: #f7f7f7
+      color: #2d2c2c
     }
   }
 }

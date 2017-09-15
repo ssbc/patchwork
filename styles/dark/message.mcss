@@ -164,6 +164,11 @@ Message {
         }
       }
 
+      (a.Timestamp) {
+        font-size: 75%
+        font-weight: normal
+      }
+
       span.private {
         display: inline-block;
         margin: -3px -3px 3px 4px;
