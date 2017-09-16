@@ -14,7 +14,7 @@ MainWindow {
     }
   }
 
-  -linux {
+  -linux, -win32 {
     (div) {
       ::-webkit-scrollbar {
         width: 12px
