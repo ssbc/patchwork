@@ -22,6 +22,7 @@ Compose {
   }
 
   section.warning {
+    overflow: hidden
     color: #fff
     font-size: 1.2rem
     background-color: #ff00b6
