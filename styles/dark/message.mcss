@@ -157,6 +157,10 @@ Message {
       a.likes {
         font-size: 75%;
 
+        ::before {
+          content: '❤ '
+          color: #ff2f92
+        }
         :hover {
           color: #ff2f92
         }
