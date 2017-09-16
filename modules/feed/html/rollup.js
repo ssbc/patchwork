@@ -98,7 +98,7 @@ exports.create = function (api) {
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
             refresh()
           } else {
-            updates.set(updates() + 1)
+            updates.set(newSinceRefresh.size)
           }
         })
       )
@@ -180,7 +180,11 @@ exports.create = function (api) {
         return result
       })
 
-      var renderedMessage = api.message.html.render(item, {inContext: true})
+      var renderedMessage = api.message.html.render(item, {
+        inContext: true,
+        priority: highlightItems.has(item.key) ? 2 : 0
+      })
+
       if (!renderedMessage) return h('div')
       if (lastBumpType) {
         var bumps = lastBumpType === 'vote'

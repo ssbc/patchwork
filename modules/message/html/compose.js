@@ -53,7 +53,26 @@ exports.create = function (api) {
       placeholder
     })
 
+    var warningMessage = Value(null)
+    var warning = h('section.warning',
+      { className: when(warningMessage, '-open', '-closed') },
+      [
+        h('div.warning', warningMessage),
+        h('div.close', { 'ev-click': () => warningMessage.set(null) }, 'x')
+      ]
+    )
     var fileInput = api.blob.html.input(file => {
+      const megabytes = file.size / 1024 / 1024
+      if (megabytes >= 5) {
+        const rounded = Math.floor(megabytes*100)/100
+        warningMessage.set([
+          h('i.fa.fa-exclamation-triangle'),
+          h('strong', file.name),
+          ` is ${rounded}MB - the current limit is 5MB`
+        ])
+        return
+      }
+
       files.push(file)
       filesById[file.link] = file
 
@@ -90,6 +109,7 @@ exports.create = function (api) {
       ]
     }, [
       textArea,
+      warning,
       actions
     ])
 

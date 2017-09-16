@@ -30,7 +30,7 @@
     "insert-css": "~2.0.0",
     "level": "~1.7.0",
     "lrucache": "^1.0.2",
-    "micro-css": "^2.0.0",
+    "micro-css": "^2.0.1",
     "mime-types": "^2.1.15",
     "moment": "^2.18.1",
     "mutant": "^3.21.2",
@@ -71,6 +71,6 @@
     "text-node-searcher": "^1.1.1"
   },
   "devDependencies": {
-    "electron": "~1.6.11"
+    "electron": "~1.7.6"
   }
 }
