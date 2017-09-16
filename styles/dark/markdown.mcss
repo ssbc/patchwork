@@ -66,24 +66,22 @@ Markdown {
     margin-bottom: -0.3em;
   }
 
-  p {
-    (a) {
-      color: #6f74e5
+  (a) {
+    color: #6f74e5
+    :hover {
+      text-decoration: underline;
+    }
+    [href^="@"] {
+      color: #efef00
+      border-bottom: 1px dotted #efef00
       :hover {
-        text-decoration: underline;
+        text-decoration: none;
       }
-      [href^="@"] {
-        color: #efef00
-        border-bottom: 1px dotted #efef00
-        :hover {
-          text-decoration: none;
-        }
-      }
-      [href^="#"] {
-        color: #c1cdf0
-        :hover {
-          text-decoration: none;
-        }
+    }
+    [href^="#"] {
+      color: #c1cdf0
+      :hover {
+        text-decoration: none;
       }
     }
   }
