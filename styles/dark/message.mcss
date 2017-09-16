@@ -35,7 +35,7 @@ Message {
   -mini {
     header {
       font-size: 100%
-      margin-bottom: 15px
+
       div.main {
         a.avatar {
           img {
@@ -130,16 +130,14 @@ Message {
         background-position: center
         display: inline-block
         vertical-align: middle;
-        margin-top: -3px;
 
         -new {
-          background-image: svg(new)
-        }
-
-        @svg new {
-          width: 12px
-          height: 12px
-          content: "<circle cx='6' stroke='none' fill='#efef00' cy='6' r='5' />"
+          width: auto
+          height: auto
+          :before {
+            content: '✸ new'
+            font-size: 75%
+          }
         }
       }
 
