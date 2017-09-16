@@ -97,6 +97,7 @@ module.exports = function (config) {
           getSubscribedChannelMenu,
           ['Gatherings', '/gatherings'],
           ['Extended Network', '/all'],
+          {separator: true},
           ['Settings', '/settings']
         ])
       ]),
@@ -184,6 +185,8 @@ module.exports = function (config) {
           var menu = electron.remote.Menu.buildFromTemplate(items.map(item => {
             if (typeof item === 'function') {
               return item()
+            } else if (item.separator) {
+              return { type: 'separator' }
             } else {
               return {
                 label: item[0],

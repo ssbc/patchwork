@@ -1,0 +1,284 @@
+Message {
+  display: flex
+  flex-direction: column
+  background: #383736
+  position: relative
+  font-size: 120%
+  line-height: 1.4
+  flex-shrink: 0
+
+  (highlight) {
+    background-color: yellow
+  }
+
+  :focus {
+    z-index: 1
+  }
+
+  -data {
+    header {
+      div.main {
+        font-size: 80%
+        a.avatar {
+          img {
+            width: 25px
+          }
+        }
+      }
+    }
+    (pre) {
+      overflow: auto
+      max-height: 200px
+    }
+  }
+
+  -mini {
+    header {
+      font-size: 100%
+      margin-bottom: 15px
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+
+  -reply {
+    header {
+      font-size: 100%
+      div.meta {
+        a.channel {
+          display: none;
+        }
+        span.private {
+          (img) {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+
+  -new {
+    box-shadow: 0 0 1px #efef00;
+    z-index: 1;
+  }
+
+  header {
+    font-size: 120%
+    margin: 20px 20px 0
+    display: flex
+
+    div.mini {
+      flex: 1
+    }
+
+    div.main {
+      display: flex
+      flex: 1
+
+      a.avatar {
+        img {
+          border-radius: 3px
+          width: 50px
+          height: 50px
+        }
+      }
+
+      div.main {
+        div.name {
+          a {
+            color: #757474
+            font-weight: bold
+
+            :hover {
+              color: #aaa
+            }
+          }
+        }
+        div.meta {
+          font-size: 75%
+        }
+        margin-left: 10px
+      }
+    }
+
+    div.meta {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: flex-end;
+      justify-content: flex-end;
+
+      span.flag {
+        width: 12px
+        height: 12px
+
+        background-repeat: no-repeat
+        background-position: center
+        display: inline-block
+        vertical-align: middle;
+        margin-top: -3px;
+
+        -new {
+          background-image: svg(new)
+        }
+
+        @svg new {
+          width: 12px
+          height: 12px
+          content: "<circle cx='6' stroke='none' fill='#efef00' cy='6' r='5' />"
+        }
+      }
+
+      em {
+        display: inline-block
+        padding: 4px
+      }
+
+      a.channel {
+        font-size: 75%;
+
+        :hover {
+          color: #c1cdf0
+        }
+      }
+
+      a.likes {
+        font-size: 75%;
+
+        :hover {
+          color: #ff2f92
+        }
+      }
+
+      (a.Timestamp) {
+        font-size: 75%
+        font-weight: normal
+      }
+
+      span.private {
+        display: inline-block;
+        margin: -3px -3px 3px 4px;
+        position: relative;
+
+        a {
+          display: inline-block
+
+          :first-child {
+            img {
+              border-top-left-radius: 3px
+              border-bottom-left-radius: 3px
+            }
+          }
+
+          :last-child {
+            img {
+              border-top-right-radius: 3px
+              border-bottom-right-radius: 3px
+            }
+          }
+
+          img {
+            margin: 0
+            vertical-align: bottom
+            border: none
+          }
+        }
+
+        :after {
+          content: 'private';
+          position: absolute;
+          background: rgba(0,0,0,0.75);
+          bottom: 0;
+          left: -1px;
+          font-size: 10px;
+          padding: 1px 4px;
+          border-top-right-radius: 3px;
+          color: #ccc;
+          pointer-events: none;
+          white-space: nowrap
+        }
+      }
+    }
+  }
+
+  section {
+    margin: 0
+    padding: 0 20px
+    (img) {
+      max-width: 100%
+    }
+  }
+
+  a.backlink {
+    display: block;
+    padding: 10px 20px
+    background: #2d2c2c
+    color: #757474;
+    margin-top: -1px;
+    font-size: 9pt;
+
+    :hover {
+      text-decoration: none
+      color: #aaa
+    }
+  }
+
+  footer {
+    margin: 5px 0 20px;
+    padding: 0 20px
+
+    div.actions {
+      a.like {
+        :before {
+          content: "❤ "
+        }
+        :hover {
+          background: #ff2f92
+        }
+      }
+      a.unlike {
+        :before {
+          content: ""
+        }
+        :hover {
+          background: #434141
+        }
+      }
+      a {
+        font-size: 13px
+        background: #2d2c2c
+        padding: 6px 10px
+        border-radius: 3px
+        color: #ccc
+        display: inline-block
+        text-align: center
+        transition: background-color 0.25s ease, color 0.25s ease
+
+        :before {
+          content: "↩ "
+        }
+        :hover {
+          background: #45b754
+          color: white
+        }
+      }
+      a + a {
+        margin-left: 10px;
+      }
+    }
+  }
+}

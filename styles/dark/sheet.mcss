@@ -1,0 +1,42 @@
+Sheet {
+  position: fixed;
+  max-height: 80vh;
+  max-width: 700px;
+  margin: auto;
+  top: 38px;
+  left: 0;
+  right: 0;
+  width: 80vw;
+  background: #434141;
+  box-shadow: 0 0 40px black;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  display: flex
+  flex-direction: column
+  z-index: 50
+
+  section {
+    overflow-y: auto
+    flex: 1
+  }
+
+  footer {
+    flex-shrink: 0;
+    min-height: 20px;
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    position: relative
+    border-top: 1px solid #2d2c2c
+
+    div.info {
+      flex: 1
+      padding: 8px
+      font-size: 13px
+    }
+
+    button {
+      margin-left: 10px
+    }
+  }
+}
