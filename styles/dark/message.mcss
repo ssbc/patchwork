@@ -134,9 +134,19 @@ Message {
         -new {
           width: auto
           height: auto
+          color: #757474
+
           :before {
             content: '✸ new'
             font-size: 75%
+          }
+
+          :hover {
+            color: #efef00
+          }
+
+          :first-letter {
+            color: #efef00
           }
         }
       }
