@@ -325,6 +325,8 @@ function returnTrue () {
 }
 
 function getFilter (filterSettings) {
+  if(!filterSettings) return returnTrue
+
   return function(msg) {
     return !(filterSettings.following && getType(msg) === 'contact')
   }
