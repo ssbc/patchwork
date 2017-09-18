@@ -27,7 +27,8 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
   'sbot.async.get': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'settings.obs.get': 'first',
 })
 
 exports.gives = nest({
@@ -77,6 +78,13 @@ exports.create = function (api) {
         when(loading, h('Loading -large'))
       ])
     ])
+
+    const filters = api.settings.obs.get('filters')
+    rootFilter = getFilter(filters())
+    filters((filterSettings) => {
+      rootFilter = getFilter(filterSettings)
+      refresh()
+    })
 
     onceTrue(waitFor, () => {
       // display pending updates
@@ -314,6 +322,12 @@ function getType (msg) {
 
 function returnTrue () {
   return true
+}
+
+function getFilter (filterSettings) {
+  return function(msg) {
+    return !(filterSettings.following && getType(msg) === 'contact')
+  }
 }
 
 function byAssertedTime (a, b) {

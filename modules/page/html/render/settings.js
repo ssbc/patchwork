@@ -15,6 +15,7 @@ exports.create = function (api) {
     if (path !== '/settings') return
 
     const currentTheme = api.settings.obs.get('patchwork.theme')
+    const filterFollowing = api.settings.obs.get('filters.following')
 
     var prepend = [
       h('PageHeading', [
@@ -43,6 +44,23 @@ exports.create = function (api) {
                   style
                 }, name)
               })
+            })
+          ]),
+          h('section', [
+            h('h2', 'Filters'),
+            computed(filterFollowing, filter => {
+              const style = filter
+                ? { 'margin-right': '1rem', 'border-color': 'teal' }
+                : { 'margin-right': '1rem' }
+
+              return [
+                h('button', {
+                  'ev-click': () => api.settings.sync.set({
+                    filters: {following: !filter}
+                  }),
+                  style
+                }, filter ? 'Hide following messages' : 'Show following messages')
+              ]
             })
           ])
         ])
