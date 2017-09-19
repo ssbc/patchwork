@@ -28,7 +28,8 @@ exports.needs = nest({
     subscribed: 'first',
     recent: 'first'
   },
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'settings.obs.get': 'first'
 })
 
 exports.gives = nest({
@@ -64,6 +65,7 @@ exports.create = function (api) {
       }
     }
 
+    var filters = api.settings.obs.get('filters.following')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
@@ -78,9 +80,14 @@ exports.create = function (api) {
           return isSubscribed || id === author || following().has(author)
         }
       },
+      observableFilter: computed([filters], function(filterFollowing) {
+        return {
+          filter: (msg) => !(filterFollowing && getType(msg) === 'contact')
+        } // Put this observable fn in object so it's not flattened
+      }),
       waitFor: computed([
         following.sync,
-        subscribedChannels.sync
+        subscribedChannels.sync,
       ], (...x) => x.every(Boolean))
     })
 
@@ -199,6 +206,10 @@ exports.create = function (api) {
       })
     }
   }
+}
+
+function getType (msg) {
+  return msg && msg.value && msg.value.content && msg.value.content.type
 }
 
 function arrayEq (a, b) {

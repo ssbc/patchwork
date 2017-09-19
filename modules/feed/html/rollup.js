@@ -27,8 +27,7 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
   'sbot.async.get': 'first',
-  'keys.sync.id': 'first',
-  'settings.obs.get': 'first',
+  'keys.sync.id': 'first'
 })
 
 exports.gives = nest({
@@ -42,7 +41,8 @@ exports.create = function (api) {
     bumpFilter = returnTrue,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
-    waitFor = true
+    waitFor = true,
+    observableFilter // filter that can change during runtime
   }) {
     var updates = Value(0)
     var yourId = api.keys.sync.id()
@@ -79,12 +79,16 @@ exports.create = function (api) {
       ])
     ])
 
-    const filters = api.settings.obs.get('filters')
-    rootFilter = getFilter(filters())
-    filters((filterSettings) => {
-      rootFilter = getFilter(filterSettings)
-      refresh()
-    })
+    function combineFilters(filter, observable){
+      return (msg) => filter(msg) && (!observable() || observable().filter(msg))
+    }
+
+    if(observableFilter) {
+      rootFilter = combineFilters(rootFilter, observableFilter)
+      observableFilter(() => {
+        refresh()
+      })
+    }
 
     onceTrue(waitFor, () => {
       // display pending updates
@@ -322,14 +326,6 @@ function getType (msg) {
 
 function returnTrue () {
   return true
-}
-
-function getFilter (filterSettings) {
-  if(!filterSettings) return returnTrue
-
-  return function(msg) {
-    return !(filterSettings.following && getType(msg) === 'contact')
-  }
 }
 
 function byAssertedTime (a, b) {
