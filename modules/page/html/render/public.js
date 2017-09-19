@@ -65,7 +65,7 @@ exports.create = function (api) {
       }
     }
 
-    var filters = api.settings.obs.get('filters.following')
+    var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
@@ -80,16 +80,18 @@ exports.create = function (api) {
           return isSubscribed || id === author || following().has(author)
         }
       },
-      observableFilter: computed([filters], function(filterFollowing) {
-        return {
-          filter: (msg) => !(filterFollowing && getType(msg) === 'contact')
-        } // Put this observable fn in object so it's not flattened
-      }),
+      rootFilter: function (msg) {
+        if (!filters()) return true
+        return !(filters().following && getType(msg) === 'contact')
+      },
       waitFor: computed([
         following.sync,
         subscribedChannels.sync,
       ], (...x) => x.every(Boolean))
     })
+
+    // call reload whenever filters changes (equivalent to the refresh from inside rollup)
+    filters(feedView.reload)
 
     var result = h('div.SplitView', [
       h('div.side', [

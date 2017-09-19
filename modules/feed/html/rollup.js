@@ -41,8 +41,7 @@ exports.create = function (api) {
     bumpFilter = returnTrue,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
-    waitFor = true,
-    observableFilter // filter that can change during runtime
+    waitFor = true
   }) {
     var updates = Value(0)
     var yourId = api.keys.sync.id()
@@ -78,17 +77,6 @@ exports.create = function (api) {
         when(loading, h('Loading -large'))
       ])
     ])
-
-    function combineFilters(filter, observable){
-      return (msg) => filter(msg) && (!observable() || observable().filter(msg))
-    }
-
-    if(observableFilter) {
-      rootFilter = combineFilters(rootFilter, observableFilter)
-      observableFilter(() => {
-        refresh()
-      })
-    }
 
     onceTrue(waitFor, () => {
       // display pending updates
