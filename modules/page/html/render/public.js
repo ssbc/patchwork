@@ -86,7 +86,7 @@ exports.create = function (api) {
       },
       waitFor: computed([
         following.sync,
-        subscribedChannels.sync,
+        subscribedChannels.sync
       ], (...x) => x.every(Boolean))
     })
 
