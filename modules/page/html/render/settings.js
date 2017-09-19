@@ -38,7 +38,7 @@ exports.create = function (api) {
                   : { 'margin-right': '1rem' }
 
                 return h('button', {
-                  'ev-click': () => api.settings.sync.set({ 
+                  'ev-click': () => api.settings.sync.set({
                     patchwork: {theme: name}
                   }),
                   style
@@ -48,20 +48,15 @@ exports.create = function (api) {
           ]),
           h('section', [
             h('h2', 'Filters'),
-            computed(filterFollowing, filter => {
-              const style = filter
-                ? { 'margin-right': '1rem', 'border-color': 'teal' }
-                : { 'margin-right': '1rem' }
-
-              return [
-                h('button', {
-                  'ev-click': () => api.settings.sync.set({
-                    filters: {following: !filter}
-                  }),
-                  style
-                }, filter ? 'Hide following messages' : 'Show following messages')
-              ]
-            })
+            h('label', [
+              h('input', {
+                type: 'checkbox',
+                checked: filterFollowing,
+                'ev-change': (ev) => api.settings.sync.set({
+                  filters: {following: ev.target.checked}
+                })
+              }), ' Hide following messages'
+            ])
           ])
         ])
       ])
