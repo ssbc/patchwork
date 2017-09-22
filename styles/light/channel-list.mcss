@@ -21,9 +21,9 @@ ChannelList {
 
     -subscribed {
       background-image: svg(subscribed)
-      span.name {
-        font-weight: bold
-      }
+      border-left: 2px solid #51c067;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
 
     @svg subscribed {
