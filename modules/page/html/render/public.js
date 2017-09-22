@@ -117,7 +117,7 @@ exports.create = function (api) {
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, i18n.__('+ Join Pub')),
-        when(loading, [ h(i18n.__("Loading")) ], [
+        when(loading, [ h("Loading") ], [
           when(computed(channels, x => x.length), h('h2', i18n.__("Active Channels"))),
           h('div', {
             classList: 'ChannelList',

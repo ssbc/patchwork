@@ -1,5 +1,7 @@
 var nest = require('depnest')
 var { h, send, when, computed, map } = require('mutant')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.async.publish': 'first',
@@ -39,10 +41,10 @@ exports.create = function(api){
               when(subscribed,
                 h('a.-unsubscribe', {
                   'ev-click': send(unsubscribe, channel)
-                }, 'Unsubscribe'),
+                }, i18n.__('Unsubscribe')),
                 h('a.-subscribe', {
                   'ev-click': send(subscribe, channel)
-                }, 'Subscribe')
+                }, i18n.__('Subscribe'))
               )
             ])
           }, {maxTime: 5, idle: true})

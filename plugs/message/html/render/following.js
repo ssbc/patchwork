@@ -2,6 +2,8 @@ var h = require('mutant/h')
 var nest = require('depnest')
 var extend = require('xtend')
 var ref = require('ssb-ref')
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.html': {
@@ -30,7 +32,7 @@ exports.create = function (api) {
   function messageContent (msg) {
     var following = msg.value.content.following
     return [
-      following ? 'followed ' : 'unfollowed ',
+      following ? i18n.__('followed ') : i18n.__('unfollowed '),
       api.profile.html.person(msg.value.content.contact)
     ]
   }

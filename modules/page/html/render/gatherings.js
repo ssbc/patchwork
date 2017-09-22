@@ -1,5 +1,7 @@
 var { h } = require('mutant')
 var nest = require('depnest')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'feed.pull.type': 'first',
@@ -22,11 +24,11 @@ exports.create = function (api) {
 
     var prepend = [
       h('PageHeading', [
-        h('h1', [h('strong', 'Gatherings'), ' from your extended network']),
+        h('h1', [h('strong', i18n.__('Gatherings')), i18n.__(' from your extended network')]),
         h('div.meta', [
           h('button -add', {
             'ev-click': createGathering
-          }, '+ Add Gathering')
+          }, i18n.__('+ Add Gathering'))
         ])
       ])
     ]

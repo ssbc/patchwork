@@ -2,7 +2,7 @@ var { h, when, map, Proxy, Struct, Value, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 
-var appRoot = require('app-root-path');
+var appRoot = require('app-root-path')
 var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
@@ -52,7 +52,7 @@ exports.create = function (api) {
 
       if (!value) {
         return result.set(h('PageHeading', [
-          h('h1', 'Cannot display message.')
+          h('h1', i18n.__('Cannot display message.'))
         ]))
       }
 

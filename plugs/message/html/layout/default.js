@@ -1,6 +1,8 @@
 const { h, map, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'profile.html.person': 'first',
@@ -33,11 +35,11 @@ exports.create = function (api) {
       var branch = msg.value.content.branch
       if (branch) {
         if (!previousId || (previousId && last(branch) && previousId !== last(branch))) {
-          replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
+          replyInfo = h('span', [i18n.__('in reply to '), api.message.html.link(last(branch))])
         }
       }
     } else if (msg.value.content.project) {
-      replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
+      replyInfo = h('span', [i18n.__('on '), api.message.html.link(msg.value.content.project)])
     }
 
     if (priority === 2) {
@@ -66,7 +68,7 @@ exports.create = function (api) {
     function messageHeader (msg, {replyInfo, priority}) {
       var additionalMeta = []
       if (priority >= 2) {
-        additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
+        additionalMeta.push(h('span.flag -new', {title: i18n.__('New Message')}))
       }
       return h('header', [
         h('div.main', [

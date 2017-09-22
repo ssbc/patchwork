@@ -95,12 +95,12 @@ module.exports = function (config) {
       h('span.nav', [
         tab(i18n.__("Public"), '/public'),
         tab(i18n.__("Private"), '/private'),
-        dropTab('More', [
+        dropTab(i18n.__('More'), [
           getSubscribedChannelMenu,
-          ['Gatherings', '/gatherings'],
-          ['Extended Network', '/all'],
+          [i18n.__('Gatherings'), '/gatherings'],
+          [i18n.__('Extended Network'), '/all'],
           {separator: true},
-          ['Settings', '/settings']
+          [i18n.__('Settings'), '/settings']
         ])
       ]),
       h('span.appTitle', [
@@ -116,7 +116,7 @@ module.exports = function (config) {
     when(latestUpdate,
       h('div.info', [
         h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases' }, [
-          h('strong', ['Patchwork ', latestUpdate, ' has been released.']), ' Click here to download and view more info!',
+          h('strong', ['Patchwork ', latestUpdate, i18n.__(' has been released.')]), i18n.__(' Click here to download and view more info!'),
           h('a.ignore', {'ev-click': latestUpdate.ignore}, 'X')
         ])
       ])
@@ -152,9 +152,9 @@ module.exports = function (config) {
 
     if (channels.length) {
       return {
-        label: 'Channels',
+        label: i18n.__('Channels'),
         submenu: [
-          { label: 'Browse All',
+          { label: i18n.__('Browse All'),
             click () {
               setView('/channels')
             }
@@ -171,7 +171,7 @@ module.exports = function (config) {
       }
     } else {
       return {
-        label: 'Browse Channels',
+        label: i18n.__('Browse Channels'),
         click () {
           setView('/channels')
         }

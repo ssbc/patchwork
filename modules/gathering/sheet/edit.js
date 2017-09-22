@@ -2,6 +2,8 @@ var nest = require('depnest')
 var extend = require('xtend')
 var Pickr = require('flatpickr')
 var spacetime = require('spacetime')
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 var {Value, h, computed, when} = require('mutant')
 
@@ -53,14 +55,14 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, [id ? 'Edit' : 'Create', ' Gathering']),
+          }, [id ? i18n.__('Edit') : i18n.__('Create'), i18n.__(' Gathering')]),
           h('GatheringEditor', [
             h('input.title', {
-              placeholder: 'Choose a title',
+              placeholder: i18n.__('Choose a title'),
               hooks: [ValueHook(chosen.title), FocusHook()]
             }),
             h('input.date', {
-              placeholder: 'Choose date and time',
+              placeholder: i18n.__('Choose date and time'),
               hooks: [
                 PickrHook(chosen.startDateTime)
               ]
@@ -68,7 +70,7 @@ exports.create = function (api) {
             h('ImageInput .banner', {
               style: { 'background-image': computed(imageUrl, x => `url(${x})`) }
             }, [
-              h('span', ['🖼 Choose Banner Image...']),
+              h('span', ['🖼 ', i18n.__('Choose Banner Image...')]),
               api.blob.html.input(file => {
                 chosen.image.set(file)
               }, {
@@ -76,7 +78,7 @@ exports.create = function (api) {
               })
             ]),
             h('textarea.description', {
-              placeholder: 'Describe the gathering (if you want)',
+              placeholder: i18n.__('Describe the gathering (if you want)'),
               hooks: [ValueHook(chosen.description)]
             })
           ])
@@ -85,10 +87,10 @@ exports.create = function (api) {
           h('button -save', {
             'ev-click': save,
             'disabled': publishing
-          }, when(publishing, 'Publishing...', 'Publish')),
+          }, when(publishing, i18n.__('Publishing...'), i18n.__('Publish'))),
           h('button -cancel', {
             'ev-click': close
-          }, 'Cancel')
+          }, i18n.__('Cancel'))
         ]
       }
 
@@ -111,7 +113,7 @@ exports.create = function (api) {
 
         if (!compareImage(chosen.image(), current.image())) update.image = chosen.image()
         if (!compareTime(chosen.startDateTime(), current.startDateTime())) update.startDateTime = chosen.startDateTime()
-        if (chosen.title() !== current.title()) update.title = chosen.title() || 'Untitled Gathering'
+        if (chosen.title() !== current.title()) update.title = chosen.title() || i18n.__('Untitled Gathering')
         if (chosen.description() !== current.description()) update.description = chosen.description()
 
         if (Object.keys(update).length) {
@@ -126,9 +128,9 @@ exports.create = function (api) {
                 publishing.set(false)
                 showDialog({
                   type: 'error',
-                  title: 'Error',
+                  title: i18n.__('Error'),
                   buttons: ['OK'],
-                  message: 'An error occurred while attempting to publish gathering.',
+                  message: i18n.__('An error occurred while attempting to publish gathering.'),
                   detail: err.message
                 })
               } else {

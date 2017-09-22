@@ -1,6 +1,8 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var { h, map, computed } = require('mutant')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.obs': {
@@ -25,7 +27,7 @@ exports.create = function (api) {
           href: link.id, title: link.id
         }, [
           h('strong', [
-            api.profile.html.person(link.author), ' forked this discussion:'
+            api.profile.html.person(link.author), i18n.__(' forked this discussion:')
           ]), ' ',
           api.message.obs.name(link.id)
         ])
@@ -35,7 +37,7 @@ exports.create = function (api) {
           href: link.id, title: link.id
         }, [
           h('strong', [
-            api.profile.html.person(link.author), ' referenced this message:'
+            api.profile.html.person(link.author), i18n.__(' referenced this message:')
           ]), ' ',
           api.message.obs.name(link.id)
         ])

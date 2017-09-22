@@ -1,6 +1,8 @@
 var h = require('mutant/h')
 var nest = require('depnest')
 var extend = require('xtend')
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.html': {
@@ -26,7 +28,7 @@ exports.create = function (api) {
     var channel = `#${msg.value.content.channel}`
     var subscribed = msg.value.content.subscribed
     return [
-      subscribed ? 'subscribed to ' : 'unsubscribed from ',
+      subscribed ? i18n.__('subscribed to ') : i18n.__('unsubscribed from '),
       h('a', {href: channel}, channel)
     ]
   }

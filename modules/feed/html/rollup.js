@@ -7,19 +7,19 @@ var nextStepper = require('../../../lib/next-stepper')
 var extend = require('xtend')
 var paramap = require('pull-paramap')
 
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
+
 var bumpMessages = {
-  'vote': 'liked this message',
-  'post': 'replied to this message',
-  'about': 'added changes',
-  'mention': 'mentioned you',
-  'channel-mention': 'mentioned this channel'
+  'vote': i18n.__('liked this message'),
+  'post': i18n.__('replied to this message'),
+  'about': i18n.__('added changes'),
+  'mention': i18n.__('mentioned you'),
+  'channel-mention': i18n.__('mentioned this channel')
 }
 
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
-
-var appRoot = require('app-root-path');
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 
 exports.needs = nest({
@@ -210,7 +210,7 @@ exports.create = function (api) {
         renderedMessage,
         when(replyElements.length, [
           when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key}, ['View full thread (', replies.length, ')'])
+            h('a.full', {href: item.key}, [i18n.__('View full thread') +' (', replies.length, ')'])
           ),
           h('div.replies', replyElements)
         ])

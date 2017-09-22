@@ -7,6 +7,8 @@ var Scroller = require('../../../../lib/scroller')
 var nextStepper = require('../../../../lib/next-stepper')
 var nest = require('depnest')
 var Proxy = require('mutant/proxy')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'sbot.pull.stream': 'first',
@@ -29,11 +31,11 @@ exports.create = function (api) {
     var aborter = null
 
     const searchHeader = h('div', {className: 'PageHeading'}, [
-      h('h1', [h('strong', 'Search Results:'), ' ', query.join(' ')])
+      h('h1', [h('strong', i18n.__('Search Results:')), ' ', query.join(' ')])
     ])
 
     var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
-      'Show ', h('strong', [updates]), ' ', plural(updates, 'update', 'updates')
+      'Show ', h('strong', [updates]), ' ', plural(updates, i18n.__('update'), i18n.__('updates'))
     ])
 
     var content = Proxy()
@@ -49,7 +51,7 @@ exports.create = function (api) {
               'padding': '60px 0',
               'font-size': '150%'
             }
-          }, [h('strong', 'Search completed.'), ' ', count, ' ', plural(count, 'result', 'results'), ' found']))
+          }, [h('strong', i18n.__('Search completed.')), ' ', count, ' ', plural(count, i18n.__('result found'), i18n.__('results found'))]))
         ])
       ])
     ])

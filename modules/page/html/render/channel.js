@@ -1,5 +1,7 @@
 var { h, when, send } = require('mutant')
 var nest = require('depnest')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'channel.obs.subscribed': 'first',
@@ -27,19 +29,19 @@ exports.create = function (api) {
           when(subscribedChannels.has(channel),
             h('a.ToggleButton.-unsubscribe', {
               'href': '#',
-              'title': 'Click to unsubscribe',
+              'title': i18n.__('Click to unsubscribe'),
               'ev-click': send(unsubscribe, channel)
-            }, 'Subscribed'),
+            }, i18n.__('Subscribed')),
             h('a.ToggleButton.-subscribe', {
               'href': '#',
               'ev-click': send(subscribe, channel)
-            }, 'Subscribe')
+            }, i18n.__('Subscribe'))
           )
         ])
       ]),
       api.message.html.compose({
         meta: {type: 'post', channel},
-        placeholder: 'Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics'
+        placeholder: i18n.__('Write a message in this channel')
       })
     ]
 

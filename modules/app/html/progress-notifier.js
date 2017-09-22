@@ -1,7 +1,8 @@
 var {computed, when, h, Value} = require('mutant')
 var nest = require('depnest')
 var sustained = require('../../../lib/sustained')
-var pull = require('pull-stream')
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.gives = nest('app.html.progressNotifier')
 
@@ -46,15 +47,13 @@ exports.create = function (api) {
     return h('div.info', { hidden }, [
       h('div.status', [
         when(displaying, h('Loading -small', [
-          when(waiting, 'Waiting for Scuttlebot...',
-            when(pendingMigration,
-              [h('span.info', 'Upgrading database'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
-              when(computed(replicateProgress.incompleteFeeds, (v) => v > 5),
-                [h('span.info', 'Downloading new messages'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
-                when(pending, [
-                  [h('span.info', 'Indexing database'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
-                ], 'Scuttling...')
-              )
+          when(pendingMigration,
+            [h('span.info', i18n.__('Upgrading database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
+            when(computed(replicateProgress.incompleteFeeds, (v) => v > 5),
+              [h('span.info', i18n.__('Downloading new messages')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
+              when(pending, [
+                [h('span.info', i18n.__('Indexing database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
+              ], i18n.__('Scuttling...'))
             )
           )
         ]))

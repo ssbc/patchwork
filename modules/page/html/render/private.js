@@ -1,5 +1,7 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
+var appRoot = require('app-root-path')
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'feed.html.rollup': 'first',
@@ -24,7 +26,7 @@ exports.create = function (api) {
           })
           return msg
         },
-        placeholder: `Write a private message \n\n\n\nThis can only be read by yourself and people you have @mentioned.`
+        placeholder: i18n.__('Write a private message')
       })
     ]
 

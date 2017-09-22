@@ -3,6 +3,8 @@ var computed = require('mutant/computed')
 var nest = require('depnest')
 var extend = require('xtend')
 var ref = require('ssb-ref')
+var appRoot = require('app-root-path');
+var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.html': {
@@ -33,18 +35,18 @@ exports.create = function (api) {
       var target = api.profile.html.person(c.about, c.name)
       miniContent.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
-          return ['self identifies as "', target, '"']
+          return [i18n.__('self identifies as "'), target, '"']
         } else if (a === b) {
-          return ['identified ', api.profile.html.person(c.about)]
+          return [i18n.__('identified '), api.profile.html.person(c.about)]
         } else {
-          return ['identifies ', api.profile.html.person(c.about), ' as "', target, '"']
+          return [i18n.__('identifies '), api.profile.html.person(c.about), i18n.__(' as "'), target, '"']
         }
       }))
     }
 
     if (c.image) {
       if (!miniContent.length) {
-        var imageAction = self ? 'self assigned a display image' : ['assigned a display image to ', api.profile.html.person(c.about)]
+        var imageAction = self ? i18n.__('self assigned a display image') : [i18n.__('assigned a display image to '), api.profile.html.person(c.about)]
         miniContent.push(imageAction)
       }
 
@@ -70,7 +72,7 @@ exports.create = function (api) {
     if (c.description) {
       elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
         showActions: true,
-        miniContent: self ? 'self assigned a description' : ['assigned a description to ', api.profile.html.person(c.about)],
+        miniContent: self ? i18n.__('self assigned a description') : [i18n.__('assigned a description to '), api.profile.html.person(c.about)],
         content: api.message.html.markdown(c.description),
         layout: 'mini'
       }, opts)), { msg }))
