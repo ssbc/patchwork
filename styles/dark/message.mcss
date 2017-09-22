@@ -101,11 +101,11 @@ Message {
       div.main {
         div.name {
           a {
-            color: #757474
+            color: #999
             font-weight: bold
 
             :hover {
-              color: #aaa
+              color: #bbb
             }
           }
         }
