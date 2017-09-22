@@ -40,15 +40,11 @@ exports.create = function (api) {
     })
 
     api.sbot.async.get(id, (err, value) => {
-<<<<<<< 7cd7a533a0573f32dd6e18be5e921a99e2c161af
       if (err) {
         return result.set(h('PageHeading', [
-          h('h1', 'Cannot load thread. Root message missing.')
+          h('h1', i18n.__('Cannot load thead'))
         ]))
       }
-=======
-      if (err) return result.set(h('div', {className: 'Error'}, [i18n.__('Cannot load thead')]))
->>>>>>> more translations
 
       if (typeof value.content === 'string') {
         value = api.message.sync.unbox(value)
