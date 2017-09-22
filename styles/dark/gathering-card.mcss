@@ -1,7 +1,7 @@
 GatheringCard {
-  border: 1px solid #DDD
-  padding: 10px
-  margin-bottom: 10px
+  padding: 20px
+  margin: 20px -20px
+  border-top: 1px solid #2d2c2c
 
   a.image {
     display: block
@@ -17,23 +17,34 @@ GatheringCard {
     padding-top: 10px;
 
     div.title {
-      font-size: 90%;
-      color: #555;
-      font-weight: bold;
+      font-size: 75%;
       margin-bottom: 10px;
+      text-align: center
     }
     div.attendees {
-      margin: 0 5px
-      a {
-        margin-right: 4px
-        img {
-          height: 45px
-          width: 45px
-        }
+      text-align: center
+
+      a + a {
+        margin-left: 10px
+      }
+
+      (img) {
+        height: 45px
+        width: 45px
+        border-radius: 3px
       }
     }
     div.actions {
+      text-align: center
       margin-top: 10px
+
+      button {
+        :first-child {
+          ::before {
+            content: '✔ '
+          }
+        }
+      }
       button + button {
         margin-left: 5px
       }
@@ -41,18 +52,23 @@ GatheringCard {
   }
 
   div.title {
-    font-size: 200%
+    a {
+      font-size: 200%
+    }
     button {
       float: right;
-      font-size: 60%;
+
+      ::before {
+        content: '✎ '
+      }
     }
   }
   div.time {
-    color: #555
-    font-size: 120%
+    color: #757474
   }
   div.description {
-    border-top: 3px solid #CCC;
-    margin-top: 10px;
+    margin: 20px 0 0
+    padding: 20px
+    background: #2d2c2c
   }
 }
