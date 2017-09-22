@@ -101,16 +101,23 @@ Message {
       div.main {
         div.name {
           a {
-            color: #999
+            color: #c3c3c3
             font-weight: bold
 
             :hover {
-              color: #bbb
+              color: #ddd
             }
           }
         }
         div.meta {
           font-size: 75%
+          color: #8a8a8a;
+          (a) {
+            color: #b3b8e0
+            :hover {
+              color: #dfdfe2
+            }
+          }
         }
         margin-left: 10px
       }
