@@ -21,7 +21,7 @@ exports.create = function (api) {
       h('PageHeading', [
         h('h1', [
           h('strong', 'Settings')
-        ]),
+        ])
       ])
     ]
 
@@ -31,20 +31,17 @@ exports.create = function (api) {
         h('section.content', [
           h('section', [
             h('h2', 'Theme'),
-            computed(currentTheme, currentTheme => {
-              return themeNames.map(name => {
-                const style = currentTheme == name
-                  ? { 'margin-right': '1rem', 'border-color': 'teal' }
-                  : { 'margin-right': '1rem' }
-
-                return h('button', {
-                  'ev-click': () => api.settings.sync.set({
-                    patchwork: {theme: name}
-                  }),
-                  style
-                }, name)
+            h('select', {
+              style: {
+                'font-size': '120%'
+              },
+              value: currentTheme,
+              'ev-change': (ev) => api.settings.sync.set({
+                patchwork: {theme: ev.target.value}
               })
-            })
+            }, [
+              themeNames.map(name => h('option', {value: name}, [name]))
+            ])
           ]),
           h('section', [
             h('h2', 'Filters'),
