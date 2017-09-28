@@ -10,18 +10,18 @@ var Path = require('path')
 var defaultMenu = require('electron-default-menu')
 var WindowState = require('electron-window-state')
 var Menu = electron.Menu
-var extend = require('xtend')
-var ssbKeys = require('ssb-keys')
+var spawn = require('child_process').spawn
 
 var windows = {
   dialogs: new Set()
 }
-var ssbConfig = null
 var quitting = false
 
+var ssbConfig = require('./config')
+
 electron.app.on('ready', () => {
-  setupContext('ssb', {
-    server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+  startServer({
+    server: false // !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
     var menu = defaultMenu(electron.app, electron.shell)
     var view = menu.find(x => x.label === 'View')
@@ -103,43 +103,14 @@ function openMainWindow () {
   }
 }
 
-function setupContext (appName, opts, cb) {
-  ssbConfig = require('ssb-config/inject')(appName, extend({
-    port: 8008,
-    blobsPort: 7777
-  }, opts))
-
-  ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
-
-  // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
-  var id = ssbConfig.keys.id
-  ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${id.slice(1).replace('.ed25519', '')}`
-
+function startServer (opts, cb) {
   if (opts.server === false) {
     cb && cb()
   } else {
-    electron.ipcMain.once('server-started', function (ev, config) {
-      ssbConfig = config
-      cb && cb()
-    })
-    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'server-process.js'), {
-      connect: false,
-      center: true,
-      fullscreen: false,
-      fullscreenable: false,
-      height: 150,
-      maximizable: false,
-      minimizable: false,
-      resizable: false,
-      show: false,
-      skipTaskbar: true,
-      title: 'patchwork-server',
-      useContentSize: true,
-      width: 150
-    })
-    // windows.background.on('close', (ev) => {
-    //   ev.preventDefault()
-    //   windows.background.hide()
-    // })
+    setTimeout(() => {
+      spawn('node', [Path.join(__dirname, 'server-process.js')], {
+        stdio: 'inherit'
+      })
+    }, 200)
   }
 }

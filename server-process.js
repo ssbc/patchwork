@@ -1,7 +1,7 @@
 var serveBlobs = require('./lib/serve-blobs')
 var fs = require('fs')
 var Path = require('path')
-var electron = require('electron')
+//var electron = require('electron')
 var spawn = require('child_process').spawn
 var fixPath = require('fix-path')
 
@@ -24,24 +24,21 @@ var createSbot = require('scuttlebot')
 
 fixPath()
 
-module.exports = function (ssbConfig) {
-  var context = {
-    sbot: createSbot(ssbConfig),
-    config: ssbConfig
-  }
-  ssbConfig.manifest = context.sbot.getManifest()
-  serveBlobs(context)
-  fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
-  electron.ipcRenderer.send('server-started', ssbConfig)
+var config = require('./config')
+var sbot = createSbot(config)
+
+config.manifest = sbot.getManifest()
+serveBlobs({sbot, config})
+fs.writeFileSync(Path.join(config.path, 'manifest.json'), JSON.stringify(config.manifest))
+//electron.ipcRenderer.send('server-started', config)
 
   // attempt to run git-ssb if it is installed and in path
-  var gitSsb = spawn('git-ssb', [ 'web' ], {
-    stdio: 'inherit'
-  })
-  gitSsb.on('error', () => {
-    console.log('git-ssb is not installed, or not available in path')
-  })
-  process.on('exit', () => {
-    gitSsb.kill()
-  })
-}
+  // var gitSsb = spawn('git-ssb', [ 'web' ], {
+  //   stdio: 'inherit'
+  // })
+  // gitSsb.on('error', () => {
+  //   console.log('git-ssb is not installed, or not available in path')
+  // })
+  // process.on('exit', () => {
+  //   gitSsb.kill()
+  // })
