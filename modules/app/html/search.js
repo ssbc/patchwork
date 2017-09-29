@@ -3,12 +3,11 @@ var nest = require('depnest')
 var addSuggest = require('suggest-box')
 
 var appRoot = require('app-root-path');
-var i18n = require(appRoot + '/lib/i18n').i18n
-
 
 exports.needs = nest({
   'profile.async.suggest': 'first',
-  'channel.async.suggest': 'first'
+  'channel.async.suggest': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('app.html.search')
@@ -16,12 +15,13 @@ exports.gives = nest('app.html.search')
 var pages = ['/public', '/private', '/mentions', '/all', '/gatherings']
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('app.html.search', function (setView) {
     var getProfileSuggestions = api.profile.async.suggest()
     var getChannelSuggestions = api.channel.async.suggest()
     var searchBox = h('input.search', {
       type: 'search',
-      placeholder: i18n.__('word, @key, #channel'),
+      placeholder: i18n('word, @key, #channel'),
       'ev-suggestselect': (ev) => {
         setView(ev.detail.id)
         searchBox.value = ev.detail.id

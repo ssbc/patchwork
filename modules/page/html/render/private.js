@@ -1,18 +1,18 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var appRoot = require('app-root-path')
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'feed.html.rollup': 'first',
   'feed.pull.private': 'first',
   'message.html.compose': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function channel (path) {
     if (path !== '/private') return
 
@@ -26,7 +26,7 @@ exports.create = function (api) {
           })
           return msg
         },
-        placeholder: i18n.__('Write a private message')
+        placeholder: i18n('Write a private message')
       })
     ]
 

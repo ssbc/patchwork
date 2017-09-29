@@ -7,15 +7,12 @@ var nextStepper = require('../../../lib/next-stepper')
 var extend = require('xtend')
 var paramap = require('pull-paramap')
 
-var appRoot = require('app-root-path');
-var i18n = require(appRoot + '/lib/i18n').i18n
-
 var bumpMessages = {
-  'vote': i18n.__('liked this message'),
-  'post': i18n.__('replied to this message'),
-  'about': i18n.__('added changes'),
-  'mention': i18n.__('mentioned you'),
-  'channel-mention': i18n.__('mentioned this channel')
+  'vote': 'liked this message',
+  'post': 'replied to this message',
+  'about': 'added changes',
+  'mention': 'mentioned you',
+  'channel-mention': 'mentioned this channel'
 }
 
 // bump even for first message
@@ -31,7 +28,8 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
   'sbot.async.get': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest({
@@ -39,6 +37,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('feed.html.rollup', function (getStream, {
     prepend,
     rootFilter = returnTrue,
@@ -51,7 +50,7 @@ exports.create = function (api) {
     var yourId = api.keys.sync.id()
     var throttledUpdates = throttle(updates, 200)
     var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
-      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, i18n.__('update'), i18n.__('updates'))
+      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, i18n('update'), i18n('updates'))
     ])
 
     var abortLastFeed = null
@@ -195,9 +194,9 @@ exports.create = function (api) {
           ? getLikeAuthors(groupedBumps[lastBumpType])
           : getAuthors(groupedBumps[lastBumpType])
 
-        var description = bumpMessages[lastBumpType] || 'added changes'
+        var description = i18n(bumpMessages[lastBumpType] || 'added changes')
         meta = h('div.meta', { title: names(bumps) }, [
-          many(bumps, api.profile.html.person), ' ', description
+          many(bumps, api.profile.html.person, i18n), ' ', description
         ])
       }
 
@@ -210,7 +209,7 @@ exports.create = function (api) {
         renderedMessage,
         when(replyElements.length, [
           when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key}, [i18n.__('View full thread') +' (', replies.length, ')'])
+            h('a.full', {href: item.key}, [i18n('View full thread') +' (', replies.length, ')'])
           ),
           h('div.replies', replyElements)
         ])
@@ -249,7 +248,7 @@ function plural (value, single, many) {
   })
 }
 
-function many (ids, fn) {
+function many (ids, fn, intl) {
   ids = Array.from(ids)
   var featuredIds = ids.slice(0, 4)
 
@@ -258,25 +257,25 @@ function many (ids, fn) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), i18n.__(' and '),
-        ids.length - 3, i18n.__(' others')
+        fn(featuredIds[2]), intl(' and '),
+        ids.length - 3, intl(' others'),
       ]
     } else if (ids.length === 4) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), i18n.__(' and '),
+        fn(featuredIds[2]), intl(' and '),
         fn(featuredIds[3])
       ]
     } else if (ids.length === 3) {
       return [
         fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), i18n.__(' and '),
+        fn(featuredIds[1]), intl(' and '),
         fn(featuredIds[2])
       ]
     } else if (ids.length === 2) {
       return [
-        fn(featuredIds[0]), i18n.__(' and '),
+        fn(featuredIds[0]), intl(' and '),
         fn(featuredIds[1])
       ]
     } else {

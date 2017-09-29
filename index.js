@@ -3,8 +3,6 @@ process.on('uncaughtException', function (err) {
   process.exit()
 })
 
-var i18n = require('./lib/i18n').i18n
-
 var electron = require('electron')
 var openWindow = require('./lib/window')
 
@@ -83,7 +81,7 @@ function openMainWindow () {
       height: windowState.height,
       titleBarStyle: 'hidden-inset',
       autoHideMenuBar: true,
-      title: i18n.__("Patchwork"),
+      title: "Patchwork",
       show: true,
       backgroundColor: '#EEE',
       webPreferences: {

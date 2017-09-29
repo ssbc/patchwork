@@ -1,13 +1,12 @@
 var nest = require('depnest')
 var { h } = require('mutant')
-var appRoot = require('app-root-path')
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'feed.pull.public': 'first',
   'message.html.compose': 'first',
   'message.async.publish': 'first',
-  'feed.html.rollup': 'first'
+  'feed.html.rollup': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest({
@@ -15,6 +14,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', page)
 
   function page (path) {
@@ -23,11 +23,11 @@ exports.create = function (api) {
     var prepend = [
       h('PageHeading', [
         h('h1', [
-          i18n.__('All Posts from Your '),
-          h('strong', i18n.__('Extended Network'))
+          i18n('All Posts from Your '),
+          h('strong', i18n('Extended Network'))
         ])
       ]),
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n.__('Write a public message') })
+      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
     ]
 
     var feedView = api.feed.html.rollup(api.feed.pull.public, {

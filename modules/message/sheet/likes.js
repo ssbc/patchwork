@@ -2,9 +2,6 @@ var {h, when, map, computed} = require('mutant')
 var nest = require('depnest')
 var catchLinks = require('../../../lib/catch-links')
 
-var appRoot = require('app-root-path');
-var i18n = require(appRoot + '/lib/i18n').i18n
-
 exports.needs = nest({
   'sheet.display': 'first',
   'keys.sync.id': 'first',
@@ -12,12 +9,14 @@ exports.needs = nest({
   'profile.obs.rank': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
-  'app.navigate': 'first'
+  'app.navigate': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('message.sheet.likes')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('message.sheet.likes', function (ids) {
     api.sheet.display(close => {
       var content = h('div', {
@@ -25,7 +24,7 @@ exports.create = function (api) {
       }, [
         h('h2', {
           style: { 'font-weight': 'normal' }
-        }, [i18n.__('Liked by')]),
+        }, [i18n('Liked by')]),
         renderContactBlock(ids)
       ])
 
@@ -41,7 +40,7 @@ exports.create = function (api) {
         footer: [
           h('button -close', {
             'ev-click': close
-          }, i18n.__('Close'))
+          }, i18n('Close'))
         ]
       }
     })

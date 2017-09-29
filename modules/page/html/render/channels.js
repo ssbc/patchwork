@@ -1,7 +1,5 @@
 var nest = require('depnest')
 var { h, send, when, computed, map } = require('mutant')
-var appRoot = require('app-root-path')
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.async.publish': 'first',
@@ -9,12 +7,14 @@ exports.needs = nest({
   'channel.obs': {
     subscribed: 'first',
     recent: 'first'
-  }
+  },
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function(api){
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function page(path){
     if (path !== '/channels') return
 
@@ -41,10 +41,10 @@ exports.create = function(api){
               when(subscribed,
                 h('a.-unsubscribe', {
                   'ev-click': send(unsubscribe, channel)
-                }, i18n.__('Unsubscribe')),
+                }, i18n('Unsubscribe')),
                 h('a.-subscribe', {
                   'ev-click': send(subscribe, channel)
-                }, i18n.__('Subscribe'))
+                }, i18n('Subscribe'))
               )
             ])
           }, {maxTime: 5, idle: true})

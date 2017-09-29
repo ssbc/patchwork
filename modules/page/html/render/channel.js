@@ -1,7 +1,5 @@
 var { h, when, send } = require('mutant')
 var nest = require('depnest')
-var appRoot = require('app-root-path')
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'channel.obs.subscribed': 'first',
@@ -10,12 +8,14 @@ exports.needs = nest({
   'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '#') return
 
@@ -29,19 +29,19 @@ exports.create = function (api) {
           when(subscribedChannels.has(channel),
             h('a.ToggleButton.-unsubscribe', {
               'href': '#',
-              'title': i18n.__('Click to unsubscribe'),
+              'title': i18n('Click to unsubscribe'),
               'ev-click': send(unsubscribe, channel)
-            }, i18n.__('Subscribed')),
+            }, i18n('Subscribed')),
             h('a.ToggleButton.-subscribe', {
               'href': '#',
               'ev-click': send(subscribe, channel)
-            }, i18n.__('Subscribe'))
+            }, i18n('Subscribe'))
           )
         ])
       ]),
       api.message.html.compose({
         meta: {type: 'post', channel},
-        placeholder: i18n.__('Write a message in this channel')
+        placeholder: i18n('Write a message in this channel')
       })
     ]
 

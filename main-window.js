@@ -12,7 +12,6 @@ var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
-var i18n = require('./lib/i18n').i18n
 
 
 module.exports = function (config) {
@@ -42,14 +41,17 @@ module.exports = function (config) {
     'app.navigate': 'first',
     'channel.obs.subscribed': 'first',
     'settings.obs.get': 'first',
+    'intl.sync.i18n': 'first',
   }))
 
   setupContextMenuAndSpellCheck(api.config.sync.load())
+  
+  const i18n = api.intl.sync.i18n
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
   var subscribedChannels = api.channel.obs.subscribed(id)
-
+    
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
     sbot.latestSequence(sbot.id, (_, key) => {
@@ -93,30 +95,30 @@ module.exports = function (config) {
         })
       ]),
       h('span.nav', [
-        tab(i18n.__("Public"), '/public'),
-        tab(i18n.__("Private"), '/private'),
-        dropTab(i18n.__('More'), [
+        tab(i18n("Public"), '/public'),
+        tab(i18n("Private"), '/private'),
+        dropTab(i18n('More'), [
           getSubscribedChannelMenu,
-          [i18n.__('Gatherings'), '/gatherings'],
-          [i18n.__('Extended Network'), '/all'],
+          [i18n('Gatherings'), '/gatherings'],
+          [i18n('Extended Network'), '/all'],
           {separator: true},
-          [i18n.__('Settings'), '/settings']
+          [i18n('Settings'), '/settings']
         ])
       ]),
       h('span.appTitle', [
-        h('span.title', i18n.__("Patchwork")),
+        h('span.title', i18n("Patchwork")),
         api.app.html.progressNotifier()
       ]),
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
-        tab(i18n.__('Profile'), id),
-        tab(i18n.__('Mentions'), '/mentions')
+        tab(i18n('Profile'), id),
+        tab(i18n('Mentions'), '/mentions')
       ])
     ]),
     when(latestUpdate,
       h('div.info', [
         h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases' }, [
-          h('strong', ['Patchwork ', latestUpdate, i18n.__(' has been released.')]), i18n.__(' Click here to download and view more info!'),
+          h('strong', ['Patchwork ', latestUpdate, i18n(' has been released.')]), i18n(' Click here to download and view more info!'),
           h('a.ignore', {'ev-click': latestUpdate.ignore}, 'X')
         ])
       ])
@@ -152,9 +154,9 @@ module.exports = function (config) {
 
     if (channels.length) {
       return {
-        label: i18n.__('Channels'),
+        label: i18n('Channels'),
         submenu: [
-          { label: i18n.__('Browse All'),
+          { label: i18n('Browse All'),
             click () {
               setView('/channels')
             }
@@ -171,7 +173,7 @@ module.exports = function (config) {
       }
     } else {
       return {
-        label: i18n.__('Browse Channels'),
+        label: i18n('Browse Channels'),
         click () {
           setView('/channels')
         }

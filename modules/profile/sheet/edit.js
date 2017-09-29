@@ -1,8 +1,6 @@
 var nest = require('depnest')
 var extend = require('xtend')
 var {Value, h, computed, when} = require('mutant')
-var appRoot = require('app-root-path')
-var i18n = require(appRoot + '/lib/i18n').i18n
 var fallbackImageUrl = 'data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
 
 exports.gives = nest('profile.sheet.edit')
@@ -18,10 +16,12 @@ exports.needs = nest({
     color: 'first'
   },
   'blob.html.input': 'first',
-  'blob.sync.url': 'first'
+  'blob.sync.url': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('profile.sheet.edit', function () {
     var id = api.keys.sync.id()
     api.sheet.display(close => {
@@ -47,7 +47,7 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, [i18n.__('Your Profile')]),
+          }, [i18n('Your Profile')]),
           h('ProfileEditor', [
             h('div.side', [
               h('ImageInput', [
@@ -55,7 +55,7 @@ exports.create = function (api) {
                   style: { 'background-color': api.about.obs.color(id) },
                   src: computed(chosenImage, (id) => id ? api.blob.sync.url(id) : fallbackImageUrl)
                 }),
-                h('span', ['🖼 ', i18n.__('Choose Profile Image...')]),
+                h('span', ['🖼 ', i18n('Choose Profile Image...')]),
                 api.blob.html.input(file => {
                   chosenImage.set(file.link)
                 }, {
@@ -66,11 +66,11 @@ exports.create = function (api) {
             ]),
             h('div.main', [
               h('input.name', {
-                placeholder: i18n.__('Choose a name'),
+                placeholder: i18n('Choose a name'),
                 hooks: [ValueHook(chosenName), FocusHook()]
               }),
               h('textarea.description', {
-                placeholder: i18n.__('Describe yourself (if you want)'),
+                placeholder: i18n('Describe yourself (if you want)'),
                 hooks: [ValueHook(chosenDescription)]
               })
             ])
@@ -80,10 +80,10 @@ exports.create = function (api) {
           h('button -save', {
             'ev-click': save,
             'disabled': publishing
-          }, when(publishing, i18n.__('Publishing...'), i18n.__('Publish'))),
+          }, when(publishing, i18n('Publishing...'), i18n('Publish'))),
           h('button -cancel', {
             'ev-click': close
-          }, i18n.__('Cancel'))
+          }, i18n('Cancel'))
         ]
       }
 
@@ -106,9 +106,9 @@ exports.create = function (api) {
               publishing.set(false)
               showDialog({
                 type: 'error',
-                title: i18n.__('Error'),
-                buttons: [i18n.__('OK')],
-                message: i18n.__('An error occurred while attempting to publish about message.'),
+                title: i18n('Error'),
+                buttons: [i18n('OK')],
+                message: i18n('An error occurred while attempting to publish about message.'),
                 detail: err.message
               })
             } else {

@@ -1,8 +1,6 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var { h, map, computed } = require('mutant')
-var appRoot = require('app-root-path')
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.obs': {
@@ -10,12 +8,14 @@ exports.needs = nest({
     name: 'first',
     author: 'first'
   },
-  'profile.html.person': 'first'
+  'profile.html.person': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('message.html.backlinks')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('message.html.backlinks', function (msg, {includeReferences = true, includeForks = true} = {}) {
     if (!ref.type(msg.key)) return []
     var backlinks = api.message.obs.backlinks(msg.key)
@@ -27,7 +27,7 @@ exports.create = function (api) {
           href: link.id, title: link.id
         }, [
           h('strong', [
-            api.profile.html.person(link.author), i18n.__(' forked this discussion:')
+            api.profile.html.person(link.author), i18n(' forked this discussion:')
           ]), ' ',
           api.message.obs.name(link.id)
         ])
@@ -37,7 +37,7 @@ exports.create = function (api) {
           href: link.id, title: link.id
         }, [
           h('strong', [
-            api.profile.html.person(link.author), i18n.__(' referenced this message:')
+            api.profile.html.person(link.author), i18n(' referenced this message:')
           ]), ' ',
           api.message.obs.name(link.id)
         ])

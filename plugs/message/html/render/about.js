@@ -3,8 +3,6 @@ var computed = require('mutant/computed')
 var nest = require('depnest')
 var extend = require('xtend')
 var ref = require('ssb-ref')
-var appRoot = require('app-root-path');
-var i18n = require(appRoot + '/lib/i18n').i18n
 
 exports.needs = nest({
   'message.html': {
@@ -15,12 +13,14 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'profile.html.person': 'first',
   'about.obs.name': 'first',
-  'blob.sync.url': 'first'
+  'blob.sync.url': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('message.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('message.html.render', function about (msg, opts) {
     if (msg.value.content.type !== 'about') return
     if (!ref.isFeed(msg.value.content.about)) return
@@ -35,18 +35,18 @@ exports.create = function (api) {
       var target = api.profile.html.person(c.about, c.name)
       miniContent.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
         if (self) {
-          return [i18n.__('self identifies as "'), target, '"']
+          return [i18n('self identifies as "'), target, '"']
         } else if (a === b) {
-          return [i18n.__('identified '), api.profile.html.person(c.about)]
+          return [i18n('identified '), api.profile.html.person(c.about)]
         } else {
-          return [i18n.__('identifies '), api.profile.html.person(c.about), i18n.__(' as "'), target, '"']
+          return [i18n('identifies '), api.profile.html.person(c.about), i18n(' as "'), target, '"']
         }
       }))
     }
 
     if (c.image) {
       if (!miniContent.length) {
-        var imageAction = self ? i18n.__('self assigned a display image') : [i18n.__('assigned a display image to '), api.profile.html.person(c.about)]
+        var imageAction = self ? i18n('self assigned a display image') : [i18n('assigned a display image to '), api.profile.html.person(c.about)]
         miniContent.push(imageAction)
       }
 
@@ -72,7 +72,7 @@ exports.create = function (api) {
     if (c.description) {
       elements.push(api.message.html.decorate(api.message.html.layout(msg, extend({
         showActions: true,
-        miniContent: self ? i18n.__('self assigned a description') : [i18n.__('assigned a description to '), api.profile.html.person(c.about)],
+        miniContent: self ? i18n('self assigned a description') : [i18n('assigned a description to '), api.profile.html.person(c.about)],
         content: api.message.html.markdown(c.description),
         layout: 'mini'
       }, opts)), { msg }))

@@ -2,17 +2,16 @@ var {h, when, Value, Proxy} = require('mutant')
 var nest = require('depnest')
 var electron = require('electron')
 
-var appRoot = require('app-root-path');
-var i18n = require(appRoot + '/lib/i18n').i18n
-
 exports.needs = nest({
   'sheet.display': 'first',
-  'invite.async.accept': 'first'
+  'invite.async.accept': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('invite.sheet')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('invite.sheet', function () {
     api.sheet.display(close => {
       var publishing = Value()
@@ -24,7 +23,7 @@ exports.create = function (api) {
           'margin-top': '20px',
           'width': '100%'
         },
-        placeholder: i18n.__('paste invite code here')
+        placeholder: i18n('paste invite code here')
       })
       setTimeout(() => {
         input.focus()
@@ -40,9 +39,9 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, [i18n.__('By default, Patchwork will only see other users that are on the same local area network as you.')]),
+          }, [i18n('By default, Patchwork will only see other users that are on the same local area network as you.')]),
           h('div', [
-            i18n.__('In order to share with users on the internet, you need to be invited to a pub server.')
+            i18n('In order to share with users on the internet, you need to be invited to a pub server.')
           ]),
           input
         ]),
@@ -56,9 +55,9 @@ exports.create = function (api) {
                   publishing.set(false)
                   showDialog({
                     type: 'error',
-                    title: i18n.__('Error'),
-                    buttons: [i18n.__('OK')],
-                    message: i18n.__('An error occurred while attempting to redeem invite.'),
+                    title: i18n('Error'),
+                    buttons: [i18n('OK')],
+                    message: i18n('An error occurred while attempting to redeem invite.'),
                     detail: err.message
                   })
                 } else {
@@ -66,10 +65,10 @@ exports.create = function (api) {
                 }
               }))
             }
-          }, [ when(publishing, publishStatus, i18n.__('Redeem Invite')) ]),
+          }, [ when(publishing, publishStatus, i18n('Redeem Invite')) ]),
           h('button -cancel', {
             'ev-click': close
-          }, i18n.__('Cancel'))
+          }, i18n('Cancel'))
         ]
       }
     })
