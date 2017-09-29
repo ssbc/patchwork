@@ -76,8 +76,9 @@ exports.create = function (api) {
 
           var author = msg.value.author
           var channel = normalizeChannel(msg.value.content.channel)
+          var tagged = checkTag(msg.value.content.mentions)
           var isSubscribed = channel ? subscribedChannels().has(channel) : false
-          return isSubscribed || id === author || following().includes(author)
+          return isSubscribed || id === author || following().includes(author) || tagged
         }
       },
       rootFilter: function (msg) {
@@ -104,6 +105,17 @@ exports.create = function (api) {
     result.reload = feedView.reload
 
     return result
+
+    function checkTag (mentions) {
+      if (Array.isArray(mentions)) {
+        return mentions.some((mention) => {
+          if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
+            var channel = normalizeChannel(mention.link.slice(1))
+            return channel ? subscribedChannels().has(channel) : false
+          }
+        })
+      }
+    }
 
     function getSidebar () {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {

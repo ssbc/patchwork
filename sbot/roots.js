@@ -197,9 +197,20 @@ module.exports = function (ssb, config) {
           var type = msg.value.content.type
           if (type === 'vote') return false // filter out likes
           var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, ids, msg.value.content.channel))
-          return ids.includes(msg.value.author) || matchesChannel || checkFollowing(friends, ids, msg.value.author)
+          var matchesTag = checkTag(subscriptions, ids, msg.value.content.mentions)
+          return ids.includes(msg.value.author) || matchesChannel || matchesTag || checkFollowing(friends, ids, msg.value.author)
         })
       })
+    })
+  }
+}
+
+function checkTag (lookup, ids, mentions) {
+  if (Array.isArray(mentions)) {
+    return mentions.some((mention) => {
+      if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
+        return checkChannel(lookup, ids, mention.link.slice(1))
+      }
     })
   }
 }
