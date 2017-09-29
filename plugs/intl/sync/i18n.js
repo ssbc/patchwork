@@ -73,11 +73,12 @@ exports.create = (api) => {
   function _init() {
     if (_locale) return
     //TODO: Depject this!
+    _locale = true;
     i18nL.configure({
         locales:['en','ki','es'],
         directory: appRoot + '/locales'
     });
-   
+
     watch(api.settings.obs.get('patchwork.lang'), currentLocale => {
         i18nL.setLocale(currentLocale)
     })
