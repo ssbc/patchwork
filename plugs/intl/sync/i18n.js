@@ -76,11 +76,12 @@ exports.create = (api) => {
     _locale = true;
     i18nL.configure({
         locales:['en','ki','es'],
-        directory: appRoot + '/locales'
+        directory: appRoot + '/locales',
+        defaultLocale: 'en'
     });
 
-    watch(api.settings.obs.get('patchwork.lang'), currentLocale => {
-        i18nL.setLocale(currentLocale)
+    watch(api.settings.obs.get('patchwork.lang',navigator.language), currentLocale => {
+        i18nL.setLocale(getSubLocal(currentLocale))
     })
   }
 
