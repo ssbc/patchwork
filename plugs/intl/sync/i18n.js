@@ -73,7 +73,6 @@ exports.create = (api) => {
   function _init() {
     if (_locale) return
     //TODO: Depject this!
-    _locale = true;
     i18nL.configure({
         directory: appRoot + '/locales',
         defaultLocale: 'en'
@@ -81,7 +80,15 @@ exports.create = (api) => {
 
     watch(api.settings.obs.get('patchwork.lang',navigator.language), currentLocale => {
         i18nL.setLocale(getSubLocal(currentLocale))
+        
+        // Only refresh if the language has already been selected once.
+        // This will prevent the update loop
+        if (_locale) {
+          electron.remote.getCurrentWebContents().reloadIgnoringCache()
+        }
     })
+
+    _locale = true;
   }
 
 }
