@@ -206,11 +206,13 @@ module.exports = function (ssb, config) {
 
 function checkFollowing (lookup, ids, target) {
   // TODO: rewrite contacts index (for some reason the order is different)
-  var value = mostRecentValue(ids.map(id => lookup[id].following && lookup[id].following[target]), 1)
+  if (!lookup) return false
+  var value = mostRecentValue(ids.map(id => lookup[id] && lookup[id].following && lookup[id].following[target]), 1)
   return value && value[0]
 }
 
 function checkChannel (lookup, ids, channel) {
+  if (!lookup) return false
   channel = normalizeChannel(channel)
   if (channel) {
     var value = mostRecentValue(ids.map(id => lookup[`${id}:${channel}`]))
