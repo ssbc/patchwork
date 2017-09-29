@@ -1,4 +1,5 @@
 var Channels = require('./channels')
+var Heartbeat = require('./heartbeat')
 var Subscriptions = require('./subscriptions')
 var Roots = require('./roots')
 var Progress = require('./progress')
@@ -18,6 +19,7 @@ exports.manifest = {
   recentFeeds: 'source',
   getSubscriptions: 'async',
   getChannels: 'async',
+  heartbeat: 'source',
   liveBacklinks: {
     subscribe: 'sync',
     unsubscribe: 'sync',
@@ -34,6 +36,7 @@ exports.init = function (ssb, config) {
   var recentFeeds = RecentFeeds(ssb, config)
 
   return {
+    heartbeat: Heartbeat(ssb, config),
     channels: channels.stream,
     subscriptions: subscriptions.stream,
     roots: roots.read,
