@@ -20,7 +20,7 @@ exports.create = function (api) {
     var replicateProgress = api.progress.obs.replicate()
     var indexes = api.progress.obs.indexes()
     var migration = api.progress.obs.migration()
-    var waiting = Waiting()
+    var waiting = Waiting(replicateProgress)
 
     var pending = computed(indexes, (progress) => progress.target - progress.current || 0)
     var pendingMigration = computed(migration, (progress) => progress.target - progress.current || 0)
@@ -64,16 +64,15 @@ exports.create = function (api) {
 
   // scoped
 
-  function Waiting () {
+  function Waiting (progress) {
     var waiting = Value()
     var lastTick = Date.now()
 
+    progress && progress(update)
+
     pull(
       api.sbot.pull.stream(sbot => sbot.patchwork.heartbeat()),
-      pull.drain((tick) => {
-        lastTick = Date.now()
-        waiting.set(false)
-      })
+      pull.drain(update)
     )
 
     setInterval(function () {
@@ -83,6 +82,13 @@ exports.create = function (api) {
     }, 1000)
 
     return waiting
+
+    // scoped
+
+    function update () {
+      lastTick = Date.now()
+      waiting.set(false)
+    }
   }
 }
 
