@@ -123,7 +123,7 @@ exports.create = function (api) {
     return computed([api.about.obs.name(id), id, following], function nameAndFollowWarning (name, id, following) {
       if (id === yourId) {
         return `${name} (you)`
-      } else if (following.has(id)) {
+      } else if (following.includes(id)) {
         return `${name}`
       } else {
         return `${name} (not following)`

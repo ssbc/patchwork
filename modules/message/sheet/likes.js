@@ -53,7 +53,7 @@ exports.create = function (api) {
         classList: 'ProfileList'
       }, [
         map(profiles, (id) => {
-          var following = computed(yourFollows, f => f.has(id))
+          var following = computed(yourFollows, f => f.includes(id))
           return h('a.profile', {
             href: id,
             classList: [

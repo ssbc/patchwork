@@ -189,7 +189,7 @@ module.exports = function (ssb, config) {
 
   function getFilter (cb) {
     // TODO: rewrite contacts stream
-    ssb.contacts.get((err, contacts) => {
+    ssb.friends.get((err, friends) => {
       if (err) return cb(err)
       ssb.patchwork.getSubscriptions((err, subscriptions) => {
         if (err) return cb(err)
@@ -197,7 +197,7 @@ module.exports = function (ssb, config) {
           var type = msg.value.content.type
           if (type === 'vote') return false // filter out likes
           var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, ids, msg.value.content.channel))
-          return ids.includes(msg.value.author) || matchesChannel || checkFollowing(contacts, ids, msg.value.author)
+          return ids.includes(msg.value.author) || matchesChannel || checkFollowing(friends, ids, msg.value.author)
         })
       })
     })
@@ -207,7 +207,9 @@ module.exports = function (ssb, config) {
 function checkFollowing (lookup, ids, target) {
   // TODO: rewrite contacts index (for some reason the order is different)
   if (!lookup) return false
-  var value = mostRecentValue(ids.map(id => lookup[id] && lookup[id].following && lookup[id].following[target]), 1)
+  // HACK: only lookup the first ID until a method is added to ssb-friends to
+  // correctly identify latest info
+  var value = ids.slice(0, 1).map(id => lookup[id] && lookup[id][target])
   return value && value[0]
 }
 

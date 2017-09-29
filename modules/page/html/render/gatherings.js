@@ -36,7 +36,7 @@ exports.create = function (api) {
       bumpFilter: function (msg) {
         if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
           var author = msg.value.author
-          return id === author || following().has(author)
+          return id === author || following().includes(author)
         }
       },
       rootFilter: (msg) => msg.value.content.type === 'gathering',

@@ -43,7 +43,7 @@ exports.create = function (api) {
     var friendsLoaded = computed([rawFollowers.sync, rawFollowing.sync], (...x) => x.every(Boolean))
 
     var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
-      return Array.from(following).filter(follow => followers.has(follow))
+      return Array.from(following).filter(follow => followers.includes(follow))
     })
 
     var following = computed([rawFollowing, friends], (following, friends) => {
@@ -63,7 +63,7 @@ exports.create = function (api) {
     })
 
     var youFollow = computed([yourFollows], function (youFollow) {
-      return youFollow.has(id)
+      return youFollow.includes(id)
     })
 
     var names = api.about.obs.names(id)
@@ -200,7 +200,7 @@ exports.create = function (api) {
         classList: 'ProfileList'
       }, [
         map(profiles, (id) => {
-          var following = computed(yourFollows, f => f.has(id))
+          var following = computed(yourFollows, f => f.includes(id))
           return h('a.profile', {
             href: id,
             classList: [

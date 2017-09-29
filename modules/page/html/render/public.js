@@ -77,7 +77,7 @@ exports.create = function (api) {
           var author = msg.value.author
           var channel = normalizeChannel(msg.value.content.channel)
           var isSubscribed = channel ? subscribedChannels().has(channel) : false
-          return isSubscribed || id === author || following().has(author)
+          return isSubscribed || id === author || following().includes(author)
         }
       },
       rootFilter: function (msg) {
@@ -107,7 +107,7 @@ exports.create = function (api) {
 
     function getSidebar () {
       var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {
-        return recent.filter(x => x !== id && !following.has(x) && !peers.includes(x)).slice(0, 10)
+        return recent.filter(x => x !== id && !following.includes(x) && !peers.includes(x)).slice(0, 10)
       })
       return [
         h('button -pub -full', {
