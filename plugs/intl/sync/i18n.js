@@ -75,7 +75,6 @@ exports.create = (api) => {
     //TODO: Depject this!
     _locale = true;
     i18nL.configure({
-        locales:['en','ki','es'],
         directory: appRoot + '/locales',
         defaultLocale: 'en'
     });
