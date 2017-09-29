@@ -7,6 +7,7 @@ exports.gives = nest('intl.sync', [
   'locale',
   'locales',
   'i18n',
+  'time',
 ])
 
 exports.needs = nest({
@@ -28,7 +29,8 @@ exports.create = (api) => {
   return nest('intl.sync', {
     locale,
     locales,
-    i18n
+    i18n,
+    time
   })
 
   //Get locale value in setting
@@ -45,6 +47,26 @@ exports.create = (api) => {
   function i18n (value) {
     _init()
     return i18nL.__(value)
+  }
+
+  function time (date){
+    return date
+      .replace(/from now/, i18n('form now'))
+      .replace(/ago/, i18n('ago'))
+      .replace(/years/,i18n('years'))
+      .replace(/months/,i18n('months'))
+      .replace(/weeks/,i18n('weeks'))
+      .replace(/days/,i18n('days'))
+      .replace(/hours/,i18n('hours'))
+      .replace(/minutes/,i18n('minutes'))
+      .replace(/seconds/,i18n('seconds'))
+      .replace(/year/,i18n('year'))
+      .replace(/month/,i18n('month'))
+      .replace(/week/,i18n('week'))
+      .replace(/day/,i18n('day'))
+      .replace(/hour/,i18n('hour'))
+      .replace(/minute/,i18n('minute'))
+      .replace(/second/,i18n('second'))
   }
 
   //Init an subscribe to settings changes.
