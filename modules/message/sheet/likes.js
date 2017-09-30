@@ -28,9 +28,9 @@ exports.create = function (api) {
         renderContactBlock(ids)
       ])
 
-      catchLinks(content, (href, external) => {
+      catchLinks(content, (href, external, anchor) => {
         if (!external) {
-          api.app.navigate(href)
+          api.app.navigate(href, anchor)
           close()
         }
       })

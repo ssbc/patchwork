@@ -23,7 +23,7 @@ exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.compose', function ({shrink = true, meta, prepublish, placeholder = 'Write a message'}, cb) {
+  return nest('message.html.compose', function ({shrink = true, meta, hooks, prepublish, placeholder = 'Write a message'}, cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
@@ -106,6 +106,7 @@ exports.create = function (api) {
     ])
 
     var composer = h('Compose', {
+      hooks,
       classList: [
         when(expanded, '-expanded', '-contracted')
       ]
@@ -114,6 +115,10 @@ exports.create = function (api) {
       warning,
       actions
     ])
+
+    composer.focus = function () {
+      textArea.focus()
+    }
 
     addSuggest(textArea, (inputText, cb) => {
       if (inputText[0] === '@') {

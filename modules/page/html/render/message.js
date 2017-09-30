@@ -1,6 +1,7 @@
 var { h, when, map, Proxy, Struct, Value, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
+var AnchorHook = require('../../../../lib/anchor-hook')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
@@ -11,7 +12,7 @@ exports.needs = nest({
     compose: 'first'
   },
   'sbot.async.get': 'first',
-  'intl.sync.i18n':'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -23,6 +24,7 @@ exports.create = function (api) {
     var loader = h('div', {className: 'Loading -large'})
 
     var result = Proxy(loader)
+    var anchor = Value()
 
     var meta = Struct({
       type: 'post',
@@ -35,6 +37,9 @@ exports.create = function (api) {
     var compose = api.message.html.compose({
       meta,
       shrink: false,
+      hooks: [
+        AnchorHook('reply', anchor, (el) => el.focus())
+      ],
       placeholder: when(meta.recps, i18n('Write a private reply'), i18n('Write a public reply'))
     })
 
@@ -69,10 +74,18 @@ exports.create = function (api) {
 
       var container = h('Thread', [
         h('div.messages', [
-          when(thread.branchId, h('a.full', {href: thread.rootId}, [i18n('View full thread')])),
+          when(thread.branchId, h('a.full', {href: thread.rootId, anchor: id}, [i18n('View full thread')])),
           map(thread.messages, (msg) => {
             return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
-              return api.message.html.render(msg, {pageId: id, previousId, includeReferences: true})
+              return h('div', {
+                hooks: [AnchorHook(msg.key, anchor, showContext)]
+              }, [
+                api.message.html.render(msg, {
+                  pageId: id,
+                  previousId,
+                  includeReferences: true
+                })
+              ])
             })
           }, {
             maxTime: 5,
@@ -84,10 +97,34 @@ exports.create = function (api) {
       result.set(when(thread.sync, container, loader))
     })
 
-    return h('div', {className: 'SplitView'}, [
+    var view = h('div', {className: 'SplitView'}, [
       h('div.main', [
         result
       ])
     ])
+
+    view.setAnchor = function (value) {
+      anchor.set(value)
+    }
+
+    return view
   })
+}
+
+function showContext (element) {
+  var scrollParent = getScrollParent(element)
+  if (scrollParent) {
+    // ensure context is visible
+    scrollParent.scrollTop = Math.max(0, scrollParent.scrollTop - 100)
+  }
+}
+
+function getScrollParent (element) {
+  while (element.parentNode) {
+    if (element.parentNode.scrollTop) {
+      return element.parentNode
+    } else {
+      element = element.parentNode
+    }
+  }
 }

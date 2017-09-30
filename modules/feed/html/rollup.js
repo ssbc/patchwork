@@ -209,13 +209,19 @@ exports.create = function (api) {
         renderedMessage,
         when(replyElements.length, [
           when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key}, [i18n('View full thread') +' (', replies.length, ')'])
+            h('a.full', {href: item.key, anchor: getFirstId(replyElements)}, [i18n('View full thread') + ' (', replies.length, ')'])
           ),
           h('div.replies', replyElements)
         ])
       ])
     }
   })
+
+  function getFirstId (elements) {
+    if (Array.isArray(elements) && elements.length) {
+      return elements[0].dataset.id
+    }
+  }
 
   function names (ids) {
     var items = map(Array.from(ids), api.about.obs.name)

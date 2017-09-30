@@ -99,7 +99,7 @@ exports.create = function (api) {
       }
     }
 
-    function setView (view) {
+    function setView (view, anchor) {
       loadView(view)
 
       if (views.has(view)) {
@@ -109,6 +109,12 @@ exports.create = function (api) {
 
         if (currentView() && lastViewed[currentView()] !== true) {
           lastViewed[currentView()] = Date.now()
+        }
+
+        var viewElement = views.get(view)
+
+        if (viewElement && typeof viewElement.setAnchor === 'function') {
+          viewElement.setAnchor(anchor)
         }
 
         if (view !== currentView()) {

@@ -45,13 +45,13 @@ module.exports = function (config) {
   }))
 
   setupContextMenuAndSpellCheck(api.config.sync.load())
-  
+
   const i18n = api.intl.sync.i18n
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
   var subscribedChannels = api.channel.obs.subscribed(id)
-    
+
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
     sbot.latestSequence(sbot.id, (_, key) => {
@@ -126,7 +126,7 @@ module.exports = function (config) {
     views.html
   ])
 
-  catchLinks(container, (href, external) => {
+  catchLinks(container, (href, external, anchor) => {
     if (external) {
       electron.shell.openExternal(href)
     } else if (ref.isBlob(href)) {
@@ -137,11 +137,11 @@ module.exports = function (config) {
         if (handler) {
           handler(href)
         } else {
-          api.app.navigate(href)
+          api.app.navigate(href, anchor)
         }
       })
     } else {
-      api.app.navigate(href)
+      api.app.navigate(href, anchor)
     }
   })
 
@@ -211,8 +211,8 @@ module.exports = function (config) {
     return element
   }
 
-  function setView (href) {
-    views.setView(href)
+  function setView (href, anchor) {
+    views.setView(href, anchor)
   }
 
   function getExternalHandler (key, cb) {
