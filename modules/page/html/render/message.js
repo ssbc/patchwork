@@ -122,7 +122,7 @@ function showContext (element) {
 
 function getScrollParent (element) {
   while (element.parentNode) {
-    if (element.parentNode.scrollTop) {
+    if (element.parentNode.scrollTop > 10) {
       return element.parentNode
     } else {
       element = element.parentNode
