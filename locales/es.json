@@ -1,4 +1,5 @@
 {
+	"$name": "el español",
 	"Patchwork": "Patchwork",
 	"Public": "Público",
 	"Private": "Privado",
@@ -132,5 +133,8 @@
 	"hour": "hora",
 	"minute": "minutos",
 	"second": "segundos",
-	"unsubscribed from ": "desuscrito de "
+	"unsubscribed from ": "desuscrito de ",
+	"en": "en",
+	"es": "es",
+	"ki": "ki"
 }

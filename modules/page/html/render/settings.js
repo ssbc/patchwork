@@ -8,7 +8,8 @@ exports.needs = nest({
   'settings.obs.get': 'first',
   'settings.sync.set': 'first',
   'intl.sync.locales': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'intl.sync.localeNames': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -17,10 +18,11 @@ exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (path !== '/settings') return
     const i18n = api.intl.sync.i18n
-    
+
     const currentTheme = api.settings.obs.get('patchwork.theme')
     const currentLang = api.settings.obs.get('patchwork.lang')
-    const langNames = api.intl.sync.locales()
+    const locales = api.intl.sync.locales()
+    const localeNameLookup = api.intl.sync.localeNames()
     const filterFollowing = api.settings.obs.get('filters.following')
 
     var prepend = [
@@ -35,42 +37,39 @@ exports.create = function (api) {
       h('div.wrapper', [
         h('section.prepend', prepend),
         h('section.content', [
+
           h('section', [
             h('h2', i18n('Theme')),
-            computed(currentTheme, currentTheme => {
-              return themeNames.map(name => {
-                const style = currentTheme == name
-                  ? { 'margin-right': '1rem', 'border-color': 'teal' }
-                  : { 'margin-right': '1rem' }
-
-                return h('button', {
-                  'ev-click': () => api.settings.sync.set({
-                    patchwork: {theme: name}
-                  }),
-                  style
-                }, name)
+            h('select', {
+              style: {
+                'font-size': '120%'
+              },
+              value: currentTheme,
+              'ev-change': (ev) => api.settings.sync.set({
+                patchwork: {theme: ev.target.value}
               })
             }, [
               themeNames.map(name => h('option', {value: name}, [name]))
             ])
           ]),
+
           h('section', [
             h('h2', i18n('Language')),
-            computed(currentLang, currentLang => {
-              return langNames.map(lang => {
-                const style = currentLang == lang
-                  ? { 'margin-right': '1rem', 'border-color': 'teal' }
-                  : { 'margin-right': '1rem' }
-
-                return h('button', {
-                  'ev-click': () => api.settings.sync.set({
-                    patchwork: {lang: lang}
-                  }),
-                  style
-                }, lang)
+            h('select', {
+              style: {
+                'font-size': '120%'
+              },
+              value: currentLang,
+              'ev-change': (ev) => api.settings.sync.set({
+                patchwork: {lang: ev.target.value}
               })
-            })
+            }, [
+              locales.map(code => h('option', {value: code}, [
+                code.toUpperCase(), ' - ', getLocaleName(code)
+              ]))
+            ])
           ]),
+
           h('section', [
             h('h2', i18n('Filters')),
             h('label', [
@@ -86,5 +85,16 @@ exports.create = function (api) {
         ])
       ])
     ])
+
+    function getLocaleName (code) {
+      var translated = i18n(code)
+      var name = localeNameLookup[code]
+
+      if (name !== translated && code !== translated) {
+        return `${name} (${translated})`
+      } else {
+        return name
+      }
+    }
   })
 }

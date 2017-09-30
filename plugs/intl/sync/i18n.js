@@ -1,13 +1,14 @@
 const nest = require('depnest')
 var { watch } = require('mutant')
-var appRoot = require('app-root-path');
-var i18nL = require("i18n")
+var appRoot = require('app-root-path')
+var i18nL = require('i18n')
 
 exports.gives = nest('intl.sync', [
   'locale',
   'locales',
+  'localeNames',
   'i18n',
-  'time',
+  'time'
 ])
 
 exports.needs = nest({
@@ -29,6 +30,7 @@ exports.create = (api) => {
   return nest('intl.sync', {
     locale,
     locales,
+    localeNames,
     i18n,
     time
   })
@@ -43,7 +45,15 @@ exports.create = (api) => {
     return i18nL.getLocales()
   }
 
-  //Get translation  
+  function localeNames () {
+    var names = i18nL.__l('$name')
+    return locales().reduce((result, item, i) => {
+      result[item] = names[i]
+      return result
+    }, {})
+  }
+
+  //Get translation
   function i18n (value) {
     _init()
     return i18nL.__(value)
@@ -80,7 +90,7 @@ exports.create = (api) => {
 
     watch(api.settings.obs.get('patchwork.lang',navigator.language), currentLocale => {
         i18nL.setLocale(getSubLocal(currentLocale))
-        
+
         // Only refresh if the language has already been selected once.
         // This will prevent the update loop
         if (_locale) {
