@@ -36,6 +36,7 @@ exports.create = function (api) {
 
     var compose = api.message.html.compose({
       meta,
+      isPrivate: when(meta.recps, true),
       shrink: false,
       hooks: [
         AnchorHook('reply', anchor, (el) => el.focus())
