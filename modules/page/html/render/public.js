@@ -29,7 +29,8 @@ exports.needs = nest({
     recent: 'first'
   },
   'keys.sync.id': 'first',
-  'settings.obs.get': 'first'
+  'settings.obs.get': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest({
@@ -37,6 +38,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', page)
 
   function page (path) {
@@ -53,7 +55,7 @@ exports.create = function (api) {
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
 
     var prepend = [
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: 'Write a public message' })
+      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
     ]
 
     var getStream = (opts) => {
@@ -124,9 +126,9 @@ exports.create = function (api) {
       return [
         h('button -pub -full', {
           'ev-click': api.invite.sheet
-        }, '+ Join Pub'),
-        when(loading, [ h('Loading') ], [
-          when(computed(channels, x => x.length), h('h2', 'Active Channels')),
+        }, i18n('+ Join Pub')),
+        when(loading, [ h("Loading") ], [
+          when(computed(channels, x => x.length), h('h2', i18n("Active Channels"))),
           h('div', {
             classList: 'ChannelList',
             hidden: loading
@@ -143,21 +145,21 @@ exports.create = function (api) {
                 when(subscribed,
                   h('a.-unsubscribe', {
                     'ev-click': send(unsubscribe, channel)
-                  }, 'Unsubscribe'),
+                  }, i18n('Unsubscribe')),
                   h('a.-subscribe', {
                     'ev-click': send(subscribe, channel)
-                  }, 'Subscribe')
+                  }, i18n('Subscribe'))
                 )
               ])
             }, {maxTime: 5}),
-            h('a.channel -more', {href: '/channels'}, 'More Channels...')
+            h('a.channel -more', {href: '/channels'}, i18n('More Channels...'))
           ])
         ]),
 
-        PeerList(localPeers, 'Local'),
-        PeerList(connectedPubs, 'Connected Pubs'),
+        PeerList(localPeers, i18n('Local')),
+        PeerList(connectedPubs, i18n('Connected Pubs')),
 
-        when(computed(whoToFollow, x => x.length), h('h2', 'Who to follow')),
+        when(computed(whoToFollow, x => x.length), h('h2', i18n('Who to follow'))),
         when(following.sync,
           h('div', {
             classList: 'ProfileList'

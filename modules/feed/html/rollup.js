@@ -18,6 +18,7 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
+
 exports.needs = nest({
   'about.obs.name': 'first',
   'app.sync.externalHandler': 'first',
@@ -27,7 +28,8 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
   'sbot.async.get': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest({
@@ -35,6 +37,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('feed.html.rollup', function (getStream, {
     prepend,
     rootFilter = returnTrue,
@@ -47,7 +50,7 @@ exports.create = function (api) {
     var yourId = api.keys.sync.id()
     var throttledUpdates = throttle(updates, 200)
     var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
-      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, 'update', 'updates')
+      'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, i18n('update'), i18n('updates'))
     ])
 
     var abortLastFeed = null
@@ -191,9 +194,9 @@ exports.create = function (api) {
           ? getLikeAuthors(groupedBumps[lastBumpType])
           : getAuthors(groupedBumps[lastBumpType])
 
-        var description = bumpMessages[lastBumpType] || 'added changes'
+        var description = i18n(bumpMessages[lastBumpType] || 'added changes')
         meta = h('div.meta', { title: names(bumps) }, [
-          many(bumps, api.profile.html.person), ' ', description
+          many(bumps, api.profile.html.person, i18n), ' ', description
         ])
       }
 
@@ -206,7 +209,7 @@ exports.create = function (api) {
         renderedMessage,
         when(replyElements.length, [
           when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key}, ['View full thread (', replies.length, ')'])
+            h('a.full', {href: item.key}, [i18n('View full thread') +' (', replies.length, ')'])
           ),
           h('div.replies', replyElements)
         ])
@@ -245,7 +248,7 @@ function plural (value, single, many) {
   })
 }
 
-function many (ids, fn) {
+function many (ids, fn, intl) {
   ids = Array.from(ids)
   var featuredIds = ids.slice(0, 4)
 
@@ -254,25 +257,25 @@ function many (ids, fn) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
-        ids.length - 3, ' others'
+        fn(featuredIds[2]), intl(' and '),
+        ids.length - 3, intl(' others'),
       ]
     } else if (ids.length === 4) {
       return [
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), ' and ',
+        fn(featuredIds[2]), intl(' and '),
         fn(featuredIds[3])
       ]
     } else if (ids.length === 3) {
       return [
         fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ' and ',
+        fn(featuredIds[1]), intl(' and '),
         fn(featuredIds[2])
       ]
     } else if (ids.length === 2) {
       return [
-        fn(featuredIds[0]), ' and ',
+        fn(featuredIds[0]), intl(' and '),
         fn(featuredIds[1])
       ]
     } else {

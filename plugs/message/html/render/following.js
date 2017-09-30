@@ -8,12 +8,14 @@ exports.needs = nest({
     decorate: 'reduce',
     layout: 'first'
   },
-  'profile.html.person': 'first'
+  'profile.html.person': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('message.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('message.html.render', function renderMessage (msg, opts) {
     if (msg.value.content.type !== 'contact') return
     if (!ref.isFeed(msg.value.content.contact)) return
@@ -30,7 +32,7 @@ exports.create = function (api) {
   function messageContent (msg) {
     var following = msg.value.content.following
     return [
-      following ? 'followed ' : 'unfollowed ',
+      following ? i18n('followed ') : i18n('unfollowed '),
       api.profile.html.person(msg.value.content.contact)
     ]
   }

@@ -8,12 +8,14 @@ exports.needs = nest({
   'gathering.sheet.edit': 'first',
   'keys.sync.id': 'first',
   'contact.obs.following': 'first',
-  'sbot.pull.stream': 'first'
+  'sbot.pull.stream': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function channel (path) {
     if (path !== '/gatherings') return
 
@@ -22,11 +24,11 @@ exports.create = function (api) {
 
     var prepend = [
       h('PageHeading', [
-        h('h1', [h('strong', 'Gatherings'), ' from your extended network']),
+        h('h1', [h('strong', i18n('Gatherings')), i18n(' from your extended network')]),
         h('div.meta', [
           h('button -add', {
             'ev-click': createGathering
-          }, '+ Add Gathering')
+          }, i18n('+ Add Gathering'))
         ])
       ])
     ]

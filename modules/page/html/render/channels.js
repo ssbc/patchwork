@@ -7,12 +7,14 @@ exports.needs = nest({
   'channel.obs': {
     subscribed: 'first',
     recent: 'first'
-  }
+  },
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function(api){
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function page(path){
     if (path !== '/channels') return
 
@@ -39,10 +41,10 @@ exports.create = function(api){
               when(subscribed,
                 h('a.-unsubscribe', {
                   'ev-click': send(unsubscribe, channel)
-                }, 'Unsubscribe'),
+                }, i18n('Unsubscribe')),
                 h('a.-subscribe', {
                   'ev-click': send(subscribe, channel)
-                }, 'Subscribe')
+                }, i18n('Subscribe'))
               )
             ])
           }, {maxTime: 5, idle: true})
