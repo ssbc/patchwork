@@ -19,6 +19,7 @@ var windows = {
 var ssbConfig = null
 var quitting = false
 
+
 electron.app.on('ready', () => {
   setupContext('ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
@@ -80,7 +81,7 @@ function openMainWindow () {
       height: windowState.height,
       titleBarStyle: 'hidden-inset',
       autoHideMenuBar: true,
-      title: 'Patchwork',
+      title: "Patchwork",
       show: true,
       backgroundColor: '#EEE',
       webPreferences: {

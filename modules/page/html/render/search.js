@@ -11,12 +11,14 @@ var Proxy = require('mutant/proxy')
 exports.needs = nest({
   'sbot.pull.stream': 'first',
   'keys.sync.id': 'first',
-  'message.html.render': 'first'
+  'message.html.render': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '?') return
 
@@ -29,11 +31,11 @@ exports.create = function (api) {
     var aborter = null
 
     const searchHeader = h('div', {className: 'PageHeading'}, [
-      h('h1', [h('strong', 'Search Results:'), ' ', query.join(' ')])
+      h('h1', [h('strong', i18n('Search Results:')), ' ', query.join(' ')])
     ])
 
     var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
-      'Show ', h('strong', [updates]), ' ', plural(updates, 'update', 'updates')
+      'Show ', h('strong', [updates]), ' ', plural(updates, i18n('update'), i18n('updates'))
     ])
 
     var content = Proxy()
@@ -49,7 +51,7 @@ exports.create = function (api) {
               'padding': '60px 0',
               'font-size': '150%'
             }
-          }, [h('strong', 'Search completed.'), ' ', count, ' ', plural(count, 'result', 'results'), ' found']))
+          }, [h('strong', i18n('Search completed.')), ' ', count, ' ', plural(count, i18n('result found'), i18n('results found'))]))
         ])
       ])
     ])

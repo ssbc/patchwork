@@ -16,10 +16,12 @@ exports.needs = nest({
     color: 'first'
   },
   'blob.html.input': 'first',
-  'blob.sync.url': 'first'
+  'blob.sync.url': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('profile.sheet.edit', function () {
     var id = api.keys.sync.id()
     api.sheet.display(close => {
@@ -45,7 +47,7 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, ['Your Profile']),
+          }, [i18n('Your Profile')]),
           h('ProfileEditor', [
             h('div.side', [
               h('ImageInput', [
@@ -53,7 +55,7 @@ exports.create = function (api) {
                   style: { 'background-color': api.about.obs.color(id) },
                   src: computed(chosenImage, (id) => id ? api.blob.sync.url(id) : fallbackImageUrl)
                 }),
-                h('span', ['🖼 Choose Profile Image...']),
+                h('span', ['🖼 ', i18n('Choose Profile Image...')]),
                 api.blob.html.input(file => {
                   chosenImage.set(file.link)
                 }, {
@@ -64,11 +66,11 @@ exports.create = function (api) {
             ]),
             h('div.main', [
               h('input.name', {
-                placeholder: 'Choose a name',
+                placeholder: i18n('Choose a name'),
                 hooks: [ValueHook(chosenName), FocusHook()]
               }),
               h('textarea.description', {
-                placeholder: 'Describe yourself (if you want)',
+                placeholder: i18n('Describe yourself (if you want)'),
                 hooks: [ValueHook(chosenDescription)]
               })
             ])
@@ -78,10 +80,10 @@ exports.create = function (api) {
           h('button -save', {
             'ev-click': save,
             'disabled': publishing
-          }, when(publishing, 'Publishing...', 'Publish')),
+          }, when(publishing, i18n('Publishing...'), i18n('Publish'))),
           h('button -cancel', {
             'ev-click': close
-          }, 'Cancel')
+          }, i18n('Cancel'))
         ]
       }
 
@@ -104,9 +106,9 @@ exports.create = function (api) {
               publishing.set(false)
               showDialog({
                 type: 'error',
-                title: 'Error',
-                buttons: ['OK'],
-                message: 'An error occurred while attempting to publish about message.',
+                title: i18n('Error'),
+                buttons: [i18n('OK')],
+                message: i18n('An error occurred while attempting to publish about message.'),
                 detail: err.message
               })
             } else {

@@ -5,12 +5,14 @@ exports.needs = nest({
   'sheet.display': 'first',
   'message.html.render': 'first',
   'sbot.async.publish': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('message.async.publish')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('message.async.publish', function (content, cb) {
     api.sheet.display(function (close) {
       return {
@@ -22,8 +24,8 @@ exports.create = function (api) {
           }})
         ],
         footer: [
-          h('button -save', { 'ev-click': publish }, 'Confirm'),
-          h('button -cancel', { 'ev-click': cancel }, 'Cancel')
+          h('button -save', { 'ev-click': publish }, i18n('Confirm')),
+          h('button -cancel', { 'ev-click': cancel }, i18n('Cancel'))
         ]
       }
 

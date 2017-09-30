@@ -1,7 +1,7 @@
 var {computed, when, h, Value} = require('mutant')
 var nest = require('depnest')
 var sustained = require('../../../lib/sustained')
-var pull = require('pull-stream')
+const pull = require('pull-stream')
 
 exports.gives = nest('app.html.progressNotifier')
 
@@ -12,10 +12,12 @@ exports.needs = nest({
     indexes: 'first',
     replicate: 'first',
     migration: 'first'
-  }
+  },
+  'intl.sync.i18n':'first'
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('app.html.progressNotifier', function (id) {
     var replicateProgress = api.progress.obs.replicate()
     var indexes = api.progress.obs.indexes()
@@ -46,15 +48,13 @@ exports.create = function (api) {
     return h('div.info', { hidden }, [
       h('div.status', [
         when(displaying, h('Loading -small', [
-          when(waiting, 'Waiting for Scuttlebot...',
-            when(pendingMigration,
-              [h('span.info', 'Upgrading database'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
-              when(computed(replicateProgress.incompleteFeeds, (v) => v > 5),
-                [h('span.info', 'Downloading new messages'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
-                when(pending, [
-                  [h('span.info', 'Indexing database'), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
-                ], 'Scuttling...')
-              )
+          when(pendingMigration,
+            [h('span.info', i18n('Upgrading database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
+            when(computed(replicateProgress.incompleteFeeds, (v) => v > 5),
+              [h('span.info', i18n('Downloading new messages')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
+              when(pending, [
+                [h('span.info', i18n('Indexing database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
+              ], i18n('Scuttling...'))
             )
           )
         ]))

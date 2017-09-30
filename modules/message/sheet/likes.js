@@ -9,12 +9,14 @@ exports.needs = nest({
   'profile.obs.rank': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
-  'app.navigate': 'first'
+  'app.navigate': 'first',
+  'intl.sync.i18n': 'first',
 })
 
 exports.gives = nest('message.sheet.likes')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('message.sheet.likes', function (ids) {
     api.sheet.display(close => {
       var content = h('div', {
@@ -22,7 +24,7 @@ exports.create = function (api) {
       }, [
         h('h2', {
           style: { 'font-weight': 'normal' }
-        }, ['Liked by']),
+        }, [i18n('Liked by')]),
         renderContactBlock(ids)
       ])
 
@@ -38,7 +40,7 @@ exports.create = function (api) {
         footer: [
           h('button -close', {
             'ev-click': close
-          }, 'Close')
+          }, i18n('Close'))
         ]
       }
     })

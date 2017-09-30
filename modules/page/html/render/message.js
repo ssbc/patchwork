@@ -10,12 +10,14 @@ exports.needs = nest({
     render: 'first',
     compose: 'first'
   },
-  'sbot.async.get': 'first'
+  'sbot.async.get': 'first',
+  'intl.sync.i18n':'first',
 })
 
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function (id) {
     if (!ref.isMsg(id)) return
     var loader = h('div', {className: 'Loading -large'})
@@ -33,13 +35,13 @@ exports.create = function (api) {
     var compose = api.message.html.compose({
       meta,
       shrink: false,
-      placeholder: when(meta.recps, 'Write a private reply', 'Write a public reply')
+      placeholder: when(meta.recps, i18n('Write a private reply'), i18n('Write a public reply'))
     })
 
     api.sbot.async.get(id, (err, value) => {
       if (err) {
         return result.set(h('PageHeading', [
-          h('h1', 'Cannot load thread. Root message missing.')
+          h('h1', i18n('Cannot load thead'))
         ]))
       }
 
@@ -49,7 +51,7 @@ exports.create = function (api) {
 
       if (!value) {
         return result.set(h('PageHeading', [
-          h('h1', 'Cannot display message.')
+          h('h1', i18n('Cannot display message.'))
         ]))
       }
 
@@ -67,7 +69,7 @@ exports.create = function (api) {
 
       var container = h('Thread', [
         h('div.messages', [
-          when(thread.branchId, h('a.full', {href: thread.rootId}, ['View full thread'])),
+          when(thread.branchId, h('a.full', {href: thread.rootId}, [i18n('View full thread')])),
           map(thread.messages, (msg) => {
             return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
               return api.message.html.render(msg, {pageId: id, previousId, includeReferences: true})
