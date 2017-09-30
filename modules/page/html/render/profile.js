@@ -23,6 +23,7 @@ exports.needs = nest({
   'sheet.display': 'first',
   'profile.obs.rank': 'first',
   'profile.sheet.edit': 'first',
+  'app.navigate': 'first',
   'contact.obs': {
     followers: 'first',
     following: 'first'
@@ -178,6 +179,7 @@ exports.create = function (api) {
         feedView
       ]),
       h('div.side.-right', [
+        h('button PrivateMessageButton', {'ev-click': () => api.app.navigate('/private', {compose: {to: id}})}, i18n('Send Private Message')),
         when(friendsLoaded,
           h('div', [
             renderContactBlock(i18n('Friends'), friends, yourFollows),

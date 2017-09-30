@@ -58,6 +58,20 @@ Compose {
 
     padding: .4rem
 
+    button {
+      -private {
+        color: #8a6610;
+        background: #f3e7ac;
+        border-color: #f3e7ac;
+
+        :hover {
+          color: #ffffff
+          background-color: #8a6610
+          border-color: #8a6610
+        }
+      }
+    }
+
     input[type="file"] {
       padding: .5rem 0
 

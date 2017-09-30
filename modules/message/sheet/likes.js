@@ -10,7 +10,7 @@ exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'app.navigate': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.sheet.likes')

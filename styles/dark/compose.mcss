@@ -111,6 +111,11 @@ Compose {
       :hover {
         background: #6f74e5
       }
+      -private {
+        :hover {
+          background: #ceab2f
+        }
+      }
     }
   }
 

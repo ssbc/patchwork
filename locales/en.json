@@ -137,5 +137,8 @@
 	"New Message": "New Message",
 	"unsubscribed from ": "unsubscribed from ",
 	"en": "en",
-	"on ": "on "
+	"on ": "on ",
+	"Private Message": "Private Message",
+	"Send Private Message": "Send Private Message",
+	"Publish Privately": "Publish Privately"
 }
