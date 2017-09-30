@@ -51,7 +51,7 @@ exports.create = (api) => {
 
   function time (date){
     return date
-      .replace(/from now/, i18n('form now'))
+      .replace(/from now/, i18n('from now'))
       .replace(/ago/, i18n('ago'))
       .replace(/years/,i18n('years'))
       .replace(/months/,i18n('months'))
