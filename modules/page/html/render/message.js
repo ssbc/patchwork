@@ -118,14 +118,24 @@ function showContext (element) {
     // ensure context is visible
     scrollParent.scrollTop = Math.max(0, scrollParent.scrollTop - 100)
   }
+
+  // HACK: sometimes the body gets affected!? Why no just hack it!!!
+  if (document.body.scrollTop > 0) {
+    document.body.scrollTop = 0
+  }
 }
 
 function getScrollParent (element) {
   while (element.parentNode) {
-    if (element.parentNode.scrollTop > 10) {
+    if (element.parentNode.scrollTop > 10 && isScroller(element.parentNode)) {
       return element.parentNode
     } else {
       element = element.parentNode
     }
   }
+}
+
+function isScroller (element) {
+  var value = window.getComputedStyle(element)['overflow-y']
+  return (value === 'auto' || value === 'scroll')
 }
