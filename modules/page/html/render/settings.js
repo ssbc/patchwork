@@ -1,6 +1,5 @@
-var { h, computed } = require('mutant')
+var { h, when } = require('mutant')
 var nest = require('depnest')
-var appRoot = require('app-root-path')
 
 var themeNames = Object.keys(require('../../../../styles'))
 
@@ -29,7 +28,7 @@ exports.create = function (api) {
       h('PageHeading', [
         h('h1', [
           h('strong', i18n('Settings'))
-        ]),
+        ])
       ])
     ]
 
@@ -44,7 +43,7 @@ exports.create = function (api) {
               style: {
                 'font-size': '120%'
               },
-              value: currentTheme,
+              value: when(currentTheme, currentTheme, 'light'),
               'ev-change': (ev) => api.settings.sync.set({
                 patchwork: {theme: ev.target.value}
               })
@@ -59,7 +58,7 @@ exports.create = function (api) {
               style: {
                 'font-size': '120%'
               },
-              value: currentLang,
+              value: when(currentLang, currentLang, 'en'),
               'ev-change': (ev) => api.settings.sync.set({
                 patchwork: {lang: ev.target.value}
               })
