@@ -5,13 +5,6 @@ module.exports = function (ssb, config) {
   return ssb._flumeUse('patchwork-channels', FlumeReduce(1, reduce, map))
 }
 
-function isActivityMessage(msg) {
-  var isVote = msg.value.content.type === "vote";
-
-  return !isVote && msg.value.content.subscribed !== false
-    && msg.value.content.subscribed !== true;
-}
-
 function reduce (result, item) {
   if (!result) result = {}
   if (item) {
@@ -22,10 +15,7 @@ function reduce (result, item) {
       }
       value.count += 1
 
-      // We don't update the timestamp if the messsage was just somebody subscribing
-      // or unsubscribing from the channel, or it is a vote as we don't want it to register as
-      // 'recent activity'.
-      if (item[channel].isActivityMessage && item[channel].timestamp > value.timestamp) {
+      if (item[channel].timestamp > value.timestamp) {
         value.timestamp = item[channel].timestamp
       }
     }
@@ -35,10 +25,14 @@ function reduce (result, item) {
 
 function map (msg) {
   if (msg.value.content) {
+    var isLike = msg.value.content.type === 'vote'
+    var isSubscription = msg.value.content.type === 'channel'
     var channel = normalizeChannel(msg.value.content.channel)
-    if (channel) {
+
+    // filter out likes and subscriptions
+    if (channel && !isLike && !isSubscription) {
       return {
-        [channel]: {timestamp: msg.timestamp, isActivityMessage: isActivityMessage(msg) }
+        [channel]: {timestamp: msg.timestamp}
       }
     }
   }
