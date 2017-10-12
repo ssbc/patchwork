@@ -118,11 +118,6 @@ function showContext (element) {
     // ensure context is visible
     scrollParent.scrollTop = Math.max(0, scrollParent.scrollTop - 100)
   }
-
-  // HACK: sometimes the body gets affected!? Why no just hack it!!!
-  if (document.body.scrollTop > 0) {
-    document.body.scrollTop = 0
-  }
 }
 
 function getScrollParent (element) {
