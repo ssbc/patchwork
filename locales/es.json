@@ -1,5 +1,5 @@
 {
-	"$name": "el español",
+	"$name": "Español",
 	"Patchwork": "Patchwork",
 	"Public": "Público",
 	"Private": "Privado",
@@ -136,5 +136,12 @@
 	"unsubscribed from ": "desuscrito de ",
 	"en": "en",
 	"es": "es",
-	"ki": "ki"
+	"ki": "ki",
+	"Publish Privately": "Publicar en privado",
+	"Send Private Message": "Enviar mensaje privado",
+	"de": "de",
+	"pt": "pt",
+	"on ": "on ",
+	"Unblock": "Desbloquear",
+	"Block": "Bloquear"
 }
