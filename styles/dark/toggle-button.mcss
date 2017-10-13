@@ -32,6 +32,18 @@ ToggleButton {
     }
   }
 
+  -blocking {
+    margin-left: 5px
+    border: 0px
+  }
+
+  -unblocking {
+    margin-left: 5px
+    background-color: rgb(212, 112, 112)
+    color: #ffffff
+    border: 0px
+  }
+
   -disabled {
     cursor: default
     opacity: 0.4 !important
