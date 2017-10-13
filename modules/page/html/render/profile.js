@@ -26,8 +26,11 @@ exports.needs = nest({
   'app.navigate': 'first',
   'contact.obs': {
     followers: 'first',
-    following: 'first'
+    following: 'first',
+    blockers: 'first'
   },
+  'contact.async.block': 'first',
+  'contact.async.unblock': 'first',
   'intl.sync.i18n': 'first',
 })
 exports.gives = nest('page.html.render')
@@ -44,6 +47,7 @@ exports.create = function (api) {
     var rawFollowers = api.contact.obs.followers(id)
     var rawFollowing = api.contact.obs.following(id)
     var friendsLoaded = computed([rawFollowers.sync, rawFollowing.sync], (...x) => x.every(Boolean))
+    var { block, unblock } = api.contact.async
 
     var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
       return Array.from(following).filter(follow => followers.includes(follow))
@@ -67,6 +71,11 @@ exports.create = function (api) {
 
     var youFollow = computed([yourFollows], function (youFollow) {
       return youFollow.includes(id)
+    })
+
+    var blockers = api.contact.obs.blockers(id)
+    var ImBlockingThem = computed(blockers, function(blockers) {
+      return blockers.includes(yourId)
     })
 
     var names = api.about.obs.names(id)
@@ -153,8 +162,20 @@ exports.create = function (api) {
                   'href': '#',
                   'ev-click': send(follow, id)
                 }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
+              ),
+              when(ImBlockingThem,
+                h('a.ToggleButton.-unblocking', {
+                  'href': '#',
+                  'title': i18n('Unblock'),
+                  'ev-click': () => unblock(id, console.log)
+                }, i18n('Unblock')),
+                h('a.ToggleButton.-blocking', {
+                  'href': '#',
+                  'title': i18n('Block'),
+                  'ev-click': () => block(id, console.log) 
+                }, i18n('Block')),
               )
-            ])
+            ]),
           ])
         ]),
         h('section -description', [
