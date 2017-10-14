@@ -78,8 +78,8 @@ exports.create = function (api) {
       return blockers.includes(yourId)
     })
 
-    var names = computed([api.about.obs.names(id), yourFollows, rawFollowing], onlyEndorsed)
-    var images = computed([api.about.obs.images(id), yourFollows, rawFollowing], onlyEndorsed)
+    var names = computed([api.about.obs.names(id), yourFollows, rawFollowing, yourId, id], filterByValues)
+    var images = computed([api.about.obs.images(id), yourFollows, rawFollowing, yourId, id], filterByValues)
 
     var namePicker = h('div', {className: 'Picker'}, [
       map(dictToCollection(names), (item) => {
@@ -220,20 +220,6 @@ exports.create = function (api) {
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload
     return container
-
-    // scoped
-
-    function onlyEndorsed (values, yourFollows, theirFollows) {
-      return Object.keys(values).reduce((result, key) => {
-        var ids = values[key].filter(id => {
-          return yourFollows.includes(id) || theirFollows.includes(id)
-        })
-        if (ids.length) {
-          result[key] = ids
-        }
-        return result
-      }, {})
-    }
   })
 
   function renderContactBlock (title, profiles, yourFollows) {
@@ -349,4 +335,22 @@ exports.create = function (api) {
       return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
     })
   }
+}
+
+function filterByValues (attributes, ...matchValues) {
+  return Object.keys(attributes).reduce((result, key) => {
+    var values = attributes[key].filter(value => {
+      return matchValues.some(matchValue => {
+        if (Array.isArray(matchValue)) {
+          return matchValue.includes(value)
+        } else {
+          return matchValue === value
+        }
+      })
+    })
+    if (values.length) {
+      result[key] = values
+    }
+    return result
+  }, {})
 }
