@@ -172,7 +172,7 @@ exports.create = function (api) {
                 ),
                 h('a.ToggleButton.-blocking', {
                   'href': '#',
-                  'title': i18n('Block'),
+                  'title': i18n('Click to block syncing with this person and hide their posts'),
                   'ev-click': () => block(id, console.log)
                 }, i18n('Block'))
               ])

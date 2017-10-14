@@ -142,11 +142,11 @@
 	"Private Message": "Private Message",
 	"Send Private Message": "Send Private Message",
 	"Publish Privately": "Publish Privately",
-	"Unblock": "Unblock",
 	"Block": "Block",
 	"Click to unblock": "Click to unblock",
 	"Blocked": "Blocked",
 	"pt": "pt",
 	"blocked ": "blocked ",
-	"unblocked ": "unblocked "
+	"unblocked ": "unblocked ",
+	"Click to block syncing with this person and hide their posts": "Click to block syncing with this person and hide their posts"
 }
