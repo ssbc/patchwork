@@ -86,7 +86,7 @@ exports.create = function (api) {
         }
       },
       rootFilter: function (msg) {
-        var filtered = filters() && !(filters().following && getType(msg) === 'contact')
+        var filtered = filters() && filters().following && getType(msg) === 'contact'
         // skip messages that are directly replaced by the previous message
         // e.g. follow / unfollow in quick succession
         var isOutdated = isReplacementMessage(msg, lastMessage)
