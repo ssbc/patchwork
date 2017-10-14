@@ -193,7 +193,8 @@ exports.create = function (api) {
     var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
       prepend,
       displayFilter: (msg) => msg.value.author === id,
-      bumpFilter: (msg) => msg.value.author === id,
+      rootFilter: (msg) => !youBlock(),
+      bumpFilter: (msg) => msg.value.author === id
     })
 
     var container = h('div', {className: 'SplitView'}, [
@@ -212,6 +213,9 @@ exports.create = function (api) {
         )
       ])
     ])
+
+    // refresh feed (to hide all posts) when blocked
+    youBlock(feedView.reload)
 
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload
