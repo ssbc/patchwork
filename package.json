@@ -28,6 +28,7 @@
     "flatpickr": "^3.0.5-1",
     "flumeview-level": "^2.0.3",
     "hashlru": "^2.2.0",
+    "human-time": "0.0.1",
     "i18n": "^0.8.3",
     "insert-css": "~2.0.0",
     "level": "~1.7.0",
