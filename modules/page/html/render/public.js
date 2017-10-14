@@ -67,6 +67,8 @@ exports.create = function (api) {
       }
     }
 
+    var lastMessage = null
+
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
@@ -84,8 +86,14 @@ exports.create = function (api) {
         }
       },
       rootFilter: function (msg) {
-        if (!filters()) return true
-        return !(filters().following && getType(msg) === 'contact')
+        var filtered = filters() && !(filters().following && getType(msg) === 'contact')
+        // skip messages that are directly replaced by the previous message
+        // e.g. follow / unfollow in quick succession
+        var isOutdated = isReplacementMessage(msg, lastMessage)
+        if (!filtered && !isOutdated) {
+          lastMessage = msg
+          return true
+        }
       },
       waitFor: computed([
         following.sync,
@@ -231,5 +239,14 @@ function getType (msg) {
 function arrayEq (a, b) {
   if (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a !== b) {
     return a.every((value, i) => value === b[i])
+  }
+}
+
+function isReplacementMessage (msgA, msgB) {
+  if (msgA && msgB && msgA.value.content && msgB.value.content && msgA.value.content.type === msgB.value.content.type) {
+    var type = msgA.value.content.type
+    if (type === 'contact') {
+      return msgA.value.author === msgB.value.author && msgA.value.content.contact === msgB.value.content.contact
+    }
   }
 }
