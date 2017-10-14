@@ -1,5 +1,13 @@
 Markdown {
   word-break: break-word
+
+  (a.bad) {
+    color: inherit
+    :hover {
+      text-decoration: inherit
+    }
+  }
+
   (img) {
     -pending {
       border: 1px solid #DDD
@@ -63,5 +71,13 @@ Markdown {
     height: 1.5em;
     align-content: center;
     margin-bottom: -0.3em;
+  }
+  (a) {
+    [href^="#"], [href^="@"], [href^="%"] {
+      border-bottom: 1px dotted #286bc3;
+      :hover {
+        text-decoration: none;
+      }
+    }
   }
 }

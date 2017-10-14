@@ -1,4 +1,11 @@
 Markdown {
+  (a.bad) {
+    color: inherit
+    :hover {
+      text-decoration: inherit
+    }
+  }
+
   word-break: break-word
   (img) {
     -pending {
@@ -80,6 +87,14 @@ Markdown {
     }
     [href^="#"] {
       color: #c1cdf0
+      border-bottom: 1px dotted #c1cdf0
+      :hover {
+        text-decoration: none;
+      }
+    }
+    [href^="%"] {
+      color: #efef00
+      border-bottom: 1px dotted #efef00
       :hover {
         text-decoration: none;
       }
