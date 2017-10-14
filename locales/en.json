@@ -146,5 +146,7 @@
 	"Block": "Block",
 	"Click to unblock": "Click to unblock",
 	"Blocked": "Blocked",
-	"pt": "pt"
+	"pt": "pt",
+	"blocked ": "blocked ",
+	"unblocked ": "unblocked "
 }

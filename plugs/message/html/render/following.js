@@ -19,7 +19,7 @@ exports.create = function (api) {
   return nest('message.html.render', function renderMessage (msg, opts) {
     if (msg.value.content.type !== 'contact') return
     if (!ref.isFeed(msg.value.content.contact)) return
-    if (typeof msg.value.content.following !== 'boolean') return
+    if (typeof msg.value.content.following !== 'boolean' && typeof msg.value.content.blocking !== 'boolean') return
 
     var element = api.message.html.layout(msg, extend({
       miniContent: messageContent(msg),
@@ -31,9 +31,18 @@ exports.create = function (api) {
 
   function messageContent (msg) {
     var following = msg.value.content.following
-    return [
-      following ? i18n('followed ') : i18n('unfollowed '),
-      api.profile.html.person(msg.value.content.contact)
-    ]
+    var blocking = msg.value.content.blocking
+
+    if (typeof blocking === 'boolean') {
+      return [
+        blocking ? i18n('blocked ') : i18n('unblocked '),
+        api.profile.html.person(msg.value.content.contact)
+      ]
+    } else {
+      return [
+        following ? i18n('followed ') : i18n('unfollowed '),
+        api.profile.html.person(msg.value.content.contact)
+      ]
+    }
   }
 }
