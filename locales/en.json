@@ -138,8 +138,15 @@
 	"unsubscribed from ": "unsubscribed from ",
 	"en": "en",
 	"on ": "on ",
+	"de": "German",
 	"Private Message": "Private Message",
 	"Send Private Message": "Send Private Message",
 	"Publish Privately": "Publish Privately",
-	"de": "German"
+	"Unblock": "Unblock",
+	"Block": "Block",
+	"Click to unblock": "Click to unblock",
+	"Blocked": "Blocked",
+	"pt": "pt",
+	"blocked ": "blocked ",
+	"unblocked ": "unblocked "
 }

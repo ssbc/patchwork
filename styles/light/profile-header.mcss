@@ -23,6 +23,12 @@ ProfileHeader {
       h1 {
         flex: 1
       }
+      div.meta {
+        a {
+          margin-left: 5px
+          display: inline-block
+        }
+      }
     }
     section {
       -description {

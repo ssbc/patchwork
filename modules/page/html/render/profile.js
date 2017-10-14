@@ -26,8 +26,11 @@ exports.needs = nest({
   'app.navigate': 'first',
   'contact.obs': {
     followers: 'first',
-    following: 'first'
+    following: 'first',
+    blockers: 'first'
   },
+  'contact.async.block': 'first',
+  'contact.async.unblock': 'first',
   'intl.sync.i18n': 'first',
 })
 exports.gives = nest('page.html.render')
@@ -44,6 +47,7 @@ exports.create = function (api) {
     var rawFollowers = api.contact.obs.followers(id)
     var rawFollowing = api.contact.obs.following(id)
     var friendsLoaded = computed([rawFollowers.sync, rawFollowing.sync], (...x) => x.every(Boolean))
+    var { block, unblock } = api.contact.async
 
     var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
       return Array.from(following).filter(follow => followers.includes(follow))
@@ -67,6 +71,11 @@ exports.create = function (api) {
 
     var youFollow = computed([yourFollows], function (youFollow) {
       return youFollow.includes(id)
+    })
+
+    var blockers = api.contact.obs.blockers(id)
+    var youBlock = computed(blockers, function(blockers) {
+      return blockers.includes(yourId)
     })
 
     var names = api.about.obs.names(id)
@@ -143,17 +152,30 @@ exports.create = function (api) {
             when(id === yourId, [
               h('button', {'ev-click': api.profile.sheet.edit}, i18n('Edit Your Profile'))
             ], [
-              when(youFollow,
-                h('a.ToggleButton.-unsubscribe', {
+              when(youBlock, [
+                h('a.ToggleButton.-unblocking', {
                   'href': '#',
-                  'title': i18n('Click to unfollow'),
-                  'ev-click': send(unfollow, id)
-                }, when(isFriends, i18n('Friends'), i18n('Following'))),
-                h('a.ToggleButton.-subscribe', {
+                  'title': i18n('Click to unblock'),
+                  'ev-click': () => unblock(id, console.log)
+                }, i18n('Blocked'))
+              ], [
+                when(youFollow,
+                  h('a.ToggleButton.-unsubscribe', {
+                    'href': '#',
+                    'title': i18n('Click to unfollow'),
+                    'ev-click': send(unfollow, id)
+                  }, when(isFriends, i18n('Friends'), i18n('Following'))),
+                  h('a.ToggleButton.-subscribe', {
+                    'href': '#',
+                    'ev-click': send(follow, id)
+                  }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
+                ),
+                h('a.ToggleButton.-blocking', {
                   'href': '#',
-                  'ev-click': send(follow, id)
-                }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
-              )
+                  'title': i18n('Block'),
+                  'ev-click': () => block(id, console.log)
+                }, i18n('Block'))
+              ])
             ])
           ])
         ]),
@@ -171,7 +193,8 @@ exports.create = function (api) {
     var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
       prepend,
       displayFilter: (msg) => msg.value.author === id,
-      bumpFilter: (msg) => msg.value.author === id,
+      rootFilter: (msg) => !youBlock(),
+      bumpFilter: (msg) => msg.value.author === id
     })
 
     var container = h('div', {className: 'SplitView'}, [
@@ -190,6 +213,9 @@ exports.create = function (api) {
         )
       ])
     ])
+
+    // refresh feed (to hide all posts) when blocked
+    youBlock(feedView.reload)
 
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload

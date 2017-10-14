@@ -23,6 +23,11 @@ ToggleButton {
     padding-right: 25px
   }
 
+  -unblocking {
+    background-color: #deb250
+    border-color: #ad7904
+  }
+
   -disabled {
     cursor: default
     opacity: 0.4 !important
