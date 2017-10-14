@@ -96,7 +96,11 @@ exports.create = function (api) {
         pull.drain((msg) => {
           if (msg.value.content.type === 'vote') return
           if (api.app.sync.externalHandler(msg)) return
-          newSinceRefresh.add(msg.key)
+
+          // Only increment the 'new since' for items that we render on
+          // the feed as otherwise the 'show <n> updates message' will be
+          // shown on new messages that patchwork cannot render
+          if (canRenderMessage(msg)) newSinceRefresh.add(msg.key)
 
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
             refresh()
@@ -116,6 +120,20 @@ exports.create = function (api) {
     result.reload = refresh
 
     return result
+
+    function canRenderMessage(msg) {
+
+      // TODO: This implementation of 'canRenderMessage' is just for a proof of
+      // concept. I will add an alternative that just returns 'true' rather
+      // than rendering if the provider handles the message type
+
+      var isRenderableByPatchbay = api.message.html.render(msg, {
+        inContext: true,
+        priority: highlightItems.has(msg.key) ? 2 : 0
+      });
+
+      return isRenderableByPatchbay;
+    }
 
     function refresh () {
       onceTrue(waitFor, () => {
