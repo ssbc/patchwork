@@ -11,24 +11,41 @@ exports.needs = nest({
   'about.obs.latestValue': 'first'
 })
 
-exports.gives = nest('message.html.render')
+exports.gives = nest('message.html', {
+  canRender: true,
+  render: true
+})
 
-exports.create = function (api) {
-  return nest('message.html.render', function about (msg, opts) {
-    if (msg.value.content.type !== 'about') return
-    if (!ref.isMsg(msg.value.content.about)) return
-    if (!msg.value.content.attendee) return
-    if (msg.value.content.attendee.link !== msg.value.author) return
+exports.create = function(api) {
+  return nest('message.html', {
+    canRender: function(msg) {
+      return isRenderable(msg)
+    },
+    render: function about(msg, opts) {
+      if (!isRenderable(msg)) return
 
-    var action = msg.value.content.attendee.remove ? `can't attend` : 'is attending'
-    var target = msg.value.content.about
-    var title = api.about.obs.latestValue(target, 'title')
-    var element = api.message.html.layout(msg, extend({
-      showActions: true,
-      miniContent: [action, ' ', h('a', {href: target}, title)],
-      layout: 'mini'
-    }, opts))
+      var action = msg.value.content.attendee.remove ? `can't attend` : 'is attending'
+      var target = msg.value.content.about
+      var title = api.about.obs.latestValue(target, 'title')
+      var element = api.message.html.layout(msg, extend({
+        showActions: true,
+        miniContent: [action, ' ', h('a', {
+          href: target
+        }, title)],
+        layout: 'mini'
+      }, opts))
 
-    return api.message.html.decorate(element, { msg })
+      return api.message.html.decorate(element, {
+        msg
+      })
+    }
   })
+
+  function isRenderable(msg) {
+    if (msg.value.content.type !== 'about') return false
+    else if (!ref.isMsg(msg.value.content.about)) return false
+    else if (!msg.value.content.attendee) return false
+    else if (msg.value.content.attendee.link !== msg.value.author) return false
+    else return true
+  }
 }

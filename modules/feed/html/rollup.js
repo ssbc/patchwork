@@ -22,6 +22,7 @@ var rootBumpTypes = ['mention', 'channel-mention']
 exports.needs = nest({
   'about.obs.name': 'first',
   'app.sync.externalHandler': 'first',
+  'message.html.canRender': 'first',
   'message.html.render': 'first',
   'profile.html.person': 'first',
   'message.html.link': 'first',
@@ -122,17 +123,7 @@ exports.create = function (api) {
     return result
 
     function canRenderMessage(msg) {
-
-      // TODO: This implementation of 'canRenderMessage' is just for a proof of
-      // concept. I will add an alternative that just returns 'true' rather
-      // than rendering if the provider handles the message type
-
-      var isRenderableByPatchbay = api.message.html.render(msg, {
-        inContext: true,
-        priority: highlightItems.has(msg.key) ? 2 : 0
-      });
-
-      return isRenderableByPatchbay;
+      return api.message.html.canRender(msg);
     }
 
     function refresh () {
