@@ -148,5 +148,6 @@
 	"pt": "pt",
 	"blocked ": "blocked ",
 	"unblocked ": "unblocked ",
-	"Click to block syncing with this person and hide their posts": "Click to block syncing with this person and hide their posts"
+	"Click to block syncing with this person and hide their posts": "Click to block syncing with this person and hide their posts",
+	"Public key for this profile": "Public key for this profile"
 }

@@ -37,6 +37,15 @@ ProfileHeader {
         overflow: auto
         -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
       }
+      -publicKey {
+        pre {
+          color: #b3b3b3;
+          margin: 2px 0;
+          font-size: 120%;
+          background: #ffffff;
+          padding: 3px;
+        }
+      }
     }
   }
 }
