@@ -74,12 +74,12 @@ exports.create = function (api) {
     })
 
     var blockers = api.contact.obs.blockers(id)
-    var youBlock = computed(blockers, function(blockers) {
+    var youBlock = computed(blockers, function (blockers) {
       return blockers.includes(yourId)
     })
 
-    var names = api.about.obs.names(id)
-    var images = api.about.obs.images(id)
+    var names = computed([api.about.obs.names(id), yourFollows, rawFollowing], onlyEndorsed)
+    var images = computed([api.about.obs.images(id), yourFollows, rawFollowing], onlyEndorsed)
 
     var namePicker = h('div', {className: 'Picker'}, [
       map(dictToCollection(names), (item) => {
@@ -220,6 +220,20 @@ exports.create = function (api) {
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload
     return container
+
+    // scoped
+
+    function onlyEndorsed (values, yourFollows, theirFollows) {
+      return Object.keys(values).reduce((result, key) => {
+        var ids = values[key].filter(id => {
+          return yourFollows.includes(id) || theirFollows.includes(id)
+        })
+        if (ids.length) {
+          result[key] = ids
+        }
+        return result
+      }, {})
+    }
   })
 
   function renderContactBlock (title, profiles, yourFollows) {
