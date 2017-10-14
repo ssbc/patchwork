@@ -74,7 +74,7 @@ exports.create = function (api) {
     })
 
     var blockers = api.contact.obs.blockers(id)
-    var ImBlockingThem = computed(blockers, function(blockers) {
+    var youBlock = computed(blockers, function(blockers) {
       return blockers.includes(yourId)
     })
 
@@ -152,30 +152,31 @@ exports.create = function (api) {
             when(id === yourId, [
               h('button', {'ev-click': api.profile.sheet.edit}, i18n('Edit Your Profile'))
             ], [
-              when(youFollow,
-                h('a.ToggleButton.-unsubscribe', {
-                  'href': '#',
-                  'title': i18n('Click to unfollow'),
-                  'ev-click': send(unfollow, id)
-                }, when(isFriends, i18n('Friends'), i18n('Following'))),
-                h('a.ToggleButton.-subscribe', {
-                  'href': '#',
-                  'ev-click': send(follow, id)
-                }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
-              ),
-              when(ImBlockingThem,
+              when(youBlock, [
                 h('a.ToggleButton.-unblocking', {
                   'href': '#',
-                  'title': i18n('Unblock'),
+                  'title': i18n('Click to unblock'),
                   'ev-click': () => unblock(id, console.log)
-                }, i18n('Unblock')),
+                }, i18n('Blocked'))
+              ], [
+                when(youFollow,
+                  h('a.ToggleButton.-unsubscribe', {
+                    'href': '#',
+                    'title': i18n('Click to unfollow'),
+                    'ev-click': send(unfollow, id)
+                  }, when(isFriends, i18n('Friends'), i18n('Following'))),
+                  h('a.ToggleButton.-subscribe', {
+                    'href': '#',
+                    'ev-click': send(follow, id)
+                  }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
+                ),
                 h('a.ToggleButton.-blocking', {
                   'href': '#',
                   'title': i18n('Block'),
-                  'ev-click': () => block(id, console.log) 
-                }, i18n('Block')),
-              )
-            ]),
+                  'ev-click': () => block(id, console.log)
+                }, i18n('Block'))
+              ])
+            ])
           ])
         ]),
         h('section -description', [

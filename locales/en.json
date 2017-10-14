@@ -143,5 +143,8 @@
 	"Send Private Message": "Send Private Message",
 	"Publish Privately": "Publish Privately",
 	"Unblock": "Unblock",
-	"Block": "Block"
+	"Block": "Block",
+	"Click to unblock": "Click to unblock",
+	"Blocked": "Blocked",
+	"pt": "pt"
 }

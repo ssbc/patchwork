@@ -23,12 +23,7 @@ ToggleButton {
     padding-right: 25px
   }
 
-  -blocking {
-    margin-top: 5px
-  }
-
   -unblocking {
-    margin-top: 5px
     background-color: #deb250
     border-color: #ad7904
   }
