@@ -18,9 +18,7 @@ exports.gives = nest('message.html', {
 exports.create = function(api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html', {
-    canRender: function (msg) {
-      return isRenderable(msg);
-    },
+    canRender: isRenderable,
     render: function (msg, opts) {
       if (!isRenderable(msg)) return
       var element = api.message.html.layout(msg, extend({
@@ -47,5 +45,5 @@ exports.create = function(api) {
 }
 
 function isRenderable(msg) {
-  return msg.value.content.type === 'channel'
+  return msg.value.content.type === 'channel' ? true : undefined
 }

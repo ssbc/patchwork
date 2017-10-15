@@ -25,9 +25,7 @@ exports.gives = nest('message.html', {
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html', {
-    canRender: function (msg) {
-      return isRenderable(msg);
-    },
+    canRender: isRenderable,
     render: function (msg, opts) {
       if (!isRenderable(msg)) return;
 
@@ -89,8 +87,8 @@ exports.create = function (api) {
   })
 
   function isRenderable(msg) {
-    if (msg.value.content.type !== 'about') return false
-    else if (!ref.isFeed(msg.value.content.about)) return false
+    if (msg.value.content.type !== 'about') return undefined
+    else if (!ref.isFeed(msg.value.content.about)) return undefined
     return true
   }
 }

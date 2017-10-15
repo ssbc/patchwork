@@ -34,9 +34,7 @@ exports.create = function(api) {
   var following = null
 
   return nest('message.html', {
-    canRender: function(msg) {
-      return isRenderable(msg)
-    },
+    canRender: isRenderable,
     render: function (msg, opts) {
       if (!isRenderable(msg)) return
 
@@ -158,7 +156,7 @@ exports.create = function(api) {
 }
 
 function isRenderable(msg) {
-  return (msg.value.content.type === 'gathering')
+  return (msg.value.content.type === 'gathering') ? true : undefined
 }
 
 function formatTime(time) {

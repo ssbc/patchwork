@@ -18,9 +18,7 @@ exports.gives = nest('message.html', {
 
 exports.create = function(api) {
   return nest('message.html', {
-    canRender: function(msg) {
-      return isRenderable(msg)
-    },
+    canRender: isRenderable,
     render: function about(msg, opts) {
       if (!isRenderable(msg)) return
 
@@ -42,10 +40,10 @@ exports.create = function(api) {
   })
 
   function isRenderable(msg) {
-    if (msg.value.content.type !== 'about') return false
-    else if (!ref.isMsg(msg.value.content.about)) return false
-    else if (!msg.value.content.attendee) return false
-    else if (msg.value.content.attendee.link !== msg.value.author) return false
+    if (msg.value.content.type !== 'about') return undefined
+    else if (!ref.isMsg(msg.value.content.about)) return undefined
+    else if (!msg.value.content.attendee) return undefined
+    else if (msg.value.content.attendee.link !== msg.value.author) return undefined
     else return true
   }
 }

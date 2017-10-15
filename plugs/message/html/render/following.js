@@ -20,10 +20,8 @@ exports.gives = nest('message.html', {
 exports.create = function(api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html', {
-    canRender: function(msg) {
-      return isRenderable(msg);
-    },
-    render: function (msg, opts) {
+    canRender: isRenderable,
+    render: function(msg, opts) {
       if (!isRenderable(msg)) return
 
       var element = api.message.html.layout(msg, extend({
@@ -37,7 +35,7 @@ exports.create = function(api) {
     }
   })
 
-  function messageContent (msg) {
+  function messageContent(msg) {
     var following = msg.value.content.following
     var blocking = msg.value.content.blocking
 
@@ -54,11 +52,11 @@ exports.create = function(api) {
     }
   }
 
-function isRenderable(msg) {
-  if (msg.value.content.type !== 'contact') return
-  else if (!ref.isFeed(msg.value.content.contact)) return
-  else if (typeof msg.value.content.following !== 'boolean' && typeof msg.value.content.blocking !== 'boolean') return
-  return true;
-}
+  function isRenderable(msg) {
+    if (msg.value.content.type !== 'contact') return undefined
+    else if (!ref.isFeed(msg.value.content.contact)) return undefined
+    else if (typeof msg.value.content.following !== 'boolean' && typeof msg.value.content.blocking !== 'boolean') return undefined
+    return true;
+  }
 
 }
