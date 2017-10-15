@@ -171,8 +171,8 @@ exports.create = function (api) {
         }
       })
 
-      var replies = item.replies.filter(isReply)
-      var replyElements = replies.filter(displayFilter).sort(byAssertedTime).slice(-3).map((msg) => {
+      var replies = item.replies.filter(isReply).filter(displayFilter).sort(byAssertedTime)
+      var replyElements = replies.slice(-3).map((msg) => {
         var result = api.message.html.render(msg, {
           inContext: true,
           inSummary: true,
@@ -209,19 +209,13 @@ exports.create = function (api) {
         renderedMessage,
         when(replyElements.length, [
           when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key, anchor: getFirstId(replyElements)}, [i18n('View full thread') + ' (', replies.length, ')'])
+            h('a.full', {href: item.key, anchor: replies[0] && replies[0].key}, [i18n('View full thread') + ' (', replies.length, ')'])
           ),
           h('div.replies', replyElements)
         ])
       ])
     }
   })
-
-  function getFirstId (elements) {
-    if (Array.isArray(elements) && elements.length) {
-      return elements[0].dataset.id
-    }
-  }
 
   function names (ids) {
     var items = map(Array.from(ids), api.about.obs.name)
