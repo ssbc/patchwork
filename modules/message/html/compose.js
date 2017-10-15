@@ -145,7 +145,7 @@ exports.create = function (api) {
         // TODO: when no emoji typed, list some default ones
         cb(null, api.emoji.sync.names().filter(function (name) {
           return name.slice(0, word.length) === word
-        }).slice(0, 100).map(function (emoji) {
+        }).map(function (emoji) {
           return {
             image: api.emoji.sync.url(emoji),
             title: emoji,
