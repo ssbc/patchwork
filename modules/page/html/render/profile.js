@@ -55,10 +55,6 @@ exports.create = function (api) {
 
     var hops = api.profile.obs.hops(yourId, id)
 
-    var mutualFriends = computed([yourFollowers, yourFollows, rawFollowers, rawFollowing], (first, ...rest) => {
-      return first.filter(value => rest.every((collection) => collection.includes(value)))
-    })
-
     var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
       return Array.from(following).filter(follow => followers.includes(follow))
     })
@@ -75,6 +71,9 @@ exports.create = function (api) {
     var youBlock = computed(blockers, function (blockers) {
       return blockers.includes(yourId)
     })
+
+    var yourBlockingFriends = computed([yourFollowers, yourFollows, blockers], inAllSets)
+    var mutualFriends = computed([yourFollowers, yourFollows, rawFollowers, rawFollowing], inAllSets)
 
     var names = computed([api.about.obs.names(id), yourFollows, rawFollowing, yourId, id], filterByValues)
     var images = computed([api.about.obs.images(id), yourFollows, rawFollowing, yourId, id], filterByValues)
@@ -158,9 +157,21 @@ exports.create = function (api) {
           h('pre', {title: i18n('Public key for this profile')}, id)
         ]),
 
-        computed(hops, (value) => {
+        computed([hops, yourBlockingFriends, youBlock], (value, yourBlockingFriends, youBlock) => {
           if (value) {
-            if (value[0] > 2 || value[1] === undefined) {
+            if ((value[0] > 1 || youBlock) && yourBlockingFriends.length > 0) {
+              return h('section -blockWarning', [
+                h('a', {
+                  href: '#',
+                  'ev-click': send(displayBlockingFriends, yourBlockingFriends)
+                }, [
+                  '⚠️ ',
+                  computed(mutualFriends, (items) => {
+                    return plural('This person is blocked by %s of your friends.', yourBlockingFriends.length)
+                  })
+                ])
+              ])
+            } else if (value[0] > 2 || value[1] === undefined) {
               return h('section -distanceWarning', [
                 h('h1', i18n(`You don't follow anyone who follows this person`)),
                 h('p', i18n('You might not be seeing their latest messages. You could try joining a pub that they are a member of.'))
@@ -231,6 +242,10 @@ exports.create = function (api) {
 
   function displayMutualFriends (profiles) {
     api.sheet.profiles(profiles, i18n('Mutual Friends'))
+  }
+
+  function displayBlockingFriends (profiles) {
+    api.sheet.profiles(profiles, i18n('Blocked by'))
   }
 
   function renderContactBlock (title, profiles, yourFollows) {
@@ -348,4 +363,8 @@ function filterByValues (attributes, ...matchValues) {
     }
     return result
   }, {})
+}
+
+function inAllSets (first, ...rest) {
+  return first.filter(value => rest.every((collection) => collection.includes(value)))
 }

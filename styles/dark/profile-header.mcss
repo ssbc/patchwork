@@ -64,6 +64,22 @@ ProfileHeader {
         }
       }
 
+      -blockWarning {
+        padding: 8px;
+        border: 1px solid #ffba4e;
+        background: #5f410b;
+        margin: 5px 0;
+        color: #ffdda7;
+        font-size: 110%
+        a {
+          color: #ffdda7;
+          :hover {
+            text-decoration: none
+            color: #ffb236
+          }
+        }
+      }
+
       -mutualFriends {
         padding: 8px;
         border: 1px solid #046ac1;

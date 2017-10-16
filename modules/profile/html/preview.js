@@ -4,20 +4,10 @@ var computed = require('mutant/computed')
 var send = require('mutant/send')
 
 exports.needs = nest({
-  'about.obs': {
-    name: 'first',
-    description: 'first',
-    names: 'first',
-    images: 'first',
-    color: 'first'
-  },
-  'blob.sync.url': 'first',
-  'blob.html.input': 'first',
-  'message.html.markdown': 'first',
+  'about.obs.name': 'first',
   'about.html.image': 'first',
   'keys.sync.id': 'first',
   'sheet.display': 'first',
-  'profile.obs.rank': 'first',
   'app.navigate': 'first',
   'contact.obs': {
     followers: 'first',
@@ -41,7 +31,6 @@ exports.create = function (api) {
 
   return nest('profile.html.preview', function (id) {
     var name = api.about.obs.name(id)
-    var description = api.about.obs.description(id)
     var yourId = api.keys.sync.id()
     var yourFollows = api.contact.obs.following(yourId)
     var yourFollowers = api.contact.obs.followers(yourId)
@@ -50,9 +39,12 @@ exports.create = function (api) {
     var rawFollowing = api.contact.obs.following(id)
     var hops = api.profile.obs.hops(yourId, id)
 
-    var mutualFriends = computed([yourFollowers, yourFollows, rawFollowers, rawFollowing], (first, ...rest) => {
-      return first.filter(value => rest.every((collection) => collection.includes(value)))
+    var blockers = api.contact.obs.blockers(id)
+    var youBlock = computed(blockers, function (blockers) {
+      return blockers.includes(yourId)
     })
+    var yourBlockingFriends = computed([yourFollowers, yourFollows, blockers], inAllSets)
+    var mutualFriends = computed([yourFollowers, yourFollows, rawFollowers, rawFollowing], inAllSets)
 
     return h('ProfilePreview', [
       h('header', [
@@ -71,9 +63,21 @@ exports.create = function (api) {
           ])
         ])
       ]),
-      computed(hops, (value) => {
+      computed([hops, yourBlockingFriends, youBlock], (value, yourBlockingFriends, youBlock) => {
         if (value) {
-          if (value[0] > 2 || value[1] === undefined) {
+          if ((value[0] > 1 || youBlock) && yourBlockingFriends.length > 0) {
+            return h('section -blockWarning', [
+              h('a', {
+                href: '#',
+                'ev-click': send(displayBlockingFriends, yourBlockingFriends)
+              }, [
+                '⚠️ ',
+                computed(mutualFriends, (items) => {
+                  return plural('This person is blocked by %s of your friends.', yourBlockingFriends.length)
+                })
+              ])
+            ])
+          } else if (value[0] > 2 || value[1] === undefined) {
             return h('section -distanceWarning', [
               '⚠️ ', i18n(`You don't follow anyone who follows this person`)
             ])
@@ -105,4 +109,12 @@ exports.create = function (api) {
   function displayMutualFriends (profiles) {
     api.sheet.profiles(profiles, i18n('Mutual Friends'))
   }
+
+  function displayBlockingFriends (profiles) {
+    api.sheet.profiles(profiles, i18n('Blocked by'))
+  }
+}
+
+function inAllSets (first, ...rest) {
+  return first.filter(value => rest.every((collection) => collection.includes(value)))
 }
