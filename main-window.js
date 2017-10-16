@@ -153,8 +153,9 @@ module.exports = function (config) {
       var maxLeft = window.innerWidth - 510
       var maxTop = window.innerHeight - 100
       var distanceFromRight = window.innerWidth - rect.right
+      var shouldDisplayBeside = rect.bottom > maxTop || rect.left < 100 || distanceFromRight < 100
 
-      if (rect.bottom > maxTop || rect.left < 100 || distanceFromRight < 100) {
+      if (shouldDisplayBeside && rect.bottom > 50) {
         preview.style.top = `${Math.min(rect.top, maxTop)}px`
         if (rect.right > maxLeft) {
           preview.style.left = `${rect.left - 510}px`
