@@ -71,10 +71,7 @@ exports.create = function (api) {
                 href: '#',
                 'ev-click': send(displayBlockingFriends, yourBlockingFriends)
               }, [
-                '⚠️ ',
-                computed(mutualFriends, (items) => {
-                  return plural('This person is blocked by %s of your friends.', yourBlockingFriends.length)
-                })
+                '⚠️ ', plural('This person is blocked by %s of your friends.', yourBlockingFriends.length)
               ])
             ])
           } else if (value[0] > 2 || value[1] === undefined) {
