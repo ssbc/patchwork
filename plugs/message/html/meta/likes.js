@@ -4,7 +4,7 @@ var { h, computed, map, send } = require('mutant')
 exports.gives = nest('message.html.meta')
 exports.needs = nest({
   'message.obs.likes': 'first',
-  'message.sheet.likes': 'first',
+  'sheet.profiles': 'first',
   'about.obs.name': 'first',
   'intl.sync.i18n': 'first',
 })
@@ -22,7 +22,7 @@ exports.create = function (api) {
       return [' ', h('a.likes', {
         title: names(likes),
         href: '#',
-        'ev-click': send(api.message.sheet.likes, likes)
+        'ev-click': send(displayLikes, likes)
       }, [`${likes.length} ${likes.length === 1 ? i18n('like') : i18n('likes')}`])]
     }
   }
@@ -32,5 +32,9 @@ exports.create = function (api) {
     return computed([items], (names) => {
       return i18n('Liked by\n') + names.map((n) => `- ${n}`).join('\n')
     })
+  }
+
+  function displayLikes (likes) {
+    api.sheet.profiles(likes, i18n('Liked by'))
   }
 }

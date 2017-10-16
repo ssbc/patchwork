@@ -2,17 +2,18 @@ var combine = require('depject')
 var entry = require('depject/entry')
 var electron = require('electron')
 var h = require('mutant/h')
+var Value = require('mutant/value')
 var when = require('mutant/when')
 var onceTrue = require('mutant/once-true')
 var computed = require('mutant/computed')
 var catchLinks = require('./lib/catch-links')
+var ObserveLinkHover = require('./lib/observe-link-hover')
 var insertCss = require('insert-css')
 var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
-
 
 module.exports = function (config) {
   var sockets = combine(
@@ -38,6 +39,7 @@ module.exports = function (config) {
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first',
+    'profile.html.preview': 'first',
     'app.navigate': 'first',
     'channel.obs.subscribed': 'first',
     'settings.obs.get': 'first',
@@ -126,6 +128,50 @@ module.exports = function (config) {
     views.html
   ])
 
+  var currentHover = ObserveLinkHover(container, 500)
+  var previewElement = Value()
+
+  currentHover(element => {
+    var href = element && element.getAttribute('href')
+    var preview = null
+
+    if (href) {
+      if (ref.isFeed(href)) {
+        preview = api.profile.html.preview(href)
+      } else if (href.includes('://')) {
+        preview = h('ProfilePreview', [
+          h('section', [
+            h('strong', [i18n('External Link'), ' 🌐']), h('br'),
+            h('code', href)
+          ])
+        ])
+      }
+    }
+
+    if (preview) {
+      var rect = element.getBoundingClientRect()
+      var maxLeft = window.innerWidth - 510
+      var maxTop = window.innerHeight - 100
+      var distanceFromRight = window.innerWidth - rect.right
+
+      if (rect.bottom > maxTop || rect.left < 100 || distanceFromRight < 100) {
+        preview.style.top = `${Math.min(rect.top, maxTop)}px`
+        if (rect.right > maxLeft) {
+          preview.style.left = `${rect.left - 510}px`
+        } else {
+          preview.style.left = `${rect.right + 5}px`
+        }
+      } else {
+        preview.style.top = `${rect.bottom + 5}px`
+        preview.style.left = `${Math.min(rect.left, maxLeft)}px`
+      }
+
+      previewElement.set(preview)
+    } else if (element !== false) {
+      previewElement.set(null)
+    }
+  })
+
   catchLinks(container, (href, external, anchor) => {
     if (external) {
       electron.shell.openExternal(href)
@@ -145,7 +191,7 @@ module.exports = function (config) {
     }
   })
 
-  return container
+  return [container, previewElement]
 
   // scoped
 
@@ -212,6 +258,8 @@ module.exports = function (config) {
   }
 
   function setView (href, anchor) {
+    currentHover.cancel()
+    previewElement.set(null)
     views.setView(href, anchor)
   }
 

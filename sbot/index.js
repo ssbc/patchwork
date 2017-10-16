@@ -6,6 +6,7 @@ var Progress = require('./progress')
 var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
+var Hops = require('./hops')
 
 exports.name = 'patchwork'
 exports.version = require('../package.json').version
@@ -17,9 +18,12 @@ exports.manifest = {
   linearSearch: 'source',
   progress: 'source',
   recentFeeds: 'source',
+  heartbeat: 'source',
+
   getSubscriptions: 'async',
   getChannels: 'async',
-  heartbeat: 'source',
+  getHops: 'async',
+
   liveBacklinks: {
     subscribe: 'sync',
     unsubscribe: 'sync',
@@ -46,6 +50,7 @@ exports.init = function (ssb, config) {
     linearSearch: search.linear,
     getSubscriptions: subscriptions.get,
     getChannels: channels.get,
-    liveBacklinks: LiveBacklinks(ssb, config)
+    liveBacklinks: LiveBacklinks(ssb, config),
+    getHops: Hops(ssb, config)
   }
 }

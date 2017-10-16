@@ -150,5 +150,15 @@
 	"unblocked ": "unblocked ",
 	"Click to block syncing with this person and hide their posts": "Click to block syncing with this person and hide their posts",
 	"Public key for this profile": "Public key for this profile",
-	"Liked by": "Liked by"
+	"Liked by": "Liked by",
+	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
+	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
+	"Mutual Friends": "Mutual Friends",
+	"You share %s mutual friends with this person.": {
+		"one": "You share %s mutual friend with this person.",
+		"other": "You share %s mutual friends with this person."
+	},
+	"This person does not follow anyone that follows you": "This person does not follow anyone that follows you",
+	"They might not receive your private messages or replies. You could try joining a pub that they are a member of.": "They might not receive your private messages or replies. You could try joining a pub that they are a member of.",
+	"External Link": "External Link"
 }

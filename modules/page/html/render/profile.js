@@ -29,14 +29,17 @@ exports.needs = nest({
     following: 'first',
     blockers: 'first'
   },
-  'contact.async.block': 'first',
-  'contact.async.unblock': 'first',
+  'contact.html.followToggle': 'first',
   'intl.sync.i18n': 'first',
+  'intl.sync.i18n_n': 'first',
+  'profile.obs.hops': 'first',
+  'sheet.profiles': 'first'
 })
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
+  const plural = api.intl.sync.i18n_n
   return nest('page.html.render', function profile (id) {
     if (!ref.isFeed(id)) return
 
@@ -44,10 +47,17 @@ exports.create = function (api) {
     var description = api.about.obs.description(id)
     var yourId = api.keys.sync.id()
     var yourFollows = api.contact.obs.following(yourId)
+    var yourFollowers = api.contact.obs.followers(yourId)
+
     var rawFollowers = api.contact.obs.followers(id)
     var rawFollowing = api.contact.obs.following(id)
     var friendsLoaded = computed([rawFollowers.sync, rawFollowing.sync], (...x) => x.every(Boolean))
-    var { block, unblock } = api.contact.async
+
+    var hops = api.profile.obs.hops(yourId, id)
+
+    var mutualFriends = computed([yourFollowers, yourFollows, rawFollowers, rawFollowing], (first, ...rest) => {
+      return first.filter(value => rest.every((collection) => collection.includes(value)))
+    })
 
     var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
       return Array.from(following).filter(follow => followers.includes(follow))
@@ -59,18 +69,6 @@ exports.create = function (api) {
 
     var followers = computed([rawFollowers, friends], (followers, friends) => {
       return Array.from(followers).filter(follower => !friends.includes(follower))
-    })
-
-    var isFriends = computed([friends], function (friends) {
-      return friends.includes(yourId)
-    })
-
-    var followsYou = computed([following], function (followsYou) {
-      return followsYou.includes(yourId)
-    })
-
-    var youFollow = computed([yourFollows], function (youFollow) {
-      return youFollow.includes(id)
     })
 
     var blockers = api.contact.obs.blockers(id)
@@ -105,7 +103,7 @@ exports.create = function (api) {
         'ev-click': () => {
           rename(id)
         },
-        href: '#',
+        href: '#'
       }, ['+'])
     ])
 
@@ -152,36 +150,42 @@ exports.create = function (api) {
             when(id === yourId, [
               h('button', {'ev-click': api.profile.sheet.edit}, i18n('Edit Your Profile'))
             ], [
-              when(youBlock, [
-                h('a.ToggleButton.-unblocking', {
-                  'href': '#',
-                  'title': i18n('Click to unblock'),
-                  'ev-click': () => unblock(id, console.log)
-                }, i18n('Blocked'))
-              ], [
-                when(youFollow,
-                  h('a.ToggleButton.-unsubscribe', {
-                    'href': '#',
-                    'title': i18n('Click to unfollow'),
-                    'ev-click': send(unfollow, id)
-                  }, when(isFriends, i18n('Friends'), i18n('Following'))),
-                  h('a.ToggleButton.-subscribe', {
-                    'href': '#',
-                    'ev-click': send(follow, id)
-                  }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
-                ),
-                h('a.ToggleButton.-blocking', {
-                  'href': '#',
-                  'title': i18n('Click to block syncing with this person and hide their posts'),
-                  'ev-click': () => block(id, console.log)
-                }, i18n('Block'))
-              ])
+              api.contact.html.followToggle(id)
             ])
           ])
         ]),
         h('section -publicKey', [
           h('pre', {title: i18n('Public key for this profile')}, id)
         ]),
+
+        computed(hops, (value) => {
+          if (value) {
+            if (value[0] > 2 || value[1] === undefined) {
+              return h('section -distanceWarning', [
+                h('h1', i18n(`You don't follow anyone who follows this person`)),
+                h('p', i18n('You might not be seeing their latest messages. You could try joining a pub that they are a member of.'))
+              ])
+            } else if (value[1] > 2 || value[1] === undefined) {
+              return h('section -distanceWarning', [
+                h('h1', i18n('This person does not follow anyone that follows you')),
+                h('p', i18n('They might not receive your private messages or replies. You could try joining a pub that they are a member of.'))
+              ])
+            } else if (value[0] === 2) {
+              return h('section -mutualFriends', [
+                h('a', {
+                  href: '#',
+                  'ev-click': send(displayMutualFriends, mutualFriends)
+                }, [
+                  '👥 ',
+                  computed(mutualFriends, (items) => {
+                    return plural('You share %s mutual friends with this person.', items.length)
+                  })
+                ])
+              ])
+            }
+          }
+        }),
+
         h('section -description', [
           computed(description, (text) => {
             if (typeof text === 'string') {
@@ -225,6 +229,10 @@ exports.create = function (api) {
     return container
   })
 
+  function displayMutualFriends (profiles) {
+    api.sheet.profiles(profiles, i18n('Mutual Friends'))
+  }
+
   function renderContactBlock (title, profiles, yourFollows) {
     profiles = api.profile.obs.rank(profiles)
     return [
@@ -251,22 +259,6 @@ exports.create = function (api) {
         })
       ])
     ]
-  }
-
-  function follow (id) {
-    api.sbot.async.publish({
-      type: 'contact',
-      contact: id,
-      following: true
-    })
-  }
-
-  function unfollow (id) {
-    api.sbot.async.publish({
-      type: 'contact',
-      contact: id,
-      following: false
-    })
   }
 
   function assignImage (id, image) {
