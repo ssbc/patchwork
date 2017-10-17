@@ -5,6 +5,8 @@ exports.gives = nest('contact.html.followToggle')
 exports.needs = nest({
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
+  'contact.async.follow': 'first',
+  'contact.async.unfollow': 'first',
   'contact.async.block': 'first',
   'contact.async.unblock': 'first',
   'contact.obs.following': 'first',
@@ -60,11 +62,11 @@ exports.create = function (api) {
           h('a.ToggleButton.-unsubscribe', {
             'href': '#',
             'title': i18n('Click to unfollow'),
-            'ev-click': send(unfollow, id)
+            'ev-click': send(api.contact.async.unfollow, id)
           }, when(isFriends, i18n('Friends'), i18n('Following'))),
           h('a.ToggleButton.-subscribe', {
             'href': '#',
-            'ev-click': send(follow, id)
+            'ev-click': send(api.contact.async.follow, id)
           }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
         ),
         when(showBlockButton, h('a.ToggleButton.-blocking', {
@@ -77,20 +79,4 @@ exports.create = function (api) {
       return []
     }
   })
-
-  function follow (id) {
-    api.sbot.async.publish({
-      type: 'contact',
-      contact: id,
-      following: true
-    })
-  }
-
-  function unfollow (id) {
-    api.sbot.async.publish({
-      type: 'contact',
-      contact: id,
-      following: false
-    })
-  }
 }
