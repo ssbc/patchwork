@@ -94,7 +94,7 @@ exports.create = function (api) {
               ])
             ])
           } else if (value[0] === 0) {
-            return h('section', [
+            return h('section -you', [
               i18n('This is you.')
             ])
           }

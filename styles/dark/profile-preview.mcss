@@ -30,6 +30,10 @@ ProfilePreview {
     -mutualFriends {
       background: #7192ce
     }
+
+    -you {
+      background: #7d7d7d;
+    }
   }
 
   header {
