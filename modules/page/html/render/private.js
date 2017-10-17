@@ -35,7 +35,7 @@ exports.create = function (api) {
     view.setAnchor = function (data) {
       if (data && data.compose && data.compose.to) {
         var name = api.about.obs.name(data.compose.to)
-        compose.setText(`[${name()}](${data.compose.to})\n\n`, true)
+        compose.setText(`[@${name()}](${data.compose.to})\n\n`, true)
         window.requestAnimationFrame(() => {
           compose.focus()
         })
