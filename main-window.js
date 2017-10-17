@@ -150,17 +150,24 @@ module.exports = function (config) {
 
     if (preview) {
       var rect = element.getBoundingClientRect()
-      var maxLeft = window.innerWidth - 510
+      var width = 510
+      var maxLeft = window.innerWidth - width
       var maxTop = window.innerHeight - 100
       var distanceFromRight = window.innerWidth - rect.right
       var shouldDisplayBeside = rect.bottom > maxTop || rect.left < 100 || distanceFromRight < 100
 
       if (shouldDisplayBeside && rect.bottom > 50) {
-        preview.style.top = `${Math.min(rect.top, maxTop)}px`
-        if (rect.right > maxLeft) {
-          preview.style.left = `${rect.left - 510}px`
+        if (rect.right > maxLeft && (rect.left - width) < 0) {
+          // no room, just give up!
+          previewElement.set(null)
+          return
         } else {
-          preview.style.left = `${rect.right + 5}px`
+          preview.style.top = `${Math.min(rect.top, maxTop)}px`
+          if (rect.right > maxLeft) {
+            preview.style.left = `${rect.left - width}px`
+          } else {
+            preview.style.left = `${rect.right + 5}px`
+          }
         }
       } else {
         preview.style.top = `${rect.bottom + 5}px`
