@@ -222,7 +222,8 @@ exports.create = function (api) {
           h('div', [
             renderContactBlock(i18n('Friends'), friends, yourFollows),
             renderContactBlock(i18n('Followers'), followers, yourFollows),
-            renderContactBlock(i18n('Following'), following, yourFollows)
+            renderContactBlock(i18n('Following'), following, yourFollows),
+            renderContactBlock(i18n('Blocked by'), yourBlockingFriends, yourFollows)
           ]),
           h('div', {className: 'Loading'})
         )
