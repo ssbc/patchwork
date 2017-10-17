@@ -154,7 +154,7 @@ module.exports = function (config) {
       var maxLeft = window.innerWidth - width
       var maxTop = window.innerHeight - 100
       var distanceFromRight = window.innerWidth - rect.right
-      var shouldDisplayBeside = rect.bottom > maxTop || rect.left < 100 || distanceFromRight < 100
+      var shouldDisplayBeside = rect.bottom > maxTop || rect.left < 50 || distanceFromRight < 50
 
       if (shouldDisplayBeside && rect.bottom > 50) {
         if (rect.right > maxLeft && (rect.left - width) < 0) {
