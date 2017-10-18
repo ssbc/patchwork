@@ -40,6 +40,7 @@ exports.create = function (api) {
     }
 
     var imageUrl = computed(image, (id) => api.blob.sync.url(id))
+    var imageId = computed(image, (link) => link && link.link || link)
     var content = h('GatheringCard', [
       h('div.title', [
         h('a', {href: msg.key}, title),
@@ -49,7 +50,7 @@ exports.create = function (api) {
       ]),
       h('div.time', computed(startDateTime, formatTime)),
       when(image, h('a.image', {
-        href: imageUrl,
+        href: imageId,
         style: {
           'background-image': computed(imageUrl, (url) => `url(${url})`)
         }
