@@ -6,6 +6,7 @@ var Progress = require('./progress')
 var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
+var pull = require('pull-stream')
 
 exports.name = 'patchwork'
 exports.version = require('../package.json').version
@@ -36,6 +37,28 @@ exports.init = function (ssb, config) {
   var roots = Roots(ssb, config)
   var search = Search(ssb, config)
   var recentFeeds = RecentFeeds(ssb, config)
+
+  pull(
+    ssb.friends.createFriendStream({live: false}),
+    pull.drain(() => {}, () => {
+      // don't assign peer friends until friends have loaded
+      ssb.friends.hops({start: ssb.id, hops: 2}, function (_, following) {
+        ssb.gossip.peers().forEach(function (peer) {
+          if (following[peer.key]) {
+            // we follow them, or follow someone that follows them!
+            ssb.gossip.add(peer, 'friends')
+          } else {
+            ssb.friends.hops({start: peer.key, hops: 2}, function (_, result) {
+              if (result && result[ssb.id]) {
+                // they follow us, or someone that follows us!
+                ssb.gossip.add(peer, 'friends')
+              }
+            })
+          }
+        })
+      })
+    })
+  )
 
   return {
     heartbeat: Heartbeat(ssb, config),
