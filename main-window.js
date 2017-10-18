@@ -2,12 +2,10 @@ var combine = require('depject')
 var entry = require('depject/entry')
 var electron = require('electron')
 var h = require('mutant/h')
-var Value = require('mutant/value')
 var when = require('mutant/when')
 var onceTrue = require('mutant/once-true')
 var computed = require('mutant/computed')
 var catchLinks = require('./lib/catch-links')
-var ObserveLinkHover = require('./lib/observe-link-hover')
 var insertCss = require('insert-css')
 var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
@@ -41,9 +39,10 @@ module.exports = function (config) {
     'profile.sheet.edit': 'first',
     'profile.html.preview': 'first',
     'app.navigate': 'first',
+    'app.linkPreview': 'first',
     'channel.obs.subscribed': 'first',
     'settings.obs.get': 'first',
-    'intl.sync.i18n': 'first',
+    'intl.sync.i18n': 'first'
   }))
 
   setupContextMenuAndSpellCheck(api.config.sync.load())
@@ -128,58 +127,7 @@ module.exports = function (config) {
     views.html
   ])
 
-  var currentHover = ObserveLinkHover(container, 500)
-  var previewElement = Value()
-  previewElement(currentHover.active.set)
-
-  currentHover(element => {
-    var href = element && element.getAttribute('href')
-    var preview = null
-
-    if (href) {
-      if (ref.isFeed(href)) {
-        preview = api.profile.html.preview(href)
-      } else if (href.includes('://')) {
-        preview = h('ProfilePreview', [
-          h('section', [
-            h('strong', [i18n('External Link'), ' 🌐']), h('br'),
-            h('code', href)
-          ])
-        ])
-      }
-    }
-
-    if (preview) {
-      var rect = element.getBoundingClientRect()
-      var width = 510
-      var maxLeft = window.innerWidth - width
-      var maxTop = window.innerHeight - 100
-      var distanceFromRight = window.innerWidth - rect.right
-      var shouldDisplayBeside = rect.bottom > maxTop || rect.left < 50 || distanceFromRight < 50
-
-      if (shouldDisplayBeside && rect.bottom > 50) {
-        if (rect.right > maxLeft && (rect.left - width) < 0) {
-          // no room, just give up!
-          previewElement.set(null)
-          return
-        } else {
-          preview.style.top = `${Math.min(rect.top, maxTop)}px`
-          if (rect.right > maxLeft) {
-            preview.style.left = `${rect.left - width}px`
-          } else {
-            preview.style.left = `${rect.right + 5}px`
-          }
-        }
-      } else {
-        preview.style.top = `${rect.bottom + 5}px`
-        preview.style.left = `${Math.min(rect.left, maxLeft)}px`
-      }
-
-      previewElement.set(preview)
-    } else if (element !== false) {
-      previewElement.set(null)
-    }
-  })
+  var previewElement = api.app.linkPreview(container, 500)
 
   catchLinks(container, (href, external, anchor) => {
     if (external) {
