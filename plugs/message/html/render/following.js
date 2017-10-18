@@ -33,15 +33,18 @@ exports.create = function (api) {
     var following = msg.value.content.following
     var blocking = msg.value.content.blocking
 
-    if (typeof blocking === 'boolean') {
+    if (blocking === true) {
       return [
-        blocking ? i18n('blocked ') : i18n('unblocked '),
-        api.profile.html.person(msg.value.content.contact)
+        i18n('blocked '), api.profile.html.person(msg.value.content.contact)
       ]
-    } else {
+    } else if (typeof following === 'boolean') {
       return [
         following ? i18n('followed ') : i18n('unfollowed '),
         api.profile.html.person(msg.value.content.contact)
+      ]
+    } else if (blocking === false) {
+      return [
+        i18n('unblocked '), api.profile.html.person(msg.value.content.contact)
       ]
     }
   }
