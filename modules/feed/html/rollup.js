@@ -18,7 +18,6 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
-
 exports.needs = nest({
   'about.obs.name': 'first',
   'app.sync.externalHandler': 'first',
@@ -30,6 +29,7 @@ exports.needs = nest({
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
+  'message.html.missing': 'first'
 })
 
 exports.gives = nest({
@@ -180,7 +180,11 @@ exports.create = function (api) {
           priority: highlightItems.has(msg.key) ? 2 : 0
         })
         previousId = msg.key
-        return result
+        return [
+          // insert missing message marker (if can't be found)
+          api.message.html.missing(last(msg.value.content.branch), msg),
+          result
+        ]
       })
 
       var renderedMessage = api.message.html.render(item, {
@@ -322,4 +326,12 @@ function returnTrue () {
 
 function byAssertedTime (a, b) {
   return a.value.timestamp - b.value.timestamp
+}
+
+function last (array) {
+  if (Array.isArray(array)) {
+    return array[array.length - 1]
+  } else {
+    return array
+  }
 }

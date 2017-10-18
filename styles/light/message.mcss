@@ -72,6 +72,21 @@ Message {
     }
   }
 
+  -missing {
+    header {
+      div.main {
+        div.main {
+          margin-left: 0
+        }
+      }
+    }
+    section {
+      font-size: 90%
+      font-style: italic
+      color: #777
+    }
+  }
+
   -new {
     box-shadow: 0 0 1px #ffc600;
     z-index: 1;
