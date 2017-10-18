@@ -168,7 +168,7 @@ exports.create = function (api) {
                   '⚠️ ', plural('This person is blocked by %s of your friends.', yourBlockingFriends.length)
                 ])
               ])
-            } else if (value[0] > 2 || value[1] === undefined) {
+            } else if (value[0] > 2 || value[0] === undefined) {
               return h('section -distanceWarning', [
                 h('h1', i18n(`You don't follow anyone who follows this person`)),
                 h('p', i18n('You might not be seeing their latest messages. You could try joining a pub that they are a member of.'))
