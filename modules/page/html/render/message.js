@@ -12,7 +12,8 @@ exports.needs = nest({
     compose: 'first'
   },
   'sbot.async.get': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'message.html.missing': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -81,9 +82,11 @@ exports.create = function (api) {
               return h('div', {
                 hooks: [AnchorHook(msg.key, anchor, showContext)]
               }, [
+                msg.key !== id ? api.message.html.missing(last(msg.value.content.branch), msg) : null,
                 api.message.html.render(msg, {
                   pageId: id,
                   previousId,
+                  includeForks: msg.key !== id,
                   includeReferences: true
                 })
               ])
@@ -133,4 +136,12 @@ function getScrollParent (element) {
 function isScroller (element) {
   var value = window.getComputedStyle(element)['overflow-y']
   return (value === 'auto' || value === 'scroll')
+}
+
+function last (array) {
+  if (Array.isArray(array)) {
+    return array[array.length - 1]
+  } else {
+    return array
+  }
 }

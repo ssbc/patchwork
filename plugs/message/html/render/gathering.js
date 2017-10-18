@@ -1,10 +1,4 @@
-var {
-  h,
-  computed,
-  when,
-  map,
-  send
-} = require('mutant')
+var { h, computed, when, map, send } = require('mutant')
 var nest = require('depnest')
 var extend = require('xtend')
 var moment = require('moment')
@@ -35,7 +29,7 @@ exports.create = function(api) {
 
   return nest('message.html', {
     canRender: isRenderable,
-    render: function (msg, opts) {
+    render: function(msg, opts) {
       if (!isRenderable(msg)) return
 
       var yourId = api.keys.sync.id()
@@ -52,6 +46,7 @@ exports.create = function(api) {
       }
 
       var imageUrl = computed(image, (id) => api.blob.sync.url(id))
+      var imageId = computed(image, (link) => link && link.link || link)
       var content = h('GatheringCard', [
         h('div.title', [
           h('a', {
@@ -63,7 +58,7 @@ exports.create = function(api) {
         ]),
         h('div.time', computed(startDateTime, formatTime)),
         when(image, h('a.image', {
-          href: imageUrl,
+          href: imageId,
           style: {
             'background-image': computed(imageUrl, (url) => `url(${url})`)
           }
@@ -155,10 +150,6 @@ exports.create = function(api) {
   }
 }
 
-function isRenderable(msg) {
-  return (msg.value.content.type === 'gathering') ? true : undefined
-}
-
 function formatTime(time) {
   if (time && time.epoch) {
     return moment(time.epoch).format('LLLL')
@@ -167,4 +158,8 @@ function formatTime(time) {
 
 function getAttendees(lookup) {
   return Object.keys(lookup)
+}
+
+function isRenderable(msg) {
+  return (msg.value.content.type === 'gathering') ? true : undefined
 }

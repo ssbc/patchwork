@@ -18,7 +18,6 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
-
 exports.needs = nest({
   'about.obs.name': 'first',
   'app.sync.externalHandler': 'first',
@@ -31,6 +30,7 @@ exports.needs = nest({
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
+  'message.html.missing': 'first'
 })
 
 exports.gives = nest({
@@ -180,8 +180,8 @@ exports.create = function (api) {
         }
       })
 
-      var replies = item.replies.filter(isReply)
-      var replyElements = replies.filter(displayFilter).sort(byAssertedTime).slice(-3).map((msg) => {
+      var replies = item.replies.filter(isReply).filter(displayFilter).sort(byAssertedTime)
+      var replyElements = replies.slice(-3).map((msg) => {
         var result = api.message.html.render(msg, {
           inContext: true,
           inSummary: true,
@@ -189,11 +189,16 @@ exports.create = function (api) {
           priority: highlightItems.has(msg.key) ? 2 : 0
         })
         previousId = msg.key
-        return result
+        return [
+          // insert missing message marker (if can't be found)
+          api.message.html.missing(last(msg.value.content.branch), msg),
+          result
+        ]
       })
 
       var renderedMessage = api.message.html.render(item, {
         inContext: true,
+        includeForks: false,
         priority: highlightItems.has(item.key) ? 2 : 0
       })
 
@@ -218,19 +223,13 @@ exports.create = function (api) {
         renderedMessage,
         when(replyElements.length, [
           when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key, anchor: getFirstId(replyElements)}, [i18n('View full thread') + ' (', replies.length, ')'])
+            h('a.full', {href: item.key, anchor: replies[0] && replies[0].key}, [i18n('View full thread') + ' (', replies.length, ')'])
           ),
           h('div.replies', replyElements)
         ])
       ])
     }
   })
-
-  function getFirstId (elements) {
-    if (Array.isArray(elements) && elements.length) {
-      return elements[0].dataset.id
-    }
-  }
 
   function names (ids) {
     var items = map(Array.from(ids), api.about.obs.name)
@@ -336,4 +335,12 @@ function returnTrue () {
 
 function byAssertedTime (a, b) {
   return a.value.timestamp - b.value.timestamp
+}
+
+function last (array) {
+  if (Array.isArray(array)) {
+    return array[array.length - 1]
+  } else {
+    return array
+  }
 }

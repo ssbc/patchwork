@@ -13,7 +13,6 @@ var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 
-
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
@@ -38,10 +37,12 @@ module.exports = function (config) {
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first',
+    'profile.html.preview': 'first',
     'app.navigate': 'first',
+    'app.linkPreview': 'first',
     'channel.obs.subscribed': 'first',
     'settings.obs.get': 'first',
-    'intl.sync.i18n': 'first',
+    'intl.sync.i18n': 'first'
   }))
 
   setupContextMenuAndSpellCheck(api.config.sync.load())
@@ -126,6 +127,8 @@ module.exports = function (config) {
     views.html
   ])
 
+  var previewElement = api.app.linkPreview(container, 500)
+
   catchLinks(container, (href, external, anchor) => {
     if (external) {
       electron.shell.openExternal(href)
@@ -145,7 +148,7 @@ module.exports = function (config) {
     }
   })
 
-  return container
+  return [container, previewElement]
 
   // scoped
 
@@ -212,6 +215,7 @@ module.exports = function (config) {
   }
 
   function setView (href, anchor) {
+    previewElement.cancel()
     views.setView(href, anchor)
   }
 

@@ -21,7 +21,7 @@ exports.gives = nest('message.html.layout')
 exports.create = function (api) {
   return nest('message.html.layout', layout)
 
-  function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences}) {
+  function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences, includeForks = true}) {
     if (!(layout === 'mini')) return
 
     var classList = ['Message -mini']
@@ -59,7 +59,7 @@ exports.create = function (api) {
           ])
         }
       }),
-      api.message.html.backlinks(msg, {includeReferences})
+      api.message.html.backlinks(msg, {includeReferences, includeForks})
     ])
 
     // scoped

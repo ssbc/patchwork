@@ -25,15 +25,39 @@ function reduce (result, item) {
 
 function map (msg) {
   if (msg.value.content) {
+    // filter out likes and subscriptions
     var isLike = msg.value.content.type === 'vote'
     var isSubscription = msg.value.content.type === 'channel'
-    var channel = normalizeChannel(msg.value.content.channel)
 
-    // filter out likes and subscriptions
-    if (channel && !isLike && !isSubscription) {
-      return {
-        [channel]: {timestamp: msg.timestamp}
+    if (!isLike && !isSubscription) {
+      var channels = getChannels(msg)
+      if (channels.length) {
+        return channels.reduce((result, channel) => {
+          result[channel] = {timestamp: msg.timestamp}
+          return result
+        }, {})
       }
     }
   }
+}
+
+function getChannels (msg) {
+  var result = []
+  if (msg.value && msg.value.content) {
+    var channel = normalizeChannel(msg.value.content.channel)
+    if (channel) {
+      result.push(channel)
+    }
+    if (Array.isArray(msg.value.content.mentions)) {
+      msg.value.content.mentions.forEach(mention => {
+        if (typeof mention.link === 'string' && mention.link.startsWith('#')) {
+          var tag = normalizeChannel(mention.link.slice(1))
+          if (tag) {
+            result.push(tag)
+          }
+        }
+      })
+    }
+  }
+  return result
 }

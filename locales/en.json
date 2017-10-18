@@ -149,5 +149,31 @@
 	"blocked ": "blocked ",
 	"unblocked ": "unblocked ",
 	"Click to block syncing with this person and hide their posts": "Click to block syncing with this person and hide their posts",
-	"Public key for this profile": "Public key for this profile"
+	"Public key for this profile": "Public key for this profile",
+	"Liked by": "Liked by",
+	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
+	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
+	"Mutual Friends": "Mutual Friends",
+	"You share %s mutual friends with this person.": {
+		"one": "You share %s mutual friend with this person.",
+		"other": "You share %s mutual friends with this person."
+	},
+	"This person does not follow anyone that follows you": "This person does not follow anyone that follows you",
+	"They might not receive your private messages or replies. You could try joining a pub that they are a member of.": "They might not receive your private messages or replies. You could try joining a pub that they are a member of.",
+	"External Link": "External Link",
+	"This is you.": "This is you.",
+	"This person is blocked by %s of your friends.": {
+		"one": "This person is blocked by %s of your friends.",
+		"other": "This person is blocked by %s of your friends."
+	},
+	"Blocked by": "Blocked by",
+	"However, this person should be able to see your posts.": "However, this person should be able to see your posts.",
+	"However, since they follow someone that follows you, they should be able to see your posts.": "However, since they follow someone that follows you, they should be able to see your posts.",
+	"They might not be able to see your posts either.": "They might not be able to see your posts either.",
+	"However, since you follow someone that follows them, you should be able to see their latest posts.": "However, since you follow someone that follows them, you should be able to see their latest posts.",
+	"An error occured while publishing your message.": "An error occured while publishing your message.",
+	"Missing message": "Missing message",
+	"The author of this message could be outside of your follow range.": "The author of this message could be outside of your follow range.",
+	" via ": " via ",
+	"Cannot load thead": "Cannot load thead"
 }

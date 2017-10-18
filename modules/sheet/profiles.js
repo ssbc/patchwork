@@ -1,6 +1,6 @@
 var {h, when, map, computed} = require('mutant')
 var nest = require('depnest')
-var catchLinks = require('../../../lib/catch-links')
+var catchLinks = require('../../lib/catch-links')
 
 exports.needs = nest({
   'sheet.display': 'first',
@@ -13,18 +13,18 @@ exports.needs = nest({
   'intl.sync.i18n': 'first'
 })
 
-exports.gives = nest('message.sheet.likes')
+exports.gives = nest('sheet.profiles')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.sheet.likes', function (ids) {
+  return nest('sheet.profiles', function (ids, title) {
     api.sheet.display(close => {
       var content = h('div', {
         style: { padding: '20px' }
       }, [
         h('h2', {
           style: { 'font-weight': 'normal' }
-        }, [i18n('Liked by')]),
+        }, [title]),
         renderContactBlock(ids)
       ])
 

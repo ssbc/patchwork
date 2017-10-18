@@ -143,5 +143,33 @@
 	"pt": "pt",
 	"on ": "on ",
 	"Unblock": "Desbloquear",
-	"Block": "Bloquear"
+	"Block": "Bloquear",
+		"Click to unblock": "Click to unblock",
+	"Blocked": "Bloqueado",
+	"blocked ": "bloqueó a ",
+	"unblocked ": "desbloqueó a ",
+	"Click to block syncing with this person and hide their posts": "Haz clic para bloquear la sincronización con esta persona y ocultar sus publicaciones",
+	"Public key for this profile": "Clave pública de este perfil",
+	"Liked by": "Le gusta a:",
+	"You don't follow anyone who follows this person": "No sigues a nadie que siga a esta persona",
+	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "Es posible que no esté viendo sus últimos mensajes. Puedes intentar unirte a un pub del que sea miembro.",
+	"Mutual Friends": "Amigos en común",
+	"You share %s mutual friends with this person.": {
+		"one": "Compartes %s amigo en común con esta persona.",
+		"other": "Compartes %s amigos en común con esta persona"
+	},
+	"This person does not follow anyone that follows you": "Esta persona no sigue a nadie que te sigue",
+	"They might not receive your private messages or replies. You could try joining a pub that they are a member of.": "Es posible que no reciban sus mensajes o respuestas privadas. Puedes intentar unirte a un pub del que sea miembro.",
+	"External Link": "Link externo",
+	"This is you.": "Este ere tu.",
+	"This person is blocked by %s of your friends.": {
+		"one": "Esta persona está bloqueada por %s de tus amigos.",
+		"other": "Esta persona está bloqueada por %s de tus amigos."
+	},
+	"Blocked by": "Bloqueado por",
+	"However, this person should be able to see your posts.": "Sin embargo, esta persona debería poder ver tus publicaciones.",
+	"However, since they follow someone that follows you, they should be able to see your posts.": "Sin embargo, dado que sigue a alguien que te sigue, debería poder ver tus publicaciones.",
+	"They might not be able to see your posts either.": "Es posible que tampoco pueda ver tus publicaciones.",
+	"However, since you follow someone that follows them, you should be able to see their latest posts.": "Sin embargo, dado que sigues a alguien que lo sigue, deberías poder ver sus últimas publicaciones.",
+	"An error occured while publishing your message.": "Se produjo un error al publicar su mensaje."
 }

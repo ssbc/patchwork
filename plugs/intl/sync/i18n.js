@@ -8,6 +8,7 @@ exports.gives = nest('intl.sync', [
   'locales',
   'localeNames',
   'i18n',
+  'i18n_n',
   'time'
 ])
 
@@ -32,6 +33,7 @@ exports.create = (api) => {
     locales,
     localeNames,
     i18n,
+    i18n_n,
     time
   })
 
@@ -54,9 +56,15 @@ exports.create = (api) => {
   }
 
   //Get translation
-  function i18n (value) {
+  function i18n (value, ...opts) {
     _init()
-    return i18nL.__(value)
+    return i18nL.__(value, ...opts)
+  }
+
+  //Get translation
+  function i18n_n (value, ...opts) {
+    _init()
+    return i18nL.__n(value, ...opts)
   }
 
   function time (date){
