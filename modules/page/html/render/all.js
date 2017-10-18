@@ -32,7 +32,11 @@ exports.create = function (api) {
 
     var feedView = api.feed.html.rollup(api.feed.pull.public, {
       bumpFilter: (msg) => {
-        return msg.value.content && typeof msg.value.content === 'object'
+        if (msg.value.content) {
+          // filter out likes
+          if (msg.value.content.type === 'vote') return false
+          return msg.value.content && typeof msg.value.content === 'object'
+        }
       },
       prepend
     })

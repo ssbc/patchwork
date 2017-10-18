@@ -52,6 +52,8 @@ exports.create = function (api) {
     })
 
     function mentionFilter (msg) {
+      // filter out likes
+      if (msg.value.content.type === 'vote') return false
       if (msg.value.content.channel === channel) return true
       if (Array.isArray(msg.value.content.mentions)) {
         if (msg.value.content.mentions.some(mention => {
