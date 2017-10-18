@@ -181,19 +181,34 @@ exports.create = function (api) {
           content = prepublish(content)
         }
       } catch (err) {
-        publishing.set(false)
-        if (cb) cb(err)
-        else throw err
+        return done(err)
       }
 
       return api.message.async.publish(content, done)
 
       function done (err, msg) {
         publishing.set(false)
-        if (err) throw err
-        else if (msg) textArea.value = ''
-        if (cb) cb(err, msg)
+        if (err) {
+          if (cb) cb(err)
+          else {
+            showDialog({
+              type: 'error',
+              title: i18n('Error'),
+              buttons: [i18n('OK')],
+              message: i18n('An error occured while publishing your message.'),
+              detail: err.message
+            })
+          }
+        } else {
+          textArea.value = ''
+          if (cb) cb(null, msg)
+        }
       }
     }
   })
+}
+
+function showDialog (opts) {
+  var electron = require('electron')
+  electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), opts)
 }
