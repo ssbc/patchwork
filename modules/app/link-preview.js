@@ -67,6 +67,11 @@ exports.create = function (api) {
       }
     })
 
+    previewElement.cancel = function () {
+      currentHover.cancel()
+      previewElement.set(null)
+    }
+
     return previewElement
   })
 }

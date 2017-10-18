@@ -215,8 +215,7 @@ module.exports = function (config) {
   }
 
   function setView (href, anchor) {
-    currentHover.cancel()
-    previewElement.set(null)
+    previewElement.cancel()
     views.setView(href, anchor)
   }
 
