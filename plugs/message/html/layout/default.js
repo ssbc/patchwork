@@ -24,7 +24,7 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html.layout', layout)
 
-  function layout (msg, {layout, previousId, priority, content, includeReferences = false}) {
+  function layout (msg, {layout, previousId, priority, content, includeReferences = false, includeForks = true}) {
     if (!(layout === undefined || layout === 'default')) return
 
     var classList = ['Message']
@@ -60,7 +60,7 @@ exports.create = function (api) {
           ])
         }
       }),
-      api.message.html.backlinks(msg, {includeReferences})
+      api.message.html.backlinks(msg, {includeReferences, includeForks})
     ])
 
     // scoped

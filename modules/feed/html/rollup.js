@@ -185,6 +185,7 @@ exports.create = function (api) {
 
       var renderedMessage = api.message.html.render(item, {
         inContext: true,
+        includeForks: false,
         priority: highlightItems.has(item.key) ? 2 : 0
       })
 

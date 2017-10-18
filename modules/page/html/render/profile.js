@@ -14,6 +14,7 @@ exports.needs = nest({
   'blob.html.input': 'first',
   'message.async.publish': 'first',
   'message.html.markdown': 'first',
+  'message.sync.root': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
   'feed.pull.profile': 'first',
@@ -188,7 +189,7 @@ exports.create = function (api) {
     var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
       prepend,
       displayFilter: (msg) => msg.value.author === id,
-      rootFilter: (msg) => !contact.youBlock(),
+      rootFilter: (msg) => !contact.youBlock() && !api.message.sync.root(msg),
       bumpFilter: (msg) => msg.value.author === id
     })
 

@@ -24,7 +24,7 @@ exports.create = function (api) {
     return [
       map(forks, link => {
         return h('a.backlink', {
-          href: link.id, title: link.id
+          href: msg.key, anchor: link.id
         }, [
           h('strong', [
             api.profile.html.person(link.author), i18n(' forked this discussion:')
@@ -51,7 +51,7 @@ function onlyReferences (backlinks, msg) {
 }
 
 function onlyForks (backlinks, msg) {
-  return backlinks.filter(link => link.root === msg.key && msg.value.content && msg.value.content.root)
+  return backlinks.filter(link => link.root === msg.key && includeOrEqual(link.branch, msg.key) && msg.value.content && msg.value.content.root)
 }
 
 function includeOrEqual (valueOrArray, item) {

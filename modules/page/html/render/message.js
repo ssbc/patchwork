@@ -84,6 +84,7 @@ exports.create = function (api) {
                 api.message.html.render(msg, {
                   pageId: id,
                   previousId,
+                  includeForks: msg.key !== id,
                   includeReferences: true
                 })
               ])
