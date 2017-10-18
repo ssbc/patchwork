@@ -108,10 +108,10 @@ function setupContext (appName, opts, cb) {
   ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
     blobsPort: 7777,
-    // friends: {
-    //   dunbar: 150,
-    //   hops: 2 // down from 3
-    // }
+    friends: {
+      dunbar: 150,
+      hops: 2 // down from 3
+    }
   }, opts))
 
   console.log(ssbConfig)
