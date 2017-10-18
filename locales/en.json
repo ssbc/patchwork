@@ -166,5 +166,9 @@
 		"one": "This person is blocked by %s of your friends.",
 		"other": "This person is blocked by %s of your friends."
 	},
-	"Blocked by": "Blocked by"
+	"Blocked by": "Blocked by",
+	"However, this person should be able to see your posts.": "However, this person should be able to see your posts.",
+	"However, since they follow someone that follows you, they should be able to see your posts.": "However, since they follow someone that follows you, they should be able to see your posts.",
+	"They might not be able to see your posts either.": "They might not be able to see your posts either.",
+	"However, since you follow someone that follows them, you should be able to see their latest posts.": "However, since you follow someone that follows them, you should be able to see their latest posts."
 }

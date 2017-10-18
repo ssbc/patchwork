@@ -1,7 +1,6 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var {h, when, computed, map, send, dictToCollection, resolve} = require('mutant')
-var extend = require('xtend')
 
 exports.needs = nest({
   'about.obs': {
@@ -24,15 +23,10 @@ exports.needs = nest({
   'profile.obs.rank': 'first',
   'profile.sheet.edit': 'first',
   'app.navigate': 'first',
-  'contact.obs': {
-    followers: 'first',
-    following: 'first',
-    blockers: 'first'
-  },
+  'profile.obs.contact': 'first',
   'contact.html.followToggle': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.i18n_n': 'first',
-  'profile.obs.hops': 'first',
   'sheet.profiles': 'first'
 })
 exports.gives = nest('page.html.render')
@@ -42,41 +36,25 @@ exports.create = function (api) {
   const plural = api.intl.sync.i18n_n
   return nest('page.html.render', function profile (id) {
     if (!ref.isFeed(id)) return
-
+    var yourId = api.keys.sync.id()
     var name = api.about.obs.name(id)
     var description = api.about.obs.description(id)
-    var yourId = api.keys.sync.id()
-    var yourFollows = api.contact.obs.following(yourId)
-    var yourFollowers = api.contact.obs.followers(yourId)
+    var contact = api.profile.obs.contact(id)
 
-    var rawFollowers = api.contact.obs.followers(id)
-    var rawFollowing = api.contact.obs.following(id)
-    var friendsLoaded = computed([rawFollowers.sync, rawFollowing.sync], (...x) => x.every(Boolean))
-
-    var hops = api.profile.obs.hops(yourId, id)
-
-    var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
+    var friends = computed([contact.following, contact.followers], (following, followers) => {
       return Array.from(following).filter(follow => followers.includes(follow))
     })
 
-    var following = computed([rawFollowing, friends], (following, friends) => {
-      return Array.from(following).filter(follow => !friends.includes(follow))
+    var following = computed([contact.following, friends], (following, friends) => {
+      return following.filter(follow => !friends.includes(follow))
     })
 
-    var followers = computed([rawFollowers, friends], (followers, friends) => {
-      return Array.from(followers).filter(follower => !friends.includes(follower))
+    var followers = computed([contact.followers, friends], (followers, friends) => {
+      return followers.filter(follower => !friends.includes(follower))
     })
 
-    var blockers = api.contact.obs.blockers(id)
-    var youBlock = computed(blockers, function (blockers) {
-      return blockers.includes(yourId)
-    })
-
-    var yourBlockingFriends = computed([yourFollowers, yourFollows, blockers], inAllSets)
-    var mutualFriends = computed([yourFollowers, yourFollows, rawFollowers, rawFollowing], inAllSets)
-
-    var names = computed([api.about.obs.names(id), yourFollows, rawFollowing, yourId, id], filterByValues)
-    var images = computed([api.about.obs.images(id), yourFollows, rawFollowing, yourId, id], filterByValues)
+    var names = computed([api.about.obs.names(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
+    var images = computed([api.about.obs.images(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
 
     var namePicker = h('div', {className: 'Picker'}, [
       map(dictToCollection(names), (item) => {
@@ -157,42 +135,44 @@ exports.create = function (api) {
           h('pre', {title: i18n('Public key for this profile')}, id)
         ]),
 
-        computed([hops, yourBlockingFriends, youBlock], (value, yourBlockingFriends, youBlock) => {
-          if (value) {
-            if ((value[0] > 1 || youBlock) && yourBlockingFriends.length > 0) {
-              return h('section -blockWarning', [
-                h('a', {
-                  href: '#',
-                  'ev-click': send(displayBlockingFriends, yourBlockingFriends)
-                }, [
-                  '⚠️ ', plural('This person is blocked by %s of your friends.', yourBlockingFriends.length)
-                ])
-              ])
-            } else if (value[0] > 2 || value[0] === undefined) {
-              return h('section -distanceWarning', [
-                h('h1', i18n(`You don't follow anyone who follows this person`)),
-                h('p', i18n('You might not be seeing their latest messages. You could try joining a pub that they are a member of.'))
-              ])
-            } else if (value[1] > 2 || value[1] === undefined) {
-              return h('section -distanceWarning', [
+        when(contact.notFollowing, [
+          when(contact.blockingFriendsCount, h('section -blockWarning', [
+            h('a', {
+              href: '#',
+              'ev-click': send(displayBlockingFriends, contact.blockingFriends)
+            }, [
+              '⚠️ ', computed(['This person is blocked by %s of your friends.', contact.blockingFriendsCount], plural)
+            ])
+          ])),
+
+          when(contact.noOutgoing,
+            h('section -distanceWarning', [
+              h('h1', i18n(`You don't follow anyone who follows this person`)),
+              h('p', i18n('You might not be seeing their latest messages. You could try joining a pub that they are a member of.')),
+              when(contact.hasIncoming,
+                h('p', i18n('However, since they follow someone that follows you, they should be able to see your posts.')),
+                h('p', i18n(`They might not be able to see your posts either.`))
+              )
+            ]),
+            when(contact.noIncoming,
+              h('section -distanceWarning', [
                 h('h1', i18n('This person does not follow anyone that follows you')),
-                h('p', i18n('They might not receive your private messages or replies. You could try joining a pub that they are a member of.'))
-              ])
-            } else if (value[0] === 2) {
-              return h('section -mutualFriends', [
-                h('a', {
-                  href: '#',
-                  'ev-click': send(displayMutualFriends, mutualFriends)
-                }, [
-                  '👥 ',
-                  computed(mutualFriends, (items) => {
-                    return plural('You share %s mutual friends with this person.', items.length)
-                  })
+                h('p', i18n('They might not receive your private messages or replies. You could try joining a pub that they are a member of.')),
+                h('p', i18n('However, since you follow someone that follows them, you should be able to see their latest posts.'))
+              ]),
+              when(contact.mutualFriendsCount,
+                h('section -mutualFriends', [
+                  h('a', {
+                    href: '#',
+                    'ev-click': send(displayMutualFriends, contact.mutualFriends)
+                  }, [
+                    '👥 ', computed(['You share %s mutual friends with this person.', contact.mutualFriendsCount], plural)
+                  ])
                 ])
-              ])
-            }
-          }
-        }),
+              )
+            )
+          )
+        ]),
 
         h('section -description', [
           computed(description, (text) => {
@@ -208,7 +188,7 @@ exports.create = function (api) {
     var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
       prepend,
       displayFilter: (msg) => msg.value.author === id,
-      rootFilter: (msg) => !youBlock(),
+      rootFilter: (msg) => !contact.youBlock(),
       bumpFilter: (msg) => msg.value.author === id
     })
 
@@ -218,12 +198,12 @@ exports.create = function (api) {
       ]),
       h('div.side.-right', [
         h('button PrivateMessageButton', {'ev-click': () => api.app.navigate('/private', {compose: {to: id}})}, i18n('Send Private Message')),
-        when(friendsLoaded,
+        when(contact.sync,
           h('div', [
-            renderContactBlock(i18n('Friends'), friends, yourFollows),
-            renderContactBlock(i18n('Followers'), followers, yourFollows),
-            renderContactBlock(i18n('Following'), following, yourFollows),
-            renderContactBlock(i18n('Blocked by'), yourBlockingFriends, yourFollows)
+            renderContactBlock(i18n('Friends'), friends, contact.yourFollowing),
+            renderContactBlock(i18n('Followers'), followers, contact.yourFollowing),
+            renderContactBlock(i18n('Following'), following, contact.yourFollowing),
+            renderContactBlock(i18n('Blocked by'), contact.blockingFriends, contact.yourFollowing)
           ]),
           h('div', {className: 'Loading'})
         )
@@ -231,7 +211,7 @@ exports.create = function (api) {
     ])
 
     // refresh feed (to hide all posts) when blocked
-    youBlock(feedView.reload)
+    contact.youBlock(feedView.reload)
 
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload
@@ -246,7 +226,7 @@ exports.create = function (api) {
     api.sheet.profiles(profiles, i18n('Blocked by'))
   }
 
-  function renderContactBlock (title, profiles, yourFollows) {
+  function renderContactBlock (title, profiles, yourFollowing) {
     profiles = api.profile.obs.rank(profiles)
     return [
       when(computed(profiles, x => x.length), h('h2', title)),
@@ -254,7 +234,7 @@ exports.create = function (api) {
         classList: 'ProfileList'
       }, [
         map(profiles, (id) => {
-          var following = computed(yourFollows, f => f.includes(id))
+          var following = computed(yourFollowing, f => f.includes(id))
           return h('a.profile', {
             href: id,
             classList: [
@@ -361,8 +341,4 @@ function filterByValues (attributes, ...matchValues) {
     }
     return result
   }, {})
-}
-
-function inAllSets (first, ...rest) {
-  return first.filter(value => rest.every((collection) => collection.includes(value)))
 }
