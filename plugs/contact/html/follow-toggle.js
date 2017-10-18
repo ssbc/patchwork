@@ -5,6 +5,7 @@ exports.gives = nest('contact.html.followToggle')
 exports.needs = nest({
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
+  'message.async.publish': 'first',
   'contact.async.follow': 'first',
   'contact.async.unfollow': 'first',
   'contact.async.block': 'first',
@@ -72,11 +73,20 @@ exports.create = function (api) {
         when(showBlockButton, h('a.ToggleButton.-blocking', {
           'href': '#',
           'title': i18n('Click to block syncing with this person and hide their posts'),
-          'ev-click': send(api.contact.async.block, id)
+          'ev-click': send(block, id)
         }, i18n('Block')))
       ])
     } else {
       return []
     }
   })
+
+  function block (id) {
+    // displays message confirm
+    api.message.async.publish({
+      type: 'contact',
+      contact: id,
+      blocking: true
+    })
+  }
 }
