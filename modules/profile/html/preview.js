@@ -59,11 +59,11 @@ exports.create = function (api) {
               '⚠️ ', computed(['This person is blocked by %s of your friends.', contact.blockingFriendsCount], plural)
             ])
           ]),
-          when(contact.noOutgoing,
+          when(contact.noIncoming,
             h('section -distanceWarning', [
               '⚠️ ', i18n(`You don't follow anyone who follows this person`)
             ]),
-            when(contact.noIncoming,
+            when(contact.noOutgoing,
               h('section -distanceWarning', [
                 '⚠️ ', i18n('This person does not follow anyone that follows you')
               ]),

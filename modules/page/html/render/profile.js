@@ -145,16 +145,16 @@ exports.create = function (api) {
             ])
           ])),
 
-          when(contact.noOutgoing,
+          when(contact.noIncoming,
             h('section -distanceWarning', [
               h('h1', i18n(`You don't follow anyone who follows this person`)),
               h('p', i18n('You might not be seeing their latest messages. You could try joining a pub that they are a member of.')),
-              when(contact.hasIncoming,
+              when(contact.hasOutgoing,
                 h('p', i18n('However, since they follow someone that follows you, they should be able to see your posts.')),
                 h('p', i18n(`They might not be able to see your posts either.`))
               )
             ]),
-            when(contact.noIncoming,
+            when(contact.noOutgoing,
               h('section -distanceWarning', [
                 h('h1', i18n('This person does not follow anyone that follows you')),
                 h('p', i18n('They might not receive your private messages or replies. You could try joining a pub that they are a member of.')),
