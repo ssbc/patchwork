@@ -56,7 +56,7 @@ exports.create = function (api) {
         h('a.ToggleButton.-unblocking', {
           'href': '#',
           'title': i18n('Click to unblock'),
-          'ev-click': send(api.contact.async.unblock, id)
+          'ev-click': send(unblock, id)
         }, i18n('Blocked'))
       ], [
         when(youFollow,
@@ -87,6 +87,15 @@ exports.create = function (api) {
       type: 'contact',
       contact: id,
       blocking: true
+    })
+  }
+
+  function unblock (id) {
+    // displays message confirm
+    api.message.async.publish({
+      type: 'contact',
+      contact: id,
+      blocking: false
     })
   }
 }
