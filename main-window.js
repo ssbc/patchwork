@@ -130,6 +130,7 @@ module.exports = function (config) {
 
   var currentHover = ObserveLinkHover(container, 500)
   var previewElement = Value()
+  previewElement(currentHover.active.set)
 
   currentHover(element => {
     var href = element && element.getAttribute('href')
