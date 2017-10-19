@@ -136,8 +136,7 @@ module.exports = function (config) {
       electron.shell.openExternal(api.blob.sync.url(href))
     } else if (ref.isMsg(href)) {
       getExternalHandler(href, (err, handler) => {
-        if (err) throw err
-        if (handler) {
+        if (!err && handler) {
           handler(href)
         } else {
           api.app.navigate(href, anchor)
