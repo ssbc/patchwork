@@ -14,7 +14,7 @@ exports.needs = nest({
   'profile.html.person': 'first',
   'about.obs.name': 'first',
   'blob.sync.url': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html', {
@@ -27,7 +27,7 @@ exports.create = function (api) {
   return nest('message.html', {
     canRender: isRenderable,
     render: function (msg, opts) {
-      if (!isRenderable(msg)) return;
+      if (!isRenderable(msg)) return
 
       var c = msg.value.content
       var self = msg.value.author === c.about
@@ -86,9 +86,9 @@ exports.create = function (api) {
     }
   })
 
-  function isRenderable(msg) {
-    if (msg.value.content.type !== 'about') return undefined
-    else if (!ref.isFeed(msg.value.content.about)) return undefined
+  function isRenderable (msg) {
+    if (msg.value.content.type !== 'about') return
+    if (!ref.isFeed(msg.value.content.about)) return
     return true
   }
 }

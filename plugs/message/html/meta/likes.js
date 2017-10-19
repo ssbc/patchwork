@@ -6,7 +6,7 @@ exports.needs = nest({
   'message.obs.likes': 'first',
   'sheet.profiles': 'first',
   'about.obs.name': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.create = function (api) {

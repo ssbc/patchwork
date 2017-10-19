@@ -24,12 +24,12 @@ exports.gives = nest('message.html', {
   render: true
 })
 
-exports.create = function(api) {
+exports.create = function (api) {
   var following = null
 
   return nest('message.html', {
     canRender: isRenderable,
-    render: function(msg, opts) {
+    render: function (msg, opts) {
       if (!isRenderable(msg)) return
 
       var yourId = api.keys.sync.id()
@@ -39,7 +39,7 @@ exports.create = function(api) {
       var description = api.about.obs.latestValue(msg.key, 'description')
       var location = api.about.obs.latestValue(msg.key, 'location')
       var startDateTime = api.about.obs.latestValue(msg.key, 'startDateTime')
-      var endDateTime = api.about.obs.latestValue(msg.key, 'endDateTime')
+      // var endDateTime = api.about.obs.latestValue(msg.key, 'endDateTime')
       var attendees = computed([api.about.obs.groupedValues(msg.key, 'attendee')], getAttendees)
       if (!following) {
         following = api.contact.obs.following(yourId)
@@ -103,7 +103,7 @@ exports.create = function(api) {
     }
   })
 
-  function publishAttending(id) {
+  function publishAttending (id) {
     var yourId = api.keys.sync.id()
 
     // publish with confirm
@@ -116,7 +116,7 @@ exports.create = function(api) {
     })
   }
 
-  function publishNotAttending(id) {
+  function publishNotAttending (id) {
     var yourId = api.keys.sync.id()
 
     // publish with confirm
@@ -130,9 +130,9 @@ exports.create = function(api) {
     })
   }
 
-  function nameAndFollowWarning(id) {
+  function nameAndFollowWarning (id) {
     var yourId = api.keys.sync.id()
-    return computed([api.about.obs.name(id), id, following], function nameAndFollowWarning(name, id, following) {
+    return computed([api.about.obs.name(id), id, following], function nameAndFollowWarning (name, id, following) {
       if (id === yourId) {
         return `${name} (you)`
       } else if (following.includes(id)) {
@@ -143,23 +143,23 @@ exports.create = function(api) {
     })
   }
 
-  function markdown(obs) {
+  function markdown (obs) {
     return computed(obs, (text) => {
       if (typeof text === 'string') return api.message.html.markdown(text)
     })
   }
 }
 
-function formatTime(time) {
+function formatTime (time) {
   if (time && time.epoch) {
     return moment(time.epoch).format('LLLL')
   }
 }
 
-function getAttendees(lookup) {
+function getAttendees (lookup) {
   return Object.keys(lookup)
 }
 
-function isRenderable(msg) {
+function isRenderable (msg) {
   return (msg.value.content.type === 'gathering') ? true : undefined
 }

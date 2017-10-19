@@ -16,10 +16,10 @@ exports.gives = nest('message.html', {
   render: true
 })
 
-exports.create = function(api) {
+exports.create = function (api) {
   return nest('message.html', {
     canRender: isRenderable,
-    render: function about(msg, opts) {
+    render: function about (msg, opts) {
       if (!isRenderable(msg)) return
 
       var action = msg.value.content.attendee.remove ? `can't attend` : 'is attending'
@@ -39,11 +39,11 @@ exports.create = function(api) {
     }
   })
 
-  function isRenderable(msg) {
-    if (msg.value.content.type !== 'about') return undefined
-    else if (!ref.isMsg(msg.value.content.about)) return undefined
-    else if (!msg.value.content.attendee) return undefined
-    else if (msg.value.content.attendee.link !== msg.value.author) return undefined
-    else return true
+  function isRenderable (msg) {
+    if (msg.value.content.type !== 'about') return
+    if (!ref.isMsg(msg.value.content.about)) return
+    if (!msg.value.content.attendee) return
+    if (msg.value.content.attendee.link !== msg.value.author) return
+    return true
   }
 }

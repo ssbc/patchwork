@@ -7,7 +7,7 @@ exports.needs = nest({
     decorate: 'reduce',
     layout: 'first'
   },
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html', {
@@ -15,7 +15,7 @@ exports.gives = nest('message.html', {
   render: true
 })
 
-exports.create = function(api) {
+exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html', {
     canRender: isRenderable,
@@ -32,7 +32,7 @@ exports.create = function(api) {
     }
   })
 
-  function messageContent(msg) {
+  function messageContent (msg) {
     var channel = `#${msg.value.content.channel}`
     var subscribed = msg.value.content.subscribed
     return [
@@ -44,6 +44,6 @@ exports.create = function(api) {
   }
 }
 
-function isRenderable(msg) {
+function isRenderable (msg) {
   return msg.value.content.type === 'channel' ? true : undefined
 }
