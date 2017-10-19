@@ -229,7 +229,11 @@ module.exports = function (config) {
     var instance = views.get(view)
     return h('a', {
       'ev-click': function (ev) {
-        if (instance.pendingUpdates && instance.pendingUpdates() && instance.reload) {
+        var isSelected = views.currentView() === view
+        var needsRefresh = instance.pendingUpdates && instance.pendingUpdates()
+
+        // refresh if tab is clicked when there are pending items or the page is already selected
+        if ((needsRefresh || isSelected) && instance.reload) {
           instance.reload()
         }
       },
