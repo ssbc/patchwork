@@ -18,6 +18,7 @@ exports.needs = nest({
   'blob.html.input': 'first',
   'blob.sync.url': 'first',
   'intl.sync.i18n': 'first',
+  'about.sync.shortFeedId': 'first'
 })
 
 exports.create = function (api) {
@@ -33,7 +34,7 @@ exports.create = function (api) {
       var chosenImage = Value(currentImage())
 
       // don't display if name is default
-      var chosenName = Value(currentName() === id.slice(1, 10) ? '' : currentName())
+      var chosenName = Value(currentName() === api.about.sync.shortFeedId(id) ? '' : currentName())
       var chosenDescription = Value(currentDescription())
 
       return {
