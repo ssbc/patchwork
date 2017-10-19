@@ -173,7 +173,7 @@
 	"However, since you follow someone that follows them, you should be able to see their latest posts.": "However, since you follow someone that follows them, you should be able to see their latest posts.",
 	"An error occured while publishing your message.": "An error occured while publishing your message.",
 	"Missing message": "Missing message",
-	"The author of this message could be outside of your follow range.": "The author of this message could be outside of your follow range.",
 	" via ": " via ",
-	"Cannot load thead": "Cannot load thead"
+	"Cannot load thead": "Cannot load thead",
+	"The author of this message could be outside of your follow range or they may be blocked.": "The author of this message could be outside of your follow range or they may be blocked."
 }

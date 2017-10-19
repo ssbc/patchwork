@@ -38,7 +38,7 @@ exports.create = function (api) {
         ])
       ]),
       h('section', [
-        h('p', [i18n(`The author of this message could be outside of your follow range.`)])
+        h('p', [i18n(`The author of this message could be outside of your follow range or they may be blocked.`)])
       ])
     ])
   }
