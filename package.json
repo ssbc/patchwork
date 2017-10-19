@@ -63,7 +63,7 @@
     "ssb-keys": "~7.0.12",
     "ssb-mentions": "^0.4.0",
     "ssb-msgs": "^5.2.0",
-    "ssb-private": "0.1.2",
+    "ssb-private": "0.1.4",
     "ssb-query": "^1.0.0",
     "ssb-ref": "~2.7.1",
     "ssb-sort": "^1.0.0",
