@@ -21,6 +21,7 @@ var rootBumpTypes = ['mention', 'channel-mention']
 exports.needs = nest({
   'about.obs.name': 'first',
   'app.sync.externalHandler': 'first',
+  'message.html.canRender': 'first',
   'message.html.render': 'first',
   'profile.html.person': 'first',
   'message.html.link': 'first',
@@ -96,7 +97,11 @@ exports.create = function (api) {
         pull.drain((msg) => {
           if (msg.value.content.type === 'vote') return
           if (api.app.sync.externalHandler(msg)) return
-          newSinceRefresh.add(msg.key)
+
+          // Only increment the 'new since' for items that we render on
+          // the feed as otherwise the 'show <n> updates message' will be
+          // shown on new messages that patchwork cannot render
+          if (canRenderMessage(msg)) newSinceRefresh.add(msg.key)
 
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
             refresh()
@@ -116,6 +121,10 @@ exports.create = function (api) {
     result.reload = refresh
 
     return result
+
+    function canRenderMessage(msg) {
+      return api.message.html.canRender(msg);
+    }
 
     function refresh () {
       onceTrue(waitFor, () => {
