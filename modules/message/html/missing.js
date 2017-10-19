@@ -7,6 +7,7 @@ var nest = require('depnest')
 exports.needs = nest({
   'sbot.async.get': 'first',
   'profile.html.person': 'first',
+  'message.html.meta': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -35,6 +36,9 @@ exports.create = function (api) {
             h('div.name', ['⚠️ ', h('strong', i18n('Missing message')), i18n(' via '), api.profile.html.person(hintMessage.value.author)]),
             h('div.meta', [h('a', {href: id}, id)])
           ])
+        ]),
+        h('div.meta', [
+          api.message.html.meta({key: id, value: {missing: true}})
         ])
       ]),
       h('section', [
