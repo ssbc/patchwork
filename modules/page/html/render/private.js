@@ -30,7 +30,10 @@ exports.create = function (api) {
       placeholder: i18n('Write a private message')
     })
 
-    var view = api.feed.html.rollup(api.feed.pull.private, { prepend: [compose] })
+    var view = api.feed.html.rollup(api.feed.pull.private, {
+      prepend: [compose],
+      bumpFilter: (msg) => msg.value.content.type !== 'vote'
+    })
 
     view.setAnchor = function (data) {
       if (data && data.compose && data.compose.to) {
