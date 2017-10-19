@@ -180,8 +180,8 @@ exports.create = function (api) {
         }
       })
 
-      var replies = item.replies.filter(isReply).filter(displayFilter).sort(byAssertedTime)
-      var replyElements = replies.slice(-3).map((msg) => {
+      var replies = item.replies.filter(isReply).sort(byAssertedTime)
+      var replyElements = replies.filter(displayFilter).slice(-3).map((msg) => {
         var result = api.message.html.render(msg, {
           inContext: true,
           inSummary: true,
