@@ -43,6 +43,7 @@ exports.create = function (api) {
     prepend,
     rootFilter = returnTrue,
     bumpFilter = returnTrue,
+    prefiltered = false,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
     waitFor = true
@@ -124,8 +125,8 @@ exports.create = function (api) {
 
     return result
 
-    function canRenderMessage(msg) {
-      return api.message.html.canRender(msg);
+    function canRenderMessage (msg) {
+      return api.message.html.canRender(msg)
     }
 
     function refresh () {
@@ -151,7 +152,7 @@ exports.create = function (api) {
 
         pull(
           stream,
-          pull.filter(bumpFilter),
+          prefiltered ? pull.through() : pull.filter(bumpFilter),
           abortable,
           api.feed.pull.rollup(rootFilter),
           scroller

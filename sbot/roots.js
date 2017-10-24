@@ -5,6 +5,7 @@ var pullCat = require('pull-cat')
 var HLRU = require('hashlru')
 var extend = require('xtend')
 var normalizeChannel = require('../lib/normalize-channel')
+var Defer = require('pull-defer')
 
 // HACK: pull it out of patchcore
 var getRoot = require('patchcore/message/sync/root').create().message.sync.root
@@ -25,58 +26,40 @@ module.exports = function (ssb, config) {
 
   return {
     latest: function ({ids = [ssb.id]}) {
-      var filter = null
-      return pull(
-        // READ INDEX
-        index.read({old: false}),
+      var stream = Defer.source()
+      getFilter((err, filter) => {
+        if (err) return stream.abort(err)
+        stream.resolve(pull(
+          index.read({old: false}),
 
-        // LOAD FILTERS
-        pull.asyncMap((item, cb) => {
-          if (!filter) {
-            // pause stream until filters have loaded
-            getFilter((err, result) => {
-              if (err) return cb(err)
-              filter = result
-              cb(null, item)
-            })
-          } else {
-            cb(null, item)
-          }
-        }),
+          // BUMP FILTER
+          pull.filter(item => {
+            if (filter && item.value && item.value) {
+              var filterResult = filter(ids, item.value)
+              if (filterResult) {
+                item.value.filterResult = filterResult
+                return true
+              }
+            }
+          }),
 
-        // BUMP FILTER
-        pull.filter(item => {
-          if (filter && item.value && item.value) {
-            return filter(ids, item.value)
-          }
-        }),
+          // LOOKUP AND ADD ROOTS
+          LookupRoots(),
 
-        // LOOKUP ROOTS
-        pull.asyncMap((item, cb) => {
-          var msg = item.value
-          var key = item.key[1]
-          if (key === msg.key) {
-            // already a root
-            cb(null, msg)
-          }
-          getThruCache(key, (_, value) => {
-            cb(null, extend(msg, {
-              root: value
-            }))
+          // FILTER ROOTS
+          pull.filter(item => {
+            var root = item.root || item
+            if (filter && root && root.value) {
+              return checkReplyForcesDisplay(item) || filter(ids, root)
+            }
           })
-        }),
-
-        // FILTER
-        pull.filter(item => {
-          var root = item.root || item
-          if (filter && root && root.value) {
-            return filter(ids, root)
-          }
-        })
-      )
+        ))
+      })
+      return stream
     },
-    read: function ({ids = [ssb.id], reverse, live, old, limit, lt, gt}) {
-      var opts = {reverse, live, old}
+
+    read: function ({ids = [ssb.id], reverse, limit, lt, gt}) {
+      var opts = {reverse, old: true}
 
       // handle markers passed in to lt / gt
       if (lt && typeof lt.timestamp === 'number') lt = lt.timestamp
@@ -85,69 +68,63 @@ module.exports = function (ssb, config) {
       if (typeof gt === 'number') opts.gt = [gt]
 
       var seen = new Set()
+      var included = new Set()
       var marker = {marker: true, timestamp: null}
-      var filter = null
 
-      var stream = pull(
+      var stream = Defer.source()
 
-        // READ ROOTS
-        index.read(opts),
+      getFilter((err, filter) => {
+        if (err) return stream.abort(err)
+        stream.resolve(pull(
+          // READ ROOTS INDEX
+          index.read(opts),
 
-        // LOAD FILTERS
-        pull.asyncMap((item, cb) => {
-          if (!filter) {
-            // pause stream until filters have loaded
-            getFilter((err, result) => {
-              if (err) return cb(err)
-              filter = result
-              cb(null, item)
-            })
-          } else {
-            cb(null, item)
-          }
-        }),
+          // BUMP FILTER
+          pull.filter(item => {
+            // keep track of latest timestamp
+            marker.timestamp = item.key[0]
 
-        // BUMP FILTER
-        pull.filter(item => {
-          if (filter && item.value && item.value.value) {
-            return filter(ids, item.value)
-          }
-        }),
-
-        // MAP ROOTS
-        pull.map(item => {
-          if (item.sync) return item
-          marker.timestamp = item.key[0]
-          return item.key[1]
-        }),
-
-        // UNIQUE
-        pull.filter(item => {
-          if (old === false) return true // don't filter live stream
-          if (item && item.sync) {
-            return true
-          } else if (typeof item === 'string') {
-            if (!seen.has(item)) {
-              seen.add(item)
-              return true
+            if (filter && item.value && item.value) {
+              var filterResult = filter(ids, item.value)
+              if (filterResult) {
+                item.value.filterResult = filterResult
+                return true
+              }
             }
-          }
-        }),
+          }),
 
-        // LOOKUP (with cache)
-        pull.asyncMap((item, cb) => {
-          if (item.sync) return cb(null, item)
-          var key = item
-          getThruCache(key, cb)
-        }),
+          // LOOKUP AND ADD ROOTS
+          LookupRoots(),
 
-        // ROOT FILTER
-        pull.filter(msg => {
-          if (filter && msg.value && !getRoot(msg)) {
-            return filter(ids, msg)
-          }
-        })
-      )
+          // FILTER ROOTS
+          pull.filter(item => {
+            var root = item.root || item
+
+            // skip this item if it has already been included
+            if (!included.has(root.key) && filter && root && root.value) {
+              if (checkReplyForcesDisplay(item)) {
+                // include this item if it has matching tags or the author is you
+                included.add(root.key)
+                return true
+              } else if (!seen.has(root.key)) {
+                seen.add(root.key)
+                var result = filter(ids, root)
+                if (result) {
+                  // include this item if we have not yet seen it and the root filter passes
+                  included.add(root.key)
+                  return true
+                }
+              }
+            }
+          }),
+
+          // MAP ROOT ITEMS
+          pull.map(item => {
+            var root = item.root || item
+            return root
+          })
+        ))
+      })
 
       // TRUNCATE
       if (typeof limit === 'number') {
@@ -197,22 +174,65 @@ module.exports = function (ssb, config) {
           var type = msg.value.content.type
           if (type === 'vote') return false // filter out likes
           var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, ids, msg.value.content.channel))
-          var matchesTag = checkTag(subscriptions, ids, msg.value.content.mentions)
-          return ids.includes(msg.value.author) || matchesChannel || matchesTag || checkFollowing(friends, ids, msg.value.author)
+          var matchingTags = getMatchingTags(subscriptions, ids, msg.value.content.mentions)
+          var isYours = ids.includes(msg.value.author)
+          var mentionsYou = getMentionsYou(ids, msg.value.content.mentions)
+          var following = checkFollowing(friends, ids, msg.value.author)
+          if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
+            return {
+              matchingTags, matchesChannel, isYours, following, mentionsYou
+            }
+          }
         })
+      })
+    })
+  }
+
+  function LookupRoots () {
+    return pull.asyncMap((item, cb) => {
+      var msg = item.value
+      var key = item.key[1]
+      if (key === msg.key) {
+        // already a root
+        return cb(null, msg)
+      }
+      getThruCache(key, (_, value) => {
+        cb(null, extend(msg, {
+          root: value
+        }))
       })
     })
   }
 }
 
-function checkTag (lookup, ids, mentions) {
+function getMatchingTags (lookup, ids, mentions) {
+  if (Array.isArray(mentions)) {
+    return mentions.reduce((result, mention) => {
+      if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
+        if (checkChannel(lookup, ids, mention.link.slice(1))) {
+          result.push(normalizeChannel(mention.link.slice(1)))
+        }
+      }
+      return result
+    }, [])
+  }
+  return []
+}
+
+function getMentionsYou (ids, mentions) {
   if (Array.isArray(mentions)) {
     return mentions.some((mention) => {
-      if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
-        return checkChannel(lookup, ids, mention.link.slice(1))
+      if (mention && typeof mention.link === 'string') {
+        return ids.includes(mention.link)
       }
     })
   }
+}
+
+function checkReplyForcesDisplay (item) {
+  var filterResult = item.filterResult || {}
+  var matchesTags = filterResult.matchingTags && !!filterResult.matchingTags.length
+  return matchesTags || filterResult.isYours || filterResult.mentionsYou
 }
 
 function checkFollowing (lookup, ids, target) {

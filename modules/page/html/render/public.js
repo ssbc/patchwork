@@ -72,8 +72,11 @@ exports.create = function (api) {
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
+      prefiltered: true, // we've already filtered out the roots we don't want to include
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
       bumpFilter: function (msg) {
+        // this needs to match the logic in sbot/roots so that we display the
+        // correct bump explainations
         if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
           var type = msg.value.content.type
           if (type === 'vote') return false
