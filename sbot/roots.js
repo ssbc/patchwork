@@ -99,9 +99,10 @@ module.exports = function (ssb, config) {
           // FILTER ROOTS
           pull.filter(item => {
             var root = item.root || item
+            var isPrivate = root.value && typeof root.value.content === 'string'
 
             // skip this item if it has already been included
-            if (!included.has(root.key) && filter && root && root.value) {
+            if (!included.has(root.key) && filter && root && root.value && !isPrivate) {
               if (checkReplyForcesDisplay(item)) {
                 // include this item if it has matching tags or the author is you
                 included.add(root.key)
