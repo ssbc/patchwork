@@ -49,7 +49,9 @@ module.exports = function (ssb, config) {
           // FILTER ROOTS
           pull.filter(item => {
             var root = item.root || item
-            if (filter && root && root.value) {
+            var isPrivate = root.value && typeof root.value.content === 'string'
+
+            if (filter && root && root.value && !isPrivate) {
               return checkReplyForcesDisplay(item) || filter(ids, root)
             }
           })
