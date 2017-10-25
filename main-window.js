@@ -6,7 +6,7 @@ var when = require('mutant/when')
 var onceTrue = require('mutant/once-true')
 var computed = require('mutant/computed')
 var catchLinks = require('./lib/catch-links')
-var insertCss = require('insert-css')
+var themes = require('./styles')
 var nest = require('depnest')
 var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
@@ -72,16 +72,13 @@ module.exports = function (config) {
     electron.remote.app.setBadgeCount(count)
   })
 
-
-  watch(api.settings.obs.get('patchwork.theme', 'light'), name => {
-    Array.from(document.head.children)
-      .filter(c => c.tagName == 'STYLE')
-      .forEach(c => c.innerText = '')
-
-    var theme = require('./styles')[name]
-    if (!theme) theme = require('./styles')['light']
-    insertCss(theme)
-  })
+  document.head.appendChild(
+    h('style', {
+      innerHTML: computed(api.settings.obs.get('patchwork.theme', 'light'), themeName => {
+        return themes[themeName] || themes['light']
+      })
+    })
+  )
 
   var container = h(`MainWindow -${process.platform}`, [
     h('div.top', [
