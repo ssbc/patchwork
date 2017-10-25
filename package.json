@@ -51,7 +51,7 @@
     "pull-ping": "^2.0.2",
     "pull-pushable": "^2.0.1",
     "pull-stream": "~3.6.0",
-    "scuttlebot": "github:ssbc/scuttlebot#4172c0370b73ca0ef62d505decb71f8f48bbfa75",
+    "scuttlebot": "github:ssbc/scuttlebot#391718cf4f47bd0a1c8bafc86c24a86e33be5562",
     "secure-scuttlebutt": "^16.3.7",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
