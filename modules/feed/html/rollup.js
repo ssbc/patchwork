@@ -224,12 +224,10 @@ exports.create = function (api) {
       }, [
         meta,
         renderedMessage,
-        when(replyElements.length, [
-          when(replies.length > replyElements.length || partial,
-            h('a.full', {href: item.key, anchor: replies[0] && replies[0].key}, [i18n('View full thread') + ' (', replies.length, ')'])
-          ),
-          h('div.replies', replyElements)
-        ])
+        when(replies.length > replyElements.length || partial,
+          h('a.full', {href: item.key, anchor: replies[0] && replies[0].key}, [i18n('View full thread') + ' (', replies.length, ')'])
+        ),
+        h('div.replies', replyElements)
       ])
     }
   })
