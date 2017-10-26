@@ -92,10 +92,17 @@ exports.create = (api) => {
     })
 
     watch(api.settings.obs.get('patchwork.lang', navigator.language), currentLocale => {
-      i18nL.setLocale(getSubLocal(currentLocale))
+      var locales = i18nL.getLocales()
 
-        // Only refresh if the language has already been selected once.
-        // This will prevent the update loop
+      // Try BCP47 codes, otherwise load family language if exist
+      if (locales.indexOf(currentLocale) !== -1) {
+        i18nL.setLocale(currentLocale)
+      } else {
+        i18nL.setLocale(getSimilar(locales, currentLocale))
+      }
+
+      // Only refresh if the language has already been selected once.
+      // This will prevent the update loop
       if (_locale) {
         electron.remote.getCurrentWebContents().reloadIgnoringCache()
       }
@@ -108,4 +115,17 @@ exports.create = (api) => {
 // For now get only global languages
 function getSubLocal (loc) {
   return loc.split('-')[0]
+}
+
+function getSimilar (locales, option) {
+  var reindexed = {}
+  locales.forEach(function (local) {
+    (reindexed[getSubLocal(local)])
+      ? reindexed[getSubLocal(local)].concat(local)
+      : reindexed[getSubLocal(local)] = [local]
+  }, this)
+  if (reindexed[getSubLocal(option)]) {
+    return reindexed[getSubLocal(option)][0]
+  }
+  return option
 }
