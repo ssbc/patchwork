@@ -58,7 +58,7 @@
     "ssb-avatar": "^0.2.0",
     "ssb-backlinks": "~0.4.1",
     "ssb-blobs": "~1.1.4",
-    "ssb-friends": "^2.3.0",
+    "ssb-friends": "github:ssbc/ssb-friends#e9b841696a989217ad76c927bf22ccd79faa5c39",
     "ssb-keys": "~7.0.12",
     "ssb-mentions": "^0.4.0",
     "ssb-msgs": "^5.2.0",
