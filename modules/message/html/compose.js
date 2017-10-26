@@ -16,7 +16,7 @@ exports.needs = nest({
   'message.async.publish': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html.compose')
@@ -66,7 +66,7 @@ exports.create = function (api) {
     var fileInput = api.blob.html.input(file => {
       const megabytes = file.size / 1024 / 1024
       if (megabytes >= 5) {
-        const rounded = Math.floor(megabytes*100)/100
+        const rounded = Math.floor(megabytes * 100) / 100
         warningMessage.set([
           h('i.fa.fa-exclamation-triangle'),
           h('strong', file.name),

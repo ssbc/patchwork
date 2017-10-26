@@ -1,6 +1,6 @@
 var nest = require('depnest')
 var pull = require('pull-stream')
-var {Struct, Dict, Value, computed, watch, onceTrue} = require('mutant')
+var {Struct, Dict, Value, computed, watch} = require('mutant')
 
 exports.gives = nest({
   'progress.obs': [
@@ -19,12 +19,6 @@ exports.needs = nest({
 exports.create = function (api) {
   var syncStatus = null
   var progress = null
-
-  setInterval(() => {
-    onceTrue(api.sbot.obs.connection(), sbot => {
-      sbot.progress
-    })
-  }, 1000)
 
   return nest({
     'progress.obs': {

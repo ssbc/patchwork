@@ -31,7 +31,7 @@ exports.create = function (api) {
       value.set(TimeIntl(timestamp))
     }
 
-    function TimeIntl(timestamp) {
+    function TimeIntl (timestamp) {
       return api.intl.sync.time(Time(timestamp))
     }
   }

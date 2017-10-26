@@ -31,7 +31,7 @@ exports.create = function (api) {
 
     var canGoForward = Value(false)
     var canGoBack = Value(false)
-    var currentView = Value(defaultViews && defaultViews[0] || null)
+    var currentView = Value((defaultViews && defaultViews[0]) || null)
 
     var viewCollection = dictToCollection(views)
     var html = h('div.main', map(viewCollection, (item) => {

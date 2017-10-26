@@ -6,7 +6,7 @@ exports.needs = nest({
   'message.html.compose': 'first',
   'message.async.publish': 'first',
   'feed.html.rollup': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest({

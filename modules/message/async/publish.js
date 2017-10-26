@@ -6,7 +6,7 @@ exports.needs = nest({
   'message.html.render': 'first',
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.async.publish')

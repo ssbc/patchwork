@@ -14,7 +14,7 @@ exports.needs = nest({
   'about.obs.latestValue': 'first',
   'blob.html.input': 'first',
   'blob.sync.url': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.create = function (api) {

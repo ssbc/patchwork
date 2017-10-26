@@ -93,8 +93,8 @@ module.exports = function (config) {
         })
       ]),
       h('span.nav', [
-        tab(i18n("Public"), '/public'),
-        tab(i18n("Private"), '/private'),
+        tab(i18n('Public'), '/public'),
+        tab(i18n('Private'), '/private'),
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
           [i18n('Gatherings'), '/gatherings'],
@@ -104,7 +104,7 @@ module.exports = function (config) {
         ])
       ]),
       h('span.appTitle', [
-        h('span.title', i18n("Patchwork")),
+        h('span.title', i18n('Patchwork')),
         api.app.html.progressNotifier()
       ]),
       h('span', [ api.app.html.search(api.app.navigate) ]),

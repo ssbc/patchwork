@@ -5,7 +5,7 @@ var electron = require('electron')
 exports.needs = nest({
   'sheet.display': 'first',
   'invite.async.accept': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('invite.sheet')

@@ -9,7 +9,7 @@ exports.needs = nest({
     author: 'first'
   },
   'profile.html.person': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html.backlinks')

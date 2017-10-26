@@ -13,7 +13,7 @@ exports.needs = nest({
     replicate: 'first',
     migration: 'first'
   },
-  'intl.sync.i18n':'first'
+  'intl.sync.i18n': 'first'
 })
 
 exports.create = function (api) {

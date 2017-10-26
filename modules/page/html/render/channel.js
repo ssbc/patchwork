@@ -9,7 +9,7 @@ exports.needs = nest({
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
   'keys.sync.id': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('page.html.render')

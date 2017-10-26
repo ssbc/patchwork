@@ -273,7 +273,7 @@ function many (ids, fn, intl) {
         fn(featuredIds[0]), ', ',
         fn(featuredIds[1]), ', ',
         fn(featuredIds[2]), intl(' and '),
-        ids.length - 3, intl(' others'),
+        ids.length - 3, intl(' others')
       ]
     } else if (ids.length === 4) {
       return [

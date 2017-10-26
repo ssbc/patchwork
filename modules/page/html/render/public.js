@@ -30,7 +30,7 @@ exports.needs = nest({
   },
   'keys.sync.id': 'first',
   'settings.obs.get': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest({
@@ -138,8 +138,8 @@ exports.create = function (api) {
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, i18n('+ Join Pub')),
-        when(loading, [ h("Loading") ], [
-          when(computed(channels, x => x.length), h('h2', i18n("Active Channels"))),
+        when(loading, [ h('Loading') ], [
+          when(computed(channels, x => x.length), h('h2', i18n('Active Channels'))),
           h('div', {
             classList: 'ChannelList',
             hidden: loading

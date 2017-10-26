@@ -46,7 +46,7 @@ exports.create = function (api) {
       }
 
       var imageUrl = computed(image, (id) => api.blob.sync.url(id))
-      var imageId = computed(image, (link) => link && link.link || link)
+      var imageId = computed(image, (link) => (link && link.link) || link)
       var content = h('GatheringCard', [
         h('div.title', [
           h('a', {

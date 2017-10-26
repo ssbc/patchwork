@@ -1,4 +1,4 @@
-const { h, map, computed } = require('mutant')
+const { h, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 
@@ -15,7 +15,7 @@ exports.needs = nest({
     backlinks: 'first'
   },
   'about.html.image': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html.layout')

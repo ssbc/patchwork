@@ -2,8 +2,6 @@ var h = require('mutant/h')
 var nest = require('depnest')
 var addSuggest = require('suggest-box')
 
-var appRoot = require('app-root-path');
-
 exports.needs = nest({
   'profile.async.suggest': 'first',
   'channel.async.suggest': 'first',
@@ -52,7 +50,7 @@ exports.create = function (api) {
       var value = searchBox.value.trim()
       if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
         if (value.startsWith('@') && value.length < 30) {
-          return // probably not a key
+           // probably not a key
         } else if (value.length > 2) {
           setView(value)
         }

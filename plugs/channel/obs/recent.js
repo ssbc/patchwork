@@ -3,7 +3,7 @@
 var nest = require('depnest')
 var pull = require('pull-stream')
 
-var { Value, Dict, Struct, computed, resolve, throttle } = require('mutant')
+var { Value, Dict, Struct, computed, throttle } = require('mutant')
 
 exports.needs = nest({
   'sbot.pull.stream': 'first'

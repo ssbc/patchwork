@@ -1,4 +1,3 @@
-var { h, when } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({

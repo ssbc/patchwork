@@ -26,15 +26,16 @@ exports.create = (api) => {
   })
 }
 
-function portInUse (port, callback) {
+function portInUse (port, cb) {
+  /* eslint-disable standard/no-callback-literal */
   // super hacky check!
   var server = net.createServer(function (socket) {})
   server.listen(port, '127.0.0.1')
   server.on('error', function (e) {
-    callback(true)
+    cb(true)
   })
   server.on('listening', function (e) {
     server.close()
-    callback(false)
+    cb(false)
   })
 }

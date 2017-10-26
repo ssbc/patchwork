@@ -1,4 +1,4 @@
-const { h, map, computed } = require('mutant')
+const { h, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 

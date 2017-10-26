@@ -9,7 +9,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'contact.obs.following': 'first',
   'sbot.pull.stream': 'first',
-  'intl.sync.i18n': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('page.html.render')

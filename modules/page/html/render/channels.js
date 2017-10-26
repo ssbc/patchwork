@@ -13,9 +13,9 @@ exports.needs = nest({
 
 exports.gives = nest('page.html.render')
 
-exports.create = function(api){
+exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('page.html.render', function page(path){
+  return nest('page.html.render', function page (path) {
     if (path !== '/channels') return
 
     var id = api.keys.sync.id()
@@ -23,22 +23,22 @@ exports.create = function(api){
     var subscribedChannels = api.channel.obs.subscribed(id)
     var loading = computed(subscribedChannels.sync, x => !x)
 
-    return h('div', { classList: 'Scroller'}, [
-        when(loading, [ h('Loading') ]),
-        h('div', {
-          classList: 'AllChannels',
-          hidden: loading
-        }, [
-          map(channels, (channel) => {
-            var subscribed = subscribedChannels.has(channel)
-            return h('a.channel', {
-              href: `#${channel}`,
-              classList: [
-                when(subscribed, '-subscribed')
-              ]
-            }, [
-              h('span.name', '#' + channel),
-              when(subscribed,
+    return h('div', { classList: 'Scroller' }, [
+      when(loading, [ h('Loading') ]),
+      h('div', {
+        classList: 'AllChannels',
+        hidden: loading
+      }, [
+        map(channels, (channel) => {
+          var subscribed = subscribedChannels.has(channel)
+          return h('a.channel', {
+            href: `#${channel}`,
+            classList: [
+              when(subscribed, '-subscribed')
+            ]
+          }, [
+            h('span.name', '#' + channel),
+            when(subscribed,
                 h('a.-unsubscribe', {
                   'ev-click': send(unsubscribe, channel)
                 }, i18n('Unsubscribe')),
@@ -46,11 +46,10 @@ exports.create = function(api){
                   'ev-click': send(subscribe, channel)
                 }, i18n('Subscribe'))
               )
-            ])
-          }, {maxTime: 5, idle: true})
-        ])
+          ])
+        }, {maxTime: 5, idle: true})
+      ])
     ])
-
 
     function subscribe (id) {
       api.message.async.publish({
