@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var {Value, Proxy, Array: MutantArray, h, computed, map, when, onceTrue, throttle} = require('mutant')
+var {Value, Proxy, Array: MutantArray, h, computed, when, onceTrue, throttle} = require('mutant')
 var pull = require('pull-stream')
 var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/scroller')
