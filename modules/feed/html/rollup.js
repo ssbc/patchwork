@@ -232,11 +232,6 @@ exports.create = function (api) {
     }
   })
 
-  function names (ids) {
-    var items = map(Array.from(ids), api.about.obs.name)
-    return computed([items], (names) => names.map((n) => `- ${n}`).join('\n'))
-  }
-
   function LookupRoot () {
     return paramap((msg, cb) => {
       var rootId = api.message.sync.root(msg)
