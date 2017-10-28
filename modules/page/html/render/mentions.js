@@ -25,6 +25,8 @@ exports.create = function (api) {
         return 'mention'
       } else if (msg.value.content.type === 'contact') {
         return true
+      } else if (msg.value.content.type === 'about') {
+        return true
       }
     }
   })
