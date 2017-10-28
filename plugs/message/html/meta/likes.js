@@ -20,17 +20,17 @@ exports.create = function (api) {
   function likeCount (likes) {
     if (likes.length) {
       return [' ', h('a.likes', {
-        title: names(likes),
+        title: nameList(i18n('Liked by'), likes),
         href: '#',
         'ev-click': send(displayLikes, likes)
       }, [`${likes.length} ${likes.length === 1 ? i18n('like') : i18n('likes')}`])]
     }
   }
 
-  function names (ids) {
+  function nameList (prefix, ids) {
     var items = map(ids, api.about.obs.name)
-    return computed([items], (names) => {
-      return i18n('Liked by\n') + names.map((n) => `- ${n}`).join('\n')
+    return computed([prefix, items], (prefix, names) => {
+      return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
     })
   }
 
