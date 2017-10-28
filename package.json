@@ -8,6 +8,7 @@
   "scripts": {
     "test": "standard",
     "start": "electron index.js",
+    "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild",
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
   },
@@ -71,6 +72,7 @@
     "text-node-searcher": "^1.1.1"
   },
   "devDependencies": {
+    "colors": "^1.1.2",
     "electron": "~1.8.1"
   }
 }
