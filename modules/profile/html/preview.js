@@ -1,5 +1,6 @@
 var nest = require('depnest')
 var h = require('mutant/h')
+var map = require('mutant/map')
 var when = require('mutant/when')
 var computed = require('mutant/computed')
 var send = require('mutant/send')
@@ -71,9 +72,19 @@ exports.create = function (api) {
                 h('section -mutualFriends', [
                   h('a', {
                     href: '#',
+                    title: nameList(i18n('Mutual Friends'), contact.mutualFriends),
                     'ev-click': send(displayMutualFriends, contact.mutualFriends)
                   }, [
                     '👥 ', computed(['You share %s mutual friends with this person.', contact.mutualFriendsCount], plural)
+                  ])
+                ]),
+                h('section -mutualFriends', [
+                  h('a', {
+                    href: '#',
+                    title: nameList(i18n('Followed by'), contact.incomingVia),
+                    'ev-click': send(displayFollowedBy, contact.incomingVia)
+                  }, [
+                    '👥 ', computed(['You follow %s people that follow this person.', contact.incomingViaCount], plural)
                   ])
                 ])
               )
@@ -88,7 +99,18 @@ exports.create = function (api) {
     api.sheet.profiles(profiles, i18n('Mutual Friends'))
   }
 
+  function displayFollowedBy (profiles) {
+    api.sheet.profiles(profiles, i18n('Followed by'))
+  }
+
   function displayBlockingFriends (profiles) {
     api.sheet.profiles(profiles, i18n('Blocked by'))
+  }
+
+  function nameList (prefix, ids) {
+    var items = map(ids, api.about.obs.name)
+    return computed([prefix, items], (prefix, names) => {
+      return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
+    })
   }
 }

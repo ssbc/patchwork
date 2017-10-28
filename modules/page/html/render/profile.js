@@ -165,9 +165,19 @@ exports.create = function (api) {
                 h('section -mutualFriends', [
                   h('a', {
                     href: '#',
+                    title: nameList(i18n('Mutual Friends'), contact.mutualFriends),
                     'ev-click': send(displayMutualFriends, contact.mutualFriends)
                   }, [
                     '👥 ', computed(['You share %s mutual friends with this person.', contact.mutualFriendsCount], plural)
+                  ])
+                ]),
+                h('section -mutualFriends', [
+                  h('a', {
+                    href: '#',
+                    title: nameList(i18n('Followed by'), contact.incomingVia),
+                    'ev-click': send(displayFollowedBy, contact.incomingVia)
+                  }, [
+                    '👥 ', computed(['You follow %s people that follow this person.', contact.incomingViaCount], plural)
                   ])
                 ])
               )
@@ -218,6 +228,10 @@ exports.create = function (api) {
     container.reload = feedView.reload
     return container
   })
+
+  function displayFollowedBy (profiles) {
+    api.sheet.profiles(profiles, i18n('Followed by'))
+  }
 
   function displayMutualFriends (profiles) {
     api.sheet.profiles(profiles, i18n('Mutual Friends'))
