@@ -25,6 +25,7 @@ exports.create = function (api) {
       if (href) {
         if (ref.isFeed(href)) {
           preview = api.profile.html.preview(href)
+          preview.onwheel = previewElement.cancel
         } else if (href.includes('://')) {
           preview = h('ProfilePreview', [
             h('section', [
