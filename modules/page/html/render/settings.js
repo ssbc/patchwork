@@ -64,7 +64,7 @@ exports.create = function (api) {
               })
             }, [
               locales.map(code => h('option', {value: code}, [
-                code.toUpperCase(), ' - ', getLocaleName(code)
+                '[', code, '] ', getLocaleName(code)
               ]))
             ])
           ]),
