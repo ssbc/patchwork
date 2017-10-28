@@ -38,25 +38,17 @@ exports.init = function (ssb, config) {
   var search = Search(ssb, config)
   var recentFeeds = RecentFeeds(ssb, config)
 
+  // prioritize pubs that we actually follow
   pull(
-    ssb.friends.createFriendStream({live: false}),
-    pull.drain(() => {}, () => {
-      // don't assign peer friends until friends have loaded
-      ssb.friends.hops({start: ssb.id, hops: 2}, function (_, following) {
+    ssb.friends.createFriendStream({hops: 1, live: false}),
+    pull.collect((err, contacts) => {
+      if (!err) {
         ssb.gossip.peers().forEach(function (peer) {
-          if (following[peer.key]) {
-            // we follow them, or follow someone that follows them!
+          if (contacts.includes(peer.key)) {
             ssb.gossip.add(peer, 'friends')
-          } else {
-            ssb.friends.hops({start: peer.key, hops: 2}, function (_, result) {
-              if (result && result[ssb.id]) {
-                // they follow us, or someone that follows us!
-                ssb.gossip.add(peer, 'friends')
-              }
-            })
           }
         })
-      })
+      }
     })
   )
 
