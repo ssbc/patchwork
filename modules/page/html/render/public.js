@@ -58,7 +58,13 @@ exports.create = function (api) {
       api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
     ]
 
+    var lastMessage = null
+
     var getStream = (opts) => {
+      if (!opts.lt) {
+        // HACK: reset the isReplacementMessage check
+        lastMessage = null
+      }
       if (opts.lt != null && !opts.lt.marker) {
         // if an lt has been specified that is not a marker, assume stream is finished
         return pull.empty()
@@ -66,8 +72,6 @@ exports.create = function (api) {
         return api.sbot.pull.stream(sbot => sbot.patchwork.roots(extend(opts, { ids: [id] })))
       }
     }
-
-    var lastMessage = null
 
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
@@ -92,6 +96,7 @@ exports.create = function (api) {
         var filtered = filters() && filters().following && getType(msg) === 'contact'
         // skip messages that are directly replaced by the previous message
         // e.g. follow / unfollow in quick succession
+        // THIS IS A TOTAL HACK!!! SHOULD BE REPLACED WITH A PROPER ROLLUP!
         var isOutdated = isReplacementMessage(msg, lastMessage)
         if (!filtered && !isOutdated) {
           lastMessage = msg
@@ -115,7 +120,9 @@ exports.create = function (api) {
     ])
 
     result.pendingUpdates = feedView.pendingUpdates
-    result.reload = feedView.reload
+    result.reload = function () {
+      feedView.reload()
+    }
 
     return result
 
@@ -247,6 +254,7 @@ function arrayEq (a, b) {
 
 function isReplacementMessage (msgA, msgB) {
   if (msgA && msgB && msgA.value.content && msgB.value.content && msgA.value.content.type === msgB.value.content.type) {
+    if (msgA.key === msgB.key) return false
     var type = msgA.value.content.type
     if (type === 'contact') {
       return msgA.value.author === msgB.value.author && msgA.value.content.contact === msgB.value.content.contact
