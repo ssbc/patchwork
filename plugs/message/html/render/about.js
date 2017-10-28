@@ -39,7 +39,7 @@ exports.create = function (api) {
         var target = api.profile.html.person(c.about, c.name)
         miniContent.push(computed([self, api.about.obs.name(c.about), c.name], (self, a, b) => {
           if (self) {
-            return [i18n('self identifies as "'), target, '"']
+            return [i18n('self identifies as '), '"', target, '"']
           } else if (a === b) {
             return [i18n('identified '), api.profile.html.person(c.about)]
           } else {
