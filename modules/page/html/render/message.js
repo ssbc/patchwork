@@ -7,6 +7,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'feed.obs.thread': 'first',
   'message.sync.unbox': 'first',
+  'message.sync.root': 'first',
   'message.html': {
     render: 'first',
     compose: 'first'
@@ -65,11 +66,12 @@ exports.create = function (api) {
       // what happens in private stays in private!
       meta.recps.set(value.content.recps)
 
-      var isReply = !!value.content.root
+      var root = api.message.sync.root({key: id, value}) || id
+      var isReply = id !== root
       var thread = api.feed.obs.thread(id, {branch: isReply})
 
       meta.channel.set(value.content.channel)
-      meta.root.set(value.content.root || thread.rootId)
+      meta.root.set(root || thread.rootId)
 
       // if root thread, reply to last post
       meta.branch.set(isReply ? thread.branchId : thread.lastId)

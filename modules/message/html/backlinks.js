@@ -3,6 +3,7 @@ var ref = require('ssb-ref')
 var { h, map, computed } = require('mutant')
 
 exports.needs = nest({
+  'message.sync.root': 'first',
   'message.obs': {
     backlinks: 'first',
     name: 'first',
@@ -18,9 +19,12 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html.backlinks', function (msg, {includeReferences = true, includeForks = true} = {}) {
     if (!ref.type(msg.key)) return []
+
+    var rootId = api.message.sync.root(msg)
     var backlinks = api.message.obs.backlinks(msg.key)
     var references = includeReferences ? computed([backlinks, msg], onlyReferences) : []
-    var forks = (includeForks && msg.value.content.root) ? computed([backlinks, msg], onlyForks) : []
+    var forks = (includeForks && rootId) ? computed([backlinks, msg], onlyForks) : []
+
     return [
       map(forks, link => {
         return h('a.backlink', {
@@ -44,14 +48,14 @@ exports.create = function (api) {
       })
     ]
   })
-}
 
-function onlyReferences (backlinks, msg) {
-  return backlinks.filter(link => link.root !== msg.key && !includeOrEqual(link.branch, msg.key))
-}
+  function onlyReferences (backlinks, msg) {
+    return backlinks.filter(link => link.root !== msg.key && !includeOrEqual(link.branch, msg.key))
+  }
 
-function onlyForks (backlinks, msg) {
-  return backlinks.filter(link => link.root === msg.key && includeOrEqual(link.branch, msg.key) && msg.value.content && msg.value.content.root)
+  function onlyForks (backlinks, msg) {
+    return backlinks.filter(link => link.root === msg.key && includeOrEqual(link.branch, msg.key) && api.message.sync.root(msg))
+  }
 }
 
 function includeOrEqual (valueOrArray, item) {
