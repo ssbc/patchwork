@@ -179,5 +179,6 @@
 		"one": "You follow someone that follows this person.",
 		"other": "You follow %s people that follow this person."
 	},
-	"Followed by": "Followed by"
+	"Followed by": "Followed by",
+	"pt-BR": "Brazillian Portuguese"
 }
