@@ -169,5 +169,13 @@
 	"However, since they follow someone that follows you, they should be able to see your posts.": "Sin embargo, dado que sigue a alguien que te sigue, debería poder ver tus publicaciones.",
 	"They might not be able to see your posts either.": "Es posible que tampoco pueda ver tus publicaciones.",
 	"However, since you follow someone that follows them, you should be able to see their latest posts.": "Sin embargo, dado que sigues a alguien que lo sigue, deberías poder ver sus últimas publicaciones.",
-	"An error occured while publishing your message.": "Se produjo un error al publicar su mensaje."
+	"An error occured while publishing your message.": "Se produjo un error al publicar su mensaje.",
+	"Private Message": "Mensaje privado",
+	"Missing message": "Mensaje perdido",
+	" via ": " via ",
+	"Cannot load thead": "No se puede cargar el hilo",
+	"The author of this message could be outside of your follow range or they may be blocked.": "El autor de este mensaje podría estar fuera de su rango de seguimiento o puede estar bloqueado.",
+	"You follow %s people that follow this person.": {"one":"Sigues a alguien que sigue a esta persona.","other":"Sigues a %s personas que siguen a esta persona."},
+	"Followed by": "Seguido por",
+	"pt-BR": "Portugués Brasileño"
 }
