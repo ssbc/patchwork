@@ -212,7 +212,7 @@ exports.create = function (api) {
           : getAuthors(groupedBumps[lastBumpType])
 
         var description = i18n(bumpMessages[lastBumpType] || 'added changes')
-        meta = h('div.meta', { title: names(bumps) }, [
+        meta = h('div.meta', [
           many(bumps, api.profile.html.person, i18n), ' ', description
         ])
       }
