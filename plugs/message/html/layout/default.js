@@ -1,6 +1,7 @@
-const { h, computed } = require('mutant')
+const { h, computed, Value, when } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
+var ExpanderHook = require('../../../../lib/expander-hook')
 
 exports.needs = nest({
   'profile.html.person': 'first',
@@ -30,6 +31,9 @@ exports.create = function (api) {
     var classList = ['Message']
     var replyInfo = null
 
+    var needsExpand = Value(false)
+    var expanded = Value(false)
+
     if (msg.value.content.root) {
       classList.push('-reply')
       var branch = msg.value.content.branch
@@ -49,11 +53,22 @@ exports.create = function (api) {
     return h('div', {
       classList
     }, [
-      messageHeader(msg, { replyInfo, priority }),
-      h('section', [content]),
+      messageHeader(msg, { replyInfo, priority, needsExpand, expanded }),
+      h('section', {
+        classList: [ when(expanded, '-expanded') ],
+        hooks: [ ExpanderHook(needsExpand) ]
+      }, [content]),
       computed(msg.key, (key) => {
         if (ref.isMsg(key)) {
           return h('footer', [
+            when(needsExpand, h('div.expander', {
+              classList: when(expanded, null, '-truncated')
+            }, [
+              h('a', {
+                href: '#',
+                'ev-click': toggle(expanded)
+              }, when(expanded, i18n('See less'), i18n('See more')))
+            ])),
             h('div.actions', [
               api.message.html.action(msg)
             ])
@@ -100,4 +115,15 @@ function last (array) {
   } else {
     return array
   }
+}
+
+function toggle (param) {
+  return {
+    handleEvent: handleToggle,
+    param
+  }
+}
+
+function handleToggle (ev) {
+  this.param.set(!this.param())
 }

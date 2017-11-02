@@ -252,6 +252,13 @@ Message {
   section {
     margin: 0
     padding: 0 20px
+    max-height: 1500px
+    overflow: hidden
+
+    -expanded {
+      max-height: none
+    }
+
     (img) {
       max-width: 100%
     }
@@ -274,6 +281,20 @@ Message {
   footer {
     margin: 5px 0 20px;
     padding: 0 20px
+
+    div.expander {
+      text-align: center;
+      background-color: #383736;
+
+      -truncated {
+        padding-top: 50px;
+        margin-top: -50px;
+        -webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,1) 50%, rgba(0,0,0,0));
+        a {
+          :before { content: '▼ '; font-size: 80% }
+        }
+      }
+    }
 
     div.actions {
       a.like {
