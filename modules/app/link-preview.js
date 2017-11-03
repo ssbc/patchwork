@@ -14,7 +14,19 @@ exports.gives = nest('app.linkPreview')
 exports.create = function (api) {
   var i18n = api.intl.sync.i18n
   return nest('app.linkPreview', function (container, delay) {
-    var currentHover = ObserveLinkHover(container, 500)
+    var currentHover = ObserveLinkHover(container, (value, lastValue) => {
+      var href = value && value.getAttribute('href')
+      var oldHref = lastValue && lastValue.getAttribute('href')
+
+      var delay = 500
+      if (href && oldHref) {
+        delay = 100
+      } else if (!value) {
+        delay = 200
+      }
+
+      return delay
+    })
     var previewElement = Value()
 
     currentHover(element => {
