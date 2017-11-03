@@ -8,6 +8,7 @@ var nest = require('depnest')
 var mentions = require('ssb-mentions')
 var extend = require('xtend')
 var addSuggest = require('suggest-box')
+var emoji = require('emojilib')
 
 exports.needs = nest({
   'blob.html.input': 'first',
@@ -142,10 +143,7 @@ exports.create = function (api) {
         if (word[word.length - 1] === ':') {
           word = word.slice(0, -1)
         }
-        // TODO: when no emoji typed, list some default ones
-        cb(null, api.emoji.sync.names().filter(function (name) {
-          return name.slice(0, word.length) === word
-        }).slice(0, 100).map(function (emoji) {
+        cb(null, suggestEmoji(word).slice(0, 100).map(function (emoji) {
           return {
             image: api.emoji.sync.url(emoji),
             title: emoji,
@@ -206,6 +204,14 @@ exports.create = function (api) {
       }
     }
   })
+
+  function suggestEmoji (prefix) {
+    var availableEmoji = api.emoji.sync.names()
+    return emoji.ordered.filter(key => {
+      if (!availableEmoji.includes(key)) return false
+      return key.startsWith(prefix) || key.includes('_' + prefix) || emoji.lib[key].keywords.some(word => word.startsWith(prefix) || word.startsWith(':' + prefix))
+    })
+  }
 }
 
 function showDialog (opts) {
