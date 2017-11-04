@@ -75,6 +75,9 @@ exports.create = function (api) {
       meta.channel.set(value.content.channel)
       meta.root.set(root || thread.rootId)
 
+      // track message author for resolving missing messages and reply mentions
+      meta.reply.set({[id]: author})
+
       // if root thread, reply to last post
       meta.branch.set(isReply ? thread.branchId : thread.lastId)
 
@@ -104,13 +107,6 @@ exports.create = function (api) {
       ])
       result.set(when(thread.sync, container, loader))
 
-      watch(anchor, (anchor) => {
-        if (anchor === 'reply') {
-          meta.reply.set([author])
-        } else {
-          meta.reply.set(undefined)
-        }
-      })
     })
 
     var view = h('div', {className: 'SplitView'}, [

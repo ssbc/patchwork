@@ -30,7 +30,7 @@ exports.create = function (api) {
   })
 
   function messageMissing (id, hintMessage) {
-    var possibleAuthor = only(hintMessage.value.content.reply)
+    var possibleAuthor = hintMessage.value.content.reply && hintMessage.value.content.reply[id]
     var msg = {
       key: id,
       value: {
@@ -62,13 +62,5 @@ exports.create = function (api) {
 
     element.msg = msg
     return element
-  }
-}
-
-function only (arrayOrString) {
-  if (Array.isArray(arrayOrString) && arrayOrString.length === 1) {
-    return arrayOrString[0]
-  } else if (typeof arrayOrString === 'string') {
-    return arrayOrString
   }
 }
