@@ -25,7 +25,7 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html.layout', layout)
 
-  function layout (msg, {layout, previousId, priority, content, includeReferences = false, includeForks = true}) {
+  function layout (msg, {layout, previousId, priority, content, includeReferences = false, includeForks = true, compact = false}) {
     if (!(layout === undefined || layout === 'default')) return
 
     var classList = ['Message']
@@ -44,6 +44,10 @@ exports.create = function (api) {
       }
     } else if (msg.value.content.project) {
       replyInfo = h('span', [i18n('on '), api.message.html.link(msg.value.content.project)])
+    }
+
+    if (compact) {
+      classList.push('-compact')
     }
 
     if (priority === 2) {
@@ -66,7 +70,7 @@ exports.create = function (api) {
             }, [
               h('a', {
                 href: '#',
-                'ev-click': toggle(expanded)
+                'ev-click': toggleAndTrack(expanded)
               }, when(expanded, i18n('See less'), i18n('See more')))
             ])),
             h('div.actions', [
@@ -117,7 +121,7 @@ function last (array) {
   }
 }
 
-function toggle (param) {
+function toggleAndTrack (param) {
   return {
     handleEvent: handleToggle,
     param
@@ -126,4 +130,13 @@ function toggle (param) {
 
 function handleToggle (ev) {
   this.param.set(!this.param())
+  if (!this.param()) {
+    ev.target.scrollIntoViewIfNeeded()
+
+    // HACK: due to a browser bug, sometimes the body gets affected!?
+    // Why not just hack it!!!
+    if (document.body.scrollTop > 0) {
+      document.body.scrollTop = 0
+    }
+  }
 }

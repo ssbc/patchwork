@@ -13,6 +13,7 @@ exports.create = function (api) {
     if (path !== '/mentions') return
     var id = api.keys.sync.id()
     return api.feed.html.rollup(api.feed.pull.mentions(id), {
+      compactFilter: (msg) => !mentionFilter(msg), // compact context messages
       bumpFilter: mentionFilter,
       displayFilter: mentionFilter
     })

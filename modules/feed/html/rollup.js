@@ -43,6 +43,7 @@ exports.create = function (api) {
     prepend,
     rootFilter = returnTrue,
     bumpFilter = returnTrue,
+    compactFilter = returnFalse,
     prefiltered = false,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
@@ -186,9 +187,8 @@ exports.create = function (api) {
       var replies = item.replies.filter(isReply).sort(byAssertedTime)
       var replyElements = replies.filter(displayFilter).slice(-3).map((msg) => {
         var result = api.message.html.render(msg, {
-          inContext: true,
-          inSummary: true,
           previousId,
+          compact: compactFilter(msg),
           priority: highlightItems.has(msg.key) ? 2 : 0
         })
         previousId = msg.key
@@ -200,8 +200,7 @@ exports.create = function (api) {
       })
 
       var renderedMessage = api.message.html.render(item, {
-        inContext: true,
-        includeForks: false,
+        compact: compactFilter(item),
         priority: highlightItems.has(item.key) ? 2 : 0
       })
 
@@ -326,6 +325,10 @@ function getType (msg) {
 }
 
 function returnTrue () {
+  return true
+}
+
+function returnFalse () {
   return true
 }
 

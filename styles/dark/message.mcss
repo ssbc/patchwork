@@ -62,6 +62,12 @@ Message {
     }
   }
 
+  -compact {
+    section {
+      max-height: 300px
+    }
+  }
+
   -reply {
     header {
       font-size: 100%

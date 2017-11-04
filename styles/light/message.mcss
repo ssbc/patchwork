@@ -47,6 +47,12 @@ Message {
     }
   }
 
+  -compact {
+    section {
+      max-height: 300px
+    }
+  }
+
   -reply {
     header {
       font-size: 100%
@@ -206,7 +212,7 @@ Message {
     padding: 0 20px
     max-height: 1500vh
     overflow: hidden
-    
+
     (img) {
       max-width: 100%
     }
