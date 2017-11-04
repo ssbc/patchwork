@@ -210,7 +210,7 @@ Message {
   section {
     margin: 0
     padding: 0 20px
-    max-height: 1500vh
+    max-height: 1500px
     overflow: hidden
 
     (img) {
