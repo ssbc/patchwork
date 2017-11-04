@@ -329,7 +329,7 @@ function returnTrue () {
 }
 
 function returnFalse () {
-  return true
+  return false
 }
 
 function byAssertedTime (a, b) {
