@@ -1,4 +1,4 @@
-var { h, when, map, Proxy, Struct, Value, computed } = require('mutant')
+var { h, when, map, Proxy, Struct, Value, computed, watch } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var AnchorHook = require('../../../../lib/anchor-hook')
@@ -32,6 +32,7 @@ exports.create = function (api) {
       type: 'post',
       root: Proxy(id),
       branch: Proxy(id),
+      reply: Value(undefined),
       channel: Value(undefined),
       recps: Value(undefined)
     })
@@ -66,6 +67,7 @@ exports.create = function (api) {
       // what happens in private stays in private!
       meta.recps.set(value.content.recps)
 
+      var author = value.author
       var root = api.message.sync.root({key: id, value}) || id
       var isReply = id !== root
       var thread = api.feed.obs.thread(id, {branch: isReply})
@@ -101,6 +103,14 @@ exports.create = function (api) {
         compose
       ])
       result.set(when(thread.sync, container, loader))
+
+      watch(anchor, (anchor) => {
+        if (anchor === 'reply') {
+          meta.reply.set([author])
+        } else {
+          meta.reply.set(undefined)
+        }
+      })
     })
 
     var view = h('div', {className: 'SplitView'}, [

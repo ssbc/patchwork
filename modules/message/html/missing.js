@@ -1,5 +1,6 @@
 var h = require('mutant/h')
 var Value = require('mutant/value')
+var when = require('mutant/when')
 var ref = require('ssb-ref')
 
 var nest = require('depnest')
@@ -29,21 +30,45 @@ exports.create = function (api) {
   })
 
   function messageMissing (id, hintMessage) {
-    return h('Message -missing -reply', [
+    var possibleAuthor = only(hintMessage.value.content.reply)
+    var msg = {
+      key: id,
+      value: {
+        missing: true,
+        author: ref.isFeed(possibleAuthor) ? possibleAuthor : null
+      }
+    }
+    var element = h('Message -missing -reply', [
       h('header', [
         h('div.main', [
           h('div.main', [
-            h('div.name', ['⚠️ ', h('strong', i18n('Missing message')), i18n(' via '), api.profile.html.person(hintMessage.value.author)]),
+            h('div.name', [
+              '⚠️ ',
+              msg.value.author
+                ? [api.profile.html.person(msg.value.author), ' ', i18n('(missing message)')]
+                : h('strong', i18n('Missing message')),
+              i18n(' via '), api.profile.html.person(hintMessage.value.author)]),
             h('div.meta', [h('a', {href: id}, id)])
           ])
         ]),
         h('div.meta', [
-          api.message.html.meta({key: id, value: {missing: true}})
+          api.message.html.meta(msg)
         ])
       ]),
       h('section', [
         h('p', [i18n(`The author of this message could be outside of your follow range or they may be blocked.`)])
       ])
     ])
+
+    element.msg = msg
+    return element
+  }
+}
+
+function only (arrayOrString) {
+  if (Array.isArray(arrayOrString) && arrayOrString.length === 1) {
+    return arrayOrString[0]
+  } else if (typeof arrayOrString === 'string') {
+    return arrayOrString
   }
 }
