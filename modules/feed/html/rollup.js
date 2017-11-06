@@ -156,6 +156,7 @@ exports.create = function (api) {
         pull(
           stream,
           abortable,
+          pull.filter(msg => msg && msg.value && msg.value.content),
           prefiltered ? pull(
             pull.filter(msg => !api.message.sync.isBlocked(msg)),
             api.feed.pull.withReplies()
