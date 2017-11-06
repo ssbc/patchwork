@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var {Value, Proxy, Array: MutantArray, h, computed, when, onceTrue, throttle} = require('mutant')
+var {Value, Proxy, Array: MutantArray, h, computed, when, onceTrue, throttle, resolve} = require('mutant')
 var pull = require('pull-stream')
 var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/scroller')
@@ -23,10 +23,12 @@ exports.needs = nest({
   'app.sync.externalHandler': 'first',
   'message.html.canRender': 'first',
   'message.html.render': 'first',
+  'message.sync.isBlocked': 'first',
   'profile.html.person': 'first',
   'message.html.link': 'first',
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
+  'feed.pull.withReplies': 'first',
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
@@ -153,9 +155,14 @@ exports.create = function (api) {
 
         pull(
           stream,
-          prefiltered ? pull.through() : pull.filter(bumpFilter),
           abortable,
-          api.feed.pull.rollup(rootFilter),
+          prefiltered ? pull(
+            pull.filter(msg => !api.message.sync.isBlocked(msg)),
+            api.feed.pull.withReplies()
+          ) : pull(
+            pull.filter(bumpFilter),
+            api.feed.pull.rollup(rootFilter)
+          ),
           scroller
         )
       })
@@ -201,6 +208,7 @@ exports.create = function (api) {
 
       var renderedMessage = api.message.html.render(item, {
         compact: compactFilter(item),
+        includeForks: false, // this is a root message, so forks are already displayed as replies
         priority: highlightItems.has(item.key) ? 2 : 0
       })
 
