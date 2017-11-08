@@ -17,6 +17,7 @@
   "dependencies": {
     "app-root-path": "^2.0.1",
     "bulk-require": "^1.0.0",
+    "chloride": "github:ssbc/chloride#4492abb5186c03146a546eb4e5aab326474781fa",
     "compare-version": "^0.1.2",
     "cross-script": "^1.0.1",
     "deep-equal": "^1.0.1",
