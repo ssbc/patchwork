@@ -56,7 +56,7 @@
     "scuttlebot": "github:ssbc/scuttlebot#ea69ae675efd46259855bdbee0127c68fe2818e4",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
-    "ssb-about": "0.1.0",
+    "ssb-about": "~0.1.1",
     "ssb-avatar": "^0.2.0",
     "ssb-backlinks": "~0.4.1",
     "ssb-blobs": "~1.1.4",
