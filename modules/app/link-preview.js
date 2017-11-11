@@ -1,4 +1,4 @@
-var { h, Value } = require('mutant')
+var { h, Value, computed } = require('mutant')
 var ObserveLinkHover = require('../../lib/observe-link-hover')
 var ref = require('ssb-ref')
 
@@ -14,7 +14,6 @@ exports.gives = nest('app.linkPreview')
 exports.create = function (api) {
   var i18n = api.intl.sync.i18n
   return nest('app.linkPreview', function (container, delay) {
-
     var currentHover = ObserveLinkHover(container, (value, lastValue) => {
       var href = value && value.getAttribute('href')
       var oldHref = lastValue && lastValue.getAttribute('href')
@@ -29,6 +28,16 @@ exports.create = function (api) {
       return delay
     })
     var previewElement = Value()
+
+    // hide preview on scroll
+    var hasPreview = computed(previewElement, x => !!x)
+    hasPreview(value => {
+      if (value) {
+        window.addEventListener('wheel', previewElement.cancel)
+      } else {
+        window.removeEventListener('wheel', previewElement.cancel)
+      }
+    })
 
     currentHover(element => {
       var href = element && element.getAttribute('href')
@@ -48,7 +57,6 @@ exports.create = function (api) {
       }
 
       if (preview) {
-        preview.addEventListener('wheel', previewElement.cancel)
         var rect = element.getBoundingClientRect()
         var width = 510
         var maxLeft = window.innerWidth - width
@@ -84,9 +92,6 @@ exports.create = function (api) {
       currentHover.cancel()
       previewElement.set(null)
     }
-
-    // hide preview on scroll
-    container.addEventListener('wheel', previewElement.cancel)
 
     return previewElement
   })
