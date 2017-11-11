@@ -1,4 +1,4 @@
-var { h, computed, when } = require('mutant')
+var { h, computed, when, Set } = require('mutant')
 var nest = require('depnest')
 
 // TODO move somewhere better
@@ -24,11 +24,11 @@ exports.create = (api) => {
     return when(flagged,
       h('a.unflag', {
         href: '#',
-        'ev-click': () => publishFlag(msg, false)
+        'ev-click': () => publishFlag(msg, null)
       }, 'Unflag'),
       h('a.flag', {
         href: '#',
-        'ev-click': () => inputFlag(msg, true)
+        'ev-click': () => inputFlag(msg)
       }, 'Flag')
     )
   })
@@ -36,18 +36,24 @@ exports.create = (api) => {
   function inputFlag (msg) {
     // open sheet to ask for reason
     api.sheet.display(function (done) {
+      const flagObs = Set()
       const content = (
         h('div', [
           Object.keys(FLAGS).map(function (flagId) {
             const flagDescription = FLAGS[flagId]
-            const fieldId = `${msg.id}-${flagId}`
+            const fieldId = `flag-${msg.key}-${flagId}`
             return (
               h('div', [
                 h('input', {
-                  name: 'flags',
+                  name: 'flag',
                   id: fieldId,
                   type: 'checkbox',
-                  value: flagId
+                  value: flagId,
+                  'ev-change': (ev) => {
+                    const { checked } = ev.target
+                    if (checked) flagObs.add(flagId)
+                    else flagObs.delete(flagId)
+                  }
                 }),
                 h('label', {
                   for: fieldId,
@@ -62,8 +68,7 @@ exports.create = (api) => {
       const footer = (
         h('button', {
           'ev-click': () => {
-            // TODO get flags from inputs
-            publishFlag()
+            publishFlag(msg, flagObs())
             done()
           }
         }, [
@@ -74,26 +79,20 @@ exports.create = (api) => {
     })
   }
 
-  function publishFlag (msg, status = true) {
-    // TODO
-    console.log('publish flag')
-    return
-    var flag = status ? {
-      type: 'vote',
+  function publishFlag (msg, flag) {
+    var content = {
+      type: 'flag',
       channel: msg.value.content.channel,
-      vote: { link: msg.key, value: -1, expression: 'Flag' }
-    } : {
-      type: 'vote',
-      channel: msg.value.content.channel,
-      vote: { link: msg.key, value: 0, expression: 'Unflag' }
+      link: msg.key,
+      flag
     }
     if (msg.value.content.recps) {
-      flag.recps = msg.value.content.recps.map(function (e) {
+      content.recps = msg.value.content.recps.map(function (e) {
         return e && typeof e !== 'string' ? e.link : e
       })
-      flag.private = true
+      content.private = true
     }
-    api.sbot.async.publish(flag)
+    api.sbot.async.publish(content)
   }
 }
 

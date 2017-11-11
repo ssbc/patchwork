@@ -57,11 +57,10 @@ exports.create = function (api) {
       if (sync) {
         return backlinks.reduce((result, msg) => {
           var c = msg.value.content
-          if (c.type === 'vote' && c.vote && c.vote.link === id) {
+          if (c.type === 'flag' && c.link === id) {
             var value = result[msg.value.author]
             if (!value || value[0] < msg.value.timestamp) {
-              // TODO store reasons
-              result[msg.value.author] = [msg.value.timestamp, c.vote.value, c.vote.expression]
+              result[msg.value.author] = [msg.value.timestamp, c.flag]
             }
           }
           return result
@@ -78,10 +77,5 @@ exports.create = function (api) {
 }
 
 function getFlags (flags) {
-  return Object.keys(flags).reduce((result, id) => {
-    if (flags[id][1] < 0) {
-      result.push(id)
-    }
-    return result
-  }, [])
+  return Object.values(flags)
 }
