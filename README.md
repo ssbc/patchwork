@@ -60,7 +60,7 @@ See [patchwork/releases](https://github.com/ssbc/patchwork/releases)
 
 ### Or build from source
 
-With node (>= 4) and npm (>= 2) installed:
+With node (>= 4) and npm (>= 3) installed:
 
 ```shell
 $ git clone https://github.com/ssbc/patchwork
