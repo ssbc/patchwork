@@ -24,6 +24,7 @@ exports.needs = nest({
   'feed.html.rollup': 'first',
   'profile.obs.recentlyUpdated': 'first',
   'contact.obs.following': 'first',
+  'contact.obs.blocking': 'first',
   'channel.obs': {
     subscribed: 'first',
     recent: 'first'
@@ -46,6 +47,7 @@ exports.create = function (api) {
 
     var id = api.keys.sync.id()
     var following = api.contact.obs.following(id)
+    var blocking = api.contact.obs.blocking(id)
     var subscribedChannels = api.channel.obs.subscribed(id)
     var recentChannels = api.channel.obs.recent()
     var loading = computed([subscribedChannels.sync, recentChannels.sync], (...args) => !args.every(Boolean))
@@ -138,8 +140,8 @@ exports.create = function (api) {
     }
 
     function getSidebar () {
-      var whoToFollow = computed([following, api.profile.obs.recentlyUpdated(), localPeers], (following, recent, peers) => {
-        return recent.filter(x => x !== id && !following.includes(x) && !peers.includes(x)).slice(0, 10)
+      var whoToFollow = computed([api.profile.obs.recentlyUpdated(), following, blocking, localPeers], (recent, ...ignoreFeeds) => {
+        return recent.filter(x => x !== id && !ignoreFeeds.some(f => f.includes(x))).slice(0, 10)
       })
       return [
         h('button -pub -full', {
