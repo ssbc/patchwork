@@ -26,11 +26,11 @@ exports.create = function (api) {
       }
 
       var c = msg.value.content
-      if (c.type !== 'vote') return
-      if (!c.vote || !c.vote.link) return
+      if (c.type !== 'flag') return
+      if (!c.link) return
 
       activeFlags.forEach((flags) => {
-        if (flags.id === c.vote.link) {
+        if (flags.id === c.link) {
           flags.push(msg)
         }
       })
@@ -39,7 +39,7 @@ exports.create = function (api) {
       if (!ref.isLink(id)) throw new Error('an id must be specified')
       var obs = get(id)
       obs.id = id
-      var result = computed(obs, getFlags, {
+      var result = computed(obs, flags => flags, {
         // allow manual append for simulated realtime
         onListen: () => activeFlags.add(obs),
         onUnlisten: () => activeFlags.delete(obs)
@@ -74,8 +74,4 @@ exports.create = function (api) {
     flags.sync = backlinks.sync
     return flags
   }
-}
-
-function getFlags (flags) {
-  return Object.values(flags)
 }

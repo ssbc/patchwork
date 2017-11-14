@@ -18,6 +18,7 @@ exports.create = function (api) {
   })
 
   function flagCount (flags) {
+    console.log('flags', flags)
     if (flags.length) {
       return [' ', h('a.flags', {
         title: nameList(i18n('Flagged by'), flags),
@@ -27,8 +28,12 @@ exports.create = function (api) {
     }
   }
 
-  function nameList (prefix, ids) {
-    var items = map(ids, api.about.obs.name)
+  function nameList (prefix, flags) {
+    console.log('flags', flags)
+    var items = map(flags, flag => {
+      console.log('flag', flag)
+      //api.about.obs.name)
+    })
     return computed([prefix, items], (prefix, names) => {
       return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
     })

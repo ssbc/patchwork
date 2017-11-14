@@ -97,5 +97,5 @@ exports.create = (api) => {
 }
 
 function doesFlag (flags, userId) {
-  return flags.includes(userId)
+  return Object.keys(flags).includes(userId)
 }
