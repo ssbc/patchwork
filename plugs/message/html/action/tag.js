@@ -10,12 +10,13 @@ var tagS = {
 }
 
 exports.needs = nest({
+  'about.obs.groupedValues': 'first',
+  'about.obs.valueFrom': 'first',
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
+  'profile.html.person': 'first',
   'sbot.async.publish': 'first',
-  'sheet.display': 'first',
-  'about.obs.groupedValues': 'first',
-  'about.obs.valueFrom': 'first'
+  'sheet.display': 'first'
 })
 
 exports.gives = nest('message.html.action')
@@ -45,12 +46,9 @@ exports.create = (api) => {
     ]
 
     var allTagsObs = api.about.obs.groupedValues(msg.key, 'tag')
+    var allTagNamesObs = computed([allTagsObs], Object.keys)
     var myCurrentTags = api.about.obs.valueFrom(msg.key, 'tag', id)
     var myTagsObs = Set(myCurrentTags())
-    console.log('allTags', allTagsObs())
-    setTimeout(() => {
-      console.log('allTags', allTagsObs())
-    }, 1000)
 
     // open sheet to read and write tags
     api.sheet.display(function (done) {
@@ -74,19 +72,36 @@ exports.create = (api) => {
 
       var content = (
         h('div', [
-          nextTagInput,
-          h('ul', [
-            map(myTagsObs, function (tag) {
-              return h('li', [
-                h('span', tag),
-                h('button', {
-                  'ev-click': () => {
-                    myTagsObs.delete(tag)
-                  }
-                }, [
-                  'x'
+          h('div', [
+            nextTagInput,
+            h('ul', [
+              map(myTagsObs, function (tag) {
+                return h('li', [
+                  h('span', tag),
+                  h('button', {
+                    'ev-click': () => {
+                      myTagsObs.delete(tag)
+                    }
+                  }, [
+                    'x'
+                  ])
                 ])
-              ])
+              })
+            ])
+          ]),
+          h('ul', [
+            map(allTagNamesObs, function (tagName) {
+              var taggers = computed([allTagsObs], (tags) => tags[tagName])
+              return (
+                h('li', [
+                  h('h2', tagName),
+                  h('ul', [
+                    map(taggers, (taggerId) => {
+                      return api.profile.html.person(taggerId)
+                    })
+                  ])
+                ])
+              )
             })
           ])
         ])
