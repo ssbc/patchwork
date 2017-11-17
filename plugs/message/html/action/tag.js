@@ -1,0 +1,131 @@
+var { h, computed, map, Set } = require('mutant')
+var nest = require('depnest')
+var addSuggest = require('suggest-box')
+
+// TODO move somewhere better
+var tagS = {
+  dead: 'Dead Account / Lost Keys',
+  spam: 'Spammer',
+  abuse: 'Abusive behavior'
+}
+
+exports.needs = nest({
+  'intl.sync.i18n': 'first',
+  'keys.sync.id': 'first',
+  'sbot.async.publish': 'first',
+  'sheet.display': 'first',
+  'about.obs.groupedValues': 'first',
+  'about.obs.valueFrom': 'first'
+})
+
+exports.gives = nest('message.html.action')
+
+exports.create = (api) => {
+  var i18n = api.intl.sync.i18n
+
+  return nest('message.html.action', function tag (msg) {
+    var id = api.keys.sync.id()
+    return (
+      h('a.tag', {
+        href: '#',
+        'ev-click': () => inputTags(msg, id)
+      }, 'Tag')
+    )
+  })
+
+
+
+  function inputTags (msg, id) {
+    // TODO
+    var getTagSuggestions = (word) => [
+      {
+        title: 'test',
+        value: 'test'
+      }
+    ]
+
+    var allTagsObs = api.about.obs.groupedValues(msg.key, 'tag')
+    var myCurrentTags = api.about.obs.valueFrom(msg.key, 'tag', id)
+    var myTagsObs = Set(myCurrentTags())
+    console.log('allTags', allTagsObs())
+    setTimeout(() => {
+      console.log('allTags', allTagsObs())
+    }, 1000)
+
+    // open sheet to read and write tags
+    api.sheet.display(function (done) {
+
+      var nextTagInput = h('input', {
+        type: 'text',
+        placeholder: i18n('tag'),
+        'ev-suggestselect': (ev) => {
+          myTagsObs.add(ev.detail.value)
+          nextTagInput.value = ''
+        }
+      })
+
+      setImmediate(() => {
+        addSuggest(nextTagInput, (inputText, cb) => {
+          cb(null, getTagSuggestions(inputText))
+        }, {
+          cls: 'SuggestBox'
+        })
+      })
+
+      var content = (
+        h('div', [
+          nextTagInput,
+          h('ul', [
+            map(myTagsObs, function (tag) {
+              return h('li', [
+                h('span', tag),
+                h('button', {
+                  'ev-click': () => {
+                    myTagsObs.delete(tag)
+                  }
+                }, [
+                  'x'
+                ])
+              ])
+            })
+          ])
+        ])
+      )
+      const footer = [
+        h('button', {
+          'ev-click': () => {
+            publishTag(msg, myTagsObs())
+            done()
+          }
+        }, [
+          'tag'
+        ]),
+        h('button', {
+          'ev-click': () => {
+            done()
+          }
+        }, [
+          'cancel'
+        ])
+      ]
+      return { content, footer }
+    })
+  }
+
+  function publishTag (msg, tag) {
+    var content = {
+      type: 'about',
+      about: msg.key,
+      tag
+    }
+    if (msg.value.content.recps) {
+      content.recps = msg.value.content.recps.map(function (e) {
+        return e && typeof e !== 'string' ? e.link : e
+      })
+      content.private = true
+    }
+    console.log('content', content)
+    return
+    api.sbot.async.publish(content)
+  }
+}
