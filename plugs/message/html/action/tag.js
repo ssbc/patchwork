@@ -40,10 +40,19 @@ exports.create = (api) => {
 
       var nextTagInput = h('input', {
         type: 'text',
-        placeholder: i18n('tag'),
+        placeholder: i18n('#tag'),
         'ev-suggestselect': (ev) => {
           myTagsObs.add(ev.detail.value)
           nextTagInput.value = ''
+        },
+        'ev-keydown': (ev) => {
+          if (ev.key === 'Enter') {
+            var value = ev.target.value
+            if (!value.startsWith('#')) return
+            myTagsObs.add(value)
+            nextTagInput.value = ''
+            ev.preventDefault()
+          }
         }
       })
 

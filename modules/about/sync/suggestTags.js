@@ -41,8 +41,10 @@ exports.create = function (api) {
             for (var tagger in taggers) {
               var taggerTags = taggers[tagger][0]
               if (!Array.isArray(taggerTags)) taggerTags = [taggerTags]
-              // TODO assert tags are all strings
               taggerTags.forEach(function (tag) {
+                // assert tag is a string starting with #
+                if (typeof tag !== 'string' || !tag.startsWith('#')) return
+
                 if (tags.has(tag)) return
                 tags.add(tag)
               })
@@ -56,8 +58,8 @@ exports.create = function (api) {
   function suggestion (id) {
     return Struct({
       title: id,
-      id: `#${id}`,
-      value: `#${id}`
+      id: id,
+      value: id
     })
   }
 }
