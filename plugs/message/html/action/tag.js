@@ -2,16 +2,10 @@ var { h, computed, map, Set } = require('mutant')
 var nest = require('depnest')
 var addSuggest = require('suggest-box')
 
-// TODO move somewhere better
-var tagS = {
-  dead: 'Dead Account / Lost Keys',
-  spam: 'Spammer',
-  abuse: 'Abusive behavior'
-}
-
 exports.needs = nest({
   'about.obs.groupedValues': 'first',
   'about.obs.valueFrom': 'first',
+  'about.sync.suggestTags': 'first',
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
   'profile.html.person': 'first',
@@ -34,17 +28,8 @@ exports.create = (api) => {
     )
   })
 
-
-
   function inputTags (msg, id) {
-    // TODO
-    var getTagSuggestions = (word) => [
-      {
-        title: 'test',
-        value: 'test'
-      }
-    ]
-
+    var getTagSuggestions = api.about.sync.suggestTags()
     var allTagsObs = api.about.obs.groupedValues(msg.key, 'tag')
     var allTagNamesObs = computed([allTagsObs], Object.keys)
     var myCurrentTags = api.about.obs.valueFrom(msg.key, 'tag', id)
@@ -139,8 +124,6 @@ exports.create = (api) => {
       })
       content.private = true
     }
-    console.log('content', content)
-    return
     api.sbot.async.publish(content)
   }
 }
