@@ -165,6 +165,16 @@
 	"Blocked": "Blockiert",
 	"Click to block syncing with this person and hide their posts": "Klicke hier um die synchronisation mit dieser Person zu blockieren und deren posts zu verbergen",
 	"Block": "Blocken",
-	"External Link": "External Link",
-	"blocked ": "blocked "
+	"External Link": "Externer Link",
+	"blocked ": "blockiert ",
+	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "Es könnte sein, dass du die aktuellsten Nachrichten dieser Person nicht bekommt. Du könntest versuchen einem Pub beizutreten, bei dem die Person Mitglied ist.",
+	"Mutual Friends": "Gemeinsame Freunde",
+	"Followed by": "Gefolgt von",
+	"You follow %s people that follow this person.": {
+		"one": "Du folgst einer Person die dieser Person folgt.",
+		"other": "Du folgst %s Personen die dieser Person folgen."
+	},
+	"See less": "weniger zeigen",
+	"See more": "mehr zeigen",
+	"pt-BR": "pt-BR"
 }
