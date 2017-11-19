@@ -20,6 +20,7 @@ module.exports = function (config) {
     require('./modules'),
     require('./plugs'),
     require('patch-settings'),
+    require('patch-drafts'),
     require('patchcore'),
     require('./overrides')
   )
