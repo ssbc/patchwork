@@ -4,7 +4,7 @@ var FlumeViewLevel = require('flumeview-level')
 var pullCat = require('pull-cat')
 var HLRU = require('hashlru')
 var extend = require('xtend')
-var normalizeChannel = require('../lib/normalize-channel')
+var normalizeChannel = require('ssb-ref').normalizeChannel
 var Defer = require('pull-defer')
 
 // HACK: pull it out of patchcore

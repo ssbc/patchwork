@@ -1,7 +1,6 @@
 var nest = require('depnest')
 var extend = require('xtend')
 var pull = require('pull-stream')
-var normalizeChannel = require('../../../../lib/normalize-channel')
 var { h, send, when, computed, map } = require('mutant')
 
 exports.needs = nest({
@@ -30,6 +29,7 @@ exports.needs = nest({
     subscribed: 'first',
     recent: 'first'
   },
+  'channel.sync.normalize': 'first',
   'keys.sync.id': 'first',
   'settings.obs.get': 'first',
   'intl.sync.i18n': 'first'
@@ -89,7 +89,7 @@ exports.create = function (api) {
           if (type === 'vote') return false
 
           var author = msg.value.author
-          var channel = normalizeChannel(msg.value.content.channel)
+          var channel = api.channel.sync.normalize(msg.value.content.channel)
           var tagged = checkTag(msg.value.content.mentions)
           var isSubscribed = channel ? subscribedChannels().has(channel) : false
           return isSubscribed || id === author || following().includes(author) || tagged
@@ -139,7 +139,7 @@ exports.create = function (api) {
       if (Array.isArray(mentions)) {
         return mentions.some((mention) => {
           if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
-            var channel = normalizeChannel(mention.link.slice(1))
+            var channel = api.channel.sync.normalize(mention.link.slice(1))
             return channel ? subscribedChannels().has(channel) : false
           }
         })

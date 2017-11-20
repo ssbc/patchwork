@@ -4,6 +4,7 @@ var nest = require('depnest')
 exports.needs = nest({
   'channel.obs.subscribed': 'first',
   'message.html.compose': 'first',
+  'channel.sync.normalize': 'first',
   'feed.html.rollup': 'first',
   'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
@@ -19,7 +20,7 @@ exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '#') return
 
-    var channel = path.substr(1)
+    var channel = api.channel.sync.normalize(path.substr(1))
     var subscribedChannels = api.channel.obs.subscribed(api.keys.sync.id())
 
     var prepend = [
@@ -54,10 +55,10 @@ exports.create = function (api) {
     function mentionFilter (msg) {
       // filter out likes
       if (msg.value.content.type === 'vote') return false
-      if (msg.value.content.channel === channel) return true
+      if (api.channel.sync.normalize(msg.value.content.channel) === channel) return true
       if (Array.isArray(msg.value.content.mentions)) {
         if (msg.value.content.mentions.some(mention => {
-          return mention && mention.link === `#${channel}`
+          return mention && api.channel.sync.normalize(mention.link) === `#${channel}`
         })) {
           return 'channel-mention'
         }
