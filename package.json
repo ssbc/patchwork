@@ -41,6 +41,7 @@
     "mutant": "^3.21.2",
     "mutant-pull-reduce": "^1.1.0",
     "obv": "0.0.1",
+    "patch-drafts": "0.0.5",
     "patch-settings": "^1.0.1",
     "patchcore": "~1.17.0",
     "pull-abortable": "^4.1.0",
