@@ -196,7 +196,7 @@ exports.create = function (api) {
       var replyElements = replies.filter(displayFilter).slice(-3).map((msg) => {
         var result = api.message.html.render(msg, {
           previousId,
-          compact: compactFilter(msg),
+          compact: compactFilter(msg, item),
           priority: highlightItems.has(msg.key) ? 2 : 0
         })
         previousId = msg.key

@@ -19,6 +19,7 @@ exports.needs = nest({
 
   'message.html.compose': 'first',
   'message.async.publish': 'first',
+  'message.sync.root': 'first',
   'progress.html.peer': 'first',
 
   'feed.html.rollup': 'first',
@@ -102,6 +103,12 @@ exports.create = function (api) {
         var isOutdated = isReplacementMessage(msg, lastMessage)
         if (!filtered && !isOutdated) {
           lastMessage = msg
+          return true
+        }
+      },
+      compactFilter: function (msg, root) {
+        if (!root && api.message.sync.root(msg)) {
+          // msg has a root, but is being displayed as root (fork)
           return true
         }
       },
