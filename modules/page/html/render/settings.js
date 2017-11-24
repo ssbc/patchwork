@@ -22,6 +22,8 @@ exports.create = function (api) {
     const currentLang = api.settings.obs.get('patchwork.lang')
     const locales = api.intl.sync.locales()
     const localeNameLookup = api.intl.sync.localeNames()
+    const currentFontSize = api.settings.obs.get('patchwork.fontSize')
+    const fontSizes = ['8px', '10px', '12px', '14px', '16px', '18px', '20px']
     const filterFollowing = api.settings.obs.get('filters.following')
 
     var prepend = [
@@ -67,6 +69,19 @@ exports.create = function (api) {
                 '[', code, '] ', getLocaleName(code)
               ]))
             ])
+          ]),
+
+          h('section', [
+            h('h2', i18n('Font Size')),
+            h('select', {
+              style: {
+                'font-size': '120%'
+              },
+              value: when(currentFontSize, currentFontSize, window.getComputedStyle(document.documentElement).fontSize),
+              'ev-change': (ev) => api.settings.sync.set({
+                patchwork: {fontSize: ev.target.value}
+              })
+            }, fontSizes.map(size => h('option', {value: size}, size)))
           ]),
 
           h('section', [
