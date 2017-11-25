@@ -17,6 +17,7 @@ ProfileHeader {
 
   div.main {
     flex: 1
+    min-width: 0
     div.title {
       display: flex
       h1 {
@@ -32,6 +33,8 @@ ProfileHeader {
       }
       -publicKey {
         pre {
+          text-overflow: ellipsis;
+          overflow: hidden;
           color: #808080;
           margin: 2px 0;
           font-size: 120%;
