@@ -48,6 +48,7 @@ ProfilePreview {
     }
 
     div.main {
+      min-width: 0
       flex: 1
       margin: 5px
 
@@ -70,6 +71,8 @@ ProfilePreview {
       }
       section {
         pre {
+          text-overflow: ellipsis;
+          overflow: hidden;
           color: #b3b3b3;
           margin: 2px 0;
           font-size: 110%;
