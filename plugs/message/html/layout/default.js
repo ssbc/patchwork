@@ -34,6 +34,9 @@ exports.create = function (api) {
     var needsExpand = Value(false)
     var expanded = Value(false)
 
+    // new message previews shouldn't contract
+    if (!msg.key) expanded.set(true)
+
     if (msg.value.content.root) {
       classList.push('-reply')
       var branch = msg.value.content.branch
