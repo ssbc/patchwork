@@ -146,8 +146,6 @@ exports.create = function (api) {
         highlightItems = newSinceRefresh
         newSinceRefresh = new Set()
 
-        window.thing = unreadIds
-
         var done = Value(false)
         var stream = nextStepper(getStream, {reverse: true, limit: 50})
         var scroller = Scroller(container, content(), renderItem, {
