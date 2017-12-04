@@ -24,6 +24,7 @@ exports.needs = nest({
   'message.html.canRender': 'first',
   'message.html.render': 'first',
   'message.sync.isBlocked': 'first',
+  'message.sync.unbox': 'first',
   'profile.html.person': 'first',
   'message.html.link': 'first',
   'message.sync.root': 'first',
@@ -277,6 +278,10 @@ exports.create = function (api) {
       var rootId = api.message.sync.root(msg)
       if (rootId) {
         api.sbot.async.get(rootId, (_, value) => {
+          if (typeof value.content === 'string') {
+            // unbox private message
+            value = api.message.sync.unbox(value)
+          }
           cb(null, extend(msg, {
             root: {key: rootId, value}
           }))
