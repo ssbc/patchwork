@@ -61,6 +61,7 @@ exports.create = function (api) {
     var abortLastFeed = null
     var content = Value()
     var loading = Proxy(true)
+    var unreadIds = new Set()
     var newSinceRefresh = new Set()
     var highlightItems = new Set()
 
@@ -107,6 +108,7 @@ exports.create = function (api) {
           // shown on new messages that patchwork cannot render
           if (canRenderMessage(msg) && (!msg.root || canRenderMessage(msg.root))) {
             newSinceRefresh.add(msg.key)
+            unreadIds.add(msg.key)
           }
 
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
@@ -144,9 +146,20 @@ exports.create = function (api) {
         highlightItems = newSinceRefresh
         newSinceRefresh = new Set()
 
+        window.thing = unreadIds
+
         var done = Value(false)
         var stream = nextStepper(getStream, {reverse: true, limit: 50})
-        var scroller = Scroller(container, content(), renderItem, () => done.set(true))
+        var scroller = Scroller(container, content(), renderItem, {
+          onDone: () => done.set(true),
+          onItemVisible: (item) => {
+            if (Array.isArray(item.msgIds)) {
+              item.msgIds.forEach(id => {
+                unreadIds.delete(id)
+              })
+            }
+          }
+        })
 
         // track loading state
         loading.set(computed([done, scroller.queue], (done, queue) => {
@@ -193,14 +206,15 @@ exports.create = function (api) {
       })
 
       var replies = item.replies.filter(isReply).sort(byAssertedTime)
-      var highlightedReplies = replies.filter(isHighlighted)
+      var highlightedReplies = replies.filter(getPriority)
       var replyElements = replies.filter(displayFilter).slice(-3).map((msg) => {
         var result = api.message.html.render(msg, {
           previousId,
           compact: compactFilter(msg, item),
-          priority: highlightItems.has(msg.key) ? 2 : 0
+          priority: getPriority(msg)
         })
         previousId = msg.key
+
         return [
           // insert missing message marker (if can't be found)
           api.message.html.missing(last(msg.value.content.branch), msg),
@@ -211,8 +225,10 @@ exports.create = function (api) {
       var renderedMessage = api.message.html.render(item, {
         compact: compactFilter(item),
         includeForks: false, // this is a root message, so forks are already displayed as replies
-        priority: highlightItems.has(item.key) ? 2 : 0
+        priority: getPriority(item)
       })
+
+      unreadIds.delete(item.key)
 
       if (!renderedMessage) return h('div')
       if (lastBumpType) {
@@ -229,7 +245,7 @@ exports.create = function (api) {
       // if there are new messages, view full thread goes to the top of those, otherwise to very first reply
       var anchorReply = highlightedReplies.length >= 3 ? highlightedReplies[0] : replies[0]
 
-      return h('FeedEvent -post', {
+      var result = h('FeedEvent -post', {
         attributes: {
           'data-root-id': item.key
         }
@@ -241,10 +257,20 @@ exports.create = function (api) {
         ),
         h('div.replies', replyElements)
       ])
+
+      result.msgIds = [item.key].concat(item.replies.map(x => x.key))
+
+      return result
     }
 
-    function isHighlighted (msg) {
-      return highlightItems.has(msg.key)
+    function getPriority (msg) {
+      if (highlightItems.has(msg.key)) {
+        return 2
+      } else if (unreadIds.has(msg.key)) {
+        return 1
+      } else {
+        return 0
+      }
     }
   })
 

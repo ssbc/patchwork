@@ -93,7 +93,7 @@ Message {
     }
   }
 
-  -new {
+  -new, -unread {
     box-shadow: 0 0 1px #ffc600;
     z-index: 1;
   }
@@ -148,14 +148,34 @@ Message {
         vertical-align: middle;
         margin-top: -3px;
 
-        -new {
-          background-image: svg(new)
+        -unread {
+          :after {
+            content: ' unread'
+            font-size: 75%
+            color: #b7b7b7
+          }
         }
 
-        @svg new {
-          width: 12px
-          height: 12px
-          content: "<circle cx='6' stroke='none' fill='#ffcf04' cy='6' r='5' />"
+        -new {
+          :after {
+            content: ' new'
+            font-size: 75%
+            color: #b7b7b7
+          }
+        }
+
+        -new, -unread {
+          width: auto
+          height: auto
+
+          :before {
+            color: #ffcf04
+            content: '✸'
+          }
+
+          :first-letter {
+            font-size: 100%
+          }
         }
       }
 

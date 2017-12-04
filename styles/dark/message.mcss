@@ -93,7 +93,7 @@ Message {
     }
   }
 
-  -new {
+  -new, -unread {
     box-shadow: 0 0 1px #efef00;
     z-index: 1;
   }
@@ -159,22 +159,29 @@ Message {
         display: inline-block
         vertical-align: middle;
 
+        -unread {
+          :after {
+            content: ' unread'
+            color: #757474
+          }
+        }
+
         -new {
+          :after {
+            content: ' new'
+            color: #757474
+          }
+        }
+
+        -new, -unread {
           width: auto
           height: auto
           color: #757474
+          font-size: 75%
 
           :before {
-            content: '✸ new'
-            font-size: 75%
-          }
-
-          :hover {
             color: #efef00
-          }
-
-          :first-letter {
-            color: #efef00
+            content: '✸'
           }
         }
       }

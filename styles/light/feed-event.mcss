@@ -11,7 +11,7 @@ FeedEvent {
     margin-bottom: -25px
   }
 
-  -new {
+  -new, -unread {
     box-shadow: 0px 0px 2px #ffc800;
     background: #fffdf7;
   }

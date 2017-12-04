@@ -54,6 +54,10 @@ exports.create = function (api) {
       classList.push('-new')
     }
 
+    if (priority === 1) {
+      classList.push('-unread')
+    }
+
     return h('div', {
       classList
     }, [
@@ -86,8 +90,10 @@ exports.create = function (api) {
 
     function messageHeader (msg, {replyInfo, priority}) {
       var additionalMeta = []
-      if (priority >= 2) {
+      if (priority === 2) {
         additionalMeta.push(h('span.flag -new', {title: i18n('New Message')}))
+      } else if (priority === 1) {
+        additionalMeta.push(h('span.flag -unread', {title: i18n('Unread Message')}))
       }
       return h('header', [
         h('div.main', [
