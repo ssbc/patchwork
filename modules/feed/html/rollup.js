@@ -30,6 +30,7 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
   'feed.pull.withReplies': 'first',
+  'feed.pull.unique': 'first',
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
@@ -170,6 +171,7 @@ exports.create = function (api) {
           abortable,
           pull.filter(msg => msg && msg.value && msg.value.content),
           prefiltered ? pull(
+            api.feed.pull.unique(),
             pull.filter(msg => !api.message.sync.isBlocked(msg)),
             api.feed.pull.withReplies()
           ) : pull(
