@@ -22,9 +22,15 @@ exports.create = function (api) {
       meta: {type: 'post'},
       isPrivate: true,
       prepublish: function (msg) {
-        msg.recps = [id].concat(msg.mentions).filter(function (e) {
-          return ref.isFeed(typeof e === 'string' ? e : e.link)
+        msg.recps = [id]
+
+        msg.mentions.forEach(mention => {
+          mention = typeof mention === 'string' ? mention : mention.link
+          if (ref.isFeed(mention) && !msg.recps.includes(mention)) {
+            msg.recps.push(mention)
+          }
         })
+
         return msg
       },
       placeholder: i18n('Write a private message')
