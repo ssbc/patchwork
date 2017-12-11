@@ -177,5 +177,6 @@
 	"The author of this message could be outside of your follow range or they may be blocked.": "El autor de este mensaje podría estar fuera de su rango de seguimiento o puede estar bloqueado.",
 	"You follow %s people that follow this person.": {"one":"Sigues a alguien que sigue a esta persona.","other":"Sigues a %s personas que siguen a esta persona."},
 	"Followed by": "Seguido por",
-	"pt-BR": "Portugués Brasileño"
+	"pt-BR": "Portugués Brasileño",
+	"Font Size": "Tamaño de fuente"
 }
