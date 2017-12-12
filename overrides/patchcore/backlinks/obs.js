@@ -10,7 +10,8 @@ var sorted = require('sorted-array-functions')
 exports.needs = nest({
   'sbot.pull.backlinks': 'first',
   'sbot.obs.connection': 'first',
-  'sbot.pull.stream': 'first'
+  'sbot.pull.stream': 'first',
+  'message.sync.timestamp': 'first'
 })
 
 exports.gives = nest('backlinks.obs.for', true)
@@ -118,15 +119,15 @@ exports.create = function (api) {
   function unsubscribe (id) {
     onceTrue(api.sbot.obs.connection(), (sbot) => sbot.patchwork.liveBacklinks.unsubscribe(id))
   }
-}
 
-function compareAsserted (a, b) {
-  if (isReplyTo(a, b)) {
-    return -1
-  } else if (isReplyTo(b, a)) {
-    return 1
-  } else {
-    return a.value.timestamp - b.value.timestamp
+  function compareAsserted (a, b) {
+    if (isReplyTo(a, b)) {
+      return -1
+    } else if (isReplyTo(b, a)) {
+      return 1
+    } else {
+      return api.message.sync.timestamp(a) - api.message.sync.timestamp(b)
+    }
   }
 }
 

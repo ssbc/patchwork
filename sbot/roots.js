@@ -9,11 +9,12 @@ var Defer = require('pull-defer')
 
 // HACK: pull it out of patchcore
 var getRoot = require('patchcore/message/sync/root').create().message.sync.root
+var getTimestamp = require('patchcore/message/sync/timestamp').create().message.sync.timestamp
 
 module.exports = function (ssb, config) {
-  var create = FlumeViewLevel(1, function (msg, seq) {
+  var create = FlumeViewLevel(2, function (msg, seq) {
     var result = [
-      [msg.value.timestamp, getRoot(msg) || msg.key]
+      [getTimestamp(msg), getRoot(msg) || msg.key]
     ]
     return result
   })

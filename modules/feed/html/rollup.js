@@ -25,6 +25,7 @@ exports.needs = nest({
   'message.html.render': 'first',
   'message.sync.isBlocked': 'first',
   'message.sync.unbox': 'first',
+  'message.sync.timestamp': 'first',
   'profile.html.person': 'first',
   'message.html.link': 'first',
   'message.sync.root': 'first',
@@ -293,6 +294,10 @@ exports.create = function (api) {
       }
     })
   }
+
+  function byAssertedTime (a, b) {
+    return api.message.sync.timestamp(a) - api.message.sync.timestamp(b)
+  }
 }
 
 function plural (value, single, many) {
@@ -378,10 +383,6 @@ function returnTrue () {
 
 function returnFalse () {
   return false
-}
-
-function byAssertedTime (a, b) {
-  return a.value.timestamp - b.value.timestamp
 }
 
 function last (array) {
