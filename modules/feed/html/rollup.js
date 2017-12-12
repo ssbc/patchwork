@@ -282,7 +282,7 @@ exports.create = function (api) {
       var rootId = api.message.sync.root(msg)
       if (rootId) {
         api.sbot.async.get(rootId, (_, value) => {
-          if (typeof value.content === 'string') {
+          if (value && typeof value.content === 'string') {
             // unbox private message
             value = api.message.sync.unbox(value)
           }
