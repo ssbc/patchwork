@@ -172,9 +172,9 @@ exports.create = function (api) {
           abortable,
           pull.filter(msg => msg && msg.value && msg.value.content),
           prefiltered ? pull(
-            api.feed.pull.unique(),
             pull.filter(msg => !api.message.sync.isBlocked(msg)),
             pull.filter(rootFilter),
+            api.feed.pull.unique(),
             api.feed.pull.withReplies()
           ) : pull(
             pull.filter(bumpFilter),

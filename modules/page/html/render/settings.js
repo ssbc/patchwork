@@ -80,14 +80,17 @@ exports.create = function (api) {
 
           h('section', [
             h('h2', i18n('Public Feed Options')),
+
             h('div', [
-              h('label', [
-                h('input', {
-                  type: 'checkbox',
-                  checked: filterFollowing,
-                  'ev-change': (ev) => filterFollowing.set(ev.target.checked)
-                }), ' ', i18n('Hide following messages')
-              ])
+              checkbox(filterFollowing, {
+                label: i18n('Hide following messages')
+              })
+            ]),
+
+            h('div', [
+              checkbox(onlySubscribed, {
+                label: i18n('Only include posts from subscribed channels')
+              })
             ])
           ])
         ])
@@ -105,4 +108,14 @@ exports.create = function (api) {
       }
     }
   })
+}
+
+function checkbox (param, {label}) {
+  return h('label', [
+    h('input', {
+      type: 'checkbox',
+      checked: param,
+      'ev-change': (ev) => param.set(ev.target.checked)
+    }), ' ', label
+  ])
 }

@@ -186,5 +186,8 @@
 	"(missing message)": "(missing message)",
 	"assigned a description to ": "assigned a description to ",
 	"Unread Message": "Unread Message",
-	"Font Size": "Font Size"
+	"Font Size": "Font Size",
+	"Public Feed Options": "Public Feed Options",
+	"Only include posts from subscribed channels": "Only include posts from subscribed channels",
+	"Default": "Default"
 }

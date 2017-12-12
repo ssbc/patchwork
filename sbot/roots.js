@@ -26,7 +26,7 @@ module.exports = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
-    latest: function ({ids = [ssb.id]}) {
+    latest: function ({ids = [ssb.id], onlySubscribedChannels = false}) {
       var stream = Defer.source()
       getFilter((err, filter) => {
         if (err) return stream.abort(err)
@@ -53,7 +53,8 @@ module.exports = function (ssb, config) {
             var isPrivate = root.value && typeof root.value.content === 'string'
 
             if (filter && root && root.value && !isPrivate) {
-              return checkReplyForcesDisplay(item) || filter(ids, root)
+              var filterResult = filter(ids, root)
+              return checkReplyForcesDisplay(item) || shouldShow(filterResult, {onlySubscribedChannels})
             }
           })
         ))
@@ -61,7 +62,7 @@ module.exports = function (ssb, config) {
       return stream
     },
 
-    read: function ({ids = [ssb.id], reverse, limit, lt, gt}) {
+    read: function ({ids = [ssb.id], reverse, limit, lt, gt, onlySubscribedChannels = false}) {
       var opts = {reverse, old: true}
 
       // handle markers passed in to lt / gt
@@ -112,9 +113,8 @@ module.exports = function (ssb, config) {
                 return true
               } else if (!seen.has(root.key)) {
                 seen.add(root.key)
-                var result = filter(ids, root)
-                if (result) {
-                  // include this item if we have not yet seen it and the root filter passes
+                var filterResult = filter(ids, root)
+                if (shouldShow(filterResult, {onlySubscribedChannels})) {
                   included.add(root.key)
                   return true
                 }
@@ -125,6 +125,7 @@ module.exports = function (ssb, config) {
           // MAP ROOT ITEMS
           pull.map(item => {
             var root = item.root || item
+            root.filterResult = item.filterResult
             return root
           })
         ))
@@ -154,6 +155,14 @@ module.exports = function (ssb, config) {
     }
   }
 
+  function shouldShow (filterResult, {onlySubscribedChannels}) {
+    if (filterResult && onlySubscribedChannels && filterResult.hasChannel) {
+      return filterResult.matchesChannel || filterResult.matchingTags.length || filterResult.mentionsYou || filterResult.isYours
+    } else {
+      return !!filterResult
+    }
+  }
+
   function getThruCache (key, cb) {
     if (cache.has(key)) {
       cb(null, cache.get(key))
@@ -177,6 +186,7 @@ module.exports = function (ssb, config) {
         cb(null, function (ids, msg) {
           var type = msg.value.content.type
           if (type === 'vote') return false // filter out likes
+          var hasChannel = !!msg.value.content.channel
           var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, ids, msg.value.content.channel))
           var matchingTags = getMatchingTags(subscriptions, ids, msg.value.content.mentions)
           var isYours = ids.includes(msg.value.author)
@@ -184,7 +194,7 @@ module.exports = function (ssb, config) {
           var following = checkFollowing(friends, ids, msg.value.author)
           if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
             return {
-              matchingTags, matchesChannel, isYours, following, mentionsYou
+              matchingTags, matchesChannel, isYours, following, mentionsYou, hasChannel
             }
           }
         })
