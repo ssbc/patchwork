@@ -189,5 +189,6 @@
 	"Font Size": "Font Size",
 	"Public Feed Options": "Public Feed Options",
 	"Only include posts from subscribed channels": "Only include posts from subscribed channels",
-	"Default": "Default"
+	"Default": "Default",
+	"Force Disconnect": "Force Disconnect"
 }

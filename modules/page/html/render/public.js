@@ -1,13 +1,14 @@
 var nest = require('depnest')
 var extend = require('xtend')
 var pull = require('pull-stream')
-var { h, send, when, computed, map } = require('mutant')
+var { h, send, when, computed, map, onceTrue } = require('mutant')
 
 exports.needs = nest({
   sbot: {
     obs: {
       connectedPeers: 'first',
-      localPeers: 'first'
+      localPeers: 'first',
+      connection: 'first'
     }
   },
   'sbot.pull.stream': 'first',
@@ -239,6 +240,9 @@ exports.create = function (api) {
               ]),
               h('div.progress', [
                 api.progress.html.peer(id)
+              ]),
+              h('div.controls', [
+                h('a.disconnect', {href: '#disconnect', 'ev-click': send(disconnect, id), title: i18n('Force Disconnect')}, ['x'])
               ])
             ])
           })
@@ -259,6 +263,12 @@ exports.create = function (api) {
         type: 'channel',
         channel: id,
         subscribed: false
+      })
+    }
+
+    function disconnect (id) {
+      onceTrue(api.sbot.obs.connection, (sbot) => {
+        sbot.patchwork.disconnect(id)
       })
     }
   }

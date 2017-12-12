@@ -7,6 +7,7 @@ var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
 var pull = require('pull-stream')
+var ref = require('ssb-ref')
 
 exports.name = 'patchwork'
 exports.version = require('../package.json').version
@@ -27,7 +28,9 @@ exports.manifest = {
     subscribe: 'sync',
     unsubscribe: 'sync',
     stream: 'source'
-  }
+  },
+
+  disconnect: 'async'
 }
 
 exports.init = function (ssb, config) {
@@ -63,6 +66,18 @@ exports.init = function (ssb, config) {
     linearSearch: search.linear,
     getSubscriptions: subscriptions.get,
     getChannels: channels.get,
-    liveBacklinks: LiveBacklinks(ssb, config)
+    liveBacklinks: LiveBacklinks(ssb, config),
+
+    disconnect: function (opts, cb) {
+      if (ref.isFeed(opts)) opts = {key: opts}
+      if (opts && (opts.key || opts.host)) {
+        ssb.gossip.peers().find(peer => {
+          if (peer.state === 'connected' && (peer.key === opts.key || peer.host === opts.host)) {
+            ssb.gossip.disconnect(peer, cb)
+            return true
+          }
+        })
+      }
+    }
   }
 }
