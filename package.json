@@ -40,7 +40,7 @@
     "mutant": "^3.21.2",
     "mutant-pull-reduce": "^1.1.0",
     "obv": "0.0.1",
-    "patch-settings": "^1.0.1",
+    "patch-settings": "github:mmckegg/patch-settings#e808303e2d3e6c88519266e0d9e18a750dee97a2",
     "patchcore": "~1.21.0",
     "pull-abortable": "^4.1.0",
     "pull-defer": "^0.2.2",

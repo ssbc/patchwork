@@ -91,7 +91,8 @@ exports.create = (api) => {
       defaultLocale: 'en'
     })
 
-    watch(api.settings.obs.get('patchwork.lang', navigator.language), currentLocale => {
+    watch(api.settings.obs.get('patchwork.lang'), currentLocale => {
+      currentLocale = currentLocale || navigator.language
       var locales = i18nL.getLocales()
 
       // Try BCP47 codes, otherwise load family language if exist
@@ -114,7 +115,7 @@ exports.create = (api) => {
 
 // For now get only global languages
 function getSubLocal (loc) {
-  return loc.split('-')[0]
+  return typeof loc === 'string' && loc.split('-')[0]
 }
 
 function getSimilar (locales, option) {

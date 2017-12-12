@@ -18,13 +18,15 @@ exports.create = function (api) {
     if (path !== '/settings') return
     const i18n = api.intl.sync.i18n
 
-    const currentTheme = api.settings.obs.get('patchwork.theme')
-    const currentLang = api.settings.obs.get('patchwork.lang')
     const locales = api.intl.sync.locales()
     const localeNameLookup = api.intl.sync.localeNames()
-    const currentFontSize = api.settings.obs.get('patchwork.fontSize')
     const fontSizes = ['8px', '10px', '12px', '14px', '16px', '18px', '20px']
+
+    const theme = api.settings.obs.get('patchwork.theme', 'light')
+    const lang = api.settings.obs.get('patchwork.lang', '')
+    const fontSize = api.settings.obs.get('patchwork.fontSize', '')
     const filterFollowing = api.settings.obs.get('filters.following')
+    const onlySubscribed = api.settings.obs.get('filters.onlySubscribed')
 
     var prepend = [
       h('PageHeading', [
@@ -42,13 +44,9 @@ exports.create = function (api) {
           h('section', [
             h('h2', i18n('Theme')),
             h('select', {
-              style: {
-                'font-size': '120%'
-              },
-              value: when(currentTheme, currentTheme, 'light'),
-              'ev-change': (ev) => api.settings.sync.set({
-                patchwork: {theme: ev.target.value}
-              })
+              style: { 'font-size': '120%' },
+              value: theme,
+              'ev-change': (ev) => theme.set(ev.target.value)
             }, [
               themeNames.map(name => h('option', {value: name}, [name]))
             ])
@@ -57,14 +55,11 @@ exports.create = function (api) {
           h('section', [
             h('h2', i18n('Language')),
             h('select', {
-              style: {
-                'font-size': '120%'
-              },
-              value: when(currentLang, currentLang, 'en'),
-              'ev-change': (ev) => api.settings.sync.set({
-                patchwork: {lang: ev.target.value}
-              })
+              style: { 'font-size': '120%' },
+              value: lang,
+              'ev-change': (ev) => lang.set(ev.target.value)
             }, [
+              h('option', {value: ''}, i18n('Default')),
               locales.map(code => h('option', {value: code}, [
                 '[', code, '] ', getLocaleName(code)
               ]))
@@ -74,29 +69,25 @@ exports.create = function (api) {
           h('section', [
             h('h2', i18n('Font Size')),
             h('select', {
-              style: {
-                'font-size': '120%'
-              },
-              value: when(currentFontSize, currentFontSize, ''),
-              'ev-change': (ev) => api.settings.sync.set({
-                patchwork: {fontSize: ev.target.value}
-              })
+              style: { 'font-size': '120%' },
+              value: fontSize,
+              'ev-change': (ev) => fontSize.set(ev.target.value)
             }, [
-              h('option', {value: ''}, 'Default'),
+              h('option', {value: ''}, i18n('Default')),
               fontSizes.map(size => h('option', {value: size}, size))
             ])
           ]),
 
           h('section', [
-            h('h2', i18n('Filters')),
-            h('label', [
-              h('input', {
-                type: 'checkbox',
-                checked: filterFollowing,
-                'ev-change': (ev) => api.settings.sync.set({
-                  filters: {following: ev.target.checked}
-                })
-              }), i18n(' Hide following messages')
+            h('h2', i18n('Public Feed Options')),
+            h('div', [
+              h('label', [
+                h('input', {
+                  type: 'checkbox',
+                  checked: filterFollowing,
+                  'ev-change': (ev) => filterFollowing.set(ev.target.checked)
+                }), i18n(' Hide following messages')
+              ])
             ])
           ])
         ])
