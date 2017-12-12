@@ -1,12 +1,11 @@
 var h = require('mutant/h')
-var Value = require('mutant/value')
-var when = require('mutant/when')
+var computed = require('mutant/computed')
 var ref = require('ssb-ref')
 
 var nest = require('depnest')
 
 exports.needs = nest({
-  'sbot.async.get': 'first',
+  'message.obs.get': 'first',
   'profile.html.person': 'first',
   'message.html.meta': 'first',
   'intl.sync.i18n': 'first'
@@ -17,27 +16,17 @@ exports.gives = nest('message.html.missing')
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html.missing', function (id, hintMessage) {
-    var result = Value()
-    if (ref.isMsg(id)) {
-      api.sbot.async.get(id, function (_, value) {
-        if (!value) {
-          result.set(messageMissing(id, hintMessage))
-        }
-      })
-    }
-
-    return result
+    if (!ref.isMsg(id)) return
+    var msg = api.message.obs.get(id, hintMessage)
+    return computed(msg, msg => {
+      if (msg && msg.value && msg.value.missing) {
+        // TODO: handle out-of-order resolved message, or message resolved later
+        return messageMissing(msg, hintMessage)
+      }
+    })
   })
 
-  function messageMissing (id, hintMessage) {
-    var possibleAuthor = hintMessage.value.content.reply && hintMessage.value.content.reply[id]
-    var msg = {
-      key: id,
-      value: {
-        missing: true,
-        author: ref.isFeed(possibleAuthor) ? possibleAuthor : null
-      }
-    }
+  function messageMissing (msg, hintMessage) {
     var element = h('Message -missing -reply', [
       h('header', [
         h('div.main', [
@@ -48,7 +37,7 @@ exports.create = function (api) {
                 ? [api.profile.html.person(msg.value.author), ' ', i18n('(missing message)')]
                 : h('strong', i18n('Missing message')),
               i18n(' via '), api.profile.html.person(hintMessage.value.author)]),
-            h('div.meta', [h('a', {href: id}, id)])
+            h('div.meta', [h('a', {href: msg.key}, msg.key)])
           ])
         ]),
         h('div.meta', [
