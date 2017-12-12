@@ -86,7 +86,7 @@ exports.create = function (api) {
                   type: 'checkbox',
                   checked: filterFollowing,
                   'ev-change': (ev) => filterFollowing.set(ev.target.checked)
-                }), i18n(' Hide following messages')
+                }), ' ', i18n('Hide following messages')
               ])
             ])
           ])
