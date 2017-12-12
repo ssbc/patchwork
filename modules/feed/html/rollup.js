@@ -174,6 +174,7 @@ exports.create = function (api) {
           prefiltered ? pull(
             api.feed.pull.unique(),
             pull.filter(msg => !api.message.sync.isBlocked(msg)),
+            pull.filter(rootFilter),
             api.feed.pull.withReplies()
           ) : pull(
             pull.filter(bumpFilter),
