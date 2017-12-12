@@ -173,7 +173,7 @@
 	"An error occured while publishing your message.": "An error occured while publishing your message.",
 	"Missing message": "Missing message",
 	" via ": " via ",
-	"Cannot load thead": "Cannot load thead",
+	"Cannot load thread": "Cannot load thread",
 	"The author of this message could be outside of your follow range or they may be blocked.": "The author of this message could be outside of your follow range or they may be blocked.",
 	"You follow %s people that follow this person.": {
 		"one": "You follow someone that follows this person.",

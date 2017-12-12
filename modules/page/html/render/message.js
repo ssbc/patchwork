@@ -50,7 +50,7 @@ exports.create = function (api) {
     api.sbot.async.get(id, (err, value) => {
       if (err) {
         return result.set(h('PageHeading', [
-          h('h1', i18n('Cannot load thead'))
+          h('h1', i18n('Cannot load thread'))
         ]))
       }
 
