@@ -2,7 +2,7 @@ var FlumeReduce = require('flumeview-reduce')
 var normalizeChannel = require('ssb-ref').normalizeChannel
 
 module.exports = function (ssb, config) {
-  return ssb._flumeUse('patchwork-channels', FlumeReduce(1, reduce, map))
+  return ssb._flumeUse('patchwork-channels', FlumeReduce(2, reduce, map))
 }
 
 function reduce (result, item) {
