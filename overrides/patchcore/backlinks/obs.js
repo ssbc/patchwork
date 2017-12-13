@@ -94,7 +94,7 @@ exports.create = function (api) {
           var collection = collections[msg.dest]
           if (collection) {
             var value = resolve(collection)
-            value.push(msg)
+            sorted.add(value, msg, compareAsserted)
             collection.set(value)
           }
         })
