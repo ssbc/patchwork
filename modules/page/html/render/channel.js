@@ -58,10 +58,16 @@ exports.create = function (api) {
       if (api.channel.sync.normalize(msg.value.content.channel) === channel) return true
       if (Array.isArray(msg.value.content.mentions)) {
         if (msg.value.content.mentions.some(mention => {
-          return mention && api.channel.sync.normalize(mention.link) === `#${channel}`
+          return mention && getNormalized(mention.link) === `#${channel}`
         })) {
           return 'channel-mention'
         }
+      }
+    }
+
+    function getNormalized (link) {
+      if (typeof link === 'string' && link.startsWith('#')) {
+        return `#${api.channel.sync.normalize(link.slice(1))}`
       }
     }
   })
