@@ -250,12 +250,14 @@ function checkReplyForcesDisplay (item) {
 }
 
 function checkFollowing (lookup, ids, target) {
-  // TODO: rewrite contacts index (for some reason the order is different)
   if (!lookup) return false
-  // HACK: only lookup the first ID until a method is added to ssb-friends to
-  // correctly identify latest info
-  var value = ids.slice(0, 1).map(id => lookup[id] && lookup[id][target])
-  return value && value[0]
+  // HACK: need to improve this to properly resolve follows and unfollows
+  var values = ids.map(id => lookup[id] && lookup[id][target])
+  if (values.includes(true) && !values.includes(false)) {
+    return true
+  } else if (values.includes(false)) {
+    return false
+  }
 }
 
 function checkChannel (lookup, ids, channel) {
