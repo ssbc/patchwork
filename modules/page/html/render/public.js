@@ -26,6 +26,7 @@ exports.needs = nest({
   'profile.obs.recentlyUpdated': 'first',
   'contact.obs.following': 'first',
   'contact.obs.blocking': 'first',
+  'contact.obs.sameAs': 'first',
   'channel.obs': {
     subscribed: 'first',
     recent: 'first'
@@ -33,7 +34,8 @@ exports.needs = nest({
   'channel.sync.normalize': 'first',
   'keys.sync.id': 'first',
   'settings.obs.get': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'lib.nextStepper': 'first'
 })
 
 exports.gives = nest({
@@ -48,6 +50,7 @@ exports.create = function (api) {
     if (path !== '/public') return // "/" is a sigil for "page"
 
     var id = api.keys.sync.id()
+    var sameAs = api.contact.obs.sameAs(id)
     var following = api.contact.obs.following(id)
     var blocking = api.contact.obs.blocking(id)
     var subscribedChannels = api.channel.obs.subscribed(id)
@@ -64,27 +67,29 @@ exports.create = function (api) {
 
     var lastMessage = null
 
-    var getStream = (opts) => {
-      if (!opts.lt) {
-        // HACK: reset the isReplacementMessage check
-        lastMessage = null
-      }
-      if (opts.lt != null && !opts.lt.marker) {
-        // if an lt has been specified that is not a marker, assume stream is finished
-        return pull.empty()
-      } else {
-        return api.sbot.pull.stream(sbot => sbot.patchwork.roots(extend(opts, {
-          ids: [id],
-          onlySubscribedChannels: filters() && filters().onlySubscribed
-        })))
-      }
+    var getStream = () => {
+      return api.lib.nextStepper(opts => {
+        if (!opts.lt) {
+          // HACK: reset the isReplacementMessage check
+          lastMessage = null
+        }
+        if (opts.lt != null && !opts.lt.marker) {
+          // if an lt has been specified that is not a marker, assume stream is finished
+          return pull.empty()
+        } else {
+          return api.sbot.pull.stream(sbot => sbot.patchwork.roots(extend(opts, {
+            ids: sameAs(),
+            onlySubscribedChannels: filters() && filters().onlySubscribed
+          })))
+        }
+      }, {limit: 50, reverse: true})
     }
 
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
       prefiltered: true, // we've already filtered out the roots we don't want to include
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
+      updateStream: getUpdateStream(),
       bumpFilter: function (msg) {
         // this needs to match the logic in sbot/roots so that we display the
         // correct bump explainations
@@ -93,7 +98,7 @@ exports.create = function (api) {
           if (type === 'vote') return false
 
           var author = msg.value.author
-          return matchesSubscribedChannel(msg) || id === author || following().includes(author)
+          return matchesSubscribedChannel(msg) || sameAs().includes(id) || following().includes(author)
         }
       },
       rootFilter: function (msg) {
@@ -113,6 +118,7 @@ exports.create = function (api) {
         }
       },
       waitFor: computed([
+        sameAs.sync,
         following.sync,
         subscribedChannels.sync
       ], (...x) => x.every(Boolean))
@@ -120,6 +126,16 @@ exports.create = function (api) {
 
     // call reload whenever filters changes (equivalent to the refresh from inside rollup)
     filters(feedView.reload)
+
+    // switch streams when sameAs changes
+    sameAs(() => {
+      if (sameAs.sync()) {
+        feedView.set(getStream, {
+          updateStream: getUpdateStream()
+        })
+        feedView.reload()
+      }
+    })
 
     var result = h('div.SplitView', [
       h('div.side', [
@@ -134,6 +150,10 @@ exports.create = function (api) {
     }
 
     return result
+
+    function getUpdateStream () {
+      return api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: sameAs()}))
+    }
 
     function checkFeedFilter (root) {
       if (filters()) {

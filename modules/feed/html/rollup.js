@@ -61,6 +61,7 @@ exports.create = function (api) {
       'Show ', h('strong', [throttledUpdates]), ' ', plural(throttledUpdates, i18n('update'), i18n('updates'))
     ])
 
+    var abortUpdateStream = null
     var abortLastFeed = null
     var content = Value()
     var loading = Proxy(true)
@@ -78,7 +79,8 @@ exports.create = function (api) {
         return () => {
           if (abortLastFeed) {
             abortLastFeed()
-            abortLastFeed = null
+            abortUpdateStream && abortUpdateStream()
+            abortUpdateStream = abortLastFeed = null
           }
         }
       }]
@@ -92,11 +94,35 @@ exports.create = function (api) {
 
     onceTrue(waitFor, () => {
       // display pending updates
+      refreshUpdateStream()
+    })
+
+    var result = MutantArray([
+      when(updates, updateLoader),
+      container
+    ])
+
+    result.pendingUpdates = throttledUpdates
+    result.reload = refresh
+    result.set = function (newGetStream, opts) {
+      getStream = newGetStream
+      updateStream = opts && opts.updateStream
+      refreshUpdateStream()
+    }
+
+    return result
+
+    function refreshUpdateStream () {
+      abortUpdateStream && abortUpdateStream()
+      var abortable = Abortable()
+      abortUpdateStream = abortable.abort
+
       pull(
         updateStream || pull(
           getStream({old: false}),
           LookupRoot()
         ),
+        abortable,
         pull.filter((msg) => {
           // only render posts that have a root message
           var root = msg.root || msg
@@ -121,17 +147,7 @@ exports.create = function (api) {
           }
         })
       )
-    })
-
-    var result = MutantArray([
-      when(updates, updateLoader),
-      container
-    ])
-
-    result.pendingUpdates = throttledUpdates
-    result.reload = refresh
-
-    return result
+    }
 
     function canRenderMessage (msg) {
       return api.message.html.canRender(msg)
@@ -150,7 +166,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = nextStepper(getStream, {reverse: true, limit: 50})
+        var stream = getStream({reverse: true})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {

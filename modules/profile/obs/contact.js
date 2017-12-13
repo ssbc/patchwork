@@ -3,6 +3,8 @@ var nest = require('depnest')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
+  'contact.obs.rootId': 'first',
+  'contact.obs.sameAs': 'first',
   'contact.obs': {
     followers: 'first',
     following: 'first',
@@ -14,21 +16,23 @@ exports.gives = nest('profile.obs.contact')
 
 exports.create = function (api) {
   return nest('profile.obs.contact', function (id) {
-    var yourId = api.keys.sync.id()
-    var yourFollowing = api.contact.obs.following(yourId)
-    var yourFollowers = api.contact.obs.followers(yourId)
+    var theirId = api.contact.obs.rootId(id)
+    var yourId = api.contact.obs.rootId(api.keys.sync.id())
+    var keys = api.contact.obs.sameAs(id)
+    var yourFollowing = computed(yourId, api.contact.obs.following)
+    var yourFollowers = computed(yourId, api.contact.obs.followers)
 
-    var followers = api.contact.obs.followers(id)
-    var following = api.contact.obs.following(id)
+    var followers = computed(theirId, api.contact.obs.followers)
+    var following = computed(theirId, api.contact.obs.following)
     var sync = computed([followers.sync, following.sync], (...x) => x.every(Boolean))
 
-    var blockers = api.contact.obs.blockers(id)
-    var youBlock = computed(blockers, function (blockers) {
+    var blockers = computed(theirId, api.contact.obs.blockers)
+    var youBlock = computed([blockers, yourId], function (blockers, yourId) {
       return blockers.includes(yourId)
     })
 
-    var youFollow = computed([yourFollowing], function (yourFollowing) {
-      return yourFollowing.includes(id)
+    var youFollow = computed([yourFollowing, theirId], function (yourFollowing, theirId) {
+      return yourFollowing.includes(theirId)
     })
 
     var blockingFriends = computed([yourFollowers, yourFollowing, blockers], inAllSets)
@@ -43,7 +47,7 @@ exports.create = function (api) {
       return a.some((id) => b.includes(id))
     })
 
-    var isYou = computed([yourId, id], (a, b) => a === b)
+    var isYou = computed([yourId, theirId], (a, b) => a === b)
 
     return {
       followers,
@@ -61,6 +65,8 @@ exports.create = function (api) {
       noOutgoing: not(hasOutgoing, isYou),
       hasIncoming,
       noIncoming: not(hasIncoming, isYou),
+      keys,
+      theirId,
       yourId,
       yourFollowing,
       yourFollowers,

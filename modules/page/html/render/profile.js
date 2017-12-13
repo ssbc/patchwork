@@ -26,6 +26,7 @@ exports.needs = nest({
   'app.navigate': 'first',
   'profile.obs.contact': 'first',
   'contact.html.followToggle': 'first',
+  'contact.obs.rootId': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.i18n_n': 'first',
   'sheet.profiles': 'first'
@@ -37,7 +38,6 @@ exports.create = function (api) {
   const plural = api.intl.sync.i18n_n
   return nest('page.html.render', function profile (id) {
     if (!ref.isFeed(id)) return
-    var yourId = api.keys.sync.id()
     var name = api.about.obs.name(id)
     var description = api.about.obs.description(id)
     var contact = api.profile.obs.contact(id)
@@ -54,13 +54,15 @@ exports.create = function (api) {
       return followers.filter(follower => !friends.includes(follower))
     })
 
-    var names = computed([api.about.obs.names(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
-    var images = computed([api.about.obs.images(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
+    var names = computed([api.about.obs.names(id), contact.yourFollowing, contact.following, contact.yourId, id], filterByValues)
+    var images = computed([api.about.obs.images(id), contact.yourFollowing, contact.following, contact.yourId, id], filterByValues)
 
     var namePicker = h('div', {className: 'Picker'}, [
-      map(dictToCollection(names), (item) => {
-        var isSelf = computed(item.value, (ids) => ids.includes(id))
-        var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
+      map(dictToCollection(names), (item, invalidateOn) => {
+        invalidateOn(contact.yourId)
+        invalidateOn(contact.theirId)
+        var isSelf = computed(item.value, (ids) => ids.includes(contact.theirId()))
+        var isAssigned = computed(item.value, (ids) => ids.includes(contact.yourId()))
         return h('a.name', {
           'ev-click': () => {
             if (!isAssigned()) {
@@ -86,9 +88,11 @@ exports.create = function (api) {
     ])
 
     var imagePicker = h('div', {className: 'Picker'}, [
-      map(dictToCollection(images), (item) => {
-        var isSelf = computed(item.value, (ids) => ids.includes(id))
-        var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
+      map(dictToCollection(images), (item, invalidateOn) => {
+        invalidateOn(contact.yourId)
+        invalidateOn(contact.theirId)
+        var isSelf = computed(item.value, (ids) => ids.includes(contact.theirId()))
+        var isAssigned = computed(item.value, (ids) => ids.includes(contact.yourId()))
         return h('a.name', {
           'ev-click': () => {
             if (!isAssigned()) {
@@ -125,7 +129,7 @@ exports.create = function (api) {
         h('div.title', [
           h('h1', [name]),
           h('div.meta', [
-            when(id === yourId, [
+            when(contact.isYou, [
               h('button', {'ev-click': api.profile.sheet.edit}, i18n('Edit Your Profile'))
             ], [
               api.contact.html.followToggle(id)
@@ -133,7 +137,9 @@ exports.create = function (api) {
           ])
         ]),
         h('section -publicKey', [
-          h('pre', {title: i18n('Public key for this profile')}, id)
+          map(contact.keys, (key) => {
+            return h('pre', {title: i18n('Public key for this profile')}, key)
+          })
         ]),
 
         when(contact.notFollowing, [

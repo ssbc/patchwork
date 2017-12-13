@@ -157,7 +157,7 @@ module.exports = function (ssb, config) {
 
   function shouldShow (filterResult, {onlySubscribedChannels}) {
     if (filterResult && onlySubscribedChannels && filterResult.hasChannel) {
-      return filterResult.matchesChannel || filterResult.matchingTags.length || filterResult.mentionsYou || filterResult.isYours
+      return filterResult.matchesChannel || filterResult.matchingTags.length || filterResult.isYours
     } else {
       return !!filterResult
     }
@@ -192,7 +192,7 @@ module.exports = function (ssb, config) {
           var isYours = ids.includes(msg.value.author)
           var mentionsYou = getMentionsYou(ids, msg.value.content.mentions)
           var following = checkFollowing(friends, ids, msg.value.author)
-          if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
+          if (isYours || matchesChannel || matchingTags.length || following) {
             return {
               matchingTags, matchesChannel, isYours, following, mentionsYou, hasChannel
             }

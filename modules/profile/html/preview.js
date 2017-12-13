@@ -41,7 +41,7 @@ exports.create = function (api) {
             ])
           ]),
           h('section -publicKey', [
-            h('pre', {title: i18n('Public key for this profile')}, id)
+            h('pre', {title: i18n('Public key for this profile')}, contact.theirId)
           ])
         ])
       ]),
