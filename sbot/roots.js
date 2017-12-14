@@ -246,7 +246,7 @@ function getMentionsYou (ids, mentions) {
 function checkReplyForcesDisplay (item) {
   var filterResult = item.filterResult || {}
   var matchesTags = filterResult.matchingTags && !!filterResult.matchingTags.length
-  return matchesTags || filterResult.isYours || filterResult.mentionsYou
+  return matchesTags || filterResult.isYours
 }
 
 function checkFollowing (lookup, ids, target) {
