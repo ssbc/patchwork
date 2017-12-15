@@ -19,6 +19,8 @@ var windows = {
 var ssbConfig = null
 var quitting = false
 
+// TODO: dependencies for tray settings
+
 electron.app.on('ready', () => {
   setupContext('ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
@@ -64,6 +66,22 @@ electron.app.on('ready', () => {
       windows.background.webContents.openDevTools({detach: true})
     }
   })
+
+  // TODO: add listener for enabeling tray, might need to move tray definition
+  tray = new electron.Tray('./assets/icon.png')
+  const contextMenu = Menu.buildFromTemplate([
+    {label: 'Show Patchwork', click: function () {
+        windows.main.show()
+      }
+    },
+    {label: 'Quit', click: function () {
+      quitting = true
+      electron.app.quit()
+    }}
+  ])
+  tray.setToolTip('Patchwork')
+  tray.setContextMenu(contextMenu)
+  // TODO: should have tray killer on tray disabling
 })
 
 function openMainWindow () {
@@ -88,14 +106,22 @@ function openMainWindow () {
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('close', function (e) {
-      if (!quitting && process.platform === 'darwin') {
+      if (!quitting) { // TODO: and darwin or not quit and trayEnabled + minimizeOnClose
         e.preventDefault()
         windows.main.hide()
       }
+      return false
     })
+    // TODO: is this still needed? probably if the tray is disabled
     windows.main.on('closed', function () {
       windows.main = null
       if (process.platform !== 'darwin') electron.app.quit()
+    })
+
+    windows.main.on('minimize', function (e) {
+      // TODO: if trayEnabled and minimizeToTray
+      e.preventDefault()
+      windows.main.hide()
     })
   }
 }
