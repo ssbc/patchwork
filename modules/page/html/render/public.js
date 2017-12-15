@@ -93,7 +93,12 @@ exports.create = function (api) {
           if (type === 'vote') return false
 
           var author = msg.value.author
-          return matchesSubscribedChannel(msg) || id === author || following().includes(author)
+
+          if (id === author || following().includes(author)) {
+            return true
+          } else if (matchesSubscribedChannel(msg)) {
+            return 'matches-channel'
+          }
         }
       },
       rootFilter: function (msg) {
@@ -143,10 +148,14 @@ exports.create = function (api) {
     }
 
     function matchesSubscribedChannel (msg) {
-      var channel = api.channel.sync.normalize(msg.value.content.channel)
-      var tagged = checkTag(msg.value.content.mentions)
-      var isSubscribed = channel ? subscribedChannels().has(channel) : false
-      return isSubscribed || tagged
+      if (msg.filterResult) {
+        return msg.filterResult.matchesChannel || msg.filterResult.matchingTags.length
+      } else {
+        var channel = api.channel.sync.normalize(msg.value.content.channel)
+        var tagged = checkTag(msg.value.content.mentions)
+        var isSubscribed = channel ? subscribedChannels().has(channel) : false
+        return isSubscribed || tagged
+      }
     }
 
     function checkTag (mentions) {

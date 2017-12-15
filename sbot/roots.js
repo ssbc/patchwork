@@ -54,7 +54,10 @@ module.exports = function (ssb, config) {
 
             if (filter && root && root.value && !isPrivate) {
               var filterResult = filter(ids, root)
-              return checkReplyForcesDisplay(item) || shouldShow(filterResult, {onlySubscribedChannels})
+              if (checkReplyForcesDisplay(item) || shouldShow(filterResult, {onlySubscribedChannels})) {
+                root.filterResult = filterResult
+                return true
+              }
             }
           })
         ))
@@ -107,14 +110,16 @@ module.exports = function (ssb, config) {
 
             // skip this item if it has already been included
             if (!included.has(root.key) && filter && root && root.value && !isPrivate) {
-              if (checkReplyForcesDisplay(item)) {
-                // include this item if it has matching tags or the author is you
+              if (checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
+                // update filter result so that we can display the correct bump message
+                root.filterResult = extend(item.filterResult, {forced: true})
                 included.add(root.key)
                 return true
               } else if (!seen.has(root.key)) {
                 seen.add(root.key)
                 var filterResult = filter(ids, root)
                 if (shouldShow(filterResult, {onlySubscribedChannels})) {
+                  root.filterResult = filterResult
                   included.add(root.key)
                   return true
                 }
@@ -125,7 +130,6 @@ module.exports = function (ssb, config) {
           // MAP ROOT ITEMS
           pull.map(item => {
             var root = item.root || item
-            root.filterResult = item.filterResult
             return root
           })
         ))
@@ -191,6 +195,11 @@ module.exports = function (ssb, config) {
           var matchingTags = getMatchingTags(subscriptions, ids, msg.value.content.mentions)
           var isYours = ids.includes(msg.value.author)
           var mentionsYou = getMentionsYou(ids, msg.value.content.mentions)
+
+          if (msg.value.author === '@u1Q+EEna+cJ+JGYppltW0hNZPAkJikVtOH5oMYZ3cEA=.ed25519') {
+            debugger
+          }
+
           var following = checkFollowing(friends, ids, msg.value.author)
           if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
             return {

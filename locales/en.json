@@ -190,5 +190,11 @@
 	"Public Feed Options": "Public Feed Options",
 	"Only include posts from subscribed channels": "Only include posts from subscribed channels",
 	"Default": "Default",
-	"Force Disconnect": "Force Disconnect"
+	"Force Disconnect": "Force Disconnect",
+	"mentioned in your network": "mentioned in your network",
+	"%s people from your network replied to this message on ": {
+		"one": "%s person from your network replied to this message on ",
+		"other": "%s people from your network replied to this message on "
+	},
+	"(you)": "(you)"
 }

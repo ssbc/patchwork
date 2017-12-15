@@ -1,0 +1,5 @@
+ChannelLink {
+  border-bottom: 1px dotted;
+  color: #333
+  font-weight: bold
+}

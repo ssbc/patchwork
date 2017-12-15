@@ -27,6 +27,7 @@ exports.needs = nest({
   'message.sync.unbox': 'first',
   'message.sync.timestamp': 'first',
   'profile.html.person': 'first',
+  'channel.html.link': 'first',
   'message.html.link': 'first',
   'message.sync.root': 'first',
   'feed.pull.rollup': 'first',
@@ -35,6 +36,7 @@ exports.needs = nest({
   'sbot.async.get': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
+  'intl.sync.i18n_n': 'first',
   'message.html.missing': 'first'
 })
 
@@ -44,6 +46,7 @@ exports.gives = nest({
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
+  const i18nPlural = api.intl.sync.i18n_n
   return nest('feed.html.rollup', function (getStream, {
     prepend,
     rootFilter = returnTrue,
@@ -100,7 +103,7 @@ exports.create = function (api) {
         pull.filter((msg) => {
           // only render posts that have a root message
           var root = msg.root || msg
-          return root && root.value && root.value.content && rootFilter(root) && bumpFilter(msg) && displayFilter(msg)
+          return root && root.value && root.value.content && rootFilter(root) && bumpFilter(msg, root) && displayFilter(msg)
         }),
         pull.drain((msg) => {
           if (msg.value.content.type === 'vote') return
@@ -234,15 +237,32 @@ exports.create = function (api) {
       unreadIds.delete(item.key)
 
       if (!renderedMessage) return h('div')
-      if (lastBumpType) {
+
+      if (rootBumpType === 'matches-channel') {
+        var channels = []
+        if (item.value.content.channel) channels.push(item.value.content.channel)
+        if (item.filterResult && Array.isArray(item.filterResult.matchingTags)) {
+          item.filterResult.matchingTags.forEach(x => channels.push(x))
+        }
+        meta = h('div.meta', [
+          many(channels, api.channel.html.link, i18n), ' ', i18n('mentioned in your network')
+        ])
+      } else if (lastBumpType) {
         var bumps = lastBumpType === 'vote'
           ? getLikeAuthors(groupedBumps[lastBumpType])
           : getAuthors(groupedBumps[lastBumpType])
 
-        var description = i18n(bumpMessages[lastBumpType] || 'added changes')
-        meta = h('div.meta', [
-          many(bumps, api.profile.html.person, i18n), ' ', description
-        ])
+        if (lastBumpType === 'matches-channel' && item.value.content.channel) {
+          var channel = api.channel.html.link(item.value.content.channel)
+          meta = h('div.meta', [
+            i18nPlural('%s people from your network replied to this message on ', groupedBumps[lastBumpType].length), channel
+          ])
+        } else {
+          var description = i18n(bumpMessages[lastBumpType] || 'added changes')
+          meta = h('div.meta', [
+            many(bumps, api.profile.html.person, i18n), ' ', description
+          ])
+        }
       }
 
       // if there are new messages, view full thread goes to the top of those, otherwise to very first reply
@@ -264,6 +284,10 @@ exports.create = function (api) {
       result.msgIds = [item.key].concat(item.replies.map(x => x.key))
 
       return result
+    }
+
+    function channelLink (channelName) {
+      return
     }
 
     function getPriority (msg) {
