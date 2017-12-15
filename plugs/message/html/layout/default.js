@@ -8,6 +8,8 @@ exports.needs = nest({
   'message.obs.backlinks': 'first',
   'message.obs.name': 'first',
   'message.obs.author': 'first',
+  'contact.obs.following': 'first',
+  'keys.sync.id': 'first',
   'message.html': {
     link: 'first',
     meta: 'map',
@@ -23,6 +25,14 @@ exports.gives = nest('message.html.layout')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
+  var yourFollows = null
+
+  // to get sync follows
+  setImmediate(() => {
+    var yourId = api.keys.sync.id()
+    yourFollows = api.contact.obs.following(yourId)
+  })
+
   return nest('message.html.layout', layout)
 
   function layout (msg, {layout, previousId, priority, content, includeReferences = false, includeForks = true, compact = false}) {
@@ -47,6 +57,10 @@ exports.create = function (api) {
       }
     } else if (msg.value.content.project) {
       replyInfo = h('span', [i18n('on '), api.message.html.link(msg.value.content.project)])
+    }
+
+    if (yourFollows && yourFollows().includes(msg.value.author)) {
+      classList.push('-following')
     }
 
     if (compact) {
@@ -92,12 +106,14 @@ exports.create = function (api) {
     // scoped
 
     function messageHeader (msg, {replyInfo, priority}) {
+      var yourId = api.keys.sync.id()
       var additionalMeta = []
       if (priority === 2) {
         additionalMeta.push(h('span.flag -new', {title: i18n('New Message')}))
       } else if (priority === 1) {
         additionalMeta.push(h('span.flag -unread', {title: i18n('Unread Message')}))
       }
+
       return h('header', [
         h('div.main', [
           h('a.avatar', {href: `${msg.value.author}`}, [
@@ -105,7 +121,8 @@ exports.create = function (api) {
           ]),
           h('div.main', [
             h('div.name', [
-              api.profile.html.person(msg.value.author)
+              api.profile.html.person(msg.value.author),
+              msg.value.author === yourId ? [' ', h('span.you', {}, i18n('(you)'))] : null
             ]),
             h('div.meta', [
               api.message.html.timestamp(msg), ' ',

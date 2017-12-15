@@ -6,6 +6,8 @@ exports.needs = nest({
   'profile.html.person': 'first',
   'message.obs.backlinks': 'first',
   'message.obs.name': 'first',
+  'contact.obs.following': 'first',
+  'keys.sync.id': 'first',
   'message.html': {
     link: 'first',
     meta: 'map',
@@ -13,18 +15,33 @@ exports.needs = nest({
     timestamp: 'first',
     backlinks: 'first'
   },
-  'about.html.image': 'first'
+  'about.html.image': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html.layout')
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
+  var yourFollows = null
+
+  // to get sync follows
+  setImmediate(() => {
+    var yourId = api.keys.sync.id()
+    yourFollows = api.contact.obs.following(yourId)
+  })
+
   return nest('message.html.layout', layout)
 
   function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences, includeForks = true}) {
     if (!(layout === 'mini')) return
 
     var classList = ['Message -mini']
+
+    if (yourFollows && yourFollows().includes(msg.value.author)) {
+      classList.push('-following')
+    }
+
     var replyInfo = null
 
     if (msg.value.content.root) {
@@ -65,6 +82,7 @@ exports.create = function (api) {
     // scoped
 
     function messageHeader (msg, {replyInfo, priority, miniContent}) {
+      var yourId = api.keys.sync.id()
       var additionalMeta = []
       if (priority >= 2) {
         additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
@@ -76,7 +94,8 @@ exports.create = function (api) {
           ]),
           h('div.main', [
             h('div.name', [
-              api.profile.html.person(msg.value.author)
+              api.profile.html.person(msg.value.author),
+              msg.value.author === yourId ? [' ', h('span.you', {}, i18n('(you)'))] : null
             ]),
             h('div.meta', [
               miniContent, ' ',

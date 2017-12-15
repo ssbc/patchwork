@@ -15,6 +15,18 @@ Message {
     z-index: 1
   }
 
+  -following {
+    header {
+      div.main {
+        div.main {
+          div.name {
+            $following
+          }
+        }
+      }
+    }
+  }
+
   -data {
     header {
       div.main {
