@@ -82,8 +82,10 @@ module.exports = function (config) {
 
   document.head.appendChild(
     h('style', {
-      innerHTML: computed(api.settings.obs.get('patchwork.fontSize', document.documentElement.style.fontSize), size => {
-        return 'html, body {font-size: ' + size + ';}'
+      innerHTML: computed(api.settings.obs.get('patchwork.fontSize'), size => {
+        if (size) {
+          return 'html, body {font-size: ' + size + ';}'
+        }
       })
     })
   )
