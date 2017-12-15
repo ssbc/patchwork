@@ -83,9 +83,6 @@ function openMainWindow () {
       title: 'Patchwork',
       show: true,
       backgroundColor: '#EEE',
-      webPreferences: {
-        experimentalFeatures: true
-      },
       icon: './assets/icon.png'
     })
     windowState.manage(windows.main)
