@@ -81,6 +81,9 @@ electron.app.on('ready', () => {
   ])
   tray.setToolTip('Patchwork')
   tray.setContextMenu(contextMenu)
+  tray.on('click', () => {
+    windows.main.show()
+  })
   // TODO: should have tray killer on tray disabling
 })
 
