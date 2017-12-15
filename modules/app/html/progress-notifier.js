@@ -30,9 +30,16 @@ exports.create = function (api) {
     var indexProgress = computed(indexes, calcProgress)
     var migrationProgress = computed(migration, calcProgress)
 
+    var incompleteFeedsFrom = 0
+
     var downloadProgress = computed([replicateProgress.feeds, replicateProgress.incompleteFeeds], (feeds, incomplete) => {
-      if (feeds) {
-        return clamp((feeds - incomplete) / feeds)
+      if (incomplete > incompleteFeedsFrom) {
+        incompleteFeedsFrom = incomplete
+      } else if (incomplete === 0) {
+        incompleteFeedsFrom = 0
+      }
+      if (feeds && incomplete) {
+        return clamp((feeds - incomplete) / incompleteFeedsFrom)
       } else {
         return 1
       }
