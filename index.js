@@ -67,7 +67,6 @@ electron.app.on('ready', () => {
     }
   })
 
-  // TODO: add listener for enabeling tray, might need to move tray definition
   var tray = new electron.Tray('./assets/icon.png')
   var contextMenu = Menu.buildFromTemplate([
     {label: 'Toggle Visibility', click: function () {
@@ -84,7 +83,6 @@ electron.app.on('ready', () => {
   tray.on('click', () => {
     toggleWindow()
   })
-  // TODO: should have tray killer on tray disabling
 })
 
 function toggleWindow() {
@@ -125,7 +123,6 @@ function openMainWindow () {
       }
       return false
     })
-    // TODO: is this still needed? probably if the tray is disabled
     windows.main.on('closed', function () {
       windows.main = null
       if (process.platform !== 'darwin') electron.app.quit()

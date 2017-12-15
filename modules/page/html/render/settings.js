@@ -99,6 +99,7 @@ exports.create = function (api) {
 
           h('section', [
             h('h2', i18n('System Tray Options')),
+            h('p', i18n('When enabling or disabling the system tray, the application must be restarted for changes to take effect.')),
 
             h('div', [
               checkbox(trayEnabled, {
@@ -106,7 +107,6 @@ exports.create = function (api) {
               })
             ]),
 
-            // TODO: make these unavailable when tray disabled
             h('div', [
               checkbox(minimizeToTray, {
                 label: i18n('Minimize application in system tray')
