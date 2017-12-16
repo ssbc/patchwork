@@ -1,5 +1,6 @@
 var { h, when } = require('mutant')
 var nest = require('depnest')
+var packageInfo = require('../../../../package.json')
 
 var themeNames = Object.keys(require('../../../../styles'))
 
@@ -92,6 +93,12 @@ exports.create = function (api) {
                 label: i18n('Only include posts from subscribed channels')
               })
             ])
+          ]),
+
+          h('section', [
+            h('h2', i18n('Information')),
+
+            h('p', `${packageInfo.productName} ${packageInfo.version}`)
           ])
         ])
       ])
