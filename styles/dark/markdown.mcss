@@ -52,7 +52,7 @@ Markdown {
   }
   (hr) {
     border: none;
-    border-top: 1px solid #2d2c2c
+    border-top: 3px solid #636363
     margin: 1em 0
   }
   (pre) {
