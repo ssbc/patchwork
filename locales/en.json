@@ -196,5 +196,6 @@
 		"one": "%s person from your network replied to this message on ",
 		"other": "%s people from your network replied to this message on "
 	},
-	"(you)": "(you)"
+	"(you)": "(you)",
+	"Information": "Information"
 }
