@@ -196,5 +196,10 @@
 		"one": "%s person from your network replied to this message on ",
 		"other": "%s people from your network replied to this message on "
 	},
-	"(you)": "(you)"
+	"(you)": "(you)",
+	"System Tray Options": "System Tray Options",
+	"Minimize application in system tray": "Minimize application in system tray",
+	"Minimize application on close": "Minimize application on close",
+	"When enabling or disabling the system tray, the application must be restarted for changes to take effect.": "When enabling or disabling the system tray, the application must be restarted for changes to take effect.",
+	"Enable system tray icon": "Enable system tray icon"
 }

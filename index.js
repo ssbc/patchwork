@@ -18,6 +18,8 @@ var windows = {
 }
 var ssbConfig = null
 var quitting = false
+var windowVisible = true
+// TODO: dependencies for tray settings
 
 electron.app.on('ready', () => {
   setupContext('ssb', {
@@ -64,7 +66,34 @@ electron.app.on('ready', () => {
       windows.background.webContents.openDevTools({detach: true})
     }
   })
+
+  var tray = new electron.Tray('./assets/icon.png')
+  var contextMenu = Menu.buildFromTemplate([
+    {label: 'Toggle Visibility', click: function () {
+      toggleWindow()
+      }
+    },
+    {label: 'Quit', click: function () {
+      quitting = true
+      electron.app.quit()
+    }}
+  ])
+  tray.setToolTip('Patchwork')
+  tray.setContextMenu(contextMenu)
+  tray.on('click', () => {
+    toggleWindow()
+  })
 })
+
+function toggleWindow() {
+  if (windowVisible) {
+    windowVisible = false
+    windows.main.hide()
+  } else {
+    windowVisible = true
+    windows.main.show()
+  }
+}
 
 function openMainWindow () {
   if (!windows.main) {
@@ -88,14 +117,21 @@ function openMainWindow () {
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('close', function (e) {
-      if (!quitting && process.platform === 'darwin') {
+      if (!quitting) { // TODO: and darwin or not quit and trayEnabled + minimizeOnClose
         e.preventDefault()
-        windows.main.hide()
+        toggleWindow()
       }
+      return false
     })
     windows.main.on('closed', function () {
       windows.main = null
       if (process.platform !== 'darwin') electron.app.quit()
+    })
+
+    windows.main.on('minimize', function (e) {
+      // TODO: if trayEnabled and minimizeToTray
+      e.preventDefault()
+      toggleWindow()
     })
   }
 }

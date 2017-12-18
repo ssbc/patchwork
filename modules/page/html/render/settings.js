@@ -27,6 +27,9 @@ exports.create = function (api) {
     const fontSize = api.settings.obs.get('patchwork.fontSize', '')
     const filterFollowing = api.settings.obs.get('filters.following')
     const onlySubscribed = api.settings.obs.get('filters.onlySubscribed')
+    const trayEnabled = api.settings.obs.get('tray.enabled')
+    const minimizeToTray = api.settings.obs.get('tray.hideOnMinimize')
+    const minimizeOnClose = api.settings.obs.get('tray.hideOnClose')
 
     var prepend = [
       h('PageHeading', [
@@ -90,6 +93,29 @@ exports.create = function (api) {
             h('div', [
               checkbox(onlySubscribed, {
                 label: i18n('Only include posts from subscribed channels')
+              })
+            ])
+          ]),
+
+          h('section', [
+            h('h2', i18n('System Tray Options')),
+            h('p', i18n('When enabling or disabling the system tray, the application must be restarted for changes to take effect.')),
+
+            h('div', [
+              checkbox(trayEnabled, {
+                label: i18n('Enable system tray icon')
+              })
+            ]),
+
+            h('div', [
+              checkbox(minimizeToTray, {
+                label: i18n('Minimize application in system tray')
+              })
+            ]),
+
+            h('div', [
+              checkbox(minimizeOnClose, {
+                label: i18n('Minimize application on close')
               })
             ])
           ])
