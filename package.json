@@ -8,6 +8,7 @@
   "scripts": {
     "test": "standard",
     "start": "electron index.js",
+    "dev" : "electron index.js --reload",
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild",
     "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
