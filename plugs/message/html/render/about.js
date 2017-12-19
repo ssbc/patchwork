@@ -89,6 +89,8 @@ exports.create = function (api) {
   function isRenderable (msg) {
     if (msg.value.content.type !== 'about') return
     if (!ref.isFeed(msg.value.content.about)) return
+    var c = msg.value.content
+    if (!c || !c.description || !c.image || !c.name) return
     return true
   }
 }
