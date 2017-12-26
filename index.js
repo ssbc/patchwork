@@ -19,6 +19,29 @@ var windows = {
 var ssbConfig = null
 var quitting = false
 
+/**
+ * It's not possible to run two instances of patchwork as it would create two
+ * scuttlebot instances that conflict on the same port. Before opening patchwork,
+ * we check if it's already running and if it is we focus the existing window
+ * rather than opening a new instance.
+ */
+function quitIfAlreadyRunning() {
+  var shouldQuit = electron.app.makeSingleInstance(function(commandLine, workingDirectory) {
+    // Someone tried to run a second instance, we should focus our window.
+    if (windows.main) {
+      if (windows.main.isMinimized()) windows.main.restore();
+      windows.main.focus();
+    }
+  });
+
+  if (shouldQuit) {
+    electron.app.quit();
+    return;
+  }
+}
+
+quitIfAlreadyRunning();
+
 electron.app.on('ready', () => {
   setupContext('ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
