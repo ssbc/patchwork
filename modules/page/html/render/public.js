@@ -24,6 +24,7 @@ exports.needs = nest({
 
   'feed.html.rollup': 'first',
   'profile.obs.recentlyUpdated': 'first',
+  'profile.obs.contact': 'first',
   'contact.obs.following': 'first',
   'contact.obs.blocking': 'first',
   'channel.obs': {
@@ -57,6 +58,7 @@ exports.create = function (api) {
     var connectedPeers = api.sbot.obs.connectedPeers()
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
+    var contact = api.profile.obs.contact(id)
 
     var prepend = [
       api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
@@ -130,7 +132,12 @@ exports.create = function (api) {
       h('div.side', [
         getSidebar()
       ]),
-      h('div.main', feedView)
+      h('div.main', [
+        when(
+          computed([contact.isNotFollowingAnybody, loading], (a,b) => a && !b),
+           renderNoVisiblePostsWarning()
+         ),
+         feedView])
     ])
 
     result.pendingUpdates = feedView.pendingUpdates
@@ -281,6 +288,15 @@ exports.create = function (api) {
       })
     }
   }
+}
+
+function renderNoVisiblePostsWarning() {
+  return  h('div', {classList: 'PublicFeed main'}, h('section -notFollowingAnyoneWarning', [
+    h('h1', '⚠️ You are not following anybody.'),
+    h('h3', `You may not be able to see new posts and replies.`),
+    h('h3', 'You can only see new posts from people you follow, and people that they follow.'),
+    h('h3', 'Follow one or more users to see some new posts.')
+  ]))
 }
 
 function getType (msg) {
