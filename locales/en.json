@@ -197,5 +197,10 @@
 		"other": "%s people from your network replied to this message on "
 	},
 	"(you)": "(you)",
-	"Information": "Information"
+	"Information": "Information",
+
+	"You are not following anybody.": "You are not following anybody",
+	"You may not be able to see new posts and replies.": "You may not be able to see new posts and replies.",
+	"You can only see new posts from people you follow, and people that they follow.": "You can only see new posts from people you follow, and people that they follow.",
+	"Follow one or more users to see some new posts.": "Follow one or more users to see some new posts."
 }

@@ -135,7 +135,7 @@ exports.create = function (api) {
       h('div.main', [
         when(
           computed([contact.isNotFollowingAnybody, loading], (a,b) => a && !b),
-           renderNoVisiblePostsWarning()
+           renderNoVisiblePostsWarning(i18n)
          ),
          feedView])
     ])
@@ -290,12 +290,12 @@ exports.create = function (api) {
   }
 }
 
-function renderNoVisiblePostsWarning() {
+function renderNoVisiblePostsWarning(i18n) {
   return  h('div', {classList: 'PublicFeed main'}, h('section -notFollowingAnyoneWarning', [
-    h('h1', '⚠️ You are not following anybody.'),
-    h('h3', `You may not be able to see new posts and replies.`),
-    h('h3', 'You can only see new posts from people you follow, and people that they follow.'),
-    h('h3', 'Follow one or more users to see some new posts.')
+    h('h1', i18n('You are not following anybody.')),
+    h('h3', i18n(`You may not be able to see new posts and replies.`)),
+    h('h3', i18n('You can only see new posts from people you follow, and people that they follow.')),
+    h('h3', i18n('Follow one or more users to see some new posts.'))
   ]))
 }
 
