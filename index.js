@@ -35,8 +35,8 @@ electron.app.on('ready', () => {
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
+    var win = menu.find(x => x.label === 'Window')
     if (process.platform === 'darwin') {
-      var win = menu.find(x => x.label === 'Window')
       win.submenu = [
         { role: 'minimize' },
         { role: 'zoom' },
@@ -45,6 +45,13 @@ electron.app.on('ready', () => {
         { role: 'front' }
       ]
     }
+    win.submenu.push({
+      label: 'Find in Page',
+      accelerator: 'CmdOrCtrl+F',
+      click() {
+        windows.main.webContents.send('showSearch')
+      }
+    })
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
     openMainWindow()
   })

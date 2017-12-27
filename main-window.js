@@ -33,6 +33,7 @@ module.exports = function (config) {
     'page.html.render': 'first',
     'app.html.search': 'first',
     'app.html.channels': 'first',
+    'app.html.findInPage': 'first',
     'app.views': 'first',
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
@@ -131,6 +132,7 @@ module.exports = function (config) {
         ])
       ])
     ),
+    api.app.html.findInPage(views),
     views.html
   ])
 
