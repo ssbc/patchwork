@@ -61,7 +61,8 @@ exports.create = function (api) {
     var contact = api.profile.obs.contact(id)
 
     var prepend = [
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
+      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') }),
+      noVisibleNewPostsWarning()
     ]
 
     var lastMessage = null
@@ -132,12 +133,7 @@ exports.create = function (api) {
       h('div.side', [
         getSidebar()
       ]),
-      h('div.main', [
-        when(
-          computed([contact.isNotFollowingAnybody, loading], (a,b) => a && !b),
-           renderNoVisiblePostsWarning(i18n)
-         ),
-         feedView])
+      h('div.main', feedView)
     ])
 
     result.pendingUpdates = feedView.pendingUpdates
@@ -266,6 +262,23 @@ exports.create = function (api) {
       ]
     }
 
+    function noVisibleNewPostsWarning() {
+      var content =
+        h('div', {classList: 'PublicFeed main'}, h('section -notFollowingAnyoneWarning', [
+          h('h1', i18n('You are not following anybody.')),
+          h('h3', i18n(`You may not be able to see new posts and replies.`)),
+          h('h3', i18n('You can only see new posts from people you follow, and people that they follow.')),
+          h('h3', i18n('Follow one or more users to see some new posts.'))
+        ]))
+
+      return when(
+        computed([loading, contact.isNotFollowingAnybody],
+           (isLoading,isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
+        ),
+        content
+       )
+    }
+
     function subscribe (id) {
       api.message.async.publish({
         type: 'channel',
@@ -288,15 +301,6 @@ exports.create = function (api) {
       })
     }
   }
-}
-
-function renderNoVisiblePostsWarning(i18n) {
-  return  h('div', {classList: 'PublicFeed main'}, h('section -notFollowingAnyoneWarning', [
-    h('h1', i18n('You are not following anybody.')),
-    h('h3', i18n(`You may not be able to see new posts and replies.`)),
-    h('h3', i18n('You can only see new posts from people you follow, and people that they follow.')),
-    h('h3', i18n('Follow one or more users to see some new posts.'))
-  ]))
 }
 
 function getType (msg) {

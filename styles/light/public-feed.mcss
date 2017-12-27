@@ -4,12 +4,11 @@ PublicFeed {
   section {
     background: #4c4a4a
     color: white
-    padding: 5px
-    text-align: center
+    padding: 20px
+    width: 700px
 
     -notFollowingAnyoneWarning {
-      padding: 8px;
-      border: 2px solid #D8000C;
+      border: 1px solid #D8000C;
       background: #FFBABA;
       margin: 5px 0;
       color: #D8000C;
