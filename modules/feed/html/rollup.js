@@ -112,9 +112,9 @@ exports.create = function (api) {
           // Only increment the 'new since' for items that we render on
           // the feed as otherwise the 'show <n> updates message' will be
           // shown on new messages that patchwork cannot render
-          if (canRenderMessage(msg) && (!msg.root || canRenderMessage(msg.root))) {
-            newSinceRefresh.add(msg.key)
-            unreadIds.add(msg.key)
+          if (canRenderMessage(msg) && msg.value.author != yourId && (!msg.root || canRenderMessage(msg.root))) {
+              newSinceRefresh.add(msg.key)
+              unreadIds.add(msg.key)
           }
 
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
