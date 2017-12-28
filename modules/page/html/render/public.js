@@ -265,10 +265,11 @@ exports.create = function (api) {
     function noVisibleNewPostsWarning() {
       var content =
         h('div', {classList: 'PublicFeed main'}, h('section -notFollowingAnyoneWarning', [
-          h('h3', i18n('Welcome to Patchwork')),
+          h('h1', i18n('Welcome to Patchwork')),
           h('p', i18n('You may not be able to see new content until you follow some users or pubs.')),
-          h('span', i18n("For help, see the 'Getting Started' guide at ")),
-          h('a', {href: 'https://www.scuttlebutt.nz/'}, 'https://www.scuttlebutt.nz/')
+          h('p', [i18n("For help, see the 'Getting Started' guide at "),
+            h('a', {href: 'https://www.scuttlebutt.nz/'}, 'https://www.scuttlebutt.nz/')]
+          ),
         ]))
 
       return when(
