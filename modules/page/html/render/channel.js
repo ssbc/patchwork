@@ -10,7 +10,8 @@ exports.needs = nest({
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
   'keys.sync.id': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'profile.obs.contact': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -20,8 +21,12 @@ exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '#') return
 
+    var id = api.keys.sync.id()
+
     var channel = api.channel.sync.normalize(path.substr(1))
-    var subscribedChannels = api.channel.obs.subscribed(api.keys.sync.id())
+    var subscribedChannels = api.channel.obs.subscribed(id)
+
+    var contact = api.profile.obs.contact(id)
 
     var prepend = [
       h('PageHeading', [
@@ -43,7 +48,8 @@ exports.create = function (api) {
       api.message.html.compose({
         meta: {type: 'post', channel},
         placeholder: i18n('Write a message in this channel')
-      })
+      }),
+      noVisibleNewPostsWarning()
     ]
 
     return api.feed.html.rollup(api.feed.pull.channel(channel), {
@@ -70,6 +76,20 @@ exports.create = function (api) {
         return `#${api.channel.sync.normalize(link.slice(1))}`
       }
     }
+
+    function noVisibleNewPostsWarning() {
+      var content =
+        h('div', {classList: 'NotFollowingAnyoneWarning'}, h('section -notFollowingAnyoneWarning', [
+          h('h1', i18n('You are not Following Anyone')),
+          h('p', i18n('You may not be able to see new channel content until you follow some users or pubs.')),
+          h('p', [i18n("For help, see the 'Getting Started' guide at "),
+            h('a', {href: 'https://www.scuttlebutt.nz/'}, 'https://www.scuttlebutt.nz/')]
+          ),
+        ]))
+
+      return when(contact.isNotFollowingAnybody, content)
+    }
+
   })
 
   function subscribe (id) {

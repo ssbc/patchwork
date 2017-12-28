@@ -130,5 +130,12 @@
 	"Write a private reply": "Write a private reply",
 	"Write a public reply": "Write a public reply",
 	"External Link": "External Link",
-	"subscribed to ": "subscribed to "
+	"subscribed to ": "subscribed to ",
+	"unsubscribed from ": "unsubscribed from ",
+	"Click to unsubscribe": "Click to unsubscribe",
+	"Subscribed": "Subscribed",
+	"Write a message in this channel": "Write a message in this channel",
+	"mentioned this channel": "mentioned this channel",
+	"You are not Following Anyone": "You are not Following Anyone",
+	"You may not be able to see new channel content until you follow some users or pubs.": "You may not be able to see new channel content until you follow some users or pubs."
 }
