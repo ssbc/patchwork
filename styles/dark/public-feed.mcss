@@ -4,7 +4,7 @@ PublicFeed {
   section {
     background: #4c4a4a
     color: white
-    padding: 20px
+    padding: 5px 20px 20px 20px
     width: 700px
 
     -notFollowingAnyoneWarning {
