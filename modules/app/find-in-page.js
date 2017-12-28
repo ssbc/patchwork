@@ -1,4 +1,4 @@
-var {remote, shell, clipboard, ipcRenderer, webContents } = require('electron')
+var {remote, shell, clipboard, ipcRenderer } = require('electron')
 var nest = require('depnest')
 var { h, Value, computed, Struct, when } = require('mutant')
 
@@ -29,18 +29,20 @@ exports.create = function (api) {
     const searchString = Value('')
     const resultCount = Value(null)
 
+    window.searchString = searchString
+
     ipcRenderer.on('showSearch', () => shown.set(true))
     views.currentView(() => shown.set(false))
 
-    // webContents.on('found-in-page', (event, result) => {
-    //   resultCount.set(result.matches)
-    //   // if (result.finalUpdate) webContents.stopFindInPage('clearSelection')
-    // })
+    ipcRenderer.on('found-in-page', (event, result) => {
+      resultCount.set(result.matches - 1)
+      console.log('found-in-page',{ event, result })
+    })
 
     searchString(search => {
-      console.log('searching for', search, [views.html])
       if (search.length > 0) {
-        webContents.findInPage(search)
+        console.log('sending', search)
+        ipcRenderer.send('findInPage', search)
       } else {
         resultCount.set(null)
       }
