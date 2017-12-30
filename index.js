@@ -104,17 +104,6 @@ function openMainWindow () {
       windows.main = null
       if (process.platform !== 'darwin') electron.app.quit()
     })
-    electron.ipcMain.on('findInPage', (event, search) => {
-      console.log('findInPage', {search})
-      windows.main.webContents.findInPage(search)
-    })
-    windows.main.webContents.on('found-in-page', (event, result) => {
-      console.log('found-in-page', { result })
-      if (result.finalUpdate) {
-        windows.main.webContents.stopFindInPage('keepSelection')
-      }
-      windows.main.webContents.send('found-in-page', result)
-    })
   }
 }
 

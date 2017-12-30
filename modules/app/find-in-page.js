@@ -19,32 +19,30 @@ const EscapeHook = (obs, value) => element => {
 
 exports.gives = nest('app.html.findInPage')
 
-// exports.needs = nest({
-//   'app.views': 'first'
-// })
-
 exports.create = function (api) {
   return nest('app.html.findInPage', function (views) {
     const shown = Value(false)
     const searchString = Value('')
-    const resultCount = Value(null)
-
-    window.searchString = searchString
+    const resultCount = Value(0)
+    const currentMatchNum = Value(0)
 
     ipcRenderer.on('showSearch', () => shown.set(true))
     views.currentView(() => shown.set(false))
 
-    ipcRenderer.on('found-in-page', (event, result) => {
-      resultCount.set(result.matches - 1)
-      console.log('found-in-page',{ event, result })
-    })
+    // views.html.addEventListener('found-in-page', ({ result }) => {
+    //   const {activeMatchOrdinal, finalUpdate, matches} = result
+    //   currentMatchNum.set(activeMatchOrdinal)
+    //   resultCount.set(matches)
+    //   console.log('found-in-page', { activeMatchOrdinal, finalUpdate, matches })
+    // })
 
     searchString(search => {
       if (search.length > 0) {
-        console.log('sending', search)
-        ipcRenderer.send('findInPage', search)
+        // console.log('sending', search)
+        window.find(search, false, false, true, false, true, true)
       } else {
-        resultCount.set(null)
+        resultCount.set(0)
+        currentMatchNum.set(0)
       }
     })
 
@@ -57,7 +55,6 @@ exports.create = function (api) {
     shown(val => {
       if (val) {
         setTimeout(() => {
-          console.log('focusing')
           input.focus()
           input.select()
         }, 5)
@@ -66,7 +63,7 @@ exports.create = function (api) {
     return h('div', when(shown,
       h('div.search', [
         input,
-        h('span.count', resultCount)
+        when(searchString, h('span.count', [currentMatchNum, '/' , resultCount]))
       ])
     ))
 })
