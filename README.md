@@ -74,7 +74,7 @@ You'll need some more dependencies to build.
 On Debian Linux:
 
 ```shell
-sudo apt-get install g++ m4 libtool automake libgconf-2-4   # build tools
+sudo apt-get install g++ m4 libtool automake libgconf-2-4 libxkbfile-dev # build tools
 sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
 ```
 On Fedora Linux:
