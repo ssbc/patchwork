@@ -6,6 +6,7 @@ exports.needs = nest({
   'message.html.compose': 'first',
   'channel.sync.normalize': 'first',
   'feed.html.rollup': 'first',
+  'feed.html.followWarning': 'first',
   'feed.pull.channel': 'first',
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
@@ -78,16 +79,8 @@ exports.create = function (api) {
     }
 
     function noVisibleNewPostsWarning() {
-      var content =
-        h('div', {classList: 'NotFollowingAnyoneWarning'}, h('section -notFollowingAnyoneWarning', [
-          h('h1', i18n('You are not Following Anyone')),
-          h('p', i18n('You may not be able to see new channel content until you follow some users or pubs.')),
-          h('p', [i18n("For help, see the 'Getting Started' guide at "),
-            h('a', {href: 'https://www.scuttlebutt.nz/'}, 'https://www.scuttlebutt.nz/')]
-          ),
-        ]))
-
-      return when(contact.isNotFollowingAnybody, content)
+      var warning = i18n('You may not be able to see new channel content until you follow some users or pubs.')
+      return api.feed.html.followWarning(contact.isNotFollowingAnybody, warning);
     }
 
   })

@@ -137,5 +137,16 @@
 	"Write a message in this channel": "Write a message in this channel",
 	"mentioned this channel": "mentioned this channel",
 	"You are not Following Anyone": "You are not Following Anyone",
-	"You may not be able to see new channel content until you follow some users or pubs.": "You may not be able to see new channel content until you follow some users or pubs."
+	"You may not be able to see new channel content until you follow some users or pubs.": "You may not be able to see new channel content until you follow some users or pubs.",
+	"Search Results:": "Search Results:",
+	"Search completed.": "Search completed.",
+	"result found": "result found",
+	"results found": "results found",
+	"blocked ": "blocked ",
+	"Confirm": "Confirm",
+	"Cancel": "Cancel",
+	"Unread Message": "Unread Message",
+	" forked this discussion:": " forked this discussion:",
+	"You are not following anyone": "You are not following anyone",
+	"For help getting started, see the guide at ": "For help getting started, see the guide at "
 }

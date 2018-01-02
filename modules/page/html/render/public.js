@@ -22,6 +22,7 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'progress.html.peer': 'first',
 
+  'feed.html.followWarning': 'first',
   'feed.html.rollup': 'first',
   'profile.obs.recentlyUpdated': 'first',
   'profile.obs.contact': 'first',
@@ -263,21 +264,13 @@ exports.create = function (api) {
     }
 
     function noVisibleNewPostsWarning() {
-      var content =
-        h('div', {classList: 'NotFollowingAnyoneWarning'}, h('section -notFollowingAnyoneWarning', [
-          h('h1', i18n('Welcome to Patchwork')),
-          h('p', i18n('You may not be able to see new content until you follow some users or pubs.')),
-          h('p', [i18n("For help, see the 'Getting Started' guide at "),
-            h('a', {href: 'https://www.scuttlebutt.nz/'}, 'https://www.scuttlebutt.nz/')]
-          ),
-        ]))
-
-      return when(
-        computed([loading, contact.isNotFollowingAnybody],
+      var explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
+      
+      var shownWhen = computed([loading, contact.isNotFollowingAnybody],
            (isLoading,isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
-        ),
-        content
-       )
+        )
+
+      return api.feed.html.followWarning(shownWhen, explanation);
     }
 
     function subscribe (id) {
