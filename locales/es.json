@@ -175,8 +175,27 @@
 	" via ": " via ",
 	"Cannot load thread": "No se puede cargar el hilo",
 	"The author of this message could be outside of your follow range or they may be blocked.": "El autor de este mensaje podría estar fuera de su rango de seguimiento o puede estar bloqueado.",
-	"You follow %s people that follow this person.": {"one":"Sigues a alguien que sigue a esta persona.","other":"Sigues a %s personas que siguen a esta persona."},
+	"You follow %s people that follow this person.": {
+		"one": "Sigues a alguien que sigue a esta persona.",
+		"other": "Sigues a %s personas que siguen a esta persona."
+	},
 	"Followed by": "Seguido por",
 	"pt-BR": "Portugués Brasileño",
-	"Font Size": "Tamaño de fuente"
+	"Font Size": "Tamaño de fuente",
+	"Default": "Default",
+	"Public Feed Options": "Opciones de feed público",
+	"Only include posts from subscribed channels": "Incluir solo publicaciones de canales suscritos",
+	"Information": "Información",
+	"Force Disconnect": "Forzar desconexión",
+	"(you)": "(tu)",
+	"See less": "Ver menos",
+	"See more": "Ver completo",
+	"Unread Message": "Mensaje sin leer",
+	"(missing message)": "(mensaje perdido)",
+	"assigned a description to ": "asignó una descripción a ",
+	"mentioned in your network": "mencionado en tu red",
+	"%s people from your network replied to this message on ": {
+		"one":"%s persona de tu red respondió este mensaje en ",
+		"other":"%s personas de tu red respondieron este mensaje en "
+	}
 }
