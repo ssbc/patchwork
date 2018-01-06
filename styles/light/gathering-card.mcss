@@ -6,7 +6,8 @@ GatheringCard {
   a.image {
     display: block
     margin-top: 10px
-    height: 300px
+    height: 600px
+    width: 800px
     background-size: cover
     background-repeat: no-repeat
     background-position: center

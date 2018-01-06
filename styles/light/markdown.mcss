@@ -59,7 +59,7 @@ Markdown {
     padding: 10px;
     background: #fbfbfb;
     border: 1px solid #EEE;
-    max-height: 300px;
+    max-height: 1080px;
   }
   (ul) {
     (p) {

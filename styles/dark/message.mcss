@@ -76,7 +76,7 @@ Message {
 
   -compact {
     section {
-      max-height: 300px
+      max-height: 1080px
     }
   }
 
