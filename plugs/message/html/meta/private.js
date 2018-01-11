@@ -13,7 +13,9 @@ exports.create = (api) => {
   return nest('message.html.meta', function privateMeta (msg) {
     if (msg.value.private) {
       return h('span.private', map(msg.value.content.recps, id => {
-        id = msgs.link(id, 'feed').link
+        const feed = msgs.link(id, 'feed')
+        if (!feed) return
+        id = feed.link
         return h('a', {
           href: id,
           title: api.about.obs.name(id)
