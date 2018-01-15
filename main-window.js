@@ -34,6 +34,7 @@ module.exports = function (config) {
     'app.html.search': 'first',
     'app.html.channels': 'first',
     'app.views': 'first',
+    'app.fullscreen': 'first',
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first',
@@ -90,7 +91,9 @@ module.exports = function (config) {
     })
   )
 
-  var container = h(`MainWindow -${process.platform}`, [
+  var container = h(`MainWindow -${process.platform}`, {
+    classList: [ when(api.app.fullscreen(), '-fullscreen') ]
+  }, [
     h('div.top', [
       h('span.history', [
         h('a', {

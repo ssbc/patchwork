@@ -3,9 +3,16 @@ MainWindow {
   flex: 1
   flex-direction: column
 
+  :not(.-fullscreen) {
+    -darwin {
+      div.top {
+        padding-left: 70px
+      }
+    }
+  }
+
   -darwin {
     div.top {
-      padding-left: 70px
       span.appTitle {
         span.title {
           visibility: visible
