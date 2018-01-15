@@ -53,7 +53,7 @@ Loading {
     }
     ::after {
       color: #CCC;
-      content: 'Seaching...'
+      content: 'Searching...'
       font-size: 200%
     }
   }
