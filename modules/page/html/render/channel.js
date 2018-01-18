@@ -10,7 +10,8 @@ exports.needs = nest({
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
   'keys.sync.id': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'settings.obs.get': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -46,11 +47,31 @@ exports.create = function (api) {
       })
     ]
 
-    return api.feed.html.rollup(api.feed.pull.channel(channel), {
-      prepend,
-      displayFilter: mentionFilter,
-      bumpFilter: mentionFilter
-    })
+    const filters = api.settings.obs.get('filters')
+    const channelView = api.feed.html.rollup(
+      api.feed.pull.channel(channel), {
+        prepend,
+        rootFilter: checkFeedFilter,
+        displayFilter: mentionFilter,
+        bumpFilter: mentionFilter
+      })
+
+    // call reload whenever filters changes
+    filters(channelView.reload)
+
+    return channelView
+
+    function checkFeedFilter (msg) {
+      const filterObj = filters(),
+            msgType = msg && msg.value && msg.value.content &&
+                      msg.value.content.type
+      if (filterObj) {
+        // filter out channel subscription messages
+        if (filterObj.subscriptions && msgType === 'channel')
+          return false
+      }
+      return true
+    }
 
     function mentionFilter (msg) {
       // filter out likes
