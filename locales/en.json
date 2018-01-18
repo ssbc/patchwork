@@ -197,5 +197,7 @@
 		"other": "%s people from your network replied to this message on "
 	},
 	"(you)": "(you)",
-	"Information": "Information"
+	"Information": "Information",
+	"Hide channel (un)subcribe messages": "Hide channel (un)subcribe messages",
+	"Channel Feed Options": "Channel Feed Options"
 }

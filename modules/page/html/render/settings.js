@@ -27,6 +27,7 @@ exports.create = function (api) {
     const lang = api.settings.obs.get('patchwork.lang', '')
     const fontSize = api.settings.obs.get('patchwork.fontSize', '')
     const filterFollowing = api.settings.obs.get('filters.following')
+    const filterSubscriptions = api.settings.obs.get('filters.subscriptions')
     const onlySubscribed = api.settings.obs.get('filters.onlySubscribed')
 
     var prepend = [
@@ -91,6 +92,16 @@ exports.create = function (api) {
             h('div', [
               checkbox(onlySubscribed, {
                 label: i18n('Only include posts from subscribed channels')
+              })
+            ])
+          ]),
+
+          h('section', [
+            h('h2', i18n('Channel Feed Options')),
+
+            h('div', [
+              checkbox(filterSubscriptions, {
+                label: i18n('Hide channel (un)subcribe messages')
               })
             ])
           ]),
