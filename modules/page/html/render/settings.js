@@ -29,6 +29,7 @@ exports.create = function (api) {
     const filterFollowing = api.settings.obs.get('filters.following')
     const filterSubscriptions = api.settings.obs.get('filters.subscriptions')
     const onlySubscribed = api.settings.obs.get('filters.onlySubscribed')
+    const filterChannelViewSubscriptions = api.settings.obs.get('filters.channelView.subscriptions')
 
     var prepend = [
       h('PageHeading', [
@@ -90,6 +91,12 @@ exports.create = function (api) {
             ]),
 
             h('div', [
+              checkbox(filterSubscriptions, {
+                label: i18n('Hide channel (un)subcribe messages')
+              })
+            ]),
+
+            h('div', [
               checkbox(onlySubscribed, {
                 label: i18n('Only include posts from subscribed channels')
               })
@@ -100,7 +107,7 @@ exports.create = function (api) {
             h('h2', i18n('Channel Feed Options')),
 
             h('div', [
-              checkbox(filterSubscriptions, {
+              checkbox(filterChannelViewSubscriptions, {
                 label: i18n('Hide channel (un)subcribe messages')
               })
             ])

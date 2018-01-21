@@ -62,10 +62,10 @@ exports.create = function (api) {
     return channelView
 
     function checkFeedFilter (msg) {
-      const filterObj = filters(),
-            msgType = msg && msg.value && msg.value.content &&
-                      msg.value.content.type
+      const filterObj = filters() && filters().channelView;
       if (filterObj) {
+        const msgType = msg && msg.value && msg.value.content &&
+                        msg.value.content.type
         // filter out channel subscription messages
         if (filterObj.subscriptions && msgType === 'channel')
           return false
