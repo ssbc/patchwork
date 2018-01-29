@@ -35,6 +35,13 @@ electron.app.on('ready', () => {
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
+    var help = menu.find(x => x.label === 'Help')
+    help.submenu = [
+      {
+        label: 'Learn More',
+        click () { require('electron').shell.openExternal('https://scuttlebutt.nz') }
+      }
+    ]
     if (process.platform === 'darwin') {
       var win = menu.find(x => x.label === 'Window')
       win.submenu = [
