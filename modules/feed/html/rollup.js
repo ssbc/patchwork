@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var {Value, Proxy, Array: MutantArray, h, computed, when, onceTrue, throttle, resolve} = require('mutant')
+var {Value, Proxy, Array: MutantArray, h, computed, when, onceTrue, throttle} = require('mutant')
 var pull = require('pull-stream')
 var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/scroller')
@@ -112,9 +112,9 @@ exports.create = function (api) {
           // Only increment the 'new since' for items that we render on
           // the feed as otherwise the 'show <n> updates message' will be
           // shown on new messages that patchwork cannot render
-          if (canRenderMessage(msg) && msg.value.author != yourId && (!msg.root || canRenderMessage(msg.root))) {
-              newSinceRefresh.add(msg.key)
-              unreadIds.add(msg.key)
+          if (canRenderMessage(msg) && msg.value.author !== yourId && (!msg.root || canRenderMessage(msg.root))) {
+            newSinceRefresh.add(msg.key)
+            unreadIds.add(msg.key)
           }
 
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
@@ -284,10 +284,6 @@ exports.create = function (api) {
       result.msgIds = [item.key].concat(item.replies.map(x => x.key))
 
       return result
-    }
-
-    function channelLink (channelName) {
-      return
     }
 
     function getPriority (msg) {

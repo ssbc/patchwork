@@ -45,9 +45,9 @@ exports.create = function (api) {
 
     var isYou = computed([yourId, id], (a, b) => a === b)
 
-    var isNotFollowingAnybody = computed(following,
-      followingList => !followingList || followingList.length == 0
-    );
+    var isNotFollowingAnybody = computed(following, followingList => {
+      return !followingList || !followingList.length
+    })
 
     return {
       followers,

@@ -1,5 +1,6 @@
 var nest = require('depnest')
-var { computed, Value } = require('mutant')
+var electron = require('electron')
+var { Value } = require('mutant')
 
 exports.gives = nest('app.fullscreen')
 
@@ -14,5 +15,5 @@ exports.create = function () {
       isFullScreen.set(false)
     })
     return isFullScreen
-  });
+  })
 }

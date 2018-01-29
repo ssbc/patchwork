@@ -69,13 +69,12 @@ exports.create = function (api) {
     return channelView
 
     function checkFeedFilter (msg) {
-      const filterObj = filters() && filters().channelView;
+      const filterObj = filters() && filters().channelView
       if (filterObj) {
         const msgType = msg && msg.value && msg.value.content &&
                         msg.value.content.type
         // filter out channel subscription messages
-        if (filterObj.subscriptions && msgType === 'channel')
-          return false
+        if (filterObj.subscriptions && msgType === 'channel') { return false }
       }
       return true
     }
@@ -99,11 +98,10 @@ exports.create = function (api) {
       }
     }
 
-    function noVisibleNewPostsWarning() {
+    function noVisibleNewPostsWarning () {
       var warning = i18n('You may not be able to see new channel content until you follow some users or pubs.')
-      return api.feed.html.followWarning(contact.isNotFollowingAnybody, warning);
+      return api.feed.html.followWarning(contact.isNotFollowingAnybody, warning)
     }
-
   })
 
   function subscribe (id) {

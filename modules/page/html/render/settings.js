@@ -1,4 +1,4 @@
-var { h, when } = require('mutant')
+var { h } = require('mutant')
 var nest = require('depnest')
 var packageInfo = require('../../../../package.json')
 

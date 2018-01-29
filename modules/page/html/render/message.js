@@ -1,4 +1,4 @@
-var { h, when, map, Proxy, Struct, Value, computed, watch } = require('mutant')
+var { h, when, map, Proxy, Struct, Value, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var AnchorHook = require('../../../../lib/anchor-hook')
@@ -106,7 +106,6 @@ exports.create = function (api) {
         compose
       ])
       result.set(when(thread.sync, container, loader))
-
     })
 
     var view = h('div', {className: 'SplitView'}, [

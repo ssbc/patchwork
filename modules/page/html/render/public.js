@@ -149,9 +149,11 @@ exports.create = function (api) {
       if (filterObj) {
         const rootType = getType(root)
         if (
-          filterObj.following && rootType === 'contact' ||
-          filterObj.subscriptions && rootType === 'channel'
-        ) return false
+          (filterObj.following && rootType === 'contact') ||
+          (filterObj.subscriptions && rootType === 'channel')
+        ) {
+          return false
+        }
       }
       return true
     }
@@ -268,14 +270,14 @@ exports.create = function (api) {
       ]
     }
 
-    function noVisibleNewPostsWarning() {
+    function noVisibleNewPostsWarning () {
       var explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
-      
+
       var shownWhen = computed([loading, contact.isNotFollowingAnybody],
-           (isLoading,isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
+           (isLoading, isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
         )
 
-      return api.feed.html.followWarning(shownWhen, explanation);
+      return api.feed.html.followWarning(shownWhen, explanation)
     }
 
     function subscribe (id) {
@@ -304,10 +306,6 @@ exports.create = function (api) {
 
 function getType (msg) {
   return msg && msg.value && msg.value.content && msg.value.content.type
-}
-
-function hasChannel (msg) {
-  return getType(msg) !== 'channel' && msg && msg.value && msg.value.content && !!msg.value.content.channel
 }
 
 function arrayEq (a, b) {

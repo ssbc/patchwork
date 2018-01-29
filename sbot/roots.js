@@ -196,10 +196,6 @@ module.exports = function (ssb, config) {
           var isYours = ids.includes(msg.value.author)
           var mentionsYou = getMentionsYou(ids, msg.value.content.mentions)
 
-          if (msg.value.author === '@u1Q+EEna+cJ+JGYppltW0hNZPAkJikVtOH5oMYZ3cEA=.ed25519') {
-            debugger
-          }
-
           var following = checkFollowing(friends, ids, msg.value.author)
           if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
             return {
