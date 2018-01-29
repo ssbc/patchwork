@@ -141,8 +141,13 @@ exports.create = function (api) {
     return result
 
     function checkFeedFilter (root) {
-      if (filters()) {
-        if (filters().following && getType(root) === 'contact') return false
+      const filterObj = filters()
+      if (filterObj) {
+        const rootType = getType(root)
+        if (
+          filterObj.following && rootType === 'contact' ||
+          filterObj.subscriptions && rootType === 'channel'
+        ) return false
       }
       return true
     }
