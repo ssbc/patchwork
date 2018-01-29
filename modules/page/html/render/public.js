@@ -22,8 +22,10 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'progress.html.peer': 'first',
 
+  'feed.html.followWarning': 'first',
   'feed.html.rollup': 'first',
   'profile.obs.recentlyUpdated': 'first',
+  'profile.obs.contact': 'first',
   'contact.obs.following': 'first',
   'contact.obs.blocking': 'first',
   'channel.obs': {
@@ -57,9 +59,11 @@ exports.create = function (api) {
     var connectedPeers = api.sbot.obs.connectedPeers()
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
+    var contact = api.profile.obs.contact(id)
 
     var prepend = [
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
+      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') }),
+      noVisibleNewPostsWarning()
     ]
 
     var lastMessage = null
@@ -262,6 +266,16 @@ exports.create = function (api) {
           })
         ])
       ]
+    }
+
+    function noVisibleNewPostsWarning() {
+      var explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
+      
+      var shownWhen = computed([loading, contact.isNotFollowingAnybody],
+           (isLoading,isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
+        )
+
+      return api.feed.html.followWarning(shownWhen, explanation);
     }
 
     function subscribe (id) {
