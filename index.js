@@ -19,6 +19,10 @@ var windows = {
 var ssbConfig = null
 var quitting = false
 
+if (process.argv.includes('--reload')) { 
+    require('electron-reload')(__dirname);
+}
+
 electron.app.on('ready', () => {
   setupContext('ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))

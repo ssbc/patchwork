@@ -69,6 +69,12 @@ $ npm install
 $ npm start
 ```
 
+To run with live-reload:
+
+```shell
+$ npm run dev
+```
+
 You'll need some more dependencies to build.
 
 On Debian Linux:
