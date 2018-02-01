@@ -31,16 +31,16 @@ It's better than email because:
  - You have to follow somebody to get messages from them, so you won't get spammed.
  - Your mail can be public broadcasts or private, and you'll only see replies by people you follow.
  - The datastructure is a global mesh of append-only logs, which can support new types of data (not just "mail").
- - Users are not bound to one server/host (what we call "pubs") and do not have to trust the servers.
- - It's very easy to setup and maintain your own pub.
+ - Users are not bound to one server/host (what we call "Pubs") and do not have to trust the servers.
+ - It's very easy to setup and maintain your own Pub.
 
-It's better than twitter and facebook because:
+It's better than Twitter and Facebook because:
 
  - Private messages are end-to-end encrypted, always.
  - The software runs on your device, so there's nobody tracking your browsing.
- - The application-code is FOSS, so you're free to fork or write new applications without a gatekeeper setting terms.
+ - The application code is FOSS, so you're free to fork or write new applications without a gatekeeper setting terms.
  - Data is saved to your disk, and so the application works offline.
- - You can sync directly with friends over the wifi.
+ - You can sync directly with friends over Wi-Fi.
 
 ## Pubs
 
@@ -50,7 +50,7 @@ You can find an invite to an available pub at the [Pub servers registry](https:/
 
 Get an invite, then in `patchwork`: click "+ Join Pub" and paste the invite code.
 
-This will cause you to follow the Pub and vise versa. If you haven't synchronized to this social network yet, prepare to wait a few minutes while your local server synchronizes.
+This will cause you to follow the Pub and vice versa. If you haven't synchronized to this social network yet, prepare to wait a few minutes while your local server synchronizes.
 
 ## Install
 
@@ -77,7 +77,9 @@ On Debian Linux:
 sudo apt-get install g++ m4 libtool automake libgconf-2-4   # build tools
 sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
 ```
+
 On Fedora Linux:
+
 ```shell
 sudo dnf install libXext-devel libXtst-devel libxkbfile-devel gcc-c++ m4 automake libtool
 ```
@@ -91,7 +93,6 @@ brew install libtool automake # build tools
 ## Code of conduct
 
 Please note that this project is released with a [Contributor Code of Conduct](code-of-conduct.md). By participating in this project you agree to abide by its terms.
-
 
 ## Docs
 
