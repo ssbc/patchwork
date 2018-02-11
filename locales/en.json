@@ -157,5 +157,8 @@
 	"Describe yourself (if you want)": "Describe yourself (if you want)",
 	"Missing message": "Missing message",
 	" via ": " via ",
-	"The author of this message could be outside of your follow range or they may be blocked.": "The author of this message could be outside of your follow range or they may be blocked."
+	"The author of this message could be outside of your follow range or they may be blocked.": "The author of this message could be outside of your follow range or they may be blocked.",
+	"Close": "Close",
+	" referenced this message:": " referenced this message:",
+	"on ": "on "
 }
