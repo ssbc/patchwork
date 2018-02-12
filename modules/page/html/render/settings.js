@@ -98,7 +98,7 @@ exports.create = function (api) {
 
             h('div', [
               checkbox(onlySubscribed, {
-                label: i18n('Only include posts from subscribed channels')
+                label: i18n(`Hide posts in channels that are not subscribed`)
               })
             ])
           ]),

@@ -143,7 +143,7 @@
 	"Cancel": "Cancel",
 	"Unread Message": "Unread Message",
 	"Font Size": "Font Size",
-	"Only include posts from subscribed channels": "Only include posts from subscribed channels",
+	"Hide posts in channels that are not subscribed": "Hide posts in channels that are not subscribed",
 	"Information": "Information",
 	"Hide channel (un)subcribe messages": "Hide channel (un)subcribe messages",
 	"Channel Feed Options": "Channel Feed Options",
