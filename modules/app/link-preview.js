@@ -54,7 +54,7 @@ exports.create = function (api) {
               h('code', href)
             ])
           ])
-        } else if (href.startsWith('#')) {
+        } else if (href.startsWith('#') && href.length > 1) {
           preview = api.channel.html.preview(href.slice(1))
         }
       }
