@@ -179,9 +179,9 @@ Message {
         -new, -unread {
           width: auto
           height: auto
+          color: #ffcf04
 
           :before {
-            color: #ffcf04
             content: '✸'
           }
 
