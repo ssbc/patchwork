@@ -239,10 +239,10 @@ exports.create = function (api) {
       if (!renderedMessage) return h('div')
 
       if (rootBumpType === 'matches-channel') {
-        var channels = []
-        if (item.value.content.channel) channels.push(item.value.content.channel)
-        if (item.filterResult && Array.isArray(item.filterResult.matchingTags)) {
-          item.filterResult.matchingTags.forEach(x => channels.push(x))
+        var channels = new Set()
+        if (item.filterResult) {
+          if (item.filterResult.matchesChannel) channels.add(item.value.content.channel)
+          if (Array.isArray(item.filterResult.matchingTags)) item.filterResult.matchingTags.forEach(x => channels.add(x))
         }
         meta = h('div.meta', [
           many(channels, api.channel.html.link, i18n), ' ', i18n('mentioned in your network')
