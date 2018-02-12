@@ -20,14 +20,16 @@ exports.create = function (api) {
 
     // scoped
     function mentionFilter (msg) {
-      if (Array.isArray(msg.value.content.mentions) && msg.value.content.mentions.some(mention => {
-        return mention && mention.link === id
-      })) {
-        return 'mention'
-      } else if (msg.value.content.type === 'contact') {
-        return true
-      } else if (msg.value.content.type === 'about') {
-        return true
+      if (msg.value.author !== id) {
+        if (Array.isArray(msg.value.content.mentions) && msg.value.content.mentions.some(mention => {
+          return mention && mention.link === id
+        })) {
+          return 'mention'
+        } else if (msg.value.content.type === 'contact') {
+          return true
+        } else if (msg.value.content.type === 'about') {
+          return true
+        }
       }
     }
   })
