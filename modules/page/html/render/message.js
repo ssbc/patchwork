@@ -27,6 +27,7 @@ exports.create = function (api) {
 
     var result = Proxy(loader)
     var anchor = Value()
+    var participants = Proxy([])
 
     var meta = Struct({
       type: 'post',
@@ -41,6 +42,7 @@ exports.create = function (api) {
       meta,
       isPrivate: when(meta.recps, true),
       shrink: false,
+      participants,
       hooks: [
         AnchorHook('reply', anchor, (el) => el.focus())
       ],
@@ -80,6 +82,10 @@ exports.create = function (api) {
 
       // if root thread, reply to last post
       meta.branch.set(isReply ? thread.branchId : thread.lastId)
+
+      participants.set(computed(thread.messages, messages => {
+        return messages.map(msg => msg && msg.value && msg.value.author)
+      }))
 
       var container = h('Thread', [
         h('div.messages', [

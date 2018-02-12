@@ -14,6 +14,15 @@ SuggestBox {
     list-style-type: none;
     padding: 0;
 
+    li.following {
+      font-weight: bold
+
+      strong {
+        font-weight: bold
+        $following
+      }
+    }
+
     li {
       display: flex;
       align-items: center;

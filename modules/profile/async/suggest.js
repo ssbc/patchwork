@@ -14,16 +14,41 @@ exports.gives = nest('profile.async.suggest')
 exports.create = function (api) {
   var suggestions = null
   var recentSuggestions = null
+  var following = null
 
   return nest('profile.async.suggest', function () {
     loadSuggestions()
-    return function (word) {
+    return function (word, defaultItems) {
+      var defaultSuggestions = Array.isArray(defaultItems) && defaultItems.length ? suggestions().filter((item) => {
+        return matches(item.title, word) && defaultItems.includes(item.id)
+      }) : null
+
       if (!word) {
-        return recentSuggestions()
+        return defaultSuggestions || recentSuggestions()
       } else {
-        return suggestions().filter((item) => {
-          return item.title.toLowerCase().startsWith(word.toLowerCase())
+        var result = defaultSuggestions || []
+
+        // prioritize people you follow
+        suggestions().forEach((item) => {
+          if (following().includes(item.id) && matches(item.title, word) && !result.some(v => v.id === item.id)) {
+            result.push(item)
+          }
         })
+
+        // next most recently active profiles
+        recentSuggestions().forEach((item) => {
+          if (matches(item.title, word) && !result.some(v => v.id === item.id)) {
+            result.push(item)
+          }
+        })
+
+        // fallback to everyone
+        suggestions().forEach((item) => {
+          if (matches(item.title, word) && !result.some(v => v.id === item.id)) {
+            result.push(item)
+          }
+        })
+        return result
       }
     }
   })
@@ -31,7 +56,7 @@ exports.create = function (api) {
   function loadSuggestions () {
     if (!suggestions) {
       var id = api.keys.sync.id()
-      var following = api.contact.obs.following(id)
+      following = api.contact.obs.following(id)
       var recentlyUpdated = api.profile.obs.recentlyUpdated()
       var contacts = computed([following, recentlyUpdated], function (a, b) {
         var result = Array.from(a)
@@ -43,7 +68,7 @@ exports.create = function (api) {
         return result
       })
 
-      recentSuggestions = map(computed(recentlyUpdated, (items) => Array.from(items).slice(0, 10)), suggestion, {idle: true})
+      recentSuggestions = map(computed(recentlyUpdated, (items) => Array.from(items).slice(0, 40)), suggestion, {idle: true})
       suggestions = map(contacts, suggestion, {idle: true})
       watch(recentSuggestions)
       watch(suggestions)
@@ -56,7 +81,8 @@ exports.create = function (api) {
       title: name,
       id,
       subtitle: id.substring(0, 10),
-      value: computed([name, id], mention),
+      value: computed([name, id], mention, {idle: true}),
+      cls: computed([id, following], followingClass, {idle: true}),
       image: api.about.obs.imageUrl(id),
       showBoth: true
     })
@@ -65,4 +91,15 @@ exports.create = function (api) {
 
 function mention (name, id) {
   return `[@${name}](${id})`
+}
+
+function followingClass (id, following) {
+  if (following.includes(id)) {
+    return 'following'
+  }
+}
+
+function matches (title, match) {
+  if (!match) return true
+  return title.toLowerCase().startsWith(match.toLowerCase())
 }
