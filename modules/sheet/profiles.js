@@ -27,7 +27,7 @@ exports.create = function (api) {
         if (filter) {
           var result = []
           for (var k in nameLookup) {
-            if (nameLookup[k] && nameLookup[k].toLowerCase().includes(filter.toLowerCase())) {
+            if ((nameLookup[k] && nameLookup[k].toLowerCase().includes(filter.toLowerCase())) || k === filter) {
               result.push(k)
             }
           }
@@ -49,6 +49,7 @@ exports.create = function (api) {
             'ev-input': function (ev) {
               currentFilter.set(ev.target.value)
             },
+            hooks: [FocusHook()],
             style: {
               'float': 'right',
               'font-size': '100%'
@@ -100,5 +101,14 @@ exports.create = function (api) {
         }, { idle: true, maxTime: 2 })
       ])
     ]
+  }
+}
+
+function FocusHook () {
+  return function (element) {
+    setTimeout(() => {
+      element.focus()
+      element.select()
+    }, 5)
   }
 }
