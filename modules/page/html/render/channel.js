@@ -1,10 +1,10 @@
-var { h, when, send } = require('mutant')
+var { h } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
-  'channel.obs.subscribed': 'first',
   'message.html.compose': 'first',
   'channel.sync.normalize': 'first',
+  'channel.html.subscribeToggle': 'first',
   'feed.html.rollup': 'first',
   'feed.html.followWarning': 'first',
   'feed.pull.channel': 'first',
@@ -24,27 +24,15 @@ exports.create = function (api) {
     if (path[0] !== '#') return
 
     var id = api.keys.sync.id()
+    var contact = api.profile.obs.contact(id)
 
     var channel = api.channel.sync.normalize(path.substr(1))
-    var subscribedChannels = api.channel.obs.subscribed(id)
-
-    var contact = api.profile.obs.contact(id)
 
     var prepend = [
       h('PageHeading', [
         h('h1', `#${channel}`),
         h('div.meta', [
-          when(subscribedChannels.has(channel),
-            h('a.ToggleButton.-unsubscribe', {
-              'href': '#',
-              'title': i18n('Click to unsubscribe'),
-              'ev-click': send(unsubscribe, channel)
-            }, i18n('Subscribed')),
-            h('a.ToggleButton.-subscribe', {
-              'href': '#',
-              'ev-click': send(subscribe, channel)
-            }, i18n('Subscribe'))
-          )
+          api.channel.html.subscribeToggle(channel)
         ])
       ]),
       api.message.html.compose({
@@ -103,22 +91,4 @@ exports.create = function (api) {
       return api.feed.html.followWarning(contact.isNotFollowingAnybody, warning)
     }
   })
-
-  function subscribe (id) {
-    // confirm
-    api.message.async.publish({
-      type: 'channel',
-      channel: id,
-      subscribed: true
-    })
-  }
-
-  function unsubscribe (id) {
-    // confirm
-    api.message.async.publish({
-      type: 'channel',
-      channel: id,
-      subscribed: false
-    })
-  }
 }

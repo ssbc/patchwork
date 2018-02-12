@@ -6,7 +6,8 @@ var nest = require('depnest')
 
 exports.needs = nest({
   'intl.sync.i18n': 'first',
-  'profile.html.preview': 'first'
+  'profile.html.preview': 'first',
+  'channel.html.preview': 'first'
 })
 
 exports.gives = nest('app.linkPreview')
@@ -53,6 +54,8 @@ exports.create = function (api) {
               h('code', href)
             ])
           ])
+        } else if (href.startsWith('#')) {
+          preview = api.channel.html.preview(href.slice(1))
         }
       }
 

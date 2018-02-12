@@ -1,8 +1,33 @@
 var FlumeReduce = require('flumeview-reduce')
 var normalizeChannel = require('ssb-ref').normalizeChannel
+var FlatMap = require('pull-flatmap')
+var pull = require('pull-stream')
 
 module.exports = function (ssb, config) {
-  return ssb._flumeUse('patchwork-subscriptions', FlumeReduce(3, reduce, map))
+  var index = ssb._flumeUse('patchwork-subscriptions', FlumeReduce(3, reduce, map))
+  return {
+    stream: function (opts) {
+      var channel = normalizeChannel(opts.channel)
+      return pull(
+        index.stream({live: opts.live}),
+        FlatMap(items => {
+          var result = []
+
+          if (items) {
+            Object.keys(items).forEach(key => {
+              var parts = getParts(key)
+              if (parts && (!channel || parts[1] === channel)) {
+                result.push({from: parts[0], to: parts[1], value: items[key][1], ts: items[key][0]})
+              }
+            })
+          }
+
+          return result
+        })
+      )
+    },
+    get: index.get
+  }
 }
 
 function reduce (result, item) {
@@ -15,6 +40,13 @@ function reduce (result, item) {
     }
   }
   return result
+}
+
+function getParts (value) {
+  var splitIndex = value.indexOf(':')
+  if (splitIndex > 50) { // HACK: yup
+    return [value.slice(0, splitIndex), value.slice(splitIndex + 1)]
+  }
 }
 
 function map (msg) {

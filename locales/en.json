@@ -34,7 +34,7 @@
 	},
 	"Followed by": "Followed by",
 	"You follow %s people that follow this person.": {
-		"one": "You follow %s people that follow this person.",
+		"one": "You follow %s person that follows this person.",
 		"other": "You follow %s people that follow this person."
 	},
 	"Send Private Message": "Send Private Message",
@@ -160,5 +160,10 @@
 	"The author of this message could be outside of your follow range or they may be blocked.": "The author of this message could be outside of your follow range or they may be blocked.",
 	"Close": "Close",
 	" referenced this message:": " referenced this message:",
-	"on ": "on "
+	"on ": "on ",
+	"You follow %s people that subscribe to this channel.": {
+		"one": "You follow %s person that subscribes to this channel.",
+		"other": "You follow %s people that subscribe to this channel."
+	},
+	"People you follow that subscribe to this channel": "People you follow that subscribe to this channel"
 }
