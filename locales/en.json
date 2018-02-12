@@ -165,5 +165,7 @@
 		"one": "You follow %s person that subscribes to this channel.",
 		"other": "You follow %s people that subscribe to this channel."
 	},
-	"People you follow that subscribe to this channel": "People you follow that subscribe to this channel"
+	"People you follow that subscribe to this channel": "People you follow that subscribe to this channel",
+	" from your extended network": " from your extended network",
+	"+ Add Gathering": "+ Add Gathering"
 }
