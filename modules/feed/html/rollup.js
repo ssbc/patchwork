@@ -119,9 +119,22 @@ exports.create = function (api) {
 
           if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
             refresh()
-          } else {
-            updates.set(newSinceRefresh.size)
+          } else if (msg.value.author === yourId && content()) {
+            // dynamically insert this post into the feed! (manually so that it doesn't get slow with mutant)
+            var existingContainer = content().querySelector(`[data-root-id="${msg.value.content.root}"]`)
+            if (existingContainer) {
+              var replies = existingContainer.querySelector('div.replies')
+              var lastReply = existingContainer.querySelector('div.replies > .Message:last-child')
+              var previousId = lastReply ? lastReply.getAttribute('data-id') : existingContainer.getAttribute('data-root-id')
+              replies.appendChild(api.message.html.render(msg, {
+                previousId,
+                compact: false,
+                priority: 2
+              }))
+            }
           }
+
+          updates.set(newSinceRefresh.size)
         })
       )
     })
