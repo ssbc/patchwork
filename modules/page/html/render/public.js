@@ -78,8 +78,7 @@ exports.create = function (api) {
         return pull.empty()
       } else {
         return api.sbot.pull.stream(sbot => sbot.patchwork.roots(extend(opts, {
-          ids: [id],
-          onlySubscribedChannels: filters() && filters().onlySubscribed
+          ids: [id]
         })))
       }
     }
@@ -150,7 +149,8 @@ exports.create = function (api) {
         const rootType = getType(root)
         if (
           (filterObj.following && rootType === 'contact') ||
-          (filterObj.subscriptions && rootType === 'channel')
+          (filterObj.subscriptions && rootType === 'channel') ||
+          (filterObj.onlySubscribed && rootType === 'post' && !matchesSubscribedChannel(root))
         ) {
           return false
         }

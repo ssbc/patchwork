@@ -26,7 +26,7 @@ module.exports = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
-    latest: function ({ids = [ssb.id], onlySubscribedChannels = false}) {
+    latest: function ({ids = [ssb.id]}) {
       var stream = Defer.source()
       getFilter((err, filter) => {
         if (err) return stream.abort(err)
@@ -54,7 +54,7 @@ module.exports = function (ssb, config) {
 
             if (filter && root && root.value && !isPrivate) {
               var filterResult = filter(ids, root)
-              if (checkReplyForcesDisplay(item) || shouldShow(filterResult, {onlySubscribedChannels})) {
+              if (checkReplyForcesDisplay(item) || shouldShow(filterResult)) {
                 root.filterResult = filterResult
                 return true
               }
@@ -65,7 +65,7 @@ module.exports = function (ssb, config) {
       return stream
     },
 
-    read: function ({ids = [ssb.id], reverse, limit, lt, gt, onlySubscribedChannels = false}) {
+    read: function ({ids = [ssb.id], reverse, limit, lt, gt}) {
       var opts = {reverse, old: true}
 
       // handle markers passed in to lt / gt
@@ -118,7 +118,7 @@ module.exports = function (ssb, config) {
               } else if (!seen.has(root.key)) {
                 seen.add(root.key)
                 var filterResult = filter(ids, root)
-                if (shouldShow(filterResult, {onlySubscribedChannels})) {
+                if (shouldShow(filterResult)) {
                   root.filterResult = filterResult
                   included.add(root.key)
                   return true
@@ -159,12 +159,8 @@ module.exports = function (ssb, config) {
     }
   }
 
-  function shouldShow (filterResult, {onlySubscribedChannels}) {
-    if (filterResult && onlySubscribedChannels && filterResult.hasChannel) {
-      return filterResult.matchesChannel || filterResult.matchingTags.length || filterResult.mentionsYou || filterResult.isYours
-    } else {
-      return !!filterResult
-    }
+  function shouldShow (filterResult) {
+    return !!filterResult
   }
 
   function getThruCache (key, cb) {
