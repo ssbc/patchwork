@@ -1,4 +1,4 @@
-var {h, when, map, computed} = require('mutant')
+var {h, when, map, computed, Value, lookup} = require('mutant')
 var nest = require('depnest')
 var catchLinks = require('../../lib/catch-links')
 
@@ -19,13 +19,43 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('sheet.profiles', function (ids, title) {
     api.sheet.display(close => {
+      var currentFilter = Value()
+      var nameLookup = lookup(ids, (id) => {
+        return [id, api.about.obs.name(id)]
+      })
+      var filteredIds = computed([ids, nameLookup, currentFilter], (ids, nameLookup, filter) => {
+        if (filter) {
+          var result = []
+          for (var k in nameLookup) {
+            if (nameLookup[k] && nameLookup[k].toLowerCase().includes(filter.toLowerCase())) {
+              result.push(k)
+            }
+          }
+          return result
+        } else {
+          return ids
+        }
+      })
       var content = h('div', {
         style: { padding: '20px' }
       }, [
         h('h2', {
           style: { 'font-weight': 'normal' }
-        }, [title]),
-        renderContactBlock(ids)
+        }, [
+          title,
+          h('input', {
+            type: 'search',
+            placeholder: 'filter names',
+            'ev-input': function (ev) {
+              currentFilter.set(ev.target.value)
+            },
+            style: {
+              'float': 'right',
+              'font-size': '100%'
+            }
+          })
+        ]),
+        renderContactBlock(filteredIds)
       ])
 
       catchLinks(content, (href, external, anchor) => {
@@ -67,7 +97,7 @@ exports.create = function (api) {
               h('div.name', [ api.about.obs.name(id) ])
             ])
           ])
-        }, { idle: true })
+        }, { idle: true, maxTime: 2 })
       ])
     ]
   }

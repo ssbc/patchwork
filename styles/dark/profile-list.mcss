@@ -13,6 +13,11 @@ ProfileList {
     background-repeat: no-repeat
     background-position: right
 
+    -more {
+      padding-top: 10px
+      padding-bottom: 10px
+    }
+
     -following {
       background-image: svg(following)
     }

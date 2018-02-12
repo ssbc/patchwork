@@ -31,6 +31,8 @@ exports.create = function (api) {
       return yourFollowing.includes(id)
     })
 
+    var yourFriends = computed([yourFollowers, yourFollowing], inAllSets)
+
     var blockingFriends = computed([yourFollowers, yourFollowing, blockers], inAllSets)
     var mutualFriends = computed([yourFollowers, yourFollowing, followers, following], inAllSets)
     var outgoingVia = computed([yourFollowers, following], inAllSets)
@@ -69,6 +71,7 @@ exports.create = function (api) {
       yourId,
       yourFollowing,
       yourFollowers,
+      yourFriends,
       youFollow,
       youBlock,
       isYou,

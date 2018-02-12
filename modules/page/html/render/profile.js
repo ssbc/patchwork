@@ -25,6 +25,7 @@ exports.needs = nest({
   'profile.sheet.edit': 'first',
   'app.navigate': 'first',
   'profile.obs.contact': 'first',
+  'profile.obs.recentlyUpdated': 'first',
   'contact.html.followToggle': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.i18n_n': 'first',
@@ -41,6 +42,7 @@ exports.create = function (api) {
     var name = api.about.obs.name(id)
     var description = api.about.obs.description(id)
     var contact = api.profile.obs.contact(id)
+    var recent = api.profile.obs.recentlyUpdated()
 
     var friends = computed([contact.following, contact.followers], (following, followers) => {
       return Array.from(following).filter(follow => followers.includes(follow))
@@ -212,9 +214,9 @@ exports.create = function (api) {
         h('button PrivateMessageButton', {'ev-click': () => api.app.navigate('/private', {compose: {to: id}})}, i18n('Send Private Message')),
         when(contact.sync,
           h('div', [
-            renderContactBlock(i18n('Friends'), friends, contact.yourFollowing),
-            renderContactBlock(i18n('Followers'), followers, contact.yourFollowing),
-            renderContactBlock(i18n('Following'), following, contact.yourFollowing),
+            renderContactBlock(i18n('Friends'), onlyRecent(friends, 10), contact.yourFollowing, friends),
+            renderContactBlock(i18n('Followers'), onlyFollowing(followers, 10), contact.yourFollowing, followers),
+            renderContactBlock(i18n('Following'), onlyRecent(following, 10), contact.yourFollowing, following),
             renderContactBlock(i18n('Blocked by'), contact.blockingFriends, contact.yourFollowing)
           ]),
           h('div', {className: 'Loading'})
@@ -228,6 +230,34 @@ exports.create = function (api) {
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload
     return container
+
+    // scoped
+
+    function onlyFollowing (ids, max) {
+      return computed([ids, contact.yourFollowing, recent], (a, b, c) => {
+        var result = a.filter(x => b.includes(x) && c.includes(x))
+        if (result.length === 0 && a.length) {
+          // fallback to just recent
+          result = a.filter(x => c.includes(x))
+        }
+        if (max) {
+          return result.slice(0, max)
+        } else {
+          return result
+        }
+      })
+    }
+
+    function onlyRecent (ids, max) {
+      return computed([ids, recent], (a, b) => {
+        var result = a.filter(x => b.includes(x))
+        if (max) {
+          return result.slice(0, max)
+        } else {
+          return result
+        }
+      })
+    }
   })
 
   function displayFollowedBy (profiles) {
@@ -242,10 +272,10 @@ exports.create = function (api) {
     api.sheet.profiles(profiles, i18n('Blocked by'))
   }
 
-  function renderContactBlock (title, profiles, yourFollowing) {
-    profiles = api.profile.obs.rank(profiles)
+  function renderContactBlock (title, profiles, yourFollowing, fullList) {
+    var moreCount = computed([profiles, fullList], (a, b) => a && b && a.length < b.length && b.length - a.length)
     return [
-      when(computed(profiles, x => x.length), h('h2', title)),
+      when(computed([profiles, fullList], (a, b) => a.length || (b && b.length)), h('h2', title)),
       h('div', {
         classList: 'ProfileList'
       }, [
@@ -265,7 +295,21 @@ exports.create = function (api) {
         }, {
           maxTime: 5,
           idle: true
-        })
+        }),
+        when(moreCount,
+          h('a.profile -more', {
+            href: '#',
+            'ev-click': function () {
+              api.sheet.profiles(fullList, title)
+            }
+          }, [
+            h('div.main', [
+              h('div.name', computed(moreCount, count => {
+                return count && plural('View %s more', count)
+              }))
+            ])
+          ])
+        )
       ])
     ]
   }
