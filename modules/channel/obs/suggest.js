@@ -4,6 +4,7 @@ var {Struct, map, computed, watch} = require('mutant')
 exports.needs = nest({
   'channel.obs.recent': 'first',
   'channel.obs.subscribed': 'first',
+  'channel.obs.mostActive': 'first',
   'keys.sync.id': 'first'
 })
 
@@ -30,11 +31,11 @@ exports.create = function (api) {
     if (!suggestions) {
       var id = api.keys.sync.id()
       subscribed = api.channel.obs.subscribed(id)
-      var recentlyUpdated = api.channel.obs.recent()
-      var contacts = computed([subscribed, recentlyUpdated], function (a, b) {
+      var mostActive = api.channel.obs.mostActive()
+      var contacts = computed([subscribed, mostActive], function (a, b) {
         var result = Array.from(a)
         b.forEach((item, i) => {
-          if (!result.includes(item)) {
+          if (!result.includes(item[0])) {
             result.push(item)
           }
         })
@@ -47,17 +48,28 @@ exports.create = function (api) {
   }
 
   function suggestion (id) {
-    return Struct({
-      title: id,
-      id: `#${id}`,
-      subtitle: computed([id, subscribed], subscribedCaption),
-      value: `#${id}`
-    })
+    if (Array.isArray(id)) {
+      return Struct({
+        title: id[0],
+        id: `#${id[0]}`,
+        subtitle: computed([id[0], subscribed, `(${id[1]})`], subscribedCaption),
+        value: `#${id}`
+      })
+    } else {
+      return Struct({
+        title: id,
+        id: `#${id}`,
+        subtitle: computed([id, subscribed], subscribedCaption),
+        value: `#${id}`
+      })
+    }
   }
 }
 
-function subscribedCaption (id, subscribed) {
+function subscribedCaption (id, subscribed, fallback) {
   if (subscribed.has(id)) {
     return 'subscribed'
+  } else {
+    return fallback || ''
   }
 }
