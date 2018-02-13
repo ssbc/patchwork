@@ -21,7 +21,6 @@ exports.needs = nest({
   'sbot.async.publish': 'first',
   'keys.sync.id': 'first',
   'sheet.display': 'first',
-  'profile.obs.rank': 'first',
   'profile.sheet.edit': 'first',
   'app.navigate': 'first',
   'profile.obs.contact': 'first',
@@ -234,11 +233,11 @@ exports.create = function (api) {
     // scoped
 
     function onlyFollowing (ids, max) {
-      return computed([ids, contact.yourFollowing, recent], (a, b, c) => {
+      return computed([recent, ids, contact.yourFollowing], (a, b, c) => {
         var result = a.filter(x => b.includes(x) && c.includes(x))
         if (result.length === 0 && a.length) {
           // fallback to just recent
-          result = a.filter(x => c.includes(x))
+          result = a.filter(x => b.includes(x))
         }
         if (max) {
           return result.slice(0, max)
@@ -249,7 +248,7 @@ exports.create = function (api) {
     }
 
     function onlyRecent (ids, max) {
-      return computed([ids, recent], (a, b) => {
+      return computed([recent, ids], (a, b) => {
         var result = a.filter(x => b.includes(x))
         if (max) {
           return result.slice(0, max)

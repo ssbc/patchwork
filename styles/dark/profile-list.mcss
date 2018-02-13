@@ -103,6 +103,12 @@ ProfileList {
       }
     }
 
+    div.buttons {
+      display: flex;
+      align-items: center;
+      padding-right: 10px;
+    }
+
     :hover {
       background-color: #434141;
       div.controls {

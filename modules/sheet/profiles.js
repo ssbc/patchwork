@@ -6,6 +6,7 @@ exports.needs = nest({
   'sheet.display': 'first',
   'keys.sync.id': 'first',
   'contact.obs.following': 'first',
+  'contact.html.followToggle': 'first',
   'profile.obs.rank': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
@@ -79,23 +80,22 @@ exports.create = function (api) {
 
   function renderContactBlock (profiles) {
     var yourId = api.keys.sync.id()
-    var yourFollows = api.contact.obs.following(yourId)
     profiles = api.profile.obs.rank(profiles)
     return [
       h('div', {
         classList: 'ProfileList'
       }, [
         map(profiles, (id) => {
-          var following = computed(yourFollows, f => f.includes(id))
           return h('a.profile', {
             href: id,
-            classList: [
-              when(following, '-following')
-            ]
+            title: id
           }, [
             h('div.avatar', [api.about.html.image(id)]),
             h('div.main', [
               h('div.name', [ api.about.obs.name(id) ])
+            ]),
+            h('div.buttons', [
+              api.contact.html.followToggle(id, {block: false})
             ])
           ])
         }, { idle: true, maxTime: 2 })
