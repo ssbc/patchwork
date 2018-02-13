@@ -173,5 +173,10 @@
 		"other": "View %s more"
 	},
 	"self identifies as ": "self identifies as ",
-	"self assigned a description": "self assigned a description"
+	"self assigned a description": "self assigned a description",
+	"self assigned a display image": "self assigned a display image",
+	"assigned a display image to ": "assigned a display image to ",
+	"Browse Channels": "Browse Channels",
+	"identifies ": "identifies ",
+	" as \"": " as \""
 }
