@@ -171,5 +171,7 @@
 	"View %s more": {
 		"one": "View %s more",
 		"other": "View %s more"
-	}
+	},
+	"self identifies as ": "self identifies as ",
+	"self assigned a description": "self assigned a description"
 }
