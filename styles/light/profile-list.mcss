@@ -16,6 +16,12 @@ ProfileList {
     -more {
       padding-top: 10px
       padding-bottom: 10px
+
+      div.main {
+        div.name {
+          font-weight: normal
+        }
+      }
     }
 
     -following {
