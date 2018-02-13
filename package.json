@@ -43,7 +43,7 @@
     "mutant-pull-reduce": "^1.1.0",
     "obv": "0.0.1",
     "patch-settings": "~1.1.0",
-    "patchcore": "^1.23.3",
+    "patchcore": "~1.23.3",
     "pull-abortable": "^4.1.0",
     "pull-cat": "^1.1.11",
     "pull-defer": "^0.2.2",
@@ -56,7 +56,7 @@
     "pull-ping": "^2.0.2",
     "pull-pushable": "^2.0.1",
     "pull-stream": "~3.6.0",
-    "scuttlebot": "github:ssbc/scuttlebot#22d894d03235a96f1cad8e836b55ca57eb25d17f",
+    "scuttlebot": "github:ssbc/scuttlebot#383d7075a3da53278e1102455f3dc3ea7af18c46",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
     "ssb-about": "~0.1.1",
@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "colors": "^1.1.2",
-    "electron": "~1.8.1",
+    "electron": "~1.8.2",
     "node-gyp": "^3.6.2"
   }
 }
