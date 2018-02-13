@@ -51,6 +51,10 @@ exports.create = function (api) {
       return !followingList || !followingList.length
     })
 
+    var hasNoFollowers = computed(followers, followersList => {
+      return !followersList || !followersList.length
+    })
+
     return {
       followers,
       following,
@@ -65,6 +69,7 @@ exports.create = function (api) {
       incomingViaCount: count(incomingVia),
       hasOutgoing,
       isNotFollowingAnybody,
+      hasNoFollowers,
       noOutgoing: not(hasOutgoing, isYou),
       hasIncoming,
       noIncoming: not(hasIncoming, isYou),
