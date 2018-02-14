@@ -1,8 +1,5 @@
 var nest = require('depnest')
-var {
-  when,
-  h
-} = require('mutant')
+var { when, h } = require('mutant')
 
 exports.needs = nest({
   'intl.sync.i18n': 'first'
