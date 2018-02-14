@@ -64,6 +64,7 @@
     "ssb-avatar": "^0.2.0",
     "ssb-backlinks": "~0.6.1",
     "ssb-blobs": "~1.1.4",
+    "ssb-client": "4.5.2",
     "ssb-config": "^2.2.0",
     "ssb-friends": "^2.3.5",
     "ssb-keys": "^7.0.13",
