@@ -117,7 +117,7 @@ exports.create = function (api) {
             unreadIds.add(msg.key)
           }
 
-          if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 20) {
+          if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 500) {
             refresh()
           } else if (msg.value.author === yourId && content()) {
             // dynamically insert this post into the feed! (manually so that it doesn't get slow with mutant)
