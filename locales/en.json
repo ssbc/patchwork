@@ -100,5 +100,18 @@
 	" others": " others",
 	"like": "like",
 	"subscribed to ": "subscribed to ",
-	"liked this message": "liked this message"
+	"liked this message": "liked this message",
+	"Click to unblock": "Click to unblock",
+	"Blocked": "Blocked",
+	"Click to unfollow": "Click to unfollow",
+	"Follow Back": "Follow Back",
+	"Follow": "Follow",
+	"Click to block syncing with this person and hide their posts": "Click to block syncing with this person and hide their posts",
+	"Block": "Block",
+	"This is you.": "This is you.",
+	"unsubscribed from ": "unsubscribed from ",
+	"mentioned in your network": "mentioned in your network",
+	"on ": "on ",
+	"assigned a display image to ": "assigned a display image to ",
+	"Close": "Close"
 }

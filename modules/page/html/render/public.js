@@ -275,7 +275,6 @@ exports.create = function (api) {
     }
 
     function noFollowersWarning () {
-
       var explanation = i18n(
         'Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.'
       )
@@ -289,7 +288,7 @@ exports.create = function (api) {
             !isLoading && (hasNoFollowers && !isNotFollowingAnybody)
       )
 
-      return api.feed.html.followerWarning(shownWhen, explanation);
+      return api.feed.html.followerWarning(shownWhen, explanation)
     }
 
     function subscribe (id) {

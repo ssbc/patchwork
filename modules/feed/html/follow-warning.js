@@ -13,18 +13,18 @@ exports.gives = nest({
   'feed.html.followerWarning': true
 })
 
-exports.create = function(api) {
+exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('feed.html', {
-    followWarning: function followWarning(condition, explanation) {
-      return renderWarningBox(condition, i18n("You are not following anyone"), explanation)
+    followWarning: function followWarning (condition, explanation) {
+      return renderWarningBox(condition, i18n('You are not following anyone'), explanation)
     },
-    followerWarning: function followerWarning(condition, explanation) {
-      return renderWarningBox(condition, i18n("You have no followers"), explanation)
+    followerWarning: function followerWarning (condition, explanation) {
+      return renderWarningBox(condition, i18n('You have no followers'), explanation)
     }
   })
 
-  function renderWarningBox(condition, header, explanation) {
+  function renderWarningBox (condition, header, explanation) {
     var content = h('div', {
       classList: 'NotFollowingAnyoneWarning'
     }, h('section', [
@@ -39,6 +39,4 @@ exports.create = function(api) {
 
     return when(condition, content)
   }
-
-
 }
