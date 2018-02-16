@@ -254,7 +254,7 @@ exports.create = function (api) {
                 api.progress.html.peer(id)
               ]),
               h('div.controls', [
-                h('a.disconnect', {href: '#disconnect', 'ev-click': send(disconnect, id), title: i18n('Force Disconnect')}, ['x'])
+                h('a.disconnect', {href: '#', 'ev-click': send(disconnect, id), title: i18n('Force Disconnect')}, ['x'])
               ])
             ])
           })
