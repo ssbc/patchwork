@@ -13,12 +13,12 @@
 	"Local": "Local",
 	"Connected Pubs": "Connected Pubs",
 	"Who to follow": "Who to follow",
-	"Write a private message": "Write a private message",
+	"Write a private message": "Write a private message \n\n\n\nThis can only be read by yourself and people you have @mentioned.",
 	"Edit Your Profile": "Edit Your Profile",
 	"Public key for this profile": "Public key for this profile",
 	"This person is blocked by %s of your friends.": {
-		"one": "This person is blocked by %s of your friends.",
-		"other": "This person is blocked by %s of your friends."
+	  "one": "This person is blocked by %s of your friends.",
+	  "other": "This person is blocked by %s of your friends."
 	},
 	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
 	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
@@ -29,13 +29,13 @@
 	"However, since you follow someone that follows them, you should be able to see their latest posts.": "However, since you follow someone that follows them, you should be able to see their latest posts.",
 	"Mutual Friends": "Mutual Friends",
 	"You share %s mutual friends with this person.": {
-		"one": "You share %s mutual friends with this person.",
-		"other": "You share %s mutual friends with this person."
+	  "one": "You share %s mutual friend with this person.",
+	  "other": "You share %s mutual friends with this person."
 	},
 	"Followed by": "Followed by",
 	"You follow %s people that follow this person.": {
-		"one": "You follow %s person that follows this person.",
-		"other": "You follow %s people that follow this person."
+	  "one": "You follow someone that follows this person.",
+	  "other": "You follow %s people that follow this person."
 	},
 	"Send Private Message": "Send Private Message",
 	"Friends": "Friends",
@@ -68,15 +68,15 @@
 	"weeks": "weeks",
 	"days": "days",
 	"hours": "hours",
-	"minutes": "minutes",
-	"seconds": "seconds",
+	"minutes": "mins",
+	"seconds": "secs",
 	"year": "year",
 	"month": "month",
 	"week": "week",
 	"day": "day",
 	"hour": "hour",
-	"minute": "minute",
-	"second": "second",
+	"minute": "min",
+	"second": "sec",
 	"Reply": "Reply",
 	"View full thread": "View full thread",
 	"Unsubscribe": "Unsubscribe",
@@ -98,22 +98,22 @@
 	"Write a public message": "Write a public message",
 	"New Message": "New Message",
 	"%s people from your network replied to this message on ": {
-		"one": "%s person from your network replied to this message on ",
-		"other": "%s people from your network replied to this message on "
+	  "one": "%s person from your network replied to this message on ",
+	  "other": "%s people from your network replied to this message on "
 	},
 	"mentioned in your network": "mentioned in your network",
 	"Channels": "Channels",
 	"Browse All": "Browse All",
-	"$name": "$name",
+	"$name": "English",
 	"Theme": "Theme",
 	"Language": "Language",
 	"Default": "Default",
-	"de": "de",
+	"de": "German",
 	"en": "en",
-	"es": "es",
-	"ki": "ki",
+	"es": "Spanish",
+	"ki": "Kashmiri",
 	"pt": "pt",
-	"pt-BR": "pt-BR",
+	"pt-BR": "Brazillian Portuguese",
 	"Public Feed Options": "Public Feed Options",
 	"Hide following messages": "Hide following messages",
 	"This is you.": "This is you.",
@@ -131,7 +131,7 @@
 	"unsubscribed from ": "unsubscribed from ",
 	"Click to unsubscribe": "Click to unsubscribe",
 	"Subscribed": "Subscribed",
-	"Write a message in this channel": "Write a message in this channel",
+	"Write a message in this channel": "Write a message in this channel\n\n\n\nPeople who follow you or subscribe to this channel will also see this message in their main feed.\n\nTo create a new channel, type the channel name (preceded by a #) into the search box above. e.g #cat-pics",
 	"mentioned this channel": "mentioned this channel",
 	"You may not be able to see new channel content until you follow some users or pubs.": "You may not be able to see new channel content until you follow some users or pubs.",
 	"Search Results:": "Search Results:",
@@ -162,15 +162,15 @@
 	" referenced this message:": " referenced this message:",
 	"on ": "on ",
 	"You follow %s people that subscribe to this channel.": {
-		"one": "You follow %s person that subscribes to this channel.",
-		"other": "You follow %s people that subscribe to this channel."
+	  "one": "You follow %s person that subscribes to this channel.",
+	  "other": "You follow %s people that subscribe to this channel."
 	},
 	"People you follow that subscribe to this channel": "People you follow that subscribe to this channel",
 	" from your extended network": " from your extended network",
 	"+ Add Gathering": "+ Add Gathering",
 	"View %s more": {
-		"one": "View %s more",
-		"other": "View %s more"
+	  "one": "View %s more",
+	  "other": "View %s more"
 	},
 	"self identifies as ": "self identifies as ",
 	"self assigned a description": "self assigned a description",
@@ -182,4 +182,4 @@
 	"unblocked ": "unblocked ",
 	"identified ": "identified ",
 	"All Posts from Your ": "All Posts from Your "
-}
+  }
