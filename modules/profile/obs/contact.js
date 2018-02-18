@@ -52,7 +52,7 @@ exports.create = function (api) {
     })
 
     var hasNoFollowers = computed(followers, followersList => {
-      return !followersList || !followersList.length
+      return sync && (!followersList || !followersList.length)
     })
 
     return {
