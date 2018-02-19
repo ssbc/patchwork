@@ -265,9 +265,9 @@ exports.create = function (api) {
     }
 
     function noVisibleNewPostsWarning () {
-      var explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
+      const explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
 
-      var shownWhen = computed([loading, contact.isNotFollowingAnybody],
+      const shownWhen = computed([loading, contact.isNotFollowingAnybody],
            (isLoading, isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
       )
 
@@ -275,15 +275,15 @@ exports.create = function (api) {
     }
 
     function noFollowersWarning () {
-      var explanation = i18n(
+      const explanation = i18n(
         'Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.'
       )
 
-      // We only show this if the user has followed someone as the first warning ('you are not followed anyone')
+      // We only show this if the user has followed someone as the first warning ('You are not following anyone')
       // should be sufficient to get the user to join a pub. However, pubs have been buggy and not followed back on occassion.
       // Additionally, someone onboarded on a local network might follow someone on the network, but not be followed back by
       // them, so we begin to show this warning if the user has followed someone, but has no followers.
-      var shownWhen = computed([loading, contact.hasNoFollowers, contact.isNotFollowingAnybody],
+      const shownWhen = computed([loading, contact.hasNoFollowers, contact.isNotFollowingAnybody],
            (isLoading, hasNoFollowers, isNotFollowingAnybody) =>
             !isLoading && (hasNoFollowers && !isNotFollowingAnybody)
       )
