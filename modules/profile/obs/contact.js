@@ -51,8 +51,8 @@ exports.create = function (api) {
       return sync && (!following || !following.length)
     })
 
-    var hasNoFollowers = computed(followers, followersList => {
-      return sync && (!followersList || !followersList.length)
+    var hasNoFollowers = computed([followers, followers.sync], (followers, sync) => {
+      return sync && (!followers || !followers.length)
     })
 
     return {
