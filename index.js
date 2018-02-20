@@ -25,22 +25,21 @@ var quitting = false
  * we check if it's already running and if it is we focus the existing window
  * rather than opening a new instance.
  */
-function quitIfAlreadyRunning() {
-  var shouldQuit = electron.app.makeSingleInstance(function(commandLine, workingDirectory) {
+function quitIfAlreadyRunning () {
+  var shouldQuit = electron.app.makeSingleInstance(function (commandLine, workingDirectory) {
     // Someone tried to run a second instance, we should focus our window.
     if (windows.main) {
-      if (windows.main.isMinimized()) windows.main.restore();
-      windows.main.focus();
+      if (windows.main.isMinimized()) windows.main.restore()
+      windows.main.focus()
     }
-  });
+  })
 
   if (shouldQuit) {
-    electron.app.quit();
-    return;
+    electron.app.quit()
   }
 }
 
-quitIfAlreadyRunning();
+quitIfAlreadyRunning()
 
 electron.app.on('ready', () => {
   setupContext('ssb', {
