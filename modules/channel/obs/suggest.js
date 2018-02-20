@@ -53,7 +53,7 @@ exports.create = function (api) {
         title: id[0],
         id: `#${id[0]}`,
         subtitle: computed([id[0], subscribed, `(${id[1]})`], subscribedCaption),
-        value: `#${id}`
+        value: `#${id[0]}`
       })
     } else {
       return Struct({
