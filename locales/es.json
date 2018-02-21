@@ -195,7 +195,28 @@
 	"assigned a description to ": "asignó una descripción a ",
 	"mentioned in your network": "mencionado en tu red",
 	"%s people from your network replied to this message on ": {
-		"one":"%s persona de tu red respondió este mensaje en ",
-		"other":"%s personas de tu red respondieron este mensaje en "
-	}
+		"one": "%s persona de tu red respondió este mensaje en ",
+		"other": "%s personas de tu red respondieron este mensaje en "
+	},
+	"You may not be able to see new content until you follow some users or pubs.": "You may not be able to see new content until you follow some users or pubs.",
+	"You are not following anyone": "You are not following anyone",
+	"For help getting started, see the guide at ": "For help getting started, see the guide at ",
+	"View %s more": {
+		"one": "View %s more",
+		"other": "View %s more"
+	},
+	"You follow %s people that subscribe to this channel.": {
+		"one": "You follow %s people that subscribe to this channel.",
+		"other": "You follow %s people that subscribe to this channel."
+	},
+	"Hide channel (un)subcribe messages": "Hide channel (un)subcribe messages",
+	"Hide posts in channels that are not subscribed": "Hide posts in channels that are not subscribed",
+	"Channel Feed Options": "Channel Feed Options",
+	"Welcome to Patchwork": "Bienvenidos a Patchwork",
+	"For help, see the 'Getting Started' guide at ": "Para obtener ayuda, consulte la guía introducción en ",
+  	"You have no followers": "No tienes seguidores",
+  	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Nadie podrá ver tus mensajes hasta que tengas un seguidor. La manera más fácil de conseguir un seguidor es usar una invitación de pubs ya que el pub te seguirá. Si ya has redimido una invitación a un pub y ves que no te ha seguido de nuevo en tu perfil, prueba otro pub.",
+	"You may not be able to see new channel content until you follow some users or pubs.": "Es posible que no pueda ver nuevo contenido de canal hasta que siga a algunos usuarios o pubs.",
+	"People you follow that subscribe to this channel": "Personas a las que sigues que se suscriben a este canal",
+	"Browse Channels": "Buscar canales"
 }
