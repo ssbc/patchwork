@@ -33,7 +33,7 @@ exports.create = function (api) {
       type: 'post',
       root: Proxy(id),
       branch: Proxy(id),
-      reply: Value(undefined),
+      reply: Proxy(undefined),
       channel: Value(undefined),
       recps: Value(undefined)
     })
@@ -78,7 +78,21 @@ exports.create = function (api) {
       meta.root.set(root || thread.rootId)
 
       // track message author for resolving missing messages and reply mentions
-      meta.reply.set({[id]: author})
+      meta.reply.set(computed(thread.messages, messages => {
+        var result = {}
+        var first = messages[0]
+        var last = messages[messages.length - 1]
+
+        if (first && first.value) {
+          result[messages[0].key] = messages[0].value.author
+        }
+
+        if (last && last !== first && last.value) {
+          result[last.key] = last.value.author
+        }
+
+        return result
+      }))
 
       // if root thread, reply to last post
       meta.branch.set(isReply ? thread.branchId : thread.lastId)
