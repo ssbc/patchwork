@@ -53,8 +53,8 @@ exports.create = function (api) {
         hasContent.set(!!textArea.value)
         clearTimeout(draftPerstTimeout)
         draftPerstTimeout = setTimeout(() => {
-        api.drafts.sync.set(draftLocation, textArea.value)
-}, 200)
+          api.drafts.sync.set(draftLocation, textArea.value)
+        }, 200)
       },
       'ev-blur': () => {
         clearTimeout(blurTimeout)
