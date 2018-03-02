@@ -17,7 +17,10 @@ exports.needs = nest({
   'message.async.publish': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'drafts.sync.get': 'first',
+  'drafts.sync.set': 'first',
+  'drafts.sync.remove': 'first'
 })
 
 exports.gives = nest('message.html.compose')
@@ -43,9 +46,15 @@ exports.create = function (api) {
       }
     })
 
+    var draftPerstTimeout = null
+    var draftLocation = location
     var textArea = h('textarea', {
       'ev-input': function () {
         hasContent.set(!!textArea.value)
+        clearTimeout(draftPerstTimeout)
+        draftPerstTimeout = setTimeout(() => {
+        api.drafts.sync.set(draftLocation, textArea.value)
+}, 200)
       },
       'ev-blur': () => {
         clearTimeout(blurTimeout)
@@ -55,6 +64,13 @@ exports.create = function (api) {
       disabled: publishing,
       placeholder
     })
+
+    // load draft
+    let draft = api.drafts.sync.get(draftLocation)
+    if (typeof draft === 'string') {
+      textArea.value = draft
+      hasContent.set(true)
+    }
 
     var warningMessage = Value(null)
     var warning = h('section.warning',
@@ -199,6 +215,7 @@ exports.create = function (api) {
           }
         } else {
           if (msg) textArea.value = ''
+          api.drafts.sync.remove(draftLocation)
           if (cb) cb(null, msg)
         }
       }
