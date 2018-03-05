@@ -1,4 +1,4 @@
-var { h } = require('mutant')
+var { h, Struct } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
@@ -36,7 +36,11 @@ exports.create = function (api) {
         ])
       ]),
       api.message.html.compose({
-        meta: {type: 'post', channel},
+        meta: Struct({
+          type: 'post',
+          location: `${path}/${id}`,
+          channel
+        }),
         placeholder: i18n('Write a message in this channel')
       }),
       noVisibleNewPostsWarning()
