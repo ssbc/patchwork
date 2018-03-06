@@ -1,7 +1,7 @@
 var nest = require('depnest')
 var extend = require('xtend')
 var pull = require('pull-stream')
-var { h, send, when, Struct, computed, map, onceTrue } = require('mutant')
+var { h, send, when, computed, map, onceTrue } = require('mutant')
 
 exports.needs = nest({
   sbot: {
@@ -64,10 +64,11 @@ exports.create = function (api) {
 
     var prepend = [
       api.message.html.compose({
-        meta: Struct({
+        meta: {
           type: 'post',
-          location: `${path}/${id}`
-        }),
+          path: path,
+          id: id
+        },
         placeholder: i18n('Write a public message')
       }),
       noVisibleNewPostsWarning(),

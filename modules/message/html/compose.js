@@ -47,7 +47,7 @@ exports.create = function (api) {
     })
 
     var draftPerstTimeout = null
-    var draftLocation = meta.location()
+    var draftLocation = resolve(meta)
     var textArea = h('textarea', {
       'ev-input': function () {
         hasContent.set(!!textArea.value)

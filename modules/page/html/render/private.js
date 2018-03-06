@@ -1,4 +1,3 @@
-var { Struct } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 
@@ -20,10 +19,11 @@ exports.create = function (api) {
     const i18n = api.intl.sync.i18n
     var id = api.keys.sync.id()
     var compose = api.message.html.compose({
-      meta: Struct({
+      meta: {
         type: 'post',
-        location: `${path}/${id}`
-      }),
+        path: path,
+        id: id
+      },
       isPrivate: true,
       prepublish: function (msg) {
         msg.recps = [id]
