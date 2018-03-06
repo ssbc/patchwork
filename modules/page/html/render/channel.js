@@ -38,8 +38,7 @@ exports.create = function (api) {
       api.message.html.compose({
         meta: {
           type: 'post',
-          path: path,
-          id: id,
+          location: channel,
           channel
         },
         placeholder: i18n('Write a message in this channel')

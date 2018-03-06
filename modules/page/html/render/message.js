@@ -31,8 +31,7 @@ exports.create = function (api) {
 
     var meta = Struct({
       type: 'post',
-      path: `/message`,
-      id: id,
+      location: id,
       root: Proxy(id),
       branch: Proxy(id),
       reply: Proxy(undefined),

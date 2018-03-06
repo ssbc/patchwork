@@ -66,8 +66,7 @@ exports.create = function (api) {
       api.message.html.compose({
         meta: {
           type: 'post',
-          path: path,
-          id: id
+          location: `${path}/${id}`
         },
         placeholder: i18n('Write a public message')
       }),
