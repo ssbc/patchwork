@@ -9,6 +9,7 @@ var mentions = require('ssb-mentions')
 var extend = require('xtend')
 var addSuggest = require('suggest-box')
 var emoji = require('emojilib')
+var omit = require('lodash/omit')
 
 exports.needs = nest({
   'blob.html.input': 'first',
@@ -177,7 +178,8 @@ exports.create = function (api) {
     function publish () {
       publishing.set(true)
 
-      var content = extend(resolve(meta), {
+      var toPublish = omit(resolve(meta), ['path', 'id'])
+      var content = extend(toPublish, {
         text: textArea.value,
         mentions: mentions(textArea.value).map(mention => {
           // merge markdown-detected mention with file info
