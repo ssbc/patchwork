@@ -43,10 +43,11 @@ module.exports = function (config) {
     'app.linkPreview': 'first',
     'channel.obs.subscribed': 'first',
     'settings.obs.get': 'first',
+    'settings.sync.get': 'first',
     'intl.sync.i18n': 'first'
   }))
 
-  setupContextMenuAndSpellCheck(api.config.sync.load())
+  setupContextMenuAndSpellCheck(api.config.sync.load(), api.settings.sync)
 
   const i18n = api.intl.sync.i18n
 
