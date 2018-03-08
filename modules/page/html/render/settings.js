@@ -30,6 +30,7 @@ exports.create = function (api) {
     const filterSubscriptions = api.settings.obs.get('filters.subscriptions')
     const onlySubscribed = api.settings.obs.get('filters.onlySubscribed')
     const filterChannelViewSubscriptions = api.settings.obs.get('filters.channelView.subscriptions')
+    const viewerUrl = api.settings.obs.get('patchwork.viewerUrl', 'https://viewer.scuttlebot.io')
 
     var prepend = [
       h('PageHeading', [
@@ -79,6 +80,15 @@ exports.create = function (api) {
               h('option', {value: ''}, i18n('Default')),
               fontSizes.map(size => h('option', {value: size}, size))
             ])
+          ]),
+
+          h('section', [
+            h('h2', i18n('External Viewer')),
+            h('input.text', {
+              style: { 'width': '250px' },
+              value: viewerUrl,
+              'ev-change': (ev) => viewerUrl.set(ev.target.value)
+            })
           ]),
 
           h('section', [
