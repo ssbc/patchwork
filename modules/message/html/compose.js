@@ -27,7 +27,7 @@ exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.compose', function ({shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message'}, cb) {
+  return nest('message.html.compose', function ({shrink = true, isPrivate, location, participants, meta, hooks, prepublish, placeholder = 'Write a message'} , cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
@@ -47,13 +47,12 @@ exports.create = function (api) {
     })
 
     var draftPerstTimeout = null
-    var draftLocation = resolve(meta.location)
     var textArea = h('textarea', {
       'ev-input': function () {
         hasContent.set(!!textArea.value)
         clearTimeout(draftPerstTimeout)
         draftPerstTimeout = setTimeout(() => {
-          api.drafts.sync.set(draftLocation, textArea.value)
+          api.drafts.sync.set(location, textArea.value)
         }, 200)
       },
       'ev-blur': () => {
@@ -66,7 +65,7 @@ exports.create = function (api) {
     })
 
     // load draft
-    let draft = api.drafts.sync.get(draftLocation)
+    let draft = api.drafts.sync.get(location)
     if (typeof draft === 'string') {
       textArea.value = draft
       hasContent.set(true)
@@ -215,7 +214,7 @@ exports.create = function (api) {
           }
         } else {
           if (msg) textArea.value = ''
-          api.drafts.sync.remove(draftLocation)
+          api.drafts.sync.remove(location)
           if (cb) cb(null, msg)
         }
       }

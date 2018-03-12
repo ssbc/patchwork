@@ -36,11 +36,8 @@ exports.create = function (api) {
         ])
       ]),
       api.message.html.compose({
-        meta: {
-          type: 'post',
-          location: channel,
-          channel
-        },
+        meta: { type: 'post', channel },
+        location: channel,
         placeholder: i18n('Write a message in this channel')
       }),
       noVisibleNewPostsWarning()

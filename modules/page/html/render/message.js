@@ -31,7 +31,6 @@ exports.create = function (api) {
 
     var meta = Struct({
       type: 'post',
-      location: id,
       root: Proxy(id),
       branch: Proxy(id),
       reply: Proxy(undefined),
@@ -41,6 +40,7 @@ exports.create = function (api) {
 
     var compose = api.message.html.compose({
       meta,
+      location: id,
       isPrivate: when(meta.recps, true),
       shrink: false,
       participants,

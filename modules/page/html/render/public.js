@@ -64,10 +64,8 @@ exports.create = function (api) {
 
     var prepend = [
       api.message.html.compose({
-        meta: {
-          type: 'post',
-          location: `${path}/${id}`
-        },
+        meta: { type: 'post' },
+        location: `${path}/${id}`,
         placeholder: i18n('Write a public message')
       }),
       noVisibleNewPostsWarning(),
