@@ -21,7 +21,7 @@ exports.create = function (api) {
     var compose = api.message.html.compose({
       meta: { type: 'post' },
       isPrivate: true,
-      location: `${path}/${id}`,
+      location: { path: path, id: id },
       prepublish: function (msg) {
         msg.recps = [id]
 

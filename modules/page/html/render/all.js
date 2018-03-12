@@ -6,6 +6,7 @@ exports.needs = nest({
   'message.html.compose': 'first',
   'message.async.publish': 'first',
   'feed.html.rollup': 'first',
+  'keys.sync.id': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -20,6 +21,8 @@ exports.create = function (api) {
   function page (path) {
     if (path !== '/all') return // "/" is a sigil for "page"
 
+    var id = api.keys.sync.id()
+
     var prepend = [
       h('PageHeading', [
         h('h1', [
@@ -27,7 +30,7 @@ exports.create = function (api) {
           h('strong', i18n('Extended Network'))
         ])
       ]),
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
+      api.message.html.compose({ meta: { type: 'post' }, location: { id: id }, placeholder: i18n('Write a public message') })
     ]
 
     var feedView = api.feed.html.rollup(api.feed.pull.public, {

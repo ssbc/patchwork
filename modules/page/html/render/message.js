@@ -40,7 +40,7 @@ exports.create = function (api) {
 
     var compose = api.message.html.compose({
       meta,
-      location: id,
+      location: { id: id },
       isPrivate: when(meta.recps, true),
       shrink: false,
       participants,
