@@ -1,0 +1,14 @@
+Tag {
+  display: inline-block
+  padding: .4rem .6rem
+  background-color: lightgray
+  border-radius: 2px
+  margin-right: .3rem
+
+  a {
+    margin-left: .3rem
+    cursor: pointer
+    font-weight: 700
+    color: inherit
+  }
+}

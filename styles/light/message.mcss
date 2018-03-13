@@ -205,6 +205,11 @@ Message {
         font-size:90%;
       }
 
+      a.tags {
+        color: #286bc3;
+        font-size:90%;
+      }
+
       span.private {
         display: inline-block;
         margin: -3px -3px 3px 4px;

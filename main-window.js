@@ -21,6 +21,7 @@ module.exports = function (config) {
     require('./plugs'),
     require('patch-settings'),
     require('patchcore'),
+    require('patch-tag'),
     require('./overrides')
   )
 
@@ -114,6 +115,7 @@ module.exports = function (config) {
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
           [i18n('Gatherings'), '/gatherings'],
+          ['Tags', '/tags'],
           [i18n('Extended Network'), '/all'],
           {separator: true},
           [i18n('Settings'), '/settings']

@@ -19,6 +19,7 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-about'))
   .use(require('ssb-search'))
   .use(require('ssb-ws'))
+  .use(require('ssb-tags'))
   // .use(require('ssb-ebt')) // enable at your own risk!
   .use(require('./sbot'))
 

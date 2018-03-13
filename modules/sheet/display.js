@@ -5,7 +5,7 @@ exports.gives = nest('sheet.display')
 
 exports.create = function () {
   return nest('sheet.display', function (handler) {
-    var {content, footer} = handler(done)
+    var {content, footer, mounted} = handler(done)
 
     var container = h('div', {className: 'Sheet'}, [
       h('section', [content]),
@@ -13,6 +13,8 @@ exports.create = function () {
     ])
 
     document.body.appendChild(container)
+
+    if (mounted) mounted()
 
     function done () {
       document.body.removeChild(container)
