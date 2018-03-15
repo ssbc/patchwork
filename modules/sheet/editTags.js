@@ -23,7 +23,7 @@ exports.needs = nest({
       'tag': 'first'
     },
     'obs': {
-      'messageTags': 'first',
+      'messageTagsFrom': 'first',
       'allTags': 'first'
     }
   }
@@ -42,7 +42,7 @@ exports.create = function(api) {
 
       const myId = api.keys.sync.id()
       const messageTags = map(
-        api.tag.obs.messageTags(msgId),
+        api.tag.obs.messageTagsFrom(msgId, myId),
         tagId => Struct({
           tagId: Value(tagId),
           tagName: api.about.obs.name(tagId)
