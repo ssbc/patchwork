@@ -48,16 +48,20 @@ exports.create = function (api) {
     ]
 
     return h('div.SplitView', [
-      h('div.side', map(
-        tags,
-        tag => computed(
-          tag,
-          ({ tagId, tagName }) =>
-            h('a', {
-              'ev-click': () => selectedTagId.set(tagId)
-            }, api.tag.html.tag({ tagName, tagId }, null))
+      h('div.side', [
+        h('h2', 'Your Tags'),
+        map(
+          tags,
+          tag => computed(
+            tag,
+            ({ tagId, tagName }) =>
+              h('a', {
+                'ev-click': () => selectedTagId.set(tagId),
+                style: { 'margin-bottom': '.3rem', display: 'inline-block' }
+              }, api.tag.html.tag({ tagName, tagId }, null))
+          )
         )
-      )),
+      ]),
       h('div.main', [
         h('Scroller',[
           h('h2', name),
