@@ -10,7 +10,7 @@ const addSuggest = require('suggest-box')
 exports.gives = nest('sheet.editTags')
 
 exports.needs = nest({
-  'about.obs.valueFrom': 'first',
+  'about.obs.name': 'first',
   'keys.sync.id': 'first',
   'sheet.display': 'first',
   'tag': {
@@ -45,7 +45,7 @@ exports.create = function(api) {
         api.tag.obs.messageTags(msgId),
         tagId => Struct({
           tagId: Value(tagId),
-          tagName: api.about.obs.valueFrom(tagId, 'name', myId)
+          tagName: api.about.obs.name(tagId)
         })
       )
       const filteredMessages = computed(
@@ -137,7 +137,7 @@ exports.create = function(api) {
         const suggestions = map(
           api.tag.obs.allTags(),
           tagId => {
-            const tagName = api.about.obs.valueFrom(tagId, 'name', myId)()
+            const tagName = api.about.obs.name(tagId)()
             return {
               title: tagName,
               value: tagName,
