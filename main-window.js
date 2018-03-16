@@ -111,6 +111,7 @@ module.exports = function (config) {
         tab(i18n('Private'), '/private'),
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
+          [i18n('Drafts'), '/drafts'],
           [i18n('Gatherings'), '/gatherings'],
           [i18n('Extended Network'), '/all'],
           {separator: true},
