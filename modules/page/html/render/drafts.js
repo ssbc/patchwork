@@ -33,22 +33,22 @@ exports.create = function (api) {
 
     console.log(drafts)
 
-    const selectedDraft = Value()
+    const selectedDraft = Value('/public')
 
     var main = [
       h('div.SplitView', [
         h('div.side', [
           h('h2', 'Personal Drafts'),
           h('div.ChannelList', [
-            h('a', { classList: "channel", "ev-click": () => selectedDraft.set("public"), href: "/public" }, [ 'Public' ]),
-            h('a', { classList: "channel", "ev-click": () => selectedDraft.set("private"), href: "/private" }, [ 'Private' ])
+            h('a', { classList: "channel", "ev-click": (e) => setDraft(e, '/public'), href: "/public" }, [ 'Public' ]),
+            h('a', { classList: "channel", "ev-click": (e) => setDraft(e, '/private'), href: "/private" }, [ 'Private' ])
           ]),
           h('h2', 'Message Drafts'),
           h('div.ChannelList', [
             map(drafts,
               draft => computed(draft, ({ meta, value }) => {
                 if (meta.path !== "/message") return
-                return h('a', { classList: "channel", "ev-click": () => selectedDraft.set(draft), href: meta.id }, [
+                return h('a', { classList: "channel", "ev-click": (e) => setDraft(e, draft), href: meta.id }, [
                   h('span.name', [ meta.id ])
                 ])
               })
@@ -59,7 +59,7 @@ exports.create = function (api) {
             map(drafts,
               draft => computed(draft, ({ meta, value }) => {
                 if (meta.path === "/public" || meta.path === "/private" || meta.path === "/message") return
-                return h('a', { classList: "channel", "ev-click": () => selectedDraft.set(draft), href: meta.id }, [
+                return h('a', { classList: "channel", "ev-click": (e) => setDraft(e, draft), href: meta.id }, [
                   h('span.name', [ meta.id ])
                 ])
               })
@@ -73,5 +73,10 @@ exports.create = function (api) {
       ])
     ]
     return main
+
+    function setDraft (e, draft) {
+      e.preventDefault()
+      selectedDraft.set(draft)
+    }
   }
 }
