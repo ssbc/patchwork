@@ -19,8 +19,9 @@ exports.create = function (api) {
     const i18n = api.intl.sync.i18n
     var id = api.keys.sync.id()
     var compose = api.message.html.compose({
-      meta: {type: 'post'},
+      meta: { type: 'post' },
       isPrivate: true,
+      location: { path: path, id: id },
       prepublish: function (msg) {
         msg.recps = [id]
 

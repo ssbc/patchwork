@@ -17,14 +17,17 @@ exports.needs = nest({
   'message.async.publish': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'drafts.sync.get': 'first',
+  'drafts.sync.set': 'first',
+  'drafts.sync.remove': 'first'
 })
 
 exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.compose', function ({shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message'}, cb) {
+  return nest('message.html.compose', function ({shrink = true, isPrivate, location = {}, participants, meta, hooks, prepublish, placeholder = 'Write a message'} , cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
@@ -43,9 +46,11 @@ exports.create = function (api) {
       }
     })
 
+    var draftPerstTimeout = null
     var textArea = h('textarea', {
       'ev-input': function () {
         hasContent.set(!!textArea.value)
+        api.drafts.sync.set(location, textArea.value)
       },
       'ev-blur': () => {
         clearTimeout(blurTimeout)
@@ -55,6 +60,12 @@ exports.create = function (api) {
       disabled: publishing,
       placeholder
     })
+
+    let draft = api.drafts.sync.get(location)
+    if (typeof draft === 'string') {
+      textArea.value = draft
+      hasContent.set(true)
+    }
 
     var warningMessage = Value(null)
     var warning = h('section.warning',
@@ -199,6 +210,7 @@ exports.create = function (api) {
           }
         } else {
           if (msg) textArea.value = ''
+          api.drafts.sync.remove(location)
           if (cb) cb(null, msg)
         }
       }
