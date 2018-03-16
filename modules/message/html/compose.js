@@ -50,10 +50,7 @@ exports.create = function (api) {
     var textArea = h('textarea', {
       'ev-input': function () {
         hasContent.set(!!textArea.value)
-        clearTimeout(draftPerstTimeout)
-        draftPerstTimeout = setTimeout(() => {
-          api.drafts.sync.set(location, textArea.value)
-        }, 200)
+        api.drafts.sync.set(location, textArea.value)
       },
       'ev-blur': () => {
         clearTimeout(blurTimeout)
@@ -64,7 +61,6 @@ exports.create = function (api) {
       placeholder
     })
 
-    // load draft
     let draft = api.drafts.sync.get(location)
     if (typeof draft === 'string') {
       textArea.value = draft
