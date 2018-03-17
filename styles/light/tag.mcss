@@ -12,3 +12,8 @@ Tag {
     color: inherit
   }
 }
+
+a.tag-link {
+  margin-bottom: .3rem
+  display: inline-block
+}
