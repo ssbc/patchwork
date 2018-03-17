@@ -16,38 +16,29 @@ exports.gives = nest('page.html.render')
 exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (!path.startsWith('/tags')) return
-
+    const urlId = path.split('/')[2]
+    const currentTagId = urlId ? decodeURIComponent(urlId) : urlId
     const myId = api.keys.sync.id()
+
     const tags = map(
       api.tag.obs.allTagsFrom(myId),
       tagId => {
         return { tagId, tagName: api.about.obs.valueFrom(tagId, 'name', myId) }
       }
     )
-    const selectedTagId = Value(path.split('/')[2])
-    const name = computed(
-      selectedTagId,
-      tagId => tagId
-        ? api.about.obs.valueFrom(tagId, 'name', myId)
-        : Value('Select A Tag')
-    )
-    const tagMessages = computed(
-      selectedTagId,
-      tagId => tagId
+    const name =
+      currentTagId
+        ? api.about.obs.valueFrom(currentTagId, 'name', myId)
+        : 'Select A Tag'
+    const tagMessages =
+      currentTagId
         ? map(
-            api.tag.obs.taggedMessages(myId, tagId),
+            api.tag.obs.taggedMessages(myId, currentTagId),
             msgId => api.message.obs.get(msgId)
           )
         : []
-    )
 
-    var prepend = [
-      h('PageHeading', [
-        h('h1', [ h('strong', 'Tags'), ' from you' ]),
-      ])
-    ]
-
-    return h('div.SplitView', [
+    return h('SplitView', [
       h('div.side', [
         h('h2', 'Your Tags'),
         map(
@@ -55,9 +46,9 @@ exports.create = function (api) {
           tag => computed(
             tag,
             ({ tagId, tagName }) =>
-              h('a', {
-                'ev-click': () => selectedTagId.set(tagId),
-                style: { 'margin-bottom': '.3rem', display: 'inline-block' }
+              h('a.tag-link', {
+                href: `/tags/${encodeURIComponent(tagId)}`,
+                title: tagId,
               }, api.tag.html.tag({ tagName, tagId }, null))
           )
         )
