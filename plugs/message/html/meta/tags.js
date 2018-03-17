@@ -4,7 +4,7 @@ var { h, computed, map, send } = require('mutant')
 exports.gives = nest('message.html.meta')
 exports.needs = nest({
   'about.obs.name': 'first',
-  'sheet.tags': 'first',
+  'sheet.tags.render': 'first',
   'tag.obs.messageTags': 'first'
 })
 
@@ -33,6 +33,6 @@ exports.create = function (api) {
   }
 
   function displayTags ({ msgId, tags }) {
-    api.sheet.tags(msgId, tags)
+    api.sheet.tags.render(msgId, tags)
   }
 }
