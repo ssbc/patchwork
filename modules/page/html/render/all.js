@@ -30,7 +30,7 @@ exports.create = function (api) {
           h('strong', i18n('Extended Network'))
         ])
       ]),
-      api.message.html.compose({ meta: { type: 'post' }, location: { id: id }, placeholder: i18n('Write a public message') })
+      api.message.html.compose({ meta: { type: 'post' }, location: { path: '/public', ref: id }, placeholder: i18n('Write a public message') })
     ]
 
     var feedView = api.feed.html.rollup(api.feed.pull.public, {
