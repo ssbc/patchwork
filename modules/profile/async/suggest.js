@@ -99,7 +99,6 @@ function followingClass (id, following) {
   }
 }
 
-function matches (title, match) {
-  if (!match) return true
-  return title.toLowerCase().startsWith(match.toLowerCase())
+function matches (text, startsWith) {
+  return text.slice(0, startsWith.length).localeCompare(startsWith, 'default', {sensitivity: 'base'}) === 0
 }

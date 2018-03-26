@@ -21,7 +21,7 @@ exports.create = function (api) {
         return suggestions().slice(0, 200)
       } else {
         return suggestions().filter((item) => {
-          return item.title.toLowerCase().startsWith(word.toLowerCase())
+          return matches(item.title, word)
         })
       }
     }
@@ -72,4 +72,8 @@ function subscribedCaption (id, subscribed, fallback) {
   } else {
     return fallback || ''
   }
+}
+
+function matches (text, startsWith) {
+  return text.slice(0, startsWith.length).localeCompare(startsWith, 'default', {sensitivity: 'base'}) === 0
 }
