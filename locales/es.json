@@ -16,7 +16,7 @@
 	"Show ": "Mostrar ",
 	"update": "actualización",
 	"updates": "actualizaciones",
-	"+ Join Pub": "+ Unirce a un Pub",
+	"+ Join Pub": "+ Unirse a un Pub",
 	"word, @key, #channel": "palabra, @key, #canal",
 	"Profile": "Perfil",
 	"Mentions": "Menciones",
@@ -199,7 +199,7 @@
 		"other": "%s personas de tu red respondieron este mensaje en "
 	},
 	"You may not be able to see new content until you follow some users or pubs.": "You may not be able to see new content until you follow some users or pubs.",
-	"You are not following anyone": "You are not following anyone",
+	"You are not following anyone": "No estás siguiendo a nadie",
 	"For help getting started, see the guide at ": "For help getting started, see the guide at ",
 	"View %s more": {
 		"one": "View %s more",
@@ -210,8 +210,8 @@
 		"other": "You follow %s people that subscribe to this channel."
 	},
 	"Hide channel (un)subcribe messages": "Hide channel (un)subcribe messages",
-	"Hide posts in channels that are not subscribed": "Hide posts in channels that are not subscribed",
-	"Channel Feed Options": "Channel Feed Options",
+	"Hide posts in channels that are not subscribed": "Ocultar publicaciones en canales a los que no estás suscripto",
+	"Channel Feed Options": "Opciones de feed de canal",
 	"Welcome to Patchwork": "Bienvenidos a Patchwork",
 	"For help, see the 'Getting Started' guide at ": "Para obtener ayuda, consulte la guía introducción en ",
   	"You have no followers": "No tienes seguidores",
