@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var { h, send, when, computed, map } = require('mutant')
+var { h, when, computed, map } = require('mutant')
 
 exports.needs = nest({
   'message.async.publish': 'first',
@@ -14,7 +14,6 @@ exports.needs = nest({
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
-  const i18n = api.intl.sync.i18n
   return nest('page.html.render', function page (path) {
     if (path !== '/channels') return
 
@@ -42,21 +41,5 @@ exports.create = function (api) {
         }, {maxTime: 5, idle: true})
       ])
     ])
-
-    function subscribe (id) {
-      api.message.async.publish({
-        type: 'channel',
-        channel: id,
-        subscribed: true
-      })
-    }
-
-    function unsubscribe (id) {
-      api.message.async.publish({
-        type: 'channel',
-        channel: id,
-        subscribed: false
-      })
-    }
   })
 }

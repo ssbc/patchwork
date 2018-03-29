@@ -20,7 +20,7 @@ exports.create = (api) => {
 function handleEvent (ev) {
   var {api, msg} = this
   var el = getMessageElement(ev.target)
-  
+
   // HACK: if this is the last message in the list, reply to the root message
   if (el && !el.nextElementSibling) {
     api.app.navigate(api.message.sync.root(msg), 'reply')

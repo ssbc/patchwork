@@ -1,4 +1,4 @@
-var {h, when, map, computed, Value, lookup} = require('mutant')
+var {h, map, computed, Value, lookup} = require('mutant')
 var nest = require('depnest')
 var catchLinks = require('../../lib/catch-links')
 
@@ -79,7 +79,6 @@ exports.create = function (api) {
   })
 
   function renderContactBlock (profiles) {
-    var yourId = api.keys.sync.id()
     profiles = api.profile.obs.rank(profiles)
     return [
       h('div', {

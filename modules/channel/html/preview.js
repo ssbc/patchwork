@@ -1,6 +1,5 @@
 var nest = require('depnest')
 var h = require('mutant/h')
-var map = require('mutant/map')
 var when = require('mutant/when')
 var computed = require('mutant/computed')
 var send = require('mutant/send')
