@@ -268,7 +268,7 @@ exports.create = function (api) {
       const explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
 
       const shownWhen = computed([loading, contact.isNotFollowingAnybody],
-           (isLoading, isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
+        (isLoading, isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
       )
 
       return api.feed.html.followWarning(shownWhen, explanation)
@@ -284,27 +284,11 @@ exports.create = function (api) {
       // Additionally, someone onboarded on a local network might follow someone on the network, but not be followed back by
       // them, so we begin to show this warning if the user has followed someone, but has no followers.
       const shownWhen = computed([loading, contact.hasNoFollowers, contact.isNotFollowingAnybody],
-           (isLoading, hasNoFollowers, isNotFollowingAnybody) =>
-            !isLoading && (hasNoFollowers && !isNotFollowingAnybody)
+        (isLoading, hasNoFollowers, isNotFollowingAnybody) =>
+          !isLoading && (hasNoFollowers && !isNotFollowingAnybody)
       )
 
       return api.feed.html.followerWarning(shownWhen, explanation)
-    }
-
-    function subscribe (id) {
-      api.message.async.publish({
-        type: 'channel',
-        channel: id,
-        subscribed: true
-      })
-    }
-
-    function unsubscribe (id) {
-      api.message.async.publish({
-        type: 'channel',
-        channel: id,
-        subscribed: false
-      })
     }
 
     function disconnect (id) {

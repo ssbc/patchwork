@@ -74,6 +74,7 @@
     "ssb-query": "^1.0.0",
     "ssb-ref": "^2.9.0",
     "ssb-sort": "^1.0.0",
+    "standard": "^11.0.1",
     "statistics": "^3.3.0",
     "stream-to-pull-stream": "^1.7.2",
     "suggest-box": "^2.2.3",
@@ -82,7 +83,7 @@
   },
   "devDependencies": {
     "colors": "^1.1.2",
-    "electron": "~1.8.2",
+    "electron": "~1.8.4",
     "node-gyp": "^3.6.2"
   }
 }
