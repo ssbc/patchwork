@@ -69,7 +69,6 @@ exports.create = function (api) {
       // what happens in private stays in private!
       meta.recps.set(value.content.recps)
 
-      var author = value.author
       var root = api.message.sync.root({key: id, value}) || id
       var isReply = id !== root
       var thread = api.feed.obs.thread(id, {branch: isReply})
