@@ -2,7 +2,7 @@ AllChannels {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  overflow-y: auto
+  overflow: auto
   padding: 10px;
 
   a.channel {
@@ -48,6 +48,8 @@ AllChannels {
       flex: 1
       white-space: nowrap;
       min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     a {
