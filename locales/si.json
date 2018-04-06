@@ -17,8 +17,8 @@
 	"Edit Your Profile": "Uredi svoj profil",
 	"Public key for this profile": "Javni ključ za ta profil",
 	"This person is blocked by %s of your friends.": {
-	  "one": "To osebo je blokiralo %s tvojih prijateljev.",
-	  "other": "To osebo je blokiralo %s tvojih prijateljev."
+		"one": "To osebo je blokiralo %s tvojih prijateljev.",
+		"other": "To osebo je blokiralo %s tvojih prijateljev."
 	},
 	"You don't follow anyone who follows this person": "Trenutno ne spremljaš nikogar, ki bi spremljal to osebo",
 	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "Verjetno ne boš mogel_a dostopati do njihovih sporočil. Poskusi se včlaniti v pub, katerega člani so.",
@@ -29,13 +29,13 @@
 	"However, since you follow someone that follows them, you should be able to see their latest posts.": "Ker pa spremljaš nekoga, ki spremlja njih, boš lahko dostopal_a do njihovih objav.",
 	"Mutual Friends": "Skupni prijatelji",
 	"You share %s mutual friends with this person.": {
-	  "one": "S to osebo imaš %s skupnih prijateljev.",
-	  "other": "S to osebo imaš %s skupnih prijateljev."
+		"one": "S to osebo imaš %s skupnih prijateljev.",
+		"other": "S to osebo imaš %s skupnih prijateljev."
 	},
 	"Followed by": "Spremljajo ga/jo",
 	"You follow %s people that follow this person.": {
-	  "one": "Spremljaš nekoga, ki spremlja to osebo.",
-	  "other": "Spremljaš %s oseb, ki spremljajo to osebo."
+		"one": "Spremljaš nekoga, ki spremlja to osebo.",
+		"other": "Spremljaš %s oseb, ki spremljajo to osebo."
 	},
 	"Send Private Message": "Pošlji zasebno sporočilo",
 	"Friends": "Prijatelji",
@@ -98,8 +98,8 @@
 	"Write a public message": "Napiši javno sporočilo",
 	"New Message": "Novo sporočilo",
 	"%s people from your network replied to this message on ": {
-	  "one": "%s oseb iz tvojega omrežja je odgovorilo na to sporočilo o ",
-	  "other": "%s oseb iz tvojega omrežja je odgovorilo na to sporočilo o "
+		"one": "%s oseb iz tvojega omrežja je odgovorilo na to sporočilo o ",
+		"other": "%s oseb iz tvojega omrežja je odgovorilo na to sporočilo o "
 	},
 	"mentioned in your network": "omenjeno v tvojem omrežju",
 	"Channels": "Kanali",
@@ -162,15 +162,15 @@
 	" referenced this message:": " je omenil to sporočilo:",
 	"on ": "na ",
 	"You follow %s people that subscribe to this channel.": {
-	  "one": "Spemljaš %s oseb, prijavljenih na ta kanal.",
-	  "other": "Spemljaš %s oseb, prijavljenih na ta kanal."
+		"one": "Spemljaš %s oseb, prijavljenih na ta kanal.",
+		"other": "Spemljaš %s oseb, prijavljenih na ta kanal."
 	},
 	"People you follow that subscribe to this channel": "Osebe, ki ji spremljaš in so prijavljene na ta kanal",
 	" from your extended network": " iz tvojega razširjenega omrežja",
 	"+ Add Gathering": "+ Dodaj druženje",
 	"View %s more": {
-	  "one": "Poglej %s več",
-	  "other": "Poglej %s več"
+		"one": "Poglej %s več",
+		"other": "Poglej %s več"
 	},
 	"self identifies as ": "se identificira kot ",
 	"self assigned a description": "si je dodal_a opis",
@@ -183,5 +183,7 @@
 	"identified ": "identificiran_a ",
 	"All Posts from Your ": "Vsa sporočila iz tvojega ",
 	"You have no followers": "Nimaš nobenih spremljavalcev",
-	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Dokler nimaš vsaj enega spremljevalca, nihče ne bo mogel videti tvojih objav. Najlažje je, da obiščeš vsaj en pub in ta pub bo nato postal tvoj privi spremljavalec. Če si že iskoristil_a povabilo v pub in te ta pub ne spremlja nazaj, potem predlagamo, da poskusiš obiskati nov pub."
-  }
+	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Dokler nimaš vsaj enega spremljevalca, nihče ne bo mogel videti tvojih objav. Najlažje je, da obiščeš vsaj en pub in ta pub bo nato postal tvoj privi spremljavalec. Če si že iskoristil_a povabilo v pub in te ta pub ne spremlja nazaj, potem predlagamo, da poskusiš obiskati nov pub.",
+	"si": "si",
+	"ur": "ur"
+}

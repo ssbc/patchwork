@@ -17,8 +17,8 @@
 	"Edit Your Profile": "Edit Your Profile",
 	"Public key for this profile": "Public key for this profile",
 	"This person is blocked by %s of your friends.": {
-	  "one": "This person is blocked by %s of your friends.",
-	  "other": "This person is blocked by %s of your friends."
+		"one": "This person is blocked by %s of your friends.",
+		"other": "This person is blocked by %s of your friends."
 	},
 	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
 	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
@@ -29,13 +29,13 @@
 	"However, since you follow someone that follows them, you should be able to see their latest posts.": "However, since you follow someone that follows them, you should be able to see their latest posts.",
 	"Mutual Friends": "Mutual Friends",
 	"You share %s mutual friends with this person.": {
-	  "one": "You share %s mutual friend with this person.",
-	  "other": "You share %s mutual friends with this person."
+		"one": "You share %s mutual friend with this person.",
+		"other": "You share %s mutual friends with this person."
 	},
 	"Followed by": "Followed by",
 	"You follow %s people that follow this person.": {
-	  "one": "You follow someone that follows this person.",
-	  "other": "You follow %s people that follow this person."
+		"one": "You follow someone that follows this person.",
+		"other": "You follow %s people that follow this person."
 	},
 	"Send Private Message": "Send Private Message",
 	"Friends": "Friends",
@@ -98,8 +98,8 @@
 	"Write a public message": "Write a public message",
 	"New Message": "New Message",
 	"%s people from your network replied to this message on ": {
-	  "one": "%s person from your network replied to this message on ",
-	  "other": "%s people from your network replied to this message on "
+		"one": "%s person from your network replied to this message on ",
+		"other": "%s people from your network replied to this message on "
 	},
 	"mentioned in your network": "mentioned in your network",
 	"Channels": "Channels",
@@ -163,15 +163,15 @@
 	" referenced this message:": " referenced this message:",
 	"on ": "on ",
 	"You follow %s people that subscribe to this channel.": {
-	  "one": "You follow %s person that subscribes to this channel.",
-	  "other": "You follow %s people that subscribe to this channel."
+		"one": "You follow %s person that subscribes to this channel.",
+		"other": "You follow %s people that subscribe to this channel."
 	},
 	"People you follow that subscribe to this channel": "People you follow that subscribe to this channel",
 	" from your extended network": " from your extended network",
 	"+ Add Gathering": "+ Add Gathering",
 	"View %s more": {
-	  "one": "View %s more",
-	  "other": "View %s more"
+		"one": "View %s more",
+		"other": "View %s more"
 	},
 	"self identifies as ": "self identifies as ",
 	"self assigned a description": "self assigned a description",
@@ -185,4 +185,4 @@
 	"All Posts from Your ": "All Posts from Your ",
 	"You have no followers": "You have no followers",
 	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub."
-  }
+}
