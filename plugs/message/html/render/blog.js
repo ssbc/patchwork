@@ -22,7 +22,7 @@ exports.create = function (api) {
     if (!isBlog(msg)) return
 
     var blog = Blog(api.sbot.obs.connection).obs.get(msg)
-    var content = opts.renderAsCard
+    var content = opts.inRollup
       ? BlogCard({
         blog,
         onClick: () => api.app.navigate(msg.key),
