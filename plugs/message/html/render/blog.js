@@ -7,6 +7,7 @@ exports.gives = nest('message.html.render')
 
 exports.needs = nest({
   'about.obs.color': 'first',
+  'app.navigate': 'first',
   'blob.sync.url': 'first',
   'message.html.decorate': 'reduce',
   'message.html.layout': 'first',
@@ -21,20 +22,17 @@ exports.create = function (api) {
     if (!isBlog(msg)) return
 
     var blog = Blog(api.sbot.obs.connection).obs.get(msg)
-    var showBlog = Value(false)
-    // var showBlog = Value(true)
+    var content = opts.renderAsCard
+      ? BlogCard({
+        blog,
+        onClick: () => api.app.navigate(msg.key),
+        color: api.about.obs.color,
+        blobUrl: api.blob.sync.url
+      })
+      : BlogFull(blog, api.message.html.markdown)
 
     const element = api.message.html.layout(msg, Object.assign({}, {
-      content: when(showBlog,
-        BlogFull(blog, api.message.html.markdown),
-        BlogCard({
-          blog,
-          onClick: () => showBlog.set(true),
-          color: api.about.obs.color,
-          blobUrl: api.blob.sync.url
-        })
-        // Sample(blog, api.blob.sync.url, showBlog)
-      ),
+      content,
       layout: 'default'
     }, opts))
 
