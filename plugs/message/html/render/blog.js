@@ -93,5 +93,5 @@ function BlogCard ({ blog, blobUrl, onClick, color }) {
 }
 
 function canRender (msg) {
-  return msg.value && msg.value.content && msg.value.content.type === 'blog' && isBlog(msg)
+  if (isBlog(msg)) return true
 }
