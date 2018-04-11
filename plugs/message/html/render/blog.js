@@ -31,8 +31,8 @@ exports.create = function (api) {
     if (!canRender(msg)) return
 
     var content = null
-
-    // only render the message body if it is available (only in thread view), otherwise show card
+    // show a card (if there's no body loaded) or the full blog (if the blog body is loaded)
+    // msg is decorated with a `body` attribute when loaded using feed.obs.thread from patchcore
     if (msg.body) {
       content = h('BlogFull.Markdown', [
         h('h1', msg.value.content.title),
