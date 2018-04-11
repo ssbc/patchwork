@@ -244,7 +244,6 @@ exports.create = function (api) {
       var renderedMessage = api.message.html.render(item, {
         compact: compactFilter(item),
         includeForks: false, // this is a root message, so forks are already displayed as replies
-        inRollup: true,
         priority: getPriority(item)
       })
 

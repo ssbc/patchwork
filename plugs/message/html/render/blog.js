@@ -1,9 +1,12 @@
 const nest = require('depnest')
-const Blog = require('scuttle-blog')
 const isBlog = require('scuttle-blog/isBlog')
 const { h, Value, computed, when, resolve } = require('mutant')
 
-exports.gives = nest('message.html.render')
+
+exports.gives = nest('message.html', {
+  canRender: true,
+  render: true
+})
 
 exports.needs = nest({
   'about.obs.color': 'first',
@@ -16,21 +19,34 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
+
+  return nest('message.html', {
+    render: blogRenderer,
+    canRender
+  })
+
   return nest('message.html.render', blogRenderer)
 
   function blogRenderer (msg, opts) {
-    if (!isBlog(msg)) return
+    if (!canRender(msg)) return
 
-    var blog = Blog(api.sbot.obs.connection).obs.get(msg)
-    var content = opts.inRollup
-      ? BlogCard({
-        blog,
+    var content = null
+    // show a card (if there's no body loaded) or the full blog (if the blog body is loaded)
+    // msg is decorated with a `body` attribute when loaded using feed.obs.thread from patchcore
+    if (msg.body) {
+      content = h('BlogFull.Markdown', [
+        h('h1', msg.value.content.title),
+        api.message.html.markdown(msg.body)
+      ])
+    } else {
+      content = BlogCard({
+        blog: msg.value.content,
         onClick: () => api.app.navigate(msg.key),
         color: api.about.obs.color,
         blobUrl: api.blob.sync.url
       })
-      : BlogFull(blog, api.message.html.markdown)
-
+    }
+    
     const element = api.message.html.layout(msg, Object.assign({}, {
       content,
       layout: 'default'
@@ -38,23 +54,6 @@ exports.create = function (api) {
 
     return api.message.html.decorate(element, { msg })
   }
-}
-
-function BlogFull (blog, renderMd) {
-  return computed(blog.body, body => {
-    if (body && body.length) {
-      return h('BlogFull.Markdown', [
-        h('h1', blog.title),
-        renderMd(body)
-      ])
-    }
-
-    return h('BlogFull.Markdown', [
-      h('h1', blog.title),
-      blog.summary,
-      h('p', 'loading...')
-    ])
-  })
 }
 
 function BlogCard ({ blog, blobUrl, onClick, color }) {
@@ -91,4 +90,8 @@ function BlogCard ({ blog, blobUrl, onClick, color }) {
   ])
 
   return b
+}
+
+function canRender (msg) {
+  if (isBlog(msg)) return true
 }
