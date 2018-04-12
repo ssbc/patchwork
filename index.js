@@ -132,7 +132,7 @@ function openMainWindow () {
 function setupContext (appName, opts, cb) {
   ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
-    blobsPort: 7777,
+    blobsPort: 8989, // matches ssb-ws
     friends: {
       dunbar: 150,
       hops: 2 // down from 3

@@ -142,7 +142,7 @@ module.exports = function (config) {
   catchLinks(container, (href, external, anchor) => {
     if (external) {
       electron.shell.openExternal(href)
-    } else if (ref.isBlob(href)) {
+    } else if (href && href.startsWith('&')) { // (ref.isBlob(href)) {
       electron.shell.openExternal(api.blob.sync.url(href))
     } else if (ref.isMsg(href)) {
       getExternalHandler(href, (err, handler) => {

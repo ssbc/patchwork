@@ -1,4 +1,3 @@
-var serveBlobs = require('./lib/serve-blobs')
 var fs = require('fs')
 var Path = require('path')
 var electron = require('electron')
@@ -18,6 +17,7 @@ var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/logging'))
   .use(require('ssb-query'))
   .use(require('ssb-about'))
+  .use(require('ssb-ws'))
   // .use(require('ssb-ebt')) // enable at your own risk!
   .use(require('./sbot'))
 
@@ -29,7 +29,6 @@ module.exports = function (ssbConfig) {
     config: ssbConfig
   }
   ssbConfig.manifest = context.sbot.getManifest()
-  serveBlobs(context)
   fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
   electron.ipcRenderer.send('server-started', ssbConfig)
 
