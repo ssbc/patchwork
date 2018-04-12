@@ -44,7 +44,8 @@ exports.create = function (api) {
       shrink: false,
       participants,
       hooks: [
-        AnchorHook('reply', anchor, (el) => el.focus())
+        AnchorHook('reply', anchor, (el) => el.focus()),
+        AnchorHook('quote', anchor, (el) => el.addQuote(meta))
       ],
       placeholder: when(meta.recps, i18n('Write a private reply'), i18n('Write a public reply'))
     })
