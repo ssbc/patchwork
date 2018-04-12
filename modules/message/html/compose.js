@@ -134,7 +134,7 @@ exports.create = function (api) {
     }
 
     composer.addQuote = function (value) {
-      api.sbot.async.get(resolve(value.branch), (err, data) => {
+      api.sbot.async.get(resolve(value.defaultBranch), (err, data) => {
         if (err) {
           console.log('Error getting an object from sbot', err)
           return;

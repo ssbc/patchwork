@@ -33,6 +33,7 @@ exports.create = function (api) {
       type: 'post',
       root: Proxy(id),
       branch: Proxy(id),
+      defaultBranch: Proxy(id),
       reply: Proxy(undefined),
       channel: Value(undefined),
       recps: Value(undefined)
@@ -96,6 +97,8 @@ exports.create = function (api) {
 
       // if root thread, reply to last post
       meta.branch.set(isReply ? thread.branchId : thread.lastId)
+      // but keep reference to the original branch for quoting
+      meta.defaultBranch.set(id)
 
       participants.set(computed(thread.messages, messages => {
         return messages.map(msg => msg && msg.value && msg.value.author)
