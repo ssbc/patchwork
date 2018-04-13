@@ -79,9 +79,10 @@ exports.create = function (api) {
 
       files.push(file)
 
-      var embed = file.type.indexOf('image/') === 0 ? '!' : ''
       var blob = ref.parseBlob(file.link)
       filesById[blob.id] = file
+
+      var embed = isEmbeddable(file.type) ? '!' : ''
       var pos = textArea.selectionStart
       var before = textArea.value.slice(0, pos)
       var after = textArea.value.slice(pos)
@@ -221,4 +222,8 @@ exports.create = function (api) {
 function showDialog (opts) {
   var electron = require('electron')
   electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), opts)
+}
+
+function isEmbeddable (type) {
+  return type.startsWith('image/') || type.startsWith('audio/') || type.startsWith('video/')
 }

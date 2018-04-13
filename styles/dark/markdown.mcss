@@ -30,6 +30,15 @@ Markdown {
     }
   }
 
+  (video) {
+    max-width: 100%
+    object-fit: scale-down
+  }
+
+  (audio) {
+    width: 100%
+  }
+
   (table) {
     margin: 10px 0
     border-collapse: collapse
