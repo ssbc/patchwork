@@ -1,7 +1,6 @@
 const nest = require('depnest')
 const isBlog = require('scuttle-blog/isBlog')
-const { h, Value, computed, when, resolve } = require('mutant')
-
+const { h, when, resolve } = require('mutant')
 
 exports.gives = nest('message.html', {
   canRender: true,
@@ -19,13 +18,10 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-
   return nest('message.html', {
     render: blogRenderer,
     canRender
   })
-
-  return nest('message.html.render', blogRenderer)
 
   function blogRenderer (msg, opts) {
     if (!canRender(msg)) return
@@ -46,7 +42,7 @@ exports.create = function (api) {
         blobUrl: api.blob.sync.url
       })
     }
-    
+
     const element = api.message.html.layout(msg, Object.assign({}, {
       content,
       layout: 'default'
