@@ -9,6 +9,7 @@ var mentions = require('ssb-mentions')
 var extend = require('xtend')
 var addSuggest = require('suggest-box')
 var emoji = require('emojilib')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'blob.html.input': 'first',
@@ -77,9 +78,10 @@ exports.create = function (api) {
       }
 
       files.push(file)
-      filesById[file.link] = file
 
       var embed = file.type.indexOf('image/') === 0 ? '!' : ''
+      var blob = ref.parseBlob(file.link)
+      filesById[blob.id] = file
       var pos = textArea.selectionStart
       var before = textArea.value.slice(0, pos)
       var after = textArea.value.slice(pos)
