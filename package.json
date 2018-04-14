@@ -71,6 +71,7 @@
     "ssb-private": "0.1.4",
     "ssb-query": "^1.0.0",
     "ssb-ref": "github:ssbc/ssb-ref#secret-blobs",
+    "ssb-search": "~1.1.1",
     "ssb-sort": "^1.0.0",
     "ssb-ws": "~2.1.1",
     "standard": "^11.0.1",

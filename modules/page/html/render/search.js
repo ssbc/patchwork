@@ -4,7 +4,6 @@ var TextNodeSearcher = require('text-node-searcher')
 var whitespace = /\s+/
 var pullAbortable = require('pull-abortable')
 var Scroller = require('../../../../lib/scroller')
-var nextStepper = require('../../../../lib/next-stepper')
 var nest = require('depnest')
 var Proxy = require('mutant/proxy')
 
@@ -22,8 +21,7 @@ exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (path[0] !== '?') return
 
-    var queryStr = path.substr(1).trim()
-    var query = queryStr.split(whitespace)
+    var query = path.substr(1).trim()
     var done = Value(false)
     var loading = Proxy(true)
     var count = Value(0)
@@ -31,7 +29,7 @@ exports.create = function (api) {
     var aborter = null
 
     const searchHeader = h('div', {className: 'PageHeading'}, [
-      h('h1', [h('strong', i18n('Search Results:')), ' ', query.join(' ')])
+      h('h1', [h('strong', i18n('Search Results:')), ' ', query])
     ])
 
     var updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
@@ -59,7 +57,7 @@ exports.create = function (api) {
     var realtimeAborter = pullAbortable()
 
     pull(
-      api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({old: false, query})),
+      api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({old: false, query: query.split(whitespace)})),
       realtimeAborter,
       pull.drain(msg => {
         updates.set(updates() + 1)
@@ -103,11 +101,7 @@ exports.create = function (api) {
       })
 
       pull(
-        api.sbot.pull.stream(sbot => nextStepper(getStream, {
-          reverse: true,
-          limit: 5,
-          query
-        })),
+        api.sbot.pull.stream(sbot => sbot.search.query({query})),
         pull.through(() => count.set(count() + 1)),
         aborter,
         pull.filter(msg => msg.value),
@@ -119,18 +113,9 @@ exports.create = function (api) {
       }))
     }
 
-    function getStream (opts) {
-      if (opts.lt != null && !opts.lt.marker) {
-        // if an lt has been specified that is not a marker, assume stream is finished
-        return pull.empty()
-      } else {
-        return api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch(opts))
-      }
-    }
-
     function renderMsg (msg) {
       var el = h('FeedEvent', api.message.html.render(msg))
-      highlight(el, createOrRegExp(query))
+      highlight(el, createOrRegExp(query.split(whitespace)))
       return el
     }
   })
