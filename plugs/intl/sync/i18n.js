@@ -10,7 +10,8 @@ exports.gives = nest('intl.sync', [
   'localeNames',
   'i18n',
   'i18n_n',
-  'time'
+  'time',
+  'startsWith'
 ])
 
 exports.needs = nest({
@@ -23,14 +24,22 @@ exports.needs = nest({
 exports.create = (api) => {
   let _locale
 
+  // TODO: this should probably follow the selected language
+  var collator = new Intl.Collator('default', {sensitivity: 'base', usage: 'search'})
+
   return nest('intl.sync', {
     locale,
     locales,
+    startsWith,
     localeNames,
     i18n,
     i18n_n: i18nN,
     time
   })
+
+  function startsWith (text, startsWith) {
+    return collator.compare(text.slice(0, startsWith.length), startsWith) === 0
+  }
 
   // Get locale value in setting
   function locale () {

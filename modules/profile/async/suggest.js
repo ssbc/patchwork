@@ -6,6 +6,7 @@ exports.needs = nest({
   'contact.obs.following': 'first',
   'about.obs.name': 'first',
   'about.obs.imageUrl': 'first',
+  'intl.sync.startsWith': 'first',
   'keys.sync.id': 'first'
 })
 
@@ -15,6 +16,7 @@ exports.create = function (api) {
   var suggestions = null
   var recentSuggestions = null
   var following = null
+  var matches = api.intl.sync.startsWith
 
   return nest('profile.async.suggest', function () {
     loadSuggestions()
@@ -97,8 +99,4 @@ function followingClass (id, following) {
   if (following.includes(id)) {
     return 'following'
   }
-}
-
-function matches (text, startsWith) {
-  return text.slice(0, startsWith.length).localeCompare(startsWith, 'default', {sensitivity: 'base'}) === 0
 }

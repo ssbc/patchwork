@@ -5,6 +5,7 @@ exports.needs = nest({
   'channel.obs.recent': 'first',
   'channel.obs.subscribed': 'first',
   'channel.obs.mostActive': 'first',
+  'intl.sync.startsWith': 'first',
   'keys.sync.id': 'first'
 })
 
@@ -13,6 +14,7 @@ exports.gives = nest('channel.async.suggest')
 exports.create = function (api) {
   var suggestions = null
   var subscribed = null
+  var matches = api.intl.sync.startsWith
 
   return nest('channel.async.suggest', function () {
     loadSuggestions()
@@ -32,7 +34,7 @@ exports.create = function (api) {
       var id = api.keys.sync.id()
       subscribed = api.channel.obs.subscribed(id)
       var mostActive = api.channel.obs.mostActive()
-      var contacts = computed([subscribed, mostActive], function (a, b) {
+      var channels = computed([subscribed, mostActive], function (a, b) {
         var result = Array.from(a)
         b.forEach((item, i) => {
           if (!result.includes(item[0])) {
@@ -42,7 +44,7 @@ exports.create = function (api) {
         return result
       })
 
-      suggestions = map(contacts, suggestion, {idle: true})
+      suggestions = map(channels, suggestion, {idle: true})
       watch(suggestions)
     }
   }
@@ -72,8 +74,4 @@ function subscribedCaption (id, subscribed, fallback) {
   } else {
     return fallback || ''
   }
-}
-
-function matches (text, startsWith) {
-  return text.slice(0, startsWith.length).localeCompare(startsWith, 'default', {sensitivity: 'base'}) === 0
 }
