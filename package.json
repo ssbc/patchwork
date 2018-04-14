@@ -55,7 +55,7 @@
     "pull-pushable": "^2.0.1",
     "pull-stream": "~3.6.0",
     "scuttle-blog": "^1.0.0",
-    "scuttlebot": "github:ssbc/scuttlebot#22d894d03235a96f1cad8e836b55ca57eb25d17f",
+    "scuttlebot": "~11.2.1",
     "secret-stack": "4.0.1",
     "sorted-array-functions": "~1.0.0",
     "spacetime": "^1.0.7",
