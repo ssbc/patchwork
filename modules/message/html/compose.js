@@ -91,7 +91,9 @@ exports.create = function (api) {
       if (before && !before.endsWith(spacer)) before += spacer
       if (!after.startsWith(spacer)) after = spacer + after
 
-      textArea.value = `${before}${embed}[${file.name}](${file.link})${after}`
+      var embedPrefix = getEmbedPrefix(file.type)
+
+      textArea.value = `${before}${embed}[${embedPrefix}${file.name}](${file.link})${after}`
       console.log('added:', file)
     }, {
       private: isPrivate
@@ -226,4 +228,12 @@ function showDialog (opts) {
 
 function isEmbeddable (type) {
   return type.startsWith('image/') || type.startsWith('audio/') || type.startsWith('video/')
+}
+
+function getEmbedPrefix (type) {
+  if (typeof type === 'string') {
+    if (type.startsWith('audio/')) return 'audio:'
+    if (type.startsWith('video/')) return 'video:'
+  }
+  return ''
 }
