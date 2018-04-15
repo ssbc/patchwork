@@ -107,10 +107,23 @@ exports.create = function (api) {
         }
       },
       rootFilter: function (msg) {
+
+        if (msg.value && msg.value.content && msg.value.content.type === 'contact') {
+          // don't show unfollows in the main feed, but do show follows and blocks
+          // we still show unfollows on a person's profile though
+          if (msg.value.content.following === false && !msg.value.content.blocking) return false
+        }
+
+        if (msg.value && msg.value.content && msg.value.content.type === 'channel') {
+          // don't show channel unsubscribes in the main feed, but we still show on their profile
+          if (msg.value.content.subscribed === false) return false
+        }
+
         // skip messages that are directly replaced by the previous message
         // e.g. follow / unfollow in quick succession
         // THIS IS A TOTAL HACK!!! SHOULD BE REPLACED WITH A PROPER ROLLUP!
         var isOutdated = isReplacementMessage(msg, lastMessage)
+
         if (checkFeedFilter(msg) && !isOutdated) {
           lastMessage = msg
           return true
