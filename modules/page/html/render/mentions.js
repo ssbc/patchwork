@@ -25,7 +25,7 @@ exports.create = function (api) {
           return mention && mention.link === id
         })) {
           return 'mention'
-        } else if (msg.value.content.type === 'contact') {
+        } else if (msg.value.content.type === 'contact' && msg.value.content.following === true) {
           return true
         } else if (msg.value.content.type === 'about') {
           return true
