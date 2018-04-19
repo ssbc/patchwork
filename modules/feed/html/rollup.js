@@ -12,7 +12,8 @@ var bumpMessages = {
   'post': 'replied to this message',
   'about': 'added changes',
   'mention': 'mentioned you',
-  'channel-mention': 'mentioned this channel'
+  'channel-mention': 'mentioned this channel',
+  'attending': 'can attend'
 }
 
 // bump even for first message
@@ -51,6 +52,7 @@ exports.create = function (api) {
     prepend,
     rootFilter = returnTrue,
     bumpFilter = returnTrue,
+    resultFilter = returnTrue, // filter after replies have been resolved (just before append to scroll)
     compactFilter = returnFalse,
     prefiltered = false,
     displayFilter = returnTrue,
@@ -196,6 +198,7 @@ exports.create = function (api) {
             pull.filter(bumpFilter),
             api.feed.pull.rollup(rootFilter)
           ),
+          pull.filter(resultFilter),
           scroller
         )
       })

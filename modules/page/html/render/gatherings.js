@@ -24,7 +24,7 @@ exports.create = function (api) {
 
     var prepend = [
       h('PageHeading', [
-        h('h1', [h('strong', i18n('Gatherings')), i18n(' from your extended network')]),
+        h('h1', [h('strong', i18n('Gatherings'))]),
         h('div.meta', [
           h('button -add', {
             'ev-click': createGathering
@@ -35,13 +35,15 @@ exports.create = function (api) {
 
     return api.feed.html.rollup(api.feed.pull.type('gathering'), {
       prepend,
-      bumpFilter: function (msg) {
-        if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
-          var author = msg.value.author
-          return id === author || following().includes(author)
+      rootFilter: (msg) => isGathering(msg),
+      bumpFilter: (msg) => {
+        if (isGathering(msg)) {
+          return true
+        } else if (followsAuthor(following, id, msg) && isAttendee(msg)) {
+          return 'attending'
         }
       },
-      rootFilter: (msg) => msg.value.content.type === 'gathering',
+      resultFilter: (msg) => followsAuthor(following, id, msg) || followingIsAttending(following, msg),
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]}))
     })
   })
@@ -49,4 +51,24 @@ exports.create = function (api) {
   function createGathering () {
     api.gathering.sheet.edit()
   }
+}
+
+function followsAuthor (following, yourId, msg) {
+  var author = msg.value.author
+  return yourId === author || following().includes(author)
+}
+
+function followingIsAttending (following, msg) {
+  if (Array.isArray(msg.replies)) {
+    return msg.replies.some((reply) => isAttendee(reply) && following().includes(reply.value.author))
+  }
+}
+
+function isAttendee (msg) {
+  var content = msg.value && msg.value.content
+  return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
+}
+
+function isGathering (msg) {
+  return (msg.value && msg.value.content && msg.value.content.type === 'gathering')
 }

@@ -100,14 +100,17 @@ exports.create = function (api) {
           var author = msg.value.author
 
           if (id === author || following().includes(author)) {
-            return true
+            if (isAttendee(msg)) {
+              return 'attending'
+            } else {
+              return true
+            }
           } else if (matchesSubscribedChannel(msg)) {
             return 'matches-channel'
           }
         }
       },
       rootFilter: function (msg) {
-
         if (msg.value && msg.value.content && msg.value.content.type === 'contact') {
           // don't show unfollows in the main feed, but do show follows and blocks
           // we still show unfollows on a person's profile though
@@ -330,4 +333,9 @@ function isReplacementMessage (msgA, msgB) {
       return msgA.value.author === msgB.value.author && msgA.value.content.contact === msgB.value.content.contact
     }
   }
+}
+
+function isAttendee (msg) {
+  var content = msg.value && msg.value.content
+  return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
 }

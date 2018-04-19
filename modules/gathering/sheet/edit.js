@@ -55,7 +55,7 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, [id ? i18n('Edit') : i18n('Create'), i18n(' Gathering')]),
+          }, [id ? i18n('Edit') : i18n('Create Gathering')]),
           h('GatheringEditor', [
             h('input.title', {
               placeholder: i18n('Choose a title'),
