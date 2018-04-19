@@ -47,7 +47,7 @@ exports.create = function (api) {
 
     var hidden = sustained(computed([waiting, replicateProgress.incompleteFeeds, pending, pendingMigration], (waiting, incomplete, pending, pendingMigration) => {
       return !waiting && incomplete < 5 && !pending && !pendingMigration
-    }), 2000)
+    }), 500)
 
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
     var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)
