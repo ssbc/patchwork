@@ -48,7 +48,7 @@ exports.create = function (api) {
 
     function doSearch () {
       var value = searchBox.value.trim()
-      if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%')) {
+      if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%') || value.startsWith('&')) {
         if (value.startsWith('@') && value.length < 30) {
           // probably not a key
         } else if (value.length > 2) {

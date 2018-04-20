@@ -229,11 +229,17 @@ module.exports = function (config) {
 
   function getExternalHandler (href, cb) {
     var link = ref.parseLink(href)
-    if (link && ref.isMsg(link.link)) {
-      api.sbot.async.get(link.link, function (err, value) {
-        if (err) return cb(err)
-        cb(null, api.app.sync.externalHandler({key: link.link, value, query: link.query}))
-      })
+    if (link) {
+      if (ref.isMsg(link.link)) {
+        api.sbot.async.get(link.link, function (err, value) {
+          if (err) return cb(err)
+          cb(null, api.app.sync.externalHandler({key: link.link, value, query: link.query}))
+        })
+      } else if (ref.isBlob(link.link)) {
+        cb(null, function (href) {
+          electron.shell.openExternal(api.blob.sync.url(href))
+        })
+      }
     } else {
       cb()
     }
