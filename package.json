@@ -71,7 +71,7 @@
     "ssb-msgs": "^5.2.0",
     "ssb-private": "~0.1.4",
     "ssb-query": "^1.0.0",
-    "ssb-ref": "^2.11.0",
+    "ssb-ref": "^2.11.1",
     "ssb-search": "~1.1.1",
     "ssb-sort": "^1.0.0",
     "ssb-ws": "~2.1.1",
