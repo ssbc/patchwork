@@ -6,12 +6,14 @@ var pullAbortable = require('pull-abortable')
 var Scroller = require('../../../../lib/scroller')
 var nest = require('depnest')
 var Proxy = require('mutant/proxy')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'sbot.pull.stream': 'first',
   'keys.sync.id': 'first',
   'message.html.render': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'sbot.pull.backlinks': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -57,7 +59,7 @@ exports.create = function (api) {
     var realtimeAborter = pullAbortable()
 
     pull(
-      api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({old: false, query: query.split(whitespace)})),
+      getStream(query, true),
       realtimeAborter,
       pull.drain(msg => {
         updates.set(updates() + 1)
@@ -101,7 +103,7 @@ exports.create = function (api) {
       })
 
       pull(
-        api.sbot.pull.stream(sbot => sbot.search.query({query})),
+        getStream(query, false),
         pull.through(() => count.set(count() + 1)),
         aborter,
         pull.filter(msg => msg.value),
@@ -109,7 +111,7 @@ exports.create = function (api) {
       )
 
       loading.set(computed([done, scroller.queue], (done, queue) => {
-        return !done && queue < 5
+        return !done
       }))
     }
 
@@ -119,6 +121,23 @@ exports.create = function (api) {
       return el
     }
   })
+
+  function getStream (query, realtime = false) {
+    if (ref.isLink(query) || query.startsWith('#')) {
+      return api.sbot.pull.backlinks({
+        query: [ {$filter: { dest: query }} ],
+        reverse: true,
+        old: !realtime,
+        index: 'DTA' // use asserted timestamps
+      })
+    } else {
+      if (realtime) {
+        return api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({old: false, query: query.split(whitespace)}))
+      } else {
+        return api.sbot.pull.stream(sbot => sbot.search.query({query}))
+      }
+    }
+  }
 }
 
 function createOrRegExp (ary) {

@@ -33,7 +33,7 @@ exports.create = function (api) {
 
   return nest('message.html.layout', layout)
 
-  function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences, includeForks = true}) {
+  function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences, includeForks = true, actions = true}) {
     if (!(layout === 'mini')) return
 
     var classList = ['Message -mini']
@@ -67,8 +67,8 @@ exports.create = function (api) {
         replyInfo, priority, miniContent
       }),
       h('section', [content]),
-      computed(msg.key, (key) => {
-        if (ref.isMsg(key)) {
+      computed([msg.key, actions], (key, actions) => {
+        if (ref.isMsg(key) && actions) {
           return h('footer', [
             h('div.actions', [
               api.message.html.action(msg)

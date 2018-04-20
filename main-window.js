@@ -46,7 +46,7 @@ module.exports = function (config) {
     'intl.sync.i18n': 'first'
   }))
 
-  setupContextMenuAndSpellCheck(api.config.sync.load())
+  setupContextMenuAndSpellCheck(api.config.sync.load(), navigate)
 
   const i18n = api.intl.sync.i18n
 
