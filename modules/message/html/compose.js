@@ -79,8 +79,8 @@ exports.create = function (api) {
 
       files.push(file)
 
-      var blob = ref.parseBlob(file.link)
-      filesById[blob.id] = file
+      var parsed = ref.parseLink(file.link)
+      filesById[parsed.link] = file
 
       var embed = isEmbeddable(file.type) ? '!' : ''
       var pos = textArea.selectionStart

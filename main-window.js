@@ -16,7 +16,7 @@ var watch = require('mutant/watch')
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
-    addCommand('app.navigate', setView),
+    addCommand('app.navigate', navigate),
     require('./modules'),
     require('./plugs'),
     require('patch-settings'),
@@ -140,20 +140,11 @@ module.exports = function (config) {
   var previewElement = api.app.linkPreview(container, 500)
 
   catchLinks(container, (href, external, anchor) => {
+    if (!href) return
     if (external) {
       electron.shell.openExternal(href)
-    } else if (href && href.startsWith('&')) { // (ref.isBlob(href)) {
-      electron.shell.openExternal(api.blob.sync.url(href))
-    } else if (ref.isMsg(href)) {
-      getExternalHandler(href, (err, handler) => {
-        if (!err && handler) {
-          handler(href)
-        } else {
-          api.app.navigate(href, anchor)
-        }
-      })
     } else {
-      api.app.navigate(href, anchor)
+      api.app.navigate(href)
     }
   })
 
@@ -170,7 +161,7 @@ module.exports = function (config) {
         submenu: [
           { label: i18n('Browse All'),
             click () {
-              setView('/channels')
+              navigate('/channels')
             }
           },
           {type: 'separator'}
@@ -178,7 +169,7 @@ module.exports = function (config) {
           return {
             label: `#${channel}`,
             click () {
-              setView(`#${channel}`)
+              navigate(`#${channel}`)
             }
           }
         }))
@@ -187,7 +178,7 @@ module.exports = function (config) {
       return {
         label: i18n('Browse Channels'),
         click () {
-          setView('/channels')
+          navigate('/channels')
         }
       }
     }
@@ -207,7 +198,7 @@ module.exports = function (config) {
               return {
                 label: item[0],
                 click () {
-                  setView(item[1])
+                  navigate(item[1])
                 }
               }
             }
@@ -223,16 +214,29 @@ module.exports = function (config) {
     return element
   }
 
-  function setView (href, anchor) {
-    previewElement.cancel()
-    views.setView(href, anchor)
+  function navigate (href, anchor) {
+    if (typeof href !== 'string') return false
+    getExternalHandler(href, (err, handler) => {
+      if (!err && handler) {
+        handler(href)
+      } else {
+        // no external handler found, use page.html.render
+        previewElement.cancel()
+        views.setView(href, anchor)
+      }
+    })
   }
 
-  function getExternalHandler (key, cb) {
-    api.sbot.async.get(key, function (err, value) {
-      if (err) return cb(err)
-      cb(null, api.app.sync.externalHandler({key, value}))
-    })
+  function getExternalHandler (href, cb) {
+    var link = ref.parseLink(href)
+    if (link && ref.isMsg(link.link)) {
+      api.sbot.async.get(link.link, function (err, value) {
+        if (err) return cb(err)
+        cb(null, api.app.sync.externalHandler({key: link.link, value, query: link.query}))
+      })
+    } else {
+      cb()
+    }
   }
 
   function tab (name, view) {
