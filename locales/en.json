@@ -193,5 +193,12 @@
 	"Describe the gathering (if you want)": "Describe the gathering (if you want)",
 	"Create Gathering": "Create Gathering",
 	"liked": "liked",
-	"(missing message)": "(missing message)"
+	"(missing message)": "(missing message)",
+	"paste invite code here": "paste invite code here",
+	"By default, Patchwork will only see other users that are on the same local area network as you.": "By default, Patchwork will only see other users that are on the same local area network as you.",
+	"In order to share with users on the internet, you need to be invited to a pub server.": "In order to share with users on the internet, you need to be invited to a pub server.",
+	"Redeem Invite": "Redeem Invite",
+	"Error": "Error",
+	"OK": "OK",
+	"An error occurred while attempting to redeem invite.": "An error occurred while attempting to redeem invite."
 }
