@@ -84,7 +84,7 @@
   },
   "devDependencies": {
     "colors": "^1.2.3",
-    "electron": "^1.8.6",
+    "electron": "^2.0.0",
     "node-gyp": "^3.6.2"
   }
 }
