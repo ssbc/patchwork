@@ -12,7 +12,7 @@ var getRoot = require('patchcore/message/sync/root').create().message.sync.root
 var getTimestamp = require('patchcore/message/sync/timestamp').create().message.sync.timestamp
 
 module.exports = function (ssb, config) {
-  var create = FlumeViewLevel(2, function (msg, seq) {
+  var create = FlumeViewLevel(3, function (msg, seq) {
     var result = [
       [getTimestamp(msg), getRoot(msg) || msg.key]
     ]
