@@ -203,10 +203,10 @@ module.exports = function (config) {
               }
             }
           }))
-          menu.popup(electron.remote.getCurrentWindow(), {
+          menu.popup({
+            window: electron.remote.getCurrentWindow(),
             x: Math.round(rects.left * factor),
             y: Math.round(rects.bottom * factor) + 4,
-            async: true
           })
         })
       }
