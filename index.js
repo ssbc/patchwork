@@ -107,7 +107,7 @@ function openMainWindow () {
       y: windowState.y,
       width: windowState.width,
       height: windowState.height,
-      titleBarStyle: 'hidden-inset',
+      titleBarStyle: 'hiddenInset',
       autoHideMenuBar: true,
       title: 'Patchwork',
       show: true,
