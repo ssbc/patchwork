@@ -112,7 +112,7 @@ function openMainWindow () {
       title: 'Patchwork',
       show: true,
       backgroundColor: '#EEE',
-      icon: './assets/icon.png'
+      icon: Path.join(__dirname, 'assets/icon.png')
     })
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
