@@ -12,6 +12,8 @@ var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
+var mousetrap = require("mousetrap")
+
 
 module.exports = function (config) {
   var sockets = combine(
@@ -72,6 +74,9 @@ module.exports = function (config) {
   watch(pendingCount, count => {
     electron.remote.app.setBadgeCount(count)
   })
+
+  
+
 
   document.head.appendChild(
     h('style', {
@@ -147,6 +152,14 @@ module.exports = function (config) {
       api.app.navigate(href)
     }
   })
+
+
+  // TODO - should this be in a separate file instead? 
+  // And should we be using the Electron MenuItem API over mousetrap?
+
+  mousetrap.bind(["command+[", "command+left"], views.goBack)
+  mousetrap.bind(["command+]", "command+right"], views.goForward)
+
 
   return [container, previewElement]
 
