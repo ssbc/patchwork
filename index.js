@@ -45,30 +45,28 @@ electron.app.on('ready', () => {
   setupContext('ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
-    
-    var browserWindow = openMainWindow();
+    var browserWindow = openMainWindow()
     var menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
-      label: "History",
+      label: 'History',
       submenu: [
         {
-          label: "Forward",
-          accelerator: "CmdOrCtrl+]",
+          label: 'Forward',
+          accelerator: 'CmdOrCtrl+]',
           click: () => {
             browserWindow.webContents.send('goForward')
           }
         },
         {
-          label: "Back",
-          accelerator: "CmdOrCtrl+[",
+          label: 'Back',
+          accelerator: 'CmdOrCtrl+[',
           click: () => {
-            browserWindow.webContents.send("goBack")
+            browserWindow.webContents.send('goBack')
           }
         }
       ]
-    });
-    
+    })
 
     var view = menu.find(x => x.label === 'View')
     view.submenu = [
@@ -98,7 +96,7 @@ electron.app.on('ready', () => {
         { role: 'front' }
       ]
     }
-    
+
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
   })
 

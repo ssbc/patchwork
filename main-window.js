@@ -66,15 +66,15 @@ module.exports = function (config) {
   var views = api.app.views(api.page.html.render, [
     '/public', '/private', id, '/mentions'
   ])
-  
+
   var pendingCount = views.get('/mentions').pendingUpdates
 
   watch(pendingCount, count => {
     electron.remote.app.setBadgeCount(count)
   })
 
-  electron.ipcRenderer.on("goForward", views.goForward)    
-  electron.ipcRenderer.on("goBack", views.goBack)
+  electron.ipcRenderer.on('goForward', views.goForward)
+  electron.ipcRenderer.on('goBack', views.goBack)
 
   document.head.appendChild(
     h('style', {
