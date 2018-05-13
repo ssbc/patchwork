@@ -45,8 +45,8 @@ exports.create = function (api) {
       }
     })
 
-    var hidden = sustained(computed([waiting, replicateProgress.incompleteFeeds, pending, pendingMigration], (waiting, incomplete, pending, pendingMigration) => {
-      return !waiting && incomplete < 5 && !pending && !pendingMigration
+    var hidden = sustained(computed([waiting, downloadProgress, pending, pendingMigration], (waiting, downloadProgress, pending, pendingMigration) => {
+      return !waiting && downloadProgress === 1 && !pending && !pendingMigration
     }), 500)
 
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
@@ -57,7 +57,7 @@ exports.create = function (api) {
         when(displaying, h('Loading -small', [
           when(pendingMigration,
             [h('span.info', i18n('Upgrading database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
-            when(computed(replicateProgress.incompleteFeeds, (v) => v > 5),
+            when(computed(downloadProgress, (v) => v < 1),
               [h('span.info', i18n('Downloading new messages')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
               when(pending, [
                 [h('span.info', i18n('Indexing database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
