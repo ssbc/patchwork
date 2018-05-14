@@ -73,6 +73,9 @@ module.exports = function (config) {
     electron.remote.app.setBadgeCount(count)
   })
 
+  electron.ipcRenderer.on('goForward', views.goForward)
+  electron.ipcRenderer.on('goBack', views.goBack)
+
   document.head.appendChild(
     h('style', {
       innerHTML: computed(api.settings.obs.get('patchwork.theme', 'light'), themeName => {
@@ -147,7 +150,6 @@ module.exports = function (config) {
       api.app.navigate(href)
     }
   })
-
   return [container, previewElement]
 
   // scoped
