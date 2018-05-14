@@ -52,17 +52,17 @@ electron.app.on('ready', () => {
       label: 'History',
       submenu: [
         {
-          label: 'Forward',
-          accelerator: 'CmdOrCtrl+]',
-          click: () => {
-            browserWindow.webContents.send('goForward')
-          }
-        },
-        {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
           click: () => {
             browserWindow.webContents.send('goBack')
+          }
+        },
+        {
+          label: 'Forward',
+          accelerator: 'CmdOrCtrl+]',
+          click: () => {
+            browserWindow.webContents.send('goForward')
           }
         }
       ]
