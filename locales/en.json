@@ -194,5 +194,7 @@
 	"Describe the gathering (if you want)": "Describe the gathering (if you want)",
 	"Create Gathering": "Create Gathering",
 	"liked": "liked",
-	"(missing message)": "(missing message)"
+	"(missing message)": "(missing message)",
+	"What would you like to call ": "What would you like to call ",
+	"Nicknames you assign here will be publicly visible to others.": "Nicknames you assign here will be publicly visible to others."
 }
