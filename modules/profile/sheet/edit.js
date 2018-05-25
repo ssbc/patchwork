@@ -8,7 +8,7 @@ exports.gives = nest('profile.sheet.edit')
 exports.needs = nest({
   'sheet.display': 'first',
   'keys.sync.id': 'first',
-  'sbot.async.publish': 'first',
+  'message.async.publish': 'first',
   'about.obs': {
     name: 'first',
     description: 'first',
@@ -67,10 +67,12 @@ exports.create = function (api) {
             ]),
             h('div.main', [
               h('input.name', {
+                'disabled': publishing,
                 placeholder: i18n('Choose a name'),
                 hooks: [ValueHook(chosenName), FocusHook()]
               }),
               h('textarea.description', {
+                'disabled': publishing,
                 placeholder: i18n('Describe yourself (if you want)'),
                 hooks: [ValueHook(chosenDescription)]
               })
@@ -83,6 +85,7 @@ exports.create = function (api) {
             'disabled': publishing
           }, when(publishing, i18n('Publishing...'), i18n('Publish'))),
           h('button -cancel', {
+            'disabled': publishing,
             'ev-click': close
           }, i18n('Cancel'))
         ]
@@ -99,12 +102,14 @@ exports.create = function (api) {
 
         if (Object.keys(update).length) {
           publishing.set(true)
-          api.sbot.async.publish(extend({
+
+          // confirm publish
+          api.message.async.publish(extend({
             type: 'about',
             about: id
-          }, update), (err) => {
+          }, update), (err, msg) => {
+            publishing.set(false)
             if (err) {
-              publishing.set(false)
               showDialog({
                 type: 'error',
                 title: i18n('Error'),
@@ -112,7 +117,8 @@ exports.create = function (api) {
                 message: i18n('An error occurred while attempting to publish about message.'),
                 detail: err.message
               })
-            } else {
+            } else if (msg) {
+              // user confirmed publish, so close the dialog
               close()
             }
           })

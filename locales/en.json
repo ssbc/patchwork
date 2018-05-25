@@ -194,5 +194,6 @@
 	"Describe the gathering (if you want)": "Describe the gathering (if you want)",
 	"Create Gathering": "Create Gathering",
 	"liked": "liked",
-	"(missing message)": "(missing message)"
+	"(missing message)": "(missing message)",
+	"Cannot display message.": "Cannot display message."
 }
