@@ -42,7 +42,7 @@ function quitIfAlreadyRunning () {
 quitIfAlreadyRunning()
 
 electron.app.on('ready', () => {
-  setupContext('ssb', {
+  setupContext(process.env.ssb_appname, {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
     var browserWindow = openMainWindow()
