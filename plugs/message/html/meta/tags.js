@@ -1,17 +1,20 @@
 var nest = require('depnest')
 var { h, computed, map, send } = require('mutant')
+var TagHelper = require('scuttle-tag')
 
 exports.gives = nest('message.html.meta')
 exports.needs = nest({
   'about.obs.name': 'first',
+  'sbot.obs.connection': 'first',
   'sheet.tags.render': 'first',
-  'tag.obs.messageTags': 'first'
 })
 
 exports.create = function (api) {
   return nest('message.html.meta', function tags (msg) {
+    const ScuttleTag = TagHelper(api.sbot.obs.connection)
+
     if (msg.key) {
-      return computed(api.tag.obs.messageTags(msg.key), (tags) => tagCount(msg.key, tags))
+      return computed(ScuttleTag.obs.messageTags(msg.key), (tags) => tagCount(msg.key, tags))
     }
   })
 

@@ -21,7 +21,6 @@ module.exports = function (config) {
     require('./plugs'),
     require('patch-settings'),
     require('patchcore'),
-    require('scuttle-tag'),
     require('./overrides')
   )
 

@@ -1,14 +1,14 @@
 const { Value, computed, map, when, h } = require('mutant')
-var nest = require('depnest')
+const nest = require('depnest')
+const TagHelper = require('scuttle-tag')
 
 exports.needs = nest({
   'about.obs.valueFrom': 'first',
   'keys.sync.id': 'first',
   'message.html.render': 'first',
   'message.obs.get': 'first',
+  'sbot.obs.connection': 'first',
   'tag.html.tag': 'first',
-  'tag.obs.allTagsFrom': 'first',
-  'tag.obs.taggedMessages': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -19,9 +19,10 @@ exports.create = function (api) {
     const urlId = path.split('/')[2]
     const currentTagId = urlId ? decodeURIComponent(urlId) : urlId
     const myId = api.keys.sync.id()
+    const ScuttleTag = TagHelper(api.sbot.obs.connection)
 
     const tags = map(
-      api.tag.obs.allTagsFrom(myId),
+      ScuttleTag.obs.allTagsFrom(myId),
       tagId => {
         return { tagId, tagName: api.about.obs.valueFrom(tagId, 'name', myId) }
       }
@@ -33,7 +34,7 @@ exports.create = function (api) {
     const tagMessages =
       currentTagId
         ? map(
-            api.tag.obs.taggedMessages(myId, currentTagId),
+            ScuttleTag.obs.messagesTaggedByWith(myId, currentTagId),
             msgId => api.message.obs.get(msgId)
           )
         : []

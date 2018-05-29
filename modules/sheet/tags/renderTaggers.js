@@ -1,6 +1,7 @@
-var { h, map, computed, Value, lookup } = require('mutant')
-var nest = require('depnest')
-var catchLinks = require('../../../lib/catch-links')
+const { h, map, computed, Value, lookup } = require('mutant')
+const nest = require('depnest')
+const TagHelper = require('scuttle-tag')
+const catchLinks = require('../../../lib/catch-links')
 
 exports.needs = nest({
   'about.html.image': 'first',
@@ -9,7 +10,7 @@ exports.needs = nest({
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
   'profile.obs.rank': 'first',
-  'tag.obs.messageTaggers': 'first',
+  'sbot.obs.connection': 'first',
 })
 
 exports.gives = nest('sheet.tags.renderTaggers')
@@ -17,7 +18,8 @@ exports.gives = nest('sheet.tags.renderTaggers')
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('sheet.tags.renderTaggers', function (msgId, tagId) {
-    var taggerIds = api.tag.obs.messageTaggers(msgId, tagId)
+    const ScuttleTag = TagHelper(api.sbot.obs.connection)
+    var taggerIds = ScuttleTag.obs.messageTaggers(msgId, tagId)
     var currentFilter = Value()
     var taggerLookup = lookup(taggerIds, (id) => {
       return [id, api.about.obs.name(id)]
