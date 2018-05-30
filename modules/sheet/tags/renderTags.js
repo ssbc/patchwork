@@ -1,10 +1,8 @@
 var { h, map, computed, Value, lookup } = require('mutant')
 var nest = require('depnest')
-var catchLinks = require('../../../lib/catch-links')
 
 exports.needs = nest({
   'about.obs.name': 'first',
-  'app.navigate': 'first',
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first'
 })
@@ -34,7 +32,7 @@ exports.create = function (api) {
         return ids
       }
     })
-    var content = h('TagSheet', [
+    return h('TagSheet', [
       h('h2', [
         i18n('Applied Tags'),
         h('input', {
@@ -46,14 +44,6 @@ exports.create = function (api) {
       ]),
       renderTagList(filteredIds, select)
     ])
-
-    catchLinks(content, (href, external, anchor) => {
-      if (!external) {
-        api.app.navigate(href, anchor)
-      }
-    })
-
-    return content
   })
 
   function renderTagList (tags, select) {
@@ -61,7 +51,7 @@ exports.create = function (api) {
       h('TagList', [
         map(tags, (id) => {
           return h('a.tag', {
-            href: `/tags/${id}`,
+            href: `/tags/${encodeURIComponent(id)}`,
             title: id
           }, [
             h('div.main', [

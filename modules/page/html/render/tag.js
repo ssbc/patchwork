@@ -16,8 +16,8 @@ exports.gives = nest('page.html.render')
 exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (!path.startsWith('/tags')) return
-    const urlId = path.split('/')[2]
-    const currentTagId = urlId ? decodeURIComponent(urlId) : urlId
+    const urlId = path.substr(6)
+    const currentTagId = urlId && decodeURIComponent(urlId)
     const myId = api.keys.sync.id()
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
 

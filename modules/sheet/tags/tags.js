@@ -1,7 +1,9 @@
 var {h, computed, Value} = require('mutant')
 var nest = require('depnest')
+var catchLinks = require('../../../lib/catch-links')
 
 exports.needs = nest({
+  'app.navigate': 'first',
   'intl.sync.i18n': 'first',
   'sheet.display': 'first',
   'sheet.tags.renderTags': 'first',
@@ -16,16 +18,19 @@ exports.create = function (api) {
   const selectedTag = Value()
   return nest('sheet.tags.render', function (msgId, ids) {
     api.sheet.display(close => {
-      const content = computed([displayTags, selectedTag], (display, tag) => {
-        if (display) {
-          return api.sheet.tags.renderTags(ids, id => {
-            selectedTag.set(id)
-            displayTags.set(false)
-          })
-        } else {
-          return api.sheet.tags.renderTaggers(msgId, tag)
-        }
-      })
+      const content = h('div',
+        computed([displayTags, selectedTag], (display, tag) => {
+          if (display) {
+            return api.sheet.tags.renderTags(ids, id => {
+              selectedTag.set(id)
+              displayTags.set(false)
+            })
+          } else {
+            return api.sheet.tags.renderTaggers(msgId, tag)
+          }
+        })
+      )
+
       const back = computed(displayTags, (display) => {
         if (display) {
 
@@ -38,6 +43,14 @@ exports.create = function (api) {
           }, i18n('Back'))
         }
       })
+
+      catchLinks(content, (href, external, anchor) => {
+        if (!external) {
+          api.app.navigate(href, anchor)
+          close()
+        }
+      })
+
       return {
         content,
         footer: [

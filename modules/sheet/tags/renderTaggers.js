@@ -17,7 +17,7 @@ exports.gives = nest('sheet.tags.renderTaggers')
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('sheet.tags.renderTaggers', function (msgId, tagId) {
-    const ScuttleTag = TagHelper(api.sbot.obs.connection)
+    var ScuttleTag = TagHelper(api.sbot.obs.connection)
     var taggerIds = ScuttleTag.obs.messageTaggers(msgId, tagId)
     var currentFilter = Value()
     var taggerLookup = lookup(taggerIds, (id) => {
