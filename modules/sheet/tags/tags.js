@@ -5,7 +5,7 @@ exports.needs = nest({
   'intl.sync.i18n': 'first',
   'sheet.display': 'first',
   'sheet.tags.renderTags': 'first',
-  'sheet.tags.renderTaggers': 'first',
+  'sheet.tags.renderTaggers': 'first'
 })
 
 exports.gives = nest('sheet.tags.render')
@@ -28,7 +28,7 @@ exports.create = function (api) {
       })
       const back = computed(displayTags, (display) => {
         if (display) {
-          return
+
         } else {
           return h('button -close', {
             'ev-click': () => {

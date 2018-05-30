@@ -1,4 +1,4 @@
-const { Value, computed, map, when, h } = require('mutant')
+const { computed, map, h } = require('mutant')
 const nest = require('depnest')
 const TagHelper = require('scuttle-tag')
 
@@ -8,7 +8,7 @@ exports.needs = nest({
   'message.html.render': 'first',
   'message.obs.get': 'first',
   'sbot.obs.connection': 'first',
-  'tag.html.tag': 'first',
+  'tag.html.tag': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -34,9 +34,9 @@ exports.create = function (api) {
     const tagMessages =
       currentTagId
         ? map(
-            ScuttleTag.obs.messagesTaggedByWith(myId, currentTagId),
-            msgId => api.message.obs.get(msgId)
-          )
+          ScuttleTag.obs.messagesTaggedByWith(myId, currentTagId),
+          msgId => api.message.obs.get(msgId)
+        )
         : []
 
     return h('SplitView', [
@@ -49,13 +49,13 @@ exports.create = function (api) {
             ({ tagId, tagName }) =>
               h('a.tag-link', {
                 href: `/tags/${encodeURIComponent(tagId)}`,
-                title: tagId,
+                title: tagId
               }, api.tag.html.tag({ tagName, tagId }, null))
           )
         )
       ]),
       h('div.main', [
-        h('Scroller',[
+        h('Scroller', [
           h('h2', name),
           h('section.messages', [
             map(

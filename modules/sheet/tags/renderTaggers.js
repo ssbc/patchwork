@@ -1,7 +1,6 @@
 const { h, map, computed, Value, lookup } = require('mutant')
 const nest = require('depnest')
 const TagHelper = require('scuttle-tag')
-const catchLinks = require('../../../lib/catch-links')
 
 exports.needs = nest({
   'about.html.image': 'first',
@@ -10,7 +9,7 @@ exports.needs = nest({
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
   'profile.obs.rank': 'first',
-  'sbot.obs.connection': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 exports.gives = nest('sheet.tags.renderTaggers')
@@ -51,7 +50,7 @@ exports.create = function (api) {
           type: 'search',
           placeholder: 'filter names',
           'ev-input': ev => currentFilter.set(ev.target.value),
-          hooks: [ FocusHook() ],
+          hooks: [ FocusHook() ]
         })
       ]),
       renderTaggersList(filteredIds)
@@ -59,7 +58,6 @@ exports.create = function (api) {
   })
 
   function renderTaggersList (profiles) {
-    var yourId = api.keys.sync.id()
     profiles = api.profile.obs.rank(profiles)
     return [
       h('TaggersList', [

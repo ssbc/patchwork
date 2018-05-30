@@ -6,7 +6,7 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'app.navigate': 'first',
   'intl.sync.i18n': 'first',
-  'keys.sync.id': 'first',
+  'keys.sync.id': 'first'
 })
 
 exports.gives = nest('sheet.tags.renderTags')
@@ -41,7 +41,7 @@ exports.create = function (api) {
           type: 'search',
           placeholder: 'filter tags',
           'ev-input': ev => currentFilter.set(ev.target.value),
-          hooks: [ FocusHook() ],
+          hooks: [ FocusHook() ]
         })
       ]),
       renderTagList(filteredIds, select)
@@ -50,7 +50,6 @@ exports.create = function (api) {
     catchLinks(content, (href, external, anchor) => {
       if (!external) {
         api.app.navigate(href, anchor)
-        close()
       }
     })
 
@@ -58,7 +57,6 @@ exports.create = function (api) {
   })
 
   function renderTagList (tags, select) {
-    var yourId = api.keys.sync.id()
     return [
       h('TagList', [
         map(tags, (id) => {

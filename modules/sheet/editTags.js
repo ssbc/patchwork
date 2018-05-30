@@ -1,12 +1,10 @@
 const nest = require('depnest')
-const { h, Value, Struct, map, computed } = require('mutant')
-const MutantArray = require('mutant/Array')
+const { h, Value, map, computed, Array: MutantArray } = require('mutant')
 const concat = require('lodash/concat')
 const filter = require('lodash/filter')
-const zip = require('lodash/zip')
 const forEach = require('lodash/forEach')
 const addSuggest = require('suggest-box')
-
+const TagHelper = require('scuttle-tag')
 
 exports.gives = nest('sheet.editTags')
 
@@ -15,17 +13,16 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'sbot.obs.connection': 'first',
   'sheet.display': 'first',
-  'tag.html.tag': 'first',
+  'tag.html.tag': 'first'
 })
 
-exports.create = function(api) {
-
+exports.create = function (api) {
   return nest({ 'sheet.editTags': editTags })
 
-  function editTags({ msgId }, cb) {
+  function editTags ({ msgId }, cb) {
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
 
-    cb = cb || function() {}
+    cb = cb || function () {}
 
     api.sheet.display(function (close) {
       const { content, onMount, onSave } = edit({ msgId }, cb)
@@ -45,7 +42,7 @@ exports.create = function(api) {
       }
     })
 
-    function edit({ msgId }, cb) {
+    function edit ({ msgId }, cb) {
       const tagsToCreate = MutantArray([])
       const tagsToApply = MutantArray([])
       const tagsToRemove = MutantArray([])
@@ -92,29 +89,29 @@ exports.create = function(api) {
           h('EditTags', input)
         ],
         onMount,
-        onSave,
+        onSave
       }
 
-      function onMount() {
+      function onMount () {
         input.focus()
         addSuggest(input, (inputText, cb) => {
           cb(null, getTagSuggestions(inputText))
         }, { cls: 'ConfirmSuggest' })
       }
 
-      function onInput(e) {
-        const input = e.target.value;
-        if (!input.endsWith(",")) {
+      function onInput (e) {
+        const input = e.target.value
+        if (!input.endsWith(',')) {
           tagsInput.set(input)
           return
         }
         const tag = input.substring(0, input.length - 1)
         tagsToCreate.push(tag)
-        e.target.value = ""
+        e.target.value = ''
       }
 
-      function onSuggestSelect(e) {
-        e.target.value = ""
+      function onSuggestSelect (e) {
+        e.target.value = ''
         const { value, tagId } = e.detail
         const index = tagsToRemove().indexOf(tagId)
         if (index >= 0) {
@@ -124,7 +121,7 @@ exports.create = function(api) {
         }
       }
 
-      function getTagSuggestions(word) {
+      function getTagSuggestions (word) {
         const suggestions = map(
           ScuttleTag.obs.allTags(),
           tagId => {
@@ -140,11 +137,11 @@ exports.create = function(api) {
         const applyTagIds = map(tagsToApply, tag => tag.tagId)
         const stagedTagIds = computed([ appliedTagIds, applyTagIds ], (a, b) => concat(a, b))()
         const filteredSuggestions = filter(suggestions, tag => !stagedTagIds.includes(tag.tagId))
-        filteredSuggestions.push({ title: "Press , to create a new tag" })
+        filteredSuggestions.push({ title: 'Press , to create a new tag' })
         return filteredSuggestions
       }
 
-      function onSave() {
+      function onSave () {
         // tagsToCreate
         forEach(
           tagsToCreate(),
@@ -171,5 +168,4 @@ exports.create = function(api) {
       }
     }
   }
-
 }

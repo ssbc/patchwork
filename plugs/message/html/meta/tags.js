@@ -6,7 +6,7 @@ exports.gives = nest('message.html.meta')
 exports.needs = nest({
   'about.obs.name': 'first',
   'sbot.obs.connection': 'first',
-  'sheet.tags.render': 'first',
+  'sheet.tags.render': 'first'
 })
 
 exports.create = function (api) {
