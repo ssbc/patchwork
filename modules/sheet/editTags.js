@@ -51,7 +51,7 @@ exports.create = function (api) {
       const myId = api.keys.sync.id()
       const messageTags = map(
         ScuttleTag.obs.messageTagsFrom(msgId, myId),
-        tagId => ScuttleTag.obs.Tag(tagId)
+        tagId => ScuttleTag.obs.Tag(tagId, api.about.obs.name)
       )
       const filteredMessages = computed(
         [ messageTags, tagsToRemove ],

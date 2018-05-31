@@ -3,7 +3,7 @@ const nest = require('depnest')
 const TagHelper = require('scuttle-tag')
 
 exports.needs = nest({
-  'about.obs.valueFrom': 'first',
+  'about.obs.name': 'first',
   'keys.sync.id': 'first',
   'message.html.render': 'first',
   'message.obs.get': 'first',
@@ -24,12 +24,12 @@ exports.create = function (api) {
     const tags = map(
       ScuttleTag.obs.allTagsFrom(myId),
       tagId => {
-        return { tagId, tagName: api.about.obs.valueFrom(tagId, 'name', myId) }
+        return { tagId, tagName: api.about.obs.name(tagId) }
       }
     )
     const name =
       currentTagId
-        ? api.about.obs.valueFrom(currentTagId, 'name', myId)
+        ? api.about.obs.name(currentTagId)
         : 'Select A Tag'
     const tagMessages =
       currentTagId
