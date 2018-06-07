@@ -40,34 +40,29 @@ exports.create = function (api) {
       })
 
       const page = h('PollNew -chooseOne', [
-        h('h1', 'New Choose-one Poll'),
-        h('div.field -title', [
-          h('label', 'Title'),
-          h('input', { 'ev-input': ev => poll.title.set(ev.target.value) }, poll.title)
-        ]),
-        h('div.field -body', [
-          h('label', 'Description'),
-          h('textarea', { 'ev-input': ev => poll.body.set(ev.target.value) }, poll.body)
-        ]),
+        h('h2', {
+          style: {
+            'font-weight': 'normal'
+          }
+        }, [i18n('Create new Choose-one poll')]),
+        h('PollEditor', [
+          h('input.title', { 'ev-input': ev => poll.title.set(ev.target.value), placeholder: i18n('Choose a title') }, poll.title),
+          h('textarea.description', { 'ev-input': ev => poll.body.set(ev.target.value), placeholder: i18n('Describe the poll if you want') }, poll.body),
 
-        h('div.field -choices', [
-          h('label', 'Choices'),
-          h('div.inputs', [
-            map(poll.choices, (choice) => {
-              return h('input', { 'ev-input': ev => choice.set(ev.target.value) }, choice)
-            }),
-            h('button', { 'ev-click': () => poll.choices.push(Value()) }, '+ Add more')
-          ])
-        ]),
-
-        h('div.field -closesAt', [
-          h('label', 'Closes at'),
-          timeInput
-        ]),
-
-        h('div.actions', [
-          h('button', { 'ev-click': cancel }, 'Cancel'),
-          h('button', { 'ev-click': publish }, 'Start Poll')
+          h('div.field -choices', [
+            h('div.inputs', [
+              map(poll.choices, (choice, index) => {
+                return h('input', { 'ev-input': ev => choice.set(ev.target.value), placeholder: i18n('Choice') }, choice)
+              }),
+              h('button', { 'ev-click': () => poll.choices.push(Value()) }, i18n('+ Add more choices'))
+            ])
+          ]),
+          h('input.date', {
+            placeholder: i18n('Choose date and time'),
+            hooks: [
+              PickrHook(poll.closesAt)
+            ]
+          })
         ])
       ])
 
@@ -86,7 +81,16 @@ exports.create = function (api) {
             padding: '20px',
             'text-align': 'center'
           }
-        }, [page])
+        }, [page]),
+        footer: [
+          h('button -save', {
+            // TODO: publish it
+            'ev-click': publish
+          }, i18n('Publish')),
+          h('button -cancel', {
+            'ev-click': close
+          }, i18n('Cancel'))
+        ]
       }
 
       function cancel () {
