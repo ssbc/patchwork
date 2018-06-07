@@ -13,7 +13,8 @@ var bumpMessages = {
   'about': 'added changes',
   'mention': 'mentioned you',
   'channel-mention': 'mentioned this channel',
-  'attending': 'can attend'
+  'attending': 'can attend',
+  'participated': 'participated in this poll'
 }
 
 // bump even for first message

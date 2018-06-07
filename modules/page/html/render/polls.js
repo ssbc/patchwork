@@ -46,7 +46,10 @@ exports.create = function (api) {
     return api.feed.html.rollup(api.feed.pull.type('poll'), {
       prepend,
       rootFilter: poll.poll.sync.isPoll,
-      bumpFilter: msg => isPoll(msg) || isPosition(msg),
+      bumpFilter: msg => {
+        if (isPoll(msg)) return true
+        if (isPosition(msg)) return 'participated'
+      },
       resultFilter: (msg) => true, // TODO: ??
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]}))
     })
