@@ -69,6 +69,7 @@
     "ssb-keys": "^7.0.13",
     "ssb-mentions": "^0.5.0",
     "ssb-msgs": "^5.2.0",
+    "ssb-poll-schema": "^1.6.1",
     "ssb-private": "~0.1.4",
     "ssb-query": "^1.0.0",
     "ssb-ref": "^2.11.1",

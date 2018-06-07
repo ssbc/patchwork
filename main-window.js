@@ -64,7 +64,7 @@ module.exports = function (config) {
   })
 
   var views = api.app.views(api.page.html.render, [
-    '/public', '/private', id, '/mentions'
+    '/polls', '/public', '/private', id, '/mentions'
   ])
 
   var pendingCount = views.get('/mentions').pendingUpdates
@@ -114,6 +114,7 @@ module.exports = function (config) {
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
           [i18n('Gatherings'), '/gatherings'],
+          [i18n('Polls'), '/polls'],
           [i18n('Extended Network'), '/all'],
           {separator: true},
           [i18n('Settings'), '/settings']
