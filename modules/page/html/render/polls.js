@@ -1,4 +1,7 @@
 var { h, Value } = require('mutant')
+
+// TODO: I'd rather this came from scuttle-poll but inject means I get an obs called isPoll and it's a bit meh
+var {isPoll, isPosition} = require('ssb-poll-schema')
 var nest = require('depnest')
 var Poll = require('scuttle-poll')
 
@@ -43,8 +46,8 @@ exports.create = function (api) {
     return api.feed.html.rollup(api.feed.pull.type('poll'), {
       prepend,
       rootFilter: poll.poll.sync.isPoll,
-      bumpFilter: msg => poll.poll.sync.isPoll(msg) || poll.position.sync.isPosition(msg),
-      resultFilter: (msg) => true,
+      bumpFilter: msg => isPoll(msg) || isPosition(msg),
+      resultFilter: (msg) => true, // TODO: ??
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]}))
     })
   })
@@ -52,24 +55,4 @@ exports.create = function (api) {
   function createPoll () {
     api.poll.sheet.edit()
   }
-}
-
-function followsAuthor (following, yourId, msg) {
-  var author = msg.value.author
-  return yourId === author || following().includes(author)
-}
-
-function followingIsAttending (following, msg) {
-  if (Array.isArray(msg.replies)) {
-    return msg.replies.some((reply) => isAttendee(reply) && following().includes(reply.value.author))
-  }
-}
-
-function isAttendee (msg) {
-  var content = msg.value && msg.value.content
-  return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
-}
-
-function isGathering (msg) {
-  return (msg.value && msg.value.content && msg.value.content.type === 'gathering')
 }

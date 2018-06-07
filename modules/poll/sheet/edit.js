@@ -3,7 +3,9 @@ var extend = require('xtend')
 var Pickr = require('flatpickr')
 var spacetime = require('spacetime')
 
-var {Value, h, computed, when} = require('mutant')
+var {Value, resolve, h, computed, when, map, Struct, Array: MutantArray} = require('mutant')
+
+var Poll = require('scuttle-poll')
 
 exports.gives = nest('poll.sheet.edit')
 
@@ -11,6 +13,7 @@ exports.needs = nest({
   'sheet.display': 'first',
   'keys.sync.id': 'first',
   'sbot.async.publish': 'first',
+  'sbot.obs.connection': 'first',
   'about.obs.latestValue': 'first',
   'blob.html.input': 'first',
   'blob.sync.url': 'first',
@@ -20,127 +23,83 @@ exports.needs = nest({
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('poll.sheet.edit', function (id) {
+    var scuttlePoll = Poll(api.sbot.obs.connection)
     api.sheet.display(close => {
-      var current = id ? {
-        title: api.about.obs.latestValue(id, 'title'),
-        startDateTime: api.about.obs.latestValue(id, 'startDateTime'),
-        image: api.about.obs.latestValue(id, 'image'),
-        description: api.about.obs.latestValue(id, 'description')
-      } : {
-        title: Value(),
-        startDateTime: Value(),
-        image: Value(),
-        description: Value()
-      }
+      const poll = Struct({
+        title: undefined,
+        body: undefined,
+        choices: MutantArray([Value(), Value(), Value()]),
+        closesAt: undefined
+      })
 
-      var publishing = Value(false)
+      var picker
+      const timeInput = h('input', {
+        'ev-change': () => {
+          poll.closesAt.set(picker.input.value)
+        }
+      })
 
-      var chosen = {
-        title: Value(current.title()),
-        startDateTime: Value(current.startDateTime()),
-        image: Value(current.image()),
-        description: Value(current.description())
-      }
+      const page = h('PollNew -chooseOne', [
+        h('h1', 'New Choose-one Poll'),
+        h('div.field -title', [
+          h('label', 'Title'),
+          h('input', { 'ev-input': ev => poll.title.set(ev.target.value) }, poll.title)
+        ]),
+        h('div.field -body', [
+          h('label', 'Description'),
+          h('textarea', { 'ev-input': ev => poll.body.set(ev.target.value) }, poll.body)
+        ]),
 
-      var imageUrl = computed(chosen.image, (id) => id && api.blob.sync.url(id))
+        h('div.field -choices', [
+          h('label', 'Choices'),
+          h('div.inputs', [
+            map(poll.choices, (choice) => {
+              return h('input', { 'ev-input': ev => choice.set(ev.target.value) }, choice)
+            }),
+            h('button', { 'ev-click': () => poll.choices.push(Value()) }, '+ Add more')
+          ])
+        ]),
 
+        h('div.field -closesAt', [
+          h('label', 'Closes at'),
+          timeInput
+        ]),
+
+        h('div.actions', [
+          h('button', { 'ev-click': cancel }, 'Cancel'),
+          h('button', { 'ev-click': publish }, 'Start Poll')
+        ])
+      ])
+
+      const Pickr = require('flatpickr')
+      picker = new Pickr(timeInput, {
+        enableTime: true,
+        altInput: true,
+        altFormat: 'F j, Y h:i K',
+        dateFormat: 'Z'
+      })
+
+      page.cancel = cancel // made available for manual garbage collection of flatpicker
       return {
         content: h('div', {
           style: {
             padding: '20px',
             'text-align': 'center'
           }
-        }, [
-          h('h2', {
-            style: {
-              'font-weight': 'normal'
-            }
-          }, [id ? i18n('Edit') : i18n('Create Poll')]),
-          h('GatheringEditor', [
-            h('input.title', {
-              placeholder: i18n('Choose a title'),
-              hooks: [ValueHook(chosen.title), FocusHook()]
-            }),
-            h('input.date', {
-              placeholder: i18n('Choose date and time'),
-              hooks: [
-                PickrHook(chosen.startDateTime)
-              ]
-            }),
-            h('ImageInput .banner', {
-              style: { 'background-image': computed(imageUrl, x => `url(${x})`) }
-            }, [
-              h('span', ['🖼 ', i18n('Choose Banner Image...')]),
-              api.blob.html.input(file => {
-                chosen.image.set(file)
-              }, {
-                accept: 'image/*'
-              })
-            ]),
-            h('textarea.description', {
-              placeholder: i18n('Describe the gathering (if you want)'),
-              hooks: [ValueHook(chosen.description)]
-            })
-          ])
-        ]),
-        footer: [
-          h('button -save', {
-            'ev-click': save,
-            'disabled': publishing
-          }, when(publishing, i18n('Publishing...'), i18n('Publish'))),
-          h('button -cancel', {
-            'ev-click': close
-          }, i18n('Cancel'))
-        ]
+        }, [page])
       }
 
-      function ensureExists (cb) {
-        if (!id) {
-          api.sbot.async.publish({
-            type: 'gathering'
-          }, (err, msg) => {
-            if (err) return cb(err)
-            cb(null, msg.key)
-          })
-        } else {
-          cb(null, id)
-        }
+      function cancel () {
+        picker && picker.destroy && picker.destroy()
+        close && close()
       }
 
-      function save () {
-        // no confirm
-        var update = {}
-
-        if (!compareImage(chosen.image(), current.image())) update.image = chosen.image()
-        if (!compareTime(chosen.startDateTime(), current.startDateTime())) update.startDateTime = chosen.startDateTime()
-        if (chosen.title() !== current.title()) update.title = chosen.title() || i18n('Untitled Gathering')
-        if (chosen.description() !== current.description()) update.description = chosen.description()
-
-        if (Object.keys(update).length) {
-          publishing.set(true)
-          ensureExists((err, id) => {
-            if (err) throw err
-            api.sbot.async.publish(extend({
-              type: 'about',
-              about: id
-            }, update), (err) => {
-              if (err) {
-                publishing.set(false)
-                showDialog({
-                  type: 'error',
-                  title: i18n('Error'),
-                  buttons: ['OK'],
-                  message: i18n('An error occurred while attempting to publish gathering.'),
-                  detail: err.message
-                })
-              } else {
-                close()
-              }
-            })
-          })
-        } else {
-          close()
-        }
+      function publish () {
+        const content = resolveInput(poll)
+        scuttlePoll.poll.async.publishChooseOne(content, (err, success) => {
+          if (err) return console.log(err) // put warnings on form
+          close(success)
+        })
       }
     })
   })
@@ -206,4 +165,18 @@ function PickrHook (obs) {
     }
     return () => picker.destroy()
   }
+}
+function resolveInput (struct) {
+  // prunes all empty fields
+  // returns plain object
+  var result = resolve(struct)
+
+  Object.keys(result)
+    .forEach(k => {
+      const val = result[k]
+      if (!val) delete result[k]
+
+      if (Array.isArray(val)) result[k] = val.filter(Boolean)
+    })
+  return result
 }

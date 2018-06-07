@@ -38,6 +38,7 @@ exports.create = function (api) {
     render: function (msg, opts) {
       if (!isPoll(msg)) return
 
+      // TODO: this runs inject and makes a new scuttlepoll instance for every message. One option is to depject scuttlepoll.
       var scuttlePoll = Poll(api.sbot.obs.connection)
 
       const { title, body, closesAt: closesAtString, details: {choices} } = parseChooseOnePoll(msg)
