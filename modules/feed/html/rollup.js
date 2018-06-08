@@ -58,7 +58,8 @@ exports.create = function (api) {
     prefiltered = false,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
-    waitFor = true
+    waitFor = true,
+    stepper = nextStepper
   }) {
     var updates = Value(0)
     var yourId = api.keys.sync.id()
@@ -169,7 +170,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = nextStepper(getStream, {reverse: true, limit: 50})
+        var stream = stepper(getStream, {reverse: true, limit: 50})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {

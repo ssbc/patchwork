@@ -198,5 +198,11 @@
 	"Cannot display message.": "Cannot display message.",
 	"Polls": "Polls",
 	"+ Add Poll": "+ Add Poll",
-	"participated in this poll": "participated in this poll"
+	"participated in this poll": "participated in this poll",
+	"Open": "Open",
+	"Closed": "Closed",
+	"All": "All",
+	"open": "open",
+	"closed": "closed",
+	"all": "all"
 }

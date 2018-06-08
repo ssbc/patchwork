@@ -6,4 +6,11 @@ PageHeading {
   h1 {
     flex: 1
   }
+
+  div.filter {
+    margin: 0 2rem
+    button {
+      margin: 0 3px
+    }
+  }
 }

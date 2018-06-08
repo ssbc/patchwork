@@ -1,4 +1,4 @@
-var { h, Value } = require('mutant')
+var { h, Value, computed, when } = require('mutant')
 
 // TODO: I'd rather this came from scuttle-poll but inject means I get an obs called isPoll and it's a bit meh
 var {isPoll, isPosition} = require('ssb-poll-schema')
@@ -19,22 +19,24 @@ exports.needs = nest({
 
 exports.gives = nest('page.html.render')
 
+const OPEN = 'open'
+const CLOSED = 'closed'
+const ALL = 'all'
+
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-
-  var connection = Value({})
-  var scuttlePoll = ScuttlePoll(connection)
 
   return nest('page.html.render', function channel (path) {
     if (path !== '/polls') return
 
-    api.sbot.obs.connection(connection.set)
-
+    var scuttlePoll = ScuttlePoll(api.sbot.obs.connection)
     var id = api.keys.sync.id()
 
+    var mode = Value(OPEN)
     var prepend = [
       h('PageHeading', [
         h('h1', [h('strong', i18n('Polls'))]),
+        h('div.filter', [ FilterButton(OPEN), FilterButton(CLOSED), FilterButton(ALL) ]),
         h('div.meta', [
           h('button -add', {
             'ev-click': createPoll
@@ -45,7 +47,7 @@ exports.create = function (api) {
 
     // TODO replace with streams from ssb-query when new version is merged
     // will enable streaming by publish time
-    return api.feed.html.rollup(api.feed.pull.type('poll'), {
+    const rollupOpts = {
       prepend,
       rootFilter: scuttlePoll.poll.sync.isPoll,
       bumpFilter: msg => {
@@ -53,8 +55,22 @@ exports.create = function (api) {
         if (isPosition(msg)) return 'participated'
       },
       resultFilter: (msg) => true, // TODO: ??
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]}))
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
+      nextStepper: v => v
+    }
+    // NOTE - scuttlePoll has creates stepped pull-streams for you, let
+    // nextStepper: v => v  // stops double-steppering!
+
+    return computed(mode, mode => {
+      return api.feed.html.rollup(scuttlePoll.poll.pull[mode], rollupOpts)
     })
+
+    function FilterButton (m) {
+      return h('button', {
+        'ev-click': () => mode.set(m),
+        className: computed(mode, mode => m === mode ? '-filterSelected' : '-filterUnselected')
+      }, i18n(m))
+    }
   })
 
   function createPoll () {
