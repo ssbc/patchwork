@@ -2,6 +2,8 @@ PollShow {
   $scrollable 
   // from patchbay mixins
 
+  background-color: #fff
+
   display: grid
   grid-template-columns: auto
   grid-template-rows: auto auto auto auto 5rem
