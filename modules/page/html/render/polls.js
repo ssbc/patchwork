@@ -3,15 +3,15 @@ var { h, Value } = require('mutant')
 // TODO: I'd rather this came from scuttle-poll but inject means I get an obs called isPoll and it's a bit meh
 var {isPoll, isPosition} = require('ssb-poll-schema')
 var nest = require('depnest')
-var Poll = require('scuttle-poll')
+var ScuttlePoll = require('scuttle-poll')
 
 exports.needs = nest({
   'feed.pull.type': 'first',
   'feed.html.rollup': 'first',
-  'feed.pull.public': 'first',
+  // 'feed.pull.public': 'first',
   'poll.sheet.edit': 'first',
   'keys.sync.id': 'first',
-  'contact.obs.following': 'first',
+  // 'contact.obs.following': 'first',
   'sbot.pull.stream': 'first',
   'sbot.obs.connection': 'first',
   'intl.sync.i18n': 'first'
@@ -23,7 +23,7 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
 
   var connection = Value({})
-  var poll = Poll(connection)
+  var scuttlePoll = ScuttlePoll(connection)
 
   return nest('page.html.render', function channel (path) {
     if (path !== '/polls') return
@@ -43,9 +43,11 @@ exports.create = function (api) {
       ])
     ]
 
+    // TODO replace with streams from ssb-query when new version is merged
+    // will enable streaming by publish time
     return api.feed.html.rollup(api.feed.pull.type('poll'), {
       prepend,
-      rootFilter: poll.poll.sync.isPoll,
+      rootFilter: scuttlePoll.poll.sync.isPoll,
       bumpFilter: msg => {
         if (isPoll(msg)) return true
         if (isPosition(msg)) return 'participated'

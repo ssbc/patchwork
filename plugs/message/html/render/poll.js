@@ -29,7 +29,11 @@ exports.gives = nest('message.html', {
 
 exports.create = function (api) {
   var mdRenderer = markdown
-  var avatar = api.about.html.image
+  var avatar = (feed) => {
+    return h('a.avatar', {href: `${feed}`}, [
+      api.about.html.image(feed)
+    ])
+  }
   var name = api.about.obs.name
   var timeago = defaultTimeago
 
@@ -58,9 +62,11 @@ exports.create = function (api) {
 
       const page = h('PollShow -chooseOne', [
         h('section.details', [
-          h('a', {
-            href: msg.key
-          }, title),
+          h('h1', [
+            h('a', {
+              href: msg.key
+            }, title)
+          ]),
           h('div.body', mdRenderer(body || '')),
           h('div.closesAt', [
             h('div.label', 'Closes at'),

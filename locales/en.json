@@ -195,5 +195,8 @@
 	"Create Gathering": "Create Gathering",
 	"liked": "liked",
 	"(missing message)": "(missing message)",
-	"Cannot display message.": "Cannot display message."
+	"Cannot display message.": "Cannot display message.",
+	"Polls": "Polls",
+	"+ Add Poll": "+ Add Poll",
+	"participated in this poll": "participated in this poll"
 }
