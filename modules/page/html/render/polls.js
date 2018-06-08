@@ -45,16 +45,15 @@ exports.create = function (api) {
       ])
     ]
 
-    // TODO replace with streams from ssb-query when new version is merged
-    // will enable streaming by publish time
     const rollupOpts = {
       prepend,
+      compactFilter: m => true,
       rootFilter: scuttlePoll.poll.sync.isPoll,
       bumpFilter: msg => {
         if (isPoll(msg)) return true
         if (isPosition(msg)) return 'participated'
       },
-      resultFilter: (msg) => true, // TODO: ??
+      // resultFilter: (msg) => true,
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
       nextStepper: v => v
     }

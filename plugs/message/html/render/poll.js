@@ -39,7 +39,7 @@ exports.create = function (api) {
 
   return nest('message.html', {
     canRender: isPoll,
-    render: function (msg, opts) {
+    render: function (msg, opts = {}) {
       if (!isPoll(msg)) return
 
       // TODO: this runs inject and makes a new scuttlepoll instance for every message. One option is to depject scuttlepoll.
@@ -60,32 +60,56 @@ exports.create = function (api) {
         })
       }
 
-      const page = h('PollShow -chooseOne', [
-        h('section.details', [
-          h('h1', [
-            h('a', {
-              href: msg.key
-            }, title)
-          ]),
-          h('div.body', mdRenderer(body || '')),
-          h('div.closesAt', [
-            h('div.label', 'Closes at'),
-            printClosesAt(closesAt)
-          ])
-        ]),
-        NewPosition({
-          choices,
-          currentPosition: pollDoc.myPosition,
-          onPublish: (success) => {
-            // TODO: fix
-            // onPositionPublished(success)
-            updatePollDoc()
-          }
-        }),
-        Progress({ pollDoc, avatar, timeago, name, mdRenderer })
-      ])
+      return opts.compact
+        ? PollCard()
+        : PollShowChooseOne()
 
-      return page
+      function PollCard () {
+        if (!isPoll) return
+        const { title, body, closesAt: closesAtString } = parseChooseOnePoll(msg)
+
+        const closesAt = new Date(closesAtString)
+        const date = closesAt.toDateString()
+        const [ _, time, zone ] = closesAt.toTimeString().match(/^(\d+:\d+).*(\(\w+\))$/)
+
+        return h('a', { href: msg.key }, [
+          h('PollCard', { className: 'Markdown' }, [
+            h('h1', title),
+            h('div.body', mdRenderer(body || '')),
+            h('div.closesAt', [
+              'closes at: ',
+              `${time},  ${date} ${zone}`
+            ])
+          ])
+        ])
+      }
+
+      function PollShowChooseOne () {
+        return h('PollShow -chooseOne', [
+          h('section.details', [
+            h('h1', [
+              h('a', {
+                href: msg.key
+              }, title)
+            ]),
+            h('div.body', mdRenderer(body || '')),
+            h('div.closesAt', [
+              h('div.label', 'Closes at'),
+              printClosesAt(closesAt)
+            ])
+          ]),
+          NewPosition({
+            choices,
+            currentPosition: pollDoc.myPosition,
+            onPublish: (success) => {
+              // TODO: fix
+              // onPositionPublished(success)
+              updatePollDoc()
+            }
+          }),
+          Progress({ pollDoc, avatar, timeago, name, mdRenderer })
+        ])
+      }
 
       function Progress ({ pollDoc, avatar, timeago, name, mdRenderer }) {
         const forceShow = Value(false)

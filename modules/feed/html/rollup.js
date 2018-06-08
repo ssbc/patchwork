@@ -76,7 +76,7 @@ exports.create = function (api) {
     var highlightItems = new Set()
 
     var container = h('Scroller', {
-      style: { overflow: 'auto' },
+      style: { 'overflow-y': 'scroll', 'overflow-x': 'auto' },
       hooks: [(element) => {
         // don't activate until added to DOM
         refresh()
@@ -286,7 +286,7 @@ exports.create = function (api) {
       // if there are new messages, view full thread goes to the top of those, otherwise to very first reply
       var anchorReply = highlightedReplies.length >= 3 ? highlightedReplies[0] : replies[0]
 
-      var result = h('FeedEvent -post', {
+      var result = h(`FeedEvent -${item.value.content.type || 'post'}`, {
         attributes: {
           'data-root-id': item.key
         }

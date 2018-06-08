@@ -1,0 +1,31 @@
+PollCard {
+  padding: 1rem
+  cursor: pointer
+
+  background-color: #fff
+  box-shadow: hsl(0, 0%, 88%) 2px 5px 8px
+  transition: box-shadow ease-in .2s
+
+  :hover {
+    box-shadow: hsl(0, 0%, 80%) 5px 8px 8px
+  }
+
+  h1 {
+    margin-top: .5rem
+  }
+
+  div.closesAt {
+    font-style: italic
+    margin-bottom: 1rem
+  }
+
+  div.body {
+    margin-bottom: 1rem
+  }
+
+
+  div.positions {
+
+  }
+}
+
