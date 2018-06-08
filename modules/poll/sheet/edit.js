@@ -32,13 +32,6 @@ exports.create = function (api) {
         closesAt: undefined
       })
 
-      var picker
-      const timeInput = h('input', {
-        'ev-change': () => {
-          poll.closesAt.set(picker.input.value)
-        }
-      })
-
       const page = h('PollNew -chooseOne', [
         h('h2', {
           style: {
@@ -66,14 +59,6 @@ exports.create = function (api) {
         ])
       ])
 
-      const Pickr = require('flatpickr')
-      picker = new Pickr(timeInput, {
-        enableTime: true,
-        altInput: true,
-        altFormat: 'F j, Y h:i K',
-        dateFormat: 'Z'
-      })
-
       page.cancel = cancel // made available for manual garbage collection of flatpicker
       return {
         content: h('div', {
@@ -94,7 +79,6 @@ exports.create = function (api) {
       }
 
       function cancel () {
-        picker && picker.destroy && picker.destroy()
         close && close()
       }
 
@@ -157,9 +141,10 @@ function PickrHook (obs) {
     var picker = new Pickr(element, {
       enableTime: true,
       altInput: true,
-      dateFormat: 'U',
+      altFormat: 'F j, Y h:i K',
+      dateFormat: 'Z',
       onChange: function (dates) {
-        obs.set(spacetime(parseInt(element.value, 10) * 1000))
+        obs.set(picker.input.value)
       }
     })
 
