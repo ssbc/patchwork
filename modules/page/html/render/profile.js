@@ -352,7 +352,7 @@ exports.create = function (api) {
               'font-weight': 'normal'
             }
           }, [i18n('What would you like to call '), h('strong', [currentName]), '?']),
-          h('h2', {
+          h('h3', {
             style: {
               'font-weight': 'normal'
             }
