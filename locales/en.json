@@ -116,6 +116,8 @@
 	"sl": "Slovenian",
 	"pl": "Polish",
 	"pt-BR": "Brazillian Portuguese",
+	"ru": "Russian",
+	"uk": "Ukrainian",
 	"Public Feed Options": "Public Feed Options",
 	"Hide following messages": "Hide following messages",
 	"This is you.": "This is you.",
@@ -204,5 +206,7 @@
 	"All": "All",
 	"open": "open",
 	"closed": "closed",
-	"all": "all"
+	"all": "all",
+	"What would you like to call ": "What would you like to call ",
+	"Names you assign here will be publicly visible to others.": "Names you assign here will be publicly visible to others."
 }
