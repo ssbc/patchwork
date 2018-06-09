@@ -85,6 +85,7 @@
   "devDependencies": {
     "colors": "^1.1.2",
     "electron": "~1.8.4",
-    "node-gyp": "^3.6.2"
+    "node-gyp": "^3.6.2",
+    "ssb-meme": "^1.0.4"
   }
 }
