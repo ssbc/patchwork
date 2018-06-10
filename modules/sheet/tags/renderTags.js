@@ -1,4 +1,4 @@
-var { h, map, computed, Value, lookup } = require('mutant')
+var { h, map, computed, Value, lookup: mutantLookup } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
@@ -13,24 +13,19 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('sheet.tags.renderTags', function (ids, select) {
     var currentFilter = Value()
-    var tagLookup = lookup(ids, (id) => {
+    var tagLookup = mutantLookup(ids, (id) => {
       return [id, api.about.obs.name(id)]
     })
-    var filteredIds = computed([ids, tagLookup, currentFilter], (ids, tagLookup, filter) => {
-      if (filter) {
-        var result = []
-        for (var k in tagLookup) {
-          if (
-            (tagLookup[k] && tagLookup[k].toLowerCase().includes(filter.toLowerCase())) ||
-            k === filter
-          ) {
-            result.push(k)
-          }
+    var filteredIds = computed([ids, tagLookup, currentFilter], (ids, lookup, filter) => {
+      if (!filter) return ids
+      var result = []
+      for (var k in lookup) {
+        if ((lookup[k] && lookup[k].toLowerCase().includes(filter.toLowerCase())) ||
+          k === filter) {
+          result.push(k)
         }
-        return result
-      } else {
-        return ids
       }
+      return result
     })
     return h('TagSheet', [
       h('h2', [
@@ -50,17 +45,16 @@ exports.create = function (api) {
     return [
       h('TagList', [
         map(tags, (id) => {
-          return h('a.tag', {
-            href: `/tags/${encodeURIComponent(id)}`,
-            title: id
-          }, [
-            h('div.main', [
-              h('div.name', [ api.about.obs.name(id) ])
-            ]),
-            h('div.buttons', [
-              h('a.ToggleButton', { 'ev-click': () => select(id) }, i18n('View Taggers'))
+          return h('a.tag',
+            { href: `/tags/${encodeURIComponent(id)}`, title: id },
+            [
+              h('div.main', [
+                h('div.name', [ api.about.obs.name(id) ])
+              ]),
+              h('div.buttons', [
+                h('a.ToggleButton', { 'ev-click': () => select(id) }, i18n('View Taggers'))
+              ])
             ])
-          ])
         }, { idle: true, maxTime: 2 })
       ])
     ]

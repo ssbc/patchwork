@@ -21,6 +21,7 @@ exports.create = function (api) {
 
   function editTags ({ msgId }, cb) {
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
+    const HtmlTag = api.tag.html.tag
 
     cb = cb || function () {}
 
@@ -33,7 +34,7 @@ exports.create = function (api) {
           h('button.save', { 'ev-click': publish }, 'Save'),
           h('button.cancel', { 'ev-click': close }, 'Cancel')
         ],
-        mounted: onMount
+        onMount
       }
 
       function publish () {
@@ -49,31 +50,19 @@ exports.create = function (api) {
       const tagsInput = Value('')
 
       const myId = api.keys.sync.id()
-      const messageTags = map(
-        ScuttleTag.obs.messageTagsFrom(msgId, myId),
-        tagId => ScuttleTag.obs.Tag(tagId, api.about.obs.name)
-      )
-      const filteredMessages = computed(
-        [ messageTags, tagsToRemove ],
-        (tags, removedIds) => filter(tags, tag => !removedIds.includes(tag.tagId))
-      )
+      const messageTags = map(ScuttleTag.obs.messageTagsFrom(msgId, myId), tagId =>
+        ScuttleTag.obs.Tag(tagId, api.about.obs.name))
+      const filteredMessages = computed([messageTags, tagsToRemove], (tags, removedIds) =>
+        filter(tags, tag => !removedIds.includes(tag.tagId)))
 
-      const messageTagsView = map(
-        filteredMessages,
-        tag => computed(tag, t => api.tag.html.tag(t, () => tagsToRemove.push(t.tagId)))
-      )
-      const tagsToApplyView = map(
-        tagsToApply,
-        tag => api.tag.html.tag(tag, () => tagsToApply.delete(tag))
-      )
-      const tagsToCreateView = map(
-        tagsToCreate,
-        tag => api.tag.html.tag({ tagName: tag, tagId: 'new' }, () => tagsToCreate.delete(tag))
-      )
-      const stagedTags = computed(
-        [messageTagsView, tagsToApplyView, tagsToCreateView],
-        (a, b, c) => h('StagedTags', concat(a, [b, c]))
-      )
+      const messageTagsView = map(filteredMessages, tag =>
+        computed(tag, t => HtmlTag(t, () => tagsToRemove.push(t.tagId))))
+      const tagsToApplyView = map(tagsToApply, tag =>
+        HtmlTag(tag, () => tagsToApply.delete(tag)))
+      const tagsToCreateView = map(tagsToCreate, tag =>
+        HtmlTag({ tagName: tag, tagId: 'new' }, () => tagsToCreate.delete(tag)))
+      const stagedTags = computed([messageTagsView, tagsToApplyView, tagsToCreateView], (a, b, c) =>
+        h('StagedTags', concat(a, [b, c])))
 
       const input = h('input.tags', {
         placeholder: 'Add tags here',
@@ -84,10 +73,7 @@ exports.create = function (api) {
       input.addEventListener('suggestselect', onSuggestSelect)
 
       return {
-        content: [
-          stagedTags,
-          h('EditTags', input)
-        ],
+        content: [stagedTags, h('EditTags', input)],
         onMount,
         onSave
       }
@@ -122,17 +108,14 @@ exports.create = function (api) {
       }
 
       function getTagSuggestions (word) {
-        const suggestions = map(
-          ScuttleTag.obs.allTags(),
-          tagId => {
-            const tagName = api.about.obs.name(tagId)()
-            return {
-              title: tagName,
-              value: tagName,
-              tagId
-            }
+        const suggestions = map(ScuttleTag.obs.allTags(), tagId => {
+          const tagName = api.about.obs.name(tagId)()
+          return {
+            title: tagName,
+            value: tagName,
+            tagId
           }
-        )()
+        })()
         const appliedTagIds = map(filteredMessages, tag => tag.tagId)
         const applyTagIds = map(tagsToApply, tag => tag.tagId)
         const stagedTagIds = computed([ appliedTagIds, applyTagIds ], (a, b) => concat(a, b))()
@@ -143,28 +126,19 @@ exports.create = function (api) {
 
       function onSave () {
         // tagsToCreate
-        forEach(
-          tagsToCreate(),
-          tag => {
-            ScuttleTag.async.create(null, (err, msg) => {
-              if (err) return
-              ScuttleTag.async.name({ tag: msg.key, name: tag }, cb)
-              ScuttleTag.async.apply({ tagged: true, message: msgId, tag: msg.key }, cb)
-            })
-          }
-        )
-
+        forEach(tagsToCreate(), tag => {
+          ScuttleTag.async.create(null, (err, msg) => {
+            if (err) return
+            ScuttleTag.async.name({ tag: msg.key, name: tag }, cb)
+            ScuttleTag.async.apply({ tagged: true, message: msgId, tag: msg.key }, cb)
+          })
+        })
         // tagsToApply
-        forEach(
-          tagsToApply(),
-          tag => ScuttleTag.async.apply({ tagged: true, message: msgId, tag: tag.tagId }, cb)
-        )
-
+        forEach(tagsToApply(),
+          tag => ScuttleTag.async.apply({ tagged: true, message: msgId, tag: tag.tagId }, cb))
         // tagsToRemove
-        forEach(
-          tagsToRemove(),
-          tagId => ScuttleTag.async.apply({ tagged: false, message: msgId, tag: tagId }, cb)
-        )
+        forEach(tagsToRemove(),
+          tagId => ScuttleTag.async.apply({ tagged: false, message: msgId, tag: tagId }, cb))
       }
     }
   }

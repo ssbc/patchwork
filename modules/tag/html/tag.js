@@ -10,15 +10,10 @@ exports.needs = nest({
 
 exports.create = function (api) {
   return nest({ 'tag.html.tag': function ({ tagName, tagId }, handleRemove) {
-    var removeTag
+    var removeTag = ''
     if (handleRemove) {
-      removeTag = h('a', {
-        'ev-click': handleRemove
-      }, 'x')
-    } else {
-      removeTag = ''
+      removeTag = h('a', { 'ev-click': handleRemove }, 'x')
     }
-
     const backgroundColor = api.about.obs.color(tagId)
     const fontColor = computed(backgroundColor, contrast)
 

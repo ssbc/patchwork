@@ -21,51 +21,34 @@ exports.create = function (api) {
     const myId = api.keys.sync.id()
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
 
-    const tags = map(
-      ScuttleTag.obs.allTagsFrom(myId),
-      tagId => {
-        return { tagId, tagName: api.about.obs.name(tagId) }
-      }
-    )
-    const name =
-      currentTagId
-        ? api.about.obs.name(currentTagId)
-        : 'Select A Tag'
+    const tags = map(ScuttleTag.obs.allTagsFrom(myId), tagId => ({
+      tagId,
+      tagName: api.about.obs.name(tagId)
+    }))
+    const name = currentTagId ? api.about.obs.name(currentTagId) : 'Select A Tag'
     const tagMessages =
-      currentTagId
-        ? map(
-          ScuttleTag.obs.messagesTaggedByWith(myId, currentTagId),
-          msgId => api.message.obs.get(msgId)
-        )
-        : []
+      currentTagId ? map(ScuttleTag.obs.messagesTaggedByWith(myId, currentTagId), msgId =>
+        api.message.obs.get(msgId)) : []
 
     return h('SplitView', [
       h('div.side', [
         h('h2', 'Your Tags'),
-        map(
-          tags,
-          tag => computed(
-            tag,
-            ({ tagId, tagName }) =>
-              h('a.tag-link', {
-                href: `/tags/${encodeURIComponent(tagId)}`,
-                title: tagId
-              }, api.tag.html.tag({ tagName, tagId }, null))
-          )
-        )
+        map(tags, tag =>
+          computed(tag, ({ tagId, tagName }) =>
+            h('a.tag-link',
+              { href: `/tags/${encodeURIComponent(tagId)}`, title: tagId },
+              api.tag.html.tag({ tagName, tagId }, null))))
       ]),
       h('div.main', [
         h('Scroller', [
           h('h2', name),
           h('section.messages', [
-            map(
-              tagMessages,
-              msg => computed(msg, msg => {
+            map(tagMessages, msg =>
+              computed(msg, msg => {
                 if (msg && !msg.value.missing) {
                   return h('div.messagewrapper', api.message.html.render(msg))
                 }
-              })
-            )
+              }))
           ])
         ])
       ])

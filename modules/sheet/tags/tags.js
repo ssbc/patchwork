@@ -20,28 +20,22 @@ exports.create = function (api) {
     api.sheet.display(close => {
       const content = h('div',
         computed([displayTags, selectedTag], (display, tag) => {
-          if (display) {
-            return api.sheet.tags.renderTags(ids, id => {
-              selectedTag.set(id)
-              displayTags.set(false)
-            })
-          } else {
-            return api.sheet.tags.renderTaggers(msgId, tag)
-          }
+          if (!display) return api.sheet.tags.renderTaggers(msgId, tag)
+          return api.sheet.tags.renderTags(ids, id => {
+            selectedTag.set(id)
+            displayTags.set(false)
+          })
         })
       )
 
       const back = computed(displayTags, (display) => {
-        if (display) {
-
-        } else {
-          return h('button -close', {
-            'ev-click': () => {
-              displayTags.set(true)
-              selectedTag.set()
-            }
-          }, i18n('Back'))
-        }
+        if (display) return
+        return h('button -close', {
+          'ev-click': () => {
+            displayTags.set(true)
+            selectedTag.set()
+          }
+        }, i18n('Back'))
       })
 
       catchLinks(content, (href, external, anchor) => {
