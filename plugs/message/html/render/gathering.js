@@ -56,7 +56,7 @@ exports.create = function (api) {
             'ev-click': send(api.gathering.sheet.edit, msg.key)
           }, 'Edit Details')
         ]),
-        h('div.time', computed(startDateTime, formatTime)),
+        h('div.time', computed(startDateTime, (time) => `${formatTime(time)} (your timezone)`)),
         when(image, h('a.image', {
           href: imageId,
           style: {
