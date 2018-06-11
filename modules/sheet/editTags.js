@@ -11,10 +11,10 @@ exports.gives = nest('sheet.editTags')
 exports.needs = nest({
   'about.obs.name': 'first',
   'keys.sync.id': 'first',
-  'intl.sync.startsWith': 'first',
   'sbot.obs.connection': 'first',
   'sheet.display': 'first',
-  'tag.html.tag': 'first'
+  'tag.html.tag': 'first',
+  'tag.obs.suggest': 'first'
 })
 
 exports.create = function (api) {
@@ -23,7 +23,6 @@ exports.create = function (api) {
   function editTags ({ msgId }, cb) {
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
     const HtmlTag = api.tag.html.tag
-    const matches = api.intl.sync.startsWith
 
     cb = cb || function () {}
 
@@ -82,6 +81,10 @@ exports.create = function (api) {
 
       function onMount () {
         input.focus()
+        const appliedTagIds = map(filteredMessages, tag => tag.tagId)
+        const applyTagIds = map(tagsToApply, tag => tag.tagId)
+        const stagedTagIds = computed([ appliedTagIds, applyTagIds ], (a, b) => concat(a, b))
+        const getTagSuggestions = api.tag.obs.suggest(stagedTagIds)
         addSuggest(input, (inputText, cb) => {
           cb(null, getTagSuggestions(inputText))
         }, { cls: 'SuggestBox' })
@@ -113,26 +116,6 @@ exports.create = function (api) {
         }
       }
 
-      function getTagSuggestions (word) {
-        const tags = computed([ScuttleTag.obs.allTagsFrom(myId), ScuttleTag.obs.mostActive()], (a, b) => {
-          const result = Array.from(a)
-          b.forEach((item) => {
-            if (!result.includes(item[0])) {
-              result.push(item)
-            }
-          })
-          return result
-        })
-        const suggestions = map(tags, suggestion, { idle: true })()
-        const appliedTagIds = map(filteredMessages, tag => tag.tagId)
-        const applyTagIds = map(tagsToApply, tag => tag.tagId)
-        const stagedTagIds = computed([ appliedTagIds, applyTagIds ], (a, b) => concat(a, b))()
-        const unusedSuggestions = filter(suggestions, tag => !stagedTagIds.includes(tag.tagId))
-        const filteredSuggestions = word ? filter(unusedSuggestions, tag => matches(tag.title, word)) : unusedSuggestions().slice(0, 200)
-        filteredSuggestions.push({ title: 'Press , to create a new tag', value: word, tagId: false })
-        return filteredSuggestions
-      }
-
       function onSave () {
         // tagsToCreate
         forEach(tagsToCreate(), tag => {
@@ -148,26 +131,6 @@ exports.create = function (api) {
         // tagsToRemove
         forEach(tagsToRemove(),
           tagId => ScuttleTag.async.apply({ tagged: false, message: msgId, tag: tagId }, cb))
-      }
-    }
-  }
-
-  function suggestion (id) {
-    if (Array.isArray(id)) {
-      const tagName = api.about.obs.name(id[0])()
-      return {
-        title: tagName,
-        subtitle: `(${id[1]})`,
-        value: tagName,
-        id
-      }
-    } else {
-      const tagName = api.about.obs.name(id)()
-      return {
-        title: tagName,
-        subtitle: 'used by you',
-        value: tagName,
-        id
       }
     }
   }
