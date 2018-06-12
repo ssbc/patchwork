@@ -1,7 +1,9 @@
 var { h, computed, when, map, send } = require('mutant')
 var nest = require('depnest')
 var extend = require('xtend')
-var moment = require('moment')
+var moment = require('moment-timezone')
+
+var localTimezone = moment.tz.guess()
 
 exports.needs = nest({
   'message.html.markdown': 'first',
@@ -56,7 +58,7 @@ exports.create = function (api) {
             'ev-click': send(api.gathering.sheet.edit, msg.key)
           }, 'Edit Details')
         ]),
-        h('div.time', computed(startDateTime, (time) => `${formatTime(time)} (your timezone)`)),
+        h('div.time', computed(startDateTime, formatTime)),
         when(image, h('a.image', {
           href: imageId,
           style: {
@@ -152,7 +154,7 @@ exports.create = function (api) {
 
 function formatTime (time) {
   if (time && time.epoch) {
-    return moment(time.epoch).format('LLLL')
+    return moment(time.epoch).tz(localTimezone).format('LLLL zz')
   }
 }
 
