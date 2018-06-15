@@ -166,6 +166,9 @@ exports.create = function (api) {
     // scoped
 
     function publish () {
+      if (!textArea.value) {
+        return
+      }
       publishing.set(true)
 
       var content = extend(resolve(meta), {
