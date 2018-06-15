@@ -83,7 +83,7 @@ exports.create = function (api) {
           h('button -save', {
             'ev-click': save,
             'disabled': publishing
-          }, when(publishing, i18n('Publishing...'), i18n('Publish'))),
+          }, when(publishing, i18n('Publishing...'), i18n('Preview & Publish'))),
           h('button -cancel', {
             'disabled': publishing,
             'ev-click': close
