@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Patchwork
+Icon=nz.scuttlebutt.Patchwork
+Exec=npm start
+Categories=Network;Chat;Feed;
