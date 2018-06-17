@@ -17,14 +17,14 @@ exports.create = function (api) {
   var matches = api.intl.sync.startsWith
 
   return nest('tag.obs.suggest', function (stagedTagIds) {
-    loadSuggestions(stagedTagIds)
+    loadSuggestions()
     return function (word) {
       var filtered
       if (!word) {
         filtered = suggestions().slice(0, 200)
       } else {
         filtered = suggestions().filter((item) => {
-          return matches(item.title, word) && !stagedTagIds().includes(item.id)
+          return matches(item.title, word) && !stagedTagIds().includes(item.tagId)
         })
       }
       filtered.push({
@@ -36,7 +36,7 @@ exports.create = function (api) {
     }
   })
 
-  function loadSuggestions (stagedTagIds) {
+  function loadSuggestions () {
     if (!suggestions) {
       var id = api.keys.sync.id()
       var ScuttleTag = TagHelper(api.sbot.obs.connection)
@@ -64,7 +64,7 @@ exports.create = function (api) {
         title: tagName,
         subtitle: `(${id[1]})`,
         value: tagName,
-        id
+        tagId: id[0]
       }
     } else {
       const tagName = api.about.obs.name(id)()
@@ -72,7 +72,7 @@ exports.create = function (api) {
         title: tagName,
         subtitle: 'used by you',
         value: tagName,
-        id
+        tagId: id
       }
     }
   }
