@@ -40,17 +40,19 @@ exports.create = function (api) {
               api.tag.html.tag({ tagName, tagId }, null))))
       ]),
       h('div.main', [
-        h('Scroller', [
-          h('h2', name),
-          h('section.messages', [
-            map(tagMessages, msg =>
-              computed(msg, msg => {
-                if (msg && !msg.value.missing) {
-                  return h('div.messagewrapper', api.message.html.render(msg))
-                }
-              }))
+        h('Scroller',
+          h('div.wrapper', [
+            h('h2', name),
+            h('section.messages', [
+              map(tagMessages, msg =>
+                computed(msg, msg => {
+                  if (msg && !msg.value.missing) {
+                    return h('div.messagewrapper', api.message.html.render(msg))
+                  }
+                }))
+            ])
           ])
-        ])
+        )
       ])
     ])
   })
