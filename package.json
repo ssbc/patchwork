@@ -76,7 +76,7 @@
     "ssb-ref": "^2.11.1",
     "ssb-search": "~1.1.1",
     "ssb-sort": "^1.0.0",
-    "ssb-tags": "^0.1.0",
+    "ssb-tags": "^0.2.0",
     "ssb-ws": "~2.1.1",
     "standard": "^11.0.1",
     "statistics": "^3.3.0",
