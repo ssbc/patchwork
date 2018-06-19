@@ -9,22 +9,26 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-  return nest({ 'tag.html.tag': function ({ tagName, tagId }, handleRemove) {
+  return nest({ 'tag.html.tag': function ({ tagName, tagId }, { linkToTag, onRemove }) {
     var removeTag = ''
-    if (handleRemove) {
-      removeTag = h('a', { 'ev-click': handleRemove }, 'x')
+    if (onRemove) {
+      removeTag = h('a', { 'ev-click': onRemove }, 'x')
     }
     const backgroundColor = api.about.obs.color(tagId)
     const fontColor = computed(backgroundColor, contrast)
-
     const style = {
       'background-color': backgroundColor,
       'color': fontColor
     }
-    return h('Tag', { style }, [
+    const tag = h('Tag', { style }, [
       h('span', tagName),
       removeTag
     ])
+    if (linkToTag) {
+      const href = `/tags/${encodeURIComponent(tagId)}`
+      return h('a.tag-link', { href, title: tagId }, tag)
+    }
+    return tag
   }})
 }
 

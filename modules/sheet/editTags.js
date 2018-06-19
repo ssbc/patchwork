@@ -57,11 +57,11 @@ exports.create = function (api) {
         filter(tags, tag => !removedIds.includes(tag.tagId)))
 
       const messageTagsView = map(filteredMessages, tag =>
-        computed(tag, t => HtmlTag(t, () => tagsToRemove.push(t.tagId))))
+        computed(tag, t => HtmlTag(t, { onRemove: () => tagsToRemove.push(t.tagId) })))
       const tagsToApplyView = map(tagsToApply, tag =>
-        HtmlTag(tag, () => tagsToApply.delete(tag)))
+        HtmlTag(tag, { onRemove: () => tagsToApply.delete(tag) }))
       const tagsToCreateView = map(tagsToCreate, tag =>
-        HtmlTag({ tagName: tag, tagId: 'new' }, () => tagsToCreate.delete(tag)))
+        HtmlTag({ tagName: tag, tagId: 'new' }, { onRemove: () => tagsToCreate.delete(tag) }))
       const stagedTags = computed([messageTagsView, tagsToApplyView, tagsToCreateView], (a, b, c) =>
         h('StagedTags', concat(a, [b, c])))
 

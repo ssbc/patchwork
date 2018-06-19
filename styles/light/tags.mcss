@@ -1,3 +1,46 @@
+div.side {
+  div.heading {
+    h2 {
+      display: inline-block
+    }
+    span.tagInfo {
+      line-height: 1.5em
+      vertical-align: text-bottom
+      margin-left: .5em
+    }
+  }
+  div.tagControls {
+    display: flex
+    justify-content: space-between
+    margin-bottom: .5em
+    button {
+      width: 48%
+    }
+  }
+}
+
+section.header {
+  position: relative
+  h1 {
+    display: inline-block
+    margin-right: .5em
+    margin-top: 1em
+  }
+  span.tagInfo {
+    line-height: 1.8em
+    vertical-align: text-bottom
+    display: inline-block
+  }
+  div.tagControls {
+    position: absolute
+    top: 1.2em
+    right: 0
+    button.you {
+      margin-right: .5em
+    }
+  }
+}
+
 div.messagewrapper {
   margin-bottom: 1rem
 }
