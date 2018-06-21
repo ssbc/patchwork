@@ -1,4 +1,5 @@
 var nest = require('depnest')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'config.sync.load': 'first'
@@ -13,6 +14,10 @@ exports.create = function (api) {
     if (link && typeof link.link === 'string') {
       link = link.link
     }
-    return `${prefix}/${link}`
+
+    var parsed = ref.parseLink(link)
+    if (parsed && ref.isBlob(parsed.link)) {
+      return `${prefix}/${parsed.link}`
+    }
   })
 }
