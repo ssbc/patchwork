@@ -132,5 +132,16 @@
 	"New Message": "New Message",
 	"identified ": "identified ",
 	"Confirm": "Confirm",
-	"Cancel": "Cancel"
+	"Cancel": "Cancel",
+	"Channels": "Channels",
+	"Browse All": "Browse All",
+	" referenced this message:": " referenced this message:",
+	"added changes": "added changes",
+	"You follow %s people that subscribe to this channel.": {
+		"one": "You follow %s people that subscribe to this channel.",
+		"other": "You follow %s people that subscribe to this channel."
+	},
+	" forked this discussion:": " forked this discussion:",
+	"(missing message)": "(missing message)",
+	"self assigned a display image": "self assigned a display image"
 }
