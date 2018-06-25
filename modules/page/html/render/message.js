@@ -56,7 +56,7 @@ exports.create = function (api) {
         ]))
       }
 
-      if (value.private) {
+      if (typeof value.content === 'string') {
         value = api.message.sync.unbox(value)
       }
 
