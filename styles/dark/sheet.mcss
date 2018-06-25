@@ -20,6 +20,10 @@ Sheet {
     flex: 1
   }
 
+  img {
+    max-height: 24px;
+  }
+
   footer {
     flex-shrink: 0;
     min-height: 20px;
@@ -28,6 +32,7 @@ Sheet {
     padding: 10px;
     position: relative
     border-top: 1px solid #2d2c2c
+    align-items: center
 
     div.info {
       flex: 1
