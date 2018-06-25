@@ -29,7 +29,12 @@ Sheet {
     padding: 10px;
     position: relative
     border-top: 1px solid #DDD
-
+    align-items: center
+   
+    img {
+      max-height: 24px;
+    }
+    
     div.info {
       flex: 1
       padding: 8px

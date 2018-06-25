@@ -123,6 +123,13 @@ exports.create = function (api) {
             }
           })
         } else {
+          showDialog({
+            type: 'info',
+            title: i18n('Update Profile'),
+            buttons: [i18n('OK')],
+            message: i18n('Nothing to publish'),
+            detail: i18n('You have not made any changes.')
+          })
           close()
         }
       }
