@@ -9,7 +9,7 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-  return nest({ 'tag.html.tag': function ({ tagName, tagId }, { linkToTag, onRemove }) {
+  return nest({ 'tag.html.tag': function ({ tagName, tagId }, { href, onRemove }) {
     var removeTag = ''
     if (onRemove) {
       removeTag = h('a', { 'ev-click': onRemove }, 'x')
@@ -24,9 +24,9 @@ exports.create = function (api) {
       h('span', tagName),
       removeTag
     ])
-    if (linkToTag) {
-      const href = `/tags/${encodeURIComponent(tagId)}`
-      return h('a.tag-link', { href, title: tagId }, tag)
+    if (href) {
+      const _href = typeof href === 'string' ? href : `/tags/${encodeURIComponent(tagId)}/all`
+      return h('a.tag-link', { href: _href, title: tagId }, tag)
     }
     return tag
   }})
