@@ -60,7 +60,7 @@ exports.create = function (api) {
       pull.drain((msg) => taggedMessages.push(msg))
     )
 
-    return h('SplitView', [
+    return h('SplitView -tags', [
       h('div.side', [
         h('h2', i18n('Tags Used By You')),
         map(tagsUsedByYou, tag => computed(tag, HtmlTag)),
@@ -81,7 +81,7 @@ exports.create = function (api) {
       h('div.main', [
         h('Scroller',
           h('div.wrapper', [
-            h('section.header', [
+            h('TagsHeader', [
               h('h1', name),
               h('span.tagInfo', author === 'all' ? i18n('(from everyone)') : i18n('(from you)')),
               h('div.tagControls', [
@@ -98,7 +98,7 @@ exports.create = function (api) {
               map(taggedMessages, msg =>
                 computed(msg, msg => {
                   if (msg && !msg.value.missing) {
-                    return h('div.messagewrapper', api.message.html.render(msg))
+                    return h('FeedEvent', api.message.html.render(msg))
                   }
                 }))
             ])

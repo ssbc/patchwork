@@ -1,25 +1,28 @@
-div.side {
-  div.heading {
-    h2 {
-      display: inline-block
+SplitView -tags {
+  div.side {
+    div.heading {
+      h2 {
+        display: inline-block
+      }
+      span.tagInfo {
+        line-height: 1.5em
+        vertical-align: text-bottom
+        margin-left: .5em
+      }
     }
-    span.tagInfo {
-      line-height: 1.5em
-      vertical-align: text-bottom
-      margin-left: .5em
+    div.tagControls {
+      display: flex
+      justify-content: space-between
+      margin-bottom: .5em
+      button {
+        width: 48%
+      }
     }
   }
-  div.tagControls {
-    display: flex
-    justify-content: space-between
-    margin-bottom: .5em
-    button {
-      width: 48%
-    }
-  }
+
 }
 
-section.header {
+TagsHeader {
   position: relative
   h1 {
     display: inline-block
@@ -33,14 +36,10 @@ section.header {
   }
   div.tagControls {
     position: absolute
-    top: 1.2em
+    top: 2em
     right: 0
     button.you {
       margin-right: .5em
     }
   }
-}
-
-div.messagewrapper {
-  margin-bottom: 1rem
 }
