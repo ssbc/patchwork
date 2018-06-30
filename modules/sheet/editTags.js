@@ -13,8 +13,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'sbot.obs.connection': 'first',
   'sheet.display': 'first',
-  'tag.html.tag': 'first',
-  'tag.obs.suggest': 'first'
+  'tag.async.suggest': 'first',
+  'tag.html.tag': 'first'
 })
 
 exports.create = function (api) {
@@ -57,11 +57,11 @@ exports.create = function (api) {
         filter(tags, tag => !removedIds.includes(tag.tagId)))
 
       const messageTagsView = map(filteredMessages, tag =>
-        computed(tag, t => HtmlTag(t, () => tagsToRemove.push(t.tagId))))
+        computed(tag, t => HtmlTag(t, { onRemove: () => tagsToRemove.push(t.tagId) })))
       const tagsToApplyView = map(tagsToApply, tag =>
-        HtmlTag(tag, () => tagsToApply.delete(tag)))
+        HtmlTag(tag, { onRemove: () => tagsToApply.delete(tag) }))
       const tagsToCreateView = map(tagsToCreate, tag =>
-        HtmlTag({ tagName: tag, tagId: 'new' }, () => tagsToCreate.delete(tag)))
+        HtmlTag({ tagName: tag, tagId: 'new' }, { onRemove: () => tagsToCreate.delete(tag) }))
       const stagedTags = computed([messageTagsView, tagsToApplyView, tagsToCreateView], (a, b, c) =>
         h('StagedTags', concat(a, [b, c])))
 
@@ -84,9 +84,9 @@ exports.create = function (api) {
         const appliedTagIds = map(filteredMessages, tag => tag.tagId)
         const applyTagIds = map(tagsToApply, tag => tag.tagId)
         const stagedTagIds = computed([ appliedTagIds, applyTagIds ], (a, b) => concat(a, b))
-        const getTagSuggestions = api.tag.obs.suggest(stagedTagIds)
+        const getTagSuggestions = api.tag.async.suggest(stagedTagIds)
         addSuggest(input, (inputText, cb) => {
-          cb(null, getTagSuggestions(inputText))
+          getTagSuggestions(inputText, cb)
         }, { cls: 'SuggestBox' })
       }
 
