@@ -63,7 +63,7 @@
     "spacetime": "^4.1.1",
     "ssb-about": "~0.1.2",
     "ssb-avatar": "^0.2.0",
-    "ssb-backlinks": "~0.7.1",
+    "ssb-backlinks": "~0.7.2",
     "ssb-blobs": "~1.1.5",
     "ssb-config": "^2.2.0",
     "ssb-friends": "^2.4.0",
