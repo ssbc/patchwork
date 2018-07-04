@@ -46,7 +46,7 @@ exports.create = function (api) {
       h('TagList', [
         map(tags, (id) => {
           return h('a.tag',
-            { href: `/tags/${encodeURIComponent(id)}`, title: id },
+            { href: `/tags/${encodeURIComponent(id)}/all`, title: id },
             [
               h('div.main', [
                 h('div.name', [ api.about.obs.name(id) ])
