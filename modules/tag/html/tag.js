@@ -5,11 +5,12 @@ const hexrgb = require('hex-rgb')
 exports.gives = nest('tag.html.tag')
 
 exports.needs = nest({
-  'about.obs.color': 'first'
+  'about.obs.color': 'first',
+  'about.obs.name': 'first'
 })
 
 exports.create = function (api) {
-  return nest({ 'tag.html.tag': function ({ tagName, tagId }, { href, onRemove }) {
+  return nest({ 'tag.html.tag': function (tagId, { href, onRemove }) {
     var removeTag = ''
     if (onRemove) {
       removeTag = h('a', { 'ev-click': onRemove }, 'x')
@@ -21,7 +22,7 @@ exports.create = function (api) {
       'color': fontColor
     }
     const tag = h('Tag', { style }, [
-      h('span', tagName),
+      h('span', api.about.obs.name(tagId)),
       removeTag
     ])
     if (href) {

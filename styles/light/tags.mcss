@@ -1,15 +1,5 @@
 SplitView -tags {
   div.side {
-    div.heading {
-      h2 {
-        display: inline-block
-      }
-      span.tagInfo {
-        line-height: 1.5em
-        vertical-align: text-bottom
-        margin-left: .5em
-      }
-    }
     div.tagControls {
       display: flex
       justify-content: space-between
@@ -28,11 +18,6 @@ TagsHeader {
     display: inline-block
     margin-right: .5em
     margin-top: 1em
-  }
-  span.tagInfo {
-    line-height: 1.8em
-    vertical-align: text-bottom
-    display: inline-block
   }
   div.tagControls {
     position: absolute
