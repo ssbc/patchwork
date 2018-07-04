@@ -119,20 +119,27 @@ exports.create = function (api) {
             unreadIds.add(msg.key)
           }
 
-          if (updates() === 0 && msg.value.author === yourId && container.scrollTop < 500) {
-            refresh()
-          } else if (msg.value.author === yourId && content()) {
+          if (msg.value.author === yourId && content()) {
             // dynamically insert this post into the feed! (manually so that it doesn't get slow with mutant)
-            var existingContainer = content().querySelector(`[data-root-id="${msg.value.content.root}"]`)
-            if (existingContainer) {
-              var replies = existingContainer.querySelector('div.replies')
-              var lastReply = existingContainer.querySelector('div.replies > .Message:last-child')
-              var previousId = lastReply ? lastReply.getAttribute('data-id') : existingContainer.getAttribute('data-root-id')
-              replies.appendChild(api.message.html.render(msg, {
-                previousId,
-                compact: false,
-                priority: 2
-              }))
+            if (api.message.sync.root(msg)) {
+              var existingContainer = content().querySelector(`[data-root-id="${api.message.sync.root(msg)}"]`)
+              if (existingContainer) {
+                var replies = existingContainer.querySelector('div.replies')
+                var lastReply = existingContainer.querySelector('div.replies > .Message:last-child')
+                var previousId = lastReply ? lastReply.getAttribute('data-id') : existingContainer.getAttribute('data-root-id')
+                replies.appendChild(api.message.html.render(msg, {
+                  previousId,
+                  compact: false,
+                  priority: 2
+                }))
+              }
+            } else {
+              highlightItems.add(msg.key)
+              content().prepend(
+                renderItem(extend(msg, {
+                  replies: []
+                }))
+              )
             }
           }
 
@@ -318,7 +325,7 @@ exports.create = function (api) {
       var rootId = api.message.sync.root(msg)
       if (rootId) {
         api.sbot.async.get(rootId, (_, value) => {
-          if (value && typeof value.content === 'string') {
+          if (value && value.private) {
             // unbox private message
             value = api.message.sync.unbox(value)
           }

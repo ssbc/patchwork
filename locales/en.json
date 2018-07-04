@@ -1,7 +1,8 @@
 {
 	"Publishing...": "Publishing...",
-	"Publish Privately": "Publish Privately",
 	"Publish": "Publish",
+	"Preview & Publish Privately": "Preview & Publish Privately",
+	"Preview & Publish": "Preview & Publish",
 	"Welcome to Patchwork": "Welcome to Patchwork",
 	"You may not be able to see new content until you follow some users or pubs.": "You may not be able to see new content until you follow some users or pubs.",
 	"For help, see the 'Getting Started' guide at ": "For help, see the 'Getting Started' guide at ",
@@ -116,6 +117,9 @@
 	"sl": "Slovenian",
 	"pl": "Polish",
 	"pt-BR": "Brazillian Portuguese",
+	"ru": "Russian",
+	"uk": "Ukrainian",
+	"zh-CN": "Chinese",
 	"Public Feed Options": "Public Feed Options",
 	"Hide following messages": "Hide following messages",
 	"This is you.": "This is you.",
@@ -195,5 +199,16 @@
 	"Create Gathering": "Create Gathering",
 	"liked": "liked",
 	"(missing message)": "(missing message)",
-	"Cannot display message.": "Cannot display message."
+	"Cannot display message.": "Cannot display message.",
+	"What would you like to call ": "What would you like to call ",
+	"Names you assign here will be publicly visible to others.": "Names you assign here will be publicly visible to others.",
+	"Update Profile": "Update Profile",
+	"OK": "OK",
+	"You have not made any changes.": "You have not made any changes.",
+	"Nothing to publish": "Nothing to publish",
+	"Edit": "Edit",
+	"Only visible to you and people that have been mentioned": "Only visible to you and people that have been mentioned",
+	"Only visible to you and other thread participants": "Only visible to you and other thread participants",
+	"This message will be public and cannot be edited or deleted": "This message will be public and cannot be edited or deleted",
+	"This message will be public and can be edited by anyone": "This message will be public and can be edited by anyone"
 }

@@ -352,6 +352,11 @@ exports.create = function (api) {
               'font-weight': 'normal'
             }
           }, [i18n('What would you like to call '), h('strong', [currentName]), '?']),
+          h('h3', {
+            style: {
+              'font-weight': 'normal'
+            }
+          }, [i18n('Names you assign here will be publicly visible to others.')]),
           input
         ]),
         footer: [

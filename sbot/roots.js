@@ -12,7 +12,7 @@ var getRoot = require('patchcore/message/sync/root').create().message.sync.root
 var getTimestamp = require('patchcore/message/sync/timestamp').create().message.sync.timestamp
 
 module.exports = function (ssb, config) {
-  var create = FlumeViewLevel(2, function (msg, seq) {
+  var create = FlumeViewLevel(3, function (msg, seq) {
     var result = [
       [getTimestamp(msg), getRoot(msg) || msg.key]
     ]
@@ -50,7 +50,7 @@ module.exports = function (ssb, config) {
           // FILTER ROOTS
           pull.filter(item => {
             var root = item.root || item
-            var isPrivate = root.value && typeof root.value.content === 'string'
+            var isPrivate = root.value && root.value.private
 
             if (filter && root && root.value && !isPrivate) {
               var filterResult = filter(ids, root)
@@ -106,7 +106,7 @@ module.exports = function (ssb, config) {
           // FILTER ROOTS
           pull.filter(item => {
             var root = item.root || item
-            var isPrivate = root.value && typeof root.value.content === 'string'
+            var isPrivate = root.value && root.value.private
 
             // skip this item if it has already been included
             if (!included.has(root.key) && filter && root && root.value && !isPrivate) {

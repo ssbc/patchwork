@@ -112,7 +112,7 @@ electron.app.on('ready', () => {
 
   electron.ipcMain.on('open-background-devtools', function (ev, config) {
     if (windows.background) {
-      windows.background.webContents.openDevTools({detach: true})
+      windows.background.webContents.openDevTools({mode: 'detach'})
     }
   })
 })
@@ -129,7 +129,7 @@ function openMainWindow () {
       y: windowState.y,
       width: windowState.width,
       height: windowState.height,
-      titleBarStyle: 'hidden-inset',
+      titleBarStyle: 'hiddenInset',
       autoHideMenuBar: true,
       title: 'Patchwork',
       show: true,
