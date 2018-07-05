@@ -209,7 +209,7 @@ exports.create = function (api) {
             pull.filter(bumpFilter),
             api.feed.pull.rollup(rootFilter)
           ),
-          // GroupSimilar(20, ungroupFilter),
+          GroupSimilar(20, ungroupFilter),
           pull.filter(resultFilter),
           scroller
         )
