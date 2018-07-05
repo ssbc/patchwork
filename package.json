@@ -49,6 +49,7 @@
     "pull-cat": "^1.1.11",
     "pull-defer": "^0.2.2",
     "pull-file": "^1.1.0",
+    "pull-group": "^1.0.1",
     "pull-next": "~1.0.1",
     "pull-notify": "^0.1.1",
     "pull-paramap": "^1.2.2",

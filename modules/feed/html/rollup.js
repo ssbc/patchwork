@@ -6,6 +6,8 @@ var Scroller = require('../../../lib/scroller')
 var nextStepper = require('../../../lib/next-stepper')
 var extend = require('xtend')
 var paramap = require('pull-paramap')
+var Group = require('pull-group')
+var ref = require('ssb-ref')
 
 var bumpMessages = {
   'vote': 'liked this message',
@@ -21,6 +23,7 @@ var rootBumpTypes = ['mention', 'channel-mention']
 
 exports.needs = nest({
   'about.obs.name': 'first',
+  'about.html.image': 'first',
   'app.sync.externalHandler': 'first',
   'message.html.canRender': 'first',
   'message.html.render': 'first',
@@ -54,6 +57,7 @@ exports.create = function (api) {
     bumpFilter = returnTrue,
     resultFilter = returnTrue, // filter after replies have been resolved (just before append to scroll)
     compactFilter = returnFalse,
+    ungroupFilter = returnFalse,
     prefiltered = false,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
@@ -175,7 +179,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = nextStepper(getStream, {reverse: true, limit: 50})
+        var stream = nextStepper(getStream, {reverse: true, limit: 200})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {
@@ -205,13 +209,56 @@ exports.create = function (api) {
             pull.filter(bumpFilter),
             api.feed.pull.rollup(rootFilter)
           ),
+          // GroupSimilar(20, ungroupFilter),
           pull.filter(resultFilter),
           scroller
         )
       })
     }
 
+    function renderGroup (item, opts) {
+      var expanded = Value(false)
+      var actions = getContactActions(item.msgs)
+      var counts = getContactActionCounts(actions)
+      var reduced = reduceActions(counts)
+
+      var contentSummary = h('FollowGraph', [
+        reduced.map(action => actionSummary(action, id => {
+          if (id.startsWith('#')) {
+            return h('a -channel', {href: id}, `#${ref.normalizeChannel(id)}`)
+          } else {
+            return h('a', {href: id}, api.about.html.image(id))
+          }
+        }, i18n))
+      ])
+
+      return h('FeedEvent -group', {
+        classList: [ when(expanded, '-expanded') ]
+      }, [
+        contentSummary,
+        when(expanded, h('div.items', item.msgs.map(msg => renderItem(msg, opts)))),
+        h('a.expand', {
+          'tab-index': 0,
+          'ev-click': {handleEvent: toggleValue, value: expanded}
+        }, [
+          when(expanded,
+            [i18n('Hide details')],
+            [i18n('Show details') + ' (', item.msgs.length, ')']
+          )
+        ])
+      ])
+    }
+
     function renderItem (item, opts) {
+      if (item.group) {
+        // if (item.msgs.length === 1) {
+        //   // fallback to standard item rendering if group only contains 1 item
+        //   item = item.msgs[0]
+        // } else {
+        //   return renderGroup(item, opts)
+        // }
+        return renderGroup(item, opts)
+      }
       var partial = opts && opts.partial
       var meta = null
       var previousId = item.key
@@ -434,5 +481,253 @@ function last (array) {
     return array[array.length - 1]
   } else {
     return array
+  }
+}
+
+function actionSummary (item, avatarFormatter, i18n) {
+  var actionName = null
+  var from = []
+  var to = []
+  if (item.action === 'followedBy' || item.action === 'subscribedBy') {
+    actionName = 'followed'
+    from = item.targets
+    to = [item.id]
+  } else if (item.action === 'unfollowedBy' || item.action === 'unsubscribedBy') {
+    actionName = 'unfollowed'
+    from = item.targets
+    to = [item.id]
+  } else if (item.action === 'following' || item.action === 'subscribing') {
+    actionName = 'followed'
+    from = [item.id]
+    to = item.targets
+  } else if (item.action === 'unfollowing' || item.action === 'unsubscribing') {
+    actionName = 'unfollowed'
+    from = [item.id]
+    to = item.targets
+  } else if (item.action === 'blockedBy') {
+    actionName = 'blocked'
+    from = item.targets
+    to = [item.id]
+  } else if (item.action === 'unblockedBy') {
+    actionName = 'unblocked'
+    from = item.targets
+    to = [item.id]
+  } else if (item.action === 'blocking') {
+    actionName = 'blocked'
+    from = [item.id]
+    to = item.targets
+  } else if (item.action === 'unblocking') {
+    actionName = 'unblocked'
+    from = [item.id]
+    to = item.targets
+  } else if (item.action === 'identifying') {
+    actionName = 'identify'
+    from = [item.id]
+    to = item.targets
+  } else if (item.action === 'identifiedBy') {
+    actionName = 'identify'
+    from = item.targets
+    to = [item.id]
+  }
+
+  return h('div -' + actionName, [h('div -left', from.slice(0, 10).map(avatarFormatter)), h('span.action'), h('div -right', to.slice(0, 10).map(avatarFormatter))])
+}
+
+function getContactActions (msgs) {
+  var actions = {}
+
+  // reduce down actions for each contact change (de-duplicate, remove redundency)
+  // e.g. if a person follows someone then unfollows, ignore both actions
+  msgs.forEach(msg => {
+    var content = msg.value.content
+    let from = msg.value.author
+    if (content.type === 'contact') {
+      if (ref.isFeed(content.contact)) {
+        let to = content.contact
+        let key = `${from}:${to}`
+        if (content.following === true) {
+          if (actions[key] === 'unfollow') {
+            delete actions[key]
+          } else {
+            actions[key] = 'follow'
+          }
+        } else if (content.blocking === true) {
+          if (actions[key] === 'unblock') {
+            delete actions[key]
+          } else {
+            actions[key] = 'block'
+          }
+        } else if (content.blocking === false) {
+          if (actions[key] === 'block') {
+            delete actions[key]
+          } else {
+            actions[key] = 'unblock'
+          }
+        } else if (content.following === false) {
+          if (actions[key] === 'follow') {
+            delete actions[key]
+          } else {
+            actions[key] = 'unfollow'
+          }
+        }
+      }
+    } else if (content.type === 'channel') {
+      if (typeof content.channel === 'string') { // TODO: better channel check
+        let to = '#' + content.channel
+        let key = `${from}:${to}`
+        if (content.subscribed === true) {
+          if (actions[key] === 'unfollow') {
+            delete actions[key]
+          } else {
+            actions[key] = 'subscribe'
+          }
+        } else if (content.subscribed === false) {
+          if (actions[key] === 'follow') {
+            delete actions[key]
+          } else {
+            actions[key] = 'unsubscribe'
+          }
+        }
+      }
+    } else if (content.type === 'about') {
+      if (ref.isFeed(content.about)) {
+        let to = content.about
+        let key = `${from}:${to}`
+        actions[key] = 'identify'
+      }
+    }
+  })
+
+  return actions
+}
+
+function getContactActionCounts (actions) {
+  var actionCounts = {}
+
+  // get actions performed on and by profiles
+  // collect who did what and has what done on them
+  for (var key in actions) {
+    var action = actions[key]
+    var {from, to} = splitKey(key)
+    actionCounts[from] = actionCounts[from] || ContactActionTracker()
+    actionCounts[to] = actionCounts[to] || ContactActionTracker()
+
+    if (action === 'follow') {
+      actionCounts[from].following.push(to)
+      actionCounts[to].followedBy.push(from)
+    } else if (action === 'unfollow') {
+      actionCounts[from].unfollowing.push(to)
+      actionCounts[to].unfollowedBy.push(from)
+    } else if (action === 'subscribe') {
+      actionCounts[from].subscribing.push(to)
+      actionCounts[to].subscribedBy.push(from)
+    } else if (action === 'unsubscribe') {
+      actionCounts[from].unsubscribing.push(to)
+      actionCounts[to].unsubscribedBy.push(from)
+    } else if (action === 'block') {
+      actionCounts[from].blocking.push(to)
+      actionCounts[to].blockedBy.push(from)
+    } else if (action === 'unblock') {
+      actionCounts[from].unblocking.push(to)
+      actionCounts[to].unblockedBy.push(from)
+    } else if (action === 'identify') {
+      actionCounts[from].identifying.push(to)
+      actionCounts[to].identifiedBy.push(from)
+    }
+  }
+
+  return actionCounts
+}
+
+function reduceActions (actionCounts) {
+  var actions = []
+
+  for (let key in actionCounts) {
+    var value = actionCounts[key]
+    for (let action in value) {
+      actions.push({id: key, action, targets: value[action]})
+    }
+  }
+
+  // sort desc by most targets per action
+  actions.sort((a, b) => b.targets.length - a.targets.length)
+
+  // remove duplicate actions, and return!
+  var used = new Set()
+  return actions.filter(action => {
+    let targets = action.targets.filter(target => {
+      return !used.has(`${action.id}:${target}`) && !used.has(`${target}:${action.id}`)
+    })
+    action.targets = targets
+
+    targets.forEach(target => {
+      used.add(`${action.id}:${target}`)
+      used.add(`${target}:${action.id}`)
+    })
+
+    // only return if has targets
+    return !!targets.length
+  })
+}
+
+function GroupSimilar (windowSize, ungroupFilter) {
+  return pull(
+    Group(windowSize),
+    pull.map(function (msgs) {
+      var result = []
+      var groups = {}
+
+      var typeGroups = ['about', 'channel', 'contact']
+
+      msgs.forEach(msg => {
+        var type = 'group' // msg.value.content.type
+        if (typeGroups.includes(msg.value.content.type) && !hasReply(msg) && !ungroupFilter(msg)) {
+          if (!groups[type]) {
+            groups[type] = {group: type, msgs: []}
+            result.push(groups[type])
+          }
+          groups[type].msgs.push(msg)
+        } else {
+          result.push(msg)
+        }
+      })
+
+      return result
+    }),
+    pull.flatten()
+  )
+}
+
+function hasReply (msg) {
+  return msg.replies && msg.replies.some(msg => msg.value.content.type === 'post')
+}
+
+function ContactActionTracker () {
+  return {
+    followedBy: [],
+    following: [],
+    unfollowedBy: [],
+    unfollowing: [],
+    blockedBy: [],
+    blocking: [],
+    unblockedBy: [],
+    unblocking: [],
+    subscribedBy: [],
+    subscribing: [],
+    identifiedBy: [],
+    identifying: [],
+    profile: []
+  }
+}
+
+function toggleValue () {
+  this.value.set(!this.value())
+}
+
+function splitKey (key) {
+  var mid = key.indexOf(':')
+  return {
+    from: key.slice(0, mid),
+    to: key.slice(mid + 1)
   }
 }
