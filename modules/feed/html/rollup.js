@@ -714,9 +714,10 @@ function ContactActionTracker () {
     unblocking: [],
     subscribedBy: [],
     subscribing: [],
+    unsubscribedBy: [],
+    unsubscribing: [],
     identifiedBy: [],
-    identifying: [],
-    profile: []
+    identifying: []
   }
 }
 
