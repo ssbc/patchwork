@@ -17,23 +17,34 @@ GatheringCard {
     padding-top: 10px;
 
     div.title {
-      font-size: 90%;
-      color: #555;
-      font-weight: bold;
+      font-size: 75%;
       margin-bottom: 10px;
+      text-align: center
     }
+
     div.attendees {
-      margin: 0 5px
-      a {
-        margin-right: 4px
-        img {
-          height: 45px
-          width: 45px
-        }
+      text-align: center
+
+      a + a {
+        margin-left: 10px
+      }
+
+      (img) {
+        height: 45px
+        width: 45px
       }
     }
     div.actions {
+      text-align: center
       margin-top: 10px
+
+      button {
+        :first-child {
+          ::before {
+            content: '✔ '
+          }
+        }
+      }
       button + button {
         margin-left: 5px
       }
