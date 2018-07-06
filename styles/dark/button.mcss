@@ -26,9 +26,13 @@ button {
   }
 
   -add {
-    color: #6a7e6a;
-    background-color: #ecfff0;
+    color: white;
+    background-color: #629a6e
     border-color: #8ba289;
+    :hover {
+      color: #6a7e6a;
+      background-color: #ecfff0; 
+    }
   }
 
   -pub {
