@@ -8,7 +8,7 @@ FeedEvent {
   margin: 25px auto
 
   -group {
-    background: #e4e4e4
+    background: #e8e8e8
     a.expand {
       display: block;
       padding: 10px;

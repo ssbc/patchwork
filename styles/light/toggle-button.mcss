@@ -1,19 +1,22 @@
 ToggleButton {
-  font-size: 90%;
-  background: rgb(112, 112, 112);
-  border: 2px solid #313131;
-  transition: opacity 0.2s;
-  opacity: 0.6;
-  padding: 6px 12px;
-  color: white;
-  border-radius: 4px;
-  font-weight: bold;
-  text-decoration: none;
-  display: block;
+  display: inline-block
+  color: white
+  padding: 8px 10px
+  background-color: #848484
+  border: none
+  border-radius: 3px
+  font-size: 13px
+  cursor: pointer
+  transition: background-color 0.25s ease, color 0.25s ease
 
   -subscribe {
-    background-color: rgb(88, 171, 204);
-    border-color: #20699c;
+    :before {
+      content: '★ '
+    }
+    :hover {
+      background-color: #45b754;
+      color: white;
+    }
   }
 
   -unsubscribe {
@@ -23,9 +26,22 @@ ToggleButton {
     padding-right: 25px
   }
 
-  -unblocking {
-    background-color: #deb250
-    border-color: #ad7904
+  -blocking {
+    margin-left: 5px
+    border: 0px
+    :hover {
+      background-color: #bd6363
+    }
+  }
+
+   -unblocking {
+    margin-left: 5px
+    background-color: rgb(212, 112, 112)
+    color: #ffffff
+    border: 0px
+    :hover {
+       background-color: rgb(212, 167, 112)
+    }
   }
 
   -disabled {
@@ -36,7 +52,9 @@ ToggleButton {
 
   :hover {
     opacity: 1
+    color: white
     text-decoration: none
+    background-color: #585656
   }
 
   @svg subscribed {

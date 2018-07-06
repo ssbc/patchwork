@@ -28,9 +28,10 @@ button {
   }
 
   -add {
-    color: #ffffff;
-    background-color: #255D24;
-    border-color: #255D24;
+    :hover {
+      border-color: #7dbd85;
+      background-color: #7dbd85; 
+    }
   }
 
   -pub {
