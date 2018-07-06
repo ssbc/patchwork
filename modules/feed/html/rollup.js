@@ -212,7 +212,7 @@ exports.create = function (api) {
             api.feed.pull.rollup(rootFilter)
           ),
           pull.filter(canRenderMessage),
-          GroupSummaries(20, ungroupFilter),
+          GroupSummaries(15, ungroupFilter),
           pull.filter(resultFilter),
           scroller
         )
