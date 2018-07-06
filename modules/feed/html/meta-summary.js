@@ -14,27 +14,13 @@ exports.gives = nest({
 })
 
 var i18nActions = {
-  from: {
-    followed: 'followed %s people',
-    unfollowed: 'unfollowed %s people',
-    subscribed: 'subscribed to %s channels',
-    unsubscribed: 'unsubscribed from %s channels',
-    identified: 'identified %s people'
-  },
-  to: {
-    followed: '%s people followed',
-    unfollowed: '%s people unfollowed',
-    subscribed: '%s people subscribed to',
-    unsubscribed: '%s unsubscribed from',
-    identified: '%s people identified'
-  },
-  one: {
-    followed: 'followed',
-    unfollowed: 'unfollowed',
-    subscribed: 'subscribed to',
-    unsubscribed: 'unsubscribed from',
-    identified: 'identified'
-  }
+  followed: 'followed',
+  unfollowed: 'unfollowed',
+  subscribed: 'subscribed to',
+  unsubscribed: 'unsubscribed from',
+  identified: 'identified',
+  blocked: 'blocked',
+  unblocked: 'unblocked'
 }
 
 exports.create = function (api) {
@@ -101,15 +87,15 @@ exports.create = function (api) {
           getName(item.from[0]),
           getName(item.to[0])
         ], (a, b) => {
-          return a + ' ' + i18n(i18nActions.one[item.action]) + ' ' + b
+          return a + ' ' + i18n(i18nActions[item.action]) + ' ' + b
         })
       }
     } else if (item.from.length < item.to.length) {
       let name = getName(item.from[0])
-      return computed([name, item.to.length], (name, count) => name + ' ' + plural(i18nActions.from[item.action], count))
+      return computed([name, item.to.length], (name, count) => name + ' ' + i18n(i18nActions[item.action]) + ' ' + plural('%s people', count))
     } else {
       let name = getName(item.to[0])
-      return computed([name, item.from.length], (name, count) => plural(i18nActions.to[item.action], count) + ' ' + name)
+      return computed([name, item.from.length], (name, count) => plural('%s people', count) + ' ' + i18n(i18nActions[item.action]) + ' ' + name)
     }
   }
 
