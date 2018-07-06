@@ -7,7 +7,7 @@ var Scroller = require('../../../../lib/scroller')
 var nest = require('depnest')
 var Proxy = require('mutant/proxy')
 var ref = require('ssb-ref')
-const escapeStringRegexp = require('escape-string-regexp');
+var escapeStringRegexp = require('escape-string-regexp')
 
 exports.needs = nest({
   'sbot.pull.stream': 'first',
