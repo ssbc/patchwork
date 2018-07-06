@@ -27,6 +27,7 @@
     "electron-window-state": "^4.1.1",
     "emoji-named-characters": "^1.0.2",
     "emojilib": "^2.2.12",
+    "escape-string-regexp": "^1.0.5",
     "fix-path": "^2.1.0",
     "flatpickr": "^4.4.6",
     "flumeview-level": "^3.0.4",
