@@ -21,6 +21,10 @@
 		"one": "This person is blocked by %s of your friends.",
 		"other": "This person is blocked by %s of your friends."
 	},
+	"By default, Patchwork will only see other users that are on the same local area network as you.": "By default, Patchwork will only see other users that are on the same local area network as you.",
+	"In order to share with users on the internet, you need to be invited to a pub server.": "In order to share with users on the internet, you need to be invited to a pub server.",
+	"paste invite code here": "paste invite code here",
+	"Redeem Invite": "Redeem Invite",
 	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
 	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
 	"However, since they follow someone that follows you, they should be able to see your posts.": "However, since they follow someone that follows you, they should be able to see your posts.",
