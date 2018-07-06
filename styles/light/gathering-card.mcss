@@ -39,6 +39,7 @@ GatheringCard {
       margin-top: 10px
 
       button {
+        font-size: 100%;
         :first-child {
           ::before {
             content: '✔ '
@@ -55,7 +56,10 @@ GatheringCard {
     font-size: 200%
     button {
       float: right;
-      font-size: 60%;
+      font-size: 50%;
+      ::before {
+        content: '✎ '
+      }
     }
   }
   div.time {
