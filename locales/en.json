@@ -210,5 +210,35 @@
 	"Only visible to you and people that have been mentioned": "Only visible to you and people that have been mentioned",
 	"Only visible to you and other thread participants": "Only visible to you and other thread participants",
 	"This message will be public and cannot be edited or deleted": "This message will be public and cannot be edited or deleted",
-	"This message will be public and can be edited by anyone": "This message will be public and can be edited by anyone"
+	"This message will be public and can be edited by anyone": "This message will be public and can be edited by anyone",
+	"Show details": "Show details",
+	"Hide details": "Hide details",
+	"followed %s people": {
+		"one": "followed %s person",
+		"other": "followed %s people"
+	},
+	"identified %s people": {
+		"one": "identified %s person",
+		"other": "identified %s people"
+	},
+	"subscribed to %s channels": {
+		"one": "subscribed to %s channel",
+		"other": "subscribed to %s channels"
+	},
+	"%s people followed": {
+		"one": "%s person followed",
+		"other": "%s people followed"
+	},
+	"%s people identified": {
+		"one": "%s person identified",
+		"other": "%s people identified"
+	},
+	"%s people subscribed to": {
+		"one": "%s person subscribed to",
+		"other": "%s people subscribed to"
+	},
+	"identified": "identified",
+	"followed": "followed",
+	"subscribed to": "subscribed to",
+	"updated their profile": "updated their profile"
 }

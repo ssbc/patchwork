@@ -6,6 +6,7 @@ var Scroller = require('../../../lib/scroller')
 var nextStepper = require('../../../lib/next-stepper')
 var extend = require('xtend')
 var paramap = require('pull-paramap')
+var Group = require('pull-group')
 
 var bumpMessages = {
   'vote': 'liked this message',
@@ -19,8 +20,12 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
+// group these message types together using meta-summary
+var metaSummaryTypes = ['about', 'channel', 'contact']
+
 exports.needs = nest({
   'about.obs.name': 'first',
+  'about.html.image': 'first',
   'app.sync.externalHandler': 'first',
   'message.html.canRender': 'first',
   'message.html.render': 'first',
@@ -38,7 +43,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.i18n_n': 'first',
-  'message.html.missing': 'first'
+  'message.html.missing': 'first',
+  'feed.html.metaSummary': 'first'
 })
 
 exports.gives = nest({
@@ -54,6 +60,7 @@ exports.create = function (api) {
     bumpFilter = returnTrue,
     resultFilter = returnTrue, // filter after replies have been resolved (just before append to scroll)
     compactFilter = returnFalse,
+    ungroupFilter = returnFalse,
     prefiltered = false,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
@@ -175,7 +182,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = nextStepper(getStream, {reverse: true, limit: 50})
+        var stream = nextStepper(getStream, {reverse: true, limit: 200})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {
@@ -205,6 +212,7 @@ exports.create = function (api) {
             pull.filter(bumpFilter),
             api.feed.pull.rollup(rootFilter)
           ),
+          GroupSimilar(20, ungroupFilter),
           pull.filter(resultFilter),
           scroller
         )
@@ -212,6 +220,9 @@ exports.create = function (api) {
     }
 
     function renderItem (item, opts) {
+      if (item.group) {
+        return api.feed.html.metaSummary(item, renderItem, opts)
+      }
       var partial = opts && opts.partial
       var meta = null
       var previousId = item.key
@@ -435,4 +446,34 @@ function last (array) {
   } else {
     return array
   }
+}
+
+function GroupSimilar (windowSize, ungroupFilter) {
+  return pull(
+    Group(windowSize),
+    pull.map(function (msgs) {
+      var result = []
+      var groups = {}
+
+      msgs.forEach(msg => {
+        var type = 'metaSummary'
+        if (metaSummaryTypes.includes(msg.value.content.type) && !hasReply(msg) && !ungroupFilter(msg)) {
+          if (!groups[type]) {
+            groups[type] = {group: type, msgs: []}
+            result.push(groups[type])
+          }
+          groups[type].msgs.push(msg)
+        } else {
+          result.push(msg)
+        }
+      })
+
+      return result
+    }),
+    pull.flatten()
+  )
+}
+
+function hasReply (msg) {
+  return msg.replies && msg.replies.some(msg => msg.value.content.type === 'post')
 }
