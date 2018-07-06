@@ -206,7 +206,8 @@ Message {
       }
 
       a.channel {
-        font-size: 75%;
+        font-size: 100%;
+        color: #b3b3b3
 
         :hover {
           color: #c1cdf0
@@ -214,7 +215,7 @@ Message {
       }
 
       a.likes {
-        font-size: 75%;
+        font-size: 85%;
 
         ::before {
           content: '❤ '

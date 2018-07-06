@@ -204,7 +204,7 @@ Message {
       }
 
       a.likes {
-        font-size: 75%;
+        font-size: 85%;
         color: #757474
 
         ::before {
