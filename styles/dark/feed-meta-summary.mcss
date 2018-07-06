@@ -1,10 +1,9 @@
-FollowGraph {
+FeedMetaSummary {
   position: relative
   display: flex
   flex-wrap: wrap
   justify-content: center
   margin: 10px
-  
 
   div {
     display: flex
@@ -34,6 +33,7 @@ FollowGraph {
         img {
           display: block
           width: 45px;
+          min-height: 30px
           border-radius: 3px;
         }
 
@@ -75,20 +75,28 @@ FollowGraph {
       }}
     }
 
-    -followed {
+    -followed, -subscribed {
       span { :after {
         content: '✓'
       }}
     }
 
-    -unfollowed {
+    -unfollowed, -unsubscribed {
       background-color: #39434c
       span { :after {
         content: '⊗'
       }}
+      div {
+        -right {
+          opacity: 0.7
+          :hover {
+            opacity: 1
+          }
+        }
+      }
     }
 
-    -identify {
+    -identified {
       background-color: #afafaf
       span { :after {
         content: '👤'
