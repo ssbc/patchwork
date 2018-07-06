@@ -113,8 +113,8 @@ FeedMetaSummary {
       background-size: cover;
       height: 45px;
       margin-right: 3px;
-      padding-left: 8px;
-      padding-right: 15px;
+      padding-left: 10px;
+      padding-right: 13px;
 
       :after {
         color: white;
