@@ -61,7 +61,7 @@ exports.create = function (api) {
     ])
 
     return h('FeedEvent -group', {
-      classList: [ 
+      classList: [
         when(expanded, '-expanded'),
         when(isNew, '-new')
       ]
