@@ -27,6 +27,12 @@ FeedMetaSummary {
         border-radius: 3px
       }
 
+      strong {
+        margin-left: 3px;
+        font-size: 20px;
+        font-weight: normal;
+      }
+
       a {
         vertical-align: middle
         display: inline-block
@@ -102,7 +108,6 @@ FeedMetaSummary {
         content: '👤'
       }}
     }
-
 
     span {
       vertical-align: middle;

@@ -39,9 +39,9 @@ exports.create = function (api) {
     var contentSummary = h('FeedMetaSummary', [
       reduced.map(item => {
         return h('div -' + item.action, [
-          h('div -left', item.from.slice(0, 10).map(avatarFormatter)),
+          h('div -left', [item.from.slice(0, 8).map(avatarFormatter), more(item.from, 8)]),
           h('span.action', {title: actionDescription(item)}),
-          h('div -right', item.to.slice(0, 10).map(avatarFormatter))
+          h('div -right', [item.to.slice(0, 8).map(avatarFormatter), more(item.to, 8)])
         ])
       })
     ])
@@ -101,6 +101,12 @@ exports.create = function (api) {
 
   function getName (id) {
     return id.startsWith('#') ? id : api.about.obs.name(id)
+  }
+}
+
+function more (items, max) {
+  if (items.length > max) {
+    return h('strong', ['+', items.length - max])
   }
 }
 
