@@ -240,5 +240,7 @@
 	"identified": "identified",
 	"followed": "followed",
 	"subscribed to": "subscribed to",
-	"updated their profile": "updated their profile"
+	"updated their profile": "updated their profile",
+	"unfollowed": "unfollowed",
+	"Edit Gathering": "Edit Gathering"
 }
