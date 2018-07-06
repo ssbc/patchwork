@@ -221,7 +221,7 @@ exports.create = function (api) {
 
     function renderItem (item, opts) {
       if (item.group) {
-        return api.feed.html.metaSummary(item, renderItem, opts)
+        return api.feed.html.metaSummary(item, renderItem, getPriority, opts)
       }
       var partial = opts && opts.partial
       var meta = null

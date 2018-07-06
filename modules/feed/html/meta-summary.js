@@ -43,8 +43,9 @@ exports.create = function (api) {
 
   return nest('feed.html', {metaSummary})
 
-  function metaSummary (group, renderItem, opts) {
+  function metaSummary (group, renderItem, getPriority, opts) {
     var expanded = Value(false)
+    var isNew = group.msgs.some(msg => getPriority(msg) > 0)
     var actions = getActions(group.msgs)
     var counts = getActionCounts(actions)
     var reduced = reduceActions(counts)
@@ -60,7 +61,10 @@ exports.create = function (api) {
     ])
 
     return h('FeedEvent -group', {
-      classList: [ when(expanded, '-expanded') ]
+      classList: [ 
+        when(expanded, '-expanded'),
+        when(isNew, '-new')
+      ]
     }, [
       contentSummary,
       when(expanded, h('div.items', group.msgs.map(msg => renderItem(msg, opts)))),
