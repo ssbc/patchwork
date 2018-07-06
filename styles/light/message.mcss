@@ -8,7 +8,10 @@ Message {
   flex-shrink: 0
 
   (highlight) {
-    background-color: yellow
+    background-color: rgb(216, 179, 0);
+    color: #ffffff;
+    border-radius: 3px;
+    padding: 0 2px;
   }
 
   :focus {
