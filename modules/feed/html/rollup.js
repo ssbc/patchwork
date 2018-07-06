@@ -20,6 +20,9 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
+// group these message types together using meta-summary
+var metaSummaryTypes = ['about', 'channel', 'contact']
+
 exports.needs = nest({
   'about.obs.name': 'first',
   'about.html.image': 'first',
@@ -452,10 +455,8 @@ function GroupSimilar (windowSize, ungroupFilter) {
       var result = []
       var groups = {}
 
-      var metaSummaryTypes = ['about', 'channel', 'contact']
-
       msgs.forEach(msg => {
-        var type = 'metaSummary' // msg.value.content.type
+        var type = 'metaSummary'
         if (metaSummaryTypes.includes(msg.value.content.type) && !hasReply(msg) && !ungroupFilter(msg)) {
           if (!groups[type]) {
             groups[type] = {group: type, msgs: []}

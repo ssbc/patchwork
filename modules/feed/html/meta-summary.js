@@ -1,18 +1,46 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var { when, h, Value } = require('mutant')
+var { when, h, Value, computed } = require('mutant')
 
 exports.needs = nest({
   'intl.sync.i18n': 'first',
-  'about.html.image': 'first'
+  'intl.sync.i18n_n': 'first',
+  'about.html.image': 'first',
+  'about.obs.name': 'first'
 })
 
 exports.gives = nest({
   'feed.html.metaSummary': true
 })
 
+var i18nActions = {
+  from: {
+    followed: 'followed %s people',
+    unfollowed: 'unfollowed %s people',
+    subscribed: 'subscribed to %s channels',
+    unsubscribed: 'unsubscribed from %s channels',
+    identified: 'identified %s people'
+  },
+  to: {
+    followed: '%s people followed',
+    unfollowed: '%s people unfollowed',
+    subscribed: '%s people subscribed to',
+    unsubscribed: '%s unsubscribed from',
+    identified: '%s people identified'
+  },
+  one: {
+    followed: 'followed',
+    unfollowed: 'unfollowed',
+    subscribed: 'subscribed to',
+    unsubscribed: 'unsubscribed from',
+    identified: 'identified'
+  }
+}
+
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
+  const plural = api.intl.sync.i18n_n
+
   return nest('feed.html', {metaSummary})
 
   function metaSummary (group, renderItem, opts) {
@@ -25,7 +53,7 @@ exports.create = function (api) {
       reduced.map(item => {
         return h('div -' + item.action, [
           h('div -left', item.from.slice(0, 10).map(avatarFormatter)),
-          h('span.action'),
+          h('span.action', {title: actionDescription(item)}),
           h('div -right', item.to.slice(0, 10).map(avatarFormatter))
         ])
       })
@@ -54,6 +82,35 @@ exports.create = function (api) {
     } else {
       return h('a', {href: id}, api.about.html.image(id))
     }
+  }
+
+  function actionDescription (item) {
+    if (item.from.length === item.to.length) {
+      if (item.action === 'identified' && item.from[0] === item.to[0]) {
+        return computed([
+          getName(item.from[0])
+        ], (name) => {
+          return name + ' ' + i18n('updated their profile')
+        })
+      } else {
+        return computed([
+          getName(item.from[0]),
+          getName(item.to[0])
+        ], (a, b) => {
+          return a + ' ' + i18n(i18nActions.one[item.action]) + ' ' + b
+        })
+      }
+    } else if (item.from.length < item.to.length) {
+      let name = getName(item.from[0])
+      return computed([name, item.to.length], (name, count) => name + ' ' + plural(i18nActions.from[item.action], count))
+    } else {
+      let name = getName(item.to[0])
+      return computed([name, item.from.length], (name, count) => plural(i18nActions.to[item.action], count) + ' ' + name)
+    }
+  }
+
+  function getName (id) {
+    return id.startsWith('#') ? id : api.about.obs.name(id)
   }
 }
 
