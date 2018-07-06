@@ -6,7 +6,6 @@ var Scroller = require('../../../lib/scroller')
 var nextStepper = require('../../../lib/next-stepper')
 var extend = require('xtend')
 var paramap = require('pull-paramap')
-var Group = require('pull-group')
 
 var bumpMessages = {
   'vote': 'liked this message',
@@ -212,7 +211,8 @@ exports.create = function (api) {
             pull.filter(bumpFilter),
             api.feed.pull.rollup(rootFilter)
           ),
-          GroupSimilar(20, ungroupFilter),
+          pull.filter(canRenderMessage),
+          GroupSummaries(20, ungroupFilter),
           pull.filter(resultFilter),
           scroller
         )
@@ -448,9 +448,9 @@ function last (array) {
   }
 }
 
-function GroupSimilar (windowSize, ungroupFilter) {
+function GroupSummaries (windowSize, ungroupFilter) {
   return pull(
-    Group(windowSize),
+    GroupUntil((result, msg) => result.length < windowSize || metaSummaryTypes.includes(msg.value.content.type)),
     pull.map(function (msgs) {
       var result = []
       var groups = {}
@@ -476,4 +476,44 @@ function GroupSimilar (windowSize, ungroupFilter) {
 
 function hasReply (msg) {
   return msg.replies && msg.replies.some(msg => msg.value.content.type === 'post')
+}
+
+function GroupUntil (check) {
+  var ended = false
+  var queue = []
+  return function (read) {
+    return function (end, cb) {
+      // this means that the upstream is sending an error.
+      if (end) {
+        ended = end
+        return read(ended, cb)
+      }
+      // this means that we read an end before.
+      if (ended) return cb(ended)
+
+      read(null, function next (end, data) {
+        ended = ended || end
+
+        if (ended) {
+          if (!queue.length) {
+            return cb(ended)
+          }
+
+          let _queue = queue
+          queue = []
+          return cb(null, _queue)
+        }
+
+        if (check(queue, data)) {
+          queue.push(data)
+          read(null, next)
+        } else {
+          console.log('check fail', queue, data)
+          let _queue = queue
+          queue = [data]
+          cb(null, _queue)
+        }
+      })
+    }
+  }
 }
