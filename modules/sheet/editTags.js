@@ -51,17 +51,16 @@ exports.create = function (api) {
       const tagsInput = Value('')
 
       const myId = api.keys.sync.id()
-      const messageTags = map(ScuttleTag.obs.messageTagsFrom(msgId, myId), tagId =>
-        ScuttleTag.obs.Tag(tagId, api.about.obs.name))
-      const filteredMessages = computed([messageTags, tagsToRemove], (tags, removedIds) =>
-        filter(tags, tag => !removedIds.includes(tag.tagId)))
+      const messageTags = ScuttleTag.obs.messageTagsFrom(msgId, myId)
+      const filteredTags = computed([messageTags, tagsToRemove], (tagIds, removedIds) =>
+        filter(tagIds, tagId => !removedIds.includes(tagId)))
 
-      const messageTagsView = map(filteredMessages, tag =>
-        computed(tag, t => HtmlTag(t, { onRemove: () => tagsToRemove.push(t.tagId) })))
-      const tagsToApplyView = map(tagsToApply, tag =>
-        HtmlTag(tag, { onRemove: () => tagsToApply.delete(tag) }))
+      const messageTagsView = map(filteredTags, tagId =>
+        computed(tagId, t => HtmlTag(t, { onRemove: () => tagsToRemove.push(t.tagId) })))
+      const tagsToApplyView = map(tagsToApply, tagId =>
+        HtmlTag(tagId, { onRemove: () => tagsToApply.delete(tagId) }))
       const tagsToCreateView = map(tagsToCreate, tag =>
-        HtmlTag({ tagName: tag, tagId: 'new' }, { onRemove: () => tagsToCreate.delete(tag) }))
+        HtmlTag('new', { nameFn: () => tag, onRemove: () => tagsToCreate.delete(tag) }))
       const stagedTags = computed([messageTagsView, tagsToApplyView, tagsToCreateView], (a, b, c) =>
         h('StagedTags', concat(a, [b, c])))
 
@@ -81,9 +80,7 @@ exports.create = function (api) {
 
       function onMount () {
         input.focus()
-        const appliedTagIds = map(filteredMessages, tag => tag.tagId)
-        const applyTagIds = map(tagsToApply, tag => tag.tagId)
-        const stagedTagIds = computed([ appliedTagIds, applyTagIds ], (a, b) => concat(a, b))
+        const stagedTagIds = computed([ filteredTags, tagsToApply ], (a, b) => concat(a, b))
         const getTagSuggestions = api.tag.async.suggest(stagedTagIds)
         addSuggest(input, (inputText, cb) => {
           getTagSuggestions(inputText, cb)
@@ -112,7 +109,7 @@ exports.create = function (api) {
         if (index >= 0) {
           tagsToRemove.deleteAt(index)
         } else {
-          tagsToApply.push({ tagId, tagName: value })
+          tagsToApply.push(tagId)
         }
       }
 
@@ -127,7 +124,7 @@ exports.create = function (api) {
         })
         // tagsToApply
         forEach(tagsToApply(),
-          tag => ScuttleTag.async.apply({ tagged: true, message: msgId, tag: tag.tagId }, cb))
+          tagId => ScuttleTag.async.apply({ tagged: true, message: msgId, tag: tagId }, cb))
         // tagsToRemove
         forEach(tagsToRemove(),
           tagId => ScuttleTag.async.apply({ tagged: false, message: msgId, tag: tagId }, cb))
