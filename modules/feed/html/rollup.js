@@ -508,7 +508,6 @@ function GroupUntil (check) {
           queue.push(data)
           read(null, next)
         } else {
-          console.log('check fail', queue, data)
           let _queue = queue
           queue = [data]
           cb(null, _queue)
