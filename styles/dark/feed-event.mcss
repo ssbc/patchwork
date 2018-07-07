@@ -7,6 +7,9 @@ FeedEvent {
   margin: 25px auto
 
   -group {
+    -new {
+      background-color: #505050
+    }
     background: #505050
     a.expand {
       display: block;
