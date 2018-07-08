@@ -149,8 +149,9 @@ function getActions (msgs) {
         }
       }
     } else if (content.type === 'channel') {
-      if (typeof content.channel === 'string') { // TODO: better channel check
-        let to = '#' + content.channel
+      var channel = ref.normalizeChannel(content.channel)
+      if (channel) {
+        let to = '#' + channel
         let key = `${from}:${to}`
         if (content.subscribed === true) {
           if (actions[key] === 'unsubscribed') {
