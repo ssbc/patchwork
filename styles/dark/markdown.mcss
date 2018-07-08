@@ -83,7 +83,7 @@ Markdown {
   }
 
   (a) {
-    color: #6f74e5
+    color: #898df7
     :hover {
       text-decoration: underline;
     }
