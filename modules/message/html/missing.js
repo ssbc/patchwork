@@ -8,6 +8,7 @@ exports.needs = nest({
   'message.obs.get': 'first',
   'profile.html.person': 'first',
   'message.html.meta': 'first',
+  'message.sync.isBlocked': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -15,11 +16,11 @@ exports.gives = nest('message.html.missing')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.missing', function (id, hintMessage) {
+  return nest('message.html.missing', function (id, hintMessage, rootMessage) {
     if (!ref.isMsg(id)) return
     var msg = api.message.obs.get(id, hintMessage)
     return computed(msg, msg => {
-      if (msg && msg.value && msg.value.missing) {
+      if (msg && msg.value && msg.value.missing && !api.message.sync.isBlocked(msg, rootMessage)) {
         // TODO: handle out-of-order resolved message, or message resolved later
         return messageMissing(msg, hintMessage)
       }

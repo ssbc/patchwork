@@ -257,7 +257,7 @@ exports.create = function (api) {
 
         return [
           // insert missing message marker (if can't be found)
-          api.message.html.missing(last(msg.value.content.branch), msg),
+          api.message.html.missing(last(msg.value.content.branch), msg, item),
           result
         ]
       })
