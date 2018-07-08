@@ -212,7 +212,7 @@ exports.create = function (api) {
             api.feed.pull.rollup(rootFilter)
           ),
           pull.filter(canRenderMessage),
-          GroupSummaries(15, ungroupFilter),
+          GroupSummaries(15, ungroupFilter, getPriority),
           pull.filter(resultFilter),
           scroller
         )
@@ -448,7 +448,7 @@ function last (array) {
   }
 }
 
-function GroupSummaries (windowSize, ungroupFilter) {
+function GroupSummaries (windowSize, ungroupFilter, getPriority) {
   return pull(
     GroupUntil((result, msg) => result.length < windowSize || metaSummaryTypes.includes(msg.value.content.type)),
     pull.map(function (msgs) {
@@ -456,7 +456,7 @@ function GroupSummaries (windowSize, ungroupFilter) {
       var groups = {}
 
       msgs.forEach(msg => {
-        var type = 'metaSummary'
+        var type = getPriority(msg) ? 'unreadMetaSummary' : 'metaSummary'
         if (metaSummaryTypes.includes(msg.value.content.type) && !hasReply(msg) && !ungroupFilter(msg)) {
           if (!groups[type]) {
             groups[type] = {group: type, msgs: []}
