@@ -8,7 +8,10 @@ Message {
   flex-shrink: 0
 
   (highlight) {
-    background-color: yellow
+    background-color: rgb(255, 255, 86);
+    color: #674e00;
+    border-radius: 3px
+    padding: 0 2px
   }
 
   :focus {
@@ -125,7 +128,6 @@ Message {
 
       a.avatar {
         img {
-          border-radius: 3px
           width: 50px
           height: 50px
         }
@@ -204,7 +206,8 @@ Message {
       }
 
       a.channel {
-        font-size: 75%;
+        font-size: 100%;
+        color: #b3b3b3
 
         :hover {
           color: #c1cdf0
@@ -212,7 +215,7 @@ Message {
       }
 
       a.likes {
-        font-size: 75%;
+        font-size: 85%;
 
         ::before {
           content: '❤ '

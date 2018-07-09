@@ -4,7 +4,7 @@ ChannelList {
     padding: 8px 10px;
     font-size: 110%;
     margin: 4px 0;
-    background: #2d2c2c;
+    background: #313131;
     color: #ccc;
     border-radius: 3px;
     position: relative
@@ -42,7 +42,7 @@ ChannelList {
     }
 
     :hover {
-      background: #434141;
+      background: #292929;
       text-decoration: none;
       a {
         transition: opacity 0.05s

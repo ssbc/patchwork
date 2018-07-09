@@ -66,10 +66,12 @@ exports.create = function (api) {
         ]))
       }
 
+      var rootMessage = {key: id, value}
+
       // what happens in private stays in private!
       meta.recps.set(value.content.recps)
 
-      var root = api.message.sync.root({key: id, value}) || id
+      var root = api.message.sync.root(rootMessage) || id
       var isReply = id !== root
       var thread = api.feed.obs.thread(id, {branch: isReply})
 
@@ -108,7 +110,7 @@ exports.create = function (api) {
               return h('div', {
                 hooks: [AnchorHook(msg.key, anchor, showContext)]
               }, [
-                msg.key !== id ? api.message.html.missing(last(msg.value.content.branch), msg) : null,
+                msg.key !== id ? api.message.html.missing(last(msg.value.content.branch), msg, rootMessage) : null,
                 api.message.html.render(msg, {
                   pageId: id,
                   previousId,

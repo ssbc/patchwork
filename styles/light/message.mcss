@@ -8,7 +8,10 @@ Message {
   flex-shrink: 0
 
   (highlight) {
-    background-color: yellow
+    background-color: rgb(216, 179, 0);
+    color: #ffffff;
+    border-radius: 3px;
+    padding: 0 2px;
   }
 
   :focus {
@@ -201,8 +204,16 @@ Message {
       }
 
       a.likes {
-        color: #286bc3;
-        font-size:90%;
+        font-size: 85%;
+        color: #757474
+
+        ::before {
+          content: '❤ '
+          color: #ff2f92
+        }
+        :hover {
+          color: #ff2f92
+        }
       }
 
       a.tags {
@@ -214,6 +225,7 @@ Message {
         display: inline-block;
         margin: -3px -3px 3px 4px;
         border: 4px solid #525050;
+        background-color: #525050
         position: relative;
 
         a {
@@ -293,6 +305,46 @@ Message {
     }
 
     div.actions {
+      a.like {
+        :before {
+          content: "❤ "
+        }
+        :hover {
+          background: #e26ba4
+        }
+      }
+      a.unlike {
+        :before {
+          content: ""
+        }
+        :hover {
+          background: #959EAB
+        }
+      }
+      a {
+        font-size: 13px
+        background: #f3f3f3;
+        padding: 6px 10px;
+        border-radius: 3px;
+        color: #656565;
+        display: inline-block
+        text-align: center
+        transition: background-color 0.25s ease, color 0.25s ease
+
+        :before {
+          content: "↩ "
+        }
+        :hover {
+          background: #7dbd85
+          color: white
+        }
+      }
+      a + a {
+        margin-left: 10px;
+      }
+    }
+
+    div.actions2 {
       a {
         opacity: 0.4
         transition: opacity 0.2s

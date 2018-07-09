@@ -34,14 +34,16 @@ ToggleButton {
 
   -blocking {
     margin-left: 5px
-    border: 0px
+    :hover {
+      background-color: #bd6363
+    }
   }
 
   -unblocking {
     margin-left: 5px
-    background-color: rgb(212, 112, 112)
-    color: #ffffff
-    border: 0px
+    :hover {
+       background-color: rgb(212, 167, 112)
+    }
   }
 
   -disabled {

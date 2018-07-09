@@ -33,7 +33,8 @@ function map (msg) {
       var channels = getChannels(msg)
       if (channels.length) {
         return channels.reduce((result, channel) => {
-          result[channel] = {timestamp: msg.timestamp}
+          var timestamp = Math.min(msg.value.timestamp, msg.timestamp)
+          result[channel] = {timestamp}
           return result
         }, {})
       }

@@ -208,7 +208,7 @@
 		"one": "Sigues a alguien que está suscrita a este canal.",
 		"other": "Sigues a %s personas que están suscritas a este canal."
 	},
-	"Hide channel (un)subcribe messages": "Ocultar canal (de)suscribirse de los mensajes",
+	"Hide channel subscription messages": "Ocultar canal (de)suscribirse de los mensajes",
 	"Hide posts in channels that are not subscribed": "Ocultar publicaciones en canales a los que no estás suscrito",
 	"Channel Feed Options": "Opciones de feed de canal",
 	"Welcome to Patchwork": "Bienvenidos a Patchwork",

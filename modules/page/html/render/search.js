@@ -7,6 +7,7 @@ var Scroller = require('../../../../lib/scroller')
 var nest = require('depnest')
 var Proxy = require('mutant/proxy')
 var ref = require('ssb-ref')
+var escapeStringRegexp = require('escape-string-regexp')
 
 exports.needs = nest({
   'sbot.pull.stream': 'first',
@@ -142,7 +143,7 @@ exports.create = function (api) {
 
 function createOrRegExp (ary) {
   return new RegExp(ary.map(function (e) {
-    return '\\b' + e + '\\b'
+    return '\\b' + escapeStringRegexp(e) + '\\b'
   }).join('|'), 'i')
 }
 

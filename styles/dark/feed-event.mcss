@@ -6,6 +6,38 @@ FeedEvent {
   width: 100%
   margin: 25px auto
 
+  -group {
+    -new {
+      background-color: #505050
+    }
+    background: #505050
+    a.expand {
+      display: block;
+      padding: 10px;
+      background: #656363;
+      text-align: center;
+      color: #dadada;
+      cursor: pointer;
+      :before { content: '▼ '; font-size: 80% }
+      :hover {
+        color: white
+      }
+    }
+
+    div.items {
+      margin: -10px 15px;
+      (div.Message) {
+        background-color: #444444
+      }
+    }
+
+    -expanded {
+      a.expand {
+        :before { display: none }
+      }
+    }
+  }
+
   :empty {
     margin-bottom: -25px
   }

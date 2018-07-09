@@ -19,8 +19,12 @@ var bumpMessages = {
 // bump even for first message
 var rootBumpTypes = ['mention', 'channel-mention']
 
+// group these message types together using meta-summary
+var metaSummaryTypes = ['about', 'channel', 'contact']
+
 exports.needs = nest({
   'about.obs.name': 'first',
+  'about.html.image': 'first',
   'app.sync.externalHandler': 'first',
   'message.html.canRender': 'first',
   'message.html.render': 'first',
@@ -38,7 +42,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.i18n_n': 'first',
-  'message.html.missing': 'first'
+  'message.html.missing': 'first',
+  'feed.html.metaSummary': 'first'
 })
 
 exports.gives = nest({
@@ -54,6 +59,7 @@ exports.create = function (api) {
     bumpFilter = returnTrue,
     resultFilter = returnTrue, // filter after replies have been resolved (just before append to scroll)
     compactFilter = returnFalse,
+    ungroupFilter = returnFalse,
     prefiltered = false,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
@@ -175,7 +181,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = nextStepper(getStream, {reverse: true, limit: 50})
+        var stream = nextStepper(getStream, {reverse: true, limit: 200})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {
@@ -205,6 +211,8 @@ exports.create = function (api) {
             pull.filter(bumpFilter),
             api.feed.pull.rollup(rootFilter)
           ),
+          pull.filter(canRenderMessage),
+          GroupSummaries(15, ungroupFilter, getPriority),
           pull.filter(resultFilter),
           scroller
         )
@@ -212,6 +220,9 @@ exports.create = function (api) {
     }
 
     function renderItem (item, opts) {
+      if (item.group) {
+        return api.feed.html.metaSummary(item, renderItem, getPriority, opts)
+      }
       var partial = opts && opts.partial
       var meta = null
       var previousId = item.key
@@ -246,7 +257,7 @@ exports.create = function (api) {
 
         return [
           // insert missing message marker (if can't be found)
-          api.message.html.missing(last(msg.value.content.branch), msg),
+          api.message.html.missing(last(msg.value.content.branch), msg, item),
           result
         ]
       })
@@ -434,5 +445,74 @@ function last (array) {
     return array[array.length - 1]
   } else {
     return array
+  }
+}
+
+function GroupSummaries (windowSize, ungroupFilter, getPriority) {
+  return pull(
+    GroupUntil((result, msg) => result.length < windowSize || metaSummaryTypes.includes(msg.value.content.type)),
+    pull.map(function (msgs) {
+      var result = []
+      var groups = {}
+
+      msgs.forEach(msg => {
+        var type = getPriority(msg) ? 'unreadMetaSummary' : 'metaSummary'
+        if (metaSummaryTypes.includes(msg.value.content.type) && !hasReply(msg) && !ungroupFilter(msg)) {
+          if (!groups[type]) {
+            groups[type] = {group: type, msgs: []}
+            result.push(groups[type])
+          }
+          groups[type].msgs.push(msg)
+        } else {
+          result.push(msg)
+        }
+      })
+
+      return result
+    }),
+    pull.flatten()
+  )
+}
+
+function hasReply (msg) {
+  return msg.replies && msg.replies.some(msg => msg.value.content.type === 'post')
+}
+
+function GroupUntil (check) {
+  var ended = false
+  var queue = []
+  return function (read) {
+    return function (end, cb) {
+      // this means that the upstream is sending an error.
+      if (end) {
+        ended = end
+        return read(ended, cb)
+      }
+      // this means that we read an end before.
+      if (ended) return cb(ended)
+
+      read(null, function next (end, data) {
+        ended = ended || end
+
+        if (ended) {
+          if (!queue.length) {
+            return cb(ended)
+          }
+
+          let _queue = queue
+          queue = []
+          return cb(null, _queue)
+        }
+
+        if (check(queue, data)) {
+          queue.push(data)
+          read(null, next)
+        } else {
+          let _queue = queue
+          queue = [data]
+          cb(null, _queue)
+        }
+      })
+    }
   }
 }

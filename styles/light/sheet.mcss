@@ -16,6 +16,19 @@ Sheet {
   flex-direction: column
   z-index: 50
 
+  -private {
+    footer {
+      background-color: #fffbf4
+    }
+  }
+
+  -public {
+    footer {
+      border-color: #c7c3ff;
+      background-color: #f4f4fd;
+    }
+  }
+
   section {
     overflow-y: auto
     flex: 1
