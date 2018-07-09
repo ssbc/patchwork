@@ -33,14 +33,17 @@ module.exports = function (ssbConfig) {
   fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
   electron.ipcRenderer.send('server-started', ssbConfig)
 
-  // attempt to run git-ssb if it is installed and in path
-  var gitSsb = spawn('git-ssb', [ 'web' ], {
-    stdio: 'inherit'
-  })
-  gitSsb.on('error', () => {
-    console.log('git-ssb is not installed, or not available in path')
-  })
-  process.on('exit', () => {
-    gitSsb.kill()
-  })
+  // check if we are using a custom ssb path (which would break git-ssb-web)
+  if (!ssbConfig.customPath) {
+    // attempt to run git-ssb if it is installed and in path
+    var gitSsb = spawn('git-ssb', [ 'web' ], {
+      stdio: 'inherit'
+    })
+    gitSsb.on('error', () => {
+      console.log('git-ssb is not installed, or not available in path')
+    })
+    process.on('exit', () => {
+      gitSsb.kill()
+    })
+  }
 }
