@@ -211,10 +211,17 @@
 	"You have not made any changes.": "You have not made any changes.",
 	"Nothing to publish": "Nothing to publish",
 	"Edit Gathering": "Edit Gathering",
-	"Only visible to you and people that have been mentioned": "Only visible to you and people that have been mentioned",
-	"Only visible to you and other thread participants": "Only visible to you and other thread participants",
 	"This message will be public and cannot be edited or deleted": "This message will be public and cannot be edited or deleted",
 	"This message will be public and can be edited by anyone": "This message will be public and can be edited by anyone",
+	"Only visible to you and %s people that have been mentioned": {
+		"one": "Only visible to you and one person that has been mentioned",
+		"other": "Only visible to you and %s people that have been mentioned"
+	},
+	"Only visible to you and %s other thread participants": {
+		"one": "Only visible to you and one other thread participant",
+		"other": "Only visible to you and %s other thread participants"
+	},
+	"This message will only be visible to you": "This message will only be visible to you",
 	"Show details": "Show details",
 	"Hide details": "Hide details",
 	"%s people": {

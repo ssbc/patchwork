@@ -6,6 +6,7 @@ exports.needs = nest({
   'sheet.display': 'first',
   'message.html.render': 'first',
   'intl.sync.i18n': 'first',
+  'intl.sync.i18n_n': 'first',
   'emoji.sync.url': 'first'
 })
 
@@ -13,13 +14,19 @@ exports.gives = nest('message.sheet.preview')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
+  const plural = api.intl.sync.i18n_n
+
   return nest('message.sheet.preview', function (msg, cb) {
     api.sheet.display(function (close) {
       var isPrivate = msg.value.private
       var isRoot = !msg.value.content.root
+      var recps = (msg.value.content.recps || []).filter(id => id !== msg.value.author)
       return {
         content: [
           api.message.html.render(msg)
+        ],
+        classList: [
+          when(isPrivate, '-private', '-public')
         ],
         footer: [
           when(isPrivate,
@@ -28,10 +35,10 @@ exports.create = function (api) {
           ),
           when(isPrivate,
             h('div.info -private', [
-              when(isRoot,
-                i18n('Only visible to you and people that have been mentioned'),
-                i18n('Only visible to you and other thread participants')
-              )
+              recps.length ? when(isRoot,
+                plural('Only visible to you and %s people that have been mentioned', recps.length),
+                plural('Only visible to you and %s other thread participants', recps.length)
+              ) : i18n('This message will only be visible to you')
             ]),
             h('div.info -public', [
               when(msg.publicallyEditable,
