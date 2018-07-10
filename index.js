@@ -12,19 +12,12 @@ var WindowState = require('electron-window-state')
 var Menu = electron.Menu
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
-var program = require('commander')
 
 var windows = {
   dialogs: new Set()
 }
 var ssbConfig = null
 var quitting = false
-
-// parse program args
-program
-  .option('-g, --use-global-ssb', 'Use a global instance of sbot (Patchwork starts its own instance by default)')
-  .option('-p, --path <path>', 'Use a specific path to database files (default is $HOME/.ssb)')
-  .parse(process.argv)
 
 /**
  * It's not possible to run two instances of patchwork as it would create two
@@ -46,19 +39,15 @@ function quitIfAlreadyRunning () {
   }
 }
 
-quitIfAlreadyRunning()
-
-// pass program arguments into ssb-config
 var config = {
-  server: !program.useGlobalSsb
+  server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
 }
-if (program.path) {
-  config.path = Path.resolve(program.path)
-  // currently git-ssb-web doesn't accept config options
-  // so a different path than the default would cause it to blow up
-  // so passing in a flag to server-process to skip launching it
+// a flag so we don't start git-ssb-web if a custom path is passed in
+if (process.argv.includes('--path')) {
   config.customPath = true
 }
+
+quitIfAlreadyRunning()
 
 electron.app.on('ready', () => {
   setupContext('ssb', config, () => {

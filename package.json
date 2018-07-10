@@ -17,7 +17,6 @@
   "dependencies": {
     "app-root-path": "^2.0.1",
     "bulk-require": "^1.0.1",
-    "commander": "^2.16.0",
     "compare-version": "^0.1.2",
     "cross-script": "^1.0.5",
     "deep-equal": "^1.0.1",
