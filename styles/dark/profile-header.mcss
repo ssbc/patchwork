@@ -1,7 +1,6 @@
 ProfileHeader {
   display: flex;
   width: 100%;
-  max-width: 700px;
   margin: 20px auto;
 
   div.image {
