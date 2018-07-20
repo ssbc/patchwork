@@ -26,7 +26,7 @@
     "electron-spellchecker": "github:ssbc/electron-spellchecker-prebuilt",
     "electron-window-state": "^4.1.1",
     "emoji-named-characters": "^1.0.2",
-    "emojilib": "^2.2.12",
+    "emojilib": "^2.3.0",
     "escape-string-regexp": "^1.0.5",
     "fix-path": "^2.1.0",
     "flatpickr": "^4.5.1",
