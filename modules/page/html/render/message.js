@@ -68,7 +68,7 @@ exports.create = function (api) {
 
       var rootMessage = {key: id, value}
 
-      // what happens in private stays in private!
+      // Apply the recps of the original root message to all replies. What happens in private stays in private!
       meta.recps.set(value.content.recps)
 
       var root = api.message.sync.root(rootMessage) || id
