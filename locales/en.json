@@ -1,7 +1,8 @@
 {
 	"Publishing...": "Publishing...",
-	"Publish Privately": "Publish Privately",
 	"Publish": "Publish",
+	"Preview & Publish Privately": "Preview & Publish Privately",
+	"Preview & Publish": "Preview & Publish",
 	"Welcome to Patchwork": "Welcome to Patchwork",
 	"You may not be able to see new content until you follow some users or pubs.": "You may not be able to see new content until you follow some users or pubs.",
 	"For help, see the 'Getting Started' guide at ": "For help, see the 'Getting Started' guide at ",
@@ -20,6 +21,10 @@
 		"one": "This person is blocked by %s of your friends.",
 		"other": "This person is blocked by %s of your friends."
 	},
+	"By default, Patchwork will only see other users that are on the same local area network as you.": "By default, Patchwork will only see other users that are on the same local area network as you.",
+	"In order to share with users on the internet, you need to be invited to a pub server.": "In order to share with users on the internet, you need to be invited to a pub server.",
+	"paste invite code here": "paste invite code here",
+	"Redeem Invite": "Redeem Invite",
 	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
 	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
 	"However, since they follow someone that follows you, they should be able to see your posts.": "However, since they follow someone that follows you, they should be able to see your posts.",
@@ -118,6 +123,7 @@
 	"pt-BR": "Brazillian Portuguese",
 	"ru": "Russian",
 	"uk": "Ukrainian",
+	"zh-CN": "Chinese",
 	"Public Feed Options": "Public Feed Options",
 	"Hide following messages": "Hide following messages",
 	"This is you.": "This is you.",
@@ -149,7 +155,7 @@
 	"Font Size": "Font Size",
 	"Hide posts in channels that are not subscribed": "Hide posts in channels that are not subscribed",
 	"Information": "Information",
-	"Hide channel (un)subcribe messages": "Hide channel (un)subcribe messages",
+	"Hide channel subscription messages": "Hide channel subscription messages",
 	"Channel Feed Options": "Channel Feed Options",
 	" forked this discussion:": " forked this discussion:",
 	"You are not following anyone": "You are not following anyone",
@@ -208,5 +214,35 @@
 	"closed": "closed",
 	"all": "all",
 	"What would you like to call ": "What would you like to call ",
-	"Names you assign here will be publicly visible to others.": "Names you assign here will be publicly visible to others."
+	"Names you assign here will be publicly visible to others.": "Names you assign here will be publicly visible to others.",
+	"Update Profile": "Update Profile",
+	"OK": "OK",
+	"You have not made any changes.": "You have not made any changes.",
+	"Nothing to publish": "Nothing to publish",
+	"Edit Gathering": "Edit Gathering",
+	"This message will be public and cannot be edited or deleted": "This message will be public and cannot be edited or deleted",
+	"This message will be public and can be edited by anyone": "This message will be public and can be edited by anyone",
+	"Only visible to you and %s people that have been mentioned": {
+		"one": "Only visible to you and one person that has been mentioned",
+		"other": "Only visible to you and %s people that have been mentioned"
+	},
+	"Only visible to you and %s other thread participants": {
+		"one": "Only visible to you and one other thread participant",
+		"other": "Only visible to you and %s other thread participants"
+	},
+	"This message will only be visible to you": "This message will only be visible to you",
+	"Show details": "Show details",
+	"Hide details": "Hide details",
+	"%s people": {
+		"one": "%s person",
+		"other": "%s people"
+	},
+	"identified": "identified",
+	"followed": "followed",
+	"unfollowed": "unfollowed",
+	"subscribed to": "subscribed to",
+	"unsubscribed from": "unsubscribed from",
+	"updated their profile": "updated their profile",
+	"blocked": "blocked",
+	"unblocked": "unblocked"
 }

@@ -111,7 +111,7 @@ exports.create = function (api) {
       disabled: publishing
     }, when(publishing,
       i18n('Publishing...'),
-      when(isPrivate, i18n('Publish Privately'), i18n('Publish'))
+      when(isPrivate, i18n('Preview & Publish Privately'), i18n('Preview & Publish'))
     ))
 
     var actions = h('section.actions', [
@@ -166,6 +166,9 @@ exports.create = function (api) {
     // scoped
 
     function publish () {
+      if (!textArea.value) {
+        return
+      }
       publishing.set(true)
 
       var content = extend(resolve(meta), {

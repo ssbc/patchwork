@@ -1,7 +1,7 @@
 Sheet {
   position: fixed;
   max-height: 80vh;
-  max-width: 700px;
+  max-width: 800px;
   margin: auto;
   top: 38px;
   left: 0;
@@ -16,6 +16,19 @@ Sheet {
   flex-direction: column
   z-index: 50
 
+  -private {
+    footer {
+      background-color: #fffbf4
+    }
+  }
+
+  -public {
+    footer {
+      border-color: #c7c3ff;
+      background-color: #f4f4fd;
+    }
+  }
+
   section {
     overflow-y: auto
     flex: 1
@@ -29,7 +42,12 @@ Sheet {
     padding: 10px;
     position: relative
     border-top: 1px solid #DDD
-
+    align-items: center
+   
+    img {
+      max-height: 24px;
+    }
+    
     div.info {
       flex: 1
       padding: 8px

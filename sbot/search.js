@@ -17,7 +17,7 @@ module.exports = function (ssb, config) {
       var stream = pull(
         ssb.createLogStream(opts),
         pull.map(msg => {
-          if (msg.value && typeof msg.value.content === 'string') {
+          if (msg.value && msg.value.private) {
             var unboxed = ssb.private.unbox(msg)
             if (unboxed) {
               return unboxed

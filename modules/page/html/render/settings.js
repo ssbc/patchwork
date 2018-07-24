@@ -92,7 +92,7 @@ exports.create = function (api) {
 
             h('div', [
               checkbox(filterSubscriptions, {
-                label: i18n('Hide channel (un)subcribe messages')
+                label: i18n('Hide channel subscription messages')
               })
             ]),
 
@@ -108,7 +108,7 @@ exports.create = function (api) {
 
             h('div', [
               checkbox(filterChannelViewSubscriptions, {
-                label: i18n('Hide channel (un)subcribe messages')
+                label: i18n('Hide channel subscription messages')
               })
             ])
           ]),

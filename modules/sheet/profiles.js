@@ -97,7 +97,7 @@ exports.create = function (api) {
               api.contact.html.followToggle(id, {block: false})
             ])
           ])
-        }, { idle: true, maxTime: 2 })
+        }, { idle: true, maxTime: 10 })
       ])
     ]
   }

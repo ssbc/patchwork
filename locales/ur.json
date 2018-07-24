@@ -82,7 +82,6 @@
 	"Filters": "Filters",
 	"Hide following messages": "Hide following messages",
 	"Font Size": "Font Size",
-	"Publish Privately": "Publish Privately",
 	"You may not be able to see new content until you follow some users or pubs.": "You may not be able to see new content until you follow some users or pubs.",
 	"You are not following anyone": "You are not following anyone",
 	"For help getting started, see the guide at ": "For help getting started, see the guide at ",
@@ -139,7 +138,7 @@
 	"pt-BR": "pt-BR",
 	"ur": "ur",
 	"Public Feed Options": "Public Feed Options",
-	"Hide channel (un)subcribe messages": "Hide channel (un)subcribe messages",
+	"Hide channel subscription messages": "Hide channel subscription messages",
 	"Hide posts in channels that are not subscribed": "Hide posts in channels that are not subscribed",
 	"Channel Feed Options": "Channel Feed Options",
 	"Information": "Information"

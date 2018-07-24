@@ -31,5 +31,6 @@ GatheringEditor {
     padding: 10px
     font-size: 120%
     flex: 1
+    min-height: 100px
   }
 }

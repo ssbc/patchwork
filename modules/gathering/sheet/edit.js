@@ -9,6 +9,7 @@ exports.gives = nest('gathering.sheet.edit')
 
 exports.needs = nest({
   'sheet.display': 'first',
+  'message.sheet.preview': 'first',
   'keys.sync.id': 'first',
   'sbot.async.publish': 'first',
   'about.obs.latestValue': 'first',
@@ -55,7 +56,7 @@ exports.create = function (api) {
             style: {
               'font-weight': 'normal'
             }
-          }, [id ? i18n('Edit') : i18n('Create Gathering')]),
+          }, [id ? i18n('Edit Gathering') : i18n('Create Gathering')]),
           h('GatheringEditor', [
             h('input.title', {
               placeholder: i18n('Choose a title'),
@@ -87,7 +88,7 @@ exports.create = function (api) {
           h('button -save', {
             'ev-click': save,
             'disabled': publishing
-          }, when(publishing, i18n('Publishing...'), i18n('Publish'))),
+          }, when(publishing, i18n('Publishing...'), i18n('Preview & Publish'))),
           h('button -cancel', {
             'ev-click': close
           }, i18n('Cancel'))
@@ -117,30 +118,58 @@ exports.create = function (api) {
         if (chosen.description() !== current.description()) update.description = chosen.description()
 
         if (Object.keys(update).length) {
-          publishing.set(true)
-          ensureExists((err, id) => {
-            if (err) throw err
-            api.sbot.async.publish(extend({
-              type: 'about',
-              about: id
-            }, update), (err) => {
-              if (err) {
-                publishing.set(false)
-                showDialog({
-                  type: 'error',
-                  title: i18n('Error'),
-                  buttons: ['OK'],
-                  message: i18n('An error occurred while attempting to publish gathering.'),
-                  detail: err.message
-                })
-              } else {
-                close()
+          // gatherings consist of multiple messages (maybe none of them exist yet), so we need to
+          // construct the preview dialog manually, and override the about values
+          api.message.sheet.preview({
+            key: id,
+            previewAbout: update,
+            publicallyEditable: true,
+            value: {
+              author: api.keys.sync.id(),
+              content: {
+                type: 'gathering'
               }
-            })
+            }
+          }, (err, confirmed) => {
+            if (err) throw err
+            if (confirmed) {
+              publish(update)
+            }
           })
         } else {
+          showDialog({
+            type: 'info',
+            title: i18n('Update Profile'),
+            buttons: [i18n('OK')],
+            message: i18n('Nothing to publish'),
+            detail: i18n('You have not made any changes.')
+          })
           close()
         }
+      }
+
+      function publish (update) {
+        publishing.set(true)
+        ensureExists((err, id) => {
+          if (err) throw err
+          api.sbot.async.publish(extend({
+            type: 'about',
+            about: id
+          }, update), (err) => {
+            if (err) {
+              publishing.set(false)
+              showDialog({
+                type: 'error',
+                title: i18n('Error'),
+                buttons: ['OK'],
+                message: i18n('An error occurred while attempting to publish gathering.'),
+                detail: err.message
+              })
+            } else {
+              close()
+            }
+          })
+        })
       }
     })
   })

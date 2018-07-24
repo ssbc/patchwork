@@ -4,7 +4,7 @@ ProfileList {
     padding: 4px;
     font-size: 110%;
     margin: 4px 0;
-    background: #2d2c2c;
+    background: #313131;
     border-radius: 3px;
     position: relative
     text-decoration: none
@@ -116,7 +116,7 @@ ProfileList {
     }
 
     :hover {
-      background-color: #434141;
+      background-color: #292929;
       div.controls {
         opacity: 1
       }

@@ -1,7 +1,9 @@
 var { h, computed, when, map, send } = require('mutant')
 var nest = require('depnest')
 var extend = require('xtend')
-var moment = require('moment')
+var moment = require('moment-timezone')
+
+var localTimezone = moment.tz.guess()
 
 exports.needs = nest({
   'message.html.markdown': 'first',
@@ -33,38 +35,45 @@ exports.create = function (api) {
       if (!isRenderable(msg)) return
 
       var yourId = api.keys.sync.id()
-      var hidden = api.about.obs.valueFrom(msg.key, 'hidden', yourId)
-      var image = api.about.obs.latestValue(msg.key, 'image')
-      var title = api.about.obs.latestValue(msg.key, 'title')
-      var description = api.about.obs.latestValue(msg.key, 'description')
-      var location = api.about.obs.latestValue(msg.key, 'location')
-      var startDateTime = api.about.obs.latestValue(msg.key, 'startDateTime')
-      // var endDateTime = api.about.obs.latestValue(msg.key, 'endDateTime')
-      var attendees = computed([api.about.obs.groupedValues(msg.key, 'attendee')], getAttendees)
+
+      // allow override of resolved about messages for preview in modules/gathering/sheet/edit.js
+      var about = msg.key ? extend({
+        hidden: api.about.obs.valueFrom(msg.key, 'hidden', yourId),
+        image: api.about.obs.latestValue(msg.key, 'image'),
+        title: api.about.obs.latestValue(msg.key, 'title'),
+        description: api.about.obs.latestValue(msg.key, 'description'),
+        location: api.about.obs.latestValue(msg.key, 'location'),
+        startDateTime: api.about.obs.latestValue(msg.key, 'startDateTime')
+      }, msg.previewAbout) : msg.previewAbout
+
+      var attendees = msg.key ? computed([api.about.obs.groupedValues(msg.key, 'attendee')], getAttendees) : []
+      var disableActions = !!msg.previewAbout
+
       if (!following) {
         following = api.contact.obs.following(yourId)
       }
 
-      var imageUrl = computed(image, (id) => api.blob.sync.url(id))
-      var imageId = computed(image, (link) => (link && link.link) || link)
+      var imageUrl = computed(about.image, (id) => api.blob.sync.url(id))
+      var imageId = computed(about.image, (link) => (link && link.link) || link)
       var content = h('GatheringCard', [
         h('div.title', [
           h('a', {
             href: msg.key
-          }, title),
+          }, about.title),
           h('button', {
+            disabled: disableActions,
             'ev-click': send(api.gathering.sheet.edit, msg.key)
           }, 'Edit Details')
         ]),
-        h('div.time', computed(startDateTime, formatTime)),
-        when(image, h('a.image', {
+        h('div.time', computed(about.startDateTime, formatTime)),
+        when(about.image, h('a.image', {
           href: imageId,
           style: {
             'background-image': computed(imageUrl, (url) => `url(${url})`)
           }
         })),
         h('div.attending', [
-          h('div.title', ['Attendees', ' (', computed(attendees, (x) => x.length), ')']),
+          h('div.title', ['Attendees', ' (', computed([attendees], (x) => x.length), ')']),
           h('div.attendees', [
             map(attendees, (attendee) => {
               return h('a.attendee', {
@@ -75,25 +84,30 @@ exports.create = function (api) {
           ]),
           h('div.actions', [
             h('button -attend', {
+              disabled: disableActions,
               'ev-click': send(publishAttending, msg.key)
             }, `Attending`),
             h('button -attend', {
+              disabled: disableActions,
               'ev-click': send(publishNotAttending, msg.key)
             }, `Can't Attend`)
           ])
         ]),
-        h('div.location', markdown(location)),
-        when(description, h('div.description', markdown(description)))
+        h('div.location', markdown(about.location)),
+        when(about.description, h('div.description', markdown(about.description)))
       ])
+
+      var editPreview = msg.previewAbout && msg.key
 
       var element = api.message.html.layout(msg, extend({
         content,
-        miniContent: 'Added a gathering',
+        miniContent: editPreview ? 'Edited a gathering' : 'Added a gathering',
+        actions: !msg.previewAbout,
         layout: 'mini'
       }, opts))
 
       // hide if no title set or hidden
-      var visible = computed([title, hidden], (title, hidden) => {
+      var visible = computed([about.title, about.hidden], (title, hidden) => {
         return title && !hidden
       })
 
@@ -152,7 +166,7 @@ exports.create = function (api) {
 
 function formatTime (time) {
   if (time && time.epoch) {
-    return moment(time.epoch).format('LLLL')
+    return moment(time.epoch).tz(localTimezone).format('LLLL zz')
   }
 }
 

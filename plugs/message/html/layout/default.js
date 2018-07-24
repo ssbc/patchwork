@@ -78,7 +78,7 @@ exports.create = function (api) {
     return h('div', {
       classList
     }, [
-      messageHeader(msg, { replyInfo, priority, needsExpand, expanded }),
+      messageHeader(msg, { replyInfo, priority }),
       h('section', {
         classList: [ when(expanded, '-expanded') ],
         hooks: [ ExpanderHook(needsExpand) ]

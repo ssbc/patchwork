@@ -1,6 +1,7 @@
-const { h, computed } = require('mutant')
+const { h, computed, Value, when } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
+var ExpanderHook = require('../../../../lib/expander-hook')
 
 exports.needs = nest({
   'profile.html.person': 'first',
@@ -38,6 +39,12 @@ exports.create = function (api) {
 
     var classList = ['Message -mini']
 
+    var needsExpand = Value(false)
+    var expanded = Value(false)
+
+    // new message previews shouldn't contract
+    if (!msg.key) expanded.set(true)
+
     if (yourFollows && yourFollows().includes(msg.value.author)) {
       classList.push('-following')
     }
@@ -66,10 +73,21 @@ exports.create = function (api) {
       messageHeader(msg, {
         replyInfo, priority, miniContent
       }),
-      h('section', [content]),
+      h('section', {
+        classList: [ when(expanded, '-expanded') ],
+        hooks: [ ExpanderHook(needsExpand) ]
+      }, [content]),
       computed([msg.key, actions], (key, actions) => {
         if (ref.isMsg(key) && actions) {
           return h('footer', [
+            when(needsExpand, h('div.expander', {
+              classList: when(expanded, null, '-truncated')
+            }, [
+              h('a', {
+                href: '#',
+                'ev-click': toggleAndTrack(expanded)
+              }, when(expanded, i18n('See less'), i18n('See more')))
+            ])),
             h('div.actions', [
               api.message.html.action(msg)
             ])
@@ -118,5 +136,25 @@ function last (array) {
     return array[array.length - 1]
   } else {
     return array
+  }
+}
+
+function toggleAndTrack (param) {
+  return {
+    handleEvent: handleToggle,
+    param
+  }
+}
+
+function handleToggle (ev) {
+  this.param.set(!this.param())
+  if (!this.param()) {
+    ev.target.scrollIntoViewIfNeeded()
+
+    // HACK: due to a browser bug, sometimes the body gets affected!?
+    // Why not just hack it!!!
+    if (document.body.scrollTop > 0) {
+      document.body.scrollTop = 0
+    }
   }
 }
