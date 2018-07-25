@@ -244,5 +244,9 @@
 	"unsubscribed from": "unsubscribed from",
 	"updated their profile": "updated their profile",
 	"blocked": "blocked",
-	"unblocked": "unblocked"
+	"unblocked": "unblocked",
+	"Create new Choose-one poll": "Create new Choose-one poll",
+	"Describe the poll if you want": "Describe the poll if you want",
+	"+ Add more choices": "+ Add more choices",
+	"Choice": "Choice"
 }
