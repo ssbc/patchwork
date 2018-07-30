@@ -56,8 +56,8 @@ exports.create = function (api) {
       stepper: (getStream, opts) => {
         return getStream(opts)
       },
-      prefiltered: false,
-      ungroupFilter: () => true
+      prefiltered: false, // TODO - figure if need this?
+      ungroupFilter: () => true // TODO - figure if need this
     }
     // NOTE - scuttlePoll has creates stepped pull-streams for you, let
     // setting stepper to stop double-steppering!
