@@ -32,8 +32,7 @@ exports.create = function (api) {
     var scuttlePoll = ScuttlePoll(api.sbot.obs.connection)
     var id = api.keys.sync.id()
 
-    // TODO: change back to OPEN
-    var mode = Value(ALL)
+    var mode = Value(OPEN)
     var prepend = [
       h('PageHeading', [
         h('h1', [h('strong', i18n('Polls'))]),

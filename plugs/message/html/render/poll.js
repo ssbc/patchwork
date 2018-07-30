@@ -38,7 +38,7 @@ exports.create = function (api) {
   var timeago = defaultTimeago
 
   return nest('message.html', {
-    canRender: () => true,
+    canRender: isPoll,
     render: function (msg, opts = {}) {
       if (!isPoll(msg)) return
 
@@ -65,6 +65,7 @@ exports.create = function (api) {
         : PollShowChooseOne()
 
       function PollCard () {
+        if (!isPoll) return
         const { title, body, closesAt: closesAtString } = parseChooseOnePoll(msg)
 
         const closesAt = new Date(closesAtString)

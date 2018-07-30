@@ -135,15 +135,11 @@ exports.create = function (api) {
                 var replies = existingContainer.querySelector('div.replies')
                 var lastReply = existingContainer.querySelector('div.replies > .Message:last-child')
                 var previousId = lastReply ? lastReply.getAttribute('data-id') : existingContainer.getAttribute('data-root-id')
-                var elem = api.message.html.render(msg, {
+                replies.appendChild(api.message.html.render(msg, {
                   previousId,
                   compact: false,
                   priority: 2
-                })
-                if (elem) {
-                  // TODO: this explodes.
-                  replies.appendChild(elem)
-                }
+                }))
               }
             } else {
               highlightItems.add(msg.key)
@@ -187,7 +183,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = stepper(getStream, {reverse: true, limit: 50})
+        var stream = nextStepper(getStream, {reverse: true, limit: 200})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {
