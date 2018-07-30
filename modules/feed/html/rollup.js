@@ -183,7 +183,7 @@ exports.create = function (api) {
         newSinceRefresh = new Set()
 
         var done = Value(false)
-        var stream = nextStepper(getStream, {reverse: true, limit: 200})
+        var stream = stepper(getStream, {reverse: true, limit: 200})
         var scroller = Scroller(container, content(), renderItem, {
           onDone: () => done.set(true),
           onItemVisible: (item) => {

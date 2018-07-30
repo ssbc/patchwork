@@ -30,9 +30,9 @@ exports.create = function (api) {
     if (path !== '/polls') return
 
     var scuttlePoll = ScuttlePoll(api.sbot.obs.connection)
-    var id = api.keys.sync.id()
+    // var id = api.keys.sync.id()
 
-    var mode = Value(OPEN)
+    var mode = ALL // TODO - get this from the route
     var prepend = [
       h('PageHeading', [
         h('h1', [h('strong', i18n('Polls'))]),
@@ -53,21 +53,21 @@ exports.create = function (api) {
         if (isPoll(msg)) return true
         if (isPosition(msg)) return 'participated'
       },
-      // resultFilter: (msg) => true,
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
-      nextStepper: v => v
+      stepper: (getStream, opts) => {
+        return getStream(opts)
+      },
+      prefiltered: false,
+      ungroupFilter: () => true
     }
     // NOTE - scuttlePoll has creates stepped pull-streams for you, let
-    // nextStepper: v => v  // stops double-steppering!
+    // setting stepper to stop double-steppering!
 
-    return computed(mode, mode => {
-      return api.feed.html.rollup(scuttlePoll.poll.pull[mode], rollupOpts)
-    })
+    return api.feed.html.rollup(scuttlePoll.poll.pull[mode], rollupOpts)
 
     function FilterButton (m) {
       return h('button', {
-        'ev-click': () => mode.set(m),
-        className: computed(mode, mode => m === mode ? '-filterSelected' : '-filterUnselected')
+        // 'ev-click': () => mode.set(m), // TODO - change route
+        className: m === mode ? '-filterSelected' : '-filterUnselected'
       }, i18n(m))
     }
   })
