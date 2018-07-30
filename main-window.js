@@ -63,12 +63,12 @@ module.exports = function (config) {
     })
   })
 
-  var views = api.app.views(api.page.html.render, [
-    '/polls', '/public', '/private', id, '/mentions'
-  ])
+  const initialViews = [ '/public', '/private', id, '/mentions' ]
+  if (process.env.START_PAGE) initialViews.unshift('/' + process.env.START_PAGE)
+
+  var views = api.app.views(api.page.html.render, initialViews)
 
   var pendingCount = views.get('/mentions').pendingUpdates
-
   watch(pendingCount, count => {
     electron.remote.app.setBadgeCount(count)
   })
