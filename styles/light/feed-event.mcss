@@ -41,14 +41,6 @@ FeedEvent {
     background: #fffdf7;
   }
 
-  -poll {
-    background: none
-    box-shadow: none
-    div.meta {
-      background: none
-    }
-  }
-
   div + div {
     border-top: 1px solid #EEE
   }

@@ -244,5 +244,7 @@
 	"unsubscribed from": "unsubscribed from",
 	"updated their profile": "updated their profile",
 	"blocked": "blocked",
-	"unblocked": "unblocked"
+	"unblocked": "unblocked",
+	"closes at: ": "closes at: ",
+	"Added a poll": "Added a poll"
 }

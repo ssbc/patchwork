@@ -1,28 +1,38 @@
 PollCard {
-  padding: 1rem
-  cursor: pointer
 
-  background-color: #fff
-  box-shadow: hsl(0, 0%, 88%) 2px 5px 8px
-  transition: box-shadow ease-in .2s
+  border: 1px solid #DDD
+  padding: 10px
+  margin-bottom: 10px
 
-  :hover {
-    box-shadow: hsl(0, 0%, 80%) 5px 8px 8px
+  div.title {
+    font-size: 200%
+    button {
+      float: right;
+      font-size: 50%;
+      ::before {
+        content: '✎ '
+      }
+    }
   }
 
-  h1 {
-    margin-top: .5rem
+  div.time {
+    color: #555
+    font-size: 120%
+  }
+  div.description {
+    border-top: 3px solid #CCC;
+    margin-top: 10px;
   }
 
-  div.closesAt {
-    font-style: italic
-    margin-bottom: 1rem
+  div.time {
+    color: #555
+    font-size: 120%
   }
 
-  div.body {
-    margin-bottom: 1rem
+  div.description {
+    border-top: 3px solid #CCC;
+    margin-top: 10px;
   }
-
 
   div.positions {
 

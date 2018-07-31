@@ -1,5 +1,6 @@
 var { h, resolve, computed, when, map, send, Value, Struct } = require('mutant')
 var nest = require('depnest')
+var extend = require('xtend')
 
 // TODO: should this be provided by scuttle-poll? I _think_ so.
 var { parseChooseOnePoll, isPoll, isPosition } = require('ssb-poll-schema')
@@ -19,7 +20,8 @@ exports.needs = nest({
   'contact.obs.following': 'first',
   'blob.sync.url': 'first',
   'poll.sheet.edit': 'first',
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest('message.html', {
@@ -29,6 +31,7 @@ exports.gives = nest('message.html', {
 
 exports.create = function (api) {
   var mdRenderer = markdown
+  var i18n = api.intl.sync.i18n
   var avatar = (feed) => {
     return h('a.avatar', {href: `${feed}`}, [
       api.about.html.image(feed)
@@ -60,9 +63,18 @@ exports.create = function (api) {
         })
       }
 
-      return opts.compact
+      var content = opts.compact
         ? PollCard()
         : PollShowChooseOne()
+
+      var element = api.message.html.layout(msg, extend({
+        content,
+        miniContent: i18n('Added a poll'),
+        actions: !msg.previewAbout,
+        layout: 'mini'
+      }, opts))
+
+      return element
 
       function PollCard () {
         if (!isPoll) return
@@ -72,28 +84,28 @@ exports.create = function (api) {
         const date = closesAt.toDateString()
         const [ _, time, zone ] = closesAt.toTimeString().match(/^(\d+:\d+).*(\(\w+\))$/)
 
-        return h('a', { href: msg.key }, [
-          h('PollCard', { className: 'Markdown' }, [
-            h('h1', title),
-            h('div.body', mdRenderer(body || '')),
-            h('div.closesAt', [
-              'closes at: ',
-              `${time},  ${date} ${zone}`
-            ])
-          ])
+        return h('PollCard', [
+          h('div.title',
+            h('a', {href: msg.key}, title)
+          ),
+          h('div.time', [
+            i18n('closes at: '),
+            `${time},  ${date} ${zone}`
+          ]),
+          h('div.description', mdRenderer(body || ''))
         ])
       }
 
       function PollShowChooseOne () {
         return h('PollShow -chooseOne', [
           h('section.details', [
-            h('h1', [
+            h('div.title', [
               h('a', {
                 href: msg.key
               }, title)
             ]),
-            h('div.body', mdRenderer(body || '')),
-            h('div.closesAt', [
+            h('div.description', mdRenderer(body || '')),
+            h('div.time', [
               h('div.label', 'Closes at'),
               printClosesAt(closesAt)
             ])
@@ -124,7 +136,7 @@ exports.create = function (api) {
             Positions({ pollDoc, avatar, timeago, name, mdRenderer })
           ],
           h('div.sneakpeak', { 'ev-click': ev => forceShow.set(true) },
-            'see results'
+            i18n('see results')
           )
         )
       }
@@ -156,7 +168,7 @@ exports.create = function (api) {
 
       function Results ({ pollDoc, avatar }) {
         return h('section.PollResults', [
-          h('h2', 'Current Results'),
+          h('h2', i18n('Current Results')),
           h('div.choices', map(pollDoc.results, result => {
             const count = computed(result.voters, vs => Object.keys(vs).length)
             return when(count, h('div.choice', [
@@ -187,25 +199,25 @@ exports.create = function (api) {
 
         return h('section.NewPosition', { className }, [
           h('div.field -choices', [
-            h('label', 'Choose One'),
+            h('label', i18n('Choose One')),
             h('div.inputs', choices.map((choice, index) => {
               var id = `choice-${index}`
               return h('div.choice', {'ev-click': ev => { newPosition.choice.set(index) }}, [
-                h('input', { type: 'radio', checked: computed(newPosition.choice, c => c === index), id, name: 'choices' }),
+                h('input', { type: 'radio', checked: computed(newPosition.choice, c => c === index), id, name: i18n('choices') }),
                 h('label', { for: id }, choice)
               ])
             })
             )
           ]),
           h('div.field -reason', [
-            h('label', 'Reason'),
+            h('label', i18n('Reason')),
             h('textarea', { 'ev-input': ev => newPosition.reason.set(ev.target.value) }, newPosition.reason)
           ]),
           h('div.actions', [
-            h('button.publish.-primary', { 'ev-click': publish }, 'Publish position')
+            h('button.publish.-primary', { 'ev-click': publish }, i18n('Publish position'))
           ]),
           h('div.changePosition', { 'ev-click': ev => forceShow.set(true) },
-            'Change your position'
+            i18n('Change your position')
           )
         ])
 
