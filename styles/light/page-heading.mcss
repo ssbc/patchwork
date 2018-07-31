@@ -1,5 +1,6 @@
 PageHeading {
   display: flex
+  align-items: center
   max-width: 800px;
   margin: 10px auto;
 
@@ -8,6 +9,46 @@ PageHeading {
   }
 
   div.filter {
+    a {
+      padding: 4px 10px;
+      border-radius: 3px;
+      background: #ddd;
+      color: #5f5f5f;
+      font-size: 120%;
+      font-weight: 200;
+      cursor: pointer;
+      margin-left: 8px;
+      text-decoration: none !important
+
+      :hover {
+        color: black
+        background: #E8E8E8
+      }
+
+      -selected {
+        background: #d2d2d2
+        color: black
+        :hover {
+          background: #d2d2d2
+        }
+      }
+
+      -add {
+        border-color: #498849
+        background-color: #255D24
+        text-shadow: 1px 1px 1px #000
+        color: white
+
+        :active {
+          background-color: #1F331F !important
+        }
+
+        :hover {
+          background-color: #356D34
+          border-color: #4CB54C
+        }
+      }
+    }
     margin: 0 2rem
     button {
       margin: 0 3px

@@ -1,4 +1,5 @@
 var { h, Value, computed, when } = require('mutant')
+var url = require('url')
 
 // TODO: I'd rather this came from scuttle-poll but inject means I get an obs called isPoll and it's a bit meh
 var {isPoll, isPosition} = require('ssb-poll-schema')
@@ -27,12 +28,12 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
 
   return nest('page.html.render', function channel (path) {
-    if (path !== '/polls') return
+    var {pathname, query} = url.parse(path, true)
+    if (pathname !== '/polls') return
 
     var scuttlePoll = ScuttlePoll(api.sbot.obs.connection)
-    // var id = api.keys.sync.id()
 
-    var mode = ALL // TODO - get this from the route
+    var mode = (query && query.filter) || ALL
     var prepend = [
       h('PageHeading', [
         h('h1', [h('strong', i18n('Polls'))]),
@@ -51,7 +52,7 @@ exports.create = function (api) {
       rootFilter: scuttlePoll.poll.sync.isPoll,
       bumpFilter: msg => {
         if (isPoll(msg)) return true
-        if (isPosition(msg)) return 'participated'
+        if (isPosition(msg)) return i18n('participated')
       },
       stepper: (getStream, opts) => {
         return getStream(opts)
@@ -65,9 +66,9 @@ exports.create = function (api) {
     return api.feed.html.rollup(scuttlePoll.poll.pull[mode], rollupOpts)
 
     function FilterButton (m) {
-      return h('button', {
-        // 'ev-click': () => mode.set(m), // TODO - change route
-        className: m === mode ? '-filterSelected' : '-filterUnselected'
+      return h('a', {
+        href: `/polls?filter=${m}`,
+        className: m === mode ? '-selected' : ''
       }, i18n(m))
     }
   })
