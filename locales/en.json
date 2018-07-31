@@ -247,5 +247,12 @@
 	"unblocked": "unblocked",
 	"closes at: ": "closes at: ",
 	"Added a poll": "Added a poll",
-	"participated": "participated"
+	"participated": "participated",
+	"Choose One": "Choose One",
+	"choices": "choices",
+	"Reason": "Reason",
+	"Publish position": "Publish position",
+	"Change your position": "Change your position",
+	"Current Results": "Current Results",
+	"see results": "see results"
 }

@@ -45,6 +45,11 @@ PollShow {
   }
 
   section.NewPosition {
+    div.actions {
+      button {
+        margin-left: 10px
+      }
+    }
   }
 }
 

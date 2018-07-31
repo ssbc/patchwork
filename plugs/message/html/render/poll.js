@@ -214,7 +214,8 @@ exports.create = function (api) {
             h('textarea', { 'ev-input': ev => newPosition.reason.set(ev.target.value) }, newPosition.reason)
           ]),
           h('div.actions', [
-            h('button.publish.-primary', { 'ev-click': publish }, i18n('Publish position'))
+            h('button.cancel.-cancel', { 'ev-click': ev => forceShow.set(false) }, i18n('Cancel')),
+            h('button.publish.-save', { 'ev-click': publish }, i18n('Publish position'))
           ]),
           h('div.changePosition', { 'ev-click': ev => forceShow.set(true) },
             i18n('Change your position')
