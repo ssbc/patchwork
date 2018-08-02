@@ -171,7 +171,6 @@ exports.create = function (api) {
         })
 
         const forceShow = Value(false)
-        forceShow(console.log)
 
         const className = computed([pollDoc.myPosition, forceShow], (myPosition, force) => {
           if (force) return '-show'
