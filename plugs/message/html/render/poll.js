@@ -9,6 +9,7 @@ var Poll = require('scuttle-poll')
 exports.needs = nest({
   'message.html.markdown': 'first',
   'message.html.layout': 'first',
+  'message.html.render': 'first',
   'message.html.decorate': 'reduce',
   'message.async.publish': 'first',
   'keys.sync.id': 'first',
@@ -132,8 +133,7 @@ exports.create = function (api) {
 
         return when(showProgress,
           [
-            Results({ pollDoc, avatar }),
-            Positions({ pollDoc, avatar, timeago, name, mdRenderer })
+            Results({ pollDoc, avatar })
           ],
           h('div.sneakpeak', { 'ev-click': ev => forceShow.set(true) },
             i18n('see results')
@@ -144,25 +144,7 @@ exports.create = function (api) {
       function Positions ({ pollDoc, avatar, timeago, name, mdRenderer }) {
         return h('section.PollPositions', [
           h('h2', ['History']),
-          h('div.positions', map(pollDoc.positions, position => {
-            if (!isPosition(position)) return
-            const {author, timestamp} = position.value
-            // postion, reason, time, avatar, name
-            return h('PollPosition', [
-              h('div.left', [
-                h('div.avatar', avatar(author)),
-                h('div.timestamp', timeago(timestamp))
-              ]),
-              h('div.right', [
-                h('div.summary', [
-                  h('div.name', name(author)),
-                  '-',
-                  h('div.choice', position.choice)
-                ]),
-                h('div.reason', mdRenderer(position.reason || ''))
-              ])
-            ])
-          }))
+          h('div.positions', msg.replies.map(api.message.html.render))
         ])
       }
 

@@ -1,6 +1,7 @@
 PollShow {
   $scrollable 
   // from patchbay mixins
+  -webkit-margin-after: 1rem
 
   background-color: #fff
 
@@ -70,6 +71,7 @@ PollPositions {
 }
 
 PollPosition {
+  -webkit-margin-after: 1rem
   display: flex
   div.left {
     order: 0
