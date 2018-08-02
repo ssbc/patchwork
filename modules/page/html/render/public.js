@@ -2,6 +2,7 @@ var nest = require('depnest')
 var extend = require('xtend')
 var pull = require('pull-stream')
 var { h, send, when, computed, map, onceTrue } = require('mutant')
+var { isPoll } = require('ssb-poll-schema')
 
 exports.needs = nest({
   sbot: {
@@ -137,6 +138,7 @@ exports.create = function (api) {
           // msg has a root, but is being displayed as root (fork)
           return true
         }
+        if (isPoll(msg)) { return true }
       },
       waitFor: computed([
         following.sync,
