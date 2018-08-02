@@ -72,34 +72,12 @@ PollPositions {
 
 PollPosition {
   -webkit-margin-after: 1rem
-  display: flex
-  div.left {
-    order: 0
-    margin-right: 1rem
-
-    div.timestamp {
-      color: hsl(0, 0%, 40%)
-      font-size: 0.8rem
-      width: 54px
+  div.choice {
+    display: flex
+    div.choiceName {
+      font-weight: 600
+      margin-left: .5rem
     }
-  }
-
-  div.right {
-    order: 1
-    flex-grow: 1
-
-    div.summary {
-      display: flex 
-      div.name {
-        margin-right: .5rem
-      }
-
-      div.choice {
-        font-weight: 600
-        margin-left: .5rem
-      }
-    }
-
   }
 }
 

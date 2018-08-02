@@ -3,7 +3,8 @@ var nest = require('depnest')
 var extend = require('xtend')
 
 // TODO: should this be provided by scuttle-poll? I _think_ so.
-var { isPosition, isChooseOnePosition, parseChooseOnePosition } = require('ssb-poll-schema')
+var { isPosition, isChooseOnePosition, parseChooseOnePoll, parseChooseOnePosition } = require('ssb-poll-schema')
+var Poll = require('scuttle-poll')
 
 exports.needs = nest({
   'message.html.markdown': 'first',
@@ -42,17 +43,28 @@ exports.create = function (api) {
     canRender: isPosition,
     render: function (msg, opts = {}) {
       if (!isPosition(msg)) return
+      var scuttlePoll = Poll(api.sbot.obs.connection)
+
+      var position
+      if (isChooseOnePosition) { position = parseChooseOnePosition(msg) }
+
+      var choice = Value('')
+
+      scuttlePoll.poll.async.get(msg.dest, function (err, poll) {
+        if (!err) {
+          const { details: {choices} } = parseChooseOnePoll(poll)
+          if (position.details.choice >= choices.length || position.details.choice < 0) {
+            choice.set(i18n('Invalid choice selected.'))
+          }
+          choice.set(choices[position.details.choice])
+        }
+      })
 
       function Position ({ msg, avatar, timeago, name, mdRenderer }) {
-        const {author, timestamp} = msg.value
-        var position
-        if (isChooseOnePosition) { position = parseChooseOnePosition(msg) }
-        console.log(position)
-
         // postion, reason, time, avatar, name
         return h('PollPosition', [
-          h('div.choice', position.choice),
-          h('div.reason', mdRenderer(position.reason || ' '))
+          h('div.choice', [h('div', i18n('Voted: ')), h('div.choiceName', choice)]),
+          h('div.reason', [h('div', i18n('Reason: ')), h('div', mdRenderer(position.reason || ' '))])
         ])
       }
 

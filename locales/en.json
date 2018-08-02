@@ -255,5 +255,7 @@
 	"Change your position": "Change your position",
 	"Current Results": "Current Results",
 	"see results": "see results",
-	"Added a position": "Added a position"
+	"Added a position": "Added a position",
+	"Voted: ": "Voted: ",
+	"Reason: ": "Reason: "
 }
