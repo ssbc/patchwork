@@ -31,7 +31,7 @@
 	"Mutual Friends": "共同好友",
 	"You share %s mutual friends with this person.": {
 		"one": "你和此人有 %s 个共同好友.",
-    "other": "你和此人有 %s 个共同好友."
+		"other": "你和此人有 %s 个共同好友."
 	},
 	"Followed by": "被谁关注",
 	"You follow %s people that follow this person.": {
@@ -210,5 +210,15 @@
 	"Only visible to you and people that have been mentioned": "只可见于你和被引用的人",
 	"Only visible to you and other thread participants": "只可见于你和其他参与此楼讨论的人",
 	"This message will be public and cannot be edited or deleted": "此消息将会被公开而且无法被修改或者删除",
-	"This message will be public and can be edited by anyone": "此消息将会被公开而且所有人可修改"
+	"This message will be public and can be edited by anyone": "此消息将会被公开而且所有人可修改",
+	"followed": "关注了",
+	"Hide details": "隐藏细节",
+	"Show details": "显示细节",
+	"%s people": {
+		"one": "%s 人",
+		"other": "%s 人"
+	},
+	"updated their profile": "更新了他们的个人信息",
+	"fr": "法语",
+	"sk": "斯洛伐克语"
 }

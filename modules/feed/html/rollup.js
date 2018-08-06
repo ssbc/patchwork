@@ -336,7 +336,8 @@ exports.create = function (api) {
       var rootId = api.message.sync.root(msg)
       if (rootId) {
         api.sbot.async.get(rootId, (_, value) => {
-          if (value && value.private) {
+          // because we're doing a raw get (not from flume index), we need to use the old private message check
+          if (value && typeof value.content === 'string') {
             // unbox private message
             value = api.message.sync.unbox(value)
           }

@@ -31,6 +31,7 @@ FeedMetaSummary {
         margin-left: 3px;
         font-size: 20px;
         font-weight: normal;
+        color: white
       }
 
 

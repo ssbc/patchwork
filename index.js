@@ -39,6 +39,14 @@ function quitIfAlreadyRunning () {
   }
 }
 
+var config = {
+  server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+}
+// a flag so we don't start git-ssb-web if a custom path is passed in
+if (process.argv.includes('--path')) {
+  config.customPath = true
+}
+
 quitIfAlreadyRunning()
 
 electron.app.on('ready', () => {
