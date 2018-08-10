@@ -2,7 +2,7 @@ const nest = require('depnest')
 const { h, Value, map, computed, Array: MutantArray } = require('mutant')
 const concat = require('lodash/concat')
 const filter = require('lodash/filter')
-const forEach = require('lodash/forEach')
+const parallel = require('run-parallel')
 const addSuggest = require('suggest-box')
 const TagHelper = require('scuttle-tag')
 
@@ -20,14 +20,14 @@ exports.needs = nest({
 exports.create = function (api) {
   return nest({ 'sheet.editTags': editTags })
 
-  function editTags ({ msgId }, cb) {
+  function editTags ({ msgId }, callback) {
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
     const HtmlTag = api.tag.html.tag
 
-    cb = cb || function () {}
+    callback = callback || function () {}
 
     api.sheet.display(function (close) {
-      const { content, onMount, onSave } = edit({ msgId }, cb)
+      const { content, onMount, onSave } = edit({ msgId })
 
       return {
         content,
@@ -44,7 +44,7 @@ exports.create = function (api) {
       }
     })
 
-    function edit ({ msgId }, cb) {
+    function edit ({ msgId }) {
       const tagsToCreate = MutantArray([])
       const tagsToApply = MutantArray([])
       const tagsToRemove = MutantArray([])
@@ -56,7 +56,7 @@ exports.create = function (api) {
         filter(tagIds, tagId => !removedIds.includes(tagId)))
 
       const messageTagsView = map(filteredTags, tagId =>
-        computed(tagId, t => HtmlTag(t, { onRemove: () => tagsToRemove.push(t.tagId) })))
+        HtmlTag(tagId, { onRemove: () => tagsToRemove.push(tagId) }))
       const tagsToApplyView = map(tagsToApply, tagId =>
         HtmlTag(tagId, { onRemove: () => tagsToApply.delete(tagId) }))
       const tagsToCreateView = map(tagsToCreate, tag =>
@@ -114,21 +114,43 @@ exports.create = function (api) {
       }
 
       function onSave () {
-        // tagsToCreate
-        forEach(tagsToCreate(), tag => {
-          ScuttleTag.async.create(null, (err, msg) => {
-            if (err) return
-            ScuttleTag.async.name({ tag: msg.key, name: tag }, cb)
-            ScuttleTag.async.apply({ tagged: true, message: msgId, tag: msg.key }, cb)
-          })
-        })
-        // tagsToApply
-        forEach(tagsToApply(),
-          tagId => ScuttleTag.async.apply({ tagged: true, message: msgId, tag: tagId }, cb))
-        // tagsToRemove
-        forEach(tagsToRemove(),
-          tagId => ScuttleTag.async.apply({ tagged: false, message: msgId, tag: tagId }, cb))
+        parallel(
+          concat(
+            tagsToCreate().map(tag => cb => createNameAndApplyTag(tag, cb)),
+            tagsToApply().map(tagId => cb => ScuttleTag.async.apply({
+              tagged: true,
+              message: msgId,
+              tag: tagId
+            }, cb)),
+            tagsToRemove().map(tagId => cb => ScuttleTag.async.apply({
+              tagged: false,
+              message: msgId,
+              tag: tagId
+            }, cb))
+          ),
+          callback
+        )
       }
+    }
+
+    function createNameAndApplyTag (tag, callback) {
+      ScuttleTag.async.create(null, (err, msg) => {
+        if (err) {
+          callback(err)
+          return
+        }
+        parallel([
+          cb => ScuttleTag.async.name({
+            tag: msg.key,
+            name: tag
+          }, cb),
+          cb => ScuttleTag.async.apply({
+            tagged: true,
+            message: msgId,
+            tag: msg.key
+          }, cb)
+        ], callback)
+      })
     }
   }
 }
