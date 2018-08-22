@@ -220,5 +220,10 @@
 	},
 	"updated their profile": "更新了他们的个人信息",
 	"fr": "法语",
-	"sk": "斯洛伐克语"
+	"sk": "斯洛伐克语",
+	"subscribed to": "去订阅",
+	"identified": "被认为",
+	"blocked": "被屏蔽了",
+	"This message will only be visible to you": "此消息只有你可见",
+	"unfollowed": "取消关注"
 }
