@@ -17,6 +17,9 @@ module.exports = (tokens) => {
         } else if (key === 'deep') {
           // XXX: ignore? not sure what to do here
         } else if (key === 'extensions') {
+          Object.values(obj[key]).forEach((extension) => {
+            print(extension);
+          });
           // XXX: ignore? not sure what to do here
         } else if (key === 'rules') {
           Object.keys(obj[key]).forEach((rule) => {

@@ -12,6 +12,7 @@
        font-weight: bold
        strong {
          font-weight: bold
+         $following
        }
      }
      li {

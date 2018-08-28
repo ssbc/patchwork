@@ -36,6 +36,7 @@
          }
        }
        -distanceWarning {
+         $distanceWarning
        }
        -blockWarning {
          padding: 8px

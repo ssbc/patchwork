@@ -186,6 +186,7 @@
        div.main {
          div.main {
            div.name {
+             $following
            }
          }
        }
