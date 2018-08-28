@@ -1,10 +1,9 @@
 ChannelList {
 a.channel {
-background-color: #313131;
+background: #313131;
 color: #ccc;
 border-radius: 3px;
 transition: background-color 0.25s;
-background-image: none;
 -more {
 background-color: transparent;
 color: #6e6d6d;

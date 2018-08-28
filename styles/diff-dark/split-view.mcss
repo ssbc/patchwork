@@ -12,7 +12,6 @@ margin-top: 20px;
 margin-bottom: 8px;
 color: #6e6d6d;
 font-weight: lighter;
-text-shadow: none;
 :first-child {
 margin-top: 0;
 }

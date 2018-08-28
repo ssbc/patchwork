@@ -3,5 +3,6 @@ const diffDark = require('./diff-dark')
 
 module.exports = {
   light: light,
-  dark: light + diffDark
+  dark: require('./dark'),
+  diffDark: light + diffDark
 }
