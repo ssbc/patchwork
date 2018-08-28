@@ -42,15 +42,21 @@ fs.readdir('./light', (err, files) => {
         const darkDiff = ttm(diff(base, darkTokens))
         const lightDiff = ttm(diff(base, lightTokens))
 
-        fs.writeFile(`./base/${file}`, baseResult, (writeBaseErr) => {
-          if (writeBaseErr) throw writeBaseErr;
-        });
-        fs.writeFile(`./diff-light/${file}`, lightDiff, (writeLightErr) => {
-          if (writeLightErr) throw writeLightErr;
-        });
-        fs.writeFile(`./diff-dark/${file}`, darkDiff, (writeDarkErr) => {
-          if (writeDarkErr) throw writeDarkErr;
-        });
+        if (baseResult.length > 2) {
+          fs.writeFile(`./base/${file}`, baseResult, (writeBaseErr) => {
+            if (writeBaseErr) throw writeBaseErr;
+          });
+        }
+        if (lightDiff.length > 2) {
+          fs.writeFile(`./diff-light/${file}`, lightDiff, (writeLightErr) => {
+            if (writeLightErr) throw writeLightErr;
+          });
+        }
+        if (darkDiff.length > 2) {
+          fs.writeFile(`./diff-dark/${file}`, darkDiff, (writeDarkErr) => {
+            if (writeDarkErr) throw writeDarkErr;
+          });
+        }
       });
     });
 
