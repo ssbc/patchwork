@@ -1,20 +1,20 @@
  AllChannels {
    a.channel {
-     background: rgba(255, 255, 255, 0.66);
-     color: #333;
-     border-radius: 5px;
-     transition: background-color 0.2s;
-     overflow: hidden;
-     text-overflow: ellipsis;
+     background: rgba(255, 255, 255, 0.66)
+     color: #333
+     border-radius: 5px
+     transition: background-color 0.2s
+     overflow: hidden
+     text-overflow: ellipsis
      :hover {
-       background: rgba(255, 255, 255, 0.4);
+       background: rgba(255, 255, 255, 0.4)
      }
      a {
-       border-radius: 4px;
-       font-weight: bold;
+       border-radius: 4px
+       font-weight: bold
        -subscribe {
          :hover {
-           background-color: rgb(112, 184, 212);
+           background-color: rgb(112, 184, 212)
          }
        }
      }

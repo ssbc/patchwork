@@ -1,18 +1,18 @@
  ProfilePreview {
-   background: #525252;
-   border: 2px solid #636363;
-   border-radius: 3px;
-   color: white;
+   background: #525252
+   border: 2px solid #636363
+   border-radius: 3px
+   color: white
    section {
-     background: #4c4a4a;
+     background: #4c4a4a
      -distanceWarning {
-       background: #ab7d47;
+       background: #ab7d47
      }
      -mutualFriends {
-       background: #7192ce;
+       background: #7192ce
      }
      -you {
-       background: #7d7d7d;
+       background: #7d7d7d
      }
    }
    header {
@@ -20,7 +20,7 @@
        div.title {
          h1 {
            a {
-             color: white;
+             color: white
            }
          }
        }

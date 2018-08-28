@@ -23,7 +23,7 @@ module.exports = (tokens) => {
           Object.keys(obj[key]).forEach((rule) => {
             const value = obj[key][rule];
             if (value !== undefined) {
-              print(`${rule}: ${value};`);
+              print(`${rule}: ${value}`);
             }
           });
         } else {

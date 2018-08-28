@@ -1,49 +1,49 @@
  MainWindow {
    div.top {
-     background: #fff;
-     border-bottom: 2px solid #e4edff;
-     box-shadow: 0 0 3px #7f7f7f;
+     background: #fff
+     border-bottom: 2px solid #e4edff
+     box-shadow: 0 0 3px #7f7f7f
      span {
        input.search {
-         background: #ffffff;
-         color: #656565;
+         background: #ffffff
+         color: #656565
          :focus {
-           box-shadow: inset 0 0 0px 1px #286bc3;
+           box-shadow: inset 0 0 0px 1px #286bc3
          }
        }
      }
      span.history {
        a {
-         border-radius: 2px;
+         border-radius: 2px
          :hover {
-           background-color: #E8E8E8;
+           background-color: #E8E8E8
          }
        }
      }
      span.nav {
        a {
-         background: #f3f3f3;
-         color: #656565;
+         background: #f3f3f3
+         color: #656565
          :hover {
-           background: #E8E8E8;
+           background: #E8E8E8
          }
          -selected {
-           background: #d2d2d2;
+           background: #d2d2d2
            :hover {
-             background: #d2d2d2;
+             background: #d2d2d2
            }
          }
          -drop {
            :after {
-             border-left: 1px solid #d2d2d2;
+             border-left: 1px solid #d2d2d2
            }
          }
        }
      }
      span.appTitle {
-       color: #757575;
+       color: #757575
        div.info {
-         background: white;
+         background: white
        }
      }
    }

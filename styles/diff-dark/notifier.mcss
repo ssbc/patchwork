@@ -1,14 +1,14 @@
  Notifier {
-   background: #ebebeb;
+   background: #ebebeb
    :hover {
-     background: #f7f7f7;
+     background: #f7f7f7
    }
    -loader {
-     background: #ebebeb;
-     color: #383736;
+     background: #ebebeb
+     color: #383736
      :hover {
-       background: #f7f7f7;
-       color: #2d2c2c;
+       background: #f7f7f7
+       color: #2d2c2c
      }
    }
  }

@@ -1,10 +1,10 @@
  html, body {
-   background: #434141;
-   color: #ccc;
+   background: #434141
+   color: #ccc
  }
  a {
-   color: #757474;
+   color: #757474
    :hover {
-     color: #aaa;
+     color: #aaa
    }
  }

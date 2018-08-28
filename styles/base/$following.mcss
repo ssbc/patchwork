@@ -1,13 +1,13 @@
  $following {
    :after {
-     display: inline-block;
-     content: ' ';
-     width: 20px;
-     height: 12px;
-     background: svg(subscribed) no-repeat center;
+     display: inline-block
+     content: ' '
+     width: 20px
+     height: 12px
+     background: svg(subscribed) no-repeat center
      @svg subscribed {
-       width: 20px;
-       height: 12px;
+       width: 20px
+       height: 12px
      }
    }
  }

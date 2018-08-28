@@ -1,10 +1,10 @@
  button {
-   padding: 8px 10px;
-   border: 0;
-   border-radius: 3px;
-   font-size: 13px;
-   cursor: pointer;
-   transition: background-color 0.25s ease, color 0.25s ease;
+   padding: 8px 10px
+   border: 0
+   border-radius: 3px
+   font-size: 13px
+   cursor: pointer
+   transition: background-color 0.25s ease, color 0.25s ease
    :hover {
    }
    :focus {
@@ -28,8 +28,8 @@
      }
    }
    -full {
-     display: block;
-     width: 100%;
+     display: block
+     width: 100%
    }
    -cancel {
    }

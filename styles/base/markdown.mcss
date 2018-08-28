@@ -1,26 +1,26 @@
  Markdown {
    a.bad {
-     color: inherit;
+     color: inherit
      :hover {
-       text-decoration: inherit;
+       text-decoration: inherit
      }
      deep {
      }
    }
    img {
      -pending {
-       width: 120px;
-       height: 40px;
-       background-image: svg(fetching);
-       background-position: center;
-       background-repeat: no-repeat;
+       width: 120px
+       height: 40px
+       background-image: svg(fetching)
+       background-position: center
+       background-repeat: no-repeat
        @svg fetching {
-         width: 100px;
-         height: 20px;
-         content: '<text x='0' y='12'>Fetching image...</text>';
+         width: 100px
+         height: 20px
+         content: '<text x='0' y='12'>Fetching image...</text>'
          text {
-           font: caption;
-           font-size: 12px;
+           font: caption
+           font-size: 12px
          }
        }
      }
@@ -28,28 +28,28 @@
      }
    }
    video {
-     max-width: 100%;
-     object-fit: scale-down;
+     max-width: 100%
+     object-fit: scale-down
      deep {
      }
    }
    audio {
-     width: 100%;
+     width: 100%
      deep {
      }
    }
    table {
-     margin: 10px 0;
-     border-collapse: collapse;
+     margin: 10px 0
+     border-collapse: collapse
      th {
-       text-align: left;
-       border-bottom: 1px solid #DDD;
-       padding: 3px;
+       text-align: left
+       border-bottom: 1px solid #DDD
+       padding: 3px
        deep {
        }
      }
      td {
-       padding: 3px;
+       padding: 3px
        deep {
        }
      }
@@ -57,26 +57,26 @@
      }
    }
    blockquote {
-     margin: 1rem 0;
-     padding: 5px 20px;
+     margin: 1rem 0
+     padding: 5px 20px
      deep {
      }
    }
    hr {
-     border: none;
+     border: none
      deep {
      }
    }
    pre {
-     overflow: auto;
-     padding: 10px;
-     max-height: 300px;
+     overflow: auto
+     padding: 10px
+     max-height: 300px
      deep {
      }
    }
    ul {
      p {
-       margin: 0;
+       margin: 0
        deep {
        }
      }
@@ -84,10 +84,10 @@
      }
    }
    img.emoji {
-     width: 1.5em;
-     height: 1.5em;
-     align-content: center;
-     margin-bottom: -0.3em;
+     width: 1.5em
+     height: 1.5em
+     align-content: center
+     margin-bottom: -0.3em
      deep {
      }
    }
@@ -103,5 +103,5 @@
      deep {
      }
    }
-   word-break: break-word;
+   word-break: break-word
  }

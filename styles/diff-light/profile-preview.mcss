@@ -1,12 +1,12 @@
  ProfilePreview {
-   background: white;
-   border: 2px solid #9c9a9a;
-   border-bottom-left-radius: 3px;
-   border-bottom-right-radius: 3px;
+   background: white
+   border: 2px solid #9c9a9a
+   border-bottom-left-radius: 3px
+   border-bottom-right-radius: 3px
    section {
-     background: #888;
+     background: #888
      -distanceWarning {
-       background: #544533;
+       background: #544533
      }
    }
    header {
@@ -14,13 +14,13 @@
        div.title {
          h1 {
            a {
-             color: black;
+             color: black
            }
          }
        }
        section {
          pre {
-           background: #ffffff;
+           background: #ffffff
          }
        }
      }

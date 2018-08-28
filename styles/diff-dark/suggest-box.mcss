@@ -1,4 +1,4 @@
  SuggestBox {
-   background-color: #333;
-   box-shadow: 0 0 5px #111;
+   background-color: #333
+   box-shadow: 0 0 5px #111
  }

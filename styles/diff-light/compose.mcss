@@ -1,51 +1,51 @@
  Compose {
-   border: 1px solid gainsboro;
-   background: white;
+   border: 1px solid gainsboro
+   background: white
    textarea {
      [disabled] {
-       color: #AAA;
-       background: #ebf7ee;
+       color: #AAA
+       background: #ebf7ee
      }
    }
    section.actions {
-     background: #fafafa;
-     padding: .4rem;
+     background: #fafafa
+     padding: .4rem
      button {
        -private {
-         color: #8a6610;
-         background: #f3e7ac;
-         border-color: #f3e7ac;
+         color: #8a6610
+         background: #f3e7ac
+         border-color: #f3e7ac
          :hover {
-           color: #ffffff;
-           background-color: #8a6610;
-           border-color: #8a6610;
+           color: #ffffff
+           background-color: #8a6610
+           border-color: #8a6610
          }
        }
      }
      input[type="file"] {
-       padding: .5rem 0;
-       width: 95px;
-       height: 29px;
+       padding: .5rem 0
+       width: 95px
+       height: 29px
        :hover {
          ::before {
-           color: black;
-           border-color: #8B8B8B;
+           color: black
+           border-color: #8B8B8B
          }
        }
        ::before {
-         color: #5f5f5f;
-         padding: 3px 6px;
-         background: white;
-         border: 2px solid #DDD;
-         border-radius: 4px;
-         padding-top: .3rem;
-         content: '📎 Attach File';
+         color: #5f5f5f
+         padding: 3px 6px
+         background: white
+         border: 2px solid #DDD
+         border-radius: 4px
+         padding-top: .3rem
+         content: '📎 Attach File'
        }
      }
    }
    -expanded {
      textarea {
-       border-bottom: 1px solid gainsboro;
+       border-bottom: 1px solid gainsboro
      }
    }
  }

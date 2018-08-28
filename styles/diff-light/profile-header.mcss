@@ -1,44 +1,44 @@
  ProfileHeader {
    div.image {
-     padding: 5px;
-     background: white;
-     box-shadow: 0 0 10px #AAA;
+     padding: 5px
+     background: white
+     box-shadow: 0 0 10px #AAA
    }
    div.main {
      div.title {
        div.meta {
          a {
-           margin-left: 5px;
-           display: inline-block;
+           margin-left: 5px
+           display: inline-block
          }
        }
      }
      section {
        -publicKey {
          pre {
-           color: #b3b3b3;
-           background: #ffffff;
+           color: #b3b3b3
+           background: #ffffff
          }
        }
        -blockWarning {
-         border: 1px solid #ffc965;
-         background: #ffebcc;
-         color: #8a6800;
+         border: 1px solid #ffc965
+         background: #ffebcc
+         color: #8a6800
          a {
-           color: #8a6800;
+           color: #8a6800
            :hover {
-             color: #da8701;
+             color: #da8701
            }
          }
        }
        -mutualFriends {
-         background: #cfe9ff;
-         font-size: 110%;
-         font-weight: bold;
+         background: #cfe9ff
+         font-size: 110%
+         font-weight: bold
          a {
-           color: #003a5d;
+           color: #003a5d
            :hover {
-             color: #0188da;
+             color: #0188da
            }
          }
        }

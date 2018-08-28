@@ -2,7 +2,7 @@
    div {
      div {
        strong {
-         color: white;
+         color: white
        }
      }
    }

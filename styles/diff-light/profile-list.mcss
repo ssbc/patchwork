@@ -1,20 +1,20 @@
  ProfileList {
    a.profile {
-     background: rgba(255, 255, 255, 0.74);
-     border-radius: 5px;
-     transition: background-color 0.2s;
+     background: rgba(255, 255, 255, 0.74)
+     border-radius: 5px
+     transition: background-color 0.2s
      @svg connected {
-       content: "<circle cx='6' stroke='none' fill='green' cy='6' r='5' />";
+       content: "<circle cx='6' stroke='none' fill='green' cy='6' r='5' />"
      }
      div.main {
        div.name {
-         font-weight: bold;
-         font-size: 110%;
-         color: #636363;
+         font-weight: bold
+         font-size: 110%
+         color: #636363
        }
      }
      :hover {
-       background-color: rgba(255, 255, 255, 0.4);
+       background-color: rgba(255, 255, 255, 0.4)
      }
    }
  }

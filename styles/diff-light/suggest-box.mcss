@@ -1,4 +1,4 @@
  SuggestBox {
-   background-color: #fff;
-   border: 1px gainsboro solid;
+   background-color: #fff
+   border: 1px gainsboro solid
  }
