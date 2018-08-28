@@ -1,6 +1,6 @@
  MainWindow {
    -linux, -win32 {
-     div {
+     (div) {
        ::-webkit-scrollbar {
          width: 12px
        }
@@ -12,8 +12,6 @@
          border-radius: 10px
          background-color: #2d2c2c
          /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) */
-       }
-       deep {
        }
      }
    }

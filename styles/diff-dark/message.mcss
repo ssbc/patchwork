@@ -19,12 +19,10 @@
          div.meta {
            font-size: 75%
            color: #8a8a8a
-           a {
+           (a) {
              color: #b3b8e0
              :hover {
                color: #dfdfe2
-             }
-             deep {
              }
            }
          }
@@ -57,11 +55,9 @@
            color: #c1cdf0
          }
        }
-       a.Timestamp {
+       (a.Timestamp) {
          font-size: 75%
          font-weight: normal
-         deep {
-         }
        }
        span.private {
          a {

@@ -7,7 +7,7 @@
        border-left: 1px solid #2d2c2c
        background: #383736
      }
-     h2 {
+     (h2) {
        margin-top: 20px
        margin-bottom: 8px
        color: #6e6d6d
@@ -18,8 +18,6 @@
        span.sub {
          font-weight: normal
          font-size: 90%
-       }
-       deep {
        }
      }
    }

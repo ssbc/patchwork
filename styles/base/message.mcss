@@ -5,11 +5,9 @@
    font-size: 120%
    line-height: 1.4
    flex-shrink: 0
-   highlight {
+   (highlight) {
      border-radius: 3px
      padding: 0 2px
-     deep {
-     }
    }
    header {
      font-size: 120%
@@ -117,10 +115,8 @@
      -expanded {
        max-height: none
      }
-     img {
+     (img) {
        max-width: 100%
-       deep {
-       }
      }
    }
    a.backlink {
@@ -206,11 +202,9 @@
          }
        }
      }
-     pre {
+     (pre) {
        overflow: auto
        max-height: 200px
-       deep {
-       }
      }
    }
    -mini {
@@ -253,11 +247,9 @@
            display: none
          }
          span.private {
-           img {
+           (img) {
              width: 40px
              height: 40px
-             deep {
-             }
            }
          }
        }

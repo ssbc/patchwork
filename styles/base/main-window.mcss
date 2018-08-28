@@ -182,11 +182,9 @@
        padding: 5px
        background: #7c7c7c
        color: white
-       svg {
+       (svg) {
          width: 20px
          height: 20px
-         deep {
-         }
        }
      }
      [hidden] {

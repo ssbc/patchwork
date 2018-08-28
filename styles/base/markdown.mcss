@@ -1,13 +1,11 @@
  Markdown {
-   a.bad {
+   (a.bad) {
      color: inherit
      :hover {
        text-decoration: inherit
      }
-     deep {
-     }
    }
-   img {
+   (img) {
      -pending {
        width: 120px
        height: 40px
@@ -24,74 +22,50 @@
          }
        }
      }
-     deep {
-     }
    }
-   video {
+   (video) {
      max-width: 100%
      object-fit: scale-down
-     deep {
-     }
    }
-   audio {
+   (audio) {
      width: 100%
-     deep {
-     }
    }
-   table {
+   (table) {
      margin: 10px 0
      border-collapse: collapse
-     th {
+     (th) {
        text-align: left
        border-bottom: 1px solid #DDD
        padding: 3px
-       deep {
-       }
      }
-     td {
+     (td) {
        padding: 3px
-       deep {
-       }
-     }
-     deep {
      }
    }
-   blockquote {
+   (blockquote) {
      margin: 1rem 0
      padding: 5px 20px
-     deep {
-     }
    }
-   hr {
+   (hr) {
      border: none
-     deep {
-     }
    }
-   pre {
+   (pre) {
      overflow: auto
      padding: 10px
      max-height: 300px
-     deep {
-     }
    }
-   ul {
-     p {
+   (ul) {
+     (p) {
        margin: 0
-       deep {
-       }
-     }
-     deep {
      }
    }
-   img.emoji {
+   (img.emoji) {
      width: 1.5em
      height: 1.5em
      align-content: center
      margin-bottom: -0.3em
-     deep {
-     }
    }
-   a {
+   (a) {
      :hover {
      }
      [href^="@"] {
@@ -99,8 +73,6 @@
      [href^="#"] {
      }
      [href^="%"] {
-     }
-     deep {
      }
    }
    word-break: break-word

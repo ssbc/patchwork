@@ -13,10 +13,8 @@
        }
      }
      div.items {
-       div.Message {
+       (div.Message) {
          background-color: #444444
-         deep {
-         }
        }
      }
    }

@@ -1,5 +1,3 @@
-let depth = 0
-
 module.exports = (tokens) => {
   let result = '';
 
@@ -12,11 +10,12 @@ module.exports = (tokens) => {
   };
 
   const walk = (obj) => {
-    depth += 1
     Object.keys(obj).forEach((key) => {
       if (obj[key]) {
         if (key === 'objects' || key === 'flags' || key === 'pseudos' || key === 'entities' || key === 'elements' || key === 'mixins') {
           walk(obj[key]);
+        } else if (key === 'deep') {
+          // XXX: ignore? not sure what to do here
         } else if (key === 'extensions') {
           // XXX: ignore? not sure what to do here
         } else if (key === 'rules') {
@@ -27,7 +26,11 @@ module.exports = (tokens) => {
             }
           });
         } else {
-          print(`${key} {`);
+          if (obj[key].deep) {
+            print(`(${key}) {`);
+          } else {
+            print(`${key} {`);
+          }
           indent += 2
           walk(obj[key]);
           indent -= 2
