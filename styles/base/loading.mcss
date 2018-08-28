@@ -8,7 +8,7 @@
      overflow: hidden;
      white-space: nowrap;
      text-overflow: ellipsis;
-     }
+   }
    -inline {
      height: 16px;
      width: 16px;
@@ -18,38 +18,38 @@
        display: block;
        height: 16px;
        width: 16px;
-       }
      }
+   }
    -small {
      ::before {
        height: 30px;
        width: 30px;
-       }
      }
+   }
    -large {
      height: 25vh;
      ::before {
        height: 100px;
        width: 100px;
-       }
+     }
      ::after {
        color: #CCC;
        content: 'Loading...';
        font-size: 200%;
-       }
      }
+   }
    -search {
      height: 200px;
      ::before {
        height: 100px;
        width: 100px;
-       }
+     }
      ::after {
        color: #CCC;
        content: 'Searching...';
        font-size: 200%;
-       }
      }
+   }
    ::before {
      content: ' ';
      height: 50px;
@@ -59,8 +59,8 @@
      background-position: center;
      background-size: contain;
      animation: spin 3s infinite linear;
-     }
    }
+ }
  @svg waitingIcon {
    width: 30px;
    height: 30px;
@@ -69,13 +69,13 @@
      stroke: #CCC;
      stroke-width: 3px;
      fill: none;
-     }
    }
+ }
  @keyframes spin {
    0% {
      transform: rotate(0deg);
-     }
+   }
    100% {
      transform: rotate(360deg);
-     }
    }
+ }

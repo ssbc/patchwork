@@ -3,7 +3,7 @@
    highlight {
      background-color: rgb(216, 179, 0);
      color: #ffffff;
-     }
+   }
    header {
      margin: 15px 20px 0;
      div.main {
@@ -11,13 +11,13 @@
          div.name {
            a {
              color: #444;
-             }
-           }
-         div.meta {
-           font-size: 90%;
            }
          }
+         div.meta {
+           font-size: 90%;
+         }
        }
+     }
      div.meta {
        span.flag {
          margin-top: -3px;
@@ -25,42 +25,42 @@
            :after {
              font-size: 75%;
              color: #b7b7b7;
-             }
            }
+         }
          -new {
            :after {
              font-size: 75%;
              color: #b7b7b7;
-             }
            }
+         }
          -new, -unread {
            color: #ffcf04;
            :first-letter {
              font-size: 100%;
-             }
            }
          }
+       }
        a.channel {
          font-weight: bold;
-         }
+       }
        a.likes {
          color: #757474;
-         }
+       }
        span.private {
          border: 4px solid #525050;
          background-color: #525050;
          a {
-           }
+         }
          :after {
            background: #525050;
            padding: 2px 4px 0 2px;
            border-top-right-radius: 5px;
            color: white;
            font-weight: bold;
-           }
          }
        }
      }
+   }
    a.backlink {
      border-top: 1px solid #EEE;
      padding: 10px 15px;
@@ -68,31 +68,31 @@
      color: #8f8f8f;
      :hover {
        color: #777;
-       }
      }
+   }
    footer {
      div.expander {
        background-color: white;
-       }
+     }
      div.actions {
        a.like {
          :hover {
            background: #e26ba4;
-           }
          }
+       }
        a.unlike {
          :hover {
            background: #959EAB;
-           }
          }
+       }
        a {
          background: #f3f3f3;
          color: #656565;
          :hover {
            background: #7dbd85;
-           }
          }
        }
+     }
      div.actions2 {
        a {
          opacity: 0.4;
@@ -102,19 +102,19 @@
          :hover {
            opacity: 1;
            text-decoration: none;
-           }
-         }
-       a + a {
-         margin-left: 25px;
          }
        }
+       a + a {
+         margin-left: 25px;
+       }
      }
+   }
    -mini {
      header {
        margin-bottom: 15px;
-       }
-     }
-   -new, -unread {
-     box-shadow: 0 0 1px #ffc600;
      }
    }
+   -new, -unread {
+     box-shadow: 0 0 1px #ffc600;
+   }
+ }

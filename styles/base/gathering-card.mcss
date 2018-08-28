@@ -6,7 +6,7 @@
      background-size: cover;
      background-repeat: no-repeat;
      background-position: center;
-     }
+   }
    div.attending {
      margin: 10px 0;
      padding-top: 10px;
@@ -14,19 +14,19 @@
        font-size: 75%;
        margin-bottom: 10px;
        text-align: center;
-       }
+     }
      div.attendees {
        text-align: center;
        a + a {
          margin-left: 10px;
-         }
+       }
        img {
          height: 45px;
          width: 45px;
          deep {
-           }
          }
        }
+     }
      div.actions {
        text-align: center;
        margin-top: 10px;
@@ -34,26 +34,26 @@
          :first-child {
            ::before {
              content: '✔ ';
-             }
            }
          }
+       }
        button + button {
          margin-left: 5px;
-         }
        }
      }
+   }
    div.title {
      a {
-       }
+     }
      button {
        float: right;
        ::before {
          content: '✎ ';
-         }
        }
      }
-   div.time {
-     }
-   div.description {
-     }
    }
+   div.time {
+   }
+   div.description {
+   }
+ }

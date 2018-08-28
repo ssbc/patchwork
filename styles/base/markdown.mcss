@@ -3,10 +3,10 @@
      color: inherit;
      :hover {
        text-decoration: inherit;
-       }
-     deep {
-       }
      }
+     deep {
+     }
+   }
    img {
      -pending {
        width: 120px;
@@ -21,23 +21,23 @@
          text {
            font: caption;
            font-size: 12px;
-           }
          }
        }
-     deep {
-       }
      }
+     deep {
+     }
+   }
    video {
      max-width: 100%;
      object-fit: scale-down;
      deep {
-       }
      }
+   }
    audio {
      width: 100%;
      deep {
-       }
      }
+   }
    table {
      margin: 10px 0;
      border-collapse: collapse;
@@ -46,62 +46,62 @@
        border-bottom: 1px solid #DDD;
        padding: 3px;
        deep {
-         }
        }
+     }
      td {
        padding: 3px;
        deep {
-         }
-       }
-     deep {
        }
      }
+     deep {
+     }
+   }
    blockquote {
      margin: 1rem 0;
      padding: 5px 20px;
      deep {
-       }
      }
+   }
    hr {
      border: none;
      deep {
-       }
      }
+   }
    pre {
      overflow: auto;
      padding: 10px;
      max-height: 300px;
      deep {
-       }
      }
+   }
    ul {
      p {
        margin: 0;
        deep {
-         }
-       }
-     deep {
        }
      }
+     deep {
+     }
+   }
    img.emoji {
      width: 1.5em;
      height: 1.5em;
      align-content: center;
      margin-bottom: -0.3em;
      deep {
-       }
      }
+   }
    a {
      :hover {
-       }
-     [href^="@"] {
-       }
-     [href^="#"] {
-       }
-     [href^="%"] {
-       }
-     deep {
-       }
      }
-   word-break: break-word;
+     [href^="@"] {
+     }
+     [href^="#"] {
+     }
+     [href^="%"] {
+     }
+     deep {
+     }
    }
+   word-break: break-word;
+ }

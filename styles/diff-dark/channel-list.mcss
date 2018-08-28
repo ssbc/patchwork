@@ -10,23 +10,23 @@
        :hover {
          background-color: transparent;
          color: #ccc;
-         }
        }
+     }
      -subscribed {
        span.name {
          font-weight: bold;
-         }
        }
+     }
      :hover {
        background: #292929;
-       }
+     }
      a {
        border-radius: 3px;
        -subscribe {
          :hover {
            background-color: #51c067;
-           }
          }
        }
      }
    }
+ }

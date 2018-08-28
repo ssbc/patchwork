@@ -2,7 +2,7 @@
    display: flex;
    div.side {
      margin-right: 10px;
-     }
+   }
    div.main {
      flex: 1;
      display: flex;
@@ -11,7 +11,7 @@
        border: 1px solid #CCC;
        font-size: 150%;
        padding: 10px;
-       }
+     }
      textarea {
        resize: vertical;
        margin-top: 10px;
@@ -19,6 +19,6 @@
        padding: 10px;
        font-size: 150%;
        flex: 1;
-       }
      }
    }
+ }

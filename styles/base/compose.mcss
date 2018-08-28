@@ -11,12 +11,12 @@
      border: none;
      padding: 10px;
      [disabled] {
-       }
-     :focus {
-       }
-     ::-webkit-input-placeholder {
-       }
      }
+     :focus {
+     }
+     ::-webkit-input-placeholder {
+     }
+   }
    section.warning {
      overflow: hidden;
      color: #fff;
@@ -30,19 +30,19 @@
      -open {
        padding: .5rem;
        height: initial;
-       }
+     }
      i.fa {
        margin-right: .5rem;
-       }
+     }
      div.warning {
        strong {
          margin-right: .3rem;
-         }
-       }
-     div.close {
-       cursor: pointer;
        }
      }
+     div.close {
+       cursor: pointer;
+     }
+   }
    section.actions {
      display: flex;
      flex-direction: row;
@@ -52,46 +52,46 @@
        color: transparent;
        :hover {
          ::before {
-           }
          }
+       }
        ::-webkit-file-upload-button {
          display: none;
-         }
+       }
        ::before {
          cursor: pointer;
          font-size: 1rem;
          outline: none;
          white-space: nowrap;
          -webkit-user-select: none;
-         }
+       }
        :active, :focus {
          outline: none;
          box-shadow: none;
-         }
        }
+     }
      button {
        -private {
          :hover {
-           }
          }
        }
      }
+   }
    -expanded {
      textarea {
        height: 200px;
        transition: height .15s ease-out;
-       }
+     }
      section.actions {
        display: flex;
-       }
      }
+   }
    -contracted {
      textarea {
        height: 50px;
        transition: height .15s ease-in;
-       }
+     }
      section.actions {
        display: none;
-       }
      }
    }
+ }

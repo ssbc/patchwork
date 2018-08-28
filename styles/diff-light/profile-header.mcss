@@ -3,23 +3,23 @@
      padding: 5px;
      background: white;
      box-shadow: 0 0 10px #AAA;
-     }
+   }
    div.main {
      div.title {
        div.meta {
          a {
            margin-left: 5px;
            display: inline-block;
-           }
          }
        }
+     }
      section {
        -publicKey {
          pre {
            color: #b3b3b3;
            background: #ffffff;
-           }
          }
+       }
        -blockWarning {
          border: 1px solid #ffc965;
          background: #ffebcc;
@@ -28,9 +28,9 @@
            color: #8a6800;
            :hover {
              color: #da8701;
-             }
            }
          }
+       }
        -mutualFriends {
          background: #cfe9ff;
          font-size: 110%;
@@ -39,9 +39,9 @@
            color: #003a5d;
            :hover {
              color: #0188da;
-             }
            }
          }
        }
      }
    }
+ }

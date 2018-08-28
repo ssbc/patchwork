@@ -6,9 +6,9 @@
      font-size: 120%;
      font-weight: bold;
      margin: 0;
-     }
+   }
    p {
      margin: 0;
      margin-top: 8px;
-     }
    }
+ }

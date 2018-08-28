@@ -10,23 +10,23 @@
        :hover {
          background-color: transparent;
          color: #ccc;
-         }
        }
+     }
      -subscribed {
        border-left: 2px solid #51c067;
        border-top-left-radius: 0;
        border-bottom-left-radius: 0;
-       }
+     }
      :hover {
        background: #383736;
-       }
+     }
      a {
        border-radius: 3px;
        -subscribe {
          :hover {
            background-color: #51c067;
-           }
          }
        }
      }
    }
+ }

@@ -7,15 +7,15 @@
    -private {
      footer {
        background-color: #fffbf4;
-       }
      }
+   }
    -public {
      footer {
        border-color: #c7c3ff;
        background-color: #f4f4fd;
-       }
-     }
-   footer {
-     border-top: 1px solid #DDD;
      }
    }
+   footer {
+     border-top: 1px solid #DDD;
+   }
+ }

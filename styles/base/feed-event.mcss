@@ -5,14 +5,14 @@
    margin: 25px auto;
    -group {
      -new {
-       }
+     }
      -expanded {
        a.expand {
          :before {
            display: none;
-           }
          }
        }
+     }
      a.expand {
        display: block;
        padding: 10px;
@@ -21,31 +21,31 @@
        :before {
          content: '▼ ';
          font-size: 80%;
-         }
-       :hover {
-         }
        }
-     div.items {
-       margin: -10px 15px;
+       :hover {
        }
      }
+     div.items {
+       margin: -10px 15px;
+     }
+   }
    -new, -unread {
      box-shadow: 0px 0px 2px #ffc800;
      background: #fffdf7;
-     }
+   }
    :empty {
      margin-bottom: -25px;
-     }
+   }
    div + div {
-     }
+   }
    div {
      flex: 1;
-     }
+   }
    a.full {
      display: block;
      padding: 10px;
      text-align: center;
-     }
+   }
    div.replies {
      font-size: 100%;
      display: flex;
@@ -53,11 +53,11 @@
      div {
        flex: 1;
        margin: 0;
-       }
-     div + div {
-       }
      }
-   div.meta {
-     font-size: 100%;
+     div + div {
      }
    }
+   div.meta {
+     font-size: 100%;
+   }
+ }

@@ -9,18 +9,18 @@
      cursor: pointer;
      div.Thumbnail {
        margin-right: 1rem;
-       }
+     }
      div.text {
        padding: .5rem;
        div.summary {
-         }
+       }
        div.read {
          margin-top: 1rem;
          text-decoration: underline;
-         }
        }
      }
    }
+ }
  Thumbnail {
    min-width: 20rem;
    width: 20rem;
@@ -33,5 +33,5 @@
      display: flex;
      justify-content: center;
      align-items: center;
-     }
    }
+ }

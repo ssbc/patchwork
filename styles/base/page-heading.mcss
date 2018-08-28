@@ -4,5 +4,5 @@
    margin: 10px auto;
    h1 {
      flex: 1;
-     }
    }
+ }

@@ -30,8 +30,8 @@ module.exports = (tokens) => {
           print(`${key} {`);
           indent += 2
           walk(obj[key]);
-          print('}');
           indent -= 2
+          print('}');
         }
       }
     });

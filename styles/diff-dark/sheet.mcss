@@ -7,14 +7,14 @@
      footer {
        border-color: #5b56b3;
        background-color: #372a56;
-       }
      }
+   }
    -public {
      footer {
        background-color: #4a3232;
-       }
-     }
-   footer {
-     border-top: 1px solid #2d2c2c;
      }
    }
+   footer {
+     border-top: 1px solid #2d2c2c;
+   }
+ }

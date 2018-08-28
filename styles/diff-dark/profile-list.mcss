@@ -5,19 +5,19 @@
      transition: background-color 0.25s;
      @svg connected {
        content: "<circle cx='6' stroke='none' fill='#45b754' cy='6' r='5' />";
-       }
+     }
      div.avatar {
        img {
          border-radius: 3px;
-         }
        }
+     }
      div.main {
        div.name {
          color: #ccc;
-         }
-       }
-     :hover {
-       background-color: #292929;
        }
      }
+     :hover {
+       background-color: #292929;
+     }
    }
+ }

@@ -12,8 +12,8 @@
        font-weight: bold;
        strong {
          font-weight: bold;
-         }
        }
+     }
      li {
        display: flex;
        align-items: center;
@@ -24,22 +24,22 @@
          height: 36px;
          width: 36px;
          padding: .2rem;
-         }
+       }
        strong {
          flex-grow: 1;
          margin-left: .5rem;
          font-weight: 300;
-         }
+       }
        small {
          font-family: monospace;
          margin-left: .5rem;
          padding-right: .2rem;
          font-size: 1rem;
-         }
        }
+     }
      li.selected {
        color: #fff;
        background: #0caaf9;
-       }
      }
    }
+ }

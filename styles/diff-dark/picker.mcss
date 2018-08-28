@@ -9,22 +9,22 @@
      color: #ccc;
      :hover {
        color: white;
-       }
+     }
      img {
        border-radius: 3px;
        margin: -2px -5px;
-       }
+     }
      -assigned {
        color: white;
        border: 2px solid #c1cdf0;
        background: #c1cdf0;
-       }
+     }
      -self {
        color: white;
        border: 2px solid #6f74e5 !important;
        background: #6f74e5 !important;
-       }
      }
+   }
    span.add {
      background: #383736;
      margin: 0 5px 5px 0;
@@ -32,13 +32,13 @@
      border-radius: 3px;
      ::before {
        top: 5px;
-       }
+     }
      :hover {
        color: white;
-       }
+     }
      input[type="file"] {
        height: 50px;
        width: 50px;
-       }
      }
    }
+ }

@@ -6,12 +6,12 @@
      flex-direction: column;
      flex: 1;
      overflow-y: auto;
-     }
+   }
    div.side {
      width: 280px;
      padding: 20px;
      overflow-y: auto;
      -right {
-       }
      }
    }
+ }

@@ -6,31 +6,31 @@
    cursor: pointer;
    transition: background-color 0.25s ease, color 0.25s ease;
    :hover {
-     }
+   }
    :focus {
-     }
+   }
    :active {
-     }
+   }
    [disabled] {
-     }
+   }
    -add {
      :hover {
-       }
      }
+   }
    -pub {
      :hover {
-       }
      }
+   }
    -save {
      ::before {
-       }
-     :hover {
-       }
      }
+     :hover {
+     }
+   }
    -full {
      display: block;
      width: 100%;
-     }
-   -cancel {
-     }
    }
+   -cancel {
+   }
+ }

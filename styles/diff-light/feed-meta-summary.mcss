@@ -3,7 +3,7 @@
      div {
        strong {
          color: white;
-         }
        }
      }
    }
+ }

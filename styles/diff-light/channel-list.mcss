@@ -7,20 +7,20 @@
      -more {
        color: #658aaf;
        background: rgb(255, 255, 255);
-       }
+     }
      -subscribed {
-       }
+     }
      :hover {
        background: rgba(255, 255, 255, 0.4);
-       }
+     }
      a {
        border-radius: 4px;
        font-weight: bold;
        -subscribe {
          :hover {
            background-color: rgb(112, 184, 212);
-           }
          }
        }
      }
    }
+ }

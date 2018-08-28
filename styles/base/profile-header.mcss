@@ -8,8 +8,8 @@
      margin-right: 20px;
      img {
        width: 100%;
-       }
      }
+   }
    div.main {
      flex: 1;
      min-width: 0;
@@ -17,15 +17,15 @@
        display: flex;
        h1 {
          flex: 1;
-         }
        }
+     }
      section {
        -description {
          font-size: 120%;
          max-height: 350px;
          overflow: auto;
          -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
-         }
+       }
        -publicKey {
          pre {
            text-overflow: ellipsis;
@@ -33,10 +33,10 @@
            margin: 2px 0;
            font-size: 120%;
            padding: 3px;
-           }
          }
+       }
        -distanceWarning {
-         }
+       }
        -blockWarning {
          padding: 8px;
          margin: 5px 0;
@@ -44,18 +44,18 @@
          a {
            :hover {
              text-decoration: none;
-             }
            }
          }
+       }
        -mutualFriends {
          padding: 8px;
          margin: 5px 0;
          a {
            :hover {
              text-decoration: none;
-             }
            }
          }
        }
      }
    }
+ }

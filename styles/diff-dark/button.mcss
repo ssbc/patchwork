@@ -4,16 +4,16 @@
    :hover {
      color: white;
      border-color: #434141;
-     }
+   }
    :focus {
      outline: 1px dotted rgba(255, 255, 255, 0.45);
-     }
+   }
    :active {
      background-color: #DDD !important;
-     }
+   }
    [disabled] {
      opacity: 0.5;
-     }
+   }
    -add {
      color: white;
      background-color: #629a6e;
@@ -21,8 +21,8 @@
      :hover {
        color: #6a7e6a;
        background-color: #ecfff0;
-       }
      }
+   }
    -pub {
      color: #aaa;
      background-color: #2d2c2c;
@@ -33,21 +33,21 @@
      :hover {
        color: white;
        background-color: #45b754;
-       }
      }
+   }
    -save {
      ::before {
        content: '✔ ';
-       }
+     }
      :hover {
        background-color: #45b754;
        color: white;
-       }
-     }
-   -full {
-     margin: 0 0 15px;
-     }
-   -cancel {
-     background: transparent;
      }
    }
+   -full {
+     margin: 0 0 15px;
+   }
+   -cancel {
+     background: transparent;
+   }
+ }

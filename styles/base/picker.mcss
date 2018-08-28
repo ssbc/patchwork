@@ -3,17 +3,17 @@
      display: inline-block;
      vertical-align: top;
      :hover {
-       }
+     }
      img {
        width: 50px;
        height: 50px;
        display: block;
-       }
-     -assigned {
-       }
-     -self {
-       }
      }
+     -assigned {
+     }
+     -self {
+     }
+   }
    span.add {
      position: relative;
      display: inline-block;
@@ -24,13 +24,13 @@
        left: 0;
        right: 0;
        text-align: center;
-       }
+     }
      :hover {
-       }
+     }
      input[type="file"] {
        display: block;
        cursor: pointer;
        opacity: 0;
-       }
      }
    }
+ }

@@ -6,20 +6,20 @@
      -darwin {
        div.top {
          padding-left: 70px;
-         }
        }
      }
+   }
    -darwin {
      div.top {
        span.appTitle {
          span.title {
            visibility: visible;
-           }
          }
        }
      }
+   }
    -linux, -win32 {
-     }
+   }
    div.top {
      display: flex;
      align-items: center;
@@ -36,11 +36,11 @@
          box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1);
          :focus {
            outline: 0;
-           }
+         }
          ::-webkit-input-placeholder {
-           }
          }
        }
+     }
      span.history {
        padding-left: 6px;
        height: 26px;
@@ -55,27 +55,27 @@
          opacity: 0.4;
          -active {
            opacity: 1;
-           }
-         :hover {
-           }
          }
+         :hover {
+         }
+       }
        a + a {
          transform: rotate(180deg);
-         }
+       }
        @svg backArrow {
          width: 14px;
          height: 14px;
          content: '<g stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 7h11M7 13L1 7l6-6"/></g>';
          path {
            stroke: #979797;
-           }
+         }
          -active {
            path {
              fill: #DDD;
-             }
            }
          }
        }
+     }
      span.nav {
        display: inline-block;
        a {
@@ -88,12 +88,12 @@
          text-decoration: none !important;
          :hover {
            color: black;
-           }
+         }
          -selected {
            color: black;
            :hover {
-             }
            }
+         }
          -drop {
            :after {
              background-image: svg(dropArrow);
@@ -107,8 +107,8 @@
              margin-right: -6px;
              padding-left: 5px;
              margin-bottom: -2px;
-             }
            }
+         }
          -add {
            border-color: #498849;
            background-color: #255D24;
@@ -116,14 +116,14 @@
            color: white;
            :active {
              background-color: #1F331F !important;
-             }
+           }
            :hover {
              background-color: #356D34;
              border-color: #4CB54C;
-             }
            }
          }
        }
+     }
      span.appTitle {
        flex: 1;
        text-align: center;
@@ -134,7 +134,7 @@
        position: relative;
        span.title {
          visibility: hidden;
-         }
+       }
        div.info {
          display: block;
          position: absolute;
@@ -151,10 +151,10 @@
          letter-spacing: 0;
          [hidden] {
            opacity: 0;
-           }
          }
        }
      }
+   }
    div.info {
      a.message {
        display: block;
@@ -171,13 +171,13 @@
            text-decoration: none;
            background: #c0c0c0;
            color: white;
-           }
          }
+       }
        :hover {
          text-decoration: none;
          background: #c0ffae;
-         }
        }
+     }
      div.status {
        padding: 5px;
        background: #7c7c7c;
@@ -186,14 +186,14 @@
          width: 20px;
          height: 20px;
          deep {
-           }
          }
        }
+     }
      [hidden] {
        display: block;
        max-height: 0;
        animation: none;
-       }
+     }
      max-height: 100px;
      box-shadow: 0 0 3px #616161;
      overflow: hidden;
@@ -201,7 +201,7 @@
      animation: 0.5s slide-in;
      position: relative;
      z-index: 1;
-     }
+   }
    div.main {
      flex: 1;
      position: relative;
@@ -215,12 +215,12 @@
        flex-direction: column;
        [hidden] {
          visibility: hidden;
-         }
+       }
        div {
          -webkit-user-select: text;
-         }
        }
      }
+   }
    div.bottom {
      position: relative;
      box-shadow: 0 0 3px #222;
@@ -233,31 +233,31 @@
        width: 100%;
        ::-webkit-media-controls-panel {
          background: transparent;
-         }
+       }
        ::-webkit-media-controls-current-time-display {
          color: inherit;
-         }
        }
      }
    }
+ }
  @keyframes slide-in {
    0% {
      max-height: 0;
-     }
+   }
    100% {
      max-height: 100px;
-     }
    }
+ }
  @svg dropArrow {
    width: 12px;
    height: 6px;
    content: "<path d='M2,0 L10,0 L6,6 Z' />";
    path {
      fill: #888;
-     }
+   }
    -active {
      path {
        fill: #DDD;
-       }
      }
    }
+ }

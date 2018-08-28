@@ -14,32 +14,32 @@
      background-repeat: no-repeat;
      background-position: right;
      -more {
-       }
+     }
      -subscribed {
        background-image: svg(subscribed);
        span.name {
          font-weight: bold;
-         }
        }
+     }
      @svg subscribed {
        width: 20px;
        height: 12px;
        content: "<circle cx='6' stroke='#888' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#888'/>";
-       }
+     }
      :hover {
        text-decoration: none;
        a {
          transition: opacity 0.05s;
          opacity: 1;
-         }
        }
+     }
      span.name {
        flex: 1;
        white-space: nowrap;
        min-width: 0;
        overflow: hidden;
        text-overflow: ellipsis;
-       }
+     }
      a {
        display: inline;
        opacity: 0;
@@ -55,13 +55,13 @@
        text-decoration: none;
        -subscribe {
          :hover {
-           }
          }
+       }
        -unsubscribe {
          :hover {
            background: rgb(212, 112, 112);
-           }
          }
        }
      }
    }
+ }

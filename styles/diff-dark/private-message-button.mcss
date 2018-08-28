@@ -2,5 +2,5 @@
    margin-bottom: 10px;
    :hover {
      background: #ceab2f;
-     }
    }
+ }

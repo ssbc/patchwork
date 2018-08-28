@@ -7,22 +7,22 @@
      background: #888;
      -distanceWarning {
        background: #544533;
-       }
      }
+   }
    header {
      div.main {
        div.title {
          h1 {
            a {
              color: black;
-             }
            }
          }
+       }
        section {
          pre {
            background: #ffffff;
-           }
          }
        }
      }
    }
+ }

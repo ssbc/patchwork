@@ -9,31 +9,31 @@
      background-repeat: no-repeat;
      background-position: right;
      -more {
-       }
+     }
      -subscribed {
        background-image: svg(subscribed);
        border-left: 2px solid #51c067;
        border-top-left-radius: 0;
        border-bottom-left-radius: 0;
-       }
+     }
      @svg subscribed {
        width: 20px;
        height: 12px;
        content: "<circle cx='6' stroke='#888' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#888'/>";
-       }
+     }
      :hover {
        text-decoration: none;
        a {
          transition: opacity 0.05s;
          opacity: 1;
-         }
        }
+     }
      span.name {
        flex: 1;
        white-space: nowrap;
        min-width: 0;
        -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
-       }
+     }
      a {
        display: inline;
        opacity: 0;
@@ -49,13 +49,13 @@
        text-decoration: none;
        -subscribe {
          :hover {
-           }
          }
+       }
        -unsubscribe {
          :hover {
            background: rgb(212, 112, 112);
-           }
          }
        }
      }
    }
+ }
