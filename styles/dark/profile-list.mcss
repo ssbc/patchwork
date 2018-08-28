@@ -10,8 +10,6 @@ ProfileList {
     text-decoration: none
     transition: background-color 0.25s
 
-    background-repeat: no-repeat
-    background-position: right
 
     -more {
       padding-top: 10px
@@ -29,6 +27,8 @@ ProfileList {
     }
 
     -connected {
+      background-repeat: no-repeat
+      background-position: right
       background-image: svg(connected)
     }
 
