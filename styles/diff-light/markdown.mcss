@@ -1,28 +1,28 @@
- Markdown {
-   img {
-     -pending {
-       border: 1px solid #DDD
-       background-color: #EEE
-     }
-   }
-   blockquote {
-     border-left: 4px gainsboro solid
-     background: #fafafa
-     color: #7c7c7c
-   }
-   hr {
-     border-top: 1px solid #7e7e7e
-   }
-   pre {
-     background: #fbfbfb
-     border: 1px solid #EEE
-   }
-   a {
-     [href^="#"], [href^="@"], [href^="%"] {
-       border-bottom: 1px dotted #286bc3
-       :hover {
-         text-decoration: none
-       }
-     }
-   }
- }
+Markdown {
+  img {
+    -pending {
+      border: 1px solid #DDD
+      background-color: #EEE
+    }
+  }
+  blockquote {
+    border-left: 4px gainsboro solid
+    background: #fafafa
+    color: #7c7c7c
+  }
+  hr {
+    border-top: 1px solid #7e7e7e
+  }
+  pre {
+    background: #fbfbfb
+    border: 1px solid #EEE
+  }
+  a {
+    [href^="#"], [href^="@"], [href^="%"] {
+      border-bottom: 1px dotted #286bc3
+      :hover {
+        text-decoration: none
+      }
+    }
+  }
+}

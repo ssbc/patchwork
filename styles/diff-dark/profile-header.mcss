@@ -1,42 +1,42 @@
- ProfileHeader {
-   div.image {
-     img {
-       border-radius: 3px
-     }
-   }
-   div.main {
-     section {
-       -publicKey {
-         pre {
-           color: #808080
-           background: #333333
-           ::selection {
-             background: black
-             color: white
-           }
-         }
-       }
-       -blockWarning {
-         border: 1px solid #ffba4e
-         background: #5f410b
-         color: #ffdda7
-         a {
-           color: #ffdda7
-           :hover {
-             color: #ffb236
-           }
-         }
-       }
-       -mutualFriends {
-         border: 1px solid #046ac1
-         background: #0b405f
-         a {
-           color: #dbecf7
-           :hover {
-             color: #91d4ff
-           }
-         }
-       }
-     }
-   }
- }
+ProfileHeader {
+  div.image {
+    img {
+      border-radius: 3px
+    }
+  }
+  div.main {
+    section {
+      -publicKey {
+        pre {
+          color: #808080
+          background: #333333
+          ::selection {
+            background: black
+            color: white
+          }
+        }
+      }
+      -blockWarning {
+        border: 1px solid #ffba4e
+        background: #5f410b
+        color: #ffdda7
+        a {
+          color: #ffdda7
+          :hover {
+            color: #ffb236
+          }
+        }
+      }
+      -mutualFriends {
+        border: 1px solid #046ac1
+        background: #0b405f
+        a {
+          color: #dbecf7
+          :hover {
+            color: #91d4ff
+          }
+        }
+      }
+    }
+  }
+}

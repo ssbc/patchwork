@@ -1,8 +1,8 @@
- $distanceWarning {
-   border: 1px solid #ffc965
-   background: #ffebcc
-   color: #8a6800
-   h1 {
-     color: #583805
-   }
- }
+$distanceWarning {
+  border: 1px solid #ffc965
+  background: #ffebcc
+  color: #8a6800
+  h1 {
+    color: #583805
+  }
+}

@@ -1,9 +1,9 @@
- FeedMetaSummary {
-   div {
-     div {
-       strong {
-         color: white
-       }
-     }
-   }
- }
+FeedMetaSummary {
+  div {
+    div {
+      strong {
+        color: white
+      }
+    }
+  }
+}

@@ -1,32 +1,32 @@
- AllChannels {
-   a.channel {
-     background: #2d2c2c
-     color: #ccc
-     border-radius: 3px
-     transition: background-color 0.25s
-     -more {
-       background-color: transparent
-       color: #6e6d6d
-       :hover {
-         background-color: transparent
-         color: #ccc
-       }
-     }
-     -subscribed {
-       border-left: 2px solid #51c067
-       border-top-left-radius: 0
-       border-bottom-left-radius: 0
-     }
-     :hover {
-       background: #383736
-     }
-     a {
-       border-radius: 3px
-       -subscribe {
-         :hover {
-           background-color: #51c067
-         }
-       }
-     }
-   }
- }
+AllChannels {
+  a.channel {
+    background: #2d2c2c
+    color: #ccc
+    border-radius: 3px
+    transition: background-color 0.25s
+    -more {
+      background-color: transparent
+      color: #6e6d6d
+      :hover {
+        background-color: transparent
+        color: #ccc
+      }
+    }
+    -subscribed {
+      border-left: 2px solid #51c067
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
+    }
+    :hover {
+      background: #383736
+    }
+    a {
+      border-radius: 3px
+      -subscribe {
+        :hover {
+          background-color: #51c067
+        }
+      }
+    }
+  }
+}

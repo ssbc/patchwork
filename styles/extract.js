@@ -1,8 +1,8 @@
 const fs = require('fs');
 const { diff } = require('deep-object-diff');
 
-const tok = require('../node_modules/micro-css/lib/tokenizer.js');
-const ttm = require('./token-to-mcss');
+const tok = require('../node_modules/micro-css/lib/tokenizer');
+const ttm = require('./serializer');
 
 function equalProps(a,b){
   var newObj = {}; 
