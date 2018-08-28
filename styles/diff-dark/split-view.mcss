@@ -1,0 +1,26 @@
+SplitView {
+div.side {
+background: #383736;
+border-right: 1px solid #2d2c2c;
+-right {
+border: none;
+border-left: 1px solid #2d2c2c;
+background: #383736;
+}
+h2 {
+margin-top: 20px;
+margin-bottom: 8px;
+color: #6e6d6d;
+font-weight: lighter;
+:first-child {
+margin-top: 0;
+}
+span.sub {
+font-weight: normal;
+font-size: 90%;
+}
+deep {
+}
+}
+}
+}
