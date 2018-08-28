@@ -1,6 +1,6 @@
 AllChannels {
   a.channel {
-    background: #2d2c2c
+    background-color: #2d2c2c
     color: #ccc
     border-radius: 3px
     transition: background-color 0.25s

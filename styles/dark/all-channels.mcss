@@ -10,7 +10,7 @@ AllChannels {
     padding: 8px 10px;
     font-size: 110%;
     margin: 4px;
-    background: #2d2c2c;
+    background-color: #2d2c2c;
     color: #ccc;
     border-radius: 3px;
     position: relative

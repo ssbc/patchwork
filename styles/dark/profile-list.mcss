@@ -4,7 +4,7 @@ ProfileList {
     padding: 4px;
     font-size: 110%;
     margin: 4px 0;
-    background: #313131;
+    background-color: #313131;
     border-radius: 3px;
     position: relative
     text-decoration: none

@@ -1,6 +1,6 @@
 ChannelList {
   a.channel {
-    background: #313131
+    background-color: #313131
     color: #ccc
     border-radius: 3px
     transition: background-color 0.25s

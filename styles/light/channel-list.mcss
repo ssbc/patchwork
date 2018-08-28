@@ -4,7 +4,7 @@ ChannelList {
     padding: 8px 10px;
     font-size: 110%;
     margin: 4px 0;
-    background: rgba(255, 255, 255, 0.66);
+    background-color: rgba(255, 255, 255, 0.66);
     color: #333;
     border-radius: 5px;
     position: relative
