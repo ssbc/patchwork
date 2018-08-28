@@ -1,6 +1,6 @@
-PrivateMessageButton {
-margin-bottom: 10px;
-:hover {
-background: #ceab2f;
-}
-}
+ PrivateMessageButton {
+   margin-bottom: 10px;
+   :hover {
+     background: #ceab2f;
+     }
+   }

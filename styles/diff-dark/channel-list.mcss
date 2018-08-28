@@ -1,32 +1,32 @@
-ChannelList {
-a.channel {
-background: #313131;
-color: #ccc;
-border-radius: 3px;
-transition: background-color 0.25s;
--more {
-background-color: transparent;
-color: #6e6d6d;
-:hover {
-background-color: transparent;
-color: #ccc;
-}
-}
--subscribed {
-span.name {
-font-weight: bold;
-}
-}
-:hover {
-background: #292929;
-}
-a {
-border-radius: 3px;
--subscribe {
-:hover {
-background-color: #51c067;
-}
-}
-}
-}
-}
+ ChannelList {
+   a.channel {
+     background: #313131;
+     color: #ccc;
+     border-radius: 3px;
+     transition: background-color 0.25s;
+     -more {
+       background-color: transparent;
+       color: #6e6d6d;
+       :hover {
+         background-color: transparent;
+         color: #ccc;
+         }
+       }
+     -subscribed {
+       span.name {
+         font-weight: bold;
+         }
+       }
+     :hover {
+       background: #292929;
+       }
+     a {
+       border-radius: 3px;
+       -subscribe {
+         :hover {
+           background-color: #51c067;
+           }
+         }
+       }
+     }
+   }

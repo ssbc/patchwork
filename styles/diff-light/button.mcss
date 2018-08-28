@@ -1,0 +1,52 @@
+ button {
+   color: #5f5f5f;
+   background: #ddd;
+   :hover {
+     color: #ffffff;
+     background-color: #959EAB;
+     border-color: #959EAB;
+     }
+   :focus {
+     outline: 1px dotted #959EAB;
+     }
+   :active {
+     background-color: #959EAB !important;
+     }
+   [disabled] {
+     color: #999797 !important;
+     background: #e3e2e2 !important;
+     border-color: #DDD !important;
+     }
+   -add {
+     :hover {
+       border-color: #7dbd85;
+       background-color: #7dbd85;
+       }
+     }
+   -pub {
+     color: #ffffff;
+     background-color: #959ea9;
+     border-color: #959ea9;
+     :hover {
+       background-color: rgb(112, 184, 212);
+       border-color: rgb(112, 184, 212);
+       color: #ffffff;
+       }
+     }
+   -save {
+     color: #ffffff;
+     background-color: #70b57d;
+     border-color: #70b57d;
+     :active {
+       background-color: #59a066;
+       }
+     :hover {
+       background-color: #59a066;
+       border-color: #59a066;
+       color: #ffffff;
+       }
+     }
+   -full {
+     margin: 15px 0;
+     }
+   }

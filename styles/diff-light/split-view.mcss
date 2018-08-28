@@ -1,0 +1,21 @@
+ SplitView {
+   div.side {
+     background: #efefef;
+     border-right: 1px solid #dcdcdc;
+     -right {
+       background: #F9F8F7;
+       border-left: 1px solid #dcdcdc;
+       }
+     }
+   div.side h2 {
+     margin-top: 20px;
+     margin-bottom: 8px;
+     color: #527b90;
+     text-shadow: 0px 0px 3px #fff;
+     font-weight: normal;
+     span.sub {
+       font-weight: normal;
+       font-size: 90%;
+       }
+     }
+   }

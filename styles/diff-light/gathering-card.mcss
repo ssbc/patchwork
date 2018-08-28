@@ -1,0 +1,26 @@
+ GatheringCard {
+   border: 1px solid #DDD;
+   padding: 10px;
+   margin-bottom: 10px;
+   div.attending {
+     div.actions {
+       button {
+         font-size: 100%;
+         }
+       }
+     }
+   div.title {
+     font-size: 200%;
+     button {
+       font-size: 50%;
+       }
+     }
+   div.time {
+     color: #555;
+     font-size: 120%;
+     }
+   div.description {
+     border-top: 3px solid #CCC;
+     margin-top: 10px;
+     }
+   }

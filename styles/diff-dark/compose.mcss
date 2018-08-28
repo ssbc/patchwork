@@ -1,59 +1,55 @@
-Compose {
-box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1);
-border-radius: 3px;
-background: #2d2c2c;
-textarea {
-color: #ccc;
-[disabled] {
-opacity: 0.5;
-}
-:focus {
-outline: 0;
-}
-::-webkit-input-placeholder {
-color: #757474;
-}
-}
-section.actions {
-background: #383736;
-padding: 10px;
-border-bottom-left-radius: 3px;
-border-bottom-right-radius: 3px;
-input[type="file"] {
-width: 85px;
-height: 20px;
-:hover {
-::before {
-color: #ccc;
-}
-}
-::before {
-display: inline-block;
-color: #6e6d6d;
-padding: 3px 6px 3px 20px;
-background: svg(paperclip) no-repeat scroll center left;
-content: 'Attach';
-}
-@svg paperclip {
-width: 18px;
-height: 18px;
-fill: #6e6d6d;
-content: "<path d="M13 14c0 2.21-1.79 4-4 4s-4-1.79-4-4V3c0-1.66 1.34-3 3-3s3 1.34 3 3v9c0 1.1-.9 2-2 2s-2-.9-2-2V4h1v8c0 .55.45 1 1 1s1-.45 1-1V3c0-1.1-.9-2-2-2s-2 .9-2 2v11c0 1.66 1.34 3 3 3s3-1.34 3-3V4h1v10z"/>";
-}
-}
-button {
-:hover {
-background: #e56f6f;
-}
--private {
-:hover {
-background: #ceab2f;
-}
-}
-}
-}
--expanded {
-textarea {
-}
-}
-}
+ Compose {
+   box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1);
+   border-radius: 3px;
+   background: #2d2c2c;
+   textarea {
+     color: #ccc;
+     [disabled] {
+       opacity: 0.5;
+       }
+     :focus {
+       outline: 0;
+       }
+     ::-webkit-input-placeholder {
+       color: #757474;
+       }
+     }
+   section.actions {
+     background: #383736;
+     padding: 10px;
+     border-bottom-left-radius: 3px;
+     border-bottom-right-radius: 3px;
+     input[type="file"] {
+       width: 85px;
+       height: 20px;
+       :hover {
+         ::before {
+           color: #ccc;
+           }
+         }
+       ::before {
+         display: inline-block;
+         color: #6e6d6d;
+         padding: 3px 6px 3px 20px;
+         background: svg(paperclip) no-repeat scroll center left;
+         content: 'Attach';
+         }
+       @svg paperclip {
+         width: 18px;
+         height: 18px;
+         fill: #6e6d6d;
+         content: "<path d="M13 14c0 2.21-1.79 4-4 4s-4-1.79-4-4V3c0-1.66 1.34-3 3-3s3 1.34 3 3v9c0 1.1-.9 2-2 2s-2-.9-2-2V4h1v8c0 .55.45 1 1 1s1-.45 1-1V3c0-1.1-.9-2-2-2s-2 .9-2 2v11c0 1.66 1.34 3 3 3s3-1.34 3-3V4h1v10z"/>";
+         }
+       }
+     button {
+       :hover {
+         background: #e56f6f;
+         }
+       -private {
+         :hover {
+           background: #ceab2f;
+           }
+         }
+       }
+     }
+   }

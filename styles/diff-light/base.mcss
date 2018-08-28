@@ -1,0 +1,10 @@
+ html, body {
+   background: #f5f5f5;
+   color: #2b2b2b;
+   }
+ a {
+   color: #286bc3;
+   :hover {
+     color: #5eabff;
+     }
+   }

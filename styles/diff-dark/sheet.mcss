@@ -1,20 +1,20 @@
-Sheet {
-background: #434141;
-box-shadow: 0 0 40px black;
-border-bottom-left-radius: 3px;
-border-bottom-right-radius: 3px;
--private {
-footer {
-border-color: #5b56b3;
-background-color: #372a56;
-}
-}
--public {
-footer {
-background-color: #4a3232;
-}
-}
-footer {
-border-top: 1px solid #2d2c2c;
-}
-}
+ Sheet {
+   background: #434141;
+   box-shadow: 0 0 40px black;
+   border-bottom-left-radius: 3px;
+   border-bottom-right-radius: 3px;
+   -private {
+     footer {
+       border-color: #5b56b3;
+       background-color: #372a56;
+       }
+     }
+   -public {
+     footer {
+       background-color: #4a3232;
+       }
+     }
+   footer {
+     border-top: 1px solid #2d2c2c;
+     }
+   }

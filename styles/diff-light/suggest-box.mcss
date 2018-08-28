@@ -1,0 +1,4 @@
+ SuggestBox {
+   background-color: #fff;
+   border: 1px gainsboro solid;
+   }

@@ -1,8 +1,8 @@
-$following {
-:after {
-margin-left: 5px;
-@svg subscribed {
-content: "<circle cx='6' stroke='#777' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#777'/>";
-}
-}
-}
+ $following {
+   :after {
+     margin-left: 5px;
+     @svg subscribed {
+       content: "<circle cx='6' stroke='#777' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#777'/>";
+       }
+     }
+   }

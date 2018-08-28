@@ -1,0 +1,7 @@
+ PrivateMessageButton {
+   :hover {
+     color: #ffffff;
+     background-color: #8a6610;
+     border-color: #8a6610;
+     }
+   }

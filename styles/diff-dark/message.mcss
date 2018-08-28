@@ -1,131 +1,125 @@
-Message {
-background: #383736;
-highlight {
-background-color: rgb(255, 255, 86);
-color: #674e00;
-}
-header {
-margin: 20px 20px 0;
-div.main {
-div.main {
-div.name {
-a {
-color: #c3c3c3;
-:hover {
-color: #ddd;
-}
-}
-}
-div.meta {
-font-size: 75%;
-color: #8a8a8a;
-a {
-color: #b3b8e0;
-:hover {
-color: #dfdfe2;
-}
-deep {
-}
-}
-}
-}
-}
-div.meta {
-span.flag {
--unread {
-:after {
-color: #757474;
-}
-}
--new {
-:after {
-color: #757474;
-}
-}
--new, -unread {
-color: #757474;
-font-size: 75%;
-:before {
-color: #efef00;
-}
-}
-}
-a.channel {
-font-size: 100%;
-color: #b3b3b3;
-:hover {
-color: #c1cdf0;
-}
-}
-a.likes {
-}
-a.Timestamp {
-font-size: 75%;
-font-weight: normal;
-deep {
-}
-}
-span.private {
-a {
-:first-child {
-img {
-border-top-left-radius: 3px;
-border-bottom-left-radius: 3px;
-}
-}
-:last-child {
-img {
-border-top-right-radius: 3px;
-border-bottom-right-radius: 3px;
-}
-}
-}
-:after {
-background: rgba(0,0,0,0.75);
-padding: 1px 4px;
-border-top-right-radius: 3px;
-color: #ccc;
-}
-}
-}
-}
-a.backlink {
-padding: 10px 20px;
-background: #2d2c2c;
-color: #757474;
-:hover {
-color: #aaa;
-}
-}
-footer {
-div.expander {
-background-color: #383736;
-}
-div.actions {
-a.like {
-:hover {
-background: #ff2f92;
-}
-}
-a.unlike {
-:hover {
-background: #434141;
-}
-}
-a {
-background: #2d2c2c;
-color: #ccc;
-:hover {
-background: #45b754;
-}
-}
-}
-}
--mini {
-header {
-}
-}
--new, -unread {
-box-shadow: 0 0 1px #efef00;
-}
-}
+ Message {
+   background: #383736;
+   highlight {
+     background-color: rgb(255, 255, 86);
+     color: #674e00;
+     }
+   header {
+     margin: 20px 20px 0;
+     div.main {
+       div.main {
+         div.name {
+           a {
+             color: #c3c3c3;
+             :hover {
+               color: #ddd;
+               }
+             }
+           }
+         div.meta {
+           font-size: 75%;
+           color: #8a8a8a;
+           a {
+             color: #b3b8e0;
+             :hover {
+               color: #dfdfe2;
+               }
+             deep {
+               }
+             }
+           }
+         }
+       }
+     div.meta {
+       span.flag {
+         -unread {
+           :after {
+             color: #757474;
+             }
+           }
+         -new {
+           :after {
+             color: #757474;
+             }
+           }
+         -new, -unread {
+           color: #757474;
+           font-size: 75%;
+           :before {
+             color: #efef00;
+             }
+           }
+         }
+       a.channel {
+         font-size: 100%;
+         color: #b3b3b3;
+         :hover {
+           color: #c1cdf0;
+           }
+         }
+       a.Timestamp {
+         font-size: 75%;
+         font-weight: normal;
+         deep {
+           }
+         }
+       span.private {
+         a {
+           :first-child {
+             img {
+               border-top-left-radius: 3px;
+               border-bottom-left-radius: 3px;
+               }
+             }
+           :last-child {
+             img {
+               border-top-right-radius: 3px;
+               border-bottom-right-radius: 3px;
+               }
+             }
+           }
+         :after {
+           background: rgba(0,0,0,0.75);
+           padding: 1px 4px;
+           border-top-right-radius: 3px;
+           color: #ccc;
+           }
+         }
+       }
+     }
+   a.backlink {
+     padding: 10px 20px;
+     background: #2d2c2c;
+     color: #757474;
+     :hover {
+       color: #aaa;
+       }
+     }
+   footer {
+     div.expander {
+       background-color: #383736;
+       }
+     div.actions {
+       a.like {
+         :hover {
+           background: #ff2f92;
+           }
+         }
+       a.unlike {
+         :hover {
+           background: #434141;
+           }
+         }
+       a {
+         background: #2d2c2c;
+         color: #ccc;
+         :hover {
+           background: #45b754;
+           }
+         }
+       }
+     }
+   -new, -unread {
+     box-shadow: 0 0 1px #efef00;
+     }
+   }

@@ -1,70 +1,70 @@
-MainWindow {
--linux, -win32 {
-div {
-::-webkit-scrollbar {
-width: 12px;
-}
-::-webkit-scrollbar-track {
--webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-border-radius: 10px;
-background-color: #2d2c2c;
-/* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) */;
-}
-deep {
-}
-}
-}
-div.top {
-background: #2d2c2c;
-border-bottom: 2px solid #6f74e5;
-span {
-input.search {
-background: rgba(0, 0, 0, 0.2);
-color: #ccc;
-:focus {
-background: #383736;
-}
-::-webkit-input-placeholder {
-color: #757474;
-}
-}
-}
-span.history {
-a {
-border-radius: 3px;
-:hover {
-background-color: #383736;
-}
-}
-}
-span.nav {
-a {
-background: #434141;
-color: #aaa;
-:hover {
-background: #aeaeae;
-}
--selected {
-background: #aeaeae;
-:hover {
-background: #aeaeae;
-}
-}
--drop {
-:after {
-border-left: 1px solid #6e6d6d;
-}
-}
-}
-}
-span.appTitle {
-color: #ccc;
-div.info {
-background: #2d2c2c;
-}
-}
-}
-}
+ MainWindow {
+   -linux, -win32 {
+     div {
+       ::-webkit-scrollbar {
+         width: 12px;
+         }
+       ::-webkit-scrollbar-track {
+         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+         border-radius: 10px;
+         }
+       ::-webkit-scrollbar-thumb {
+         border-radius: 10px;
+         background-color: #2d2c2c;
+         /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) */;
+         }
+       deep {
+         }
+       }
+     }
+   div.top {
+     background: #2d2c2c;
+     border-bottom: 2px solid #6f74e5;
+     span {
+       input.search {
+         background: rgba(0, 0, 0, 0.2);
+         color: #ccc;
+         :focus {
+           background: #383736;
+           }
+         ::-webkit-input-placeholder {
+           color: #757474;
+           }
+         }
+       }
+     span.history {
+       a {
+         border-radius: 3px;
+         :hover {
+           background-color: #383736;
+           }
+         }
+       }
+     span.nav {
+       a {
+         background: #434141;
+         color: #aaa;
+         :hover {
+           background: #aeaeae;
+           }
+         -selected {
+           background: #aeaeae;
+           :hover {
+             background: #aeaeae;
+             }
+           }
+         -drop {
+           :after {
+             border-left: 1px solid #6e6d6d;
+             }
+           }
+         }
+       }
+     span.appTitle {
+       color: #ccc;
+       div.info {
+         background: #2d2c2c;
+         }
+       }
+     }
+   }

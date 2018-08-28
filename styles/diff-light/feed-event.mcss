@@ -1,0 +1,33 @@
+ FeedEvent {
+   background: white;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+   -group {
+     background: #e8e8e8;
+     a.expand {
+       background: #f1f1f1;
+       color: #1f1e1e;
+       :hover {
+         color: black;
+         }
+       }
+     div.items {
+       }
+     }
+   div + div {
+     border-top: 1px solid #EEE;
+     }
+   a.full {
+     background: #f3fafd;
+     border-top: 1px solid #bbc9d2;
+     border-bottom: 1px solid #bbc9d2;
+     }
+   div.replies {
+     div + div {
+       border-top: 1px solid #EEE;
+       }
+     }
+   div.meta {
+     padding: 10px 20px;
+     opacity: 0.8;
+     }
+   }

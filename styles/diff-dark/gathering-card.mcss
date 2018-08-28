@@ -1,31 +1,25 @@
-GatheringCard {
-padding: 20px;
-margin: 20px -20px;
-border-top: 1px solid #2d2c2c;
-div.attending {
-div.attendees {
-img {
-border-radius: 3px;
-}
-}
-div.actions {
-button {
-}
-}
-}
-div.title {
-a {
-font-size: 200%;
-}
-button {
-}
-}
-div.time {
-color: #757474;
-}
-div.description {
-margin: 20px 0 0;
-padding: 20px;
-background: #2d2c2c;
-}
-}
+ GatheringCard {
+   padding: 20px;
+   margin: 20px -20px;
+   border-top: 1px solid #2d2c2c;
+   div.attending {
+     div.attendees {
+       img {
+         border-radius: 3px;
+         }
+       }
+     }
+   div.title {
+     a {
+       font-size: 200%;
+       }
+     }
+   div.time {
+     color: #757474;
+     }
+   div.description {
+     margin: 20px 0 0;
+     padding: 20px;
+     background: #2d2c2c;
+     }
+   }

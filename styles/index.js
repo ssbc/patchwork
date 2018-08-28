@@ -1,8 +1,8 @@
-const light = require('./light')
-const diffDark = require('./diff-dark')
+const base = require('./base')
 
 module.exports = {
-  light: light,
+  light: require('./light'),
   dark: require('./dark'),
-  diffDark: light + diffDark
+  diffDark: base + require('./diff-dark'),
+  diffLight: base + require('./diff-light'),
 }
