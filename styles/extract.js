@@ -1,11 +1,10 @@
 const fs = require('fs')
 const { diff } = require('deep-object-diff')
 
-const tok = require('../node_modules/micro-css/lib/tokenizer')
-const ttm = require('./serializer')
+const tokenize = require('../node_modules/micro-css/lib/tokenizer')
+const serialize = require('./serializer')
 
 const isObj = (x) => typeof x === 'object'
-
 const common = (a, b) => {
   var result = {}
 
@@ -24,6 +23,7 @@ const common = (a, b) => {
 
   return result
 }
+const enc = 'utf-8'
 
 fs.readdir('./light', (err, files) => {
   if (err) throw err
@@ -32,35 +32,34 @@ fs.readdir('./light', (err, files) => {
     if (file.indexOf('.mcss') === -1) {
       return false
     }
-    fs.readFile(`./light/${file}`, 'utf-8', (lightErr, lightFile) => {
+
+    fs.readFile(`./light/${file}`, enc, (lightErr, lightFile) => {
       if (lightErr) throw lightErr
-      fs.readFile(`./dark/${file}`, 'utf-8', (darkErr, darkFile) => {
+      fs.readFile(`./dark/${file}`, enc, (darkErr, darkFile) => {
         if (darkErr) throw darkErr
 
-        const lightTokens = tok(lightFile)
-        const darkTokens = tok(darkFile)
-
+        const lightTokens = tokenize(lightFile)
+        const darkTokens = tokenize(darkFile)
         const base = common(darkTokens, lightTokens)
-        const baseResult = ttm(base)
 
-        const darkDiff = ttm(diff(base, darkTokens))
-        const lightDiff = ttm(diff(base, lightTokens))
+        const results = {
+          'base': serialize(base),
+          'diff-light': serialize(diff(base, lightTokens)),
+          'diff-dark': serialize(diff(base, darkTokens))
+        }
 
-        if (baseResult.length > 2) {
-          fs.writeFile(`./base/${file}`, baseResult, (writeBaseErr) => {
-            if (writeBaseErr) throw writeBaseErr
-          })
-        }
-        if (lightDiff.length > 2) {
-          fs.writeFile(`./diff-light/${file}`, lightDiff, (writeLightErr) => {
-            if (writeLightErr) throw writeLightErr
-          })
-        }
-        if (darkDiff.length > 2) {
-          fs.writeFile(`./diff-dark/${file}`, darkDiff, (writeDarkErr) => {
-            if (writeDarkErr) throw writeDarkErr
-          })
-        }
+        Object.keys(results).forEach(dir => {
+          const path = `./${dir}/${file}`
+          const result = results[dir]
+          if (result.length > 2) {
+            fs.writeFile(path, result, (writeErr) => {
+              if (writeErr) throw writeErr
+              console.log(`Done: ${path}`)
+            })
+          } else {
+            console.log(`Skipped: ${path}`)
+          }
+        })
       })
     })
 
