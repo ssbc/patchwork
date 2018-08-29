@@ -1,111 +1,51 @@
 Markdown {
-  (a.bad) {
-    color: inherit
-    :hover {
-      text-decoration: inherit
-    }
-  }
-
-  word-break: break-word
-  (img) {
+  img {
     -pending {
       background-color: #2d2c2c
-      width: 120px
-      height: 40px
-      background-image: svg(fetching)
-      background-position: center
-      background-repeat: no-repeat
       border-radius: 3px
-
       @svg fetching {
-        width: 100px
-        height: 20px
-        content: '<text x='0' y='12'>Fetching image...</text>'
         text {
-          font: caption
-          font-size: 12px
           fill: #757474
         }
       }
     }
   }
-
-  (video) {
-    max-width: 100%
-    object-fit: scale-down
+  blockquote {
+    border-left: 4px #aeaeae solid
+    background: #434141
+    color: #aaa
   }
-
-  (audio) {
-    width: 100%
-  }
-
-  (table) {
-    margin: 10px 0
-    border-collapse: collapse
-    (th) {
-      text-align: left
-      border-bottom: 1px solid #DDD
-      padding: 3px
-    }
-    (td) {
-      padding: 3px
-    }
-  }
-
-  (blockquote) {
-    margin: 1rem 0;
-    padding: 5px 20px;
-    border-left: 4px #aeaeae solid;
-    background: #434141;
-    color: #aaa;
-  }
-  (hr) {
-    border: none;
+  hr {
     border-top: 3px solid #636363
     margin: 1em 0
   }
-  (pre) {
-    overflow: auto;
-    padding: 10px;
-    background: #2d2c2c;
-    max-height: 300px;
+  pre {
+    background: #2d2c2c
   }
-  (ul) {
-    (p) {
-      margin: 0;
-    }
-  }
-  (img.emoji) {
-    width: 1.5em;
-    height: 1.5em;
-    align-content: center;
-    margin-bottom: -0.3em;
-  }
-
-  (a) {
+  a {
     color: #898df7
     :hover {
-      text-decoration: underline;
+      text-decoration: underline
     }
     [href^="@"] {
       color: #efef00
       border-bottom: 1px dotted #efef00
       :hover {
-        text-decoration: none;
+        text-decoration: none
       }
     }
     [href^="#"] {
       color: #c1cdf0
       border-bottom: 1px dotted #c1cdf0
       :hover {
-        text-decoration: none;
+        text-decoration: none
       }
     }
     [href^="%"] {
       color: #efef00
       border-bottom: 1px dotted #efef00
       :hover {
-        text-decoration: none;
+        text-decoration: none
       }
     }
   }

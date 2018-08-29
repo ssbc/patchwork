@@ -1,40 +1,28 @@
 button {
   color: #ccc
-  padding: 8px 10px
   background: #2d2c2c
-  border: 0
-  border-radius: 3px
-  font-size: 13px
-  cursor: pointer
-  transition: background-color 0.25s ease, color 0.25s ease
-
   :hover {
     color: white
     border-color: #434141
   }
-
   :focus {
     outline: 1px dotted rgba(255, 255, 255, 0.45)
   }
-
   :active {
-    background-color: #DDD !important
+    background-color: #ddd !important
   }
-
   [disabled] {
     opacity: 0.5
   }
-
   -add {
-    color: white;
+    color: white
     background-color: #629a6e
-    border-color: #8ba289;
+    border-color: #8ba289
     :hover {
-      color: #6a7e6a;
-      background-color: #ecfff0; 
+      color: #6a7e6a
+      background-color: #ecfff0
     }
   }
-
   -pub {
     color: #aaa
     background-color: #2d2c2c
@@ -42,30 +30,23 @@ button {
     margin-top: 0
     padding: 10px
     transition: background-color 0.25s ease, color 0.25s ease
-
     :hover {
       color: white
       background-color: #45b754
     }
   }
-
   -save {
     ::before {
       content: '✔ '
     }
-
     :hover {
-      background-color: #45b754;
-      color: white;
+      background-color: #45b754
+      color: white
     }
   }
-
   -full {
-    display: block
-    width: 100%
     margin: 0 0 15px
   }
-
   -cancel {
     background: transparent
   }

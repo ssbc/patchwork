@@ -8,14 +8,14 @@ ProfileEditor {
     display: flex
     flex-direction: column
     input {
-      border: 1px solid #CCC
+      border: 1px solid #ccc
       font-size: 150%
       padding: 10px
     }
     textarea {
       resize: vertical
       margin-top: 10px
-      border: 1px solid #CCC
+      border: 1px solid #ccc
       padding: 10px
       font-size: 150%
       flex: 1

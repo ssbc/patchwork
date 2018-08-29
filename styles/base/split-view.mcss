@@ -1,0 +1,15 @@
+SplitView {
+  display: flex
+  flex: 3
+  div.main {
+    display: flex
+    flex-direction: column
+    flex: 1
+    overflow-y: auto
+  }
+  div.side {
+    width: 280px
+    padding: 20px
+    overflow-y: auto
+  }
+}

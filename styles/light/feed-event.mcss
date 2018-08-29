@@ -1,81 +1,31 @@
 FeedEvent {
-  display: flex
-  flex-direction: column
   background: white
   box-shadow: 0 2px 4px rgba(0,0,0,0.1)
-  width: 100%
-  margin: 25px auto
-
   -group {
     background: #e8e8e8
     a.expand {
-      display: block;
-      padding: 10px;
-      background: #f1f1f1;
-      text-align: center;
-      color: #1f1e1e;
-      cursor: pointer;
-      :before { content: '▼ '; font-size: 80% }
+      background: #f1f1f1
+      color: #1f1e1e
       :hover {
         color: black
       }
     }
-
-    div.items {
-      margin: -10px 15px;
-    }
-
-    -expanded {
-      a.expand {
-        :before { display: none }
-      }
-    }
   }
-
-  :empty {
-    margin-bottom: -25px
-  }
-
-  -new, -unread {
-    box-shadow: 0px 0px 2px #ffc800;
-    background: #fffdf7;
-  }
-
   div + div {
-    border-top: 1px solid #EEE
+    border-top: 1px solid #eee
   }
-
-  div {
-    flex: 1
-  }
-
   a.full {
-    display: block;
-    padding: 10px;
-    background: #f3fafd;
-    border-top: 1px solid #bbc9d2;
-    border-bottom: 1px solid #bbc9d2;
-    text-align: center;
+    background: #f3fafd
+    border-top: 1px solid #bbc9d2
+    border-bottom: 1px solid #bbc9d2
   }
-
   div.replies {
-    font-size: 100%
-    display: flex
-    flex-direction: column
-    div {
-      flex: 1
-      margin: 0
-    }
-
     div + div {
-      border-top: 1px solid #EEE
+      border-top: 1px solid #eee
     }
   }
-
   div.meta {
-    font-size: 100%
     padding: 10px 20px
     opacity: 0.8
   }
-
 }

@@ -1,0 +1,50 @@
+html, body {
+  margin: 0
+  font: caption
+  overflow: hidden
+  height: 100%
+  font-size: 12px
+  -webkit-user-select: none
+}
+body {
+  display: flex
+  flex-direction: column
+  line-height: 1.2
+}
+h1 {
+  font-size: 200%
+  margin: 4px 0
+  font-weight: normal
+  flex: 1
+}
+input {
+  [type='text'] {
+    font-size: 80%
+    display: inline-block
+    padding: 2px 4px
+    height: 18px
+    border: 1px solid darkgray
+    background: #333
+    color: #fff
+    padding-right: 12px
+    border-radius: 0
+  }
+}
+a {
+  text-decoration: none
+  code {
+    color: #8EC1FC
+  }
+}
+* + h1 {
+  margin-top: 16px
+}
+* {
+  box-sizing: border-box
+}
+input, textarea, keygen, select, button {
+  font-family: '.SFNSText-Regular', sans-serif
+}
+::-webkit-file-upload-button {
+  font-family: inherit
+}

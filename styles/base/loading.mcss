@@ -4,33 +4,28 @@ Loading {
   align-items: center
   justify-content: center
   whitespace: no-wrap
-
   span.info {
     overflow: hidden
     white-space: nowrap
     text-overflow: ellipsis
   }
-
   -inline {
     height: 16px
     width: 16px
     display: inline-block
     margin: -3px 3px
-
     ::before {
       display: block
       height: 16px
       width: 16px
     }
   }
-
   -small {
     ::before {
       height: 30px
       width: 30px
     }
   }
-
   -large {
     height: 25vh
     ::before {
@@ -38,26 +33,23 @@ Loading {
       width: 100px
     }
     ::after {
-      color: #CCC;
+      color: #ccc
       content: 'Loading...'
       font-size: 200%
     }
   }
-
   -search {
     height: 200px
-
     ::before {
       height: 100px
       width: 100px
     }
     ::after {
-      color: #CCC;
+      color: #ccc
       content: 'Searching...'
       font-size: 200%
     }
   }
-
   ::before {
     content: ' '
     height: 50px
@@ -69,24 +61,21 @@ Loading {
     animation: spin 3s infinite linear
   }
 }
-
 @svg waitingIcon {
   width: 30px
   height: 30px
   content: "<circle cx='15' cy='15' r='10' /><circle cx='10' cy='10' r='2' /><circle cx='20' cy='20' r='3' />"
-
   circle {
-    stroke: #CCC
+    stroke: #ccc
     stroke-width: 3px
     fill: none
   }
 }
-
 @keyframes spin {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg)
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg)
   }
 }

@@ -1,15 +1,7 @@
 $following {
   :after {
-    display: inline-block
-    content: ' '
-    width: 20px
-    height: 12px
     margin-left: 5px
-    background: svg(subscribed) no-repeat center
-
     @svg subscribed {
-      width: 20px
-      height: 12px
       content: "<circle cx='6' stroke='#777' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#777'/>"
     }
   }

@@ -1,0 +1,260 @@
+Message {
+  display: flex
+  flex-direction: column
+  position: relative
+  font-size: 120%
+  line-height: 1.4
+  flex-shrink: 0
+  (highlight) {
+    border-radius: 3px
+    padding: 0 2px
+  }
+  header {
+    font-size: 120%
+    display: flex
+    div.mini {
+      flex: 1
+    }
+    div.main {
+      display: flex
+      flex: 1
+      a.avatar {
+        img {
+          width: 50px
+          height: 50px
+        }
+      }
+      div.main {
+        div.name {
+          a {
+            font-weight: bold
+          }
+        }
+        margin-left: 10px
+      }
+    }
+    div.meta {
+      display: flex
+      flex-direction: column-reverse
+      align-items: flex-end
+      justify-content: flex-end
+      span.flag {
+        width: 12px
+        height: 12px
+        background-repeat: no-repeat
+        background-position: center
+        display: inline-block
+        vertical-align: middle
+        -unread {
+          :after {
+            content: ' unread'
+          }
+        }
+        -new {
+          :after {
+            content: ' new'
+          }
+        }
+        -new, -unread {
+          width: auto
+          height: auto
+          :before {
+            content: '✸'
+          }
+        }
+      }
+      em {
+        display: inline-block
+        padding: 4px
+      }
+      a.likes {
+        font-size: 85%
+        ::before {
+          content: '❤ '
+          color: #ff2f92
+        }
+        :hover {
+          color: #ff2f92
+        }
+      }
+      span.private {
+        display: inline-block
+        margin: -3px -3px 3px 4px
+        position: relative
+        a {
+          display: inline-block
+          img {
+            margin: 0
+            vertical-align: bottom
+            border: none
+          }
+        }
+        :after {
+          content: 'private'
+          position: absolute
+          bottom: 0
+          left: -1px
+          font-size: 10px
+          pointer-events: none
+          white-space: nowrap
+        }
+      }
+    }
+  }
+  section {
+    margin: 0
+    padding: 0 20px
+    max-height: 1500px
+    overflow: hidden
+    -expanded {
+      max-height: none
+    }
+    (img) {
+      max-width: 100%
+    }
+  }
+  a.backlink {
+    display: block
+    margin-top: -1px
+    font-size: 9pt
+    :hover {
+      text-decoration: none
+    }
+  }
+  footer {
+    margin: 5px 0 20px
+    padding: 0 20px
+    div.expander {
+      text-align: center
+      -truncated {
+        padding-top: 50px
+        margin-top: -50px
+        -webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,1) 50%, rgba(0,0,0,0))
+        a {
+          :before {
+            content: '▼ '
+            font-size: 80%
+          }
+        }
+      }
+    }
+    div.actions {
+      a.like {
+        :before {
+          content: "❤ "
+        }
+      }
+      a.unlike {
+        :before {
+          content: ""
+        }
+      }
+      a {
+        font-size: 13px
+        padding: 6px 10px
+        border-radius: 3px
+        display: inline-block
+        text-align: center
+        transition: background-color 0.25s ease, color 0.25s ease
+        :before {
+          content: "↩ "
+        }
+        :hover {
+          color: white
+        }
+      }
+      a + a {
+        margin-left: 10px
+      }
+    }
+  }
+  :focus {
+    z-index: 1
+  }
+  -following {
+    header {
+      div.main {
+        div.main {
+          div.name {
+            $following
+          }
+        }
+      }
+    }
+  }
+  -data {
+    header {
+      div.main {
+        font-size: 80%
+        a.avatar {
+          img {
+            width: 25px
+          }
+        }
+      }
+    }
+    (pre) {
+      overflow: auto
+      max-height: 200px
+    }
+  }
+  -mini {
+    header {
+      font-size: 100%
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+  -missing {
+    header {
+      div.main {
+        div.main {
+          margin-left: 0
+        }
+      }
+    }
+    section {
+      font-size: 90%
+      font-style: italic
+      color: #777
+    }
+  }
+  -compact {
+    section {
+      max-height: 300px
+    }
+  }
+  -reply {
+    header {
+      font-size: 100%
+      div.meta {
+        a.channel {
+          display: none
+        }
+        span.private {
+          (img) {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+  -new, -unread {
+    z-index: 1
+  }
+}

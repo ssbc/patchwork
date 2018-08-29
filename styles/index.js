@@ -1,4 +1,6 @@
+const base = require('./base')
+
 module.exports = {
-  light: require('./light'),
-  dark: require('./dark')
+  light: base + require('./light'),
+  dark: base + require('./dark')
 }

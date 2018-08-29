@@ -1,24 +1,15 @@
 Notifier {
-  padding: 10px;
-  display: block;
-  background: rgb(214, 228, 236);
-  border-bottom: 1px solid rgb(187, 201, 210);
-  text-align: center;
-  animation: 0.5s slide-in;
-
+  background: rgb(214, 228, 236)
+  border-bottom: 1px solid rgb(187, 201, 210)
   :hover {
-    background: rgb(220, 242, 255);
+    background: rgb(220, 242, 255)
   }
-
-  position: relative
-
   -loader {
-    background: rgb(255, 239, 217);
-    border-bottom: 1px solid rgb(228, 220, 195);
-    color: #10100c !important;
-
+    background: rgb(255, 239, 217)
+    border-bottom: 1px solid rgb(228, 220, 195)
+    color: #10100c !important
     :hover {
-      background: rgb(245, 229, 207);
+      background: rgb(245, 229, 207)
     }
   }
 }

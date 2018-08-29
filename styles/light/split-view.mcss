@@ -1,31 +1,18 @@
 SplitView {
-  display: flex
-  flex: 3
-  div.main {
-    display: flex
-    flex-direction: column
-    flex: 1
-    overflow-y: auto
-  }
   div.side {
-    width: 280px;
-    padding: 20px;
     background: #efefef
-    border-right: 1px solid #dcdcdc;
-    overflow-y: auto;
-        
+    border-right: 1px solid gainsboro
     -right {
       background: #F9F8F7
-      border-left: 1px solid #dcdcdc;
+      border-left: 1px solid gainsboro
     }
   }
-
   div.side h2 {
     margin-top: 20px
     margin-bottom: 8px
-    color: #527b90;
-    text-shadow: 0px 0px 3px #fff;
-    font-weight: normal;
+    color: #527b90
+    text-shadow: 0px 0px 3px #fff
+    font-weight: normal
     span.sub {
       font-weight: normal
       font-size: 90%

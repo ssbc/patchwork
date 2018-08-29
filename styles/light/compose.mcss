@@ -1,138 +1,51 @@
 Compose {
-  display: flex
-  flex-direction: column
-  flex-shrink: 0
-  width: 100%
-
-  margin: 20px auto;
   border: 1px solid gainsboro
   background: white
-
   textarea {
-    resize: vertical
-    font-size: 120%
-    background: transparent
-    border: none
-    padding: 10px
     [disabled] {
-      color: #AAA;
-      background: #ebf7ee;
+      color: #aaa
+      background: #ebf7ee
     }
   }
-
-  section.warning {
-    overflow: hidden
-    color: #fff
-    font-size: 1.2rem
-    background-color: #ff00b6
-
-    height: 0
-    padding: 0 .5rem
-    transition: all ease-in .1s
-
-    display: flex
-    justify-content: space-between
-
-
-    -open {
-      padding: .5rem
-      height: initial
-    }
-
-    i.fa { margin-right: .5rem }
-    div.warning {
-      strong { margin-right: .3rem }
-    }
-    div.close {
-      cursor: pointer
-    }
-  }
-
   section.actions {
-    display: flex
-    flex-direction: row
-    align-items: baseline
-    justify-content: space-between
     background: #fafafa
-
     padding: .4rem
-
     button {
       -private {
-        color: #8a6610;
-        background: #f3e7ac;
-        border-color: #f3e7ac;
-
+        color: #8a6610
+        background: #f3e7ac
+        border-color: #f3e7ac
         :hover {
-          color: #ffffff
+          color: white
           background-color: #8a6610
           border-color: #8a6610
         }
       }
     }
-
     input[type="file"] {
       padding: .5rem 0
-
       width: 95px
       height: 29px
-
-      color: transparent
-
       :hover {
         ::before {
           color: black
           border-color: #8B8B8B
         }
       }
-
-      ::-webkit-file-upload-button {
-        display: none
-      }
-
       ::before {
-        color: #5f5f5f;
-        padding: 3px 6px;
-        background: white;
-        border: 2px solid #DDD;
-        border-radius: 4px;
-        cursor: pointer
+        color: #5f5f5f
+        padding: 3px 6px
+        background: white
+        border: 2px solid #ddd
+        border-radius: 4px
         padding-top: .3rem
         content: '📎 Attach File'
-        font-size: 1rem
-        outline: none
-        white-space: nowrap
-        -webkit-user-select: none
-      }
-
-      :active, :focus {
-        outline: none
-        box-shadow: none
       }
     }
   }
-
   -expanded {
     textarea {
-      height: 200px
-      transition: height .15s ease-out
       border-bottom: 1px solid gainsboro
     }
-
-    section.actions {
-      display: flex
-    }
   }
-
-  -contracted {
-    textarea {
-      height: 50px
-      transition: height .15s ease-in
-    }
-
-    section.actions {
-      display: none
-    }
-  }
-
 }
