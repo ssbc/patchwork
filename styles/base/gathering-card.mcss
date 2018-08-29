@@ -41,8 +41,6 @@ GatheringCard {
     }
   }
   div.title {
-    a {
-    }
     button {
       float: right
       ::before {

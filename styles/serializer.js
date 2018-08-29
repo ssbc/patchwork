@@ -13,22 +13,41 @@ module.exports = (tokens) => {
     'mixins'
   ]
 
+  const outputList = [
+    'extensions',
+    'rules'
+  ]
+
   const print = (text) => {
     result += Array(indent + 1).join(' ')
     result += text
     result += '\n'
   }
 
+  const hasOutput = (obj, key) => {
+    return Object.keys(obj[key] || {}).some((innerKey) => {
+      if (outputList.includes(innerKey)) {
+        return true
+      } else {
+        if (obj[key][innerKey]) {
+          return hasOutput(obj[key], innerKey)
+        }
+      }
+    })
+  }
+
   const handleBlock = (obj, key) => {
-    if (obj[key].deep) {
-      print(`(${key}) {`)
-    } else {
-      print(`${key} {`)
+    if (hasOutput(obj, key)) {
+      if (obj[key].deep) {
+        print(`(${key}) {`)
+      } else {
+        print(`${key} {`)
+      }
+      indent += indentSpaces
+      walk(obj[key])
+      indent -= indentSpaces
+      print('}')
     }
-    indent += indentSpaces
-    walk(obj[key])
-    indent -= indentSpaces
-    print('}')
   }
 
   const handleRules = (obj, key) => {
@@ -54,7 +73,7 @@ module.exports = (tokens) => {
         } else if (key === 'deep') {
           // The `deep` key is meant to be handled by `handleBlock`, so nothing
           // needs to be done here. We treat `deep` as a dead end.
-          return
+
         } else if (key === 'extensions') {
           handleExtensions(obj, key)
         } else if (key === 'rules') {

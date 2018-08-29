@@ -8,8 +8,6 @@ ChannelList {
       color: #658aaf
       background: rgb(255, 255, 255)
     }
-    -subscribed {
-    }
     :hover {
       background: rgba(255, 255, 255, 0.4)
     }

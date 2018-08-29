@@ -12,8 +12,6 @@ BlogCard {
     }
     div.text {
       padding: .5rem
-      div.summary {
-      }
       div.read {
         margin-top: 1rem
         text-decoration: underline

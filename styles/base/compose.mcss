@@ -12,10 +12,6 @@ Compose {
     padding: 10px
     [disabled] {
     }
-    :focus {
-    }
-    ::-webkit-input-placeholder {
-    }
   }
   section.warning {
     overflow: hidden

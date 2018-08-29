@@ -66,14 +66,6 @@ Markdown {
     margin-bottom: -0.3em
   }
   (a) {
-    :hover {
-    }
-    [href^="@"] {
-    }
-    [href^="#"] {
-    }
-    [href^="%"] {
-    }
   }
   word-break: break-word
 }

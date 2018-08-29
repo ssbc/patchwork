@@ -4,8 +4,6 @@ ToggleButton {
   border: none
   -subscribe {
   }
-  -unsubscribe {
-  }
   -blocking {
     border: 0px
   }

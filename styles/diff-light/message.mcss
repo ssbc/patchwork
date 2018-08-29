@@ -49,8 +49,6 @@ Message {
       span.private {
         border: 4px solid #525050
         background-color: #525050
-        a {
-        }
         :after {
           background: #525050
           padding: 2px 4px 0 2px

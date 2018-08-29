@@ -45,6 +45,4 @@ ToggleButton {
     width: 20px
     height: 12px
   }
-  @svg subscribed-hover {
-  }
 }

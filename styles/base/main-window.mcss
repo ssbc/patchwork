@@ -18,8 +18,6 @@ MainWindow {
       }
     }
   }
-  -linux, -win32 {
-  }
   div.top {
     display: flex
     align-items: center
@@ -36,8 +34,6 @@ MainWindow {
         box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
         :focus {
           outline: 0
-        }
-        ::-webkit-input-placeholder {
         }
       }
     }

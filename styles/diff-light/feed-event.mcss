@@ -10,8 +10,6 @@ FeedEvent {
         color: black
       }
     }
-    div.items {
-    }
   }
   div + div {
     border-top: 1px solid #EEE

@@ -16,10 +16,6 @@ ProfilePreview {
     -distanceWarning {
       color: #ffffff
     }
-    -mutualFriends {
-    }
-    -you {
-    }
   }
   header {
     display: flex

@@ -13,8 +13,6 @@ AllChannels {
     width: 200px
     background-repeat: no-repeat
     background-position: right
-    -more {
-    }
     -subscribed {
       background-image: svg(subscribed)
       span.name {

@@ -22,15 +22,11 @@ button {
     }
   }
   -save {
-    ::before {
-    }
     :hover {
     }
   }
   -full {
     display: block
     width: 100%
-  }
-  -cancel {
   }
 }

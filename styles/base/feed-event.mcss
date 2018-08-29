@@ -4,8 +4,6 @@ FeedEvent {
   width: 100%
   margin: 25px auto
   -group {
-    -new {
-    }
     -expanded {
       a.expand {
         :before {
@@ -35,8 +33,6 @@ FeedEvent {
   }
   :empty {
     margin-bottom: -25px
-  }
-  div + div {
   }
   div {
     flex: 1

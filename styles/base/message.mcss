@@ -81,8 +81,6 @@ Message {
           color: #ff2f92
         }
       }
-      a.Timestamp {
-      }
       span.private {
         display: inline-block
         margin: -3px -3px 3px 4px
