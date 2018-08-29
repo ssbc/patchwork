@@ -20,7 +20,6 @@
     "compare-version": "^0.1.2",
     "cross-script": "^1.0.5",
     "deep-equal": "^1.0.1",
-    "deep-object-diff": "^1.1.0",
     "depject": "^4.1.1",
     "depnest": "^1.3.0",
     "electron-default-menu": "~1.0.1",
