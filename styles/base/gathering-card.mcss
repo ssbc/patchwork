@@ -48,8 +48,4 @@ GatheringCard {
       }
     }
   }
-  div.time {
-  }
-  div.description {
-  }
 }

@@ -5,26 +5,6 @@ button {
   font-size: 13px
   cursor: pointer
   transition: background-color 0.25s ease, color 0.25s ease
-  :hover {
-  }
-  :focus {
-  }
-  :active {
-  }
-  [disabled] {
-  }
-  -add {
-    :hover {
-    }
-  }
-  -pub {
-    :hover {
-    }
-  }
-  -save {
-    :hover {
-    }
-  }
   -full {
     display: block
     width: 100%

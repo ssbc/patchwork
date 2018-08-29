@@ -36,8 +36,6 @@ ProfilePreview {
           flex: 1
           margin: 0
           margin-bottom: 3px
-          a {
-          }
         }
         div.meta {
           a {

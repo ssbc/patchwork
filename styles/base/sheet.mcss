@@ -10,14 +10,6 @@ Sheet {
   display: flex
   flex-direction: column
   z-index: 50
-  -private {
-    footer {
-    }
-  }
-  -public {
-    footer {
-    }
-  }
   section {
     overflow-y: auto
     flex: 1

@@ -4,10 +4,4 @@ Notifier {
   text-align: center
   animation: 0.5s slide-in
   position: relative
-  :hover {
-  }
-  -loader {
-    :hover {
-    }
-  }
 }

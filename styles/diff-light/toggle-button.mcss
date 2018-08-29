@@ -2,8 +2,6 @@ ToggleButton {
   color: white
   background-color: #848484
   border: none
-  -subscribe {
-  }
   -blocking {
     border: 0px
   }

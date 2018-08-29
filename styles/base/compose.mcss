@@ -10,8 +10,6 @@ Compose {
     background: transparent
     border: none
     padding: 10px
-    [disabled] {
-    }
   }
   section.warning {
     overflow: hidden
@@ -46,10 +44,6 @@ Compose {
     justify-content: space-between
     input[type="file"] {
       color: transparent
-      :hover {
-        ::before {
-        }
-      }
       ::-webkit-file-upload-button {
         display: none
       }
@@ -63,12 +57,6 @@ Compose {
       :active, :focus {
         outline: none
         box-shadow: none
-      }
-    }
-    button {
-      -private {
-        :hover {
-        }
       }
     }
   }

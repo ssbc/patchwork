@@ -51,10 +51,6 @@ AllChannels {
       border-bottom-left-radius: 0
       border-left: 2px solid rgba(255, 255, 255, 0.9)
       text-decoration: none
-      -subscribe {
-        :hover {
-        }
-      }
       -unsubscribe {
         :hover {
           background: rgb(212, 112, 112)

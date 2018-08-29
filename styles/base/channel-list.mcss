@@ -8,8 +8,6 @@ ChannelList {
     max-width: 250px
     background-repeat: no-repeat
     background-position: right
-    -more {
-    }
     -subscribed {
       background-image: svg(subscribed)
       border-left: 2px solid #51c067
@@ -47,10 +45,6 @@ ChannelList {
       border-bottom-left-radius: 0
       border-left: 2px solid rgba(255, 255, 255, 0.9)
       text-decoration: none
-      -subscribe {
-        :hover {
-        }
-      }
       -unsubscribe {
         :hover {
           background: rgb(212, 112, 112)

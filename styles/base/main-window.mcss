@@ -52,8 +52,6 @@ MainWindow {
         -active {
           opacity: 1
         }
-        :hover {
-        }
       }
       a + a {
         transform: rotate(180deg)
@@ -87,8 +85,6 @@ MainWindow {
         }
         -selected {
           color: black
-          :hover {
-          }
         }
         -drop {
           :after {

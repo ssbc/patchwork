@@ -20,8 +20,6 @@ FeedEvent {
         content: '▼ '
         font-size: 80%
       }
-      :hover {
-      }
     }
     div.items {
       margin: -10px 15px
@@ -49,8 +47,6 @@ FeedEvent {
     div {
       flex: 1
       margin: 0
-    }
-    div + div {
     }
   }
   div.meta {

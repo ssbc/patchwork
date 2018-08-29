@@ -30,8 +30,6 @@ Message {
             font-weight: bold
           }
         }
-        div.meta {
-        }
         margin-left: 10px
       }
     }
@@ -68,8 +66,6 @@ Message {
       em {
         display: inline-block
         padding: 4px
-      }
-      a.channel {
       }
       a.likes {
         font-size: 85%
@@ -147,14 +143,10 @@ Message {
         :before {
           content: "❤ "
         }
-        :hover {
-        }
       }
       a.unlike {
         :before {
           content: ""
-        }
-        :hover {
         }
       }
       a {

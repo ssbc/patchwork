@@ -65,7 +65,5 @@ Markdown {
     align-content: center
     margin-bottom: -0.3em
   }
-  (a) {
-  }
   word-break: break-word
 }

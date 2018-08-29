@@ -35,8 +35,6 @@ a {
   code {
     color: #8EC1FC
   }
-  :hover {
-  }
 }
 * + h1 {
   margin-top: 16px

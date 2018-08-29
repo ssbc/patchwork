@@ -27,7 +27,12 @@ module.exports = (tokens) => {
   const hasOutput = (obj, key) => {
     return Object.keys(obj[key]).some((innerKey) => {
       if (outputList.includes(innerKey)) {
-        return true
+        if (obj[key][innerKey]) {
+          const outputArray = Object.keys(obj[key][innerKey])
+          if (outputArray.length) {
+            return true
+          }
+        }
       } else {
         if (obj[key][innerKey]) {
           return hasOutput(obj[key], innerKey)
