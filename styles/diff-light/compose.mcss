@@ -3,7 +3,7 @@ Compose {
   background: white
   textarea {
     [disabled] {
-      color: #AAA
+      color: #aaa
       background: #ebf7ee
     }
   }
@@ -16,7 +16,7 @@ Compose {
         background: #f3e7ac
         border-color: #f3e7ac
         :hover {
-          color: #ffffff
+          color: white
           background-color: #8a6610
           border-color: #8a6610
         }
@@ -36,7 +36,7 @@ Compose {
         color: #5f5f5f
         padding: 3px 6px
         background: white
-        border: 2px solid #DDD
+        border: 2px solid #ddd
         border-radius: 4px
         padding-top: .3rem
         content: '📎 Attach File'

@@ -3,13 +3,13 @@ Picker {
     padding: 6px
     background: #fff
     margin: 3px
-    border: 1px solid #EEE
+    border: 1px solid #eee
     color: #222
     -add {
       padding: 0 5px
       font-size: 20px
-      border-color: #DDD
-      background: #EEE
+      border-color: #ddd
+      background: #eee
     }
     -self {
       border-color: #b3d6bd
@@ -31,8 +31,8 @@ Picker {
     }
   }
   span.add {
-    border: 1px solid #DDD
-    background: #EEE
+    border: 1px solid #ddd
+    background: #eee
     margin: 3px
     color: #222
     vertical-align: top

@@ -33,7 +33,7 @@ Loading {
       width: 100px
     }
     ::after {
-      color: #CCC
+      color: #ccc
       content: 'Loading...'
       font-size: 200%
     }
@@ -45,7 +45,7 @@ Loading {
       width: 100px
     }
     ::after {
-      color: #CCC
+      color: #ccc
       content: 'Searching...'
       font-size: 200%
     }
@@ -66,7 +66,7 @@ Loading {
   height: 30px
   content: "<circle cx='15' cy='15' r='10' /><circle cx='10' cy='10' r='2' /><circle cx='20' cy='20' r='3' />"
   circle {
-    stroke: #CCC
+    stroke: #ccc
     stroke-width: 3px
     fill: none
   }

@@ -1,5 +1,5 @@
 GatheringCard {
-  border: 1px solid #DDD
+  border: 1px solid #ddd
   padding: 10px
   margin-bottom: 10px
   div.attending {
@@ -20,7 +20,7 @@ GatheringCard {
     font-size: 120%
   }
   div.description {
-    border-top: 3px solid #CCC
+    border-top: 3px solid #ccc
     margin-top: 10px
   }
 }

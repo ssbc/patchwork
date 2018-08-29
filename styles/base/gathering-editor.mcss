@@ -11,7 +11,7 @@ GatheringEditor {
   }
   div.banner {
     margin-top: 10px
-    border: 1px solid #AAA
+    border: 1px solid #aaa
     box-shadow: none
     height: 250px
     width: 100%
@@ -20,14 +20,14 @@ GatheringEditor {
     background-size: cover
   }
   input {
-    border: 1px solid #CCC
+    border: 1px solid #ccc
     font-size: 150%
     padding: 10px
   }
   textarea {
     resize: vertical
     margin-top: 10px
-    border: 1px solid #CCC
+    border: 1px solid #ccc
     padding: 10px
     font-size: 120%
     flex: 1

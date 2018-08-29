@@ -1,8 +1,11 @@
-module.exports = (tokens) => {
-  let result = ''
+const colors = require('./colors')
 
-  let indent = 0
+module.exports = (tokens) => {
+  const doHackyColorNormalization = true
   const indentSpaces = 2
+
+  let result = ''
+  let indent = 0
 
   const ignoreList = [
     'objects',
@@ -55,10 +58,47 @@ module.exports = (tokens) => {
     }
   }
 
+  const hackyColorNormalization = (value) => {
+    const hashLocation = value.indexOf('#')
+    if (hashLocation > -1) {
+      // make sure we don't break stuff like `color: red !important`
+      let breakpoint = value.indexOf(' ', hashLocation)
+      if (breakpoint === -1) breakpoint = value.length
+      const first = value.slice(hashLocation, hashLocation + 4)
+      let last
+      let shortHex
+      if (breakpoint === hashLocation + 4) {
+        shortHex = first.toLowerCase()
+        last = shortHex
+      } else {
+        last = value.slice(hashLocation + 4, breakpoint)
+      }
+
+      const fullHex = (first + last).toLowerCase()
+      let foundColor
+
+      Object.keys(colors).forEach(colorName => {
+        if (colors[colorName] === fullHex) {
+          foundColor = true
+          console.log(colorName)
+          value = value.replace(value.slice(hashLocation, breakpoint), colorName)
+        }
+      })
+
+      if (!foundColor && shortHex) {
+        value = value.replace(value.slice(hashLocation, breakpoint), shortHex)
+      }
+    }
+    return value
+  }
+
   const handleRules = (obj, key) => {
     Object.keys(obj[key]).forEach((rule) => {
-      const value = obj[key][rule]
+      let value = obj[key][rule]
       if (value !== undefined) {
+        if (doHackyColorNormalization) {
+          value = hackyColorNormalization(value)
+        }
         print(`${rule}: ${value}`)
       }
     })

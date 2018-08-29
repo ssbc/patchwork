@@ -8,7 +8,7 @@ ProfileHeader {
     section {
       -publicKey {
         pre {
-          color: #808080
+          color: grey
           background: #333333
           ::selection {
             background: black

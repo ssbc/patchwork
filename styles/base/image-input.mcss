@@ -3,7 +3,7 @@ ImageInput {
   width: 200px
   padding: 5px
   background: white
-  box-shadow: 0 0 10px #AAA
+  box-shadow: 0 0 10px #aaa
   transition: box-shadow 0.2s
   img {
     width: 100%

@@ -54,10 +54,7 @@ fs.readdir('./light', (err, files) => {
           if (result.length > 2) {
             fs.writeFile(path, result, (writeErr) => {
               if (writeErr) throw writeErr
-              console.log(`Done: ${path}`)
             })
-          } else {
-            console.log(`Skipped: ${path}`)
           }
         })
       })

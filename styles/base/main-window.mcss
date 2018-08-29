@@ -65,7 +65,7 @@ MainWindow {
         }
         -active {
           path {
-            fill: #DDD
+            fill: #ddd
           }
         }
       }
@@ -161,7 +161,7 @@ MainWindow {
         margin-top: -2px
         :hover {
           text-decoration: none
-          background: #c0c0c0
+          background: silver
           color: white
         }
       }
@@ -219,7 +219,7 @@ MainWindow {
     display: flex
     padding: 5px
     audio {
-      color: #EEE
+      color: #eee
       width: 100%
       ::-webkit-media-controls-panel {
         background: transparent
@@ -247,7 +247,7 @@ MainWindow {
   }
   -active {
     path {
-      fill: #DDD
+      fill: #ddd
     }
   }
 }

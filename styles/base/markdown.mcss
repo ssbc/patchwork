@@ -35,7 +35,7 @@ Markdown {
     border-collapse: collapse
     (th) {
       text-align: left
-      border-bottom: 1px solid #DDD
+      border-bottom: 1px solid #ddd
       padding: 3px
     }
     (td) {

@@ -12,7 +12,7 @@ FeedEvent {
     }
   }
   div + div {
-    border-top: 1px solid #EEE
+    border-top: 1px solid #eee
   }
   a.full {
     background: #f3fafd
@@ -21,7 +21,7 @@ FeedEvent {
   }
   div.replies {
     div + div {
-      border-top: 1px solid #EEE
+      border-top: 1px solid #eee
     }
   }
   div.meta {

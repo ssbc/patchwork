@@ -87,7 +87,7 @@ ProfileList {
         overflow: hidden
         :hover {
           text-decoration: none
-          background-color: #F77
+          background-color: #f77
         }
       }
     }

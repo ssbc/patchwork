@@ -5,7 +5,7 @@ MainWindow {
     box-shadow: 0 0 3px #7f7f7f
     span {
       input.search {
-        background: #ffffff
+        background: white
         color: #656565
         :focus {
           box-shadow: inset 0 0 0px 1px #286bc3

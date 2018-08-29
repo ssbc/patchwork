@@ -1,7 +1,7 @@
 Thread {
   div.messages {
     div + div {
-      border-top: 1px solid #EEE
+      border-top: 1px solid #eee
     }
     a.full {
       background: #daecd6

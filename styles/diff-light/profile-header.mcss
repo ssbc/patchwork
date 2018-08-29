@@ -2,7 +2,7 @@ ProfileHeader {
   div.image {
     padding: 5px
     background: white
-    box-shadow: 0 0 10px #AAA
+    box-shadow: 0 0 10px #aaa
   }
   div.main {
     div.title {
@@ -17,7 +17,7 @@ ProfileHeader {
       -publicKey {
         pre {
           color: #b3b3b3
-          background: #ffffff
+          background: white
         }
       }
       -blockWarning {

@@ -20,7 +20,7 @@ ProfilePreview {
       }
       section {
         pre {
-          background: #ffffff
+          background: white
         }
       }
     }

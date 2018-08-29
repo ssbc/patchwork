@@ -2,7 +2,7 @@ button {
   color: #5f5f5f
   background: #ddd
   :hover {
-    color: #ffffff
+    color: white
     background-color: #959EAB
     border-color: #959EAB
   }
@@ -15,7 +15,7 @@ button {
   [disabled] {
     color: #999797 !important
     background: #e3e2e2 !important
-    border-color: #DDD !important
+    border-color: #ddd !important
   }
   -add {
     :hover {
@@ -24,17 +24,17 @@ button {
     }
   }
   -pub {
-    color: #ffffff
+    color: white
     background-color: #959ea9
     border-color: #959ea9
     :hover {
       background-color: rgb(112, 184, 212)
       border-color: rgb(112, 184, 212)
-      color: #ffffff
+      color: white
     }
   }
   -save {
-    color: #ffffff
+    color: white
     background-color: #70b57d
     border-color: #70b57d
     :active {
@@ -43,7 +43,7 @@ button {
     :hover {
       background-color: #59a066
       border-color: #59a066
-      color: #ffffff
+      color: white
     }
   }
   -full {

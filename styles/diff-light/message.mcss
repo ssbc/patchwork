@@ -2,7 +2,7 @@ Message {
   background: white
   highlight {
     background-color: rgb(216, 179, 0)
-    color: #ffffff
+    color: white
   }
   header {
     margin: 15px 20px 0
@@ -60,9 +60,9 @@ Message {
     }
   }
   a.backlink {
-    border-top: 1px solid #EEE
+    border-top: 1px solid #eee
     padding: 10px 15px
-    background: #ffffff
+    background: white
     color: #8f8f8f
     :hover {
       color: #777

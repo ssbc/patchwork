@@ -1,8 +1,8 @@
 Markdown {
   img {
     -pending {
-      border: 1px solid #DDD
-      background-color: #EEE
+      border: 1px solid #ddd
+      background-color: #eee
     }
   }
   blockquote {
@@ -15,7 +15,7 @@ Markdown {
   }
   pre {
     background: #fbfbfb
-    border: 1px solid #EEE
+    border: 1px solid #eee
   }
   a {
     [href^="#"], [href^="@"], [href^="%"] {

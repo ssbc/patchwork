@@ -14,7 +14,7 @@ ProfilePreview {
       color: white
     }
     -distanceWarning {
-      color: #ffffff
+      color: white
     }
   }
   header {

@@ -7,7 +7,7 @@ ToggleButton {
   }
   -unblocking {
     background-color: rgb(212, 112, 112)
-    color: #ffffff
+    color: white
     border: 0px
   }
   :hover {

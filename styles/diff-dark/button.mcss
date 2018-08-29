@@ -9,7 +9,7 @@ button {
     outline: 1px dotted rgba(255, 255, 255, 0.45)
   }
   :active {
-    background-color: #DDD !important
+    background-color: #ddd !important
   }
   [disabled] {
     opacity: 0.5

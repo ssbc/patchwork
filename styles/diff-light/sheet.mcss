@@ -16,6 +16,6 @@ Sheet {
     }
   }
   footer {
-    border-top: 1px solid #DDD
+    border-top: 1px solid #ddd
   }
 }
