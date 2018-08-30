@@ -60,33 +60,48 @@ module.exports = (tokens) => {
 
   const hackyColorNormalization = (value) => {
     const hashLocation = value.indexOf('#')
-    if (hashLocation > -1) {
+    const arrowLocation = value.indexOf('<') // svg
+    if (arrowLocation === -1 && hashLocation > -1) {
       // make sure we don't break stuff like `color: red !important`
       let breakpoint = value.indexOf(' ', hashLocation)
-      if (breakpoint === -1) breakpoint = value.length
-      const first = value.slice(hashLocation, hashLocation + 4)
-      let last
-      let shortHex
-      if (breakpoint === hashLocation + 4) {
-        shortHex = first.toLowerCase()
-        last = shortHex
-      } else {
-        last = value.slice(hashLocation + 4, breakpoint)
+      if (breakpoint === -1 || breakpoint < 3) breakpoint = value.length
+      const color = value.slice(hashLocation, breakpoint).toLowerCase()
+      let shorthand
+      let longhand
+      if (color.length === 4) {
+        shorthand = color
+        longHand = [
+          color[0],
+          color[1],
+          color[1],
+          color[2],
+          color[2],
+          color[3],
+          color[3]
+        ].join('')
+      } else if (color.length === 7) {
+        longhand = color
+        if (color[1] === color[2] && color[2] === color[3] && color[5] ===color[6]) {
+          shortHand = [
+            color[0],
+            color[1],
+            color[3],
+            color[5]
+          ].join('')
+        }
       }
 
-      const fullHex = (first + last).toLowerCase()
       let foundColor
 
       Object.keys(colors).forEach(colorName => {
-        if (colors[colorName] === fullHex) {
+        if (colors[colorName] === longhand) {
           foundColor = true
-          console.log(colorName)
           value = value.replace(value.slice(hashLocation, breakpoint), colorName)
         }
       })
 
-      if (!foundColor && shortHex) {
-        value = value.replace(value.slice(hashLocation, breakpoint), shortHex)
+      if (!foundColor && shorthand) {
+        value = value.replace(value.slice(hashLocation, breakpoint), shorthand)
       }
     }
     return value
