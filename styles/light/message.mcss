@@ -46,6 +46,10 @@ Message {
       a.likes {
         color: #757474
       }
+      a.tags {
+        color: #286bc3
+        font-size: 90%
+      }
       span.private {
         border: 4px solid #525050
         background-color: #525050

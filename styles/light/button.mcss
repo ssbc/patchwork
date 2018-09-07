@@ -17,6 +17,14 @@ button {
     background: #e3e2e2 !important
     border-color: #ddd !important
   }
+  -filterSelected {
+    color: white
+    background-color: #959EAB
+    border-color: #959EAB
+  }
+  -filterUnselected {
+    background: none
+  }
   -add {
     :hover {
       border-color: #7dbd85
