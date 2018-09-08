@@ -1,6 +1,18 @@
 const { Value, Array: MutantArray, computed, map, when, h } = require('mutant')
 const nest = require('depnest')
 const pull = require('pull-stream')
+const get = require('lodash/get')
+const concat = require('lodash/concat')
+const filter = require('lodash/filter')
+const sortBy = require('lodash/sortBy')
+const flow = require('lodash/fp/flow')
+const fpFilter = require('lodash/fp/filter')
+const fpSortBy = require('lodash/fp/sortBy')
+const fpReverse = require('lodash/fp/reverse')
+const fpReduce = require('lodash/fp/reduce')
+const fpMap = require('lodash/fp/map')
+const fpMapValues = require('lodash/fp/mapValues')
+const fpToPairs = require('lodash/fp/toPairs')
 const ScuttleTag = require('scuttle-tag')
 
 exports.needs = nest({
@@ -41,22 +53,68 @@ exports.create = function (api) {
       a.filter(c => !b.includes(c)))
 
     const name = tagId === 'all' ? i18n('All Tags') : api.about.obs.name(tagId)
-    const taggedMessages = MutantArray([])
-    let messageStream
+    let tagStream
     if (tagId === 'all' && author === 'all') {
-      messageStream = scuttleTag.pull.messagesTagged()
+      tagStream = scuttleTag.pull.allTags({ live: true })
     } else if (tagId === 'all' && author !== 'all') {
-      messageStream = scuttleTag.pull.messagesTaggedBy(author)
+      tagStream = scuttleTag.pull.tagsFrom(author, { live: true })
     } else if (tagId !== 'all' && author === 'all') {
-      messageStream = scuttleTag.pull.messagesTaggedWith(tagId)
+      tagStream = scuttleTag.pull.tagsOf(tagId, { live: true })
     } else {
-      messageStream = scuttleTag.pull.messagesTaggedWithBy(tagId, author)
+      tagStream = scuttleTag.pull.tagsOfFrom(tagId, author, { live: true })
     }
+    const sync = Value(false)
+    const newTags = MutantArray()
+    const updateCount = computed(newTags, tags => tags.length)
+    const tagsArray = MutantArray([])
+    const taggedMessages = computed(tagsArray, tags => flow(
+      fpReduce((result, tag) => {
+        const root = get(tag, 'value.content.root')
+        const tagged = get(tag, 'value.content.tagged')
+        const message = get(tag, 'value.content.message')
+        const messageTags = get(result, message) || []
+        if (!tagged) {
+          result[message] = filter(messageTags, messageTag =>
+            get(messageTag, 'value.content.root') !== root
+          )
+        } else {
+          result[message] = concat(messageTags, [tag])
+        }
+        return result
+      }, {}),
+      fpMapValues(messageTags => sortBy(messageTags, ['value', 'timestamp'])),
+      fpToPairs,
+      fpFilter(([message, messageTags]) => messageTags.length > 0),
+      fpSortBy(([message, messageTags]) => {
+        const lastTag = messageTags[messageTags.length - 1]
+        return get(lastTag, ['value', 'timestamp'])
+      }),
+      fpReverse,
+      fpMap(([message]) => api.message.obs.get(message))
+    )(tags))
     pull(
-      messageStream,
-      pull.map(api.message.obs.get),
-      pull.drain((msg) => taggedMessages.push(msg))
+      tagStream,
+      pull.drain(tag => {
+        if (tag.sync) sync.set(true)
+        if (sync()) {
+          newTags.push(tag)
+        } else {
+          tagsArray.push(tag)
+        }
+      })
     )
+
+    const refresh = () => {
+      newTags.forEach(tag => tagsArray.push(tag))
+      newTags.clear()
+    }
+
+    const updateLoader = h('a Notifier -loader', { href: '#', 'ev-click': refresh }, [
+      'Show ',
+      h('strong', [updateCount]),
+      ' ',
+      computed(updateCount, count => count === 1 ? i18n('update') : i18n('updates'))
+    ])
 
     return h('SplitView -tags', [
       h('div.side', [
@@ -82,6 +140,7 @@ exports.create = function (api) {
         })))
       ]),
       h('div.main', [
+        when(updateCount, updateLoader),
         h('Scroller',
           h('div.wrapper', [
             h('TagsHeader', [
