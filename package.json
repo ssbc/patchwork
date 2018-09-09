@@ -59,7 +59,7 @@
     "pull-pushable": "^2.2.0",
     "pull-stream": "^3.6.8",
     "scuttle-blog": "^1.0.0",
-    "scuttle-tag": "^0.4.0",
+    "scuttle-tag": "0.4.0",
     "scuttlebot": "~11.3.0",
     "secret-stack": "^4.1.0",
     "sorted-array-functions": "^1.1.0",
