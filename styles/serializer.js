@@ -102,6 +102,8 @@ module.exports = (tokens) => {
 
       if (!foundColor && shorthand) {
         value = value.replace(value.slice(hashLocation, breakpoint), shorthand)
+      } else if (!foundColor && longhand) {
+        value = value.replace(value.slice(hashLocation, breakpoint), color)
       }
     }
     return value
