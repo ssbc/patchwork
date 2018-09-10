@@ -103,15 +103,15 @@ MainWindow {
         }
         -add {
           border-color: #498849
-          background-color: #255D24
+          background-color: #255d24
           text-shadow: 1px 1px 1px #000
           color: white
           :active {
-            background-color: #1F331F !important
+            background-color: #1f331f !important
           }
           :hover {
-            background-color: #356D34
-            border-color: #4CB54C
+            background-color: #356d34
+            border-color: #4cb54c
           }
         }
       }
