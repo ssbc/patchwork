@@ -33,7 +33,7 @@ input {
 a {
   text-decoration: none
   code {
-    color: #8EC1FC
+    color: #8ec1fc
   }
 }
 * + h1 {

@@ -29,7 +29,7 @@ Compose {
       :hover {
         ::before {
           color: black
-          border-color: #8B8B8B
+          border-color: #8b8b8b
         }
       }
       ::before {

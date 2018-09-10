@@ -80,7 +80,7 @@ Message {
       }
       a.unlike {
         :hover {
-          background: #959EAB
+          background: #959eab
         }
       }
       a {

@@ -3,7 +3,7 @@ SplitView {
     background: #efefef
     border-right: 1px solid gainsboro
     -right {
-      background: #F9F8F7
+      background: #f9f8f7
       border-left: 1px solid gainsboro
     }
   }

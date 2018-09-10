@@ -3,14 +3,14 @@ button {
   background: #ddd
   :hover {
     color: white
-    background-color: #959EAB
-    border-color: #959EAB
+    background-color: #959eab
+    border-color: #959eab
   }
   :focus {
-    outline: 1px dotted #959EAB
+    outline: 1px dotted #959eab
   }
   :active {
-    background-color: #959EAB !important
+    background-color: #959eab !important
   }
   [disabled] {
     color: #999797 !important
