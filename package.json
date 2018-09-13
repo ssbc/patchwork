@@ -40,6 +40,7 @@
     "moment-timezone": "^0.5.21",
     "mutant": "^3.22.1",
     "mutant-pull-reduce": "^1.1.0",
+    "node-abi": "^2.4.3",
     "patch-settings": "^1.1.2",
     "patchcore": "^1.28.0",
     "pull-abortable": "^4.1.1",
