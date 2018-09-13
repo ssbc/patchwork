@@ -160,9 +160,8 @@ Message {
 
     div.meta {
       display: flex;
-      flex-direction: column-reverse;
+      flex-direction: column;
       align-items: flex-end;
-      justify-content: flex-end;
 
       span.flag {
         width: 12px
@@ -214,17 +213,32 @@ Message {
         }
       }
 
-      a.likes {
+      div.counts {
         font-size: 85%;
 
-        ::before {
-          content: '❤ '
-          color: #ff2f92
+        a.tags {
+          :hover {
+            color: #b480f5
+          }
         }
-        :hover {
-          color: #ff2f92
+
+        a.likes {
+          ::before {
+            content: '❤ '
+            color: #ff2f92
+          }
+          :hover {
+            color: #ff2f92
+          }
+        }
+
+        a + a {
+          border-left: 2px solid #484848
+          padding-left: 5px
         }
       }
+
+
 
       (a.Timestamp) {
         font-size: 75%
@@ -333,6 +347,14 @@ Message {
           background: #ff2f92
         }
       }
+      a.tag {
+        :before {
+          content: ""
+        }
+        :hover {
+          background: #7f2fff
+        }
+      }
       a.unlike {
         :before {
           content: ""
@@ -357,6 +379,10 @@ Message {
         :hover {
           background: #45b754
           color: white
+        }
+
+        -right {
+          float: right
         }
       }
       a + a {

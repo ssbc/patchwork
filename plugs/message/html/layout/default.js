@@ -12,8 +12,8 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'message.html': {
     link: 'first',
-    meta: 'map',
-    action: 'map',
+    metas: 'first',
+    actions: 'first',
     timestamp: 'first',
     backlinks: 'first'
   },
@@ -95,7 +95,7 @@ exports.create = function (api) {
               }, when(expanded, i18n('See less'), i18n('See more')))
             ])),
             h('div.actions', [
-              api.message.html.action(msg)
+              api.message.html.actions(msg)
             ])
           ])
         }
@@ -131,7 +131,7 @@ exports.create = function (api) {
           ])
         ]),
         h('div.meta', [
-          api.message.html.meta(msg),
+          api.message.html.metas(msg),
           additionalMeta
         ])
       ])

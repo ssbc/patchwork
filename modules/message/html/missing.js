@@ -42,7 +42,7 @@ exports.create = function (api) {
           ])
         ]),
         h('div.meta', [
-          api.message.html.meta(msg)
+          api.message.html.metas(msg)
         ])
       ]),
       h('section', [
