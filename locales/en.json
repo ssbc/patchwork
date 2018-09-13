@@ -237,5 +237,18 @@
 	"blocked": "blocked",
 	"unblocked": "unblocked",
 	"fr": "fr",
-	"sk": "sk"
+	"sk": "sk",
+	"Tags": "Tags",
+	"Tag": "Tag",
+	"All Tags": "All Tags",
+	"Tags Used By You": "Tags Used By You",
+	"Community Tags": "Community Tags",
+	"Most Active": "Most Active",
+	"Recent": "Recent",
+	"From You": "From You",
+	"From Everyone": "From Everyone",
+	"Unlike": "Unlike",
+	"Like": "Like",
+	"Applied Tags": "Applied Tags",
+	"View Taggers": "View Taggers"
 }
