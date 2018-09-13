@@ -114,6 +114,7 @@ module.exports = function (config) {
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
           [i18n('Gatherings'), '/gatherings'],
+          [i18n('Tags'), `/tags/all/${encodeURIComponent(id)}`],
           [i18n('Extended Network'), '/all'],
           {separator: true},
           [i18n('Settings'), '/settings']

@@ -50,7 +50,9 @@ if (process.argv.includes('--path')) {
 quitIfAlreadyRunning()
 
 electron.app.on('ready', () => {
-  setupContext('ssb', config, () => {
+  setupContext(process.env.ssb_appname || 'ssb', {
+    server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+  }, () => {
     var browserWindow = openMainWindow()
     var menu = defaultMenu(electron.app, electron.shell)
 

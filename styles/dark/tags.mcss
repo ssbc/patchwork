@@ -1,0 +1,30 @@
+SplitView -tags {
+  div.side {
+    div.tagControls {
+      display: flex
+      justify-content: space-between
+      margin-bottom: .5em
+      button {
+        width: 48%
+      }
+    }
+  }
+
+}
+
+TagsHeader {
+  position: relative
+  h1 {
+    display: inline-block
+    margin-right: .5em
+    margin-top: 1em
+  }
+  div.tagControls {
+    position: absolute
+    top: 2em
+    right: 0
+    button.you {
+      margin-right: .5em
+    }
+  }
+}

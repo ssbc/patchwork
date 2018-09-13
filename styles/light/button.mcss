@@ -18,6 +18,16 @@ button {
     outline: 1px dotted #959EAB
   }
 
+  -filterSelected {
+    color: #ffffff
+    background-color: #959EAB
+    border-color: #959EAB
+  }
+
+  -filterUnselected {
+    background: none
+  }
+
   :active {
     background-color: #959EAB !important
   }

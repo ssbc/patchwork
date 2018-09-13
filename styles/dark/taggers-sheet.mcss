@@ -1,0 +1,12 @@
+TaggersSheet {
+  padding: 20px
+
+  h2 {
+    font-weight: normal
+
+    input {
+      float: right
+      font-size: 100%
+    }
+  }
+}
