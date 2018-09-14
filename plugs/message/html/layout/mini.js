@@ -122,9 +122,9 @@ exports.create = function (api) {
           ])
         ]),
         h('div.meta', [
-          api.message.html.metas(msg),
+          h('strong', api.message.html.timestamp(msg)),
           additionalMeta,
-          h('strong', api.message.html.timestamp(msg))
+          api.message.html.metas(msg)
         ])
       ])
     }

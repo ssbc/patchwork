@@ -18,7 +18,6 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('message.html.metas', function likes (msg) {
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
-    const channel = msg.value.content.channel && msg.value.content.type !== 'channel' ? msg.value.content.channel : null
 
     var result = []
     if (msg.value.private) {
@@ -35,8 +34,8 @@ exports.create = function (api) {
       })))
     }
 
-    if (channel) {
-      result.push(h('a.channel', {href: `#${channel}`}, [`#${channel}`]))
+    if (msg.value.content && msg.value.content.channel && msg.value.content.type !== 'channel') {
+      result.push(h('a.channel', {href: `#${msg.value.content.channel}`}, [`#${msg.value.content.channel}`]))
     }
 
     if (msg.key) {

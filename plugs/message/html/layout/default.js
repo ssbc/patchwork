@@ -131,8 +131,8 @@ exports.create = function (api) {
           ])
         ]),
         h('div.meta', [
-          api.message.html.metas(msg),
-          additionalMeta
+          additionalMeta,
+          api.message.html.metas(msg)
         ])
       ])
     }
