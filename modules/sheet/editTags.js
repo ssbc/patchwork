@@ -37,7 +37,7 @@ exports.create = function (api) {
           h('div', [
             h('h2', {
               style: { 'font-weight': 'normal', 'text-align': 'center' }
-            }, i18n('Add/Edit Tags')),
+            }, i18n('Add / Edit Tags')),
             content
           ])
         ],

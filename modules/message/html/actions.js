@@ -20,7 +20,7 @@ exports.create = (api) => {
     var id = api.keys.sync.id()
     var liked = computed([api.message.obs.likes(msg.key), id], doesLike)
     return [
-      h('a', { href: msg.key, anchor: 'reply', 'ev-click': {handleEvent, api, msg} }, i18n('Reply')),
+      h('a.reply', { href: msg.key, anchor: 'reply', 'ev-click': {handleEvent, api, msg} }, i18n('Reply')),
       when(liked,
         h('a.unlike', {
           href: '#',
@@ -33,8 +33,9 @@ exports.create = (api) => {
       ),
       h('a.tag -right', {
         href: '#',
+        title: i18n('Add / Edit Tags'),
         'ev-click': () => api.sheet.editTags({ msgId: msg.key }, console.log)
-      }, i18n('Tag'))
+      }, i18n('Tags'))
     ]
   })
 
