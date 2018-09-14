@@ -15,10 +15,12 @@ exports.needs = nest({
   'sbot.obs.connection': 'first',
   'sheet.display': 'first',
   'tag.async.suggest': 'first',
-  'tag.html.tag': 'first'
+  'tag.html.tag': 'first',
+  'intl.sync.i18n': 'first'
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
   return nest({ 'sheet.editTags': editTags })
 
   function editTags ({ msgId }, callback) {
@@ -31,7 +33,14 @@ exports.create = function (api) {
       const { content, onMount, onSave } = edit({ msgId })
 
       return {
-        content,
+        content: [
+          h('div', [
+            h('h2', {
+              style: { 'font-weight': 'normal', 'text-align': 'center' }
+            }, i18n('Add/Edit Tags')),
+            content
+          ])
+        ],
         footer: [
           h('button.save', { 'ev-click': publish }, 'Save'),
           h('button.cancel', { 'ev-click': close }, 'Cancel')
@@ -66,7 +75,7 @@ exports.create = function (api) {
         h('StagedTags', concat(a, [b, c])))
 
       const input = h('input.tags', {
-        placeholder: 'Add tags here',
+        placeholder: i18n('Add tags here'),
         'ev-keyup': onInput,
         value: tagsInput()
       })
