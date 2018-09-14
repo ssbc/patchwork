@@ -5,6 +5,7 @@ const filter = require('lodash/filter')
 const parallel = require('run-parallel')
 const addSuggest = require('suggest-box')
 const TagHelper = require('scuttle-tag')
+const ref = require('ssb-ref')
 
 exports.gives = nest('sheet.editTags')
 
@@ -94,7 +95,7 @@ exports.create = function (api) {
           return
         }
         const tag = input.substring(0, input.length - 1)
-        tagsToCreate.push(tag)
+        tagsToCreate.push(ref.normalizeChannel(tag))
         e.target.value = ''
       }
 
@@ -102,14 +103,14 @@ exports.create = function (api) {
         e.target.value = ''
         const { value, tagId } = e.detail
         if (!tagId) {
-          tagsToCreate.push(value)
+          tagsToCreate.push(ref.normalizeChannel(value))
           return
         }
         const index = tagsToRemove().indexOf(tagId)
         if (index >= 0) {
           tagsToRemove.deleteAt(index)
         } else {
-          tagsToApply.push(tagId)
+          tagsToApply.push(ref.normalizeChannel(tagId))
         }
       }
 
