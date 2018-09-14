@@ -119,7 +119,7 @@ exports.create = function (api) {
         if (index >= 0) {
           tagsToRemove.deleteAt(index)
         } else {
-          tagsToApply.push(ref.normalizeChannel(tagId))
+          tagsToApply.push(tagId)
         }
       }
 
