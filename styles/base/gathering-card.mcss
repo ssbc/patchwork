@@ -1,0 +1,51 @@
+GatheringCard {
+  a.image {
+    display: block
+    margin-top: 10px
+    height: 300px
+    background-size: cover
+    background-repeat: no-repeat
+    background-position: center
+  }
+  div.attending {
+    margin: 10px 0
+    padding-top: 10px
+    div.title {
+      font-size: 75%
+      margin-bottom: 10px
+      text-align: center
+    }
+    div.attendees {
+      text-align: center
+      a + a {
+        margin-left: 10px
+      }
+      (img) {
+        height: 45px
+        width: 45px
+      }
+    }
+    div.actions {
+      text-align: center
+      margin-top: 10px
+      button {
+        :first-child {
+          ::before {
+            content: '✔ '
+          }
+        }
+      }
+      button + button {
+        margin-left: 5px
+      }
+    }
+  }
+  div.title {
+    button {
+      float: right
+      ::before {
+        content: '✎ '
+      }
+    }
+  }
+}

@@ -1,60 +1,20 @@
 Sheet {
-  position: fixed;
-  max-height: 80vh;
-  max-width: 800px;
-  margin: auto;
-  top: 38px;
-  left: 0;
-  right: 0;
-  width: 80vw;
-  background: #434141;
-  box-shadow: 0 0 40px black;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  display: flex
-  flex-direction: column
-  z-index: 50
-
+  background: #434141
+  box-shadow: 0 0 40px black
+  border-bottom-left-radius: 3px
+  border-bottom-right-radius: 3px
   -private {
     footer {
       border-color: #5b56b3
       background-color: #372a56
     }
   }
-
   -public {
     footer {
       background-color: #4a3232
     }
   }
-
-  section {
-    overflow-y: auto
-    flex: 1
-  }
-
   footer {
-    flex-shrink: 0;
-    min-height: 20px;
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-    position: relative
     border-top: 1px solid #2d2c2c
-    align-items: center
-
-    img {
-      max-height: 24px;
-    }
-
-    div.info {
-      flex: 1
-      padding: 8px
-      font-size: 13px
-    }
-
-    button {
-      margin-left: 10px
-    }
   }
 }

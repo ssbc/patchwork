@@ -1,80 +1,38 @@
 ProfileHeader {
-  display: flex;
-  width: 100%;
-  margin: 20px auto;
-
   div.image {
-    width: 200px;
-    max-height: 200px;
-    margin-right: 20px;
-
     img {
-      width: 100%
       border-radius: 3px
     }
   }
-
   div.main {
-    flex: 1
-    min-width: 0
-    div.title {
-      display: flex
-      h1 {
-        flex: 1
-      }
-    }
     section {
-      -description {
-        font-size: 120%
-        max-height: 350px
-        overflow: auto
-        -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
-      }
       -publicKey {
         pre {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          color: #808080;
-          margin: 2px 0;
-          font-size: 120%;
-          background: #333333;
-          padding: 3px;
+          color: grey
+          background: #333333
           ::selection {
             background: black
             color: white
           }
         }
       }
-      -distanceWarning {
-        $distanceWarning
-      }
-
       -blockWarning {
-        padding: 8px;
-        border: 1px solid #ffba4e;
-        background: #5f410b;
-        margin: 5px 0;
-        color: #ffdda7;
-        font-size: 110%
+        border: 1px solid #ffba4e
+        background: #5f410b
+        color: #ffdda7
         a {
-          color: #ffdda7;
+          color: #ffdda7
           :hover {
-            text-decoration: none
             color: #ffb236
           }
         }
       }
-
       -mutualFriends {
-        padding: 8px;
-        border: 1px solid #046ac1;
-        background: #0b405f;
-        margin: 5px 0;
-
+        border: 1px solid #046ac1
+        background: #0b405f
         a {
-          color: #dbecf7;
+          color: #dbecf7
           :hover {
-            text-decoration: none
             color: #91d4ff
           }
         }

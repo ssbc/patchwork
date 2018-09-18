@@ -1,20 +1,8 @@
 $distanceWarning {
-  padding: 8px;
-  border: 1px solid #ffc965;
-  background: #ffebcc;
-  margin: 5px 0;
-  color: #8a6800;
-  font-size: 110%
-
+  border: 1px solid #ffc965
+  background: #ffebcc
+  color: #8a6800
   h1 {
-    font-size: 120%
-    font-weight: bold
-    margin: 0
     color: #583805
-  }
-
-  p {
-    margin: 0
-    margin-top: 8px
   }
 }

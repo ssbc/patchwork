@@ -1,388 +1,126 @@
 Message {
-  display: flex
-  flex-direction: column
   background: white
-  position: relative
-  font-size: 120%
-  line-height: 1.4
-  flex-shrink: 0
-
-  (highlight) {
-    background-color: rgb(216, 179, 0);
-    color: #ffffff;
-    border-radius: 3px;
-    padding: 0 2px;
+  highlight {
+    background-color: rgb(216, 179, 0)
+    color: white
   }
-
-  :focus {
-    z-index: 1
-  }
-
-  -following {
-    header {
-      div.main {
-        div.main {
-          div.name {
-            $following
-          }
-        }
-      }
-    }
-  }
-
-  -data {
-    header {
-      div.main {
-        font-size: 80%
-        a.avatar {
-          img {
-            width: 25px
-          }
-        }
-      }
-    }
-    (pre) {
-      overflow: auto
-      max-height: 200px
-    }
-  }
-
-  -mini {
-    header {
-      font-size: 100%
-      margin-bottom: 15px
-      div.main {
-        a.avatar {
-          img {
-            width: 40px
-            height: 40px
-          }
-        }
-      }
-    }
-  }
-
-  -compact {
-    section {
-      max-height: 300px
-    }
-  }
-
-  -reply {
-    header {
-      font-size: 100%
-      div.meta {
-        a.channel {
-          display: none;
-        }
-        span.private {
-          (img) {
-            width: 40px
-            height: 40px
-          }
-        }
-      }
-      div.main {
-        a.avatar {
-          img {
-            width: 40px
-            height: 40px
-          }
-        }
-      }
-    }
-  }
-
-  -missing {
-    header {
-      div.main {
-        div.main {
-          margin-left: 0
-        }
-      }
-    }
-    section {
-      font-size: 90%
-      font-style: italic
-      color: #777
-    }
-  }
-
-  -new, -unread {
-    box-shadow: 0 0 1px #ffc600;
-    z-index: 1;
-  }
-
   header {
-    font-size: 120%
     margin: 15px 20px 0
-    display: flex
-
-    div.mini {
-      flex: 1
-    }
-
     div.main {
-      display: flex
-      flex: 1
-
-      a.avatar {
-        img {
-          width: 50px
-          height: 50px
-        }
-      }
-
       div.main {
         div.name {
           a {
             color: #444
-            font-weight: bold
           }
         }
         div.meta {
           font-size: 90%
         }
-        margin-left: 10px
       }
     }
-
     div.meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-
       span.flag {
-        width: 12px
-        height: 12px
-
-        background-repeat: no-repeat
-        background-position: center
-        display: inline-block
-        vertical-align: middle;
-        margin-top: -3px;
-
+        margin-top: -3px
         -unread {
           :after {
-            content: ' unread'
             font-size: 75%
             color: #b7b7b7
           }
         }
-
         -new {
           :after {
-            content: ' new'
             font-size: 75%
             color: #b7b7b7
           }
         }
-
         -new, -unread {
-          width: auto
-          height: auto
           color: #ffcf04
-
-          :before {
-            content: '✸'
-          }
-
           :first-letter {
             font-size: 100%
           }
         }
       }
-
-      em {
-        display: inline-block
-        padding: 4px
-      }
-
       a.channel {
-        font-weight: bold;
+        font-weight: bold
       }
-
       div.counts {
-        font-size: 85%;
         a {
           color: #757474
         }
-
         a.tags {
           :hover {
             color: #9544f9
           }
         }
-
-        a.likes {
-          ::before {
-            content: '❤ '
-            color: #ff2f92
-          }
-          :hover {
-            color: #ff2f92
-          }
-        }
-
         a + a {
           border-left: 2px solid #e6e6e6
-          padding-left: 5px
         }
       }
-
-
       span.private {
-        display: inline-block;
-        margin: -3px -3px 3px 4px;
-        border: 4px solid #525050;
+        border: 4px solid #525050
         background-color: #525050
-        position: relative;
-
-        a {
-          display: inline-block
-
-          img {
-            margin: 0
-            vertical-align: bottom
-            border: none
-          }
-        }
-
         :after {
-          content: 'private';
-          position: absolute;
-          background: #525050;
-          bottom: 0;
-          left: -1px;
-          font-size: 10px;
-          padding: 2px 4px 0 2px;
-          border-top-right-radius: 5px;
-          color: white;
-          font-weight: bold;
-          pointer-events: none;
-          white-space: nowrap
+          background: #525050
+          padding: 2px 4px 0 2px
+          border-top-right-radius: 5px
+          color: white
+          font-weight: bold
         }
       }
     }
   }
-
-  section {
-    margin: 0
-    padding: 0 20px
-    max-height: 1500px
-    overflow: hidden
-
-    (img) {
-      max-width: 100%
-    }
-
-    -expanded {
-      max-height: none
-    }
-  }
-
   a.backlink {
-    display: block;
-    border-top: 1px solid #EEE;
-    padding: 10px 15px;
-    background: #ffffff;
-    color: #8f8f8f;
-    margin-top: -1px;
-    font-size: 9pt;
-
+    border-top: 1px solid #eee
+    padding: 10px 15px
+    background: white
+    color: #8f8f8f
     :hover {
-      text-decoration: none
       color: #777
     }
   }
-
   footer {
-    margin: 5px 0 20px;
-    padding: 0 20px
-
     div.expander {
-      text-align: center;
-      background-color: white;
-
-      -truncated {
-        padding-top: 50px;
-        margin-top: -50px;
-        -webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,1) 50%, rgba(0,0,0,0));
-        a {
-          :before { content: '▼ '; font-size: 80% }
-        }
-      }
+      background-color: white
     }
-
     div.actions {
-      a.reply {
-        :before {
-          content: "↩ "
-        }
-      }
       a.like {
-        :before {
-          content: "❤ "
-        }
         :hover {
           background: #e26ba4
         }
       }
       a.unlike {
         :hover {
-          background: #959EAB
+          background: #959eab
         }
       }
       a.tag {
         :before {
-          content: ' '
-          -webkit-mask-box-image: svg(tag)
-          height: 16px;
-          width: 16px;
-          background-color: #656565;
-          display: inline-block;
-          vertical-align: bottom;
-          margin-right: 5px;
+          background-color: #656565
         }
         :hover {
-          background: #7f2fff
           :before {
             background-color: white
           }
         }
       }
       a {
-        font-size: 13px
-        background: #f3f3f3;
-        padding: 6px 10px;
-        border-radius: 3px;
-        color: #656565;
-        display: inline-block
-        text-align: center
-        transition: background-color 0.25s ease, color 0.25s ease
-
+        background: #f3f3f3
+        color: #656565
         :before {
           transition: background-color 0.25s ease
         }
-
         :hover {
           background: #7dbd85
-          color: white
         }
-
-        -right {
-          float: right
-        }
-      }
-      a + a {
-        margin-left: 10px;
-      }
-
-      @svg tag {
-        height: 50px
-        width: 50px
-        content: '<path d="M47.146,22.904l-9.21-10.506l-0.075-0.077C36.936,11.469,35.732,11,34.476,11c-0.001,0-0.002,0-0.003,0H5 c-1.654,0-3,1.346-3,3v22c0,1.654,1.346,3,3,3h29.472c0.001,0,0.002,0,0.003,0c1.258,0,2.461-0.469,3.387-1.321l9.26-10.557 C47.688,26.555,48,25.801,48,25C48,24.21,47.697,23.468,47.146,22.904z M37,28c-1.657,0-3-1.343-3-3s1.343-3,3-3s3,1.343,3,3 S38.657,28,37,28z"/>'
       }
     }
+  }
+  -mini {
+    header {
+      margin-bottom: 15px
+    }
+  }
+  -new, -unread {
+    box-shadow: 0 0 1px #ffc600
   }
 }

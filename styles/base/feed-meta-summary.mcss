@@ -1,0 +1,134 @@
+FeedMetaSummary {
+  position: relative
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  margin: 10px
+  div {
+    display: flex
+    align-items: center
+    border-radius: 3px
+    padding: 5px
+    background: #353535
+    margin: 5px
+    white-space: nowrap
+    overflow: hidden
+    div {
+      display: flex
+      align-items: center
+      flex-wrap: wrap
+      -left {
+        background: #111
+        padding: 5px
+        margin: -5px
+        border-radius: 3px
+      }
+      strong {
+        margin-left: 3px
+        font-size: 20px
+        font-weight: normal
+      }
+      a {
+        vertical-align: middle
+        display: inline-block
+        img {
+          display: block
+          width: 45px
+          min-height: 30px
+          border-radius: 3px
+        }
+        -channel {
+          font-size: 20px
+          color: #91c1ec
+          border-bottom: 1px dotted #91c1ec
+          margin: 5px
+        }
+      }
+      a + a {
+        margin-left: 3px
+      }
+    }
+    span {
+      vertical-align: middle
+      position: relative
+      display: inline-flex
+      align-items: center
+      background: svg(arrow) no-repeat right
+      background-size: cover
+      height: 45px
+      margin-right: 3px
+      padding-left: 10px
+      padding-right: 13px
+      :after {
+        color: white
+        font-size: 15px
+        vertical-align: middle
+        display: inline-block
+      }
+      @svg arrow {
+        width: 64px
+        height: 64px
+        content: "<path d='M40 54 L64 32 L40 10 L28 10 L16 0 L0 0 L0 64 L16 64 L28 54 Z' />"
+        path {
+          fill: #111
+        }
+      }
+    }
+    -blocked {
+      background-color: #382c01
+      span {
+        :after {
+          content: '⚠️'
+          color: #ffa603
+        }
+      }
+      div {
+        -right {
+          opacity: 0.7
+          :hover {
+            opacity: 1
+          }
+        }
+      }
+    }
+    -unblocked {
+      background-color: #39434c
+      span {
+        :after {
+          content: '?'
+        }
+      }
+    }
+    -followed, -subscribed {
+      span {
+        :after {
+          content: '✓'
+        }
+      }
+    }
+    -unfollowed, -unsubscribed {
+      background-color: #39434c
+      span {
+        :after {
+          content: '⊗'
+        }
+      }
+      div {
+        -right {
+          opacity: 0.7
+          :hover {
+            opacity: 1
+          }
+        }
+      }
+    }
+    -identified {
+      background-color: #afafaf
+      span {
+        :after {
+          content: '👤'
+        }
+      }
+    }
+  }
+}

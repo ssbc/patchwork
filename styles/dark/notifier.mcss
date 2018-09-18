@@ -1,20 +1,11 @@
 Notifier {
-  padding: 10px;
-  display: block;
   background: #ebebeb
-  text-align: center;
-  animation: 0.5s slide-in;
-
   :hover {
     background: #f7f7f7
   }
-
-  position: relative
-
   -loader {
     background: #ebebeb
     color: #383736
-
     :hover {
       background: #f7f7f7
       color: #2d2c2c
