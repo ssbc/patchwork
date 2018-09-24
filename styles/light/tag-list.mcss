@@ -1,0 +1,45 @@
+TagList {
+  a.tag {
+    display: flex;
+    padding: 4px;
+    font-size: 110%;
+    margin: 4px 0;
+    background: rgba(255, 255, 255, 0.74);
+    border-radius: 5px;
+    position: relative
+    text-decoration: none
+    transition: background-color 0.2s
+
+    background-repeat: no-repeat
+    background-position: right
+
+    div.main {
+      display: flex
+      flex-direction: column
+      flex: 1
+      margin-left: 10px
+      justify-content: center
+      min-width: 0px
+      div.name {
+        white-space: nowrap
+        font-weight: bold
+        font-size: 110%
+        color: #636363
+        -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0))
+      }
+    }
+
+    div.buttons {
+      display: flex;
+      align-items: center;
+      padding-right: 10px;
+    }
+
+    :hover {
+      background-color: rgba(255, 255, 255, 0.4);
+      div.controls {
+        opacity: 1
+      }
+    }
+  }
+}

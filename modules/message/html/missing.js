@@ -7,7 +7,7 @@ var nest = require('depnest')
 exports.needs = nest({
   'message.obs.get': 'first',
   'profile.html.person': 'first',
-  'message.html.meta': 'first',
+  'message.html.metas': 'first',
   'message.sync.isBlocked': 'first',
   'intl.sync.i18n': 'first'
 })
@@ -42,7 +42,7 @@ exports.create = function (api) {
           ])
         ]),
         h('div.meta', [
-          api.message.html.meta(msg)
+          api.message.html.metas(msg)
         ])
       ]),
       h('section', [
