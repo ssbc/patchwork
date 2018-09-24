@@ -4,7 +4,7 @@ GatheringCard {
   border-top: 1px solid #2d2c2c
   div.attending {
     div.attendees {
-      img {
+      (img) {
         border-radius: 3px
       }
     }

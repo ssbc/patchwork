@@ -1,5 +1,5 @@
 Markdown {
-  img {
+  (img) {
     -pending {
       background-color: #2d2c2c
       border-radius: 3px
@@ -10,19 +10,19 @@ Markdown {
       }
     }
   }
-  blockquote {
+  (blockquote) {
     border-left: 4px #aeaeae solid
     background: #434141
     color: #aaa
   }
-  hr {
+  (hr) {
     border-top: 3px solid #636363
     margin: 1em 0
   }
-  pre {
+  (pre) {
     background: #2d2c2c
   }
-  a {
+  (a) {
     color: #898df7
     :hover {
       text-decoration: underline

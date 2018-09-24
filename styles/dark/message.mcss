@@ -1,6 +1,6 @@
 Message {
   background: #383736
-  highlight {
+  (highlight) {
     background-color: rgb(255, 255, 86)
     color: #674e00
   }
