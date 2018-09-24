@@ -43,8 +43,18 @@ Message {
       a.channel {
         font-weight: bold
       }
-      a.likes {
-        color: #757474
+      div.counts {
+        a {
+          color: #757474
+        }
+        a.tags {
+          :hover {
+            color: #9544f9
+          }
+        }
+        a + a {
+          border-left: 2px solid #e6e6e6
+        }
       }
       span.private {
         border: 4px solid #525050
@@ -83,27 +93,25 @@ Message {
           background: #959eab
         }
       }
+      a.tag {
+        :before {
+          background-color: #656565
+        }
+        :hover {
+          :before {
+            background-color: white
+          }
+        }
+      }
       a {
         background: #f3f3f3
         color: #656565
+        :before {
+          transition: background-color 0.25s ease
+        }
         :hover {
           background: #7dbd85
         }
-      }
-    }
-    div.actions2 {
-      a {
-        opacity: 0.4
-        transition: opacity 0.2s
-        font-weight: bold
-        color: #333
-        :hover {
-          opacity: 1
-          text-decoration: none
-        }
-      }
-      a + a {
-        margin-left: 25px
       }
     }
   }

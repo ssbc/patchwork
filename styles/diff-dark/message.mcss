@@ -55,6 +55,16 @@ Message {
           color: #c1cdf0
         }
       }
+      div.counts {
+        a.tags {
+          :hover {
+            color: #b480f5
+          }
+        }
+        a + a {
+          border-left: 2px solid #484848
+        }
+      }
       (a.Timestamp) {
         font-size: 75%
         font-weight: normal
@@ -99,6 +109,11 @@ Message {
       a.like {
         :hover {
           background: #ff2f92
+        }
+      }
+      a.tag {
+        :before {
+          background-color: #ccc
         }
       }
       a.unlike {
