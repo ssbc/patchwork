@@ -23,6 +23,30 @@ const common = (a, b) => {
 
   return result
 }
+
+const deepify = (obj) => {
+  var result = {}
+
+  if (isObj(obj)) {
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key]
+
+      if (isObj(value)) {
+        result[key] = deepify(value)
+      } else {
+        if (key === 'deep' && !!value) {
+          // technically different but stilly truthy
+          result['deep'] = 1
+        } else {
+          result[key] = value
+        }
+      }
+    })
+  }
+
+  return result
+}
+
 const enc = 'utf-8'
 
 fs.readdir('./light', (err, files) => {
@@ -44,8 +68,8 @@ fs.readdir('./light', (err, files) => {
 
         const results = {
           'base': serialize(base),
-          'diff-light': serialize(diff(base, lightTokens)),
-          'diff-dark': serialize(diff(base, darkTokens))
+          'diff-light': serialize(diff(base, deepify(lightTokens))),
+          'diff-dark': serialize(diff(base, deepify(darkTokens)))
         }
 
         Object.keys(results).forEach(dir => {
