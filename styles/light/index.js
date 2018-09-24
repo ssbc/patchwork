@@ -1,6 +1,7 @@
 var fs = require('fs')
 var path = require('path')
 var compile = require('micro-css')
+const flatpickr = require.resolve('flatpickr/dist/flatpickr.css')
 
 var basePath = path.join(__dirname, '..', 'base')
 var dirs = [
@@ -9,7 +10,7 @@ var dirs = [
 ]
 
 var result = []
-var additional = []
+var additional = [ flatpickr ]
 
 dirs.forEach(dir => {
   fs.readdirSync(dir).forEach(file => {
