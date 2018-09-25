@@ -26,6 +26,7 @@ ProfileList {
     @svg connected {
       width: 20px
       height: 12px
+      content: "<circle cx='6' stroke='none' fill='green' cy='6' r='5' />"
     }
     @svg following {
       width: 20px

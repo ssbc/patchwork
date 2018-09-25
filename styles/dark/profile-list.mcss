@@ -4,7 +4,9 @@ ProfileList {
     border-radius: 3px
     transition: background-color 0.25s
     @svg connected {
-      content: "<circle cx='6' stroke='none' fill='#45b754' cy='6' r='5' />"
+      circle {
+        fill: #45b754
+      }
     }
     div.avatar {
       img {
