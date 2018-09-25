@@ -1,8 +1,0 @@
-AboutImage {
-  display: block
-  width: 400px;
-  margin: 20px auto;
-  img {
-    width: 100%
-  }
-}

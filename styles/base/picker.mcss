@@ -1,0 +1,28 @@
+Picker {
+  a {
+    display: inline-block
+    vertical-align: top
+    img {
+      width: 50px
+      height: 50px
+      display: block
+    }
+  }
+  span.add {
+    position: relative
+    display: inline-block
+    ::before {
+      font-size: 30px
+      content: '+'
+      position: absolute
+      left: 0
+      right: 0
+      text-align: center
+    }
+    input[type="file"] {
+      display: block
+      cursor: pointer
+      opacity: 0
+    }
+  }
+}

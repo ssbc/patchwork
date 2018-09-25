@@ -1,20 +1,26 @@
 var fs = require('fs')
 var path = require('path')
 var compile = require('micro-css')
-var result = ''
-var additional = ''
+const flatpickr = require.resolve('flatpickr/dist/flatpickr.css')
 
-fs.readdirSync(__dirname).forEach(function (file) {
-  if (/\.mcss$/i.test(file)) {
-    result += fs.readFileSync(path.resolve(__dirname, file), 'utf8') + '\n'
-  }
+var basePath = path.join(__dirname, '..', 'base')
+var dirs = [
+  basePath,
+  __dirname
+]
 
-  if (/\.css$/i.test(file)) {
-    additional += fs.readFileSync(path.resolve(__dirname, file), 'utf8') + '\n'
-  }
+var result = []
+var additional = [ flatpickr ]
+
+dirs.forEach(dir => {
+  fs.readdirSync(dir).forEach(file => {
+    if (/\.mcss$/i.test(file)) {
+      result.push(fs.readFileSync(path.resolve(dir, file), 'utf8'))
+    }
+    if (/\.css$/i.test(file)) {
+      additional.push(fs.readFileSync(path.resolve(dir, file), 'utf8'))
+    }
+  })
 })
 
-const flatpickr = require.resolve('flatpickr/dist/flatpickr.css')
-additional += fs.readFileSync(flatpickr) + '\n'
-
-module.exports = compile(result) + additional
+module.exports = compile(result.join('\n')) + additional.join('\n')

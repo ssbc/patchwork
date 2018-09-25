@@ -1,215 +1,26 @@
-PollShow {
-  $scrollable 
-  // from patchbay mixins
-
-  display: grid
-  grid-template-columns: auto
-  grid-template-rows: auto auto auto auto 5rem
-  justify-content: center
-  justify-items: stretch
-  justify-content: stretch
-
-  section {
-    grid-column-start: 1
-
-    padding: 1rem
-  }
-
-  div.sneakpeak {
-    padding: 0 1rem
-
-    text-decoration: underline
-    cursor: pointer
-  }
-
-  section.details {
-    grid-row-start: 1
-
-    h1 {
-      font-size: 2rem
-    }
-
-    div.body {
-      margin-bottom: 1rem
-    }
-
-    div.closesAt {
-      div.label {
-        $PollHeading
-
-        margin-right: .5rem
-      }
-    }
-  }
-
-  section.NewPosition {
-  }
-}
-
-PollPositions {
-  h2 {
-    $PollHeading
-  }
-
-  div.positions {
-    padding: .8rem
-    box-shadow: 0 2px 6px 0 hsla(0,0%,0%, .2)
-
-    div.PollPosition {
-      margin-bottom: 1rem
-
-    }
-  }
-}
-
 PollPosition {
   display: flex
   div.left {
     order: 0
     margin-right: 1rem
-
     div.timestamp {
       color: hsl(0, 0%, 40%)
       font-size: 0.8rem
       width: 54px
     }
   }
-
   div.right {
     order: 1
     flex-grow: 1
-
     div.summary {
-      display: flex 
+      display: flex
       div.name {
         margin-right: .5rem
       }
-
       div.choice {
         font-weight: 600
         margin-left: .5rem
       }
     }
-
   }
 }
-
-PollResults {
-  h2 {
-    $PollHeading
-  }
-
-  div.choices {
-    div.choice {
-      min-height: 3rem
-      margin-bottom: 1rem
-
-      div.header {
-        margin: .2rem
-        font-weight: 600
-        span.count {
-          font-weight: 300
-          font-size: .8rem
-          margin-left: .5rem
-        }
-      }
-
-      div.positions {
-        display: flex
-        flex-wrap: wrap
-
-        margin-left: 1rem
-
-        a.avatar {
-          img {
-            width: 30px
-            height: 30px
-            margin: 0 5px 5px 0
-          }
-        }
-        div {
-          margin-right: .2rem
-        }
-      }
-    }
-  }
-}
-
-NewPosition {
-  background: hsl(0, 0%, 92%)
-  padding: 1rem
-  margin: 1rem
-
-  -hidden {
-    color: hsla(0, 0%, 60%, 1)
-    background-color: #fff
-
-    margin: 0
-
-    div.field, div.actions {
-      display: none
-    }
-    div.changePosition {
-      display: initial
-    }
-  }
-
-  div.field {
-    display: flex
-    flex-wrap: wrap
-
-    * {
-      flex-basis: 100%
-    }
-
-    label {
-      $PollHeading
-    }
-
-    div.inputs {
-      div.choice {
-        background: #fff
-        cursor: pointer
-
-        padding: .5rem .7rem
-        border: 1px solid gainsboro
-        margin-bottom: .5rem
-
-        display: flex
-        align-items: center
-        
-        input {
-          margin-right: .5rem
-        }
-        label {}
-      }
-    }
-
-    textarea {
-      font-size: 1rem
-      font-family: serif
-      padding: .5rem
-
-      border-color: gainsboro
-    }
-
-    margin-bottom: .5rem
-  }
-  div.actions {
-    display: flex
-    justify-content: flex-end
-  }
-
-  div.changePosition {
-    text-decoration: underline
-    cursor: pointer
-    display: none
-  }
-}
-
-$PollHeading {
-  font-family: sans-serif
-  font-weight: 600
-  margin-bottom: .7rem
-}
-

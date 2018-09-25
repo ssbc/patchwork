@@ -1,0 +1,48 @@
+ToggleButton {
+  display: inline-block
+  padding: 8px 10px
+  border-radius: 3px
+  font-size: 13px
+  cursor: pointer
+  transition: background-color 0.25s ease, color 0.25s ease
+  -subscribe {
+    :before {
+      content: '★ '
+    }
+    :hover {
+      background-color: #45b754
+      color: white
+    }
+  }
+  -unsubscribe {
+    background-repeat: no-repeat
+    background-position: right
+    background-image: svg(subscribed)
+    padding-right: 25px
+  }
+  -blocking {
+    margin-left: 5px
+    :hover {
+      background-color: #bd6363
+    }
+  }
+  -unblocking {
+    margin-left: 5px
+    :hover {
+      background-color: rgb(212, 167, 112)
+    }
+  }
+  -disabled {
+    cursor: default
+    opacity: 0.4 !important
+    text-decoration: none !important
+  }
+  :hover {
+    opacity: 1
+    text-decoration: none
+  }
+  @svg subscribed {
+    width: 20px
+    height: 12px
+  }
+}

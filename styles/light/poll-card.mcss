@@ -1,41 +1,23 @@
 PollCard {
-
-  border: 1px solid #DDD
+  border: 1px solid #ddd
   padding: 10px
   margin-bottom: 10px
-
   div.title {
     font-size: 200%
     button {
-      float: right;
-      font-size: 50%;
+      float: right
+      font-size: 50%
       ::before {
         content: '✎ '
       }
     }
   }
-
   div.time {
     color: #555
     font-size: 120%
   }
   div.description {
-    border-top: 3px solid #CCC;
-    margin-top: 10px;
-  }
-
-  div.time {
-    color: #555
-    font-size: 120%
-  }
-
-  div.description {
-    border-top: 3px solid #CCC;
-    margin-top: 10px;
-  }
-
-  div.positions {
-
+    border-top: 3px solid #ccc
+    margin-top: 10px
   }
 }
-
