@@ -1,28 +1,11 @@
 ProfileHeader {
-  display: flex;
-  width: 100%;
-  margin: 20px auto;
-
   div.image {
-    width: 200px;
-    max-height: 200px;
-    padding: 5px;
-    background: white;
-    box-shadow: 0 0 10px #AAA;
-    margin-right: 20px;
-    img {
-      width: 100%
-    }
+    padding: 5px
+    background: white
+    box-shadow: 0 0 10px #aaa
   }
-
   div.main {
-    min-width: 0
-    flex: 1
     div.title {
-      display: flex
-      h1 {
-        flex: 1
-      }
       div.meta {
         a {
           margin-left: 5px
@@ -31,55 +14,30 @@ ProfileHeader {
       }
     }
     section {
-      -description {
-        font-size: 120%
-        max-height: 350px
-        overflow: auto
-        -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
-      }
       -publicKey {
         pre {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          color: #b3b3b3;
-          margin: 2px 0;
-          font-size: 120%;
-          background: #ffffff;
-          padding: 3px;
+          color: #b3b3b3
+          background: white
         }
       }
-      -distanceWarning {
-        $distanceWarning
-      }
-
       -blockWarning {
-        padding: 8px;
-        border: 1px solid #ffc965;
-        background: #ffebcc;
-        margin: 5px 0;
-        color: #8a6800;
-        font-size: 110%
-
+        border: 1px solid #ffc965
+        background: #ffebcc
+        color: #8a6800
         a {
-          color: #8a6800;
+          color: #8a6800
           :hover {
-            text-decoration: none
             color: #da8701
           }
         }
       }
-
       -mutualFriends {
-        padding: 8px;
-        background: #cfe9ff;
-        margin: 5px 0;
-        font-size: 110%;
-        font-weight: bold;
-
+        background: #cfe9ff
+        font-size: 110%
+        font-weight: bold
         a {
-          color: #003a5d;
-         :hover {
-            text-decoration: none
+          color: #003a5d
+          :hover {
             color: #0188da
           }
         }

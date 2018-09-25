@@ -1,125 +1,23 @@
 ProfileList {
   a.profile {
-    display: flex;
-    padding: 4px;
-    font-size: 110%;
-    margin: 4px 0;
-    background: #313131;
-    border-radius: 3px;
-    position: relative
-    text-decoration: none
+    background-color: #313131
+    border-radius: 3px
     transition: background-color 0.25s
-
-    background-repeat: no-repeat
-    background-position: right
-
-    -more {
-      padding-top: 10px
-      padding-bottom: 10px
-      
-      div.main {
-        div.name {
-          font-weight: normal
-        }
-      }
-    }
-
-    -following {
-      background-image: svg(following)
-    }
-
-    -connected {
-      background-image: svg(connected)
-    }
-
     @svg connected {
-      width: 20px
-      height: 12px
       content: "<circle cx='6' stroke='none' fill='#45b754' cy='6' r='5' />"
     }
-
-    @svg following {
-      width: 20px
-      height: 12px
-      content: "<circle cx='6' stroke='#888' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#888'/>"
-    }
-
     div.avatar {
       img {
-        width: 40px
-        height: 40px
-        display: block
         border-radius: 3px
       }
     }
-
     div.main {
-      display: flex
-      flex-direction: column
-      flex: 1
-      margin-left: 10px
-      justify-content: center
-      min-width: 0px
       div.name {
-        white-space: nowrap
         color: #ccc
-        -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0))
       }
     }
-
-    div.progress {
-      display: flex
-      flex-direction: column
-      svg {
-        transition: opacity 0.2s
-        opacity: 0
-        -pending {
-          opacity: 1
-        }
-        width: 20px
-      flex: 1
-      }
-    }
-
-    div.controls {
-      opacity: 0
-      position: absolute
-      right: 7px
-      top: 0
-      bottom: 0
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      width: 15px;
-      transition: opacity 0.2s
-      a.disconnect {
-        color: white;
-        border-radius: 10px;
-        height: 16px;
-        width: 16px;
-        background-color: #777
-        text-align: center
-        vertical-align: middle
-        font-size: 14px;
-        overflow: hidden;
-        :hover {
-          text-decoration: none
-          background-color: #F77
-        }
-      }
-    }
-
-    div.buttons {
-      display: flex;
-      align-items: center;
-      padding-right: 10px;
-    }
-
     :hover {
-      background-color: #292929;
-      div.controls {
-        opacity: 1
-      }
+      background-color: #292929
     }
   }
 }

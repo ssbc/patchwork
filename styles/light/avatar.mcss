@@ -1,5 +1,3 @@
 Avatar {
   background-image: linear-gradient(172deg, rgb(247, 247, 247), rgba(0,0,0,0))
-  width: 45px
-  border-radius: 3px
 }

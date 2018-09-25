@@ -1,0 +1,283 @@
+Message {
+  display: flex
+  flex-direction: column
+  position: relative
+  font-size: 120%
+  line-height: 1.4
+  flex-shrink: 0
+  (highlight) {
+    border-radius: 3px
+    padding: 0 2px
+  }
+  header {
+    font-size: 120%
+    display: flex
+    div.mini {
+      flex: 1
+    }
+    div.main {
+      display: flex
+      flex: 1
+      a.avatar {
+        img {
+          width: 50px
+          height: 50px
+        }
+      }
+      div.main {
+        div.name {
+          a {
+            font-weight: bold
+          }
+        }
+        margin-left: 10px
+      }
+    }
+    div.meta {
+      display: flex
+      flex-direction: column
+      align-items: flex-end
+      span.flag {
+        width: 12px
+        height: 12px
+        background-repeat: no-repeat
+        background-position: center
+        display: inline-block
+        vertical-align: middle
+        -unread {
+          :after {
+            content: ' unread'
+          }
+        }
+        -new {
+          :after {
+            content: ' new'
+          }
+        }
+        -new, -unread {
+          width: auto
+          height: auto
+          :before {
+            content: '✸'
+          }
+        }
+      }
+      em {
+        display: inline-block
+        padding: 4px
+      }
+      div.counts {
+        font-size: 85%
+        a.likes {
+          ::before {
+            content: '❤ '
+            color: #ff2f92
+          }
+          :hover {
+            color: #ff2f92
+          }
+        }
+        a + a {
+          padding-left: 5px
+        }
+      }
+      span.private {
+        display: inline-block
+        margin: -3px -3px 3px 4px
+        position: relative
+        a {
+          display: inline-block
+          img {
+            margin: 0
+            vertical-align: bottom
+            border: none
+          }
+        }
+        :after {
+          content: 'private'
+          position: absolute
+          bottom: 0
+          left: -1px
+          font-size: 10px
+          pointer-events: none
+          white-space: nowrap
+        }
+      }
+    }
+  }
+  section {
+    margin: 0
+    padding: 0 20px
+    max-height: 1500px
+    overflow: hidden
+    -expanded {
+      max-height: none
+    }
+    (img) {
+      max-width: 100%
+    }
+  }
+  a.backlink {
+    display: block
+    margin-top: -1px
+    font-size: 9pt
+    :hover {
+      text-decoration: none
+    }
+  }
+  footer {
+    margin: 5px 0 20px
+    padding: 0 20px
+    div.expander {
+      text-align: center
+      -truncated {
+        padding-top: 50px
+        margin-top: -50px
+        -webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,1) 50%, rgba(0,0,0,0))
+        a {
+          :before {
+            content: '▼ '
+            font-size: 80%
+          }
+        }
+      }
+    }
+    div.actions {
+      a.like {
+        :before {
+          content: "❤ "
+        }
+      }
+      a.tag {
+        :before {
+          content: ' '
+          -webkit-mask-box-image: svg(tag)
+          height: 16px
+          width: 16px
+          display: inline-block
+          vertical-align: bottom
+          margin-right: 5px
+        }
+        :hover {
+          background: #7f2fff
+        }
+      }
+      a.reply {
+        :before {
+          content: "↩ "
+        }
+      }
+      a {
+        font-size: 13px
+        padding: 6px 10px
+        border-radius: 3px
+        display: inline-block
+        text-align: center
+        transition: background-color 0.25s ease, color 0.25s ease
+        :hover {
+          color: white
+        }
+        -right {
+          float: right
+        }
+      }
+      a + a {
+        margin-left: 10px
+      }
+      @svg tag {
+        height: 50px
+        width: 50px
+        content: '<path d="M47.146,22.904l-9.21-10.506l-0.075-0.077C36.936,11.469,35.732,11,34.476,11c-0.001,0-0.002,0-0.003,0H5 c-1.654,0-3,1.346-3,3v22c0,1.654,1.346,3,3,3h29.472c0.001,0,0.002,0,0.003,0c1.258,0,2.461-0.469,3.387-1.321l9.26-10.557 C47.688,26.555,48,25.801,48,25C48,24.21,47.697,23.468,47.146,22.904z M37,28c-1.657,0-3-1.343-3-3s1.343-3,3-3s3,1.343,3,3 S38.657,28,37,28z"/>'
+      }
+    }
+  }
+  :focus {
+    z-index: 1
+  }
+  -following {
+    header {
+      div.main {
+        div.main {
+          div.name {
+            $following
+          }
+        }
+      }
+    }
+  }
+  -data {
+    header {
+      div.main {
+        font-size: 80%
+        a.avatar {
+          img {
+            width: 25px
+          }
+        }
+      }
+    }
+    (pre) {
+      overflow: auto
+      max-height: 200px
+    }
+  }
+  -mini {
+    header {
+      font-size: 100%
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+  -missing {
+    header {
+      div.main {
+        div.main {
+          margin-left: 0
+        }
+      }
+    }
+    section {
+      font-size: 90%
+      font-style: italic
+      color: #777
+    }
+  }
+  -compact {
+    section {
+      max-height: 300px
+    }
+  }
+  -reply {
+    header {
+      font-size: 100%
+      div.meta {
+        a.channel {
+          display: none
+        }
+        span.private {
+          (img) {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+      div.main {
+        a.avatar {
+          img {
+            width: 40px
+            height: 40px
+          }
+        }
+      }
+    }
+  }
+  -new, -unread {
+    z-index: 1
+  }
+}

@@ -1,0 +1,20 @@
+button {
+  padding: 8px 10px
+  border: 0
+  border-radius: 3px
+  font-size: 13px
+  cursor: pointer
+  transition: background-color 0.25s ease, color 0.25s ease
+  -filterSelected {
+    color: white
+    background-color: #959eab
+    border-color: #959eab
+  }
+  -filterUnselected {
+    background: none
+  }
+  -full {
+    display: block
+    width: 100%
+  }
+}

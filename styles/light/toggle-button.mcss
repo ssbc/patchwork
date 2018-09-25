@@ -1,65 +1,20 @@
 ToggleButton {
-  display: inline-block
   color: white
-  padding: 8px 10px
   background-color: #848484
   border: none
-  border-radius: 3px
-  font-size: 13px
-  cursor: pointer
-  transition: background-color 0.25s ease, color 0.25s ease
-
-  -subscribe {
-    :before {
-      content: '★ '
-    }
-    :hover {
-      background-color: #45b754;
-      color: white;
-    }
-  }
-
-  -unsubscribe {
-    background-repeat: no-repeat
-    background-position: right
-    background-image: svg(subscribed)
-    padding-right: 25px
-  }
-
   -blocking {
-    margin-left: 5px
     border: 0px
-    :hover {
-      background-color: #bd6363
-    }
   }
-
-   -unblocking {
-    margin-left: 5px
+  -unblocking {
     background-color: rgb(212, 112, 112)
-    color: #ffffff
-    border: 0px
-    :hover {
-       background-color: rgb(212, 167, 112)
-    }
-  }
-
-  -disabled {
-    cursor: default
-    opacity: 0.4 !important
-    text-decoration: none !important
-  }
-
-  :hover {
-    opacity: 1
     color: white
-    text-decoration: none
+    border: 0px
+  }
+  :hover {
+    color: white
     background-color: #585656
   }
-
   @svg subscribed {
-    width: 20px
-    height: 12px
     content: "<circle cx='6' stroke='#FFF' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#FFF'/>"
   }
 }
