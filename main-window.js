@@ -233,7 +233,12 @@ module.exports = function (config) {
   function getExternalHandler (href, cb) {
     var link = ref.parseLink(href)
     if (link && ref.isMsg(link.link)) {
-      api.sbot.async.get(link.link, function (err, value) {
+      var params = { id: link.link }
+      if (link.query && link.query.unbox) {
+        params.private = true
+        params.unbox = link.query.unbox
+      }
+      api.sbot.async.get(params, function (err, value) {
         if (err) return cb(err)
         cb(null, api.app.sync.externalHandler({key: link.link, value, query: link.query}))
       })
