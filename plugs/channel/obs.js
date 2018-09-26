@@ -18,6 +18,7 @@ exports.create = function (api) {
   var recentChannels = null
   var mostActiveChannels = null
   var channelsLookup = null
+  var sync = Value(false)
 
   return nest({
     'channel.obs.recent': function () {
@@ -30,31 +31,34 @@ exports.create = function (api) {
     }
   })
 
-  function load () {
-    if (!recentChannels) {
-      var sync = Value(false)
-      channelsLookup = Dict()
-
-      pull(
-        api.sbot.pull.stream(sbot => sbot.patchwork.channels({live: true})),
-        pull.drain(data => {
-          channelsLookup.transaction(() => {
-            for (var channel in data) {
-              var obs = channelsLookup.get(channel)
-              if (!obs) {
-                obs = ChannelRef(channel)
-                channelsLookup.put(channel, obs)
-              }
-              var count = data[channel].count != null ? data[channel].count : obs.count() + 1
-              var updatedAt = data[channel].timestamp
-              obs.set({ id: channel, updatedAt, count })
+  function subscribe () {
+    pull(
+      api.sbot.pull.stream(sbot => sbot.patchwork.channels({live: true})),
+      pull.drain(data => {
+        channelsLookup.transaction(() => {
+          for (var channel in data) {
+            var obs = channelsLookup.get(channel)
+            if (!obs) {
+              obs = Value({})
+              channelsLookup.put(channel, obs)
             }
-          })
-          if (!sync()) {
-            sync.set(true)
+            var count = data[channel].count != null ? data[channel].count : obs.count() + 1
+            var updatedAt = data[channel].timestamp
+            obs.set({ id: channel, updatedAt, count })
           }
         })
-      )
+        if (!sync()) {
+          sync.set(true)
+        }
+      })
+    )
+  }
+
+  function load () {
+    if (!recentChannels) {
+      channelsLookup = Dict()
+
+      subscribe()
 
       recentChannels = computed(throttle(channelsLookup, 1000), (lookup) => {
         var values = Object.keys(lookup).map(x => lookup[x]).sort((a, b) => b.updatedAt - a.updatedAt).map(x => x.id)
