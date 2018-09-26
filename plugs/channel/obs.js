@@ -39,10 +39,10 @@ exports.create = function (api) {
           for (var channel in data) {
             var obs = channelsLookup.get(channel)
             if (!obs) {
-              obs = Value({})
+              obs = Value({count: 0})
               channelsLookup.put(channel, obs)
             }
-            var count = data[channel].count != null ? data[channel].count : obs.count() + 1
+            var count = data[channel].count != null ? data[channel].count : obs().count + 1
             var updatedAt = data[channel].timestamp
             obs.set({ id: channel, updatedAt, count })
           }
