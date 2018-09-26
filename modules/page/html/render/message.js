@@ -22,7 +22,15 @@ exports.gives = nest('page.html.render')
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('page.html.render', function (id) {
-    if (!ref.isMsg(id)) return
+    if (!ref.isMsgLink(id)) return
+
+    var link = ref.parseLink(id)
+    var params = { id: link.link }
+    if (link.query && link.query.unbox) {
+      params.private = true
+      params.unbox = link.query.unbox
+    }
+
     var loader = h('div', {className: 'Loading -large'})
 
     var result = Proxy(loader)
@@ -31,11 +39,18 @@ exports.create = function (api) {
 
     var meta = Struct({
       type: 'post',
-      root: Proxy(id),
-      branch: Proxy(id),
+      root: Proxy(link.link),
+      branch: Proxy(link.link),
       reply: Proxy(undefined),
       channel: Value(undefined),
       recps: Value(undefined)
+    })
+
+    var isRecipient = computed(meta.recps, recps => {
+      if (recps == null) return true // not a private message
+      return Array.isArray(recps) && recps.some(recp => {
+        return recp === api.keys.sync.id()
+      })
     })
 
     var compose = api.message.html.compose({
@@ -49,7 +64,7 @@ exports.create = function (api) {
       placeholder: when(meta.recps, i18n('Write a private reply'), i18n('Write a public reply'))
     })
 
-    api.sbot.async.get(id, (err, value) => {
+    api.sbot.async.get(params, (err, value) => {
       if (err) {
         return result.set(h('PageHeading', [
           h('h1', i18n('Cannot load thread'))
@@ -121,7 +136,7 @@ exports.create = function (api) {
             })
           })
         ]),
-        compose
+        when(isRecipient, compose)
       ])
       result.set(when(thread.sync, container, loader))
     })
