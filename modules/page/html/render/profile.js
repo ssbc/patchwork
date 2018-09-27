@@ -48,7 +48,9 @@ exports.create = function (api) {
       // request a once off replicate of this feed
       // this is so we can break through the "fog of war", and discover profiles by visiting their keys
       // ... that is, if any pubs we know have their data!
-      sbot.replicate.request(id)
+      if (contact.blockingFriendsCount() === 0) {
+        sbot.replicate.request(id)
+      }
     })
 
     // HACK: if requesting this feed has suddenly downloaded a bunch of posts, then refresh view immediately
