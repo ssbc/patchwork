@@ -254,5 +254,7 @@
 	" Taggers": " Taggers",
 	"Back": "Back",
 	"Add tags here": "Add tags here",
-	"Add / Edit Tags": "Add / Edit Tags"
+	"Add / Edit Tags": "Add / Edit Tags",
+	"Error": "Error",
+	"Could not get message text.": "Could not get message text."
 }

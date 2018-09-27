@@ -46,9 +46,9 @@ module.exports = function (config) {
     'intl.sync.i18n': 'first'
   }))
 
-  setupContextMenuAndSpellCheck(api.config.sync.load(), navigate)
 
   const i18n = api.intl.sync.i18n
+  setupContextMenuAndSpellCheck(api.config.sync.load(), {navigate, i18n, get: api.sbot.async.get})
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
