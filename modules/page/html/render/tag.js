@@ -25,6 +25,7 @@ exports.create = function (api) {
     const author = parts[3] === 'all' ? parts[3] : decodeURIComponent(parts[3])
     const myId = api.keys.sync.id()
     const scuttleTag = ScuttleTag(api.sbot.obs.connection)
+    const showMostActive = Value(parts[4] !== 'recent')
 
     const usedByYou = scuttleTag.obs.allTagsFrom(myId)
     const mostActive = map(scuttleTag.obs.mostActive(), ([id, count]) => id, {
@@ -35,7 +36,6 @@ exports.create = function (api) {
       }
     })
     const recent = scuttleTag.obs.recent()
-    const showMostActive = Value(true)
     const community = when(showMostActive, mostActive, recent)
     const filteredCommunity = computed([community, usedByYou], (a, b) =>
       a.filter(c => !b.includes(c)))
@@ -77,8 +77,8 @@ exports.create = function (api) {
               mostActive ? '-filterUnselected' : '-filterSelected')
           }, i18n('Recent'))
         ]),
-        map(filteredCommunity, tag => computed(tag, tagId => api.tag.html.tag(tagId, {
-          href: `/tags/${encodeURIComponent(tagId)}/all`
+        map(filteredCommunity, tag => computed([tag, showMostActive], (tagId, mostActive) => api.tag.html.tag(tagId, {
+          href: `/tags/${encodeURIComponent(tagId)}/all/${mostActive ? 'active' : 'recent'}`
         })))
       ]),
       h('div.main', [
