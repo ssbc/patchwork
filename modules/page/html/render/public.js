@@ -68,13 +68,8 @@ exports.create = function (api) {
       noFollowersWarning()
     ]
 
-    var lastMessage = null
 
     var getStream = (opts) => {
-      if (!opts.lt) {
-        // HACK: reset the isReplacementMessage check
-        lastMessage = null
-      }
       if (opts.lt != null && !opts.lt.marker) {
         // if an lt has been specified that is not a marker, assume stream is finished
         return pull.empty()
@@ -122,15 +117,7 @@ exports.create = function (api) {
           if (msg.value.content.subscribed === false) return false
         }
 
-        // skip messages that are directly replaced by the previous message
-        // e.g. follow / unfollow in quick succession
-        // THIS IS A TOTAL HACK!!! SHOULD BE REPLACED WITH A PROPER ROLLUP!
-        var isOutdated = isReplacementMessage(msg, lastMessage)
-
-        if (checkFeedFilter(msg) && !isOutdated) {
-          lastMessage = msg
-          return true
-        }
+        return checkFeedFilter(msg)
       },
       compactFilter: function (msg, root) {
         if (!root && api.message.sync.root(msg)) {
@@ -322,16 +309,6 @@ function getType (msg) {
 function arrayEq (a, b) {
   if (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a !== b) {
     return a.every((value, i) => value === b[i])
-  }
-}
-
-function isReplacementMessage (msgA, msgB) {
-  if (msgA && msgB && msgA.value.content && msgB.value.content && msgA.value.content.type === msgB.value.content.type) {
-    if (msgA.key === msgB.key) return false
-    var type = msgA.value.content.type
-    if (type === 'contact') {
-      return msgA.value.author === msgB.value.author && msgA.value.content.contact === msgB.value.content.contact
-    }
   }
 }
 
