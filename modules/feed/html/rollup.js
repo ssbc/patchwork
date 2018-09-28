@@ -80,6 +80,9 @@ exports.create = function (api) {
     var highlightItems = new Set()
 
     var container = h('Scroller', {
+      // only bind elements that are visible in scroller
+      intersectionBindingViewport: {rootMargin: '1000px'},
+
       style: { overflow: 'auto' },
       hooks: [(element) => {
         // don't activate until added to DOM
