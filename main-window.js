@@ -18,10 +18,7 @@ module.exports = function (config) {
     overrideConfig(config),
     addCommand('app.navigate', navigate),
     require('./modules'),
-    require('./plugs'),
-    require('patch-settings'),
-    require('patchcore'),
-    require('./overrides')
+    require('patch-settings')
   )
 
   var api = entry(sockets, nest({

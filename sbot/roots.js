@@ -8,8 +8,8 @@ var normalizeChannel = require('ssb-ref').normalizeChannel
 var Defer = require('pull-defer')
 
 // HACK: pull it out of patchcore
-var getRoot = require('patchcore/message/sync/root').create().message.sync.root
-var getTimestamp = require('patchcore/message/sync/timestamp').create().message.sync.timestamp
+var getRoot = require('../modules/message/sync/root').create().message.sync.root
+var getTimestamp = require('../modules/message/sync/timestamp').create().message.sync.timestamp
 
 module.exports = function (ssb, config) {
   var create = FlumeViewLevel(3, function (msg, seq) {

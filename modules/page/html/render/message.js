@@ -49,7 +49,14 @@ exports.create = function (api) {
     var isRecipient = computed(meta.recps, recps => {
       if (recps == null) return true // not a private message
       return Array.isArray(recps) && recps.some(recp => {
-        return recp === api.keys.sync.id()
+        if (recp == null) return false
+        if (typeof recp === 'string') {
+          return recp === api.keys.sync.id()
+        }
+        // if recp is mentions object
+        if (typeof recp === 'object') {
+          return recp.link === api.keys.sync.id()
+        }
       })
     })
 
