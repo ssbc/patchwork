@@ -88,9 +88,11 @@
 	"mentioned you": "упомянул вас",
 	" and ": " и ",
 	"Liked by": "Понравилось",
-	"likes": "любит",
 	"liked this message": "понравилось это сообщение",
-	"like": "нравится",
+	"%s likes": {
+		"one": "%s нравится",
+		"other": "%s любит"
+	},
 	"replied to this message": "ответил на это сообщение",
 	"unfollowed ": "отписался ",
 	" others": " другие",

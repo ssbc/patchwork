@@ -5,7 +5,6 @@ var ExpanderHook = require('../../../../lib/expander-hook')
 
 exports.needs = nest({
   'profile.html.person': 'first',
-  'message.obs.backlinks': 'first',
   'message.obs.name': 'first',
   'contact.obs.following': 'first',
   'keys.sync.id': 'first',
@@ -94,7 +93,7 @@ exports.create = function (api) {
           ])
         }
       }),
-      api.message.html.backlinks(msg, {includeReferences, includeForks})
+      includeReferences ? api.message.html.backlinks(msg) : null
     ])
 
     // scoped

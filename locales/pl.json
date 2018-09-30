@@ -88,9 +88,11 @@
 	"mentioned you": "wspomniała o tobie",
 	" and ": " i ",
 	"Liked by": "Lubiane przez",
-	"likes": "lubi",
+	"%s likes": {
+		"one": "%s Polub",
+		"other": "%s lubi"
+	},
 	"liked this message": "polubił tę wiadomość",
-	"like": "Polub",
 	"replied to this message": "odpowiedziała na tę wiadomość",
 	"unfollowed ": "odobserwowała ",
 	" others": " innych",

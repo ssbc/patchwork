@@ -94,9 +94,11 @@
 	"mentioned you": "mentioned you",
 	" and ": " and ",
 	"Liked by": "Liked by",
-	"likes": "likes",
 	"liked this message": "liked this message",
-	"like": "like",
+	"%s likes": {
+		"one": "%s like",
+		"other": "%s likes"
+	},
 	"replied to this message": "replied to this message",
 	"unfollowed ": "unfollowed ",
 	" others": " others",

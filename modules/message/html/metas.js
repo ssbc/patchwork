@@ -1,14 +1,16 @@
 var nest = require('depnest')
-var { h, computed, map, send } = require('mutant')
+var { h, computed, map, send, when, onceTrue } = require('mutant')
 var TagHelper = require('scuttle-tag')
 var msgs = require('ssb-msgs')
 
 exports.gives = nest('message.html.metas')
 exports.needs = nest({
-  'message.obs.likes': 'first',
+  'message.obs.likeCount': 'first',
   'sheet.profiles': 'first',
   'about.obs.name': 'first',
+  'sbot.pull.stream': 'first',
   'intl.sync.i18n': 'first',
+  'intl.sync.i18n_n': 'first',
   'sbot.obs.connection': 'first',
   'sheet.tags.render': 'first',
   'about.html.image': 'first'
@@ -16,6 +18,8 @@ exports.needs = nest({
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
+  const plural = api.intl.sync.i18n_n
+
   return nest('message.html.metas', function likes (msg) {
     const ScuttleTag = TagHelper(api.sbot.obs.connection)
 
@@ -39,9 +43,14 @@ exports.create = function (api) {
     }
 
     if (msg.key) {
+      var likeCount = api.message.obs.likeCount(msg.key)
       result.push(
         h('div.counts', [
-          computed(api.message.obs.likes(msg.key), likeCount),
+          when(likeCount,
+            h('a.likes', {
+              href: '#', 'ev-click': send(displayLikes, msg)
+            }, computed(['%s likes', likeCount], plural))
+          ),
           computed(ScuttleTag.obs.messageTags(msg.key), (tags) => tagCount(msg.key, tags))
         ])
       )
@@ -50,25 +59,13 @@ exports.create = function (api) {
     return result
   })
 
-  function likeCount (likes) {
-    if (likes.length) {
-      return [' ', h('a.likes', {
-        title: nameList(i18n('Liked by'), likes),
-        href: '#',
-        'ev-click': send(displayLikes, likes)
-    }, [`${likes.length} ${likes.length === 1 ? i18n('like') : i18n('likes')}`])]
-    }
-  }
-
-  function nameList (prefix, ids) {
-    var items = map(ids, api.about.obs.name)
-    return computed([prefix, items], (prefix, names) => {
-      return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
+  function displayLikes (msg) {
+    onceTrue(api.sbot.obs.connection, (sbot) => {
+      sbot.patchwork.likes.get({dest: msg.key}, (err, likes) => {
+        if (err) return console.log(err)
+        api.sheet.profiles(likes, i18n('Liked by'))
+      })
     })
-  }
-
-  function displayLikes (likes) {
-    api.sheet.profiles(likes, i18n('Liked by'))
   }
 
   function tagCount (msgId, tags) {

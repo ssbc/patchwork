@@ -27,12 +27,14 @@
 	"View full thread": "Ver conversa completa",
 	" replied": " respondeu",
 	" replied to ": " respondeu a ",
-	"like": "gosto",
 	"Liked by": "Gostado por",
 	" and ": " e ",
 	" followed ": " seguiu a ",
 	" subscribed to ": " subscreveu-se a ",
-	"likes": "gosta",
+	"%s likes": {
+		"one": "%s gosto",
+		"other": "%s gosta"
+	},
 	" others": " outros",
 	"Write a private reply": "Escreva uma resposta privada",
 	"Write a public reply": "Escreva uma resposta pública",

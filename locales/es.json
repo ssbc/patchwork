@@ -24,12 +24,14 @@
 	"View full thread": "Ver hilo completo",
 	" replied": " respondió",
 	" replied to ": " respondió a ",
-	"like": "Me gusta",
 	" and ": " y ",
 	" followed ": " sigue a ",
 	"subscribed to ": "se suscribió a ",
 	" subscribed to ": "se suscribió a ",
-	"likes": "Me gusta",
+	"%s likes": {
+		"one": "%s Me gusta",
+		"other": "%s Me gusta"
+	},
 	" others": " más",
 	"Write a private reply": "Escriba una respuesta privada",
 	"Write a public reply": "Escriba una respuesta pública",

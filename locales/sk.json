@@ -94,9 +94,11 @@
 	"mentioned you": "označil ťa",
 	" and ": " a ",
 	"Liked by": "Pači sa",
-	"likes": "pači sa",
 	"liked this message": "sa páči správa",
-	"like": "páči sa mi",
+	"%s likes": {
+		"one": "%s páči sa mi",
+		"other": "%s pači sa"
+	},
 	"replied to this message": "Odpovedal na správu",
 	"unfollowed ": "prestal sledovať",
 	" others": " ostatní",

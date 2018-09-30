@@ -1,4 +1,4 @@
-var { h, computed, when } = require('mutant')
+var { h, when } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
@@ -6,9 +6,10 @@ exports.needs = nest({
   'app.navigate': 'first',
   'message.sync.root': 'first',
   'keys.sync.id': 'first',
-  'message.obs.likes': 'first',
+  'message.obs.doesLike': 'first',
   'sbot.async.publish': 'first',
-  'sheet.editTags': 'first'
+  'sheet.editTags': 'first',
+  'sbot.pull.stream': 'first'
 })
 
 exports.gives = nest('message.html.actions')
@@ -17,8 +18,8 @@ exports.create = (api) => {
   const i18n = api.intl.sync.i18n
 
   return nest('message.html.actions', function like (msg) {
-    var id = api.keys.sync.id()
-    var liked = computed([api.message.obs.likes(msg.key), id], doesLike)
+    var liked = api.message.obs.doesLike(msg.key)
+    
     return [
       when(liked,
         h('a.unlike', {

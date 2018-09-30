@@ -6,19 +6,27 @@ var resolve = require('mutant/resolve')
 var pull = require('pull-stream')
 var onceIdle = require('mutant/once-idle')
 var sorted = require('sorted-array-functions')
+var MutantPullCollection = require('../../lib/mutant-pull-collection')
 
 exports.needs = nest({
   'sbot.pull.backlinks': 'first',
   'sbot.obs.connection': 'first',
+  'message.sync.root': 'first',
   'sbot.pull.stream': 'first',
   'message.sync.timestamp': 'first'
 })
 
-exports.gives = nest('backlinks.obs.for', true)
+exports.gives = nest({
+  'backlinks.obs.for': true,
+  'backlinks.obs.references': true,
+  'backlinks.obs.forks': true
+})
 
 exports.create = function (api) {
   var cache = {}
   var collections = {}
+
+  window.backlinksCache = cache
 
   var loaded = false
 
@@ -48,8 +56,29 @@ exports.create = function (api) {
   if (timer.unref) timer.unref()
 
   return nest({
-    'backlinks.obs.for': (id) => backlinks(id)
+    'backlinks.obs.for': (id) => backlinks(id),
+    'backlinks.obs.references': references,
+    'backlinks.obs.forks': forks
   })
+
+  function references (msg) {
+    var id = msg.key
+    return MutantPullCollection((lastMessage) => {
+      return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.referencesStream({id, since: lastMessage && lastMessage.timestamp}))
+    })
+  }
+
+  function forks (msg) {
+    var id = msg.key
+    var rooted = !!api.message.sync.root(msg)
+    if (rooted) {
+      return MutantPullCollection((lastMessage) => {
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.referencesStream({id, since: lastMessage && lastMessage.timestamp}))
+      })
+    } else {
+      return []
+    }
+  }
 
   function backlinks (id) {
     load()

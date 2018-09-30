@@ -95,9 +95,11 @@
   "mentioned you": "vous a mentionné",
   " and ": " et ",
   "Liked by": "Aimé par",
-  "likes": "j'aimes",
+  "%s likes": {
+		"one": "%s aime",
+		"other": "%s j'aimes"
+	},
   "liked this message": "a aimé ce message",
-  "like": "aime",
   "replied to this message": "a répondu à ce message",
   "unfollowed ": "ne suit plus ",
   " others": " autres",

@@ -90,9 +90,11 @@
 	"mentioned you": "提到你",
 	" and ": " 和 ",
 	"Liked by": "赞源于",
-	"likes": "赞",
 	"liked this message": "赞了此帖",
-	"like": "赞",
+	"%s likes": {
+		"one": "%s 赞",
+		"other": "%s 赞"
+	},
 	"replied to this message": "回复了此帖",
 	"unfollowed ": "取消关注 ",
 	" others": " 其他人",

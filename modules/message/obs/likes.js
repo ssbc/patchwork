@@ -1,18 +1,17 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var MutantArray = require('mutant/array')
-var concat = require('mutant/concat')
-
-var { computed } = require('mutant')
+var MutantPullValue = require('../../../lib/mutant-pull-value')
 
 exports.needs = nest({
   'message.sync.unbox': 'first',
-  'backlinks.obs.for': 'first'
+  'sbot.pull.stream': 'first',
+  'keys.sync.id': 'first'
 })
 
 exports.gives = nest({
   'sbot.hook.publish': true,
-  'message.obs.likes': true
+  'message.obs.likeCount': true,
+  'message.obs.doesLike': true
 })
 
 exports.create = function (api) {
@@ -35,52 +34,17 @@ exports.create = function (api) {
         }
       })
     },
-    'message.obs.likes': (id) => {
-      if (!ref.isLink(id)) throw new Error('an id must be specified')
-      var obs = get(id)
-      obs.id = id
-      var result = computed(obs, getLikes, {
-        // allow manual append for simulated realtime
-        onListen: () => activeLikes.add(obs),
-        onUnlisten: () => activeLikes.delete(obs)
+    'message.obs.doesLike': (id) => {
+      var yourId = api.keys.sync.id()
+      return MutantPullValue(() => {
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.feedLikesMsgStream({msgId: id, feedId: yourId}))
       })
-      result.sync = obs.sync
-      return result
+    },
+    'message.obs.likeCount': (id) => {
+      if (!ref.isLink(id)) throw new Error('an id must be specified')
+      return MutantPullValue(() => {
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.countStream({dest: id}))
+      })
     }
   })
-
-  function get (id) {
-    var backlinks = api.backlinks.obs.for(id)
-    var merge = MutantArray()
-
-    var likes = computed([backlinks.sync, concat([backlinks, merge])], (sync, backlinks) => {
-      if (sync) {
-        return backlinks.reduce((result, msg) => {
-          var c = msg.value.content
-          if (c.type === 'vote' && c.vote && c.vote.link === id) {
-            var value = result[msg.value.author]
-            if (!value || value[0] < msg.value.timestamp) {
-              result[msg.value.author] = [msg.value.timestamp, c.vote.value, c.vote.expression]
-            }
-          }
-          return result
-        }, {})
-      } else {
-        return {}
-      }
-    })
-
-    likes.push = merge.push
-    likes.sync = backlinks.sync
-    return likes
-  }
-}
-
-function getLikes (likes) {
-  return Object.keys(likes).reduce((result, id) => {
-    if (likes[id][1] > 0) {
-      result.push(id)
-    }
-    return result
-  }, [])
 }

@@ -26,12 +26,14 @@
 	"View full thread": "Ver todo o tópico",
 	" replied": " respondeu",
 	" replied to ": " respondeu para ",
-	"like": "bacana",
 	"Liked by": "Bacana por",
 	" and ": " e ",
 	" followed ": " seguindo ",
 	" subscribed to ": " subscrito em ",
-	"likes": "bacanas",
+	"%s likes": {
+		"one": "%s bacana",
+		"other": "%s bacanas"
+	},
 	" others": " outros",
 	"Write a private reply": "Responder privadamente",
 	"Write a public reply": "Responder publicamente",

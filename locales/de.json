@@ -28,12 +28,14 @@
 	"View full thread": "Ganzen Thread anzeigen",
 	" replied": " hat geantwortet",
 	" replied to ": " hat geantwortet auf ",
-	"like": "like",
+	"%s likes": {
+		"one": "%s like",
+		"other": "%s likes"
+	},
 	"Liked by": "Mochten",
 	" and ": " und ",
 	" followed ": " folgt ",
 	" subscribed to ": " abonnierte ",
-	"likes": "likes",
 	" others": " andere",
 	"Write a private reply": "Schreibe eine private Antwort",
 	"Write a public reply": "Schreibe eine öffentliche Antwort",
