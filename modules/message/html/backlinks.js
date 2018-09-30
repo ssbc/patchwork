@@ -26,7 +26,6 @@ exports.create = function (api) {
 
     return [
       map(forks, link => {
-        console.log(link)
         return h('a.backlink', {
           href: msg.key, anchor: link.id
         }, [
