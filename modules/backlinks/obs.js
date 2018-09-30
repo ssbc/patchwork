@@ -73,7 +73,7 @@ exports.create = function (api) {
     var rooted = !!api.message.sync.root(msg)
     if (rooted) {
       return MutantPullCollection((lastMessage) => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.referencesStream({id, since: lastMessage && lastMessage.timestamp}))
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.forksStream({id, since: lastMessage && lastMessage.timestamp}))
       })
     } else {
       return []
