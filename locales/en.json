@@ -254,5 +254,12 @@
 	" Taggers": " Taggers",
 	"Back": "Back",
 	"Add tags here": "Add tags here",
-	"Add / Edit Tags": "Add / Edit Tags"
+	"Add / Edit Tags": "Add / Edit Tags",
+	"Too many recipients": "Too many recipients",
+	"Private messages can only be addressed to up to 7 people. ": "Private messages can only be addressed to up to 7 people. ",
+	"Your message has %s recipients": {
+		"one": "Your message has %s recipient",
+		"other": "Your message has %s recipients"
+	},
+	"Please go back and remove some of the recipients.": "Please go back and remove some of the recipients."
 }

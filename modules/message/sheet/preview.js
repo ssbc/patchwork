@@ -26,17 +26,17 @@ exports.create = function (api) {
       if (isPrivate && recps.length > 7) {
         return {
           content: [
-            h('h2', ['Too many recipients']),
+            h('h2', [i18n('Too many recipients')]),
             h('div.info', [
               h('p', [
-                'Private messages can only be addressed to up to 7 people. ',
-                'Your message has ' + recps.length + ' recipients. '
+                i18n('Private messages can only be addressed to up to 7 people. '),
+                plural('Your message has %s recipients', recps.length)
               ]),
-              h('p', ['Please go back and remove some of the recipients.'])
+              h('p', [i18n('Please go back and remove some of the recipients.')])
             ])
           ],
           classList: ['-private'],
-          footer: [h('button -cancel', { 'ev-click': cancel }, i18n('Cancel'))]
+          footer: [h('button -cancel', { 'ev-click': cancel }, i18n('Close'))]
         }
       }
       return {
