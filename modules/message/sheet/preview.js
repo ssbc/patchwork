@@ -21,6 +21,24 @@ exports.create = function (api) {
       var isPrivate = msg.value.private
       var isRoot = !msg.value.content.root
       var recps = (msg.value.content.recps || []).filter(id => id !== msg.value.author)
+
+      // handle too many private recipients
+      if (isPrivate && recps.length > 7) {
+        return {
+          content: [
+            h('h2', [i18n('Too many recipients')]),
+            h('div.info', [
+              h('p', [
+                i18n('Private messages can only be addressed to up to 7 people. '),
+                plural('Your message has %s recipients', recps.length)
+              ]),
+              h('p', [i18n('Please go back and remove some of the recipients.')])
+            ])
+          ],
+          classList: ['-private'],
+          footer: [h('button -cancel', { 'ev-click': cancel }, i18n('Close'))]
+        }
+      }
       return {
         content: [
           api.message.html.render(msg)
