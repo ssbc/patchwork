@@ -149,7 +149,10 @@ exports.create = function (api) {
     })
 
     var view = h('div', {className: 'SplitView'}, [
-      h('div.main', [
+      h('div.main', {
+        // TODO: this isn't working properly right now
+        intersectionBindingViewport: {rootMargin: '1000px'}
+      }, [
         result
       ])
     ])
