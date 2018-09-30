@@ -19,7 +19,7 @@ exports.create = function (api) {
   // not really big enough for multiple refresh cycles
   var cache = HLRU(100)
 
-  return nest('feed.pull.rollup', function (rootFilter) {
+  return nest('feed.pull.rollup', function (rootFilter, {filterRepliesIfBlockedByRootAuthor = true} = {}) {
     return pull(
       pull.map(msg => {
         if (msg.value) {
@@ -71,7 +71,7 @@ exports.create = function (api) {
       pull.filter(msg => !api.message.sync.isBlocked(msg)),
 
       // ADD REPLIES
-      api.feed.pull.withReplies()
+      api.feed.pull.withReplies({filterRepliesIfBlockedByRootAuthor})
     )
   })
 }

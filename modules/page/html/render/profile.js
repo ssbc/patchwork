@@ -216,6 +216,7 @@ exports.create = function (api) {
 
     var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
       prepend,
+      filterRepliesIfBlockedByRootAuthor: false, // still show their replies on threads they have been blocked (but just on profile view)
       compactFilter: (msg) => msg.value.author !== id, // show root context messages smaller
       displayFilter: (msg) => msg.value.author === id,
       rootFilter: (msg) => !contact.youBlock() && !api.message.sync.root(msg),

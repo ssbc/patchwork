@@ -61,6 +61,7 @@ exports.create = function (api) {
     compactFilter = returnFalse,
     ungroupFilter = returnFalse,
     prefiltered = false,
+    filterRepliesIfBlockedByRootAuthor = true,
     displayFilter = returnTrue,
     updateStream, // override the stream used for realtime updates
     waitFor = true
@@ -209,10 +210,10 @@ exports.create = function (api) {
             pull.filter(msg => !api.message.sync.isBlocked(msg)),
             pull.filter(rootFilter),
             api.feed.pull.unique(),
-            api.feed.pull.withReplies()
+            api.feed.pull.withReplies({filterRepliesIfBlockedByRootAuthor})
           ) : pull(
             pull.filter(bumpFilter),
-            api.feed.pull.rollup(rootFilter)
+            api.feed.pull.rollup(rootFilter, {filterRepliesIfBlockedByRootAuthor})
           ),
           pull.filter(canRenderMessage),
           GroupSummaries(15, ungroupFilter, getPriority),
