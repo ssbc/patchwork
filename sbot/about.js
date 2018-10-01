@@ -12,7 +12,8 @@ exports.manifest = {
 
   socialValue: 'async',
   latestValue: 'async',
-  socialValues: 'async'
+  socialValues: 'async',
+  latestValues: 'async' // get about values of chosen keys
 }
 
 exports.init = function (ssb, config) {
@@ -70,6 +71,7 @@ exports.init = function (ssb, config) {
       })
     },
     latestValue,
+    latestValues,
     socialValues
   }
 
@@ -167,6 +169,25 @@ exports.init = function (ssb, config) {
       }, (err) => {
         if (err) return cb(err)
         cb(null, value)
+      })
+    )
+  }
+
+  function latestValues ({keys, dest}, cb) {
+    var values = {}
+    pull(
+      read({dest, reverse: true}),
+      pull.drain(msg => {
+        if (msg.value.content) {
+          for (var key in msg.value.content) {
+            if (keys.includes(key) && !(key in values) && !(msg.value.content[key] && msg.value.content[key].remove)) {
+              values[key] = msg.value.content[key]
+            }
+          }
+        }
+      }, (err) => {
+        if (err) return cb(err)
+        cb(null, values)
       })
     )
   }

@@ -59,7 +59,7 @@ exports.create = function (api) {
               ) : i18n('This message will only be visible to you')
             ]),
             h('div.info -public', [
-              when(msg.publicallyEditable,
+              when(msg.publiclyEditable,
                 i18n('This message will be public and can be edited by anyone'),
                 i18n('This message will be public and cannot be edited or deleted')
               )
