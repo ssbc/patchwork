@@ -100,7 +100,7 @@ exports.init = function (ssb, config) {
           }
         }
       }),
-      pull.filter(present)
+      pull.filter(isDefined)
     )
   }
 
@@ -137,7 +137,7 @@ exports.init = function (ssb, config) {
           }
         }
       }),
-      pull.filter(present)
+      pull.filter(isDefined)
     )
   }
 
@@ -259,8 +259,8 @@ function getValue (item) {
   }
 }
 
-function present (value) {
-  return value != null
+function isDefined (value) {
+  return value !== undefined
 }
 
 function removeItem (array, item) {
