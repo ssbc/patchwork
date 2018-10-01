@@ -17,9 +17,9 @@ exports.create = function (api) {
   var recentSuggestions = null
   var following = null
   var matches = api.intl.sync.startsWith
+  setTimeout(loadSuggestions, 5000)
 
   return nest('profile.async.suggest', function () {
-    loadSuggestions()
     return function (word, defaultItems) {
       var defaultSuggestions = Array.isArray(defaultItems) && defaultItems.length ? suggestions().filter((item) => {
         return matches(item.title, word) && defaultItems.includes(item.id)
@@ -56,6 +56,7 @@ exports.create = function (api) {
   })
 
   function loadSuggestions () {
+    console.log('loading suggestions')
     if (!suggestions) {
       var id = api.keys.sync.id()
       following = api.contact.obs.following(id)
