@@ -100,12 +100,10 @@ function getGroupedValues (lookup) {
 }
 
 function getValue (item) {
-  if (item && item[0]) {
-    if (typeof item[0] === 'string') {
-      return item[0]
-    } else if (item[0] && item[0].link && ref.isLink(item[0].link) && !item[0].remove) {
-      return item[0].link
-    }
+  if (typeof item === 'string') {
+    return item
+  } else if (item && item.link && ref.isLink(item.link) && !item.remove) {
+    return item.link
   }
 }
 

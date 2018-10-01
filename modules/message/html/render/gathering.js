@@ -13,7 +13,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'about.html.image': 'first',
   'about.obs.latestValue': 'first',
-  'about.obs.groupedValues': 'first',
+  'about.obs.socialValues': 'first',
   'about.obs.valueFrom': 'first',
   'about.obs.name': 'first',
   'contact.obs.following': 'first',
@@ -46,7 +46,7 @@ exports.create = function (api) {
         startDateTime: api.about.obs.latestValue(msg.key, 'startDateTime')
       }, msg.previewAbout) : msg.previewAbout
 
-      var attendees = msg.key ? computed([api.about.obs.groupedValues(msg.key, 'attendee')], getAttendees) : []
+      var attendees = msg.key ? computed([api.about.obs.socialValues(msg.key, 'attendee')], getAttendees) : []
       var disableActions = !!msg.previewAbout
 
       if (!following) {
