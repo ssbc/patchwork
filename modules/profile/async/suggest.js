@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var {Struct, map, computed, watch} = require('mutant')
+var {Struct, map, computed, watch, Value} = require('mutant')
 
 exports.needs = nest({
   'profile.obs.recentlyUpdated': 'first',
@@ -59,19 +59,19 @@ exports.create = function (api) {
     if (!suggestions) {
       var id = api.keys.sync.id()
       following = api.contact.obs.following(id)
-      var recentlyUpdated = api.profile.obs.recentlyUpdated()
-      var contacts = computed([following, recentlyUpdated], function (a, b) {
-        var result = Array.from(a)
-        b.forEach((item, i) => {
-          if (!result.includes(item)) {
-            result.push(item)
-          }
-        })
-        return result
-      })
+      // var recentlyUpdated = api.profile.obs.recentlyUpdated()
+      // var contacts = computed([following], function (a, b) {
+      //   var result = Array.from(a)
+      //   b.forEach((item, i) => {
+      //     if (!result.includes(item)) {
+      //       result.push(item)
+      //     }
+      //   })
+      //   return result
+      // })
 
-      recentSuggestions = map(computed(recentlyUpdated, (items) => Array.from(items).slice(0, 40)), suggestion, {idle: true})
-      suggestions = map(contacts, suggestion, {idle: true})
+      recentSuggestions = Value([]) // map(computed(recentlyUpdated, (items) => Array.from(items).slice(0, 40)), suggestion, {idle: true})
+      suggestions = map(following, suggestion, {idle: true})
       watch(recentSuggestions)
       watch(suggestions)
     }
