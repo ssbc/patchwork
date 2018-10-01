@@ -46,11 +46,4 @@ button {
       color: white
     }
   }
-  -full {
-    margin: 15px 0
-  }
-  -half {
-    width: 50%
-    display: inline-block
-  }
 }

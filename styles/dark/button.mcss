@@ -44,13 +44,6 @@ button {
       color: white
     }
   }
-  -full {
-    margin: 0 0 15px
-  }
-  -half {
-    width: 50%
-    display: inline-block
-  }
   -cancel {
     background: transparent
   }

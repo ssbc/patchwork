@@ -194,12 +194,15 @@ exports.create = function (api) {
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, i18n('+ Join Pub')),
-        h('button -pub -half', {
-          'ev-click': api.dhtInvite.create.sheet
-        }, i18n('Create Invite')),
-        h('button -pub -half', {
-          'ev-click': api.dhtInvite.accept.sheet
-        }, i18n('Accept Invite')),
+        h('SplitButton', [
+          h('button -createInvite', {
+            'ev-click': api.dhtInvite.create.sheet
+          }, i18n('Create Invite')),
+          h('button -acceptInvite', {
+            'ev-click': api.dhtInvite.accept.sheet
+          }, i18n('Accept Invite'))
+        ]),
+
         when(loading, [ h('Loading') ], [
           when(computed(channels, x => x.length), h('h2', i18n('Active Channels'))),
           h('div', {
