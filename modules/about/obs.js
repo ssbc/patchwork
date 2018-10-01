@@ -31,6 +31,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  var socialValueCache = {}
   return nest({
     'about.obs': {
       // quick helpers, probably should deprecate!
@@ -69,9 +70,15 @@ exports.create = function (api) {
 
   function socialValue (id, key, defaultValue) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
-    return withDefault(MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValueStream({dest: id, key}))
-    }), defaultValue)
+    if (!socialValueCache[id + '/' + key]) {
+      var obs = socialValueCache[id + '/' + key] = MutantPullValue(() => {
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValueStream({dest: id, key}))
+      }, {
+        onListen: () => { socialValueCache[id + '/' + key] = obs },
+        onUnlisten: () => delete socialValueCache[id + '/' + key]
+      })
+    }
+    return withDefault(socialValueCache[id + '/' + key], defaultValue)
   }
 
   function socialValues (id, key) {
