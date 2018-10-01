@@ -16,6 +16,8 @@ exports.needs = nest({
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'invite.sheet': 'first',
+  'dhtInvite.accept.sheet': 'first',
+  'dhtInvite.create.sheet': 'first',
 
   'message.html.compose': 'first',
   'message.async.publish': 'first',
@@ -67,7 +69,6 @@ exports.create = function (api) {
       noVisibleNewPostsWarning(),
       noFollowersWarning()
     ]
-
 
     var getStream = (opts) => {
       if (opts.lt != null && !opts.lt.marker) {
@@ -193,6 +194,12 @@ exports.create = function (api) {
         h('button -pub -full', {
           'ev-click': api.invite.sheet
         }, i18n('+ Join Pub')),
+        h('button -pub -half', {
+          'ev-click': api.dhtInvite.create.sheet
+        }, i18n('Create Invite')),
+        h('button -pub -half', {
+          'ev-click': api.dhtInvite.accept.sheet
+        }, i18n('Accept Invite')),
         when(loading, [ h('Loading') ], [
           when(computed(channels, x => x.length), h('h2', i18n('Active Channels'))),
           h('div', {

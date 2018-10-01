@@ -263,5 +263,13 @@
 		"one": "Your message has %s recipient",
 		"other": "Your message has %s recipients"
 	},
-	"Please go back and remove some of the recipients.": "Please go back and remove some of the recipients."
+	"Please go back and remove some of the recipients.": "Please go back and remove some of the recipients.",
+	"Create Invite": "Create Invite",
+	"Accept Invite": "Accept Invite",
+	"Connect directly to friends currently online, using a peer-to-peer technology called \"Distributed Hash Table\"": "Connect directly to friends currently online, using a peer-to-peer technology called \"Distributed Hash Table\"",
+	"Give this invite code to one friend. ": "Give this invite code to one friend. ",
+	"You will sync when you are both online.": "You will sync when you are both online.",
+	"Please wait...": "Please wait...",
+	"Create DHT Invite": "Create DHT Invite",
+	"Redeeming...": "Redeeming..."
 }

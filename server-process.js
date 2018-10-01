@@ -3,15 +3,30 @@ var Path = require('path')
 var electron = require('electron')
 var spawn = require('child_process').spawn
 var fixPath = require('fix-path')
+var DHT = require('multiserver-dht')
+
+function dhtTransport (sbot) {
+  sbot.multiserver.transport({
+    name: 'dht',
+    create: dhtConfig => {
+      return DHT({
+        keys: sbot.dhtInvite.channels(),
+        port: dhtConfig.port
+      })
+    }
+  })
+}
 
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
-  .use(require('scuttlebot/plugins/gossip'))
+  .use(require('@staltz/sbot-gossip'))
   .use(require('scuttlebot/plugins/replicate'))
   .use(require('ssb-friends'))
   .use(require('ssb-blobs'))
   .use(require('ssb-backlinks'))
   .use(require('ssb-private'))
+  .use(require('ssb-dht-invite')) // this one must come before dhtTransport
+  .use(dhtTransport)
   .use(require('scuttlebot/plugins/invite'))
   .use(require('scuttlebot/plugins/local'))
   .use(require('scuttlebot/plugins/logging'))
@@ -32,6 +47,9 @@ module.exports = function (ssbConfig) {
   ssbConfig.manifest = context.sbot.getManifest()
   fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
   electron.ipcRenderer.send('server-started', ssbConfig)
+
+  // start dht invite support
+  context.sbot.dhtInvite.start()
 
   // check if we are using a custom ssb path (which would break git-ssb-web)
   if (!ssbConfig.customPath) {

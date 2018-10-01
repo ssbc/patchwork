@@ -26,7 +26,9 @@ exports.gives = {
       publish: true,
       addBlob: true,
       gossipConnect: true,
-      friendsGet: true
+      friendsGet: true,
+      acceptDHT: true,
+      createDHT: true
     },
     pull: {
       log: true,
@@ -207,6 +209,12 @@ exports.create = function (api) {
         }),
         friendsGet: rec.async(function (opts, cb) {
           sbot.friends.get(opts, cb)
+        }),
+        acceptDHT: rec.async(function (opts, cb) {
+          sbot.dhtInvite.accept(opts, cb)
+        }),
+        createDHT: rec.async(function (cb) {
+          sbot.dhtInvite.create(cb)
         })
       },
       pull: {
