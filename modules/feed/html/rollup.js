@@ -23,8 +23,6 @@ var rootBumpTypes = ['mention', 'channel-mention']
 var metaSummaryTypes = ['about', 'channel', 'contact']
 
 exports.needs = nest({
-  'about.obs.name': 'first',
-  'about.html.image': 'first',
   'app.sync.externalHandler': 'first',
   'message.html.canRender': 'first',
   'message.html.render': 'first',

@@ -8,6 +8,7 @@ var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
 var Likes = require('./likes')
 var Backlinks = require('./backlinks')
+var About = require('./about')
 
 var pull = require('pull-stream')
 var ref = require('ssb-ref')
@@ -17,6 +18,7 @@ exports.version = require('../package.json').version
 exports.manifest = {
   likes: Likes.manifest,
   backlinks: Backlinks.manifest,
+  about: About.manifest,
 
   channels: 'source',
   subscriptions: 'source',
@@ -64,6 +66,7 @@ exports.init = function (ssb, config) {
   return {
     likes: Likes.init(ssb, config),
     backlinks: Backlinks.init(ssb, config),
+    about: About.init(ssb, config),
 
     heartbeat: Heartbeat(ssb, config),
     channels: channels.stream,

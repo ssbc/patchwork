@@ -62,7 +62,6 @@
     "simple-mime": "^0.1.0",
     "sorted-array-functions": "^1.1.0",
     "spacetime": "^4.3.0",
-    "ssb-about": "~0.1.2",
     "ssb-backlinks": "^0.7.3",
     "ssb-blobs": "~1.1.5",
     "ssb-config": "^2.3.2",
