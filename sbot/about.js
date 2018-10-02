@@ -23,7 +23,7 @@ exports.init = function (ssb, config) {
     read,
     socialValueStream: function ({key, dest}) {
       var stream = Defer.source()
-      getAuthor(key, (err, authorId) => {
+      getAuthor(dest, (err, authorId) => {
         // fallback to dest if we don't have the message being described
         if (err || !authorId) authorId = dest
 
@@ -64,10 +64,13 @@ exports.init = function (ssb, config) {
     socialValuesStream,
 
     // getters
-    socialValue: function ({key, dest, authorId}, cb) {
-      socialValues({key, dest}, (err, values) => {
+    socialValue: function ({key, dest}, cb) {
+      getAuthor(dest, (err, authorId) => {
         if (err) return cb(err)
-        cb(null, getSocialValue(values, ssb.id, authorId))
+        socialValues({key, dest}, (err, values) => {
+          if (err) return cb(err)
+          cb(null, getSocialValue(values, ssb.id, authorId))
+        })
       })
     },
     latestValue,
@@ -220,9 +223,9 @@ exports.init = function (ssb, config) {
 }
 
 function getSocialValue (socialValues, yourId, authorId) {
-  if (socialValues[socialValues]) {
+  if (socialValues[yourId]) {
     // you assigned a value, use this!
-    return socialValues[socialValues]
+    return socialValues[yourId]
   } else if (socialValues[authorId]) {
     // they assigned a name, use this!
     return socialValues[authorId]
