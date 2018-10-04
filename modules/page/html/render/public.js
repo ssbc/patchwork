@@ -70,7 +70,7 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.publicFeed.roots(opts)
-    }, {limit: 20, reverse: true})
+    }, {limit: 40, reverse: true})
 
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {

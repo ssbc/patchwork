@@ -31,7 +31,7 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.gatherings.roots(opts)
-    }, {limit: 20, reverse: true})
+    }, {limit: 40, reverse: true})
 
     return api.feed.html.rollup(getStream, {
       prepend

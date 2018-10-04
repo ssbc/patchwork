@@ -8,6 +8,7 @@ const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
+const Paramap = require('pull-paramap')
 
 exports.manifest = {
   roots: 'source'
@@ -77,7 +78,7 @@ exports.init = function (ssb, config) {
             ResolveAbouts({ssb}),
 
             // ADD THREAD SUMMARY
-            pull.asyncMap((item, cb) => {
+            Paramap((item, cb) => {
               threadSummary(item.key, {
                 recentLimit: 3,
                 readThread: ssb.patchwork.thread.read,
@@ -90,7 +91,7 @@ exports.init = function (ssb, config) {
                   rootBump: bumpFilter(item)
                 }))
               })
-            })
+            }, 20)
           )
         }))
 

@@ -178,7 +178,7 @@ exports.init = function (ssb, config) {
           ResolveAbouts({ssb}),
 
           // ADD THREAD SUMMARY
-          pull.asyncMap((item, cb) => {
+          Paramap((item, cb) => {
             threadSummary(item.key, {
               readThread: ssb.patchwork.thread.read,
               recentLimit: 3,
@@ -189,7 +189,7 @@ exports.init = function (ssb, config) {
               if (err) return cb(err)
               cb(null, extend(item, summary))
             })
-          })
+          }, 20)
         )
       })
 
