@@ -35,7 +35,7 @@ exports.create = function (api) {
     setImmediate(() => {
       addSuggest(searchBox, (inputText, cb) => {
         if (inputText[0] === '@') {
-          cb(null, getProfileSuggestions(inputText.slice(1)), {idOnly: true})
+          getProfileSuggestions(inputText.slice(1), cb)
         } else if (inputText[0] === '#') {
           cb(null, getChannelSuggestions(inputText.slice(1)))
         } else if (inputText[0] === '/') {

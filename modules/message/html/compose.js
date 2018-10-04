@@ -141,7 +141,7 @@ exports.create = function (api) {
 
     addSuggest(textArea, (inputText, cb) => {
       if (inputText[0] === '@') {
-        cb(null, getProfileSuggestions(inputText.slice(1), resolve(participants)))
+        getProfileSuggestions(inputText.slice(1), resolve(participants), cb)
       } else if (inputText[0] === '#') {
         cb(null, getChannelSuggestions(inputText.slice(1)))
       } else if (inputText[0] === ':') {

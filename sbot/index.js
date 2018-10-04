@@ -9,6 +9,7 @@ var LiveBacklinks = require('./live-backlinks')
 var Likes = require('./likes')
 var Backlinks = require('./backlinks')
 var About = require('./about')
+var Profile = require('./profile')
 
 var pull = require('pull-stream')
 var ref = require('ssb-ref')
@@ -19,6 +20,7 @@ exports.manifest = {
   likes: Likes.manifest,
   backlinks: Backlinks.manifest,
   about: About.manifest,
+  profile: Profile.manifest,
 
   channels: 'source',
   subscriptions: 'source',
@@ -67,6 +69,7 @@ exports.init = function (ssb, config) {
     likes: Likes.init(ssb, config),
     backlinks: Backlinks.init(ssb, config),
     about: About.init(ssb, config),
+    profile: Profile.init(ssb, config),
 
     heartbeat: Heartbeat(ssb, config),
     channels: channels.stream,
