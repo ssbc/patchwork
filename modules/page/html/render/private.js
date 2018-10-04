@@ -3,7 +3,7 @@ var ref = require('ssb-ref')
 
 exports.needs = nest({
   'feed.html.rollup': 'first',
-  'feed.pull.private': 'first',
+  'sbot.pull.resumeStream': 'first',
   'message.html.compose': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
@@ -36,9 +36,12 @@ exports.create = function (api) {
       placeholder: i18n('Write a private message')
     })
 
-    var view = api.feed.html.rollup(api.feed.pull.private, {
-      prepend: [compose],
-      bumpFilter: (msg) => msg.value.content.type !== 'vote'
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.privateFeed.roots(opts)
+    }, {limit: 20, reverse: true})
+
+    var view = api.feed.html.rollup(getStream, {
+      prepend: [compose]
     })
 
     view.setAnchor = function (data) {

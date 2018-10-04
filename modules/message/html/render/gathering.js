@@ -36,14 +36,17 @@ exports.create = function (api) {
 
       var yourId = api.keys.sync.id()
 
+      // passed in from sbot/public-feed/roots
+      var suppliedGathering = msg.gathering || {}
+
       // allow override of resolved about messages for preview in modules/gathering/sheet/edit.js
       var about = msg.key ? extend({
         hidden: api.about.obs.valueFrom(msg.key, 'hidden', yourId),
-        image: api.about.obs.latestValue(msg.key, 'image'),
-        title: api.about.obs.latestValue(msg.key, 'title'),
-        description: api.about.obs.latestValue(msg.key, 'description'),
-        location: api.about.obs.latestValue(msg.key, 'location'),
-        startDateTime: api.about.obs.latestValue(msg.key, 'startDateTime')
+        image: suppliedGathering.image || api.about.obs.latestValue(msg.key, 'image'),
+        title: suppliedGathering.title || api.about.obs.latestValue(msg.key, 'title'),
+        description: suppliedGathering.description || api.about.obs.latestValue(msg.key, 'description'),
+        location: suppliedGathering.location || api.about.obs.latestValue(msg.key, 'location'),
+        startDateTime: suppliedGathering.startDateTime || api.about.obs.latestValue(msg.key, 'startDateTime')
       }, msg.previewAbout) : msg.previewAbout
 
       var attendees = msg.key ? computed([api.about.obs.socialValues(msg.key, 'attendee')], getAttendees) : []

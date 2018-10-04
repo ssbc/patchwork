@@ -7,7 +7,7 @@ exports.needs = nest({
   'channel.html.subscribeToggle': 'first',
   'feed.html.rollup': 'first',
   'feed.html.followWarning': 'first',
-  'feed.pull.channel': 'first',
+  'sbot.pull.resumeStream': 'first',
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
   'keys.sync.id': 'first',
@@ -43,13 +43,14 @@ exports.create = function (api) {
     ]
 
     const filters = api.settings.obs.get('filters')
-    const channelView = api.feed.html.rollup(
-      api.feed.pull.channel(channel), {
-        prepend,
-        rootFilter: checkFeedFilter,
-        displayFilter: mentionFilter,
-        bumpFilter: mentionFilter
-      })
+
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.channelFeed.roots(opts)
+    }, {limit: 20, reverse: true, channel})
+
+    const channelView = api.feed.html.rollup(getStream, {
+      prepend
+    })
 
     // call reload whenever filters changes
     filters(channelView.reload)

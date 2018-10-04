@@ -17,7 +17,7 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
-  'feed.pull.profile': 'first',
+  'sbot.pull.resumeStream': 'first',
   'sbot.async.publish': 'first',
   'sbot.obs.connection': 'first',
   'keys.sync.id': 'first',
@@ -214,13 +214,13 @@ exports.create = function (api) {
       ])
     ])
 
-    var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.profile.roots(opts)
+    }, {limit: 20, reverse: true, id})
+
+    var feedView = api.feed.html.rollup(getStream, {
       prepend,
-      filterRepliesIfBlockedByRootAuthor: false, // still show their replies on threads they have been blocked (but just on profile view)
       compactFilter: (msg) => msg.value.author !== id, // show root context messages smaller
-      displayFilter: (msg) => msg.value.author === id,
-      rootFilter: (msg) => !contact.youBlock() && !api.message.sync.root(msg),
-      bumpFilter: (msg) => msg.value.author === id,
       ungroupFilter: (msg) => msg.value.author !== id
     })
 

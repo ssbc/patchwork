@@ -10,6 +10,14 @@ var Likes = require('./likes')
 var Backlinks = require('./backlinks')
 var About = require('./about')
 var Profile = require('./profile')
+var PublicFeed = require('./public-feed')
+var Subscriptions2 = require('./subscriptions2')
+var Thread = require('./thread')
+var PrivateFeed = require('./private-feed')
+var MentionsFeed = require('./mentions-feed')
+var Gatherings = require('./gatherings')
+var NetworkFeed = require('./network-feed')
+var ChannelFeed = require('./channel-feed')
 
 var pull = require('pull-stream')
 var ref = require('ssb-ref')
@@ -21,6 +29,14 @@ exports.manifest = {
   backlinks: Backlinks.manifest,
   about: About.manifest,
   profile: Profile.manifest,
+  publicFeed: PublicFeed.manifest,
+  subscriptions2: Subscriptions2.manifest,
+  thread: Thread.manifest,
+  privateFeed: PrivateFeed.manifest,
+  mentionsFeed: MentionsFeed.manifest,
+  gatherings: Gatherings.manifest,
+  networkFeed: NetworkFeed.manifest,
+  channelFeed: ChannelFeed.manifest,
 
   channels: 'source',
   subscriptions: 'source',
@@ -70,6 +86,14 @@ exports.init = function (ssb, config) {
     backlinks: Backlinks.init(ssb, config),
     about: About.init(ssb, config),
     profile: Profile.init(ssb, config),
+    publicFeed: PublicFeed.init(ssb, config),
+    subscriptions2: Subscriptions2.init(ssb, config),
+    thread: Thread.init(ssb, config),
+    privateFeed: PrivateFeed.init(ssb, config),
+    mentionsFeed: MentionsFeed.init(ssb, config),
+    gatherings: Gatherings.init(ssb, config),
+    networkFeed: NetworkFeed.init(ssb, config),
+    channelFeed: ChannelFeed.init(ssb, config),
 
     heartbeat: Heartbeat(ssb, config),
     channels: channels.stream,

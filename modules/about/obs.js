@@ -85,13 +85,17 @@ exports.create = function (api) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullDict(() => {
       return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValuesStream({dest: id, key}))
-    })
+    }, {checkDelete})
   }
 
   function groupedValues (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return computed(socialValues(id, key), getGroupedValues)
   }
+}
+
+function checkDelete (msg) {
+  if (msg && msg.remove) return true
 }
 
 function getGroupedValues (lookup) {

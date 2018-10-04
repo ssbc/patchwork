@@ -8,6 +8,8 @@ var createFeed = require('ssb-feed')
 var nest = require('depnest')
 var ssbKeys = require('ssb-keys')
 var flat = require('flat')
+var extend = require('xtend')
+var pullResume = require('../lib/pull-resume')
 
 exports.needs = nest({
   'config.sync.load': 'first',
@@ -37,7 +39,8 @@ exports.gives = {
       feed: true,
       links: true,
       backlinks: true,
-      stream: true
+      stream: true,
+      resumeStream: true
     },
     obs: {
       connectionStatus: true,
@@ -248,6 +251,17 @@ exports.create = function (api) {
             stream.resolve(fn(connection))
           })
           return stream
+        },
+        resumeStream: function (fn, baseOpts) {
+          return function (opts) {
+            var stream = defer.source()
+            onceTrue(connection, function (connection) {
+              stream.resolve(pullResume.remote((opts) => {
+                return fn(connection, opts)
+              }, extend(baseOpts, opts)))
+            })
+            return stream
+          }
         }
       },
       obs: {

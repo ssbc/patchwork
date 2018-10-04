@@ -2,7 +2,7 @@ var nest = require('depnest')
 var { h } = require('mutant')
 
 exports.needs = nest({
-  'feed.pull.public': 'first',
+  'sbot.pull.resumeStream': 'first',
   'message.html.compose': 'first',
   'message.async.publish': 'first',
   'feed.html.rollup': 'first',
@@ -30,14 +30,11 @@ exports.create = function (api) {
       api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
     ]
 
-    var feedView = api.feed.html.rollup(api.feed.pull.public, {
-      bumpFilter: (msg) => {
-        if (msg.value.content) {
-          // filter out likes
-          if (msg.value.content.type === 'vote') return false
-          return msg.value.content && typeof msg.value.content === 'object'
-        }
-      },
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.networkFeed.roots(opts)
+    }, {limit: 20, reverse: true})
+
+    var feedView = api.feed.html.rollup(getStream, {
       prepend
     })
 

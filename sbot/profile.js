@@ -4,11 +4,21 @@ var parallel = require('run-parallel')
 var Paramap = require('pull-paramap')
 var pullCat = require('pull-cat')
 var extend = require('xtend')
+
+const HLRU = require('hashlru')
+const pullResume = require('../lib/pull-resume')
+const threadSummary = require('../lib/thread-summary')
+const LookupRoots = require('../lib/lookup-roots')
+const ResolveAbouts = require('../lib/resolve-abouts')
+const UniqueRoots = require('../lib/unique-roots')
+const getRoot = require('../lib/get-root')
+
 var collator = new Intl.Collator('default', {sensitivity: 'base', usage: 'search'})
 
 exports.manifest = {
   suggest: 'async',
-  avatar: 'async'
+  avatar: 'async',
+  roots: 'source'
 }
 
 exports.init = function (ssb, config) {
@@ -16,6 +26,7 @@ exports.init = function (ssb, config) {
   var updateQueue = new Set()
   var following = new Set()
   var recentFriends = []
+  var cache = HLRU(100)
 
   // start update loop after 5 seconds
   setTimeout(updateLoop, 5e3)
@@ -131,6 +142,79 @@ exports.init = function (ssb, config) {
           cb(null, result)
         }
       })
+    },
+    roots: function ({id, limit, reverse, resume}) {
+      // use resume option if specified
+
+      var opts = {id, reverse, old: true}
+      if (resume) {
+        opts[reverse ? 'lt' : 'gt'] = resume
+      }
+
+      return pullResume.source(ssb.createUserStream(opts), {
+        limit,
+        getResume: (item) => {
+          return item && item.value && item.value.sequence
+        },
+        filterMap: pull(
+          pull.filter(bumpFilter),
+
+          LookupRoots({ssb, cache}),
+
+          // DON'T REPEAT THE SAME THREAD
+          UniqueRoots(),
+
+          // DON'T INCLUDE UN-ROOTED MESSAGES (e.g. missing conversation root)
+          pull.filter(msg => {
+            return !getRoot(msg.root)
+          }),
+
+          // JUST RETURN THE ROOT OF THE MESSAGE
+          pull.map(msg => {
+            return msg.root || msg
+          }),
+
+          // RESOLVE ROOTS WITH ABOUTS (gatherings)
+          ResolveAbouts({ssb}),
+
+          // ADD THREAD SUMMARY
+          pull.asyncMap((item, cb) => {
+            threadSummary(item.key, {
+              readThread: ssb.patchwork.thread.read,
+              recentLimit: 3,
+              bumpFilter,
+              recentFilter
+              // TODO: hide blocked replies from other users
+            }, (err, summary) => {
+              if (err) return cb(err)
+              cb(null, extend(item, summary))
+            })
+          })
+        )
+      })
+
+      function recentFilter (msg) {
+        // only show replies by this feed on the profile
+        return msg.value.author === id
+      }
+
+      function bumpFilter (msg) {
+        // match summary bumps to actual bumps
+        if (msg.value.author === id) {
+          let content = msg.value.content
+          let type = content.type
+          if (type === 'vote' && !getRoot(msg)) { // only show likes when root post
+            let vote = content.vote
+            if (vote) {
+              return {type: 'reaction', reaction: vote.expression, value: vote.value}
+            }
+          } else if (type === 'post') {
+            return {type: 'reply'}
+          } else if (type === 'about') {
+            return {type: 'update'}
+          }
+        }
+      }
     }
   }
 

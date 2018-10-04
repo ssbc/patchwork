@@ -85,6 +85,7 @@
     "standard": "^11.0.1",
     "suggest-box": "^2.2.3",
     "text-node-searcher": "^1.1.1",
+    "tiny-map-async": "^1.0.1",
     "xtend": "^4.0.1"
   },
   "devDependencies": {

@@ -1,6 +1,4 @@
 var nest = require('depnest')
-var extend = require('xtend')
-var pull = require('pull-stream')
 var { h, send, when, computed, map, onceTrue } = require('mutant')
 
 exports.needs = nest({
@@ -12,6 +10,7 @@ exports.needs = nest({
     }
   },
   'sbot.pull.stream': 'first',
+  'sbot.pull.resumeStream': 'first',
   'feed.pull.public': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
@@ -70,66 +69,20 @@ exports.create = function (api) {
       noFollowersWarning()
     ]
 
-    var getStream = (opts) => {
-      if (opts.lt != null && !opts.lt.marker) {
-        // if an lt has been specified that is not a marker, assume stream is finished
-        return pull.empty()
-      } else {
-        return api.sbot.pull.stream(sbot => sbot.patchwork.roots(extend(opts, {
-          ids: [id]
-        })))
-      }
-    }
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.publicFeed.roots(opts)
+    }, {limit: 20, reverse: true})
 
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
-      prefiltered: true, // we've already filtered out the roots we don't want to include
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
-      bumpFilter: function (msg) {
-        // this needs to match the logic in sbot/roots so that we display the
-        // correct bump explainations
-        if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
-          var type = msg.value.content.type
-          if (type === 'vote') return false
-
-          var author = msg.value.author
-
-          if (id === author || following().includes(author)) {
-            if (isAttendee(msg)) {
-              return 'attending'
-            } else {
-              return true
-            }
-          } else if (matchesSubscribedChannel(msg)) {
-            return 'matches-channel'
-          }
-        }
-      },
-      rootFilter: function (msg) {
-        if (msg.value && msg.value.content && msg.value.content.type === 'contact') {
-          // don't show unfollows in the main feed, but do show follows and blocks
-          // we still show unfollows on a person's profile though
-          if (msg.value.content.following === false && !msg.value.content.blocking) return false
-        }
-
-        if (msg.value && msg.value.content && msg.value.content.type === 'channel') {
-          // don't show channel unsubscribes in the main feed, but we still show on their profile
-          if (msg.value.content.subscribed === false) return false
-        }
-
-        return checkFeedFilter(msg)
-      },
       compactFilter: function (msg, root) {
         if (!root && api.message.sync.root(msg)) {
           // msg has a root, but is being displayed as root (fork)
           return true
         }
-      },
-      waitFor: computed([
-        following.sync,
-        subscribedChannels.sync
-      ], (...x) => x.every(Boolean))
+      }
     })
 
     // call reload whenever filters changes (equivalent to the refresh from inside rollup)
@@ -148,43 +101,6 @@ exports.create = function (api) {
     }
 
     return result
-
-    function checkFeedFilter (root) {
-      const filterObj = filters()
-      if (filterObj) {
-        const rootType = getType(root)
-        if (
-          (filterObj.following && rootType === 'contact') ||
-          (filterObj.subscriptions && rootType === 'channel') ||
-          (filterObj.onlySubscribed && rootType === 'post' && !matchesSubscribedChannel(root))
-        ) {
-          return false
-        }
-      }
-      return true
-    }
-
-    function matchesSubscribedChannel (msg) {
-      if (msg.filterResult) {
-        return msg.filterResult.matchesChannel || msg.filterResult.matchingTags.length
-      } else {
-        var channel = api.channel.sync.normalize(msg.value.content.channel)
-        var tagged = checkTag(msg.value.content.mentions)
-        var isSubscribed = channel ? subscribedChannels().has(channel) : false
-        return isSubscribed || tagged
-      }
-    }
-
-    function checkTag (mentions) {
-      if (Array.isArray(mentions)) {
-        return mentions.some((mention) => {
-          if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
-            var channel = api.channel.sync.normalize(mention.link.slice(1))
-            return channel ? subscribedChannels().has(channel) : false
-          }
-        })
-      }
-    }
 
     function getSidebar () {
       var whoToFollow = computed([api.profile.obs.recentlyUpdated(), following, blocking, localPeers], (recent, ...ignoreFeeds) => {
@@ -312,17 +228,8 @@ exports.create = function (api) {
   }
 }
 
-function getType (msg) {
-  return msg && msg.value && msg.value.content && msg.value.content.type
-}
-
 function arrayEq (a, b) {
   if (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a !== b) {
     return a.every((value, i) => value === b[i])
   }
-}
-
-function isAttendee (msg) {
-  var content = msg.value && msg.value.content
-  return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
 }
