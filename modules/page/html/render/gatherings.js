@@ -2,7 +2,6 @@ var { h } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
-  'feed.pull.type': 'first',
   'feed.html.rollup': 'first',
   'sbot.pull.resumeStream': 'first',
   'gathering.sheet.edit': 'first',

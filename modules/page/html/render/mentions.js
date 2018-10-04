@@ -3,7 +3,6 @@ var nest = require('depnest')
 exports.needs = nest({
   'feed.html.rollup': 'first',
   'keys.sync.id': 'first',
-  'feed.pull.mentions': 'first',
   'sbot.pull.resumeStream': 'first'
 })
 

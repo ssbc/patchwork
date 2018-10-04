@@ -11,7 +11,6 @@ exports.needs = nest({
   },
   'sbot.pull.stream': 'first',
   'sbot.pull.resumeStream': 'first',
-  'feed.pull.public': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'invite.sheet': 'first',
