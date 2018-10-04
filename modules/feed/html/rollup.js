@@ -255,7 +255,9 @@ exports.create = function (api) {
         }
       }
 
-      return h('FeedEvent -post', [
+      return h('FeedEvent -post', {
+        msgIds: [item.key].concat(item.latestReplies.map(x => x.key))
+      }, [
         meta,
         renderedMessage,
         item.totalReplies > item.latestReplies.length ? h('a.full', {href: item.key}, ['View full thread' + ' (', item.totalReplies, ')']) : null,
