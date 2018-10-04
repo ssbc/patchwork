@@ -1,11 +1,16 @@
 {
     "cSpell.words": [
         "abortable",
+        "abouts",
         "backlinks",
         "depnest",
         "flatpickr",
+        "msgs",
+        "paramap",
         "pickr",
-        "spacetime"
+        "realtime",
+        "spacetime",
+        "ungroup"
     ],
     "standard.autoFixOnSave": true,
     "editor.tabSize": 2
