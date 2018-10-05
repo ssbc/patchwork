@@ -65,14 +65,11 @@ exports.create = function (api) {
         h('div.close', { 'ev-click': () => warningMessage.set(null) }, 'x')
       ]
     )
-    var fileInput = api.blob.html.input(file => {
-      const megabytes = file.size / 1024 / 1024
-      if (megabytes >= 5) {
-        const rounded = Math.floor(megabytes * 100) / 100
+    var fileInput = api.blob.html.input((err, file) => {
+      if (err) {
         warningMessage.set([
-          h('i.fa.fa-exclamation-triangle'),
-          h('strong', file.name),
-          ` is ${rounded}MB - the current limit is 5MB`
+          // TODO: handle localised error messages (https://github.com/ssbc/ssb-blob-files/issues/3)
+          '⚠️ ', err.message
         ])
         return
       }

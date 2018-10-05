@@ -66,6 +66,7 @@
     "sorted-array-functions": "^1.1.0",
     "spacetime": "^4.3.0",
     "ssb-backlinks": "^0.7.3",
+    "ssb-blob-files": "^1.1.0",
     "ssb-blobs": "~1.1.5",
     "ssb-config": "^2.3.2",
     "ssb-dht-invite": "^0.9.0",

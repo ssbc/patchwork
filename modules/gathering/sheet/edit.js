@@ -71,7 +71,8 @@ exports.create = function (api) {
                 style: { 'background-image': computed(imageUrl, x => `url(${x})`) }
               }, [
                 h('span', ['🖼 ', i18n('Choose Banner Image...')]),
-                api.blob.html.input(file => {
+                api.blob.html.input((err, file) => {
+                  if (err) return
                   chosen.image.set(file)
                 }, {
                   accept: 'image/*'

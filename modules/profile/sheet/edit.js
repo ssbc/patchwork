@@ -57,7 +57,8 @@ exports.create = function (api) {
                   src: computed(chosenImage, (id) => id ? api.blob.sync.url(id) : fallbackImageUrl)
                 }),
                 h('span', ['🖼 ', i18n('Choose Profile Image...')]),
-                api.blob.html.input(file => {
+                api.blob.html.input((err, file) => {
+                  if (err) return
                   chosenImage.set(file.link)
                 }, {
                   accept: 'image/*',

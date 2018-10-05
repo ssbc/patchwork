@@ -128,7 +128,8 @@ exports.create = function (api) {
         ])
       }),
       h('span.add', [
-        api.blob.html.input(file => {
+        api.blob.html.input((err, file) => {
+          if (err) return
           assignImage(id, file.link)
         }, {
           accept: 'image/*',
