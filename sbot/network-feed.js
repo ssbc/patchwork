@@ -8,8 +8,10 @@ const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
+const getRoot = require('../lib/get-root')
 
 exports.manifest = {
+  latest: 'source',
   roots: 'source'
 }
 
@@ -19,6 +21,13 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
+    latest: function () {
+      return pull(
+        ssb.createFeedStream({live: true, old: false}),
+        pull.filter(bumpFilter),
+        LookupRoots({ssb, cache})
+      )
+    },
     roots: function ({reverse, limit, resume}) {
       var stream = Defer.source()
 
@@ -40,6 +49,11 @@ exports.init = function (ssb, config) {
             return item && (item.rts || (item.value && item.value.timestamp))
           },
           filterMap: pull(
+            pull.filter(msg => {
+              // hack around #215 (should just merge this, matt!)
+              return msg.rts || msg.value.timestamp < Date.now()
+            }),
+
             // BUMP FILTER
             pull.filter(bumpFilter),
 
@@ -79,16 +93,6 @@ exports.init = function (ssb, config) {
             })
           )
         }))
-
-        function bumpFilter (msg) {
-          if (isAttendee(msg)) {
-            return {type: 'attending'}
-          } else if (msg.value.content.type === 'post') {
-            return {type: 'reply'}
-          } else if (msg.value.content.type === 'about') {
-            return {type: 'updated'}
-          }
-        }
       })
 
       return stream
@@ -99,4 +103,18 @@ exports.init = function (ssb, config) {
 function isAttendee (msg) {
   var content = msg.value && msg.value.content
   return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
+}
+
+function bumpFilter (msg) {
+  if (isAttendee(msg)) {
+    return 'attending'
+  } else if (msg.value.content.type === 'post') {
+    if (getRoot(msg)) {
+      return 'reply'
+    } else {
+      return 'post'
+    }
+  } else if (msg.value.content.type === 'about') {
+    return 'updated'
+  }
 }

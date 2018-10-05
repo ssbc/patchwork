@@ -11,6 +11,7 @@ const UniqueRoots = require('../lib/unique-roots')
 const Paramap = require('pull-paramap')
 
 exports.manifest = {
+  latest: 'source',
   roots: 'source'
 }
 
@@ -20,6 +21,17 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
+    latest: function () {
+      return pull(
+        ssb.backlinks.read({dest: ssb.id, live: true, old: false}),
+        pull.filter(bumpFilter),
+        LookupRoots({ssb, cache})
+      )
+
+      function bumpFilter (msg) {
+        return checkBump(msg, {id: ssb.id})
+      }
+    },
     roots: function ({reverse, limit, resume}) {
       var stream = Defer.source()
 
@@ -96,19 +108,23 @@ exports.init = function (ssb, config) {
         }))
 
         function bumpFilter (msg) {
-          if (msg.value.author !== ssb.id) {
-            if (Array.isArray(msg.value.content.mentions) && msg.value.content.mentions.some(mention => {
-              return mention && mention.link === ssb.id
-            })) {
-              return {type: 'mention'}
-            } else if (msg.value.content.type === 'contact' && msg.value.content.following === true) {
-              return {type: 'follow'}
-            }
-          }
+          return checkBump(msg, {id: ssb.id})
         }
       })
 
       return stream
+    }
+  }
+}
+
+function checkBump (msg, {id}) {
+  if (msg.value.author !== id) {
+    if (Array.isArray(msg.value.content.mentions) && msg.value.content.mentions.some(mention => {
+      return mention && mention.link === id
+    })) {
+      return 'mention'
+    } else if (msg.value.content.type === 'contact' && msg.value.content.following === true) {
+      return 'follow'
     }
   }
 }

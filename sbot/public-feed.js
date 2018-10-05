@@ -9,6 +9,7 @@ const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const Paramap = require('pull-paramap')
+const getRoot = require('../lib/get-root')
 
 exports.manifest = {
   roots: 'source'
@@ -175,9 +176,13 @@ function bumpFromFilterResult (msg, filterResult) {
       return 'attending'
     } else if (filterResult.following) {
       if (msg.value.content.type === 'post') {
-        return {type: 'reply'}
+        if (getRoot(msg)) {
+          return 'reply'
+        } else {
+          return 'post'
+        }
       } else {
-        return {type: 'updated'}
+        return 'updated'
       }
     } else if (filterResult.matchesChannel || filterResult.matchingTags.length) {
       var channels = new Set()

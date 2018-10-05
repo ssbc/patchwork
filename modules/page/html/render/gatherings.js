@@ -4,10 +4,10 @@ var nest = require('depnest')
 exports.needs = nest({
   'feed.html.rollup': 'first',
   'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'gathering.sheet.edit': 'first',
   'keys.sync.id': 'first',
   'contact.obs.following': 'first',
-  'sbot.pull.stream': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -34,7 +34,8 @@ exports.create = function (api) {
     }, {limit: 40, reverse: true})
 
     return api.feed.html.rollup(getStream, {
-      prepend
+      prepend,
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.gatherings.latest())
     })
   })
 

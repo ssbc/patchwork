@@ -3,6 +3,7 @@ var { h } = require('mutant')
 
 exports.needs = nest({
   'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'message.html.compose': 'first',
   'message.async.publish': 'first',
   'feed.html.rollup': 'first',
@@ -35,7 +36,8 @@ exports.create = function (api) {
     }, {limit: 40, reverse: true})
 
     var feedView = api.feed.html.rollup(getStream, {
-      prepend
+      prepend,
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.networkFeed.latest())
     })
 
     var result = h('div.SplitView', [

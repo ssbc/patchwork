@@ -3,7 +3,8 @@ var nest = require('depnest')
 exports.needs = nest({
   'feed.html.rollup': 'first',
   'keys.sync.id': 'first',
-  'sbot.pull.resumeStream': 'first'
+  'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -17,7 +18,8 @@ exports.create = function (api) {
     }, {limit: 40, reverse: true})
 
     return api.feed.html.rollup(getStream, {
-      compactFilter // compact context messages
+      compactFilter, // compact context messages
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.mentionsFeed.latest())
     })
   })
 
