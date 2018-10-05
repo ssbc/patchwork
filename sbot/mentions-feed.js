@@ -22,8 +22,11 @@ exports.init = function (ssb, config) {
 
   return {
     latest: function () {
+      var query = [{$filter: {
+        dest: ssb.id
+      }}]
       return pull(
-        ssb.backlinks.read({dest: ssb.id, live: true, old: false}),
+        ssb.backlinks.read({query, live: true, old: false}),
         pull.filter(bumpFilter),
         LookupRoots({ssb, cache})
       )
@@ -123,7 +126,7 @@ function checkBump (msg, {id}) {
       return mention && mention.link === id
     })) {
       return 'mention'
-    } else if (msg.value.content.type === 'contact' && msg.value.content.following === true) {
+    } else if (msg.value.content.type === 'contact' && msg.value.content.following === true && msg.value.content.contact === id) {
       return 'follow'
     }
   }
