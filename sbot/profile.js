@@ -18,6 +18,7 @@ var collator = new Intl.Collator('default', {sensitivity: 'base', usage: 'search
 exports.manifest = {
   suggest: 'async',
   avatar: 'async',
+  latest: 'source',
   roots: 'source'
 }
 
@@ -143,6 +144,21 @@ exports.init = function (ssb, config) {
         }
       })
     },
+    latest: function ({id}) {
+      return pull(
+        ssb.createUserStream({id, live: true, old: false}),
+        pull.filter(bumpFilter),
+        LookupRoots({ssb, cache}),
+        pull.filter(msg => {
+          return !getRoot(msg.root)
+        })
+        // TODO: handle blocked users
+      )
+
+      function bumpFilter (msg) {
+        return checkBump(msg, {id})
+      }
+    },
     roots: function ({id, limit, reverse, resume}) {
       // use resume option if specified
 
@@ -199,21 +215,7 @@ exports.init = function (ssb, config) {
       }
 
       function bumpFilter (msg) {
-        // match summary bumps to actual bumps
-        if (msg.value.author === id) {
-          let content = msg.value.content
-          let type = content.type
-          if (type === 'vote' && !getRoot(msg)) { // only show likes when root post
-            let vote = content.vote
-            if (vote) {
-              return {type: 'reaction', reaction: vote.expression, value: vote.value}
-            }
-          } else if (type === 'post') {
-            return {type: 'reply'}
-          } else if (type === 'about') {
-            return {type: 'update'}
-          }
-        }
+        return checkBump(msg, {id})
       }
     }
   }
@@ -273,4 +275,25 @@ function getMatches (cache, text) {
     }
   })
   return result
+}
+
+function checkBump (msg, {id}) {
+  if (msg.value.author === id) {
+    let content = msg.value.content
+    let type = content.type
+    if (type === 'vote' && !getRoot(msg)) { // only show likes when root post
+      let vote = content.vote
+      if (vote) {
+        return {type: 'reaction', reaction: vote.expression, value: vote.value}
+      }
+    } else if (type === 'post') {
+      if (getRoot(msg)) {
+        return 'reply'
+      } else {
+        return 'post'
+      }
+    } else if (type === 'about') {
+      return 'update'
+    }
+  }
 }

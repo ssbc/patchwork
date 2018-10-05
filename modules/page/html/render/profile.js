@@ -18,6 +18,7 @@ exports.needs = nest({
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
   'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'sbot.async.publish': 'first',
   'sbot.obs.connection': 'first',
   'keys.sync.id': 'first',
@@ -222,7 +223,8 @@ exports.create = function (api) {
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
       compactFilter: (msg) => msg.value.author !== id, // show root context messages smaller
-      ungroupFilter: (msg) => msg.value.author !== id
+      ungroupFilter: (msg) => msg.value.author !== id,
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.profile.latest({id}))
     })
 
     var container = h('div', {className: 'SplitView'}, [
