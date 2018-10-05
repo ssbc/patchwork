@@ -11,6 +11,7 @@ const UniqueRoots = require('../lib/unique-roots')
 const Paramap = require('pull-paramap')
 
 exports.manifest = {
+  latest: 'source',
   roots: 'source'
 }
 
@@ -20,6 +21,16 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
+    latest: function () {
+      return pull(
+        ssb.private.read({
+          live: true,
+          old: false
+        }),
+        pull.filter(bumpFilter),
+        LookupRoots({ssb, cache})
+      )
+    },
     roots: function ({reverse, limit, resume}) {
       var stream = Defer.source()
 
@@ -54,9 +65,7 @@ exports.init = function (ssb, config) {
             LookupRoots({ssb, cache}),
 
             // ONLY POSTS BUMP PRIVATE (currently)
-            pull.filter(item => {
-              return item.value.content.type === 'post'
-            }),
+            pull.filter(bumpFilter),
 
             // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
             pull.filter(item => {
@@ -94,15 +103,15 @@ exports.init = function (ssb, config) {
             }, 20)
           )
         }))
-
-        function bumpFilter (msg) {
-          if (msg.value.content.type === 'post') {
-            return {type: 'reply'}
-          }
-        }
       })
 
       return stream
     }
+  }
+}
+
+function bumpFilter (msg) {
+  if (msg.value.content.type === 'post') {
+    return {type: 'reply'}
   }
 }

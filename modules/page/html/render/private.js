@@ -4,6 +4,7 @@ var ref = require('ssb-ref')
 exports.needs = nest({
   'feed.html.rollup': 'first',
   'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'message.html.compose': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
@@ -41,7 +42,8 @@ exports.create = function (api) {
     }, {limit: 40, reverse: true})
 
     var view = api.feed.html.rollup(getStream, {
-      prepend: [compose]
+      prepend: [compose],
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.privateFeed.latest())
     })
 
     view.setAnchor = function (data) {
