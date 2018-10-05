@@ -8,6 +8,7 @@ exports.needs = nest({
   'feed.html.rollup': 'first',
   'feed.html.followWarning': 'first',
   'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'sbot.pull.log': 'first',
   'message.async.publish': 'first',
   'keys.sync.id': 'first',
@@ -49,43 +50,14 @@ exports.create = function (api) {
     }, {limit: 40, reverse: true, channel})
 
     const channelView = api.feed.html.rollup(getStream, {
-      prepend
+      prepend,
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.channelFeed.latest({channel}))
     })
 
     // call reload whenever filters changes
     filters(channelView.reload)
 
     return channelView
-
-    function checkFeedFilter (msg) {
-      const filterObj = filters() && filters().channelView
-      if (filterObj) {
-        const msgType = msg && msg.value && msg.value.content &&
-                        msg.value.content.type
-        // filter out channel subscription messages
-        if (filterObj.subscriptions && msgType === 'channel') { return false }
-      }
-      return true
-    }
-
-    function mentionFilter (msg) {
-      // filter out likes
-      if (msg.value.content.type === 'vote') return false
-      if (api.channel.sync.normalize(msg.value.content.channel) === channel) return true
-      if (Array.isArray(msg.value.content.mentions)) {
-        if (msg.value.content.mentions.some(mention => {
-          return mention && getNormalized(mention.link) === `#${channel}`
-        })) {
-          return 'channel-mention'
-        }
-      }
-    }
-
-    function getNormalized (link) {
-      if (typeof link === 'string' && link.startsWith('#')) {
-        return `#${api.channel.sync.normalize(link.slice(1))}`
-      }
-    }
 
     function noVisibleNewPostsWarning () {
       var warning = i18n('You may not be able to see new channel content until you follow some users or pubs.')

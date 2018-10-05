@@ -29,6 +29,7 @@ exports.init = function (ssb, config) {
         }),
         pull.filter(bumpFilter),
         LookupRoots({ssb, cache})
+        // TODO: don't bump if author blocked
       )
     },
     roots: function ({reverse, limit, resume}) {

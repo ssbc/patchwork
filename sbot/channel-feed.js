@@ -8,9 +8,11 @@ const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
-var normalizeChannel = require('ssb-ref').normalizeChannel
+const getRoot = require('../lib/get-root')
+const normalizeChannel = require('ssb-ref').normalizeChannel
 
 exports.manifest = {
+  latest: 'source',
   roots: 'source'
 }
 
@@ -20,6 +22,18 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
+    latest: function ({channel}) {
+      channel = normalizeChannel(channel)
+      var query = [{$filter: {
+        dest: `#${channel}`
+      }}]
+      return pull(
+        ssb.backlinks.read({old: false, live: true, query}),
+        pull.filter(msg => checkBump(msg, {channel})),
+        LookupRoots({ssb, cache})
+        // TODO: don't bump if author blocked
+      )
+    },
     roots: function ({reverse, limit, resume, channel}) {
       var stream = Defer.source()
       channel = normalizeChannel(channel)
@@ -92,24 +106,32 @@ exports.init = function (ssb, config) {
         }))
 
         function bumpFilter (msg) {
-          if (msg.value.content.type === 'vote') return
-          if (normalizeChannel(msg.value.content.channel) === channel) {
-            return 'reply'
-          }
-
-          if (Array.isArray(msg.value.content.mentions)) {
-            if (msg.value.content.mentions.some(mention => {
-              if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
-                return normalizeChannel(mention.link) === channel
-              }
-            })) {
-              return 'channel-mention'
-            }
-          }
+          return checkBump(msg, {channel})
         }
       })
 
       return stream
+    }
+  }
+}
+
+function checkBump (msg, {channel}) {
+  if (msg.value.content.type === 'vote') return
+  if (normalizeChannel(msg.value.content.channel) === channel) {
+    if (getRoot(msg)) {
+      return 'reply'
+    } else {
+      return 'post'
+    }
+  }
+
+  if (Array.isArray(msg.value.content.mentions)) {
+    if (msg.value.content.mentions.some(mention => {
+      if (mention && typeof mention.link === 'string' && mention.link.startsWith('#')) {
+        return normalizeChannel(mention.link) === channel
+      }
+    })) {
+      return 'channel-mention'
     }
   }
 }
