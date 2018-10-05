@@ -93,7 +93,8 @@ exports.create = function (api) {
       textArea.value = `${before}${embed}[${embedPrefix}${file.name}](${file.link})${after}`
       console.log('added:', file)
     }, {
-      private: isPrivate
+      private: isPrivate,
+      multiple: true
     })
 
     fileInput.onclick = function () {

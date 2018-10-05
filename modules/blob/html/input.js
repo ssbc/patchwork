@@ -11,12 +11,12 @@ module.exports = {
     return nest('blob.html.input', FileInput)
 
     function FileInput (onAdded, opts = {}) {
-      const { accept, private: isPrivate, removeExif: stripExif, resize, quality } = opts
+      const { accept, private: isPrivate, removeExif: stripExif, resize, quality, multiple } = opts
 
       return h('input', {
         type: 'file',
         accept,
-        attributes: { multiple: opts.multiple },
+        multiple,
         'ev-change': handleEvent
       })
 
