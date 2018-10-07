@@ -41,22 +41,21 @@ exports.init = function (ssb, config) {
       ssb.friends.hops((err, hops) => {
         if (err) return stream.abort(err)
 
-        // use resume option if specified
-        var opts = { reverse, old: true }
+        var filter = {
+          dest: ssb.id
+        }
 
-        if (reverse) {
-          opts.query = [
-            { $filter: {
-              dest: ssb.id,
-              timestamp: resume ? { $lt: resume, $gt: 0 } : { $gt: 0 }
-            } }
-          ]
-        } else {
-          opts.query = [
-            { $filter: {
-              dest: ssb.id,
-              timestamp: resume ? { $gt: resume } : { $gt: 0 }
-            } }
+        // use resume option if specified
+        if (resume) {
+          filter.timestamp = reverse ? { $lt: resume } : { $gt: resume }
+        }
+
+        var opts = {
+          reverse,
+          old: true,
+          index: 'DTS',
+          query: [
+            { $filter: filter }
           ]
         }
 
