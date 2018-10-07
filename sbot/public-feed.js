@@ -39,10 +39,7 @@ exports.init = function (ssb, config) {
         stream.resolve(pullResume.source(ssb.createFeedStream(opts), {
           limit,
           getResume: (item) => {
-            // WAITING FOR: https://github.com/ssbc/secure-scuttlebutt/pull/215
-            // otherwise roots can potentially have unwanted items pinned to top of feed
-            // if a message has a timestamp far in the future
-            return item && (item.rts || (item.value && item.value.timestamp))
+            return item && item.rts
           },
           filterMap: pull(
             // BUMP FILTER
