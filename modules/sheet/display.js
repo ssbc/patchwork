@@ -5,9 +5,9 @@ exports.gives = nest('sheet.display')
 
 exports.create = function () {
   return nest('sheet.display', function (handler) {
-    var {content, footer, classList, onMount} = handler(done)
+    var { content, footer, classList, onMount } = handler(done)
 
-    var container = h('div', {className: 'Sheet', classList}, [
+    var container = h('div', { className: 'Sheet', classList }, [
       h('section', [content]),
       h('footer', [footer])
     ])

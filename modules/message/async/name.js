@@ -1,6 +1,6 @@
 const nest = require('depnest')
 const ref = require('ssb-ref')
-const {resolve, onceTrue} = require('mutant')
+const { resolve, onceTrue } = require('mutant')
 
 exports.needs = nest({
   'sbot.async.get': 'first',

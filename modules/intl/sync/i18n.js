@@ -25,7 +25,7 @@ exports.create = (api) => {
   let _locale
 
   // TODO: this should probably follow the selected language
-  var collator = new Intl.Collator('default', {sensitivity: 'base', usage: 'search'})
+  var collator = new Intl.Collator('default', { sensitivity: 'base', usage: 'search' })
 
   return nest('intl.sync', {
     locale,

@@ -1,4 +1,4 @@
-var {h, when, Value} = require('mutant')
+var { h, when, Value } = require('mutant')
 var nest = require('depnest')
 var electron = require('electron')
 

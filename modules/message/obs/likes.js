@@ -37,13 +37,13 @@ exports.create = function (api) {
     'message.obs.doesLike': (id) => {
       var yourId = api.keys.sync.id()
       return MutantPullValue(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.feedLikesMsgStream({msgId: id, feedId: yourId}))
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.feedLikesMsgStream({ msgId: id, feedId: yourId }))
       })
     },
     'message.obs.likeCount': (id) => {
       if (!ref.isLink(id)) throw new Error('an id must be specified')
       return MutantPullValue(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.countStream({dest: id}))
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.countStream({ dest: id }))
       })
     }
   })

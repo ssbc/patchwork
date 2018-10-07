@@ -34,14 +34,14 @@ exports.create = function (api) {
         h('div.main', [
           h('div.title', [
             h('h1', [
-              h('a', {href: id, 'ev-click': () => api.app.navigate(id)}, [name])
+              h('a', { href: id, 'ev-click': () => api.app.navigate(id) }, [name])
             ]),
             h('div.meta', [
-              api.contact.html.followToggle(id, {block: false})
+              api.contact.html.followToggle(id, { block: false })
             ])
           ]),
           h('section -publicKey', [
-            h('pre', {title: i18n('Public key for this profile')}, id)
+            h('pre', { title: i18n('Public key for this profile') }, id)
           ])
         ])
       ]),

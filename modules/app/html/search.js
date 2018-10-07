@@ -41,7 +41,7 @@ exports.create = function (api) {
         } else if (inputText[0] === '/') {
           cb(null, getPageSuggestions(inputText))
         }
-      }, {cls: 'SuggestBox'})
+      }, { cls: 'SuggestBox' })
     })
 
     return searchBox

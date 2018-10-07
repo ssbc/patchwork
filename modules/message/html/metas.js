@@ -39,7 +39,7 @@ exports.create = function (api) {
     }
 
     if (msg.value.content && msg.value.content.channel && msg.value.content.type !== 'channel') {
-      result.push(h('a.channel', {href: `#${msg.value.content.channel}`}, [`#${msg.value.content.channel}`]))
+      result.push(h('a.channel', { href: `#${msg.value.content.channel}` }, [`#${msg.value.content.channel}`]))
     }
 
     if (msg.key) {
@@ -61,7 +61,7 @@ exports.create = function (api) {
 
   function displayLikes (msg) {
     onceTrue(api.sbot.obs.connection, (sbot) => {
-      sbot.patchwork.likes.get({dest: msg.key}, (err, likes) => {
+      sbot.patchwork.likes.get({ dest: msg.key }, (err, likes) => {
         if (err) return console.log(err)
         api.sheet.profiles(likes, i18n('Liked by'))
       })

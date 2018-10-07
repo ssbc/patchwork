@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var {computed, watch} = require('mutant')
+var { computed, watch } = require('mutant')
 
 exports.needs = nest({
   'channel.obs.recent': 'first',

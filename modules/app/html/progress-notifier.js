@@ -1,4 +1,4 @@
-var {computed, when, h, Value} = require('mutant')
+var { computed, when, h, Value } = require('mutant')
 var nest = require('depnest')
 var sustained = require('../../../lib/sustained')
 const pull = require('pull-stream')
@@ -56,11 +56,11 @@ exports.create = function (api) {
       h('div.status', [
         when(displaying, h('Loading -small', [
           when(pendingMigration,
-            [h('span.info', i18n('Upgrading database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
+            [h('span.info', i18n('Upgrading database')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: migrationProgress })],
             when(computed(downloadProgress, (v) => v < 1),
-              [h('span.info', i18n('Downloading new messages')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
+              [h('span.info', i18n('Downloading new messages')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: downloadProgress })],
               when(pending, [
-                [h('span.info', i18n('Indexing database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
+                [h('span.info', i18n('Indexing database')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: indexProgress })]
               ], i18n('Scuttling...'))
             )
           )

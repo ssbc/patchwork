@@ -31,7 +31,7 @@ exports.create = function (api) {
     var updates = Value(0)
     var aborter = null
 
-    const searchHeader = h('div', {className: 'PageHeading'}, [
+    const searchHeader = h('div', { className: 'PageHeading' }, [
       h('h1', [h('strong', i18n('Search Results:')), ' ', query])
     ])
 
@@ -126,16 +126,16 @@ exports.create = function (api) {
   function getStream (query, realtime = false) {
     if (ref.isLink(query) || query.startsWith('#')) {
       return api.sbot.pull.backlinks({
-        query: [ {$filter: { dest: query }} ],
+        query: [ { $filter: { dest: query } } ],
         reverse: true,
         old: !realtime,
         index: 'DTA' // use asserted timestamps
       })
     } else {
       if (realtime) {
-        return api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({old: false, query: query.split(whitespace)}))
+        return api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({ old: false, query: query.split(whitespace) }))
       } else {
-        return api.sbot.pull.stream(sbot => sbot.search.query({query}))
+        return api.sbot.pull.stream(sbot => sbot.search.query({ query }))
       }
     }
   }
@@ -149,7 +149,7 @@ function createOrRegExp (ary) {
 
 function highlight (el, query) {
   if (el) {
-    var searcher = new TextNodeSearcher({container: el})
+    var searcher = new TextNodeSearcher({ container: el })
     searcher.query = query
     searcher.highlight()
     return el

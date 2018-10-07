@@ -1,4 +1,4 @@
-var {h, computed, Value} = require('mutant')
+var { h, computed, Value } = require('mutant')
 var nest = require('depnest')
 var catchLinks = require('../../../lib/catch-links')
 

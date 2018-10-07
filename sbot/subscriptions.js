@@ -9,7 +9,7 @@ module.exports = function (ssb, config) {
     stream: function (opts) {
       var channel = normalizeChannel(opts.channel)
       return pull(
-        index.stream({live: opts.live}),
+        index.stream({ live: opts.live }),
         FlatMap(items => {
           var result = []
 
@@ -17,7 +17,7 @@ module.exports = function (ssb, config) {
             Object.keys(items).forEach(key => {
               var parts = getParts(key)
               if (parts && (!channel || parts[1] === channel)) {
-                result.push({from: parts[0], to: parts[1], value: items[key][1], ts: items[key][0]})
+                result.push({ from: parts[0], to: parts[1], value: items[key][1], ts: items[key][0] })
               }
             })
           }

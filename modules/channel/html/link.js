@@ -10,6 +10,6 @@ exports.gives = nest('channel.html.link')
 exports.create = function (api) {
   return nest('channel.html.link', function (channel, text = null) {
     var ref = `#${api.channel.sync.normalize(channel)}`
-    return h('a ChannelLink', {href: ref, title: ref}, text || ref)
+    return h('a ChannelLink', { href: ref, title: ref }, text || ref)
   })
 }

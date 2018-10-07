@@ -33,14 +33,14 @@ exports.create = function (api) {
     // connect to the remote pub using the invite code
     ssbClient(null, {
       remote: data.invite,
-      manifest: { invite: {use: 'async'}, getAddress: 'async' },
+      manifest: { invite: { use: 'async' }, getAddress: 'async' },
       appKey: config.caps && config.caps.shs
     }, function (err, sbot) {
       if (err) return cb(err)
       progress.set('Requesting follow...')
 
       // ask them to follow us
-      sbot.invite.use({feed: id}, function (err, msg) {
+      sbot.invite.use({ feed: id }, function (err, msg) {
         if (err) {
           // the probably already follow us
           api.contact.async.followerOf(id, data.key, function (_, follows) {
@@ -91,4 +91,3 @@ exports.create = function (api) {
     }
   })
 }
-

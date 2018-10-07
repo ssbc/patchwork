@@ -51,7 +51,7 @@ exports.create = function (api) {
               value: theme,
               'ev-change': (ev) => theme.set(ev.target.value)
             }, [
-              themeNames.map(name => h('option', {value: name}, [name]))
+              themeNames.map(name => h('option', { value: name }, [name]))
             ])
           ]),
 
@@ -62,8 +62,8 @@ exports.create = function (api) {
               value: lang,
               'ev-change': (ev) => lang.set(ev.target.value)
             }, [
-              h('option', {value: ''}, i18n('Default')),
-              locales.map(code => h('option', {value: code}, [
+              h('option', { value: '' }, i18n('Default')),
+              locales.map(code => h('option', { value: code }, [
                 '[', code, '] ', getLocaleName(code)
               ]))
             ])
@@ -76,8 +76,8 @@ exports.create = function (api) {
               value: fontSize,
               'ev-change': (ev) => fontSize.set(ev.target.value)
             }, [
-              h('option', {value: ''}, i18n('Default')),
-              fontSizes.map(size => h('option', {value: size}, size))
+              h('option', { value: '' }, i18n('Default')),
+              fontSizes.map(size => h('option', { value: size }, size))
             ])
           ]),
 
@@ -135,7 +135,7 @@ exports.create = function (api) {
   })
 }
 
-function checkbox (param, {label}) {
+function checkbox (param, { label }) {
   return h('label', [
     h('input', {
       type: 'checkbox',

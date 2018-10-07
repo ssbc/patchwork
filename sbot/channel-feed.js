@@ -22,19 +22,19 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
-    latest: function ({channel}) {
+    latest: function ({ channel }) {
       channel = normalizeChannel(channel)
-      var query = [{$filter: {
+      var query = [{ $filter: {
         dest: `#${channel}`
-      }}]
+      } }]
       return pull(
-        ssb.backlinks.read({old: false, live: true, query}),
-        pull.filter(msg => checkBump(msg, {channel})),
-        LookupRoots({ssb, cache})
+        ssb.backlinks.read({ old: false, live: true, query }),
+        pull.filter(msg => checkBump(msg, { channel })),
+        LookupRoots({ ssb, cache })
         // TODO: don't bump if author blocked
       )
     },
-    roots: function ({reverse, limit, resume, channel}) {
+    roots: function ({ reverse, limit, resume, channel }) {
       var stream = Defer.source()
       channel = normalizeChannel(channel)
 
@@ -42,18 +42,18 @@ exports.init = function (ssb, config) {
         if (err) return stream.abort(err)
 
         // use resume option if specified
-        var rts = {$gt: 0}
+        var rts = { $gt: 0 }
         if (resume) {
-          rts = reverse ? {$lt: resume} : {$gt: resume}
+          rts = reverse ? { $lt: resume } : { $gt: resume }
         }
 
         var opts = {
           reverse,
           old: true,
-          query: [{$filter: {
+          query: [{ $filter: {
             dest: `#${channel}`,
             rts
-          }}]
+          } }]
         }
 
         stream.resolve(pullResume.source(ssb.backlinks.read(opts), {
@@ -66,7 +66,7 @@ exports.init = function (ssb, config) {
             pull.filter(bumpFilter),
 
             // LOOKUP AND ADD ROOTS
-            LookupRoots({ssb, cache}),
+            LookupRoots({ ssb, cache }),
 
             // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
             pull.filter(item => {
@@ -85,7 +85,7 @@ exports.init = function (ssb, config) {
             }),
 
             // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ssb}),
+            ResolveAbouts({ ssb }),
 
             // ADD THREAD SUMMARY
             pull.asyncMap((item, cb) => {
@@ -106,7 +106,7 @@ exports.init = function (ssb, config) {
         }))
 
         function bumpFilter (msg) {
-          return checkBump(msg, {channel})
+          return checkBump(msg, { channel })
         }
       })
 
@@ -115,7 +115,7 @@ exports.init = function (ssb, config) {
   }
 }
 
-function checkBump (msg, {channel}) {
+function checkBump (msg, { channel }) {
   if (msg.value.content.type === 'vote') return
   if (normalizeChannel(msg.value.content.channel) === channel) {
     if (getRoot(msg)) {

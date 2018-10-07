@@ -3,7 +3,7 @@ var extend = require('xtend')
 var Pickr = require('flatpickr')
 var spacetime = require('spacetime')
 
-var {Value, h, computed, when} = require('mutant')
+var { Value, h, computed, when } = require('mutant')
 
 exports.gives = nest('gathering.sheet.edit')
 

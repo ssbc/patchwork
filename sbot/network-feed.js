@@ -23,19 +23,19 @@ exports.init = function (ssb, config) {
   return {
     latest: function () {
       return pull(
-        ssb.createFeedStream({live: true, old: false}),
+        ssb.createFeedStream({ live: true, old: false }),
         pull.filter(bumpFilter),
-        LookupRoots({ssb, cache})
+        LookupRoots({ ssb, cache })
       )
     },
-    roots: function ({reverse, limit, resume}) {
+    roots: function ({ reverse, limit, resume }) {
       var stream = Defer.source()
 
       ssb.friends.hops((err, hops) => {
         if (err) return stream.abort(err)
 
         // use resume option if specified
-        var opts = {reverse, old: true}
+        var opts = { reverse, old: true }
         if (resume) {
           opts[reverse ? 'lt' : 'gt'] = resume
         }
@@ -58,7 +58,7 @@ exports.init = function (ssb, config) {
             pull.filter(bumpFilter),
 
             // LOOKUP AND ADD ROOTS
-            LookupRoots({ssb, cache}),
+            LookupRoots({ ssb, cache }),
 
             // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
             pull.filter(item => {
@@ -77,7 +77,7 @@ exports.init = function (ssb, config) {
             }),
 
             // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ssb}),
+            ResolveAbouts({ ssb }),
 
             // ADD THREAD SUMMARY
             pull.asyncMap((item, cb) => {

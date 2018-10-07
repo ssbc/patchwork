@@ -17,8 +17,8 @@ exports.create = function (api) {
   return nest('feed.obs.recent', function (limit) {
     var stream = pull(
       pullCat([
-        api.sbot.pull.log({reverse: true, limit: limit || 50}),
-        api.sbot.pull.log({old: false})
+        api.sbot.pull.log({ reverse: true, limit: limit || 50 }),
+        api.sbot.pull.log({ old: false })
       ])
     )
 

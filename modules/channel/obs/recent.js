@@ -32,9 +32,9 @@ exports.create = function (api) {
           old: false,
           live: true,
           query: [
-            {$filter: {
-              dest: {$prefix: '#'}
-            }}
+            { $filter: {
+              dest: { $prefix: '#' }
+            } }
           ]
         }),
         pull.drain(msg => {
@@ -54,14 +54,14 @@ exports.create = function (api) {
       pull(
         api.sbot.pull.backlinks({
           query: [
-            {$filter: {
-              dest: {$prefix: '#'}
-            }},
-            {$reduce: {
+            { $filter: {
+              dest: { $prefix: '#' }
+            } },
+            { $reduce: {
               id: 'dest',
-              updatedAt: {$max: 'timestamp'},
-              count: {$count: true}
-            }}
+              updatedAt: { $max: 'timestamp' },
+              count: { $count: true }
+            } }
           ]
         }),
         pull.drain((item) => {
@@ -95,5 +95,5 @@ function ChannelRef (id) {
     id,
     updatedAt: Value(0),
     count: Value(0)
-  }, {merge: true})
+  }, { merge: true })
 }

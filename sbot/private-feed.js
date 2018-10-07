@@ -28,30 +28,30 @@ exports.init = function (ssb, config) {
           old: false
         }),
         pull.filter(bumpFilter),
-        LookupRoots({ssb, cache})
+        LookupRoots({ ssb, cache })
         // TODO: don't bump if author blocked
       )
     },
-    roots: function ({reverse, limit, resume}) {
+    roots: function ({ reverse, limit, resume }) {
       var stream = Defer.source()
 
       ssb.friends.hops((err, hops) => {
         if (err) return stream.abort(err)
 
         // use resume option if specified
-        var opts = {reverse, old: true}
+        var opts = { reverse, old: true }
 
         if (reverse) {
           opts.query = [
-            {$filter: {
-              timestamp: resume ? {$lt: resume, $gt: 0} : {$gt: 0}
-            }}
+            { $filter: {
+              timestamp: resume ? { $lt: resume, $gt: 0 } : { $gt: 0 }
+            } }
           ]
         } else {
           opts.query = [
-            {$filter: {
-              timestamp: resume ? {$gt: resume} : {$gt: 0}
-            }}
+            { $filter: {
+              timestamp: resume ? { $gt: resume } : { $gt: 0 }
+            } }
           ]
         }
 
@@ -63,7 +63,7 @@ exports.init = function (ssb, config) {
           },
           filterMap: pull(
             // LOOKUP AND ADD ROOTS
-            LookupRoots({ssb, cache}),
+            LookupRoots({ ssb, cache }),
 
             // ONLY POSTS BUMP PRIVATE (currently)
             pull.filter(bumpFilter),
@@ -85,7 +85,7 @@ exports.init = function (ssb, config) {
             }),
 
             // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ssb}),
+            ResolveAbouts({ ssb }),
 
             // ADD THREAD SUMMARY
             Paramap((item, cb) => {
@@ -113,6 +113,6 @@ exports.init = function (ssb, config) {
 
 function bumpFilter (msg) {
   if (msg.value.content.type === 'post') {
-    return {type: 'reply'}
+    return { type: 'reply' }
   }
 }

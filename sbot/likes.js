@@ -10,19 +10,19 @@ exports.manifest = {
 exports.init = function (ssb, config) {
   return {
     read,
-    feedLikesMsgStream: function ({feedId, msgId}) {
+    feedLikesMsgStream: function ({ feedId, msgId }) {
       var value = false
       var sync = false
       return pull(
         ssb.backlinks.read({
           live: true,
-          query: [{$filter: {
+          query: [{ $filter: {
             dest: msgId,
             value: {
               author: feedId,
-              content: {type: 'vote', vote: {link: msgId}}
+              content: { type: 'vote', vote: { link: msgId } }
             }
-          }}]
+          } }]
         }),
         pull.map((msg) => {
           if (msg.sync) {
@@ -39,10 +39,10 @@ exports.init = function (ssb, config) {
         pull.filter(present)
       )
     },
-    get: function ({dest}, cb) {
+    get: function ({ dest }, cb) {
       var ids = new Set()
       pull(
-        read({dest}),
+        read({ dest }),
         pull.drain(msg => {
           let author = msg.value.author
           let vote = msg.value.content.vote
@@ -59,11 +59,11 @@ exports.init = function (ssb, config) {
         })
       )
     },
-    countStream: function ({dest}) {
+    countStream: function ({ dest }) {
       var ids = new Set()
       var sync = false
       return pull(
-        read({dest, live: true, old: true}),
+        read({ dest, live: true, old: true }),
         pull.map(msg => {
           if (msg.sync) {
             sync = true
@@ -89,16 +89,16 @@ exports.init = function (ssb, config) {
     }
   }
 
-  function read ({reverse = false, limit, live, old, dest}) {
+  function read ({ reverse = false, limit, live, old, dest }) {
     return pull(
       ssb.backlinks.read({
         reverse,
         live,
         limit,
-        query: [{$filter: {
+        query: [{ $filter: {
           dest,
-          value: {content: {type: 'vote', vote: {link: dest}}}
-        }}]
+          value: { content: { type: 'vote', vote: { link: dest } } }
+        } }]
       })
     )
   }

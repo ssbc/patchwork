@@ -1,6 +1,6 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var {h, when, computed, map, send, dictToCollection, resolve, onceTrue} = require('mutant')
+var { h, when, computed, map, send, dictToCollection, resolve, onceTrue } = require('mutant')
 
 exports.needs = nest({
   'about.obs': {
@@ -76,7 +76,7 @@ exports.create = function (api) {
     var names = computed([api.about.obs.names(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
     var images = computed([api.about.obs.images(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
 
-    var namePicker = h('div', {className: 'Picker'}, [
+    var namePicker = h('div', { className: 'Picker' }, [
       map(dictToCollection(names), (item) => {
         var isSelf = computed(item.value, (ids) => ids.includes(id))
         var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
@@ -104,7 +104,7 @@ exports.create = function (api) {
       }, ['+'])
     ])
 
-    var imagePicker = h('div', {className: 'Picker'}, [
+    var imagePicker = h('div', { className: 'Picker' }, [
       map(dictToCollection(images), (item) => {
         var isSelf = computed(item.value, (ids) => ids.includes(id))
         var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
@@ -139,21 +139,21 @@ exports.create = function (api) {
       ])
     ])
 
-    var prepend = h('header', {className: 'ProfileHeader'}, [
+    var prepend = h('header', { className: 'ProfileHeader' }, [
       h('div.image', api.about.html.image(id)),
       h('div.main', [
         h('div.title', [
           h('h1', [name]),
           h('div.meta', [
             when(id === yourId, [
-              h('button', {'ev-click': api.profile.sheet.edit}, i18n('Edit Your Profile'))
+              h('button', { 'ev-click': api.profile.sheet.edit }, i18n('Edit Your Profile'))
             ], [
               api.contact.html.followToggle(id)
             ])
           ])
         ]),
         h('section -publicKey', [
-          h('pre', {title: i18n('Public key for this profile')}, id)
+          h('pre', { title: i18n('Public key for this profile') }, id)
         ]),
 
         when(contact.notFollowing, [
@@ -218,21 +218,21 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.profile.roots(opts)
-    }, {limit: 40, reverse: true, id})
+    }, { limit: 40, reverse: true, id })
 
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
       compactFilter: (msg) => msg.value.author !== id, // show root context messages smaller
       ungroupFilter: (msg) => msg.value.author !== id,
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.profile.latest({id}))
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.profile.latest({ id }))
     })
 
-    var container = h('div', {className: 'SplitView'}, [
+    var container = h('div', { className: 'SplitView' }, [
       h('div.main', [
         feedView
       ]),
       h('div.side.-right', [
-        h('button PrivateMessageButton', {'ev-click': () => api.app.navigate('/private', {compose: {to: id}})}, i18n('Send Private Message')),
+        h('button PrivateMessageButton', { 'ev-click': () => api.app.navigate('/private', { compose: { to: id } }) }, i18n('Send Private Message')),
         when(contact.sync,
           h('div', [
             renderContactBlock(i18n('Friends'), onlyRecent(friends, 10), contact.yourFollowing, friends),
@@ -240,7 +240,7 @@ exports.create = function (api) {
             renderContactBlock(i18n('Following'), onlyRecent(following, 10), contact.yourFollowing, following),
             renderContactBlock(i18n('Blocked by'), contact.blockingFriends, contact.yourFollowing)
           ]),
-          h('div', {className: 'Loading'})
+          h('div', { className: 'Loading' })
         )
       ])
     ])
@@ -355,7 +355,7 @@ exports.create = function (api) {
     api.sheet.display(close => {
       var currentName = api.about.obs.name(id)
       var input = h('input', {
-        style: {'font-size': '150%'},
+        style: { 'font-size': '150%' },
         value: currentName()
       })
       setTimeout(() => {

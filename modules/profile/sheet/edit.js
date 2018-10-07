@@ -1,6 +1,6 @@
 var nest = require('depnest')
 var extend = require('xtend')
-var {Value, h, computed, when} = require('mutant')
+var { Value, h, computed, when } = require('mutant')
 var fallbackImageUrl = 'data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
 
 exports.gives = nest('profile.sheet.edit')

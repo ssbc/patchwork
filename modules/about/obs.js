@@ -1,4 +1,4 @@
-var {computed} = require('mutant')
+var { computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var colorHash = new (require('color-hash'))()
@@ -57,14 +57,14 @@ exports.create = function (api) {
   function valueFrom (id, key, author) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.valueFromStream({dest: id, key, id: author}))
+      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.valueFromStream({ dest: id, key, id: author }))
     })
   }
 
   function latestValue (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.latestValueStream({dest: id, key}))
+      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.latestValueStream({ dest: id, key }))
     })
   }
 
@@ -72,7 +72,7 @@ exports.create = function (api) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     if (!socialValueCache[id + '/' + key]) {
       var obs = socialValueCache[id + '/' + key] = MutantPullValue(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValueStream({dest: id, key}))
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValueStream({ dest: id, key }))
       }, {
         onListen: () => { socialValueCache[id + '/' + key] = obs },
         onUnlisten: () => delete socialValueCache[id + '/' + key]
@@ -84,8 +84,8 @@ exports.create = function (api) {
   function socialValues (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullDict(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValuesStream({dest: id, key}))
-    }, {checkDelete})
+      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValuesStream({ dest: id, key }))
+    }, { checkDelete })
   }
 
   function groupedValues (id, key) {

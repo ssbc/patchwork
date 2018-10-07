@@ -13,7 +13,7 @@ const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
 const getRoot = require('../lib/get-root')
 
-var collator = new Intl.Collator('default', {sensitivity: 'base', usage: 'search'})
+var collator = new Intl.Collator('default', { sensitivity: 'base', usage: 'search' })
 
 exports.manifest = {
   suggest: 'async',
@@ -34,7 +34,7 @@ exports.init = function (ssb, config) {
   setTimeout(watchRecent, 10e3)
 
   pull(
-    ssb.friends.hopStream({live: true, old: true}),
+    ssb.friends.hopStream({ live: true, old: true }),
     pull.drain(hops => {
       Object.keys(hops).forEach(key => {
         if (hops[key] === 0 || hops[key] === 1) {
@@ -51,10 +51,10 @@ exports.init = function (ssb, config) {
     ssb.backlinks.read({
       live: true,
       old: false,
-      query: [{$filter: {
-        dest: {$prefix: '@'},
-        value: {content: {type: 'about'}}
-      }}]
+      query: [{ $filter: {
+        dest: { $prefix: '@' },
+        value: { content: { type: 'about' } }
+      } }]
     }),
     pull.filter(msg => {
       return msg.value && msg.value.content && ref.isFeedId(msg.value.content.about) && (typeof msg.value.content.name === 'string' || msg.value.content.image)
@@ -83,8 +83,8 @@ exports.init = function (ssb, config) {
   function watchRecent () {
     pull(
       pullCat([
-        ssb.createLogStream({reverse: true, limit: 100}),
-        ssb.createLogStream({old: false})
+        ssb.createLogStream({ reverse: true, limit: 100 }),
+        ssb.createLogStream({ old: false })
       ]),
       pull.drain(msg => {
         if (!suggestCache[msg.value.author]) {
@@ -107,7 +107,7 @@ exports.init = function (ssb, config) {
     if (Array.isArray(ids) && ids.length) {
       pull(
         pull.values(ids),
-        Paramap((id, cb) => avatar({id}, cb), 10),
+        Paramap((id, cb) => avatar({ id }, cb), 10),
         pull.drain(item => {
           suggestCache[item.id] = item
         }, cb)
@@ -119,7 +119,7 @@ exports.init = function (ssb, config) {
 
   return {
     avatar,
-    suggest: function ({text, limit, defaultIds}, cb) {
+    suggest: function ({ text, limit, defaultIds }, cb) {
       defaultIds = defaultIds || []
       update(defaultIds.filter(id => !suggestCache[id]), function (err) {
         if (err) return cb(err)
@@ -131,7 +131,7 @@ exports.init = function (ssb, config) {
           }
 
           // add following attribute
-          result = result.map(x => extend(x, {following: following.has(x.id)}))
+          result = result.map(x => extend(x, { following: following.has(x.id) }))
 
           cb(null, result)
         } else if (defaultIds && defaultIds.length) {
@@ -139,16 +139,16 @@ exports.init = function (ssb, config) {
         } else {
           let ids = recentFriends.slice(-(limit || 20)).reverse()
           let result = ids.map(id => suggestCache[id])
-          result = result.map(x => extend(x, {following: following.has(x.id)}))
+          result = result.map(x => extend(x, { following: following.has(x.id) }))
           cb(null, result)
         }
       })
     },
-    latest: function ({id}) {
+    latest: function ({ id }) {
       return pull(
-        ssb.createUserStream({id, live: true, old: false}),
+        ssb.createUserStream({ id, live: true, old: false }),
         pull.filter(bumpFilter),
-        LookupRoots({ssb, cache}),
+        LookupRoots({ ssb, cache }),
         pull.filter(msg => {
           return !getRoot(msg.root)
         })
@@ -156,13 +156,13 @@ exports.init = function (ssb, config) {
       )
 
       function bumpFilter (msg) {
-        return checkBump(msg, {id})
+        return checkBump(msg, { id })
       }
     },
-    roots: function ({id, limit, reverse, resume}) {
+    roots: function ({ id, limit, reverse, resume }) {
       // use resume option if specified
 
-      var opts = {id, reverse, old: true}
+      var opts = { id, reverse, old: true }
       if (resume) {
         opts[reverse ? 'lt' : 'gt'] = resume
       }
@@ -175,7 +175,7 @@ exports.init = function (ssb, config) {
         filterMap: pull(
           pull.filter(bumpFilter),
 
-          LookupRoots({ssb, cache}),
+          LookupRoots({ ssb, cache }),
 
           // DON'T REPEAT THE SAME THREAD
           UniqueRoots(),
@@ -191,7 +191,7 @@ exports.init = function (ssb, config) {
           }),
 
           // RESOLVE ROOTS WITH ABOUTS (gatherings)
-          ResolveAbouts({ssb}),
+          ResolveAbouts({ ssb }),
 
           // ADD THREAD SUMMARY
           Paramap((item, cb) => {
@@ -215,21 +215,21 @@ exports.init = function (ssb, config) {
       }
 
       function bumpFilter (msg) {
-        return checkBump(msg, {id})
+        return checkBump(msg, { id })
       }
     }
   }
 
-  function avatar ({id}, cb) {
-    var result = {id}
+  function avatar ({ id }, cb) {
+    var result = { id }
     parallel([(done) => {
-      ssb.patchwork.about.socialValue({dest: id, key: 'name'}, (err, value) => {
+      ssb.patchwork.about.socialValue({ dest: id, key: 'name' }, (err, value) => {
         if (err) return done(err)
         result['name'] = value
         done()
       })
     }, (done) => {
-      ssb.patchwork.about.socialValue({dest: id, key: 'image'}, (err, value) => {
+      ssb.patchwork.about.socialValue({ dest: id, key: 'image' }, (err, value) => {
         if (err) return done(err)
         if (value && value instanceof Object && value.link) value = value.link
         result['image'] = value
@@ -277,14 +277,14 @@ function getMatches (cache, text) {
   return result
 }
 
-function checkBump (msg, {id}) {
+function checkBump (msg, { id }) {
   if (msg.value.author === id) {
     let content = msg.value.content
     let type = content.type
     if (type === 'vote' && !getRoot(msg)) { // only show likes when root post
       let vote = content.vote
       if (vote) {
-        return {type: 'reaction', reaction: vote.expression, value: vote.value}
+        return { type: 'reaction', reaction: vote.expression, value: vote.value }
       }
     } else if (type === 'post') {
       if (getRoot(msg)) {

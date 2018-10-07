@@ -41,7 +41,7 @@ exports.create = function (api) {
         h('div.main', [
           h('div.title', [
             h('h1', [
-              h('a', {href, 'ev-click': () => api.app.navigate(href)}, [href])
+              h('a', { href, 'ev-click': () => api.app.navigate(href) }, [href])
             ]),
             h('div.meta', [
               api.channel.html.subscribeToggle(channel)

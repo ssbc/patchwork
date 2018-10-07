@@ -31,7 +31,7 @@ exports.create = function (api) {
       params.unbox = link.query.unbox
     }
 
-    var loader = h('div', {className: 'Loading -large'})
+    var loader = h('div', { className: 'Loading -large' })
 
     var result = Proxy(loader)
     var anchor = Value()
@@ -88,14 +88,14 @@ exports.create = function (api) {
         ]))
       }
 
-      var rootMessage = {key: id, value}
+      var rootMessage = { key: id, value }
 
       // Apply the recps of the original root message to all replies. What happens in private stays in private!
       meta.recps.set(value.content.recps)
 
       var root = api.message.sync.root(rootMessage) || id
       var isReply = id !== root
-      var thread = api.feed.obs.thread(id, {branch: isReply})
+      var thread = api.feed.obs.thread(id, { branch: isReply })
 
       meta.channel.set(value.content.channel)
       meta.root.set(root || thread.rootId)
@@ -126,7 +126,7 @@ exports.create = function (api) {
 
       var container = h('Thread', [
         h('div.messages', [
-          when(thread.branchId, h('a.full', {href: thread.rootId, anchor: id}, [i18n('View full thread')])),
+          when(thread.branchId, h('a.full', { href: thread.rootId, anchor: id }, [i18n('View full thread')])),
           map(thread.messages, (msg) => {
             return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
               return h('div', {
@@ -148,10 +148,10 @@ exports.create = function (api) {
       result.set(when(thread.sync, container, loader))
     })
 
-    var view = h('div', {className: 'SplitView'}, [
+    var view = h('div', { className: 'SplitView' }, [
       h('div.main', {
         // TODO: this isn't working properly right now
-        intersectionBindingViewport: {rootMargin: '1000px'}
+        intersectionBindingViewport: { rootMargin: '1000px' }
       }, [
         result
       ])

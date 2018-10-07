@@ -69,7 +69,7 @@ exports.init = function (ssb, config) {
 
   // prioritize pubs that we actually follow
   pull(
-    ssb.friends.createFriendStream({hops: 1, live: false}),
+    ssb.friends.createFriendStream({ hops: 1, live: false }),
     pull.collect((err, contacts) => {
       if (!err) {
         ssb.gossip.peers().forEach(function (peer) {
@@ -108,7 +108,7 @@ exports.init = function (ssb, config) {
     liveBacklinks: LiveBacklinks(ssb, config),
 
     disconnect: function (opts, cb) {
-      if (ref.isFeed(opts)) opts = {key: opts}
+      if (ref.isFeed(opts)) opts = { key: opts }
       if (opts && (opts.key || opts.host)) {
         ssb.gossip.peers().find(peer => {
           if (peer.state === 'connected' && (peer.key === opts.key || peer.host === opts.host)) {

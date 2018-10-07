@@ -3,16 +3,16 @@ var pullCat = require('pull-cat')
 
 module.exports = function (ssb, config) {
   return {
-    linear: function ({lt, gt, reverse, limit, query, old, live}) {
+    linear: function ({ lt, gt, reverse, limit, query, old, live }) {
       // handle markers passed in to lt / gt
-      var opts = {reverse, old, live}
+      var opts = { reverse, old, live }
       if (lt && typeof lt.timestamp === 'number') lt = lt.timestamp
       if (gt && typeof gt.timestamp === 'number') gt = gt.timestamp
       if (typeof lt === 'number') opts.lt = lt
       if (typeof gt === 'number') opts.gt = gt
 
       var matchesQuery = searchFilter(query)
-      var marker = {marker: true, timestamp: null}
+      var marker = { marker: true, timestamp: null }
 
       var stream = pull(
         ssb.createLogStream(opts),

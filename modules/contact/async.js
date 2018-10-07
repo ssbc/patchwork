@@ -13,11 +13,11 @@ exports.gives = nest({
 
 exports.create = function (api) {
   return nest({
-    'contact.async': {follow, unfollow, followerOf, block, unblock}
+    'contact.async': { follow, unfollow, followerOf, block, unblock }
   })
 
   function followerOf (source, dest, cb) {
-    api.sbot.async.friendsGet({source: source, dest: dest}, cb)
+    api.sbot.async.friendsGet({ source: source, dest: dest }, cb)
   }
 
   function follow (id, cb) {

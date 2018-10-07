@@ -18,7 +18,7 @@ exports.create = function (api) {
   return nest('message.html.markdown', markdown)
 
   function markdown (content) {
-    if (typeof content === 'string') { content = {text: content} }
+    if (typeof content === 'string') { content = { text: content } }
     var mentions = {}
     var typeLookup = {}
     var emojiMentions = {}

@@ -62,7 +62,7 @@ exports.create = function (api) {
                 h('div.name', [ api.about.obs.name(id) ])
               ]),
               h('div.buttons', [
-                api.contact.html.followToggle(id, {block: false})
+                api.contact.html.followToggle(id, { block: false })
               ])
             ])
         }, { idle: true, maxTime: 2 })

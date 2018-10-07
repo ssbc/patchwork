@@ -64,7 +64,7 @@ exports.create = function (api) {
   function references (msg) {
     var id = msg.key
     return MutantPullCollection((lastMessage) => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.referencesStream({id, since: lastMessage && lastMessage.timestamp}))
+      return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.referencesStream({ id, since: lastMessage && lastMessage.timestamp }))
     })
   }
 
@@ -73,7 +73,7 @@ exports.create = function (api) {
     var rooted = !!api.message.sync.root(msg)
     if (rooted) {
       return MutantPullCollection((lastMessage) => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.forksStream({id, since: lastMessage && lastMessage.timestamp}))
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.forksStream({ id, since: lastMessage && lastMessage.timestamp }))
       })
     } else {
       return []
@@ -91,7 +91,7 @@ exports.create = function (api) {
       onceIdle(() => {
         pull(
           api.sbot.pull.backlinks({
-            query: [ {$filter: { dest: id }} ],
+            query: [ { $filter: { dest: id } } ],
             index: 'DTA' // use asserted timestamps
           }),
           pull.drain((msg) => {

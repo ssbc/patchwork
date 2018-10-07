@@ -10,7 +10,7 @@ exports.init = function (ssb, config) {
   var caches = {}
 
   return {
-    get: function ({id}, cb) {
+    get: function ({ id }, cb) {
       if (caches[id]) {
         cb(null, caches[id])
       } else {
@@ -38,14 +38,14 @@ exports.init = function (ssb, config) {
     var subscriptions = {}
     pull(
       ssb.query.read({
-        query: [{$filter: {
+        query: [{ $filter: {
           value: {
             author: id,
             content: {
               type: 'channel'
             }
           }
-        }}, {$map: true}],
+        } }, { $map: true }],
         old: true,
         live: true
       }),

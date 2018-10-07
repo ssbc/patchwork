@@ -19,7 +19,7 @@ exports.create = (api) => {
 
   return nest('message.html.actions', function like (msg) {
     var liked = api.message.obs.doesLike(msg.key)
-    
+
     return [
       when(liked,
         h('a.unlike', {
@@ -69,7 +69,7 @@ function doesLike (likes, userId) {
 }
 
 function handleEvent (ev) {
-  var {api, msg} = this
+  var { api, msg } = this
   var el = getMessageElement(ev.target)
 
   // HACK: if this is the last message in the list, reply to the root message

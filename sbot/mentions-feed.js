@@ -22,41 +22,41 @@ exports.init = function (ssb, config) {
 
   return {
     latest: function () {
-      var query = [{$filter: {
+      var query = [{ $filter: {
         dest: ssb.id
-      }}]
+      } }]
       return pull(
-        ssb.backlinks.read({query, live: true, old: false}),
+        ssb.backlinks.read({ query, live: true, old: false }),
         pull.filter(bumpFilter),
-        LookupRoots({ssb, cache})
+        LookupRoots({ ssb, cache })
       )
 
       function bumpFilter (msg) {
-        return checkBump(msg, {id: ssb.id})
+        return checkBump(msg, { id: ssb.id })
       }
     },
-    roots: function ({reverse, limit, resume}) {
+    roots: function ({ reverse, limit, resume }) {
       var stream = Defer.source()
 
       ssb.friends.hops((err, hops) => {
         if (err) return stream.abort(err)
 
         // use resume option if specified
-        var opts = {reverse, old: true}
+        var opts = { reverse, old: true }
 
         if (reverse) {
           opts.query = [
-            {$filter: {
+            { $filter: {
               dest: ssb.id,
-              timestamp: resume ? {$lt: resume, $gt: 0} : {$gt: 0}
-            }}
+              timestamp: resume ? { $lt: resume, $gt: 0 } : { $gt: 0 }
+            } }
           ]
         } else {
           opts.query = [
-            {$filter: {
+            { $filter: {
               dest: ssb.id,
-              timestamp: resume ? {$gt: resume} : {$gt: 0}
-            }}
+              timestamp: resume ? { $gt: resume } : { $gt: 0 }
+            } }
           ]
         }
 
@@ -70,7 +70,7 @@ exports.init = function (ssb, config) {
             pull.filter(bumpFilter),
 
             // LOOKUP AND ADD ROOTS
-            LookupRoots({ssb, cache}),
+            LookupRoots({ ssb, cache }),
 
             // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
             pull.filter(item => {
@@ -89,7 +89,7 @@ exports.init = function (ssb, config) {
             }),
 
             // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ssb}),
+            ResolveAbouts({ ssb }),
 
             // ADD THREAD SUMMARY
             Paramap((item, cb) => {
@@ -111,7 +111,7 @@ exports.init = function (ssb, config) {
         }))
 
         function bumpFilter (msg) {
-          return checkBump(msg, {id: ssb.id})
+          return checkBump(msg, { id: ssb.id })
         }
       })
 
@@ -120,7 +120,7 @@ exports.init = function (ssb, config) {
   }
 }
 
-function checkBump (msg, {id}) {
+function checkBump (msg, { id }) {
   if (msg.value.author !== id) {
     if (Array.isArray(msg.value.content.mentions) && msg.value.content.mentions.some(mention => {
       return mention && mention.link === id

@@ -43,8 +43,8 @@ exports.create = function (api) {
       var dest = msg.value.content.contact
       var tristate = ( // from ssb-friends
         msg.value.content.following ? true
-      : msg.value.content.flagged || msg.value.content.blocking ? false
-      : null
+          : msg.value.content.flagged || msg.value.content.blocking ? false
+            : null
       )
 
       update(source, { [dest]: tristate }, cache)
@@ -65,7 +65,7 @@ exports.create = function (api) {
 
   function loadCache () {
     pull(
-      api.sbot.pull.stream(sbot => sbot.friends.stream({live: true})),
+      api.sbot.pull.stream(sbot => sbot.friends.stream({ live: true })),
       pull.drain(item => {
         if (!sync()) {
           // populate observable cache
@@ -90,8 +90,8 @@ exports.create = function (api) {
           sync.set(true)
         } else if (item && ref.isFeed(item.from) && ref.isFeed(item.to)) {
           // handle realtime updates
-          update(item.from, {[item.to]: item.value}, cache)
-          update(item.to, {[item.from]: item.value}, reverseCache)
+          update(item.from, { [item.to]: item.value }, cache)
+          update(item.to, { [item.from]: item.value }, reverseCache)
         }
       })
     )

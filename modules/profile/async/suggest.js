@@ -1,6 +1,6 @@
 var nest = require('depnest')
 
-var {onceTrue} = require('mutant')
+var { onceTrue } = require('mutant')
 var fallbackImageUrl = 'data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
 
 exports.needs = nest({
@@ -25,7 +25,7 @@ exports.create = function (api) {
         defaultIds = null
       }
       onceTrue(api.sbot.obs.connection, sbot => {
-        sbot.patchwork.profile.suggest({text, defaultIds, limit: 20}, (err, items) => {
+        sbot.patchwork.profile.suggest({ text, defaultIds, limit: 20 }, (err, items) => {
           if (err) return cb(err)
           cb(null, getSuggestions(items))
         })

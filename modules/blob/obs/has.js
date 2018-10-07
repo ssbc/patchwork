@@ -32,7 +32,7 @@ exports.create = function (api) {
     if (!cbs) {
       cbs = {}
       pull(
-        StreamWhenConnected(api.sbot.obs.connection, sbot => sbot.blobs.ls({old: false})),
+        StreamWhenConnected(api.sbot.obs.connection, sbot => sbot.blobs.ls({ old: false })),
         pull.drain(blob => {
           if (cbs[blob]) {
             while (cbs[blob].length) {

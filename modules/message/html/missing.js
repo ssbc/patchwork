@@ -38,7 +38,7 @@ exports.create = function (api) {
                 ? [api.profile.html.person(msg.value.author), ' ', i18n('(missing message)')]
                 : h('strong', i18n('Missing message')),
               i18n(' via '), api.profile.html.person(hintMessage.value.author)]),
-            h('div.meta', [h('a', {href: msg.key}, msg.key)])
+            h('div.meta', [h('a', { href: msg.key }, msg.key)])
           ])
         ]),
         h('div.meta', [

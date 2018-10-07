@@ -21,17 +21,17 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
-    roots: function ({reverse, limit, resume}) {
+    roots: function ({ reverse, limit, resume }) {
       var seen = new Set()
       var included = new Set()
 
       var stream = Defer.source()
 
-      getFilter({ssb}, (err, filter, hops) => {
+      getFilter({ ssb }, (err, filter, hops) => {
         if (err) return stream.abort(err)
 
         // use resume option if specified
-        var opts = {reverse, old: true}
+        var opts = { reverse, old: true }
         if (resume) {
           opts[reverse ? 'lt' : 'gt'] = resume
         }
@@ -57,7 +57,7 @@ exports.init = function (ssb, config) {
             }),
 
             // LOOKUP AND ADD ROOTS
-            LookupRoots({ssb, cache}),
+            LookupRoots({ ssb, cache }),
 
             // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
             pull.filter(item => {
@@ -75,7 +75,7 @@ exports.init = function (ssb, config) {
               if (!included.has(root.key) && filter && root && root.value && !isPrivate) {
                 if (checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
                   // update filter result so that we can display the correct bump message
-                  root.filterResult = extend(item.filterResult, {forced: true})
+                  root.filterResult = extend(item.filterResult, { forced: true })
                   included.add(root.key)
                   return true
                 } else if (!seen.has(root.key)) {
@@ -97,7 +97,7 @@ exports.init = function (ssb, config) {
             }),
 
             // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ssb}),
+            ResolveAbouts({ ssb }),
 
             // ADD THREAD SUMMARY
             Paramap((item, cb) => {
@@ -188,7 +188,7 @@ function bumpFromFilterResult (msg, filterResult) {
       var channels = new Set()
       if (filterResult.matchesChannel) channels.add(msg.value.content.channel)
       if (Array.isArray(filterResult.matchingTags)) filterResult.matchingTags.forEach(x => channels.add(x))
-      return {type: 'matches-channel', channels: Array.from(channels)}
+      return { type: 'matches-channel', channels: Array.from(channels) }
     }
   }
 }
@@ -198,13 +198,13 @@ function isAttendee (msg) {
   return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
 }
 
-function getFilter ({ssb}, cb) {
+function getFilter ({ ssb }, cb) {
   // TODO: rewrite contacts stream
   ssb.friends.hops((err, hops) => {
     if (err) return cb(err)
 
     // TODO: support sameAs multiple IDs
-    ssb.patchwork.subscriptions2.get({id: ssb.id}, (err, subscriptions) => {
+    ssb.patchwork.subscriptions2.get({ id: ssb.id }, (err, subscriptions) => {
       if (err) return cb(err)
       cb(null, function (msg) {
         var type = msg.value.content.type

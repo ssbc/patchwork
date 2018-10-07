@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var {Value, Proxy, Array: MutantArray, h, computed, when, throttle} = require('mutant')
+var { Value, Proxy, Array: MutantArray, h, computed, when, throttle } = require('mutant')
 var pull = require('pull-stream')
 var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/scroller')
@@ -67,7 +67,7 @@ exports.create = function (api) {
 
     var container = h('Scroller', {
       // only bind elements that are visible in scroller
-      intersectionBindingViewport: {rootMargin: '1000px'},
+      intersectionBindingViewport: { rootMargin: '1000px' },
 
       style: { overflow: 'auto' },
       hooks: [(element) => {
@@ -194,7 +194,7 @@ exports.create = function (api) {
         pull.filter(canRenderMessage),
 
         // group related items (follows, subscribes, abouts)
-        GroupSummaries({windowSize: 15, getPriority, ungroupFilter}),
+        GroupSummaries({ windowSize: 15, getPriority, ungroupFilter }),
 
         scroller
       )
@@ -258,7 +258,7 @@ exports.create = function (api) {
       }, [
         meta,
         renderedMessage,
-        item.totalReplies > item.latestReplies.length ? h('a.full', {href: item.key}, ['View full thread' + ' (', item.totalReplies, ')']) : null,
+        item.totalReplies > item.latestReplies.length ? h('a.full', { href: item.key }, ['View full thread' + ' (', item.totalReplies, ')']) : null,
         h('div.replies', [
           item.latestReplies.map(msg => {
             var result = api.message.html.render(msg, {

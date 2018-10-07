@@ -33,7 +33,7 @@ exports.create = function (api) {
 
   return nest('message.html.layout', layout)
 
-  function layout (msg, {layout, previousId, priority, miniContent, content, includeReferences, includeForks = true, actions = true}) {
+  function layout (msg, { layout, previousId, priority, miniContent, content, includeReferences, includeForks = true, actions = true }) {
     if (!(layout === 'mini')) return
 
     var classList = ['Message -mini']
@@ -98,15 +98,15 @@ exports.create = function (api) {
 
     // scoped
 
-    function messageHeader (msg, {replyInfo, priority, miniContent}) {
+    function messageHeader (msg, { replyInfo, priority, miniContent }) {
       var yourId = api.keys.sync.id()
       var additionalMeta = []
       if (priority >= 2) {
-        additionalMeta.push(h('span.flag -new', {title: 'New Message'}))
+        additionalMeta.push(h('span.flag -new', { title: 'New Message' }))
       }
       return h('header', [
         h('div.main', [
-          h('a.avatar', {href: `${msg.value.author}`}, [
+          h('a.avatar', { href: `${msg.value.author}` }, [
             api.about.html.image(msg.value.author)
           ]),
           h('div.main', [

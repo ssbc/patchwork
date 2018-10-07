@@ -48,8 +48,8 @@ exports.create = function (api) {
         ],
         footer: [
           when(isPrivate,
-            h('img', {src: api.emoji.sync.url('closed_lock_with_key')}),
-            h('img', {src: api.emoji.sync.url('globe_with_meridians')})
+            h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
+            h('img', { src: api.emoji.sync.url('globe_with_meridians') })
           ),
           when(isPrivate,
             h('div.info -private', [

@@ -57,7 +57,7 @@ exports.create = function (api) {
         content.push(h('a AboutImage', {
           href: c.about
         }, [
-          h('img', {src: api.blob.sync.url(c.image)})
+          h('img', { src: api.blob.sync.url(c.image) })
         ]))
       }
 

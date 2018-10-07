@@ -28,7 +28,7 @@ exports.create = function (api) {
       return h('a.tag-link', { href: _href, title: tagId }, tag)
     }
     return tag
-  }})
+  } })
 }
 
 function contrast (backgroundColor) {

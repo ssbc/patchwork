@@ -37,7 +37,7 @@ exports.create = function (api) {
         ])
       ]),
       api.message.html.compose({
-        meta: {type: 'post', channel},
+        meta: { type: 'post', channel },
         placeholder: i18n('Write a message in this channel')
       }),
       noVisibleNewPostsWarning()
@@ -47,11 +47,11 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.channelFeed.roots(opts)
-    }, {limit: 40, reverse: true, channel})
+    }, { limit: 40, reverse: true, channel })
 
     const channelView = api.feed.html.rollup(getStream, {
       prepend,
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.channelFeed.latest({channel}))
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.channelFeed.latest({ channel }))
     })
 
     // call reload whenever filters changes

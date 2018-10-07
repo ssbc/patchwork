@@ -17,8 +17,8 @@ exports.init = function (ssb, config) {
   return {
     latest: function () {
       return pull(
-        ssb.messagesByType({type: 'gathering', live: true, old: false}),
-        ResolveAbouts({ssb}),
+        ssb.messagesByType({ type: 'gathering', live: true, old: false }),
+        ResolveAbouts({ ssb }),
         pull.asyncMap((msg, cb) => {
           // only notify about new events that your friends are attending
           followingAny([msg.value.author].concat(msg.gathering.attending), (err, result) => {
@@ -30,14 +30,14 @@ exports.init = function (ssb, config) {
         pull.filter()
       )
     },
-    roots: function ({reverse, limit, resume}) {
+    roots: function ({ reverse, limit, resume }) {
       var stream = Defer.source()
 
       ssb.friends.hops((err, hops) => {
         if (err) return stream.abort(err)
 
         // use resume option if specified
-        var opts = {reverse, old: true, type: 'gathering'}
+        var opts = { reverse, old: true, type: 'gathering' }
         if (resume) {
           opts[reverse ? 'lt' : 'gt'] = resume
         }
@@ -55,7 +55,7 @@ exports.init = function (ssb, config) {
             }),
 
             // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ssb}),
+            ResolveAbouts({ ssb }),
 
             // FILTER GATHERINGS BASED ON ATTENDEES AND AUTHOR (and hide if no title)
             pull.filter(msg => {
@@ -82,7 +82,7 @@ exports.init = function (ssb, config) {
 
         function bumpFilter (msg) {
           if (msg.value.content.type === 'about' && isFollowing(msg.value.author) && msg.value.content.attendee && !msg.value.content.attendee.remove) {
-            return {type: 'attending'}
+            return { type: 'attending' }
           }
         }
 
@@ -97,7 +97,7 @@ exports.init = function (ssb, config) {
 
   function followingAny (ids, cb) {
     mapAsync(ids, (dest, cb) => {
-      ssb.friends.isFollowing({source: ssb.id, dest}, cb)
+      ssb.friends.isFollowing({ source: ssb.id, dest }, cb)
     }, (err, result) => {
       if (err) return cb(err)
       cb(null, result.some((x) => x))

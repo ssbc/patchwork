@@ -11,11 +11,11 @@ exports.gives = nest({
 
 exports.create = function (api) {
   return nest({
-    'profile.html': {person}
+    'profile.html': { person }
   })
 
   function person (id, altName) {
-    return h('a ProfileLink', {href: id}, [
+    return h('a ProfileLink', { href: id }, [
       altName || api.about.obs.name(id)
     ])
   }

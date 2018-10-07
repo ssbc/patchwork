@@ -25,7 +25,7 @@ exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.compose', function ({shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message'}, cb) {
+  return nest('message.html.compose', function ({ shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message' }, cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
@@ -157,7 +157,7 @@ exports.create = function (api) {
           }
         }))
       }
-    }, {cls: 'SuggestBox'})
+    }, { cls: 'SuggestBox' })
 
     return composer
 

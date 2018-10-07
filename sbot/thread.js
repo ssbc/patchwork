@@ -8,7 +8,7 @@ exports.manifest = {
 exports.init = function (ssb, config) {
   return { read }
 
-  function read ({reverse = false, limit, types, live, old, dest}) {
+  function read ({ reverse = false, limit, types, live, old, dest }) {
     // TODO: properly handle truncation
     return pull(
       ssb.backlinks.read({
@@ -16,7 +16,7 @@ exports.init = function (ssb, config) {
         reverse,
         live,
         index: 'DTA',
-        query: [{$filter: { dest }}]
+        query: [{ $filter: { dest } }]
       }),
       pull.filter(msg => {
         if (msg.sync) return msg

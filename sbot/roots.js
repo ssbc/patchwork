@@ -26,12 +26,12 @@ module.exports = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
-    latest: function ({ids = [ssb.id]}) {
+    latest: function ({ ids = [ssb.id] }) {
       var stream = Defer.source()
       getFilter((err, filter) => {
         if (err) return stream.abort(err)
         stream.resolve(pull(
-          index.read({old: false}),
+          index.read({ old: false }),
 
           // BUMP FILTER
           pull.filter(item => {
@@ -65,8 +65,8 @@ module.exports = function (ssb, config) {
       return stream
     },
 
-    read: function ({ids = [ssb.id], reverse, limit, lt, gt}) {
-      var opts = {reverse, old: true}
+    read: function ({ ids = [ssb.id], reverse, limit, lt, gt }) {
+      var opts = { reverse, old: true }
 
       // handle markers passed in to lt / gt
       if (lt && typeof lt.timestamp === 'number') lt = lt.timestamp
@@ -76,7 +76,7 @@ module.exports = function (ssb, config) {
 
       var seen = new Set()
       var included = new Set()
-      var marker = {marker: true, timestamp: null}
+      var marker = { marker: true, timestamp: null }
 
       var stream = Defer.source()
 
@@ -112,7 +112,7 @@ module.exports = function (ssb, config) {
             if (!included.has(root.key) && filter && root && root.value && !isPrivate) {
               if (checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
                 // update filter result so that we can display the correct bump message
-                root.filterResult = extend(item.filterResult, {forced: true})
+                root.filterResult = extend(item.filterResult, { forced: true })
                 included.add(root.key)
                 return true
               } else if (!seen.has(root.key)) {
@@ -168,7 +168,7 @@ module.exports = function (ssb, config) {
       cb(null, cache.get(key))
     } else {
       ssb.get(key, (_, value) => {
-        var msg = {key, value}
+        var msg = { key, value }
         if (msg.value) {
           cache.set(key, msg)
         }

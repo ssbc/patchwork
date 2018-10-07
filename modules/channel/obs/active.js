@@ -33,13 +33,13 @@ exports.create = function (api) {
 
   function subscribe () {
     pull(
-      api.sbot.pull.stream(sbot => sbot.patchwork.channels({live: true})),
+      api.sbot.pull.stream(sbot => sbot.patchwork.channels({ live: true })),
       pull.drain(data => {
         channelsLookup.transaction(() => {
           for (var channel in data) {
             var obs = channelsLookup.get(channel)
             if (!obs) {
-              obs = Value({count: 0})
+              obs = Value({ count: 0 })
               channelsLookup.put(channel, obs)
             }
             var count = data[channel].count != null ? data[channel].count : obs().count + 1
@@ -80,5 +80,5 @@ function ChannelRef (id) {
     id,
     updatedAt: Value(0),
     count: Value(0)
-  }, {merge: true})
+  }, { merge: true })
 }

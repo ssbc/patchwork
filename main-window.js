@@ -44,7 +44,7 @@ module.exports = function (config) {
   }))
 
   const i18n = api.intl.sync.i18n
-  setupContextMenuAndSpellCheck(api.config.sync.load(), {navigate, get: api.sbot.async.get})
+  setupContextMenuAndSpellCheck(api.config.sync.load(), { navigate, get: api.sbot.async.get })
 
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
@@ -112,7 +112,7 @@ module.exports = function (config) {
           [i18n('Gatherings'), '/gatherings'],
           [i18n('Tags'), `/tags/all/${encodeURIComponent(id)}`],
           [i18n('Extended Network'), '/all'],
-          {separator: true},
+          { separator: true },
           [i18n('Settings'), '/settings']
         ])
       ]),
@@ -130,7 +130,7 @@ module.exports = function (config) {
       h('div.info', [
         h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases' }, [
           h('strong', ['Patchwork ', latestUpdate, i18n(' has been released.')]), i18n(' Click here to download and view more info!'),
-          h('a.ignore', {'ev-click': latestUpdate.ignore}, 'X')
+          h('a.ignore', { 'ev-click': latestUpdate.ignore }, 'X')
         ])
       ])
     ),
@@ -163,7 +163,7 @@ module.exports = function (config) {
               navigate('/channels')
             }
           },
-          {type: 'separator'}
+          { type: 'separator' }
         ].concat(channels.map(channel => {
           return {
             label: `#${channel}`,
@@ -236,7 +236,7 @@ module.exports = function (config) {
       }
       api.sbot.async.get(params, function (err, value) {
         if (err) return cb(err)
-        cb(null, api.app.sync.externalHandler({key: link.link, value, query: link.query}))
+        cb(null, api.app.sync.externalHandler({ key: link.link, value, query: link.query }))
       })
     } else if (link && ref.isBlob(link.link)) {
       cb(null, function (href) {

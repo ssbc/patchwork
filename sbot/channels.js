@@ -11,7 +11,7 @@ function reduce (result, item) {
     for (var channel in item) {
       var value = result[channel]
       if (!value) {
-        value = result[channel] = {count: 0, timestamp: 0}
+        value = result[channel] = { count: 0, timestamp: 0 }
       }
       value.count += 1
 
@@ -34,7 +34,7 @@ function map (msg) {
       if (channels.length) {
         return channels.reduce((result, channel) => {
           var timestamp = Math.min(msg.value.timestamp, msg.timestamp)
-          result[channel] = {timestamp}
+          result[channel] = { timestamp }
           return result
         }, {})
       }

@@ -56,7 +56,7 @@ exports.create = function (api) {
     var subscribedChannels = api.channel.obs.subscribed(id)
     var recentChannels = api.channel.obs.recent()
     var loading = computed([subscribedChannels.sync, recentChannels.sync], (...args) => !args.every(Boolean))
-    var channels = computed(recentChannels, items => items.slice(0, 8), {comparer: arrayEq})
+    var channels = computed(recentChannels, items => items.slice(0, 8), { comparer: arrayEq })
     var connectedPeers = api.sbot.obs.connectedPeers()
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
@@ -70,12 +70,12 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.publicFeed.roots(opts)
-    }, {limit: 40, reverse: true})
+    }, { limit: 40, reverse: true })
 
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]})),
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ ids: [id] })),
       compactFilter: function (msg, root) {
         if (!root && api.message.sync.root(msg)) {
           // msg has a root, but is being displayed as root (fork)
@@ -134,8 +134,8 @@ exports.create = function (api) {
               }, [
                 h('span.name', '#' + channel)
               ])
-            }, {maxTime: 5}),
-            h('a.channel -more', {href: '/channels'}, i18n('More Channels...'))
+            }, { maxTime: 5 }),
+            h('a.channel -more', { href: '/channels' }, i18n('More Channels...'))
           ])
         ]),
 
@@ -184,7 +184,7 @@ exports.create = function (api) {
                 api.progress.html.peer(id)
               ]),
               h('div.controls', [
-                h('a.disconnect', {href: '#', 'ev-click': send(disconnect, id), title: i18n('Force Disconnect')}, ['x'])
+                h('a.disconnect', { href: '#', 'ev-click': send(disconnect, id), title: i18n('Force Disconnect') }, ['x'])
               ])
             ])
           })

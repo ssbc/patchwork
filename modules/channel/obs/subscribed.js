@@ -37,7 +37,7 @@ exports.create = function (api) {
       return cache[userId]
     } else {
       var stream = pull(
-        api.sbot.pull.userFeed({id: userId, live: true}),
+        api.sbot.pull.userFeed({ id: userId, live: true }),
         pull.filter((msg) => {
           return !msg.value || msg.value.content.type === 'channel'
         })

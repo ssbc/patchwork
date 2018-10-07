@@ -21,7 +21,7 @@ exports.init = function (ssb, config) {
 
     // streams
     read,
-    socialValueStream: function ({key, dest}) {
+    socialValueStream: function ({ key, dest }) {
       var stream = Defer.source()
       getAuthor(dest, (err, authorId) => {
         // fallback to dest if we don't have the message being described
@@ -44,7 +44,7 @@ exports.init = function (ssb, config) {
       })
       return stream
     },
-    valueFromStream: function ({key, dest, id}) {
+    valueFromStream: function ({ key, dest, id }) {
       var values = {}
       return pull(
         socialValuesStream({ key, dest }),
@@ -64,10 +64,10 @@ exports.init = function (ssb, config) {
     socialValuesStream,
 
     // getters
-    socialValue: function ({key, dest}, cb) {
+    socialValue: function ({ key, dest }, cb) {
       getAuthor(dest, (err, authorId) => {
         if (err) return cb(err)
-        socialValues({key, dest}, (err, values) => {
+        socialValues({ key, dest }, (err, values) => {
           if (err) return cb(err)
           cb(null, getSocialValue(values, ssb.id, authorId))
         })
@@ -78,7 +78,7 @@ exports.init = function (ssb, config) {
     socialValues
   }
 
-  function socialValuesStream ({key, dest}) {
+  function socialValuesStream ({ key, dest }) {
     var values = {}
     var sync = false
     return pull(
@@ -107,7 +107,7 @@ exports.init = function (ssb, config) {
     )
   }
 
-  function latestValueStream ({key, dest}) {
+  function latestValueStream ({ key, dest }) {
     var values = {}
     var value = null
     var authors = []
@@ -144,10 +144,10 @@ exports.init = function (ssb, config) {
     )
   }
 
-  function socialValues ({key, dest}, cb) {
+  function socialValues ({ key, dest }, cb) {
     var values = {}
     pull(
-      read({dest}),
+      read({ dest }),
       pull.drain(msg => {
         if (msg.value.content[key]) {
           values[msg.value.author] = msg.value.content[key]
@@ -159,10 +159,10 @@ exports.init = function (ssb, config) {
     )
   }
 
-  function latestValue ({key, dest}, cb) {
+  function latestValue ({ key, dest }, cb) {
     var value = null
     pull(
-      read({dest, reverse: true}),
+      read({ dest, reverse: true }),
       pull.filter(msg => {
         return msg.value.content && key in msg.value.content && !(msg.value.content[key] && msg.value.content[key].remove)
       }),
@@ -176,10 +176,10 @@ exports.init = function (ssb, config) {
     )
   }
 
-  function latestValues ({keys, dest}, cb) {
+  function latestValues ({ keys, dest }, cb) {
     var values = {}
     pull(
-      read({dest, reverse: true}),
+      read({ dest, reverse: true }),
       pull.drain(msg => {
         if (msg.value.content) {
           for (var key in msg.value.content) {
@@ -195,16 +195,16 @@ exports.init = function (ssb, config) {
     )
   }
 
-  function read ({reverse = false, limit, live, old, dest}) {
+  function read ({ reverse = false, limit, live, old, dest }) {
     return pull(
       ssb.backlinks.read({
         reverse,
         live,
         limit,
-        query: [{$filter: {
+        query: [{ $filter: {
           dest,
-          value: {content: {type: 'about', about: dest}}
-        }}]
+          value: { content: { type: 'about', about: dest } }
+        } }]
       })
     )
   }
@@ -212,7 +212,7 @@ exports.init = function (ssb, config) {
   function getAuthor (msgId, cb) {
     if (ref.isFeedId(msgId)) return cb(null, msgId)
     if (ref.isMsgId(msgId)) {
-      ssb.get({id: msgId, raw: true}, (err, value) => {
+      ssb.get({ id: msgId, raw: true }, (err, value) => {
         if (err) return cb(err)
         cb(null, value.author)
       })

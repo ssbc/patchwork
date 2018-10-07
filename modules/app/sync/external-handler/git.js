@@ -1,5 +1,5 @@
 const nest = require('depnest')
-const {shell} = require('electron')
+const { shell } = require('electron')
 const net = require('net')
 
 exports.gives = nest('app.sync.externalHandler')

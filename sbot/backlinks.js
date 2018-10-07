@@ -9,7 +9,7 @@ var excludeTypes = ['about', 'vote', 'tag']
 
 exports.init = function (ssb, config) {
   return {
-    referencesStream: function ({id, since}) {
+    referencesStream: function ({ id, since }) {
       return getBacklinksStream(id, since, (msg) => {
         if (msg.value && msg.value.content) {
           return msg.value.content.root !== id && !includeOrEqual(msg.value.content.branch, id)
@@ -18,7 +18,7 @@ exports.init = function (ssb, config) {
     },
 
     // don't call this for root messages, only replies
-    forksStream: function ({id, since}) {
+    forksStream: function ({ id, since }) {
       return getBacklinksStream(id, since, (msg) => {
         if (msg.value && msg.value.content) {
           return msg.value.content.root === id && includeOrEqual(msg.value.content.branch, id)
@@ -31,10 +31,10 @@ exports.init = function (ssb, config) {
     return pull(
       ssb.backlinks.read({
         live: true,
-        query: [{$filter: {
-          timestamp: {$gt: since || 0},
+        query: [{ $filter: {
+          timestamp: { $gt: since || 0 },
           dest: id
-        }}]
+        } }]
       }),
       pull.filter((msg) => {
         if (msg.sync) return true
@@ -43,7 +43,7 @@ exports.init = function (ssb, config) {
       }),
       pull.map((msg) => {
         if (msg.sync) return msg
-        return {id: msg.key, author: msg.value.author, timestamp: msg.timestamp}
+        return { id: msg.key, author: msg.value.author, timestamp: msg.timestamp }
       })
     )
   }
