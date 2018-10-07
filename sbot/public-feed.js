@@ -218,7 +218,7 @@ function bumpFromFilterResult (msg, filterResult) {
   if (filterResult) {
     if (isAttendee(msg)) {
       return 'attending'
-    } else if (filterResult.following) {
+    } else if (filterResult.following || filterResult.isYours) {
       if (msg.value.content.type === 'post') {
         if (getRoot(msg)) {
           return 'reply'
