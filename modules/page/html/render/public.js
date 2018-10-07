@@ -75,7 +75,7 @@ exports.create = function (api) {
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ ids: [id] })),
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.publicFeed.latest()),
       compactFilter: function (msg, root) {
         if (!root && api.message.sync.root(msg)) {
           // msg has a root, but is being displayed as root (fork)

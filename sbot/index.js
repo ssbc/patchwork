@@ -1,7 +1,6 @@
 var Channels = require('./channels')
 var Heartbeat = require('./heartbeat')
 var Subscriptions = require('./subscriptions')
-var Roots = require('./roots')
 var Progress = require('./progress')
 var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
@@ -40,8 +39,6 @@ exports.manifest = {
 
   channels: 'source',
   subscriptions: 'source',
-  roots: 'source',
-  latest: 'source',
   linearSearch: 'source',
   progress: 'source',
   recentFeeds: 'source',
@@ -63,7 +60,6 @@ exports.init = function (ssb, config) {
   var progress = Progress(ssb, config)
   var channels = Channels(ssb, config)
   var subscriptions = Subscriptions(ssb, config)
-  var roots = Roots(ssb, config)
   var search = Search(ssb, config)
   var recentFeeds = RecentFeeds(ssb, config)
 
@@ -98,8 +94,6 @@ exports.init = function (ssb, config) {
     heartbeat: Heartbeat(ssb, config),
     channels: channels.stream,
     subscriptions: subscriptions.stream,
-    roots: roots.read,
-    latest: roots.latest,
     progress: progress.stream,
     recentFeeds: recentFeeds.stream,
     linearSearch: search.linear,

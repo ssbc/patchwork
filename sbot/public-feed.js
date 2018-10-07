@@ -12,6 +12,7 @@ const Paramap = require('pull-paramap')
 const getRoot = require('../lib/get-root')
 
 exports.manifest = {
+  latest: 'source',
   roots: 'source'
 }
 
@@ -21,6 +22,52 @@ exports.init = function (ssb, config) {
   var cache = HLRU(100)
 
   return {
+    latest: function () {
+      var stream = Defer.source()
+
+      // TOOD: needs to handle realtime updates to filters after patchwork loads
+      getFilter({ ssb }, (err, filter, hops) => {
+        if (err) return stream.abort(err)
+
+        return pull(
+          ssb.createFeedStream({ live: true, old: false }),
+          pull.filter(item => {
+            if (filter && item && item.value && item.value.content && item.value.content instanceof Object) {
+              var filterResult = filter(item)
+              if (filterResult) {
+                item.filterResult = filterResult
+                return true
+              }
+            }
+          }),
+          LookupRoots({ ssb, cache }),
+          pull.filter(item => {
+            if (item.value && hops[item.value.author] < 0) return false
+            if (item.root && item.root.value && hops[item.root.value.author] < 0) return false
+            return true
+          }),
+
+          pull.filter(item => {
+            var root = item.root || item
+            var isPrivate = root.value && root.value.private
+            if (filter && root && root.value && !isPrivate) {
+              if (checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
+                root.filterResult = extend(item.filterResult, { forced: true })
+                return true
+              } else {
+                var filterResult = filter(root)
+                if (shouldShow(filterResult)) {
+                  root.filterResult = filterResult
+                  return true
+                }
+              }
+            }
+          })
+        )
+      })
+
+      return stream
+    },
     roots: function ({ reverse, limit, resume }) {
       var seen = new Set()
       var included = new Set()
