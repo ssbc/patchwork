@@ -177,9 +177,7 @@ exports.create = function (api) {
       })
 
       // track loading state
-      loading.set(computed([done, scroller.queue, firstItemVisible], (done, queue, firstItemVisible) => {
-        return !done && (queue < 5 || !firstItemVisible)
-      }))
+      loading.set(scroller.waiting)
 
       var seen = new Set()
 
