@@ -42,8 +42,8 @@ exports.create = function (api) {
           ])
         ],
         footer: [
-          h('button.save', { 'ev-click': publish }, 'Save'),
-          h('button.cancel', { 'ev-click': close }, 'Cancel')
+          h('button.save', { 'ev-click': publish }, i18n('Save')),
+          h('button.cancel', { 'ev-click': close }, i18n('Cancel'))
         ],
         onMount
       }

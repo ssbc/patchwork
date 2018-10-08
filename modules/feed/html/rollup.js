@@ -261,7 +261,7 @@ exports.create = function (api) {
       }, [
         meta,
         renderedMessage,
-        item.totalReplies > item.latestReplies.length ? h('a.full', { href: item.key }, ['View full thread' + ' (', item.totalReplies, ')']) : null,
+        item.totalReplies > item.latestReplies.length ? h('a.full', { href: item.key }, [i18n('View full thread') + ' (', item.totalReplies, ')']) : null,
         h('div.replies', [
           item.latestReplies.map(msg => {
             var result = api.message.html.render(msg, {
