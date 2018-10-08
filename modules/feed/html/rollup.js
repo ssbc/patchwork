@@ -254,7 +254,10 @@ exports.create = function (api) {
       }
 
       return h('FeedEvent -post', {
-        msgIds: [item.key].concat(item.latestReplies.map(x => x.key))
+        msgIds: [item.key].concat(item.latestReplies.map(x => x.key)),
+        attributes: {
+          'data-root-id': item.key
+        }
       }, [
         meta,
         renderedMessage,

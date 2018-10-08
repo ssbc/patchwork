@@ -29,7 +29,7 @@ exports.init = function (ssb, config) {
       getFilter({ ssb }, (err, filter, hops) => {
         if (err) return stream.abort(err)
 
-        return pull(
+        stream.resolve(pull(
           ssb.createFeedStream({ live: true, old: false }),
           pull.filter(item => {
             if (filter && item && item.value && item.value.content && item.value.content instanceof Object) {
@@ -63,7 +63,7 @@ exports.init = function (ssb, config) {
               }
             }
           })
-        )
+        ))
       })
 
       return stream
