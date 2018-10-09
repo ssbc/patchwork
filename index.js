@@ -82,8 +82,8 @@ electron.app.on('ready', () => {
       { role: 'toggledevtools' },
       { type: 'separator' },
       { role: 'resetzoom' },
-      { role: 'zoomin' },
-      { role: 'zoomout' },
+      { role: 'zoomin', accelerator: 'CmdOrCtrl+=' },
+      { role: 'zoomout', accelerator: 'CmdOrCtrl+-' },
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
