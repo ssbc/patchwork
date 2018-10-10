@@ -10,12 +10,14 @@ var extend = require('xtend')
 var addSuggest = require('suggest-box')
 var emoji = require('emojilib')
 var ref = require('ssb-ref')
+var blobFiles = require('ssb-blob-files')
 
 exports.needs = nest({
   'blob.html.input': 'first',
   'profile.async.suggest': 'first',
   'channel.async.suggest': 'first',
   'message.async.publish': 'first',
+  'sbot.obs.connection': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
   'intl.sync.i18n': 'first'
@@ -53,6 +55,17 @@ exports.create = function (api) {
         blurTimeout = setTimeout(() => focused.set(false), 200)
       },
       'ev-focus': send(focused.set, true),
+      'ev-paste': ev => {
+        const files = ev.clipboardData && ev.clipboardData.files
+        if (!files || !files.length) return
+
+        const opts = {
+          stripExif: true,
+          isPrivate: resolve(isPrivate)
+        }
+
+        blobFiles(files, api.sbot.obs.connection, opts, afterAttach)
+      },
       disabled: publishing,
       placeholder
     })
@@ -65,34 +78,7 @@ exports.create = function (api) {
         h('div.close', { 'ev-click': () => warningMessage.set(null) }, 'x')
       ]
     )
-    var fileInput = api.blob.html.input((err, file) => {
-      if (err) {
-        warningMessage.set([
-          // TODO: handle localised error messages (https://github.com/ssbc/ssb-blob-files/issues/3)
-          '⚠️ ', err.message
-        ])
-        return
-      }
-
-      files.push(file)
-
-      var parsed = ref.parseLink(file.link)
-      filesById[parsed.link] = file
-
-      var embed = isEmbeddable(file.type) ? '!' : ''
-      var pos = textArea.selectionStart
-      var before = textArea.value.slice(0, pos)
-      var after = textArea.value.slice(pos)
-
-      var spacer = embed ? '\n' : ' '
-      if (before && !before.endsWith(spacer)) before += spacer
-      if (!after.startsWith(spacer)) after = spacer + after
-
-      var embedPrefix = getEmbedPrefix(file.type)
-
-      textArea.value = `${before}${embed}[${embedPrefix}${file.name}](${file.link})${after}`
-      console.log('added:', file)
-    }, {
+    var fileInput = api.blob.html.input(afterAttach, {
       private: isPrivate,
       multiple: true
     })
@@ -162,6 +148,35 @@ exports.create = function (api) {
     return composer
 
     // scoped
+
+    function afterAttach (err, file) {
+      if (err) {
+        warningMessage.set([
+          // TODO: handle localised error messages (https://github.com/ssbc/ssb-blob-files/issues/3)
+          '⚠️ ', err.message
+        ])
+        return
+      }
+
+      files.push(file)
+
+      var parsed = ref.parseLink(file.link)
+      filesById[parsed.link] = file
+
+      var embed = isEmbeddable(file.type) ? '!' : ''
+      var pos = textArea.selectionStart
+      var before = textArea.value.slice(0, pos)
+      var after = textArea.value.slice(pos)
+
+      var spacer = embed ? '\n' : ' '
+      if (before && !before.endsWith(spacer)) before += spacer
+      if (!after.startsWith(spacer)) after = spacer + after
+
+      var embedPrefix = getEmbedPrefix(file.type)
+
+      textArea.value = `${before}${embed}[${embedPrefix}${file.name}](${file.link})${after}`
+      console.log('added:', file)
+    }
 
     function publish () {
       if (!textArea.value) {
