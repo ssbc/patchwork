@@ -64,14 +64,6 @@ Markdown {
     height: 1.5em
     align-content: center
     margin-bottom: -0.3em
-    :first-child {
-      :first-of-type {
-        :last-of-type {
-          width: 3rem
-          height: 3rem
-        }
-      }
-    }
   }
 
   word-break: break-word
