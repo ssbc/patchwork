@@ -120,7 +120,7 @@ exports.init = function (ssb, config) {
 }
 
 function checkBump (msg, { id }) {
-  if (msg.value.author !== id) {
+  if (msg && msg.value && msg.value.author !== id) {
     if (Array.isArray(msg.value.content.mentions) && msg.value.content.mentions.some(mention => {
       return mention && mention.link === id
     })) {
