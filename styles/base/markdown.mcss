@@ -64,6 +64,11 @@ Markdown {
     height: 1.5em
     align-content: center
     margin-bottom: -0.3em
+
+    -large {
+      width: 3rem
+      height: 3rem
+    }
   }
 
   word-break: break-word
