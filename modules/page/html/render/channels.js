@@ -38,7 +38,7 @@ exports.create = function (api) {
           }, [
             h('span.name', '#' + channel)
           ])
-        }, { maxTime: 5, idle: true })
+        }, { maxTime: 5, nextTick: true })
       ])
     ])
   })

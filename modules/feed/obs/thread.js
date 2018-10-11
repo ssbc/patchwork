@@ -111,7 +111,7 @@ exports.create = function (api) {
       })
     }
 
-    result.sync = computed([backlinks.sync, sync], (a, b) => a && b, { idle: true })
+    result.sync = computed([backlinks.sync, sync], (a, b) => a && b, { nextTick: true })
     return result
   }
 

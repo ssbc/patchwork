@@ -65,7 +65,7 @@ exports.create = function (api) {
                 api.contact.html.followToggle(id, { block: false })
               ])
             ])
-        }, { idle: true, maxTime: 2 })
+        }, { nextTime: true, maxTime: 2 })
       ])
     ]
   }

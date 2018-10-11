@@ -87,8 +87,7 @@ exports.create = function (api) {
       var collection = Value([])
       subscribe(id)
 
-      // try not to saturate the thread
-      onceIdle(() => {
+      process.nextTick(() => {
         pull(
           api.sbot.pull.backlinks({
             query: [ { $filter: { dest: id } } ],
