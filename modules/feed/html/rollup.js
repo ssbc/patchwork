@@ -95,10 +95,12 @@ exports.create = function (api) {
         updateStream,
         pull.drain((msg) => {
           if (!(msg && msg.value && msg.value.content && msg.value.content.type)) return
+          if (!canRenderMessage(msg)) return
+
           // Only increment the 'new since' for items that we render on
           // the feed as otherwise the 'show <n> updates message' will be
           // shown on new messages that patchwork cannot render
-          if (canRenderMessage(msg) && msg.value.author !== yourId && (!msg.root || canRenderMessage(msg.root))) {
+          if (msg.value.author !== yourId && (!msg.root || canRenderMessage(msg.root))) {
             newSinceRefresh.add(msg.key)
             unreadIds.add(msg.key)
           }
@@ -121,7 +123,9 @@ exports.create = function (api) {
               highlightItems.add(msg.key)
               content().prepend(
                 renderItem(extend(msg, {
-                  replies: []
+                  latestReplies: [],
+                  totalReplies: 0,
+                  rootBump: { type: 'post' }
                 }))
               )
             }

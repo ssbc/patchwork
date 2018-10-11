@@ -252,7 +252,7 @@ function getFilter ({ ssb }, cb) {
       if (err) return cb(err)
       cb(null, function (msg) {
         var type = msg.value.content.type
-        if (type === 'vote') return false // filter out likes
+        if (type === 'vote' || type === 'tag') return false // filter out likes and tags
         var hasChannel = !!msg.value.content.channel
         var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, msg.value.content.channel))
         var matchingTags = getMatchingTags(subscriptions, msg.value.content.mentions)
