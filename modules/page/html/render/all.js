@@ -34,7 +34,7 @@ exports.create = function (api) {
       bumpFilter: (msg) => {
         if (msg.value.content) {
           // filter out likes
-          if (msg.value.content.type === 'vote') return false
+          if (msg.value.content.type === 'vote' || msg.value.content.type === 'tag') return false
           return msg.value.content && typeof msg.value.content === 'object'
         }
       },

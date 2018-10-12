@@ -90,7 +90,7 @@ exports.create = function (api) {
         // correct bump explainations
         if (msg.value && msg.value.content && typeof msg.value.content === 'object') {
           var type = msg.value.content.type
-          if (type === 'vote') return false
+          if (type === 'vote' || type === 'tag') return false
 
           var author = msg.value.author
 

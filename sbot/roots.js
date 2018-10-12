@@ -185,7 +185,7 @@ module.exports = function (ssb, config) {
         if (err) return cb(err)
         cb(null, function (ids, msg) {
           var type = msg.value.content.type
-          if (type === 'vote') return false // filter out likes
+          if (type === 'vote' || type === 'tag') return false // filter out likes
           var hasChannel = !!msg.value.content.channel
           var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, ids, msg.value.content.channel))
           var matchingTags = getMatchingTags(subscriptions, ids, msg.value.content.mentions)

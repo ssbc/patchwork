@@ -50,11 +50,11 @@ exports.create = function (api) {
   })
 
   function onlyReferences (backlinks, msg) {
-    return backlinks.filter(link => link.root !== msg.key && !includeOrEqual(link.branch, msg.key))
+    return backlinks.filter(link => link.root !== msg.key && !includeOrEqual(link.branch, msg.key) && link.type !== 'tag')
   }
 
   function onlyForks (backlinks, msg) {
-    return backlinks.filter(link => link.root === msg.key && includeOrEqual(link.branch, msg.key) && api.message.sync.root(msg))
+    return backlinks.filter(link => link.root === msg.key && includeOrEqual(link.branch, msg.key) && api.message.sync.root(msg) && link.type !== 'tag')
   }
 }
 
