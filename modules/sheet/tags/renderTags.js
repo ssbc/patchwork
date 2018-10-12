@@ -55,7 +55,7 @@ exports.create = function (api) {
                 h('a.ToggleButton', { 'ev-click': () => select(id) }, i18n('View Taggers'))
               ])
             ])
-        }, { idle: true, maxTime: 2 })
+        }, { nextTick: true, maxTime: 2 })
       ])
     ]
   }

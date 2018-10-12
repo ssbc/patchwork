@@ -4,7 +4,6 @@ var onceTrue = require('mutant/once-true')
 var computed = require('mutant/computed')
 var resolve = require('mutant/resolve')
 var pull = require('pull-stream')
-var onceIdle = require('mutant/once-idle')
 var sorted = require('sorted-array-functions')
 
 exports.needs = nest({
@@ -58,8 +57,7 @@ exports.create = function (api) {
       var collection = Value([])
       subscribe(id)
 
-      // try not to saturate the thread
-      onceIdle(() => {
+      process.nextTick(() => {
         pull(
           api.sbot.pull.backlinks({
             query: [ {$filter: { dest: id }} ],

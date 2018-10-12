@@ -311,7 +311,7 @@ exports.create = function (api) {
           ])
         }, {
           maxTime: 5,
-          idle: true
+          nextTick: true
         }),
         when(moreCount,
           h('a.profile -more', {
