@@ -28,7 +28,7 @@ exports.create = function (api) {
         }
       })
       return result
-    })
+    }, { idle: true })
 
     watch(channels)
 
