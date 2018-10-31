@@ -227,5 +227,20 @@
 	"identified": "被认为",
 	"blocked": "被屏蔽了",
 	"This message will only be visible to you": "此消息只有你可见",
-	"unfollowed": "取消关注"
+	"unfollowed": "取消关注",
+	"Create Invite": "创建邀请",
+	"Accept Invite": "接受邀请",
+	"Tags": "标签",
+	"All Tags": "全部标签",
+	"Tags Used By You": "你使用的标签",
+	"Community Tags": "社区标签",
+	"Most Active": "最活跃",
+	"Recent": "最近",
+	"From You": "来自你",
+	"From Everyone": "来自所有人",
+	"Unlike": "取消赞",
+	"Like": "赞",
+	"Add / Edit Tags": "添加 / 编辑标签",
+	"Add tags here": "添加标签于此",
+	"made changes to": "修改了"
 }
