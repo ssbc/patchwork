@@ -13,7 +13,7 @@ AllChannels {
       }
     }
     :hover {
-      background: #383736
+      background-color: #383736
     }
     a {
       border-radius: 3px
