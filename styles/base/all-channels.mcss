@@ -18,6 +18,9 @@ AllChannels {
       span.name {
         font-weight: bold
       }
+      border-left: 2px solid rgb(81, 192, 103)
+      border-top-left-radius: 0
+      border-bottom-left-radius: 0
     }
     @svg subscribed {
       width: 20px

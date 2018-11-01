@@ -12,11 +12,6 @@ AllChannels {
         color: #ccc
       }
     }
-    -subscribed {
-      border-left: 2px solid #51c067
-      border-top-left-radius: 0
-      border-bottom-left-radius: 0
-    }
     :hover {
       background: #383736
     }
