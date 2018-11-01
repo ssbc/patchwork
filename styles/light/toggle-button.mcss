@@ -11,7 +11,6 @@ ToggleButton {
     border: 0px
   }
   :hover {
-    color: white
     background-color: #585656
   }
   @svg subscribed {
