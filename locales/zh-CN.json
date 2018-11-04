@@ -242,5 +242,19 @@
 	"Like": "赞",
 	"Add / Edit Tags": "添加 / 编辑标签",
 	"Add tags here": "添加标签于此",
-	"made changes to": "修改了"
+	"made changes to": "修改了",
+	"paste invite code here": "粘贴邀请码在此",
+	"By default, Patchwork will only see other users that are on the same local area network as you.": "默认情况下, Patchwork 只能发现和你在同一本地局域网的其他人.",
+	"In order to share with users on the internet, you need to be invited to a pub server.": "为了和互联网上的人共享, 你需要被邀请加入 pub.",
+	"Redeem Invite": "使用邀请",
+	"filter names": "筛选名字",
+	"Connect directly to friends currently online, using a peer-to-peer technology called \"Distributed Hash Table\"": "和目前在线的好友直接连接, 使用点对点的 \"分布式哈希表\" DHT 技术",
+	"Give this invite code to one friend. ": "把这个邀请码给一个好友. ",
+	"You will sync when you are both online.": "你会在你们同时在线时同步.",
+	"Please wait...": "请等等...",
+	"Create DHT Invite": "创建 DHT 邀请",
+	"Error": "错误",
+	"An error occurred while attempting to redeem invite.": "尝试使用邀请时发生错误.",
+	"Save": "保存",
+	"Redeeming...": "使用中..."
 }
