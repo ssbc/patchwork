@@ -19,8 +19,10 @@ function dhtTransport (sbot) {
 
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
-  .use(require('@staltz/sbot-gossip'))
+  .use(require('scuttlebot/plugins/gossip'))
   .use(require('scuttlebot/plugins/replicate'))
+  .use(require('scuttlebot/plugins/no-auth'))
+  .use(require('scuttlebot/plugins/unix-socket'))
   .use(require('ssb-friends'))
   .use(require('ssb-blobs'))
   .use(require('ssb-backlinks'))
