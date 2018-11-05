@@ -27,7 +27,7 @@ exports.create = function (api) {
     var replies = ProxyCollection()
 
     var prepend = MutantArray()
-    api.sbot.async.get(rootId, (err, value) => {
+    api.sbot.async.get({ id: rootId, private: true }, (err, value) => {
       var rootMessage = null
       if (!err) {
         rootMessage = unboxIfNeeded({ key: rootId, value })
@@ -35,7 +35,7 @@ exports.create = function (api) {
 
         if (isBlog(rootMessage)) {
           // resolve the blog body before returning
-          Blog(api.sbot.obs.connection).async.get(rootMessage, (err, result) => {
+          Blog(api.sbot.obs.connection).async.get({ id: rootMessage, private: true }, (err, result) => {
             if (!err) {
               rootMessage.body = result.body
               prepend.push(Value(rootMessage))

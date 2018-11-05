@@ -11,7 +11,7 @@ exports.create = function (api) {
     if (!ref.isMsg(key)) throw new Error('a msg id must be specified')
     var result = Value()
 
-    api.sbot.async.get(key, (err, value) => {
+    api.sbot.async.get({ id: key, private: true }, (err, value) => {
       if (err) {
         // TODO: handle resolving out-of-order message!
 
