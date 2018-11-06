@@ -4,7 +4,7 @@ ToggleButton {
   border-radius: 3px
   font-size: 13px
   cursor: pointer
-  transition: background-color 0.25s ease, color 0.25s ease
+  transition: background-color 0.25s ease, color 0.25s ease, background-image 0.25s ease
   -subscribe {
     :before {
       content: '★ '
@@ -19,6 +19,10 @@ ToggleButton {
     background-position: right
     background-image: svg(subscribed)
     padding-right: 25px
+    :hover {
+      background-color: #b74945
+      color: white
+    }
   }
   -blocking {
     margin-left: 5px
