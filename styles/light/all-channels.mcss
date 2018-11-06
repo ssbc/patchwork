@@ -7,7 +7,7 @@ AllChannels {
     overflow: hidden
     text-overflow: ellipsis
     :hover {
-      background: rgba(255, 255, 255, 0.4)
+      background-color: rgba(255, 255, 255, 0.4)
     }
     a {
       border-radius: 4px
