@@ -9,7 +9,7 @@ ChannelList {
       background: rgb(255, 255, 255)
     }
     :hover {
-      background: rgba(255, 255, 255, 0.4)
+      background-color: rgba(255, 255, 255, 0.4)
     }
     a {
       border-radius: 4px
