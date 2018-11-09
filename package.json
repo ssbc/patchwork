@@ -92,6 +92,6 @@
   },
   "devDependencies": {
     "colors": "^1.3.2",
-    "electron": "^2.0.11"
+    "electron": "^2.0.13"
   }
 }
