@@ -116,6 +116,7 @@ exports.init = function (ssb, config) {
 }
 
 function checkBump (msg, { channel }) {
+  if (!msg.value) return
   if (msg.value.content.type === 'vote') return
   if (normalizeChannel(msg.value.content.channel) === channel) {
     if (getRoot(msg)) {

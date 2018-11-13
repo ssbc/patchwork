@@ -14,7 +14,7 @@ exports.needs = nest({
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
-  return nest('page.html.render', function channel (path) {
+  return nest('page.html.render', function (path) {
     if (path !== '/private') return
 
     const i18n = api.intl.sync.i18n
