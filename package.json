@@ -61,7 +61,7 @@
     "pull-stream": "^3.6.9",
     "run-parallel": "^1.1.9",
     "scuttle-blog": "^1.0.1",
-    "scuttle-tag": "0.5.0",
+    "scuttle-tag": "0.4.0",
     "scuttlebot": "^13.0.3",
     "sorted-array-functions": "^1.1.0",
     "spacetime": "^4.5.1",
