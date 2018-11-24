@@ -4,7 +4,7 @@ const net = require('net')
 
 exports.gives = nest('app.sync.externalHandler')
 
-var externalViewer = 'http://git.scuttlebot.io'
+var externalViewer = 'https://git.scuttlebot.io'
 var localViewer = 'http://localhost:7718'
 
 var gitMessageTypes = [
