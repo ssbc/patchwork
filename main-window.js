@@ -12,6 +12,7 @@ var LatestUpdate = require('./lib/latest-update')
 var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
+var requireStyle = require('require-style')
 
 module.exports = function (config) {
   var sockets = combine(
@@ -76,6 +77,20 @@ module.exports = function (config) {
     h('style', {
       innerHTML: computed(api.settings.obs.get('patchwork.theme', 'light'), themeName => {
         return themes[themeName] || themes['light']
+      })
+    })
+  )
+
+  document.head.appendChild(
+    h('style', {
+      innerHTML: computed(api.settings.obs.get('patchwork.theme', 'light'), themeName => {
+        const syntaxThemeOptions = {
+          light: 'github',
+          dark: 'monokai'
+        }
+
+        const syntaxTheme = syntaxThemeOptions[themeName] || syntaxThemeOptions['light']
+        return requireStyle(`highlight.js/styles/${syntaxTheme}.css`)
       })
     })
   )
