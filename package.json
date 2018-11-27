@@ -17,6 +17,7 @@
   "dependencies": {
     "@staltz/sbot-gossip": "^1.1.6",
     "app-root-path": "^2.1.0",
+    "async": "^2.6.1",
     "bulk-require": "^1.0.1",
     "color-hash": "^1.0.3",
     "compare-version": "^0.1.2",
@@ -89,7 +90,6 @@
     "standard": "^12.0.1",
     "suggest-box": "^2.2.3",
     "text-node-searcher": "^1.1.1",
-    "tiny-map-async": "^1.0.1",
     "xtend": "^4.0.1"
   },
   "devDependencies": {
