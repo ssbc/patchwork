@@ -54,17 +54,17 @@ exports.create = function (api) {
     }
   })
 
-  function valueFrom (id, key, author) {
+  function valueFrom (id, key, authorId) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.valueFromStream({ dest: id, key, id: author }))
+      return api.sbot.pull.stream((sbot) => sbot.about.latestValueStream({ dest: id, key, authorId }))
     })
   }
 
   function latestValue (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.latestValueStream({ dest: id, key }))
+      return api.sbot.pull.stream((sbot) => sbot.about.latestValueStream({ dest: id, key }))
     })
   }
 
@@ -72,7 +72,7 @@ exports.create = function (api) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     if (!socialValueCache[id + '/' + key]) {
       var obs = socialValueCache[id + '/' + key] = MutantPullValue(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValueStream({ dest: id, key }))
+        return api.sbot.pull.stream((sbot) => sbot.about.socialValueStream({ dest: id, key }))
       }, {
         onListen: () => { socialValueCache[id + '/' + key] = obs },
         onUnlisten: () => delete socialValueCache[id + '/' + key]
@@ -84,7 +84,7 @@ exports.create = function (api) {
   function socialValues (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return MutantPullDict(() => {
-      return api.sbot.pull.stream((sbot) => sbot.patchwork.about.socialValuesStream({ dest: id, key }))
+      return api.sbot.pull.stream((sbot) => sbot.about.socialValuesStream({ dest: id, key }))
     }, { checkDelete })
   }
 

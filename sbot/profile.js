@@ -223,13 +223,13 @@ exports.init = function (ssb, config) {
   function avatar ({ id }, cb) {
     var result = { id }
     parallel([(done) => {
-      ssb.patchwork.about.socialValue({ dest: id, key: 'name' }, (err, value) => {
+      ssb.about.socialValue({ dest: id, key: 'name' }, (err, value) => {
         if (err) return done(err)
         result['name'] = value
         done()
       })
     }, (done) => {
-      ssb.patchwork.about.socialValue({ dest: id, key: 'image' }, (err, value) => {
+      ssb.about.socialValue({ dest: id, key: 'image' }, (err, value) => {
         if (err) return done(err)
         if (value && value instanceof Object && value.link) value = value.link
         result['image'] = value

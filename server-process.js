@@ -28,6 +28,7 @@ var createSbot = require('scuttlebot')
   .use(require('ssb-friends'))
   .use(require('ssb-blobs'))
   .use(require('ssb-backlinks'))
+  .use(require('ssb-about'))
   .use(require('ssb-private'))
   // .use(require('ssb-dht-invite')) // this one must come before dhtTransport
   // .use(dhtTransport)

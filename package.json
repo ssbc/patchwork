@@ -68,6 +68,7 @@
     "scuttlebot": "^13.0.3",
     "sorted-array-functions": "^1.1.0",
     "spacetime": "^4.5.1",
+    "ssb-about": "^2.0.0",
     "ssb-backlinks": "^0.7.3",
     "ssb-blob-files": "^1.1.3",
     "ssb-blobs": "^1.1.6",

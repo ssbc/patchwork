@@ -7,7 +7,6 @@ var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
 var Likes = require('./likes')
 var Backlinks = require('./backlinks')
-var About = require('./about')
 var Profile = require('./profile')
 var PublicFeed = require('./public-feed')
 var Subscriptions2 = require('./subscriptions2')
@@ -26,7 +25,6 @@ exports.version = require('../package.json').version
 exports.manifest = {
   likes: Likes.manifest,
   backlinks: Backlinks.manifest,
-  about: About.manifest,
   profile: Profile.manifest,
   publicFeed: PublicFeed.manifest,
   subscriptions2: Subscriptions2.manifest,
@@ -80,7 +78,6 @@ exports.init = function (ssb, config) {
   return {
     likes: Likes.init(ssb, config),
     backlinks: Backlinks.init(ssb, config),
-    about: About.init(ssb, config),
     profile: Profile.init(ssb, config),
     publicFeed: PublicFeed.init(ssb, config),
     subscriptions2: Subscriptions2.init(ssb, config),
