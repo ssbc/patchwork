@@ -13,7 +13,7 @@ var fixPath = require('fix-path')
 //     create: dhtConfig => {
 //       return DHT({
 //         keys: sbot.dhtInvite.channels(),
-//         port: dhtConfig.port
+//         port: dhtConfig.por t
 //       })
 //     }
 //   })
@@ -53,7 +53,7 @@ module.exports = function (ssbConfig) {
   electron.ipcRenderer.send('server-started', ssbConfig)
 
   // start dht invite support
-  context.sbot.dhtInvite.start()
+  // context.sbot.dhtInvite.start()
 
   // check if we are using a custom ssb path (which would break git-ssb-web)
   if (!ssbConfig.customPath) {
