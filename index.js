@@ -167,23 +167,21 @@ function setupContext (appName, opts, cb) {
     friends: {
       dunbar: 150,
       hops: 2 // down from 3
-    },
-    connections: { // to support DHT invites
-      incoming: {
-        dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
-      },
-      outgoing: {
-        dht: [{ transform: 'shs' }]
-      }
     }
+    // connections: { // to support DHT invites
+    //   incoming: {
+    //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
+    //   },
+    //   outgoing: {
+    //     dht: [{ transform: 'shs' }]
+    //   }
+    // }
   }, opts))
-
 
   ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
 
   const keys = ssbConfig.keys
   const pubkey = keys.id.slice(1).replace(`.${keys.curve}`, '')
-
 
   if (process.platform === 'win32') {
     // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
