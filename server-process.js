@@ -3,30 +3,34 @@ var Path = require('path')
 var electron = require('electron')
 var spawn = require('child_process').spawn
 var fixPath = require('fix-path')
-var DHT = require('multiserver-dht')
+// var DHT = require('multiserver-dht')
 
-function dhtTransport (sbot) {
-  sbot.multiserver.transport({
-    name: 'dht',
-    create: dhtConfig => {
-      return DHT({
-        keys: sbot.dhtInvite.channels(),
-        port: dhtConfig.port
-      })
-    }
-  })
-}
+// removing DHT invites until they work in sbot@13
+//
+// function dhtTransport (sbot) {
+//   sbot.multiserver.transport({
+//     name: 'dht',
+//     create: dhtConfig => {
+//       return DHT({
+//         keys: sbot.dhtInvite.channels(),
+//         port: dhtConfig.port
+//       })
+//     }
+//   })
+// }
 
 var createSbot = require('scuttlebot')
   .use(require('scuttlebot/plugins/master'))
-  .use(require('@staltz/sbot-gossip'))
+  .use(require('scuttlebot/plugins/gossip'))
   .use(require('scuttlebot/plugins/replicate'))
+  .use(require('scuttlebot/plugins/no-auth'))
+  .use(require('scuttlebot/plugins/unix-socket'))
   .use(require('ssb-friends'))
   .use(require('ssb-blobs'))
   .use(require('ssb-backlinks'))
   .use(require('ssb-private'))
-  .use(require('ssb-dht-invite')) // this one must come before dhtTransport
-  .use(dhtTransport)
+  // .use(require('ssb-dht-invite')) // this one must come before dhtTransport
+  // .use(dhtTransport)
   .use(require('scuttlebot/plugins/invite'))
   .use(require('scuttlebot/plugins/local'))
   .use(require('scuttlebot/plugins/logging'))

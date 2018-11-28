@@ -167,24 +167,32 @@ function setupContext (appName, opts, cb) {
     friends: {
       dunbar: 150,
       hops: 2 // down from 3
-    },
-    connections: { // to support DHT invites
-      incoming: {
-        dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
-      },
-      outgoing: {
-        dht: [{ transform: 'shs' }]
-      }
     }
+    // connections: { // to support DHT invites
+    //   incoming: {
+    //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
+    //   },
+    //   outgoing: {
+    //     dht: [{ transform: 'shs' }]
+    //   }
+    // }
   }, opts))
-
-  console.log(ssbConfig)
 
   ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
 
-  // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
-  var id = ssbConfig.keys.id
-  ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${id.slice(1).replace('.ed25519', '')}`
+  const keys = ssbConfig.keys
+  const pubkey = keys.id.slice(1).replace(`.${keys.curve}`, '')
+
+  if (process.platform === 'win32') {
+    // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
+    ssbConfig.remote = `net:127.0.0.1:${config.port}~shs:${pubkey}`
+  } else {
+    const socketPath = Path.join(ssbConfig.path, 'socket')
+    ssbConfig.connections.incoming.unix = [{ 'scope': 'local', 'transform': 'noauth' }]
+    ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
+  }
+
+  console.log(ssbConfig)
 
   if (opts.server === false) {
     cb && cb()
