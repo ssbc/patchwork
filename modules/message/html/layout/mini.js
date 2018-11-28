@@ -54,8 +54,8 @@ exports.create = function (api) {
       classList.push('-reply')
       var branch = msg.value.content.branch
       if (branch) {
-        if (!previousId || (previousId && last(branch) && previousId !== last(branch))) {
-          replyInfo = h('span', ['in reply to ', api.message.html.link(last(branch))])
+        if (!previousId || (previousId && first(branch) && previousId !== first(branch))) {
+          replyInfo = h('span', ['in reply to ', api.message.html.link(first(branch))])
         }
       }
     } else if (msg.value.content.project) {
@@ -130,9 +130,9 @@ exports.create = function (api) {
   }
 }
 
-function last (array) {
+function first (array) {
   if (Array.isArray(array)) {
-    return array[array.length - 1]
+    return array[0]
   } else {
     return array
   }
