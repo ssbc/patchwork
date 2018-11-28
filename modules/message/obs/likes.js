@@ -44,7 +44,7 @@ exports.create = function (api) {
       if (!ref.isLink(id)) throw new Error('an id must be specified')
       return MutantPullValue(() => {
         return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.countStream({ dest: id }))
-      })
+      }, { defaultValue: 0 })
     }
   })
 }

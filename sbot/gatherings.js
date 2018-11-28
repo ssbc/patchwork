@@ -1,12 +1,12 @@
 'use strict'
 const pull = require('pull-stream')
 const extend = require('xtend')
-const Defer = require('pull-defer')
 const pullResume = require('../lib/pull-resume')
 const threadSummary = require('../lib/thread-summary')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const Paramap = require('pull-paramap')
-const mapAsync = require('tiny-map-async')
+const FilterBlocked = require('../lib/filter-blocked')
+const async = require('async')
 
 exports.manifest = {
   latest: 'source',
@@ -19,88 +19,96 @@ exports.init = function (ssb, config) {
       return pull(
         ssb.messagesByType({ type: 'gathering', live: true, old: false }),
         ResolveAbouts({ ssb }),
-        pull.asyncMap((msg, cb) => {
-          // only notify about new events that your friends are attending
-          followingAny([msg.value.author].concat(msg.gathering.attending), (err, result) => {
-            if (err) return cb(err)
-            if (result) cb(null, msg)
-            else cb(null, null)
-          })
-        }),
-        pull.filter()
+        ApplyFilterResult({ ssb }),
+        pull.filter(msg => !!msg.filterResult)
       )
     },
     roots: function ({ reverse, limit, resume }) {
-      var stream = Defer.source()
+      // use resume option if specified
+      var opts = { reverse, old: true, type: 'gathering' }
+      if (resume) {
+        opts[reverse ? 'lt' : 'gt'] = resume
+      }
 
-      ssb.friends.hops((err, hops) => {
-        if (err) return stream.abort(err)
+      return pullResume.source(ssb.messagesByType(opts), {
+        limit,
+        getResume: (item) => {
+          return item.timestamp
+        },
+        filterMap: pull(
+          // don't include if author blocked
+          FilterBlocked([ssb.id], {
+            isBlocking: ssb.friends.isBlocking
+          }),
 
-        // use resume option if specified
-        var opts = { reverse, old: true, type: 'gathering' }
-        if (resume) {
-          opts[reverse ? 'lt' : 'gt'] = resume
-        }
+          // RESOLVE ROOTS WITH ABOUTS
+          ResolveAbouts({ ssb }),
 
-        stream.resolve(pullResume.source(ssb.messagesByType(opts), {
-          limit,
-          getResume: (item) => {
-            return item.timestamp
-          },
-          filterMap: pull(
-            // don't include if author blocked
-            pull.filter(item => {
-              if (item.value && hops[item.value.author] < 0) return false
-              return true
-            }),
+          // FILTER GATHERINGS BASED ON ATTENDEES AND AUTHOR (and hide if no title)
+          ApplyFilterResult({ ssb }),
+          pull.filter(msg => !!msg.filterResult),
 
-            // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ ssb }),
-
-            // FILTER GATHERINGS BASED ON ATTENDEES AND AUTHOR (and hide if no title)
-            pull.filter(msg => {
-              if (!msg.gathering.title) return
-              return isFollowing(msg.value.author) || msg.gathering.attending.some(isFollowing)
-            }),
-
-            // ADD THREAD SUMMARY
-            Paramap((item, cb) => {
-              threadSummary(item.key, {
-                recentLimit: 3,
-                readThread: ssb.patchwork.thread.read,
-                bumpFilter,
-                messageFilter: (msg) => !hops[msg.value.author] || hops[msg.value.author] >= 0 // don't include blocked messages
-              }, (err, summary) => {
-                if (err) return cb(err)
-                cb(null, extend(item, summary, {
-                  rootBump: bumpFilter(item)
-                }))
-              })
-            }, 10)
-          )
-        }))
-
-        function bumpFilter (msg) {
-          if (msg.value.content.type === 'about' && isFollowing(msg.value.author) && msg.value.content.attendee && !msg.value.content.attendee.remove) {
-            return { type: 'attending' }
-          }
-        }
-
-        function isFollowing (id) {
-          return hops[id] === 0 || hops[id] === 1
-        }
+          // ADD THREAD SUMMARY
+          Paramap((item, cb) => {
+            threadSummary(item.key, {
+              recentLimit: 3,
+              readThread: ssb.patchwork.thread.read,
+              bumpFilter,
+              pullFilter: pull(
+                FilterBlocked([item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
+                ApplyReplyFilterResult({ ssb })
+              )
+            }, (err, summary) => {
+              if (err) return cb(err)
+              cb(null, extend(item, summary, {
+                rootBump: bumpFilter(item)
+              }))
+            })
+          }, 10)
+        )
       })
-
-      return stream
     }
   }
+}
 
-  function followingAny (ids, cb) {
-    mapAsync(ids, (dest, cb) => {
-      ssb.friends.isFollowing({ source: ssb.id, dest }, cb)
-    }, (err, result) => {
-      if (err) return cb(err)
-      cb(null, result.some((x) => x))
-    })
+function bumpFilter (msg) {
+  if (msg.value.content.type === 'about' && msg.filterResult && msg.value.content.attendee && !msg.value.content.attendee.remove) {
+    return { type: 'attending' }
   }
+}
+
+function ApplyFilterResult ({ ssb }) {
+  return pull.asyncMap((msg, cb) => {
+    ssb.friends.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, followingAuthor) => {
+      if (err) return cb(err)
+      async.filterSeries(msg.gathering && (msg.gathering.attending || []), (dest, cb) => {
+        ssb.friends.isFollowing({ source: ssb.id, dest }, cb)
+      }, (err, followingAttending) => {
+        if (err) return cb(err)
+        var hasTitle = !!msg.gathering.title
+        if ((followingAttending.length || followingAuthor) && hasTitle) {
+          msg.filterResult = {
+            followingAttending,
+            followingAuthor,
+            hasTitle
+          }
+        }
+        cb(null, msg)
+      })
+    })
+  })
+}
+
+function ApplyReplyFilterResult ({ ssb }) {
+  return pull.asyncMap((msg, cb) => {
+    ssb.friends.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, isFollowing) => {
+      if (err) return cb(err)
+      if (isFollowing) {
+        msg.filterResult = {
+          isFollowing
+        }
+      }
+      cb(null, msg)
+    })
+  })
 }

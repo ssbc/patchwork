@@ -3,13 +3,13 @@ const pull = require('pull-stream')
 const HLRU = require('hashlru')
 const extend = require('xtend')
 const normalizeChannel = require('ssb-ref').normalizeChannel
-const Defer = require('pull-defer')
 const pullResume = require('../lib/pull-resume')
 const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const Paramap = require('pull-paramap')
 const getRoot = require('../lib/get-root')
+const FilterBlocked = require('../lib/filter-blocked')
 
 exports.manifest = {
   latest: 'source',
@@ -23,157 +23,169 @@ exports.init = function (ssb, config) {
 
   return {
     latest: function () {
-      var stream = Defer.source()
+      return pull(
+        ssb.createFeedStream({ live: true, old: false }),
 
-      // TOOD: needs to handle realtime updates to filters after patchwork loads
-      getFilter({ ssb }, (err, filter, hops) => {
-        if (err) return stream.abort(err)
+        ApplyFilterResult({ ssb }),
+        pull.filter(msg => !!msg.filterResult),
 
-        stream.resolve(pull(
-          ssb.createFeedStream({ live: true, old: false }),
-          pull.filter(item => {
-            if (filter && item && item.value && item.value.content && item.value.content instanceof Object) {
-              var filterResult = filter(item)
-              if (filterResult) {
-                item.filterResult = filterResult
-                return true
-              }
-            }
-          }),
-          LookupRoots({ ssb, cache }),
-          pull.filter(item => {
-            if (item.value && hops[item.value.author] < 0) return false
-            if (item.root && item.root.value && hops[item.root.value.author] < 0) return false
-            return true
-          }),
+        LookupRoots({ ssb, cache }),
 
-          pull.filter(item => {
-            var root = item.root || item
-            var isPrivate = root.value && root.value.private
-            if (filter && root && root.value && !isPrivate) {
-              if (checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
-                root.filterResult = extend(item.filterResult, { forced: true })
-                return true
-              } else {
-                var filterResult = filter(root)
-                if (shouldShow(filterResult)) {
-                  root.filterResult = filterResult
-                  return true
-                }
-              }
-            }
-          })
-        ))
-      })
+        FilterPrivateRoots(),
+        FilterBlocked([ssb.id], {
+          isBlocking: ssb.friends.isBlocking,
+          useRootAuthorBlocks: true,
+          checkRoot: true
+        }),
 
-      return stream
+        ApplyRootFilterResult({ ssb }),
+        pull.filter(msg => {
+          var root = msg.root || msg
+          return root.filterResult
+        })
+      )
     },
     roots: function ({ reverse, limit, resume }) {
       var seen = new Set()
       var included = new Set()
 
-      var stream = Defer.source()
+      // use resume option if specified
+      var opts = { reverse, old: true }
+      if (resume) {
+        opts[reverse ? 'lt' : 'gt'] = resume
+      }
 
-      getFilter({ ssb }, (err, filter, hops) => {
-        if (err) return stream.abort(err)
+      return pullResume.source(ssb.createFeedStream(opts), {
+        limit,
+        getResume: (item) => {
+          return item && item.rts
+        },
+        filterMap: pull(
+          ApplyFilterResult({ ssb }),
+          pull.filter(msg => !!msg.filterResult),
 
-        // use resume option if specified
-        var opts = { reverse, old: true }
-        if (resume) {
-          opts[reverse ? 'lt' : 'gt'] = resume
-        }
+          LookupRoots({ ssb, cache }),
 
-        stream.resolve(pullResume.source(ssb.createFeedStream(opts), {
-          limit,
-          getResume: (item) => {
-            return item && item.rts
-          },
-          filterMap: pull(
-            // BUMP FILTER
-            pull.filter(item => {
-              if (filter && item && item.value && item.value.content && item.value.content instanceof Object) {
-                var filterResult = filter(item)
-                if (filterResult) {
-                  item.filterResult = filterResult
-                  return true
-                }
-              }
-            }),
+          FilterPrivateRoots(),
 
-            // LOOKUP AND ADD ROOTS
-            LookupRoots({ ssb, cache }),
+          FilterBlocked([ssb.id], {
+            isBlocking: ssb.friends.isBlocking,
+            useRootAuthorBlocks: true,
+            checkRoot: true
+          }),
 
-            // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
-            pull.filter(item => {
-              if (item.value && hops[item.value.author] < 0) return false
-              if (item.root && item.root.value && hops[item.root.value.author] < 0) return false
-              return true
-            }),
+          ApplyRootFilterResult({ ssb }),
 
-            // FILTER ROOTS
-            pull.filter(item => {
-              var root = item.root || item
-              var isPrivate = root.value && root.value.private
-
-              // skip this item if it has already been included
-              if (!included.has(root.key) && filter && root && root.value && !isPrivate) {
-                if (checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
-                  // update filter result so that we can display the correct bump message
-                  root.filterResult = extend(item.filterResult, { forced: true })
+          // FILTER ROOTS
+          pull.filter(item => {
+            var root = item.root || item
+            if (!included.has(root.key) && root && root.value && root.filterResult) {
+              if (root.filterResult.forced) {
+                // force include the root when a reply has matching tags or the author is you
+                included.add(root.key)
+                return true
+              } else if (!seen.has(root.key)) {
+                seen.add(root.key)
+                if (shouldShow(root.filterResult)) {
                   included.add(root.key)
                   return true
-                } else if (!seen.has(root.key)) {
-                  seen.add(root.key)
-                  var filterResult = filter(root)
-                  if (shouldShow(filterResult)) {
-                    root.filterResult = filterResult
-                    included.add(root.key)
-                    return true
-                  }
                 }
               }
-            }),
+            }
+          }),
 
-            // MAP ROOT ITEMS
-            pull.map(item => {
-              var root = item.root || item
-              return root
-            }),
+          // MAP ROOT ITEMS
+          pull.map(item => {
+            var root = item.root || item
+            return root
+          }),
 
-            // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ ssb }),
+          // RESOLVE ROOTS WITH ABOUTS
+          ResolveAbouts({ ssb }),
 
-            // ADD THREAD SUMMARY
-            Paramap((item, cb) => {
-              threadSummary(item.key, {
-                recentLimit: 3,
-                readThread: ssb.patchwork.thread.read,
-                bumpFilter,
-                messageFilter: (msg) => !hops[msg.value.author] || hops[msg.value.author] >= 0 // don't include blocked messages
-              }, (err, summary) => {
-                if (err) return cb(err)
-                cb(null, extend(item, summary, {
-                  filterResult: undefined,
-                  rootBump: bumpFromFilterResult(item, item.filterResult)
-                }))
-              })
-            }, 20)
-          )
-        }))
-
-        function bumpFilter (msg) {
-          let filterResult = filter(msg)
-          return bumpFromFilterResult(msg, filterResult)
-        }
+          // ADD THREAD SUMMARY
+          Paramap((item, cb) => {
+            threadSummary(item.key, {
+              pullFilter: pull(
+                FilterBlocked([item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
+                ApplyFilterResult({ ssb })
+              ),
+              recentLimit: 3,
+              readThread: ssb.patchwork.thread.read,
+              bumpFilter: bumpFilter
+            }, (err, summary) => {
+              if (err) return cb(err)
+              cb(null, extend(item, summary, {
+                filterResult: undefined,
+                rootBump: bumpFilter
+              }))
+            })
+          }, 20)
+        )
       })
-
-      return stream
     }
   }
 
   function shouldShow (filterResult) {
     return !!filterResult
   }
+}
+
+function FilterPrivateRoots () {
+  return pull.filter(msg => {
+    return !msg.root || (msg.root.value && !msg.root.value.private)
+  })
+}
+
+function ApplyRootFilterResult ({ ssb }) {
+  return Paramap((item, cb) => {
+    if (item.root) {
+      getFilterResult(item.root, { ssb }, (err, rootFilterResult) => {
+        if (err) return cb(err)
+        if (item.filterResult && checkReplyForcesDisplay(item)) { // include this item if it has matching tags or the author is you
+          item.root.filterResult = extend(item.filterResult, { forced: true })
+        } else {
+          item.root.filterResult = rootFilterResult
+        }
+        cb(null, item)
+      })
+    } else {
+      cb(null, item)
+    }
+  })
+}
+
+function ApplyFilterResult ({ ssb }) {
+  return Paramap((item, cb) => {
+    getFilterResult(item, { ssb }, (err, filterResult) => {
+      if (err) return cb(err)
+      item.filterResult = filterResult
+      cb(null, item)
+    })
+  }, 10)
+}
+
+function getFilterResult (msg, { ssb }, cb) {
+  ssb.friends.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, following) => {
+    if (err) return cb(err)
+    ssb.patchwork.subscriptions2.get({ id: ssb.id }, (err, subscriptions) => {
+      if (err) return cb(err)
+      var type = msg.value.content.type
+      if (type === 'vote' || type === 'tag') return cb() // filter out likes and tags
+      var hasChannel = !!msg.value.content.channel
+      var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, msg.value.content.channel))
+      var matchingTags = getMatchingTags(subscriptions, msg.value.content.mentions)
+      var isYours = msg.value.author === ssb.id
+      var mentionsYou = getMentionsYou([ssb.id], msg.value.content.mentions)
+      if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
+        cb(null, {
+          matchingTags, matchesChannel, isYours, following, mentionsYou, hasChannel
+        })
+      } else {
+        cb()
+      }
+    })
+  })
 }
 
 function getMatchingTags (lookup, mentions) {
@@ -214,7 +226,8 @@ function checkChannel (lookup, channel) {
   }
 }
 
-function bumpFromFilterResult (msg, filterResult) {
+function bumpFilter (msg) {
+  var filterResult = msg.filterResult
   if (filterResult) {
     if (isAttendee(msg)) {
       return 'attending'
@@ -240,32 +253,4 @@ function bumpFromFilterResult (msg, filterResult) {
 function isAttendee (msg) {
   var content = msg.value && msg.value.content
   return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
-}
-
-function getFilter ({ ssb }, cb) {
-  // TODO: rewrite contacts stream
-  ssb.friends.hops((err, hops) => {
-    if (err) return cb(err)
-
-    // TODO: support sameAs multiple IDs
-    ssb.patchwork.subscriptions2.get({ id: ssb.id }, (err, subscriptions) => {
-      if (err) return cb(err)
-      cb(null, function (msg) {
-        var type = msg.value.content.type
-        if (type === 'vote' || type === 'tag') return false // filter out likes and tags
-        var hasChannel = !!msg.value.content.channel
-        var matchesChannel = (type !== 'channel' && checkChannel(subscriptions, msg.value.content.channel))
-        var matchingTags = getMatchingTags(subscriptions, msg.value.content.mentions)
-        var isYours = hops[msg.value.author] === 0
-        var mentionsYou = getMentionsYou([ssb.id], msg.value.content.mentions)
-
-        var following = hops[msg.value.author] === 1
-        if (isYours || matchesChannel || matchingTags.length || following || mentionsYou) {
-          return {
-            matchingTags, matchesChannel, isYours, following, mentionsYou, hasChannel
-          }
-        }
-      }, hops)
-    })
-  })
 }

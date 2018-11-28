@@ -2,13 +2,13 @@
 const pull = require('pull-stream')
 const HLRU = require('hashlru')
 const extend = require('xtend')
-const Defer = require('pull-defer')
 const pullResume = require('../lib/pull-resume')
 const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
 const Paramap = require('pull-paramap')
+const FilterBlocked = require('../lib/filter-blocked')
 
 exports.manifest = {
   latest: 'source',
@@ -33,80 +33,71 @@ exports.init = function (ssb, config) {
       )
     },
     roots: function ({ reverse, limit, resume }) {
-      var stream = Defer.source()
+      // use resume option if specified
+      var opts = { reverse, old: true }
 
-      ssb.friends.hops((err, hops) => {
-        if (err) return stream.abort(err)
+      if (reverse) {
+        opts.query = [
+          { $filter: {
+            timestamp: resume ? { $lt: resume, $gt: 0 } : { $gt: 0 }
+          } }
+        ]
+      } else {
+        opts.query = [
+          { $filter: {
+            timestamp: resume ? { $gt: resume } : { $gt: 0 }
+          } }
+        ]
+      }
 
-        // use resume option if specified
-        var opts = { reverse, old: true }
+      return pullResume.source(ssb.private.read(opts), {
+        private: true,
+        limit,
+        getResume: (item) => {
+          return item.timestamp
+        },
+        filterMap: pull(
+          // LOOKUP AND ADD ROOTS
+          LookupRoots({ ssb, cache }),
 
-        if (reverse) {
-          opts.query = [
-            { $filter: {
-              timestamp: resume ? { $lt: resume, $gt: 0 } : { $gt: 0 }
-            } }
-          ]
-        } else {
-          opts.query = [
-            { $filter: {
-              timestamp: resume ? { $gt: resume } : { $gt: 0 }
-            } }
-          ]
-        }
+          // ONLY POSTS BUMP PRIVATE (currently)
+          pull.filter(bumpFilter),
 
-        stream.resolve(pullResume.source(ssb.private.read(opts), {
-          private: true,
-          limit,
-          getResume: (item) => {
-            return item.timestamp
-          },
-          filterMap: pull(
-            // LOOKUP AND ADD ROOTS
-            LookupRoots({ ssb, cache }),
+          FilterBlocked([ssb.id], {
+            isBlocking: ssb.friends.isBlocking,
+            useRootAuthorBlocks: false, // disabled in private mode
+            checkRoot: true
+          }),
 
-            // ONLY POSTS BUMP PRIVATE (currently)
-            pull.filter(bumpFilter),
+          // DON'T REPEAT THE SAME THREAD
+          UniqueRoots(),
 
-            // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
-            pull.filter(item => {
-              if (item.value && hops[item.value.author] < 0) return false
-              if (item.root && item.root.value && hops[item.root.value.author] < 0) return false
-              return true
-            }),
+          // MAP ROOT ITEMS
+          pull.map(item => {
+            var root = item.root || item
+            return root
+          }),
 
-            // DON'T REPEAT THE SAME THREAD
-            UniqueRoots(),
+          // RESOLVE ROOTS WITH ABOUTS
+          ResolveAbouts({ ssb }),
 
-            // MAP ROOT ITEMS
-            pull.map(item => {
-              var root = item.root || item
-              return root
-            }),
-
-            // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ ssb }),
-
-            // ADD THREAD SUMMARY
-            Paramap((item, cb) => {
-              threadSummary(item.key, {
-                recentLimit: 3,
-                readThread: ssb.patchwork.thread.read,
-                bumpFilter,
-                messageFilter: (msg) => !hops[msg.value.author] || hops[msg.value.author] >= 0 // don't include blocked messages
-              }, (err, summary) => {
-                if (err) return cb(err)
-                cb(null, extend(item, summary, {
-                  filterResult: undefined,
-                  rootBump: bumpFilter(item)
-                }))
-              })
-            }, 20)
-          )
-        }))
+          // ADD THREAD SUMMARY
+          Paramap((item, cb) => {
+            threadSummary(item.key, {
+              recentLimit: 3,
+              readThread: ssb.patchwork.thread.read,
+              bumpFilter,
+              pullFilter: FilterBlocked([ssb.id], { isBlocking: ssb.friends.isBlocking })
+            }, (err, summary) => {
+              if (err) return cb(err)
+              cb(null, extend(item, summary, {
+                filterResult: undefined,
+                rootBump: bumpFilter(item)
+              }))
+            })
+          }, 20)
+        )
       })
-
-      return stream
     }
   }
 }

@@ -2,13 +2,13 @@
 const pull = require('pull-stream')
 const HLRU = require('hashlru')
 const extend = require('xtend')
-const Defer = require('pull-defer')
 const pullResume = require('../lib/pull-resume')
 const threadSummary = require('../lib/thread-summary')
 const LookupRoots = require('../lib/lookup-roots')
 const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
 const getRoot = require('../lib/get-root')
+const FilterBlocked = require('../lib/filter-blocked')
 
 exports.manifest = {
   latest: 'source',
@@ -29,65 +29,57 @@ exports.init = function (ssb, config) {
       )
     },
     roots: function ({ reverse, limit, resume }) {
-      var stream = Defer.source()
+      // use resume option if specified
+      var opts = { reverse, old: true }
+      if (resume) {
+        opts[reverse ? 'lt' : 'gt'] = resume
+      }
 
-      ssb.friends.hops((err, hops) => {
-        if (err) return stream.abort(err)
+      return pullResume.source(ssb.createFeedStream(opts), {
+        limit,
+        getResume: (item) => {
+          return item && item.rts
+        },
+        filterMap: pull(
+          // BUMP FILTER
+          pull.filter(bumpFilter),
 
-        // use resume option if specified
-        var opts = { reverse, old: true }
-        if (resume) {
-          opts[reverse ? 'lt' : 'gt'] = resume
-        }
+          // LOOKUP AND ADD ROOTS
+          LookupRoots({ ssb, cache }),
 
-        stream.resolve(pullResume.source(ssb.createFeedStream(opts), {
-          limit,
-          getResume: (item) => {
-            return item && item.rts
-          },
-          filterMap: pull(
-            // BUMP FILTER
-            pull.filter(bumpFilter),
+          // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
+          FilterBlocked([ssb.id], {
+            isBlocking: ssb.friends.isBlocking,
+            useRootAuthorBlocks: true,
+            checkRoot: true
+          }),
 
-            // LOOKUP AND ADD ROOTS
-            LookupRoots({ ssb, cache }),
+          // DON'T REPEAT THE SAME THREAD
+          UniqueRoots(),
 
-            // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
-            pull.filter(item => {
-              if (item.value && hops[item.value.author] < 0) return false
-              if (item.root && item.root.value && hops[item.root.value.author] < 0) return false
-              return true
-            }),
+          // MAP ROOT ITEMS
+          pull.map(item => {
+            var root = item.root || item
+            return root
+          }),
 
-            // DON'T REPEAT THE SAME THREAD
-            UniqueRoots(),
+          // RESOLVE ROOTS WITH ABOUTS
+          ResolveAbouts({ ssb }),
 
-            // MAP ROOT ITEMS
-            pull.map(item => {
-              var root = item.root || item
-              return root
-            }),
-
-            // RESOLVE ROOTS WITH ABOUTS
-            ResolveAbouts({ ssb }),
-
-            // ADD THREAD SUMMARY
-            pull.asyncMap((item, cb) => {
-              threadSummary(item.key, {
-                recentLimit: 3,
-                readThread: ssb.patchwork.thread.read,
-                bumpFilter,
-                messageFilter: (msg) => !hops[msg.value.author] || hops[msg.value.author] >= 0 // don't include blocked messages
-              }, (err, summary) => {
-                if (err) return cb(err)
-                cb(null, extend(item, summary))
-              })
+          // ADD THREAD SUMMARY
+          pull.asyncMap((item, cb) => {
+            threadSummary(item.key, {
+              recentLimit: 3,
+              readThread: ssb.patchwork.thread.read,
+              bumpFilter,
+              pullFilter: FilterBlocked([item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking })
+            }, (err, summary) => {
+              if (err) return cb(err)
+              cb(null, extend(item, summary))
             })
-          )
-        }))
+          })
+        )
       })
-
-      return stream
     }
   }
 }
