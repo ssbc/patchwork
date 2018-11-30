@@ -127,7 +127,7 @@ exports.create = function (api) {
       if (inputText[0] === '@') {
         getProfileSuggestions(inputText.slice(1), resolve(participants), cb)
       } else if (inputText[0] === '#') {
-        cb(null, getChannelSuggestions(inputText.slice(1)))
+        getChannelSuggestions(inputText.slice(1), cb)
       } else if (inputText[0] === ':') {
         // suggest emojis
         var word = inputText.slice(1)

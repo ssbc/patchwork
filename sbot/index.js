@@ -34,8 +34,8 @@ exports.manifest = {
   gatherings: Gatherings.manifest,
   networkFeed: NetworkFeed.manifest,
   channelFeed: ChannelFeed.manifest,
+  channels: Channels.manifest,
 
-  channels: 'source',
   subscriptions: 'source',
   linearSearch: 'source',
   progress: 'source',
@@ -43,7 +43,6 @@ exports.manifest = {
   heartbeat: 'source',
 
   getSubscriptions: 'async',
-  getChannels: 'async',
 
   liveBacklinks: {
     subscribe: 'sync',
@@ -56,7 +55,6 @@ exports.manifest = {
 
 exports.init = function (ssb, config) {
   var progress = Progress(ssb, config)
-  var channels = Channels(ssb, config)
   var subscriptions = Subscriptions(ssb, config)
   var search = Search(ssb, config)
   var recentFeeds = RecentFeeds(ssb, config)
@@ -87,15 +85,14 @@ exports.init = function (ssb, config) {
     gatherings: Gatherings.init(ssb, config),
     networkFeed: NetworkFeed.init(ssb, config),
     channelFeed: ChannelFeed.init(ssb, config),
+    channels: Channels.init(ssb, config),
 
     heartbeat: Heartbeat(ssb, config),
-    channels: channels.stream,
     subscriptions: subscriptions.stream,
     progress: progress.stream,
     recentFeeds: recentFeeds.stream,
     linearSearch: search.linear,
     getSubscriptions: subscriptions.get,
-    getChannels: channels.get,
     liveBacklinks: LiveBacklinks(ssb, config),
 
     disconnect: function (opts, cb) {

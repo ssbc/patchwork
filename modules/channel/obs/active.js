@@ -10,21 +10,15 @@ exports.needs = nest({
 })
 
 exports.gives = nest({
-  'channel.obs.recent': true,
   'channel.obs.mostActive': true
 })
 
 exports.create = function (api) {
-  var recentChannels = null
   var mostActiveChannels = null
   var channelsLookup = null
   var sync = Value(false)
 
   return nest({
-    'channel.obs.recent': function () {
-      load()
-      return recentChannels
-    },
     'channel.obs.mostActive': function () {
       load()
       return mostActiveChannels
@@ -33,7 +27,7 @@ exports.create = function (api) {
 
   function subscribe () {
     pull(
-      api.sbot.pull.stream(sbot => sbot.patchwork.channels({ live: true })),
+      api.sbot.pull.stream(sbot => sbot.patchwork.channels.stream({ live: true })),
       pull.drain(data => {
         channelsLookup.transaction(() => {
           for (var channel in data) {
@@ -55,22 +49,15 @@ exports.create = function (api) {
   }
 
   function load () {
-    if (!recentChannels) {
+    if (!mostActiveChannels) {
       channelsLookup = Dict()
 
       subscribe()
-
-      recentChannels = computed(throttle(channelsLookup, 1000), (lookup) => {
-        var values = Object.keys(lookup).map(x => lookup[x]).sort((a, b) => b.updatedAt - a.updatedAt).map(x => x.id)
-        return values
-      })
 
       mostActiveChannels = computed(throttle(channelsLookup, 1000), (lookup) => {
         var values = Object.keys(lookup).map(x => lookup[x]).sort((a, b) => b.count - a.count).map(x => [x.id, x.count])
         return values
       })
-
-      recentChannels.sync = sync
     }
   }
 }
