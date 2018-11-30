@@ -159,7 +159,7 @@ module.exports = function (config) {
     if (external) {
       electron.shell.openExternal(href)
     } else {
-      api.app.navigate(href)
+      api.app.navigate(href, anchor)
     }
   })
   return [container, previewElement]

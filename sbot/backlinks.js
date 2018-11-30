@@ -12,7 +12,7 @@ exports.init = function (ssb, config) {
     referencesStream: function ({ id, since }) {
       return getBacklinksStream(id, since, (msg) => {
         if (msg.value && msg.value.content) {
-          return msg.value.content.root !== id && !includeOrEqual(msg.value.content.branch, id)
+          return msg.value.content.root !== id && msg.value.content.fork !== id && !includeOrEqual(msg.value.content.branch, id)
         }
       })
     },

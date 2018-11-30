@@ -17,7 +17,7 @@ exports.gives = nest('message.html.markdown')
 exports.create = function (api) {
   return nest('message.html.markdown', markdown)
 
-  function markdown (content) {
+  function markdown (content, { classList } = {}) {
     if (typeof content === 'string') { content = { text: content } }
     var mentions = {}
     var typeLookup = {}
@@ -40,6 +40,7 @@ exports.create = function (api) {
     }
 
     return h('Markdown', {
+      classList,
       hooks: [
         LoadingBlobHook(api.blob.obs.has),
         LargeEmojiHook()

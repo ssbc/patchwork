@@ -14,7 +14,8 @@ exports.needs = nest({
     metas: 'first',
     actions: 'first',
     timestamp: 'first',
-    backlinks: 'first'
+    references: 'first',
+    forks: 'first'
   },
   'about.html.image': 'first',
   'intl.sync.i18n': 'first'
@@ -34,7 +35,7 @@ exports.create = function (api) {
 
   return nest('message.html.layout', layout)
 
-  function layout (msg, { layout, previousId, priority, content, includeReferences = false, includeForks = true, compact = false }) {
+  function layout (msg, { layout, priority, content, includeReferences = false, includeForks = true, compact = false, hooks, forkedFrom }) {
     if (!(layout === undefined || layout === 'default')) return
 
     var classList = ['Message']
@@ -48,11 +49,8 @@ exports.create = function (api) {
 
     if (msg.value.content.root) {
       classList.push('-reply')
-      var branch = msg.value.content.branch
-      if (branch) {
-        if (!previousId || (previousId && first(branch) && previousId !== first(branch))) {
-          replyInfo = h('span', [i18n('in reply to '), api.message.html.link(first(branch))])
-        }
+      if (forkedFrom) {
+        replyInfo = h('span', [i18n('forked from parent thread '), api.message.html.link(forkedFrom)])
       }
     } else if (msg.value.content.project) {
       replyInfo = h('span', [i18n('on '), api.message.html.link(msg.value.content.project)])
@@ -75,7 +73,8 @@ exports.create = function (api) {
     }
 
     return h('div', {
-      classList
+      classList,
+      hooks
     }, [
       messageHeader(msg, { replyInfo, priority }),
       h('section', {
@@ -99,7 +98,8 @@ exports.create = function (api) {
           ])
         }
       }),
-      includeReferences ? api.message.html.backlinks(msg) : null
+      includeReferences ? api.message.html.references(msg) : null,
+      includeForks ? api.message.html.forks(msg) : null
     ])
 
     // scoped
@@ -135,14 +135,6 @@ exports.create = function (api) {
         ])
       ])
     }
-  }
-}
-
-function first (array) {
-  if (Array.isArray(array)) {
-    return array[0]
-  } else {
-    return array
   }
 }
 

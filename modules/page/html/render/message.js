@@ -1,12 +1,16 @@
-var { h, when, map, Proxy, Struct, Value, computed } = require('mutant')
+var { h, when, watch, Proxy, Struct, Array: MutantArray, Value, computed } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var AnchorHook = require('../../../../lib/anchor-hook')
+var sort = require('ssb-sort')
+var pull = require('pull-stream')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
   'feed.obs.thread': 'first',
+  'sbot.pull.stream': 'first',
   'message.sync.unbox': 'first',
+  'message.html.layout': 'first',
   'message.sync.root': 'first',
   'message.html': {
     render: 'first',
@@ -36,10 +40,12 @@ exports.create = function (api) {
     var result = Proxy(loader)
     var anchor = Value()
     var participants = Proxy([])
+    var messageRefs = MutantArray()
 
     var meta = Struct({
       type: 'post',
       root: Proxy(link.link),
+      fork: Proxy(undefined),
       branch: Proxy(link.link),
       reply: Proxy(undefined),
       channel: Value(undefined),
@@ -58,7 +64,7 @@ exports.create = function (api) {
           return recp.link === api.keys.sync.id()
         }
       })
-    })
+    }, { idle: true })
 
     var compose = api.message.html.compose({
       meta,
@@ -68,7 +74,10 @@ exports.create = function (api) {
       hooks: [
         AnchorHook('reply', anchor, (el) => el.focus())
       ],
-      placeholder: when(meta.recps, i18n('Write a private reply'), i18n('Write a public reply'))
+      placeholder: when(meta.recps,
+        i18n('Write a private reply'),
+        when(meta.fork, i18n('Write a public reply in sub-thread (fork)'), i18n('Write a public reply'))
+      )
     })
 
     api.sbot.async.get(params, (err, value) => {
@@ -90,18 +99,22 @@ exports.create = function (api) {
 
       var rootMessage = { key: id, value }
 
+      messageRefs.push(getMessageRef(rootMessage))
+
       // Apply the recps of the original root message to all replies. What happens in private stays in private!
       meta.recps.set(value.content.recps)
 
       var root = api.message.sync.root(rootMessage) || id
-      var isReply = id !== root
-      var thread = api.feed.obs.thread(id, { branch: isReply })
+      var isFork = id !== root
 
       meta.channel.set(value.content.channel)
-      meta.root.set(root || thread.rootId)
+      meta.root.set(id)
+
+      // if we are viewing a message with a root directly, then direct replies fork the original thread
+      meta.fork.set(isFork ? root : undefined)
 
       // track message author for resolving missing messages and reply mentions
-      meta.reply.set(computed(thread.messages, messages => {
+      meta.reply.set(computed(messageRefs, messages => {
         var result = {}
         var first = messages[0]
         var last = messages[messages.length - 1]
@@ -115,42 +128,81 @@ exports.create = function (api) {
         }
 
         return result
-      }))
+      }, { idle: true }))
 
-      // if root thread, reply to last post
-      meta.branch.set(isReply ? thread.branchId : thread.lastId)
+      // set message heads
+      meta.branch.set(computed(messageRefs, messages => {
+        var branches = sort.heads(messages)
+        if (branches.length <= 1) {
+          branches = branches[0]
+        }
+        return branches
+      }, { idle: true }))
 
-      participants.set(computed(thread.messages, messages => {
+      participants.set(computed(messageRefs, messages => {
         return messages.map(msg => msg && msg.value && msg.value.author)
-      }))
+      }, { idle: true }))
+
+      var rootMessageElement = api.message.html.render(rootMessage, {
+        forkedFrom: rootMessage.root,
+        pageId: rootMessage.key,
+        hooks: [UnreadClassHook(anchor, rootMessage.key)],
+        includeForks: false,
+        includeReferences: true
+      })
+
+      // handle display unknown message types as root
+      if (!rootMessageElement) {
+        result.set(h('Thread', [
+          isFork ? h('a.full', { href: root, anchor: id }, [i18n('View parent thread')]) : null,
+          h('div.messages', [
+            api.message.html.render(rootMessage, {
+              renderUnknown: true
+            })
+          ])
+        ]))
+
+        return
+      }
+
+      var messagesContainer = h('div.messages', [rootMessageElement])
 
       var container = h('Thread', [
-        h('div.messages', [
-          when(thread.branchId, h('a.full', { href: thread.rootId, anchor: id }, [i18n('View full thread')])),
-          map(thread.messages, (msg) => {
-            return computed([msg, thread.previousKey(msg)], (msg, previousId) => {
-              return h('div', {
-                hooks: [AnchorHook(msg.key, anchor, showContext)]
-              }, [
-                msg.key !== id ? api.message.html.missing(last(msg.value.content.branch), msg, rootMessage) : null,
-                api.message.html.render(msg, {
-                  pageId: id,
-                  previousId,
-                  includeForks: msg.key !== id,
-                  includeReferences: true
-                })
-              ])
-            })
-          })
-        ]),
+        isFork ? h('a.full', { href: root, anchor: id }, [i18n('View parent thread')]) : null,
+        messagesContainer,
         when(isRecipient, compose)
       ])
-      result.set(when(thread.sync, container, loader))
+
+      pull(
+        api.sbot.pull.stream(sbot => sbot.patchwork.thread.sorted({
+          live: true,
+          old: true,
+          dest: rootMessage.key,
+          types: ['post', 'about']
+        })),
+        pull.drain(msg => {
+          if (msg.sync) {
+            // actually add container to DOM when we get sync on thread
+            result.set(container)
+          } else {
+            messageRefs.push(getMessageRef(msg))
+            messagesContainer.append(h('div', {
+              hooks: [AnchorHook(msg.key, anchor, showContext)]
+            }, [
+              msg.key !== id ? api.message.html.missing(first(msg.value.content.branch), msg, rootMessage) : null,
+              api.message.html.render(msg, {
+                hooks: [UnreadClassHook(anchor, msg.key)],
+                includeForks: msg.key !== id,
+                includeReferences: true
+              })
+            ]))
+          }
+        })
+      )
     })
 
     var view = h('div', { className: 'SplitView' }, [
       h('div.main', {
-        // TODO: this isn't working properly right now
         intersectionBindingViewport: { rootMargin: '1000px' }
       }, [
         result
@@ -188,10 +240,38 @@ function isScroller (element) {
   return (value === 'auto' || value === 'scroll')
 }
 
-function last (array) {
+function first (array) {
   if (Array.isArray(array)) {
-    return array[array.length - 1]
+    return array[0]
   } else {
     return array
+  }
+}
+
+function getMessageRef (msg) {
+  // only store structure meta data, not full message content to ease memory usage
+  if (msg.value && msg.value.content) {
+    return {
+      key: msg.key,
+      value: {
+        author: msg.value.author,
+        content: {
+          root: msg.value.content.root,
+          branch: msg.value.content.branch
+        }
+      }
+    }
+  }
+}
+
+function UnreadClassHook (anchor, msgId) {
+  return function (element) {
+    return watch(anchor, (current) => {
+      if (current && current.unread && current.unread.includes(msgId)) {
+        element.classList.add('-unread')
+      } else {
+        element.classList.remove('-unread')
+      }
+    })
   }
 }

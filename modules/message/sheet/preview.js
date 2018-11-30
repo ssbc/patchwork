@@ -39,9 +39,15 @@ exports.create = function (api) {
           footer: [h('button -cancel', { 'ev-click': cancel }, i18n('Close'))]
         }
       }
+
+      var messageElement = api.message.html.render(msg)
+
+      // allow inspecting of raw message that is about to be sent
+      messageElement.msg = msg
+
       return {
         content: [
-          api.message.html.render(msg)
+          messageElement
         ],
         classList: [
           when(isPrivate, '-private', '-public')

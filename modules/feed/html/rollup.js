@@ -7,6 +7,7 @@ var extend = require('xtend')
 var GroupSummaries = require('../../../lib/group-summaries')
 var rootBumpTypes = ['mention', 'channel-mention']
 var getBump = require('../../../lib/get-bump')
+var many = require('../../../lib/many')
 
 var bumpMessages = {
   'reaction': 'liked this message',
@@ -111,10 +112,7 @@ exports.create = function (api) {
               var existingContainer = content().querySelector(`[data-root-id="${api.message.sync.root(msg)}"]`)
               if (existingContainer) {
                 var replies = existingContainer.querySelector('div.replies')
-                var lastReply = existingContainer.querySelector('div.replies > .Message:last-child')
-                var previousId = lastReply ? lastReply.getAttribute('data-id') : existingContainer.getAttribute('data-root-id')
                 replies.appendChild(api.message.html.render(msg, {
-                  previousId,
                   compact: false,
                   priority: 2
                 }))
@@ -224,13 +222,28 @@ exports.create = function (api) {
 
       var renderedMessage = api.message.html.render(item, {
         compact: compactFilter(item),
+        includeForks: false,
+        pageId: item.key,
+        forkedFrom: item.value.content.root,
         priority: getPriority(item)
       })
+
+      var unreadBumps = []
+      if (unreadIds.has(item.key)) {
+        unreadBumps.push(item.key)
+      }
+
+      if (item.bumps) {
+        item.bumps.forEach(bump => {
+          if (unreadIds.has(bump.id)) {
+            unreadBumps.push(bump.id)
+          }
+        })
+      }
 
       unreadIds.delete(item.key)
 
       var meta = null
-      var previousId = item.key
 
       // explain why this message is in your feed
       if (mostRecentBumpType !== 'matches-channel' && item.rootBump && item.rootBump.type === 'matches-channel') {
@@ -257,6 +270,9 @@ exports.create = function (api) {
         }
       }
 
+      var latestReplyIds = item.latestReplies.map(msg => msg.key)
+      var hasMoreNewReplies = unreadBumps.some(id => !latestReplyIds.includes(id))
+
       return h('FeedEvent -post', {
         msgIds: [item.key].concat(item.latestReplies.map(x => x.key)),
         attributes: {
@@ -265,15 +281,21 @@ exports.create = function (api) {
       }, [
         meta,
         renderedMessage,
-        item.totalReplies > item.latestReplies.length ? h('a.full', { href: item.key }, [i18n('View full thread') + ' (', item.totalReplies, ')']) : null,
+        item.totalReplies > item.latestReplies.length ? h('a.full', {
+          href: item.key,
+          anchor: {
+            // highlight unread messages in thread view
+            unread: unreadBumps,
+            // only drop to latest messages if there are more new messages not visible in thread summary
+            anchor: hasMoreNewReplies ? unreadBumps[0] : null
+          }
+        }, [i18n('View full thread') + ' (', item.totalReplies, ')']) : null,
         h('div.replies', [
           item.latestReplies.map(msg => {
             var result = api.message.html.render(msg, {
-              previousId,
               compact: compactFilter(msg, item),
               priority: getPriority(msg)
             })
-            previousId = msg.key
 
             return [
               // insert missing message marker (if can't be found)
@@ -305,42 +327,6 @@ function plural (value, single, many) {
       return many
     }
   })
-}
-
-function many (ids, fn, intl) {
-  ids = Array.from(ids)
-  var featuredIds = ids.slice(0, 4)
-
-  if (ids.length) {
-    if (ids.length > 4) {
-      return [
-        fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), intl(' and '),
-        ids.length - 3, intl(' others')
-      ]
-    } else if (ids.length === 4) {
-      return [
-        fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), ', ',
-        fn(featuredIds[2]), intl(' and '),
-        fn(featuredIds[3])
-      ]
-    } else if (ids.length === 3) {
-      return [
-        fn(featuredIds[0]), ', ',
-        fn(featuredIds[1]), intl(' and '),
-        fn(featuredIds[2])
-      ]
-    } else if (ids.length === 2) {
-      return [
-        fn(featuredIds[0]), intl(' and '),
-        fn(featuredIds[1])
-      ]
-    } else {
-      return fn(featuredIds[0])
-    }
-  }
 }
 
 function getAuthors (items) {

@@ -204,6 +204,7 @@
 	"Describe the gathering (if you want)": "Describe the gathering (if you want)",
 	"Create Gathering": "Create Gathering",
 	"liked": "liked",
+	"unliked": "unliked",
 	"(missing message)": "(missing message)",
 	"Cannot display message.": "Cannot display message.",
 	"What would you like to call ": "What would you like to call ",
@@ -275,5 +276,9 @@
 	"made changes to": "made changes to",
 	"assigned a description to ": "assigned a description to ",
 	"filter names": "filter names",
-	"Save": "Save"
+	"Save": "Save",
+	"View parent thread": "View parent thread",
+	"Write a public reply in sub-thread (fork)": "Write a public reply in sub-thread (fork)",
+	"forked from parent thread ": "forked from parent thread ",
+	"Unknown Message Type:": "Unknown Message Type:"
 }

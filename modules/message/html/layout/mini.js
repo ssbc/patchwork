@@ -13,7 +13,8 @@ exports.needs = nest({
     metas: 'first',
     actions: 'first',
     timestamp: 'first',
-    backlinks: 'first'
+    references: 'first',
+    forks: 'first'
   },
   'about.html.image': 'first',
   'intl.sync.i18n': 'first'
@@ -33,7 +34,7 @@ exports.create = function (api) {
 
   return nest('message.html.layout', layout)
 
-  function layout (msg, { layout, previousId, priority, miniContent, content, includeReferences, includeForks = true, actions = true }) {
+  function layout (msg, { layout, priority, miniContent, content, includeReferences, includeForks = true, actions = true, hooks, forkedFrom }) {
     if (!(layout === 'mini')) return
 
     var classList = ['Message -mini']
@@ -52,11 +53,8 @@ exports.create = function (api) {
 
     if (msg.value.content.root) {
       classList.push('-reply')
-      var branch = msg.value.content.branch
-      if (branch) {
-        if (!previousId || (previousId && first(branch) && previousId !== first(branch))) {
-          replyInfo = h('span', ['in reply to ', api.message.html.link(first(branch))])
-        }
+      if (forkedFrom) {
+        replyInfo = h('span', [i18n('forked from parent thread '), api.message.html.link(forkedFrom)])
       }
     } else if (msg.value.content.project) {
       replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
@@ -67,7 +65,8 @@ exports.create = function (api) {
     }
 
     return h('div', {
-      classList
+      classList,
+      hooks
     }, [
       messageHeader(msg, {
         replyInfo, priority, miniContent
@@ -93,7 +92,8 @@ exports.create = function (api) {
           ])
         }
       }),
-      includeReferences ? api.message.html.backlinks(msg) : null
+      includeReferences ? api.message.html.references(msg) : null,
+      includeForks ? api.message.html.forks(msg) : null
     ])
 
     // scoped
@@ -127,14 +127,6 @@ exports.create = function (api) {
         ])
       ])
     }
-  }
-}
-
-function first (array) {
-  if (Array.isArray(array)) {
-    return array[0]
-  } else {
-    return array
   }
 }
 

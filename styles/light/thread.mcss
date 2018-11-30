@@ -1,13 +1,13 @@
 Thread {
+  a.full {
+    background: #daecd6
+    border-top: 1px solid #bbc9d2
+    border-bottom: 1px solid #bbc9d2
+    color: #759053
+  }
   div.messages {
     div + div {
       border-top: 1px solid #eee
-    }
-    a.full {
-      background: #daecd6
-      border-top: 1px solid #bbc9d2
-      border-bottom: 1px solid #bbc9d2
-      color: #759053
     }
     box-shadow: 0 2px 4px rgba(0,0,0,0.1)
   }

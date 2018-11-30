@@ -71,5 +71,11 @@ Markdown {
     }
   }
 
+  -fullCode {
+    (pre) {
+      max-height: none
+    }
+  }
+
   word-break: break-word
 }

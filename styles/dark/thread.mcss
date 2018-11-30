@@ -1,7 +1,11 @@
 Thread {
+  a.full {
+    background: #2d2c2c
+  }
+
   div.messages {
-    a.full {
-      background: #2d2c2c
+    div + div {
+      border-top: 1px solid #2d2c2c
     }
   }
 }

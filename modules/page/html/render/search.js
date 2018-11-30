@@ -117,7 +117,7 @@ exports.create = function (api) {
     }
 
     function renderMsg (msg) {
-      var el = h('FeedEvent', api.message.html.render(msg))
+      var el = h('FeedEvent', api.message.html.render(msg, { renderUnknown: true }))
       highlight(el, createOrRegExp(query.split(whitespace)))
       return el
     }

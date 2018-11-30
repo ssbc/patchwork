@@ -109,14 +109,9 @@ exports.create = function (api) {
         layout: 'mini'
       }, opts))
 
-      // hide if no title set or hidden
-      var visible = computed([about.title, about.hidden], (title, hidden) => {
-        return title && !hidden
-      })
-
-      return when(visible, api.message.html.decorate(element, {
+      return api.message.html.decorate(element, {
         msg
-      }))
+      })
     }
   })
 
