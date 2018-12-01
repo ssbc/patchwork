@@ -22,7 +22,6 @@ exports.needs = nest({
   'app.sync.externalHandler': 'first',
   'message.html.canRender': 'first',
   'message.html.render': 'first',
-  'message.sync.isBlocked': 'first',
   'message.sync.unbox': 'first',
   'message.sync.timestamp': 'first',
   'profile.html.person': 'first',
@@ -46,6 +45,7 @@ exports.create = function (api) {
   const i18nPlural = api.intl.sync.i18n_n
   return nest('feed.html.rollup', function (getStream, {
     prepend,
+    groupSummaries = true,
     compactFilter = returnFalse,
     filterRepliesIfBlockedByRootAuthor = true,
     displayFilter = returnTrue,
@@ -196,7 +196,7 @@ exports.create = function (api) {
         pull.filter(canRenderMessage),
 
         // group related items (follows, subscribes, abouts)
-        GroupSummaries({ windowSize: 15, getPriority, ungroupFilter }),
+        groupSummaries ? GroupSummaries({ windowSize: 15, getPriority, ungroupFilter }) : pull.through(),
 
         scroller
       )
@@ -229,13 +229,9 @@ exports.create = function (api) {
       })
 
       var unreadBumps = []
-      if (unreadIds.has(item.key)) {
-        unreadBumps.push(item.key)
-      }
-
-      if (item.bumps) {
+      if (!highlightItems.has(item.key) && item.bumps) {
         item.bumps.forEach(bump => {
-          if (unreadIds.has(bump.id)) {
+          if (highlightItems.has(bump.id)) {
             unreadBumps.push(bump.id)
           }
         })
@@ -287,7 +283,7 @@ exports.create = function (api) {
             // highlight unread messages in thread view
             unread: unreadBumps,
             // only drop to latest messages if there are more new messages not visible in thread summary
-            anchor: hasMoreNewReplies ? unreadBumps[0] : null
+            anchor: hasMoreNewReplies ? unreadBumps[unreadBumps.length - 1] : null
           }
         }, [i18n('View full thread') + ' (', item.totalReplies, ')']) : null,
         h('div.replies', [

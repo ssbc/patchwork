@@ -3,6 +3,9 @@ ToggleButton {
   background: #2d2c2c
   border: 0
   color: #ccc
+  -unblocking {
+    color: white
+  }
   -unsubscribe {
     :hover {
       background-image: svg(subscribed-hover)

@@ -11,7 +11,6 @@ exports.needs = nest({
   'sbot.async.get': 'first',
   'message.sync.unbox': 'first',
   'message.sync.root': 'first',
-  'message.sync.isBlocked': 'first',
   'sbot.obs.connection': 'first'
 })
 

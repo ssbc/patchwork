@@ -39,10 +39,11 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.privateFeed.roots(opts)
-    }, { limit: 40, reverse: true })
+    }, { limit: 20, reverse: true })
 
     var view = api.feed.html.rollup(getStream, {
       prepend: [compose],
+      groupSummaries: false,
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.privateFeed.latest())
     })
 

@@ -61,7 +61,7 @@ module.exports = function (config) {
   })
 
   var views = api.app.views(api.page.html.render, [
-    '/public', '/private', id, '/mentions'
+    '/public', '/private', '/mentions'
   ])
 
   var pendingCount = views.get('/mentions').pendingUpdates
@@ -266,8 +266,9 @@ module.exports = function (config) {
     var instance = views.get(view)
     return h('a', {
       'ev-click': function (ev) {
+        var instance = views.get(view)
         var isSelected = views.currentView() === view
-        var needsRefresh = instance.pendingUpdates && instance.pendingUpdates()
+        var needsRefresh = instance && instance.pendingUpdates && instance.pendingUpdates()
 
         // refresh if tab is clicked when there are pending items or the page is already selected
         if ((needsRefresh || isSelected) && instance.reload) {
@@ -280,9 +281,9 @@ module.exports = function (config) {
       ]
     }, [
       name,
-      when(instance.pendingUpdates, [
+      instance ? when(instance.pendingUpdates, [
         ' (', instance.pendingUpdates, ')'
-      ])
+      ]) : null
     ])
   }
 
