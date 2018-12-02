@@ -88,11 +88,11 @@ exports.create = function (api) {
           h('div.actions', [
             h('button -attend', {
               disabled: disableActions,
-              'ev-click': send(publishAttending, msg.key)
+              'ev-click': send(publishAttending, msg)
             }, `Attending`),
             h('button -attend', {
               disabled: disableActions,
-              'ev-click': send(publishNotAttending, msg.key)
+              'ev-click': send(publishNotAttending, msg)
             }, `Can't Attend`)
           ])
         ]),
@@ -115,31 +115,43 @@ exports.create = function (api) {
     }
   })
 
-  function publishAttending (id) {
+  function publishAttending (msg) {
     var yourId = api.keys.sync.id()
-
-    // publish with confirm
-    api.message.async.publish({
+    var content = {
       type: 'about',
-      about: id,
+      about: msg.key,
       attendee: {
         link: yourId
       }
-    })
-  }
+    }
 
-  function publishNotAttending (id) {
-    var yourId = api.keys.sync.id()
+    // what starts in private, stays in private!
+    if (msg.value.content.recps) {
+      content.recps = msg.value.content.recps
+    }
 
     // publish with confirm
-    api.message.async.publish({
+    api.message.async.publish(content)
+  }
+
+  function publishNotAttending (msg) {
+    var yourId = api.keys.sync.id()
+    var content = {
       type: 'about',
-      about: id,
+      about: msg.key,
       attendee: {
         link: yourId,
         remove: true
       }
-    })
+    }
+
+    // what starts in private, stays in private!
+    if (msg.value.content.recps) {
+      content.recps = msg.value.content.recps
+    }
+
+    // publish with confirm
+    api.message.async.publish(content)
   }
 
   function nameAndFollowWarning (id) {
