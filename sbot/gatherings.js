@@ -25,7 +25,7 @@ exports.init = function (ssb, config) {
     },
     roots: function ({ reverse, limit, resume }) {
       // use resume option if specified
-      var opts = { reverse, old: true, type: 'gathering' }
+      var opts = { reverse, old: true, type: 'gathering', private: true }
       if (resume) {
         opts[reverse ? 'lt' : 'gt'] = resume
       }
