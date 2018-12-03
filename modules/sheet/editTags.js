@@ -6,6 +6,7 @@ const parallel = require('run-parallel')
 const addSuggest = require('suggest-box')
 const TagHelper = require('scuttle-tag')
 const ref = require('ssb-ref')
+const catchLinks = require('../../lib/catch-links')
 
 exports.gives = nest('sheet.editTags')
 
@@ -16,7 +17,9 @@ exports.needs = nest({
   'sheet.display': 'first',
   'tag.async.suggest': 'first',
   'tag.html.tag': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'app.navigate': 'first',
+  'message.html.link': 'first'
 })
 
 exports.create = function (api) {
@@ -32,15 +35,21 @@ exports.create = function (api) {
     api.sheet.display(function (close) {
       const { content, onMount, onSave } = edit({ msgId })
 
+      var wrapper = h('div', [
+        h('h2', {
+          style: { 'font-weight': 'normal', 'text-align': 'center' }
+        }, [i18n('Add / Edit Tags'), ': ', api.message.html.link(msgId, { inContext: true })]),
+        content
+      ])
+
+      catchLinks(wrapper, (href, external, anchor) => {
+        if (!external) {
+          api.app.navigate(href, anchor)
+        }
+      })
+
       return {
-        content: [
-          h('div', [
-            h('h2', {
-              style: { 'font-weight': 'normal', 'text-align': 'center' }
-            }, i18n('Add / Edit Tags')),
-            content
-          ])
-        ],
+        content: wrapper,
         footer: [
           h('button.save', { 'ev-click': publish }, i18n('Save')),
           h('button.cancel', { 'ev-click': close }, i18n('Cancel'))
