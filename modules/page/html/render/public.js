@@ -53,7 +53,6 @@ exports.create = function (api) {
 
     var id = api.keys.sync.id()
     var following = api.contact.obs.following(id)
-    var followers = api.contact.obs.followers(id)
     var blocking = api.contact.obs.blocking(id)
     var subscribedChannels = api.channel.obs.subscribed(id)
     var recentChannels = api.channel.obs.recent(8)
