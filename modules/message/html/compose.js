@@ -23,7 +23,7 @@ exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.compose', function ({ shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message' }, cb) {
+  return nest('message.html.compose', function ({ shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message', draftKey }, cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
@@ -31,6 +31,7 @@ exports.create = function (api) {
     var publishing = Value(false)
 
     var blurTimeout = null
+    var saveTimer = null
 
     var expanded = computed([shrink, focused, hasContent], (shrink, focused, hasContent) => {
       if (!shrink || hasContent) {
@@ -46,6 +47,7 @@ exports.create = function (api) {
       'ev-drop': onDrop,
       'ev-input': function () {
         hasContent.set(!!textArea.value)
+        queueSave()
       },
       'ev-blur': () => {
         clearTimeout(blurTimeout)
@@ -60,6 +62,14 @@ exports.create = function (api) {
       disabled: publishing,
       placeholder
     })
+
+    if (draftKey) {
+      var draft = window.localStorage[`patchwork.drafts.${draftKey}`]
+      if (draft) {
+        textArea.value = draft
+        hasContent.set(!!textArea.value)
+      }
+    }
 
     var warningMessage = Value(null)
     var warning = h('section.warning',
@@ -78,6 +88,12 @@ exports.create = function (api) {
       hasContent.set(true)
     }
 
+    var clearButton = h('button -clear', {
+      'ev-click': clear
+    }, [
+      i18n('Clear Draft')
+    ])
+
     var publishBtn = h('button', {
       'ev-click': publish,
       classList: [
@@ -91,7 +107,10 @@ exports.create = function (api) {
 
     var actions = h('section.actions', [
       fileInput,
-      publishBtn
+      h('div', [
+        when(hasContent, clearButton),
+        publishBtn
+      ])
     ])
 
     var composer = h('Compose', {
@@ -117,6 +136,27 @@ exports.create = function (api) {
     return composer
 
     // scoped
+
+    function clear () {
+      textArea.value = ''
+      hasContent.set(!!textArea.value)
+      save()
+    }
+
+    function queueSave () {
+      saveTimer = setTimeout(save, 1000)
+    }
+
+    function save () {
+      clearTimeout(saveTimer)
+      if (draftKey) {
+        if (!textArea.value) {
+          delete window.localStorage[`patchwork.drafts.${draftKey}`]
+        } else {
+          window.localStorage[`patchwork.drafts.${draftKey}`] = textArea.value
+        }
+      }
+    }
 
     function onDragOver (ev) {
       ev.dataTransfer.dropEffect = 'copy'
@@ -221,6 +261,7 @@ exports.create = function (api) {
           }
         } else {
           if (msg) textArea.value = ''
+          save()
           if (cb) cb(null, msg)
         }
       }

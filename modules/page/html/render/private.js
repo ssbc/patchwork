@@ -21,6 +21,7 @@ exports.create = function (api) {
     var id = api.keys.sync.id()
     var compose = api.message.html.compose({
       meta: { type: 'post' },
+      draftKey: 'private',
       isPrivate: true,
       prepublish: function (msg) {
         msg.recps = [id]

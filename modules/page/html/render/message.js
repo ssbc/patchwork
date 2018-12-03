@@ -63,6 +63,7 @@ exports.create = function (api) {
 
     var compose = api.message.html.compose({
       meta,
+      draftKey: id,
       isPrivate: when(meta.recps, true),
       shrink: false,
       participants,

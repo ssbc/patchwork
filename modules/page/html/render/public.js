@@ -63,7 +63,7 @@ exports.create = function (api) {
     var contact = api.profile.obs.contact(id)
 
     var prepend = [
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') }),
+      api.message.html.compose({ meta: { type: 'post' }, draftKey: 'public', placeholder: i18n('Write a public message') }),
       noVisibleNewPostsWarning(),
       noFollowersWarning()
     ]

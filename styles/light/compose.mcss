@@ -10,7 +10,7 @@ Compose {
   section.actions {
     background: #fafafa
     padding: .4rem
-    button {
+    (button) {
       -private {
         color: #8a6610
         background: #f3e7ac
@@ -19,6 +19,13 @@ Compose {
           color: white
           background-color: #8a6610
           border-color: #8a6610
+        }
+      }
+
+      -clear {
+        background-color: #f3f3f3
+        :hover {
+          background-color: #b05b5b
         }
       }
     }

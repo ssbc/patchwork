@@ -59,6 +59,12 @@ Compose {
         box-shadow: none
       }
     }
+
+    (button) {
+      -clear {
+        margin-right: 5px
+      }
+    }
   }
   -expanded {
     textarea {
