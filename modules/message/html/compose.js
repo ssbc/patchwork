@@ -124,10 +124,16 @@ exports.create = function (api) {
 
     function afterAttach (err, file) {
       if (err) {
-        warningMessage.set([
-          // TODO: handle localised error messages (https://github.com/ssbc/ssb-blob-files/issues/3)
-          '⚠️ ', err.message
-        ])
+        if (err instanceof blobFiles.MaxSizeError) {
+          warningMessage.set([
+            // TODO: handle localised error messages (https://github.com/ssbc/ssb-blob-files/issues/3)
+            '⚠️ ', i18n('{{name}} ({{size}}) is larger than the allowed limit of {{max_size}}', {
+              'name': err.fileName,
+              'size': humanSize(err.fileSize),
+              'max_size': humanSize(err.maxFileSize)
+            })
+          ])
+        }
         return
       }
 
@@ -217,4 +223,8 @@ function getEmbedPrefix (type) {
     if (type.startsWith('video/')) return 'video:'
   }
   return ''
+}
+
+function humanSize (size) {
+  return (Math.ceil(size / (1024 * 1024) * 10) / 10) + ' MB'
 }
