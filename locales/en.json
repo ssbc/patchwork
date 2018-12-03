@@ -282,5 +282,6 @@
 	"forked from parent thread ": "forked from parent thread ",
 	"Unknown Message Type:": "Unknown Message Type:",
 	"{{name}} ({{size}}) is larger than the allowed limit of {{max_size}}": "{{name}} ({{size}}) is larger than the allowed limit of {{max_size}}",
-	"Clear Draft": "Clear Draft"
+	"Clear Draft": "Clear Draft",
+	"Browse Recently Active": "Browse Recently Active"
 }

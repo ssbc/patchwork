@@ -18,7 +18,7 @@ exports.create = function (api) {
     if (path !== '/channels') return
 
     var id = api.keys.sync.id()
-    var channels = api.channel.obs.recent(100)
+    var channels = api.channel.obs.recent(150)
     var subscribedChannels = api.channel.obs.subscribed(id)
     var loading = computed(subscribedChannels.sync, x => !x)
 

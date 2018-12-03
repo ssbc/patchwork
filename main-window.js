@@ -176,7 +176,7 @@ module.exports = function (config) {
       return {
         label: i18n('Channels'),
         submenu: [
-          { label: i18n('Browse All'),
+          { label: i18n('Browse Recently Active'),
             click () {
               navigate('/channels')
             }
