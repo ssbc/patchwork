@@ -7,19 +7,15 @@ var computed = require('mutant/computed')
 var nest = require('depnest')
 var mentions = require('ssb-mentions')
 var extend = require('xtend')
-var addSuggest = require('suggest-box')
-var emoji = require('emojilib')
 var ref = require('ssb-ref')
 var blobFiles = require('ssb-blob-files')
 
 exports.needs = nest({
   'blob.html.input': 'first',
-  'profile.async.suggest': 'first',
-  'channel.async.suggest': 'first',
+  'suggest.hook': 'first',
+
   'message.async.publish': 'first',
   'sbot.obs.connection': 'first',
-  'emoji.sync.names': 'first',
-  'emoji.sync.url': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -33,8 +29,6 @@ exports.create = function (api) {
     var focused = Value(false)
     var hasContent = Value(false)
     var publishing = Value(false)
-    var getProfileSuggestions = api.profile.async.suggest()
-    var getChannelSuggestions = api.channel.async.suggest()
 
     var blurTimeout = null
 
@@ -47,6 +41,7 @@ exports.create = function (api) {
     })
 
     var textArea = h('textarea', {
+      hooks: [api.suggest.hook({ participants })],
       'ev-input': function () {
         hasContent.set(!!textArea.value)
       },
@@ -122,28 +117,6 @@ exports.create = function (api) {
       textArea.value = value
       hasContent.set(!!textArea.value)
     }
-
-    addSuggest(textArea, (inputText, cb) => {
-      if (inputText[0] === '@') {
-        getProfileSuggestions(inputText.slice(1), resolve(participants), cb)
-      } else if (inputText[0] === '#') {
-        getChannelSuggestions(inputText.slice(1), cb)
-      } else if (inputText[0] === ':') {
-        // suggest emojis
-        var word = inputText.slice(1)
-        if (word[word.length - 1] === ':') {
-          word = word.slice(0, -1)
-        }
-        cb(null, suggestEmoji(word).slice(0, 100).map(function (emoji) {
-          return {
-            image: api.emoji.sync.url(emoji),
-            title: emoji,
-            subtitle: emoji,
-            value: ':' + emoji + ':'
-          }
-        }))
-      }
-    }, { cls: 'SuggestBox' })
 
     return composer
 
@@ -227,14 +200,6 @@ exports.create = function (api) {
       }
     }
   })
-
-  function suggestEmoji (prefix) {
-    var availableEmoji = api.emoji.sync.names()
-    return emoji.ordered.filter(key => {
-      if (!availableEmoji.includes(key)) return false
-      return key.startsWith(prefix) || key.includes('_' + prefix) || emoji.lib[key].keywords.some(word => word.startsWith(prefix) || word.startsWith(':' + prefix))
-    })
-  }
 }
 
 function showDialog (opts) {

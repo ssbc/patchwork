@@ -4,11 +4,13 @@
         "abouts",
         "backlinks",
         "depnest",
+        "emojilib",
         "flatpickr",
         "msgs",
         "paramap",
         "pickr",
         "realtime",
+        "recps",
         "spacetime",
         "ungroup"
     ],
