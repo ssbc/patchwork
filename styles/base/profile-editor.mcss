@@ -17,7 +17,7 @@ ProfileEditor {
       margin-top: 10px
       border: 1px solid #ccc
       padding: 10px
-      font-size: 150%
+      font-size: 120%
       flex: 1
     }
   }

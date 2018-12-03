@@ -18,6 +18,7 @@ exports.needs = nest({
   'blob.html.input': 'first',
   'blob.sync.url': 'first',
   'intl.sync.i18n': 'first',
+  'suggest.hook': 'first',
   'about.sync.shortFeedId': 'first'
 })
 
@@ -75,7 +76,7 @@ exports.create = function (api) {
               h('textarea.description', {
                 'disabled': publishing,
                 placeholder: i18n('Describe yourself (if you want)'),
-                hooks: [ValueHook(chosenDescription)]
+                hooks: [ValueHook(chosenDescription), api.suggest.hook()]
               })
             ])
           ])
