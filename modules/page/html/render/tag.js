@@ -79,7 +79,7 @@ exports.create = function (api) {
         ]),
         map(filteredCommunity, tag => computed([tag, showMostActive], (tagId, mostActive) => api.tag.html.tag(tagId, {
           href: `/tags/${encodeURIComponent(tagId)}/all/${mostActive ? 'active' : 'recent'}`
-        })))
+        })), { maxTime: 5 })
       ]),
       h('div.main', [
         h('Scroller',
@@ -99,12 +99,13 @@ exports.create = function (api) {
               ])
             ]),
             h('section.messages', [
-              map(taggedMessages, msg =>
-                computed(msg, msg => {
+              map(taggedMessages, msg => {
+                return computed(msg, msg => {
                   if (msg && !msg.value.missing) {
                     return h('FeedEvent', api.message.html.render(msg))
                   }
-                }))
+                })
+              }, { maxTime: 5 })
             ])
           ])
         )
