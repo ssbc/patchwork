@@ -10,8 +10,10 @@
         "paramap",
         "pickr",
         "realtime",
+        "recp",
         "recps",
         "spacetime",
+        "struct",
         "ungroup"
     ],
     "standard.autoFixOnSave": true,

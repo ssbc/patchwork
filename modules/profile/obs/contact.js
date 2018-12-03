@@ -20,7 +20,7 @@ exports.create = function (api) {
 
     var followers = api.contact.obs.followers(id)
     var following = api.contact.obs.following(id)
-    var sync = computed([followers.sync, following.sync], (...x) => x.every(Boolean))
+    var sync = computed([followers.sync, following.sync, yourFollowing.sync, yourFollowers.sync], (...x) => x.every(Boolean))
 
     var blockers = api.contact.obs.blockers(id)
     var youBlock = computed(blockers, function (blockers) {

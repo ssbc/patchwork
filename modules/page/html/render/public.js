@@ -199,8 +199,8 @@ exports.create = function (api) {
     function noVisibleNewPostsWarning () {
       const explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
 
-      const shownWhen = computed([following.sync, contact.isNotFollowingAnybody],
-        (followingSync, isNotFollowingAnybody) => followingSync && isNotFollowingAnybody
+      const shownWhen = computed([contact.sync, contact.isNotFollowingAnybody],
+        (contactSync, isNotFollowingAnybody) => contactSync && isNotFollowingAnybody
       )
 
       return api.feed.html.followWarning(shownWhen, explanation)
@@ -212,12 +212,12 @@ exports.create = function (api) {
       )
 
       // We only show this if the user has followed someone as the first warning ('You are not following anyone')
-      // should be sufficient to get the user to join a pub. However, pubs have been buggy and not followed back on occassion.
-      // Additionally, someone onboarded on a local network might follow someone on the network, but not be followed back by
+      // should be sufficient to get the user to join a pub. However, pubs have been buggy and not followed back on occasion.
+      // Additionally, someone on-boarded on a local network might follow someone on the network, but not be followed back by
       // them, so we begin to show this warning if the user has followed someone, but has no followers.
-      const shownWhen = computed([following.sync, followers.sync, contact.hasNoFollowers, contact.isNotFollowingAnybody],
-        (followingSync, followersSync, hasNoFollowers, isNotFollowingAnybody) =>
-          followingSync && followersSync && (hasNoFollowers && !isNotFollowingAnybody)
+      const shownWhen = computed([contact.sync, contact.hasNoFollowers, contact.isNotFollowingAnybody],
+        (contactSync, hasNoFollowers, isNotFollowingAnybody) =>
+          contactSync && (hasNoFollowers && !isNotFollowingAnybody)
       )
 
       return api.feed.html.followerWarning(shownWhen, explanation)
@@ -228,11 +228,5 @@ exports.create = function (api) {
         sbot.patchwork.disconnect(id)
       })
     }
-  }
-}
-
-function arrayEq (a, b) {
-  if (Array.isArray(a) && Array.isArray(b) && a.length === b.length && a !== b) {
-    return a.every((value, i) => value === b[i])
   }
 }

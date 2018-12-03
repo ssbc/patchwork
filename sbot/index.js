@@ -21,7 +21,6 @@ var plugins = {
   contacts: require('./contacts')
 }
 
-var pull = require('pull-stream')
 var ref = require('ssb-ref')
 
 exports.name = 'patchwork'
