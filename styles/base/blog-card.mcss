@@ -12,6 +12,12 @@ BlogCard {
     }
     div.text {
       padding: .5rem
+      h1 {
+        line-height: 1.2
+      }
+      div.summary {
+        margin-top: 1rem
+      }
       div.read {
         margin-top: 1rem
         text-decoration: underline

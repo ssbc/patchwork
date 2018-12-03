@@ -4,21 +4,19 @@ var ref = require('ssb-ref')
 var AnchorHook = require('../../../../lib/anchor-hook')
 var sort = require('ssb-sort')
 var pull = require('pull-stream')
+var isBlog = require('scuttle-blog/isBlog')
+var Blog = require('scuttle-blog')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
-  'feed.obs.thread': 'first',
   'sbot.pull.stream': 'first',
-  'message.sync.unbox': 'first',
-  'message.html.layout': 'first',
   'message.sync.root': 'first',
-  'message.html': {
-    render: 'first',
-    compose: 'first'
-  },
+  'message.html.render': 'first',
+  'message.html.compose': 'first',
+  'message.html.missing': 'first',
   'sbot.async.get': 'first',
   'intl.sync.i18n': 'first',
-  'message.html.missing': 'first'
+  'sbot.obs.connection': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -29,11 +27,8 @@ exports.create = function (api) {
     if (!ref.isMsgLink(id)) return
 
     var link = ref.parseLink(id)
-    var params = { id: link.link }
-    if (link.query && link.query.unbox) {
-      params.private = true
-      params.unbox = link.query.unbox
-    }
+    var unbox = link.query && link.query.unbox
+    id = link.link
 
     var loader = h('div', { className: 'Loading -large' })
 
@@ -80,34 +75,29 @@ exports.create = function (api) {
       )
     })
 
-    api.sbot.async.get(params, (err, value) => {
+    get(id, { unbox }, (err, rootMessage) => {
       if (err) {
         return result.set(h('PageHeading', [
           h('h1', i18n('Cannot load thread'))
         ]))
       }
 
-      if (typeof value.content === 'string') {
-        value = api.message.sync.unbox(value)
-      }
-
-      if (!value) {
+      if (!rootMessage) {
         return result.set(h('PageHeading', [
           h('h1', i18n('Cannot display message.'))
         ]))
       }
 
-      var rootMessage = { key: id, value }
-
+      var content = rootMessage.value.content
       messageRefs.push(getMessageRef(rootMessage))
 
       // Apply the recps of the original root message to all replies. What happens in private stays in private!
-      meta.recps.set(value.content.recps)
+      meta.recps.set(content.recps)
 
       var root = api.message.sync.root(rootMessage) || id
       var isFork = id !== root
 
-      meta.channel.set(value.content.channel)
+      meta.channel.set(content.channel)
       meta.root.set(id)
 
       // if we are viewing a message with a root directly, then direct replies fork the original thread
@@ -215,6 +205,22 @@ exports.create = function (api) {
 
     return view
   })
+
+  function get (id, { unbox }, cb) {
+    api.sbot.async.get({ id, private: true, unbox }, (err, value) => {
+      if (err) return cb(err)
+      var msg = { key: id, value }
+      if (isBlog(msg)) {
+        Blog(api.sbot.obs.connection).async.get(msg, (err, result) => {
+          if (err) return cb(err)
+          msg.body = result.body
+          cb(null, msg)
+        })
+      } else {
+        cb(null, msg)
+      }
+    })
+  }
 }
 
 function showContext (element) {
