@@ -55,7 +55,7 @@ exports.init = function (ssb, config) {
               readThread: ssb.patchwork.thread.read,
               bumpFilter,
               pullFilter: pull(
-                FilterBlocked([item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
+                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
                 ApplyReplyFilterResult({ ssb })
               )
             }, (err, summary) => {

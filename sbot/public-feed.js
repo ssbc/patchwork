@@ -107,7 +107,7 @@ exports.init = function (ssb, config) {
           Paramap((item, cb) => {
             threadSummary(item.key, {
               pullFilter: pull(
-                FilterBlocked([item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
+                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
                 ApplyFilterResult({ ssb })
               ),
               recentLimit: 3,
