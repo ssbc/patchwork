@@ -84,7 +84,7 @@
     "ssb-msgs": "^5.2.0",
     "ssb-private": "^0.2.3",
     "ssb-query": "^2.3.0",
-    "ssb-ref": "github:ssbc/ssb-ref#fix/unbox-message-links",
+    "ssb-ref": "^2.13.8",
     "ssb-search": "^1.1.2",
     "ssb-sort": "^1.1.0",
     "ssb-tags": "^0.2.0",
