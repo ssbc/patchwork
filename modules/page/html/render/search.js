@@ -123,21 +123,47 @@ exports.create = function (api) {
     }
   })
 
-  function getStream (query, realtime = false) {
-    if (ref.isLink(query) || query.startsWith('#')) {
+  function getStream (queryText, realtime = false) {
+    if (ref.isLink(queryText) || queryText.startsWith('#')) {
       return api.sbot.pull.backlinks({
-        query: [ { $filter: { dest: query } } ],
+        query: [ { $filter: { dest: queryText } } ],
         reverse: true,
         old: !realtime,
         index: 'DTA' // use asserted timestamps
       })
     } else {
-      if (realtime) {
-        return api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({ old: false, query: query.split(whitespace) }))
-      } else {
-        return api.sbot.pull.stream(sbot => sbot.search.query({ query }))
-      }
+      var { author, query } = parseSearch(queryText)
+      return pull(
+        realtime
+          ? api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({ old: false, query: query.split(whitespace) }))
+          : api.sbot.pull.stream(sbot => sbot.search.query({ query })),
+        pull.filter(msg => {
+          if (author && msg.value.author !== author) return false
+          return true
+        })
+      )
     }
+  }
+}
+
+function parseSearch (query) {
+  var parts = query.split(/\s/)
+  var result = []
+  var author = null
+  parts.forEach(part => {
+    if (part.startsWith('author:')) {
+      part = part.slice(('author:').length)
+      if (ref.isFeedId(part)) {
+        author = part
+      }
+    } else {
+      result.push(part)
+    }
+  })
+
+  return {
+    query: result.join(' '),
+    author
   }
 }
 
