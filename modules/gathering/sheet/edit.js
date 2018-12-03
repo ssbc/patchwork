@@ -12,16 +12,18 @@ exports.needs = nest({
   'message.sheet.preview': 'first',
   'keys.sync.id': 'first',
   'sbot.async.publish': 'first',
+  'sbot.async.get': 'first',
   'about.async.latestValues': 'first',
   'blob.html.input': 'first',
   'blob.sync.url': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'suggest.hook': 'first'
 })
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('gathering.sheet.edit', function (id) {
-    getCurrentValues(id, (err, currentValues) => {
+    getCurrentValues(id, (err, msg) => {
       if (err) {
         return showDialog({
           type: 'info',
@@ -32,14 +34,17 @@ exports.create = function (api) {
         })
       }
 
+      // use private gathering recps for default profile suggestions
+      var participants = msg.value && msg.value.content && msg.value.content.recps
+
       api.sheet.display(close => {
         var publishing = Value(false)
 
         var chosen = {
-          title: Value(currentValues.title),
-          startDateTime: Value(currentValues.startDateTime),
-          image: Value(currentValues.image),
-          description: Value(currentValues.description)
+          title: Value(msg.gathering.title),
+          startDateTime: Value(msg.gathering.startDateTime),
+          image: Value(msg.gathering.image),
+          description: Value(msg.gathering.description)
         }
 
         var imageUrl = computed(chosen.image, (id) => id && api.blob.sync.url(id))
@@ -112,10 +117,10 @@ exports.create = function (api) {
           // no confirm
           var update = {}
 
-          if (!compareImage(chosen.image(), currentValues.image)) update.image = chosen.image()
-          if (!compareTime(chosen.startDateTime(), currentValues.startDateTime)) update.startDateTime = chosen.startDateTime()
-          if (chosen.title() !== currentValues.title) update.title = chosen.title() || i18n('Untitled Gathering')
-          if (chosen.description() !== currentValues.description) update.description = chosen.description()
+          if (!compareImage(chosen.image(), msg.gathering.image)) update.image = chosen.image()
+          if (!compareTime(chosen.startDateTime(), msg.gathering.startDateTime)) update.startDateTime = chosen.startDateTime()
+          if (chosen.title() !== msg.gathering.title) update.title = chosen.title() || i18n('Untitled Gathering')
+          if (chosen.description() !== msg.gathering.description) update.description = chosen.description()
 
           if (Object.keys(update).length) {
             // gatherings consist of multiple messages (maybe none of them exist yet), so we need to
@@ -126,8 +131,10 @@ exports.create = function (api) {
               publiclyEditable: true,
               value: {
                 author: api.keys.sync.id(),
+                private: true,
                 content: {
-                  type: 'gathering'
+                  type: 'gathering',
+                  recps: participants
                 }
               }
             }, (err, confirmed) => {
@@ -152,10 +159,17 @@ exports.create = function (api) {
           publishing.set(true)
           ensureExists((err, id) => {
             if (err) throw err
-            api.sbot.async.publish(extend({
+            var content = extend({
               type: 'about',
               about: id
-            }, update), (err) => {
+            }, update)
+
+            // keep private gatherings private!
+            if (msg.value && msg.value.content && msg.value.content.recps) {
+              content.recps = msg.value.content.recps
+            }
+
+            api.sbot.async.publish(content, (err) => {
               if (err) {
                 publishing.set(false)
                 showDialog({
@@ -177,9 +191,19 @@ exports.create = function (api) {
 
   function getCurrentValues (id, cb) {
     if (id) {
-      api.about.async.latestValues(id, ['title', 'startDateTime', 'image', 'description'], cb)
+      api.sbot.async.get({ id, private: true }, (err, value) => {
+        if (err) return cb(err)
+        if (value.content.type === 'gathering') {
+          api.about.async.latestValues(id, ['title', 'startDateTime', 'image', 'description'], (err, gathering) => {
+            if (err) return cb(err)
+            cb(null, { key: id, value, gathering })
+          })
+        } else {
+          cb(new Error('Message must be of type "gathering"'))
+        }
+      })
     } else {
-      cb(null, {})
+      cb(null, { gathering: {} })
     }
   }
 }

@@ -20,6 +20,7 @@ exports.create = function (api) {
     api.sheet.display(function (close) {
       var isPrivate = msg.value.private
       var isRoot = !msg.value.content.root
+      var exists = !!msg.key
       var recps = (msg.value.content.recps || []).filter(id => id !== msg.value.author)
 
       // handle too many private recipients
@@ -59,7 +60,7 @@ exports.create = function (api) {
           ),
           when(isPrivate,
             h('div.info -private', [
-              recps.length ? when(isRoot,
+              recps.length ? when(!exists && isRoot,
                 plural('Only visible to you and %s people that have been mentioned', recps.length),
                 plural('Only visible to you and %s other thread participants', recps.length)
               ) : i18n('This message will only be visible to you')
