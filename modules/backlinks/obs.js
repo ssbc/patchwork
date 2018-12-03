@@ -4,7 +4,6 @@ var onceTrue = require('mutant/once-true')
 var computed = require('mutant/computed')
 var resolve = require('mutant/resolve')
 var pull = require('pull-stream')
-var onceIdle = require('mutant/once-idle')
 var sorted = require('sorted-array-functions')
 var MutantPullCollection = require('../../lib/mutant-pull-collection')
 

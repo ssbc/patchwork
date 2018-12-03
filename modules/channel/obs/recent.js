@@ -14,7 +14,7 @@ exports.create = function (api) {
     'channel.obs.recent': function (limit) {
       return MutantPullValue(() => {
         return api.sbot.pull.stream((sbot) => sbot.patchwork.channels.recentStream({ limit: limit || 10 }))
-      }, { defaultValue: [] })
+      }, { defaultValue: [], sync: true })
     }
   })
 }

@@ -28,6 +28,7 @@ exports.needs = nest({
   'profile.obs.recentlyUpdated': 'first',
   'profile.obs.contact': 'first',
   'contact.obs.following': 'first',
+  'contact.obs.followers': 'first',
   'contact.obs.blocking': 'first',
   'channel.obs': {
     subscribed: 'first',
@@ -52,11 +53,11 @@ exports.create = function (api) {
 
     var id = api.keys.sync.id()
     var following = api.contact.obs.following(id)
+    var followers = api.contact.obs.followers(id)
     var blocking = api.contact.obs.blocking(id)
     var subscribedChannels = api.channel.obs.subscribed(id)
-    var recentChannels = api.channel.obs.recent()
-    var loading = computed([subscribedChannels.sync, recentChannels.sync], (...args) => !args.every(Boolean))
-    var channels = computed(recentChannels, items => items.slice(0, 8), { comparer: arrayEq })
+    var recentChannels = api.channel.obs.recent(10)
+    var channelsLoading = computed([subscribedChannels.sync, recentChannels.sync], (...args) => !args.every(Boolean))
     var connectedPeers = api.sbot.obs.connectedPeers()
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
@@ -121,13 +122,13 @@ exports.create = function (api) {
         //   }, i18n('Accept Invite'))
         // ]),
 
-        when(loading, [ h('Loading') ], [
-          when(computed(channels, x => x.length), h('h2', i18n('Active Channels'))),
+        when(channelsLoading, [ h('Loading') ], [
+          when(computed(recentChannels, x => x.length), h('h2', i18n('Active Channels'))),
           h('div', {
             classList: 'ChannelList',
-            hidden: loading
+            hidden: channelsLoading
           }, [
-            map(channels, (channel) => {
+            map(recentChannels, (channel) => {
               var subscribed = subscribedChannels.has(channel)
               return h('a.channel', {
                 href: `#${channel}`,
@@ -198,8 +199,8 @@ exports.create = function (api) {
     function noVisibleNewPostsWarning () {
       const explanation = i18n('You may not be able to see new content until you follow some users or pubs.')
 
-      const shownWhen = computed([loading, contact.isNotFollowingAnybody],
-        (isLoading, isNotFollowingAnybody) => !isLoading && isNotFollowingAnybody
+      const shownWhen = computed([following.sync, contact.isNotFollowingAnybody],
+        (followingSync, isNotFollowingAnybody) => followingSync && isNotFollowingAnybody
       )
 
       return api.feed.html.followWarning(shownWhen, explanation)
@@ -214,9 +215,9 @@ exports.create = function (api) {
       // should be sufficient to get the user to join a pub. However, pubs have been buggy and not followed back on occassion.
       // Additionally, someone onboarded on a local network might follow someone on the network, but not be followed back by
       // them, so we begin to show this warning if the user has followed someone, but has no followers.
-      const shownWhen = computed([loading, contact.hasNoFollowers, contact.isNotFollowingAnybody],
-        (isLoading, hasNoFollowers, isNotFollowingAnybody) =>
-          !isLoading && (hasNoFollowers && !isNotFollowingAnybody)
+      const shownWhen = computed([following.sync, followers.sync, contact.hasNoFollowers, contact.isNotFollowingAnybody],
+        (followingSync, followersSync, hasNoFollowers, isNotFollowingAnybody) =>
+          followingSync && followersSync && (hasNoFollowers && !isNotFollowingAnybody)
       )
 
       return api.feed.html.followerWarning(shownWhen, explanation)
