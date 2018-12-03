@@ -42,6 +42,7 @@
     "html-escape": "^2.0.0",
     "human-time": "0.0.1",
     "i18n": "^0.8.3",
+    "layered-graph": "github:mmckegg/layered-graph#fix-on-ready",
     "lodash.concat": "^4.5.0",
     "lodash.filter": "^4.6.0",
     "micro-css": "^2.0.1",
