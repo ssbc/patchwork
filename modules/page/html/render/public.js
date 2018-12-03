@@ -56,7 +56,7 @@ exports.create = function (api) {
     var followers = api.contact.obs.followers(id)
     var blocking = api.contact.obs.blocking(id)
     var subscribedChannels = api.channel.obs.subscribed(id)
-    var recentChannels = api.channel.obs.recent(10)
+    var recentChannels = api.channel.obs.recent(8)
     var channelsLoading = computed([subscribedChannels.sync, recentChannels.sync], (...args) => !args.every(Boolean))
     var connectedPeers = api.sbot.obs.connectedPeers()
     var localPeers = api.sbot.obs.localPeers()

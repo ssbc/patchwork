@@ -73,6 +73,13 @@ exports.init = function (ssb, config) {
         pull.drain(data => {
           for (var channel in data) {
             var updatedAt = data[channel].timestamp
+            if (sync) {
+              // make sure there isn't a double up!
+              var existingItemIndex = lastUpdated.findIndex(value => value[0] === channel)
+              if (existingItemIndex >= 0) {
+                lastUpdated.splice(existingItemIndex, 1)
+              }
+            }
             sorted.add(lastUpdated, [channel, updatedAt], mostRecent)
           }
           if (!sync) {
