@@ -76,7 +76,7 @@
     "ssb-config": "^2.3.7",
     "ssb-dht-invite": "^1.0.0",
     "ssb-feed": "^2.3.0",
-    "ssb-friends": "github:ssbc/ssb-friends#fix-hops-options",
+    "ssb-friends": "^3.1.7",
     "ssb-keys": "^7.1.3",
     "ssb-markdown": "^4.0.0",
     "ssb-mentions": "^0.5.0",
