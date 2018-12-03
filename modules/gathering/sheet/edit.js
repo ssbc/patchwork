@@ -80,7 +80,7 @@ exports.create = function (api) {
               ]),
               h('textarea.description', {
                 placeholder: i18n('Describe the gathering (if you want)'),
-                hooks: [ValueHook(chosen.description)]
+                hooks: [ValueHook(chosen.description), api.suggest.hook({ participants })]
               })
             ])
           ]),
