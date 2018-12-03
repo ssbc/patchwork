@@ -55,18 +55,15 @@ exports.init = function (ssb, config) {
   var recentFeeds = RecentFeeds(ssb, config)
 
   // prioritize pubs that we actually follow
-  pull(
-    ssb.friends.createFriendStream({ hops: 1, live: false }),
-    pull.collect((err, contacts) => {
-      if (!err) {
-        ssb.gossip.peers().forEach(function (peer) {
-          if (contacts.includes(peer.key)) {
-            ssb.gossip.add(peer, 'friends')
-          }
-        })
-      }
-    })
-  )
+  ssb.friends.hops({ id: ssb.id, max: 1 }, (err, hops) => {
+    if (!err) {
+      ssb.gossip.peers().forEach(function (peer) {
+        if (hops[peer.key] >= 0 && hops[peer.key] < 2) {
+          ssb.gossip.add(peer, 'friends')
+        }
+      })
+    }
+  })
 
   var result = {
     heartbeat: Heartbeat(ssb, config),
