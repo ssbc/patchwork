@@ -127,6 +127,10 @@ module.exports = function (config) {
         tab(i18n('Private'), '/private'),
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
+          subMenu(i18n('Participating'), [
+            [i18n('All Threads'), '/participating'],
+            [i18n('Threads Started By You'), '/your-posts']
+          ]),
           [i18n('Gatherings'), '/gatherings'],
           [i18n('Tags'), `/tags/all/${encodeURIComponent(id)}`],
           [i18n('Extended Network'), '/all'],
@@ -168,6 +172,22 @@ module.exports = function (config) {
   return [container, previewElement]
 
   // scoped
+
+  function subMenu (label, items) {
+    return function () {
+      return {
+        label,
+        submenu: items.map(item => {
+          return {
+            label: item[0],
+            click () {
+              navigate(item[1])
+            }
+          }
+        })
+      }
+    }
+  }
 
   function getSubscribedChannelMenu () {
     var channels = Array.from(subscribedChannels()).sort(localeCompare)

@@ -17,6 +17,7 @@ var plugins = {
   gatherings: require('./gatherings'),
   networkFeed: require('./network-feed'),
   channelFeed: require('./channel-feed'),
+  participatingFeed: require('./participating-feed'),
   channels: require('./channels'),
   contacts: require('./contacts')
 }

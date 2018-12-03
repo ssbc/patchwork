@@ -283,5 +283,8 @@
 	"Unknown Message Type:": "Unknown Message Type:",
 	"{{name}} ({{size}}) is larger than the allowed limit of {{max_size}}": "{{name}} ({{size}}) is larger than the allowed limit of {{max_size}}",
 	"Clear Draft": "Clear Draft",
-	"Browse Recently Active": "Browse Recently Active"
+	"Browse Recently Active": "Browse Recently Active",
+	"Participating": "Participating",
+	"All Threads": "All Threads",
+	"Threads Started By You": "Threads Started By You"
 }

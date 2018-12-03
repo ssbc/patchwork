@@ -50,6 +50,7 @@ exports.create = function (api) {
     filterRepliesIfBlockedByRootAuthor = true,
     displayFilter = returnTrue,
     ungroupFilter = returnFalse,
+    searchSpinner = false,
     updateStream
   }) {
     var updates = Value(0)
@@ -87,7 +88,7 @@ exports.create = function (api) {
       h('div.wrapper', [
         h('section.prepend', prepend),
         content,
-        when(loading, h('Loading -large'))
+        when(loading, searchSpinner ? h('Loading -large -search') : h('Loading -large'))
       ])
     ])
 
