@@ -49,16 +49,7 @@ exports.create = function (api) {
 
     var isRecipient = computed(meta.recps, recps => {
       if (recps == null) return true // not a private message
-      return Array.isArray(recps) && recps.some(recp => {
-        if (recp == null) return false
-        if (typeof recp === 'string') {
-          return recp === api.keys.sync.id()
-        }
-        // if recp is mentions object
-        if (typeof recp === 'object') {
-          return recp.link === api.keys.sync.id()
-        }
-      })
+      return normalizedRecps(recps).includes(api.keys.sync.id())
     }, { idle: true })
 
     var compose = api.message.html.compose({
@@ -95,6 +86,16 @@ exports.create = function (api) {
       // Apply the recps of the original root message to all replies. What happens in private stays in private!
       meta.recps.set(content.recps)
 
+      if (Array.isArray(content.recps)) {
+        // use private recps if available
+        participants.set(uniq(normalizedRecps(content.recps)))
+      } else {
+        // otherwise message authors
+        participants.set(computed(messageRefs, messages => {
+          return uniq(messages.map(msg => msg && msg.value && msg.value.author))
+        }, { idle: true }))
+      }
+
       var root = api.message.sync.root(rootMessage) || id
       var isFork = id !== root
 
@@ -128,10 +129,6 @@ exports.create = function (api) {
           branches = branches[0]
         }
         return branches
-      }, { idle: true }))
-
-      participants.set(computed(messageRefs, messages => {
-        return messages.map(msg => msg && msg.value && msg.value.author)
       }, { idle: true }))
 
       var rootMessageElement = api.message.html.render(rootMessage, {
@@ -281,4 +278,21 @@ function UnreadClassHook (anchor, msgId) {
       }
     })
   }
+}
+
+function normalizedRecps (recps) {
+  return Array.isArray(recps) && recps.map(recp => {
+    if (recp == null) return null
+    if (typeof recp === 'string') {
+      return recp
+    }
+    // if recp is mentions object
+    if (typeof recp === 'object') {
+      return recp.link
+    }
+  })
+}
+
+function uniq (array) {
+  return Array.from(new Set(array))
 }
