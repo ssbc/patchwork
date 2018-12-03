@@ -42,6 +42,8 @@ exports.create = function (api) {
 
     var textArea = h('textarea', {
       hooks: [api.suggest.hook({ participants })],
+      'ev-dragover': onDragOver,
+      'ev-drop': onDrop,
       'ev-input': function () {
         hasContent.set(!!textArea.value)
       },
@@ -53,13 +55,7 @@ exports.create = function (api) {
       'ev-paste': ev => {
         const files = ev.clipboardData && ev.clipboardData.files
         if (!files || !files.length) return
-
-        const opts = {
-          stripExif: true,
-          isPrivate: resolve(isPrivate)
-        }
-
-        blobFiles(files, api.sbot.obs.connection, opts, afterAttach)
+        attachFiles(files)
       },
       disabled: publishing,
       placeholder
@@ -121,6 +117,30 @@ exports.create = function (api) {
     return composer
 
     // scoped
+
+    function onDragOver (ev) {
+      ev.dataTransfer.dropEffect = 'copy'
+      ev.preventDefault()
+      return false
+    }
+
+    function onDrop (ev) {
+      ev.preventDefault()
+
+      const files = ev.dataTransfer && ev.dataTransfer.files
+      if (!files || !files.length) return
+
+      ev.dataTransfer.dropEffect = 'copy'
+      attachFiles(files)
+      return false
+    }
+
+    function attachFiles (files) {
+      blobFiles(files, api.sbot.obs.connection, {
+        stripExif: true,
+        isPrivate: resolve(isPrivate)
+      }, afterAttach)
+    }
 
     function afterAttach (err, file) {
       if (err) {

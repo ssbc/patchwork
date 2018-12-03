@@ -106,7 +106,10 @@ module.exports = function (config) {
   )
 
   var container = h(`MainWindow -${process.platform}`, {
-    classList: [ when(api.app.fullscreen(), '-fullscreen') ]
+    classList: [ when(api.app.fullscreen(), '-fullscreen') ],
+    'ev-dragover': preventDefault,
+    'ev-drop': preventDefault,
+    'ev-dragstart': preventDefaultUnlessImage
   }, [
     h('div.top', [
       h('span.history', [
@@ -318,4 +321,14 @@ function addCommand (id, cb) {
 
 function localeCompare (a, b) {
   return a.localeCompare(b)
+}
+
+function preventDefault (ev) {
+  ev.preventDefault()
+}
+
+function preventDefaultUnlessImage (ev) {
+  if (ev.target.nodeName !== 'IMG') {
+    ev.preventDefault()
+  }
 }
