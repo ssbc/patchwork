@@ -255,7 +255,7 @@ exports.create = function (api) {
               type: 'error',
               title: i18n('Error'),
               buttons: [i18n('OK')],
-              message: i18n('An error occured while publishing your message.'),
+              message: i18n('An error occurred while publishing your message.'),
               detail: err.message
             })
           }
