@@ -29,6 +29,8 @@ exports.version = require('../package.json').version
 exports.manifest = {
   subscriptions: 'source',
   linearSearch: 'source',
+  privateSearch: 'source',
+
   progress: 'source',
   recentFeeds: 'source',
   heartbeat: 'source',
@@ -71,6 +73,7 @@ exports.init = function (ssb, config) {
     progress: progress.stream,
     recentFeeds: recentFeeds.stream,
     linearSearch: search.linear,
+    privateSearch: search.privateLinear,
     getSubscriptions: subscriptions.get,
     liveBacklinks: LiveBacklinks(ssb, config),
 

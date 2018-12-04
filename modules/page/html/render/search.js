@@ -117,7 +117,10 @@ exports.create = function (api) {
     }
 
     function renderMsg (msg) {
-      var el = h('FeedEvent', api.message.html.render(msg, { renderUnknown: true }))
+      var el = h('FeedEvent', api.message.html.render(msg, {
+        renderUnknown: true,
+        outOfContext: true
+      }))
       highlight(el, createOrRegExp(query.split(whitespace)))
       return el
     }
@@ -132,11 +135,13 @@ exports.create = function (api) {
         index: 'DTA' // use asserted timestamps
       })
     } else {
-      var { author, query } = parseSearch(queryText)
+      var { author, query, onlyPrivate } = parseSearch(queryText)
       return pull(
-        realtime
-          ? api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({ old: false, query: query.split(whitespace) }))
-          : api.sbot.pull.stream(sbot => sbot.search.query({ query })),
+        onlyPrivate
+          ? api.sbot.pull.stream(sbot => sbot.patchwork.privateSearch({ old: !realtime, reverse: true, query: query.split(whitespace), author }))
+          : realtime
+            ? api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({ old: false, query: query.split(whitespace) }))
+            : api.sbot.pull.stream(sbot => sbot.search.query({ query })),
         pull.filter(msg => {
           if (author && msg.value.author !== author) return false
           return true
@@ -150,12 +155,15 @@ function parseSearch (query) {
   var parts = query.split(/\s/)
   var result = []
   var author = null
+  var onlyPrivate = false
   parts.forEach(part => {
     if (part.startsWith('author:')) {
       part = part.slice(('author:').length)
       if (ref.isFeedId(part)) {
         author = part
       }
+    } else if (part === 'private:true') {
+      onlyPrivate = true
     } else {
       result.push(part)
     }
@@ -163,6 +171,7 @@ function parseSearch (query) {
 
   return {
     query: result.join(' '),
+    onlyPrivate,
     author
   }
 }

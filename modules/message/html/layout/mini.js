@@ -34,7 +34,7 @@ exports.create = function (api) {
 
   return nest('message.html.layout', layout)
 
-  function layout (msg, { layout, priority, miniContent, content, includeReferences, includeForks = true, actions = true, hooks, forkedFrom }) {
+  function layout (msg, { layout, priority, miniContent, content, includeReferences, includeForks = true, actions = true, hooks, forkedFrom, outOfContext }) {
     if (!(layout === 'mini')) return
 
     var classList = ['Message -mini']
@@ -55,6 +55,8 @@ exports.create = function (api) {
       classList.push('-reply')
       if (forkedFrom) {
         replyInfo = h('span', [i18n('forked from parent thread '), api.message.html.link(forkedFrom)])
+      } else if (outOfContext) {
+        replyInfo = h('span', [i18n('in reply to '), api.message.html.link(msg.value.content.root)])
       }
     } else if (msg.value.content.project) {
       replyInfo = h('span', ['on ', api.message.html.link(msg.value.content.project)])
