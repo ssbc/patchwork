@@ -20,7 +20,7 @@ exports.create = function (api) {
     var searchBox = h('input.search', {
       type: 'search',
       title: i18n('Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering'),
-      placeholder: i18n('word, @id, #channel'),
+      placeholder: i18n('word, @key, #channel'),
       'ev-suggestselect': (ev) => {
         setView(ev.detail.id)
         searchBox.value = ev.detail.id

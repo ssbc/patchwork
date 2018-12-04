@@ -287,6 +287,5 @@
 	"Participating": "Participating",
 	"All Threads": "All Threads",
 	"Threads Started By You": "Threads Started By You",
-	"Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering",
-	"word, @id, #channel": "word, @id, #channel"
+	"Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering"
 }
