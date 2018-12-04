@@ -162,7 +162,7 @@ function parseSearch (query) {
       if (ref.isFeedId(part)) {
         author = part
       }
-    } else if (part === 'private:true') {
+    } else if (part === 'is:private') {
       onlyPrivate = true
     } else {
       result.push(part)
