@@ -7,6 +7,7 @@ exports.needs = nest({
   'message.html.compose': 'first',
   'message.async.publish': 'first',
   'feed.html.rollup': 'first',
+  'keys.sync.id': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -34,10 +35,13 @@ exports.create = function (api) {
       return sbot.patchwork.participatingFeed.roots(opts)
     }, { limit: 10, reverse: true, onlyStarted: true })
 
+    var yourId = api.keys.sync.id()
+
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
       searchSpinner: true,
       groupSummaries: false,
+      compactFilter: (msg) => msg.value.author === yourId, // condense your messages
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.participatingFeed.latest({ onlyStarted: true }))
     })
 
