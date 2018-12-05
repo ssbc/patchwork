@@ -52,6 +52,8 @@ exports.create = function (api) {
       var attendees = msg.key ? computed([api.about.obs.socialValues(msg.key, 'attendee')], getAttendees) : []
       var disableActions = !!msg.previewAbout
 
+      var attending = computed([attendees, yourId], (attendees, yourId) => attendees.includes(yourId))
+
       if (!following) {
         following = api.contact.obs.following(yourId)
       }
@@ -87,7 +89,7 @@ exports.create = function (api) {
           ]),
           h('div.actions', [
             h('button -attend', {
-              disabled: disableActions,
+              disabled: computed([attending, disableActions], (...args) => args.some(Boolean)),
               'ev-click': send(publishAttending, msg)
             }, `Attending`),
             h('button -attend', {
