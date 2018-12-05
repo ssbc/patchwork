@@ -213,7 +213,7 @@
 	"You have not made any changes.": "Nič si nezmenil.",
 	"Nothing to publish": "Nemám čo zverejniť",
 	"Edit Gathering": "Upraviť Stretnutie",
-	"This message will be public and cannot be edited or deleted": "Táto speáva bude verejná a nebude môcť byť upravená ani zmazaná",
+	"This message will be public and cannot be edited or deleted": "Táto správa bude verejná a nebude môcť byť upravená ani zmazaná",
 	"This message will be public and can be edited by anyone": "Táto správa bude verejná a môže byť upravená kýmkoľvek",
 	"Only visible to you and %s people that have been mentioned": {
 		"one": "Viditeľné len pe teba a pre človeka ktorého si @zmienil",
