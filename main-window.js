@@ -55,7 +55,7 @@ module.exports = function (config) {
   onceTrue(api.sbot.obs.connection, (sbot) => {
     sbot.latestSequence(sbot.id, (_, key) => {
       if (key == null) {
-        api.profile.sheet.edit()
+        api.profile.sheet.edit({ usePreview: false })
       }
     })
   })
