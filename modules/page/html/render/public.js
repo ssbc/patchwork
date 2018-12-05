@@ -122,23 +122,25 @@ exports.create = function (api) {
         // ]),
 
         when(channelsLoading, [ h('Loading') ], [
-          when(computed(recentChannels, x => x.length), h('h2', i18n('Active Channels'))),
-          h('div', {
-            classList: 'ChannelList',
-            hidden: channelsLoading
-          }, [
-            map(recentChannels, (channel) => {
-              var subscribed = subscribedChannels.has(channel)
-              return h('a.channel', {
-                href: `#${channel}`,
-                classList: [
-                  when(subscribed, '-subscribed')
-                ]
-              }, [
-                h('span.name', '#' + channel)
-              ])
-            }, { maxTime: 5 }),
-            h('a.channel -more', { href: '/channels' }, i18n('More Channels...'))
+          when(computed(recentChannels, x => x.length), [
+            h('h2', i18n('Active Channels')),
+            h('div', {
+              classList: 'ChannelList',
+              hidden: channelsLoading
+            }, [
+              map(recentChannels, (channel) => {
+                var subscribed = subscribedChannels.has(channel)
+                return h('a.channel', {
+                  href: `#${channel}`,
+                  classList: [
+                    when(subscribed, '-subscribed')
+                  ]
+                }, [
+                  h('span.name', '#' + channel)
+                ])
+              }, { maxTime: 5 }),
+              h('a.channel -more', { href: '/channels' }, i18n('More Channels...'))
+            ])
           ])
         ]),
 

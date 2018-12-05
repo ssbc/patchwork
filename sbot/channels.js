@@ -57,15 +57,14 @@ exports.init = function (ssb, config) {
         })
       })
     },
-    recentStream: function ({ limit = 10, throttle = 5e3 }) {
+    recentStream: function ({ limit = 10, throttle = 20e3 }) {
       var aborter = Abortable()
       var stream = PullPushable(() => {
         aborter.abort()
       })
       var sync = false
-      var timer = null
-
       var lastUpdated = []
+      var queued = false
 
       pull(
         index.stream({ live: true }),
@@ -95,13 +94,16 @@ exports.init = function (ssb, config) {
 
       function sendLatest () {
         // truncate list to speed up future updates (and save memory)
-        lastUpdated.length = limit
+        lastUpdated.length = Math.min(lastUpdated.length, limit)
         stream.push(lastUpdated.map(item => item[0]))
+        queued = false
       }
 
       function queueSend () {
-        clearTimeout(timer)
-        timer = setTimeout(sendLatest, throttle || 5e3)
+        if (!queued) {
+          queued = true
+          setTimeout(sendLatest, throttle || 20e3)
+        }
       }
     }
   }
