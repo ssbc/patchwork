@@ -23,9 +23,13 @@ exports.init = function (ssb, config) {
   return {
     latest: function () {
       return pull(
-        ssb.private.read({
+        ssb.createFeedStream({
+          private: true,
           live: true,
           old: false
+        }),
+        pull.filter(msg => {
+          return msg.value && msg.value.meta && msg.value.meta.private
         }),
         pull.filter(bumpFilter),
         LookupRoots({ ssb, cache })
