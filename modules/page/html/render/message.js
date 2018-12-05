@@ -37,6 +37,8 @@ exports.create = function (api) {
     var participants = Proxy([])
     var messageRefs = MutantArray()
 
+    var yourId = api.keys.sync.id()
+
     var meta = Struct({
       type: 'post',
       root: Proxy(link.link),
@@ -49,7 +51,7 @@ exports.create = function (api) {
 
     var isRecipient = computed(meta.recps, recps => {
       if (recps == null) return true // not a private message
-      return normalizedRecps(recps).includes(api.keys.sync.id())
+      return normalizedRecps(recps).includes(yourId)
     }, { idle: true })
 
     var compose = api.message.html.compose({
@@ -161,6 +163,7 @@ exports.create = function (api) {
         when(isRecipient, compose)
       ])
 
+      var sync = false
       pull(
         api.sbot.pull.stream(sbot => sbot.patchwork.thread.sorted({
           live: true,
@@ -171,19 +174,36 @@ exports.create = function (api) {
         pull.drain(msg => {
           if (msg.sync) {
             // actually add container to DOM when we get sync on thread
+            sync = true
             result.set(container)
           } else {
+            var element = api.message.html.render(msg, {
+              hooks: [UnreadClassHook(anchor, msg.key)],
+              includeForks: msg.key !== id,
+              includeReferences: true
+            })
+
+            // mark messages as new if added in realtime
+            if (sync && element && element.classList) {
+              element.classList.add('-new')
+              setTimeout(() => {
+                // remove the new class after 30 seconds
+                element.classList.remove('-new')
+              }, 30 * 1e3)
+            }
+
             messageRefs.push(getMessageRef(msg))
             messagesContainer.append(h('div', {
               hooks: [AnchorHook(msg.key, anchor, showContext)]
             }, [
               msg.key !== id ? api.message.html.missing(first(msg.value.content.branch), msg, rootMessage) : null,
-              api.message.html.render(msg, {
-                hooks: [UnreadClassHook(anchor, msg.key)],
-                includeForks: msg.key !== id,
-                includeReferences: true
-              })
+              element
             ]))
+
+            if (document.activeElement && document.activeElement.nodeName === 'TEXTAREA') {
+              // ensure compose box remains on screen even after a post is added
+              document.activeElement.scrollIntoViewIfNeeded()
+            }
           }
         })
       )
