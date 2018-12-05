@@ -24,7 +24,7 @@ exports.init = function (ssb, config) {
   return {
     latest: function () {
       return pull(
-        ssb.createFeedStream({ live: true, old: false }),
+        ssb.createFeedStream({ live: true, old: false, awaitReady: false }),
 
         ApplyFilterResult({ ssb }),
         pull.filter(msg => !!msg.filterResult),
@@ -50,7 +50,7 @@ exports.init = function (ssb, config) {
       var included = new Set()
 
       // use resume option if specified
-      var opts = { reverse, old: true }
+      var opts = { reverse, old: true, awaitReady: false }
       if (resume) {
         opts[reverse ? 'lt' : 'gt'] = resume
       }

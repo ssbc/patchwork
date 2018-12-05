@@ -146,7 +146,7 @@ exports.init = function (ssb, config) {
     },
     latest: function ({ id }) {
       return pull(
-        ssb.createUserStream({ id, live: true, old: false }),
+        ssb.createUserStream({ id, live: true, old: false, awaitReady: false }),
         pull.filter(bumpFilter),
         LookupRoots({ ssb, cache }),
         pull.filter(msg => {
@@ -162,7 +162,7 @@ exports.init = function (ssb, config) {
     roots: function ({ id, limit, reverse, resume }) {
       // use resume option if specified
 
-      var opts = { id, reverse, old: true }
+      var opts = { id, reverse, old: true, awaitReady: false }
       if (resume) {
         opts[reverse ? 'lt' : 'gt'] = resume
       }

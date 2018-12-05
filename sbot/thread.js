@@ -59,6 +59,7 @@ exports.init = function (ssb, config) {
     return pull(
       ssb.backlinks.read({
         private: true,
+        awaitReady: false,
         reverse,
         live,
         old,

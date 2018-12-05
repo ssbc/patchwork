@@ -28,7 +28,7 @@ exports.init = function (ssb, config) {
         dest: `#${channel}`
       } }]
       return pull(
-        ssb.backlinks.read({ old: false, live: true, query }),
+        ssb.backlinks.read({ old: false, live: true, query, awaitReady: false }),
         pull.filter(msg => checkBump(msg, { channel })),
         LookupRoots({ ssb, cache })
         // TODO: don't bump if author blocked
@@ -45,6 +45,7 @@ exports.init = function (ssb, config) {
 
       var opts = {
         reverse,
+        awaitReady: false,
         old: true,
         query: [{ $filter: {
           dest: `#${channel}`,
