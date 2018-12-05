@@ -260,8 +260,11 @@ exports.create = function (api) {
             })
           }
         } else {
-          if (msg) textArea.value = ''
-          save()
+          if (msg) {
+            textArea.value = ''
+            hasContent.set(!!textArea.value)
+            save()
+          }
           if (cb) cb(null, msg)
         }
       }
