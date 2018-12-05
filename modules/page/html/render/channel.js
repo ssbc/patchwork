@@ -47,7 +47,7 @@ exports.create = function (api) {
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.channelFeed.roots(opts)
-    }, { limit: 40, reverse: true, channel })
+    }, { limit: 15, reverse: true, channel })
 
     const channelView = api.feed.html.rollup(getStream, {
       prepend,
