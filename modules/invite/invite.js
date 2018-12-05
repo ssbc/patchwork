@@ -53,28 +53,28 @@ exports.create = function (api) {
         } else {
           next()
         }
-
-        function next () {
-          progress.set('Following...')
-
-          var address = ref.parseAddress(data.remote)
-
-          if (address.host) {
-            api.sbot.async.publish({
-              type: 'pub',
-              address
-            })
-          }
-
-          api.sbot.async.publish({
-            type: 'contact',
-            contact: data.key,
-            following: true,
-            autofollow: true
-          }, cb)
-        }
       })
     })
+
+    function next () {
+      progress.set('Following...')
+
+      var address = ref.parseAddress(data.remote)
+
+      if (address.host) {
+        api.sbot.async.publish({
+          type: 'pub',
+          address
+        })
+      }
+
+      api.sbot.async.publish({
+        type: 'contact',
+        contact: data.key,
+        following: true,
+        autofollow: true
+      }, cb)
+    }
 
     return progress
   }
