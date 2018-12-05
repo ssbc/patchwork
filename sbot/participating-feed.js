@@ -24,6 +24,10 @@ exports.init = function (ssb, config) {
     latest: function ({ onlyStarted = false } = {}) {
       return pull(
         ssb.createFeedStream({ live: true, old: false }),
+        pull.filter((msg) => {
+          // only bump for self if this is original posting
+          return !msg.value.author === ssb.id || !getRoot(msg)
+        }),
         pull.filter(bumpFilter),
         LookupRoots({ ssb, cache }),
 
