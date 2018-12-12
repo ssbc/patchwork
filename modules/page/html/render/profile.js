@@ -44,6 +44,7 @@ exports.create = function (api) {
     var description = api.about.obs.description(id)
     var contact = api.profile.obs.contact(id)
     var recent = api.profile.obs.recentlyUpdated()
+    var isYou = id === yourId
 
     onceTrue(api.sbot.obs.connection, sbot => {
       // request a once off replicate of this feed
@@ -73,6 +74,7 @@ exports.create = function (api) {
       return followers.filter(follower => !friends.includes(follower))
     })
 
+    // only include names/images assigned by people you follow or people they follow
     var names = computed([api.about.obs.names(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
     var images = computed([api.about.obs.images(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
 
@@ -96,7 +98,7 @@ exports.create = function (api) {
           item.key
         ])
       }),
-      h('a -add', {
+      isYou ? null : h('a -add', {
         'ev-click': () => {
           rename(id)
         },
@@ -128,7 +130,7 @@ exports.create = function (api) {
           })
         ])
       }),
-      h('span.add', [
+      isYou ? null : h('span.add', [
         api.blob.html.input((err, file) => {
           if (err) return
           assignImage(id, file.link)
