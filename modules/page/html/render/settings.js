@@ -26,6 +26,8 @@ exports.create = function (api) {
     const theme = api.settings.obs.get('patchwork.theme', 'light')
     const lang = api.settings.obs.get('patchwork.lang', '')
     const fontSize = api.settings.obs.get('patchwork.fontSize', '')
+    const includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
+
     // const filterFollowing = api.settings.obs.get('filters.following')
     // const filterSubscriptions = api.settings.obs.get('filters.subscriptions')
     // const onlySubscribed = api.settings.obs.get('filters.onlySubscribed')
@@ -81,27 +83,15 @@ exports.create = function (api) {
             ])
           ]),
 
-          // h('section', [
-          //   h('h2', i18n('Public Feed Options')),
+          h('section', [
+            h('h2', i18n('Notification Options')),
 
-          //   h('div', [
-          //     checkbox(filterFollowing, {
-          //       label: i18n('Hide following messages')
-          //     })
-          //   ]),
-
-          //   h('div', [
-          //     checkbox(filterSubscriptions, {
-          //       label: i18n('Hide channel subscription messages')
-          //     })
-          //   ]),
-
-          //   h('div', [
-          //     checkbox(onlySubscribed, {
-          //       label: i18n(`Hide posts in channels that are not subscribed`)
-          //     })
-          //   ])
-          // ]),
+            h('div', [
+              checkbox(includeParticipating, {
+                label: i18n('Include "Participating" tab in navigation bar')
+              })
+            ])
+          ]),
 
           // h('section', [
           //   h('h2', i18n('Channel Feed Options')),

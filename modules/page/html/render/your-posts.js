@@ -27,8 +27,7 @@ exports.create = function (api) {
         h('h1', [
           i18n('Threads Started By You')
         ])
-      ]),
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
+      ])
     ]
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {

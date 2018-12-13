@@ -289,5 +289,7 @@
 	"Threads Started By You": "Threads Started By You",
 	"Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering",
 	"An error occurred while publishing your message.": "An error occurred while publishing your message.",
-	"An error occurred while attempting to redeem invite.": "An error occurred while attempting to redeem invite."
+	"An error occurred while attempting to redeem invite.": "An error occurred while attempting to redeem invite.",
+	"Notification Options": "Notification Options",
+	"Include \"Participating\" tab in navigation bar": "Include \"Participating\" tab in navigation bar"
 }

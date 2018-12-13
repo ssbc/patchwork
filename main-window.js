@@ -50,6 +50,7 @@ module.exports = function (config) {
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
   var subscribedChannels = api.channel.obs.subscribed(id)
+  var includeParticipating = api.settings.obs.get('patchwork.includeParticipating', true)
 
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
@@ -60,9 +61,20 @@ module.exports = function (config) {
     })
   })
 
-  var views = api.app.views(api.page.html.render, [
-    '/public', '/private', '/mentions'
-  ])
+  var defaultViews = computed(includeParticipating, (includeParticipating) => {
+    var result = [
+      '/public', '/private', '/mentions'
+    ]
+
+    // allow user to choose in settings whether to show participating tab
+    if (includeParticipating) {
+      result.push('/participating')
+    }
+
+    return result
+  })
+
+  var views = api.app.views(api.page.html.render, defaultViews)
 
   var pendingCount = views.get('/mentions').pendingUpdates
 
@@ -145,6 +157,9 @@ module.exports = function (config) {
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
         tab(i18n('Profile'), id),
+        computed(includeParticipating, (includeParticipating) => {
+          if (includeParticipating) return tab(i18n('Participating'), '/participating')
+        }),
         tab(i18n('Mentions'), '/mentions')
       ])
     ]),

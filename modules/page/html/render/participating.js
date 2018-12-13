@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var { h } = require('mutant')
+var { h, when } = require('mutant')
 
 exports.needs = nest({
   'sbot.pull.resumeStream': 'first',
@@ -8,7 +8,8 @@ exports.needs = nest({
   'message.async.publish': 'first',
   'feed.html.rollup': 'first',
   'keys.sync.id': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'settings.obs.get': 'first'
 })
 
 exports.gives = nest({
@@ -22,13 +23,14 @@ exports.create = function (api) {
   function page (path) {
     if (path !== '/participating') return // "/" is a sigil for "page"
 
+    var includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
+
     var prepend = [
-      h('PageHeading', [
+      when(includeParticipating, null, h('PageHeading', [
         h('h1', [
           i18n('Participating')
         ])
-      ]),
-      api.message.html.compose({ meta: { type: 'post' }, placeholder: i18n('Write a public message') })
+      ]))
     ]
 
     var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
