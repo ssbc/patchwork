@@ -167,7 +167,8 @@ function setupContext (appName, opts, cb) {
     friends: {
       dunbar: 150,
       hops: 2 // down from 3
-    }
+    },
+    db_prefix: "patchwork",
     // connections: { // to support DHT invites
     //   incoming: {
     //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
