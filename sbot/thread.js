@@ -1,9 +1,10 @@
-var pull = require('pull-stream')
-var pullCat = require('pull-cat')
-var pullDefer = require('pull-defer')
+const pull = require('pull-stream')
+const pullCat = require('pull-cat')
+const pullDefer = require('pull-defer')
+const FilterBlocked = require('../lib/filter-blocked')
 
-var getRoot = require('../lib/get-root')
-var sort = require('ssb-sort')
+const getRoot = require('../lib/get-root')
+const sort = require('ssb-sort')
 
 exports.manifest = {
   read: 'source',
@@ -13,7 +14,7 @@ exports.manifest = {
 exports.init = function (ssb, config) {
   return { read, sorted }
 
-  function sorted ({ types, live, old, dest }) {
+  function sorted ({ types, live, old, dest, useBlocksFrom }) {
     var includeOld = old == null ? !live : old
     var includeLive = live == null ? !old : live
     var streams = []
@@ -50,6 +51,9 @@ exports.init = function (ssb, config) {
         }
         var type = msg.value.content.type
         return !types || types.includes(type)
+      }),
+      FilterBlocked([ssb.id].concat(useBlocksFrom), {
+        isBlocking: ssb.friends.isBlocking
       })
     )
   }

@@ -169,6 +169,7 @@ exports.create = function (api) {
           live: true,
           old: true,
           dest: rootMessage.key,
+          useBlocksFrom: rootMessage.value.author,
           types: ['post', 'about']
         })),
         pull.drain(msg => {
