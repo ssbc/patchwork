@@ -38,7 +38,7 @@ exports.init = function (ssb, config) {
         }),
 
         pull.asyncMap((item, cb) => {
-          if (onlyStarted) return cb(null, item)
+          if (onlyStarted || isParticipant(item, ssb.id)) return cb(null, item)
 
           var root = item.root || item
           threadSummary(root.key, {
@@ -47,8 +47,7 @@ exports.init = function (ssb, config) {
             bumpFilter
           }, (err, summary) => {
             if (err) return cb(err)
-            item = extend(item, summary)
-            if (isParticipant(item, ssb.id)) {
+            if (isParticipant(summary, ssb.id)) {
               cb(null, item)
             } else {
               cb()
