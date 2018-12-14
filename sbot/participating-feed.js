@@ -26,7 +26,7 @@ exports.init = function (ssb, config) {
         ssb.createFeedStream({ live: true, old: false }),
         pull.filter((msg) => {
           // only bump for self if this is original posting
-          return !msg.value.author === ssb.id || !getRoot(msg)
+          return msg.value.author !== ssb.id || !getRoot(msg)
         }),
         pull.filter(bumpFilter),
         LookupRoots({ ssb, cache }),
@@ -127,7 +127,7 @@ exports.init = function (ssb, config) {
 }
 
 function isParticipant (msg, author) {
-  if (msg.rootBump && msg.rootBump.author === author) return true
+  if (msg.value && msg.value.author === author) return true
   if (msg.bumps && msg.bumps.some(bump => bump.author === author)) return true
 }
 
