@@ -47,7 +47,8 @@ exports.init = function (ssb, config) {
             bumpFilter
           }, (err, summary) => {
             if (err) return cb(err)
-            if (isParticipant(summary, ssb.id)) {
+            item = extend(item, summary)
+            if (isParticipant(item, ssb.id)) {
               cb(null, item)
             } else {
               cb()
