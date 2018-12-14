@@ -50,7 +50,7 @@ module.exports = function (config) {
   var id = api.keys.sync.id()
   var latestUpdate = LatestUpdate()
   var subscribedChannels = api.channel.obs.subscribed(id)
-  var includeParticipating = api.settings.obs.get('patchwork.includeParticipating', true)
+  var includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
 
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
