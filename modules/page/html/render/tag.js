@@ -102,7 +102,9 @@ exports.create = function (api) {
               map(taggedMessages, msg => {
                 return computed(msg, msg => {
                   if (msg && !msg.value.missing) {
-                    return h('FeedEvent', api.message.html.render(msg))
+                    return h('FeedEvent', api.message.html.render(msg, {
+                      outOfContext: true
+                    }))
                   }
                 })
               }, { maxTime: 5 })
