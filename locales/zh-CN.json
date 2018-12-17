@@ -54,7 +54,7 @@
 	"Downloading new messages": "下载新消息中",
 	"Indexing database": "数据库索引中",
 	"Scuttling...": "Scuttling...",
-	"word, @key, #channel": "短语, @, #频道",
+	"word, @key, #channel": "短语, @key, #频道",
 	"Profile": "个人信息",
 	"Mentions": "引用",
 	" has been released.": " 已发布.",
@@ -256,5 +256,24 @@
 	"Error": "错误",
 	"An error occurred while attempting to redeem invite.": "尝试使用邀请时发生错误.",
 	"Save": "保存",
-	"Redeeming...": "使用中..."
+	"Redeeming...": "使用中...",
+	"Applied Tags": "被贴标签",
+	"View Taggers": "看贴标签者",
+	" Taggers": " 贴标签者",
+	"Back": "返回",
+	"Only visible to you and %s people that have been mentioned": {
+		"one": "仅可见于你和 %s 被引用的人",
+		"other": "仅可见于你和 %s 被引用的人"
+	},
+	"Only visible to you and %s other thread participants": {
+		"one": "仅可见于你和 %s 其他参与此楼者",
+		"other": "仅可见于你和 %s 其他参与此楼者"
+	},
+	"Clear Draft": "清除草稿",
+	"Participating": "参与的楼",
+	"All Threads": "所有楼",
+	"Threads Started By You": "楼主是你",
+	"Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "搜索短语, @feedId, #频道 或者 %msgId\n你也可以加作者:@id 或者 is:private 以更多的筛选",
+	"Browse Recently Active": "浏览最近活跃",
+	"Write a public reply in sub-thread (fork)": "写公共回复在子楼 (fork)"
 }
