@@ -294,6 +294,8 @@ function checkBump (msg, { id }) {
       }
     } else if (type === 'about') {
       return 'update'
+    } else if (type === 'contact') {
+      return 'post'
     }
   }
 }
