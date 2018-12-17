@@ -1,7 +1,7 @@
 'use strict'
 
 var nest = require('depnest')
-var { Value, computed } = require('mutant')
+var { computed } = require('mutant')
 var MutantPullDict = require('../../lib/mutant-pull-dict')
 
 exports.needs = nest({
@@ -15,13 +15,6 @@ exports.gives = nest({
 exports.create = function (api) {
   var cache = {}
   var reverseCache = {}
-
-  window.contacts = {
-    cache,
-    reverseCache
-  }
-
-  var sync = Value(false)
 
   return nest('contact.obs', {
     following: (key) => matchingValueKeys(hops(key), 1),
