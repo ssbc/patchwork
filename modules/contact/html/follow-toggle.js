@@ -20,28 +20,19 @@ exports.create = function (api) {
   return nest('contact.html.followToggle', function (id, opts) {
     var yourId = api.keys.sync.id()
 
-    var yourFollows = api.contact.obs.following(yourId)
-    var rawFollowers = api.contact.obs.followers(id)
-    var rawFollowing = api.contact.obs.following(id)
+    var yourFollowers = api.contact.obs.followers(yourId)
+    var yourFollowing = api.contact.obs.following(yourId)
 
-    var friends = computed([rawFollowing, rawFollowers], (following, followers) => {
-      return Array.from(following).filter(follow => followers.includes(follow))
+    var followsYou = computed([yourFollowers], function (followsYou) {
+      return followsYou.includes(id)
     })
 
-    var following = computed([rawFollowing, friends], (following, friends) => {
-      return Array.from(following).filter(follow => !friends.includes(follow))
-    })
-
-    var isFriends = computed([friends], function (friends) {
-      return friends.includes(yourId)
-    })
-
-    var followsYou = computed([following], function (followsYou) {
-      return followsYou.includes(yourId)
-    })
-
-    var youFollow = computed([yourFollows], function (youFollow) {
+    var youFollow = computed([yourFollowing], function (youFollow) {
       return youFollow.includes(id)
+    })
+
+    var isFriends = computed([followsYou, youFollow], function (a, b) {
+      return a && b
     })
 
     var blockers = api.contact.obs.blockers(id)

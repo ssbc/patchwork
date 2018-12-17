@@ -3,6 +3,9 @@ ToggleButton {
   background: #2d2c2c
   border: 0
   color: #ccc
+  :hover {
+    color: white
+  }
   -unblocking {
     color: white
   }
