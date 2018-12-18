@@ -166,7 +166,8 @@ exports.create = function (api) {
             )]),
             h('p', i18n('No new messages will be downloaded. Existing messages will be hidden.'))
           ])
-        ], when(contact.notFollowing, [
+        ]),
+        when(contact.notFollowing, [
           when(contact.blockingFriendsCount, h('section -blockWarning', [
             h('a', {
               href: '#',
@@ -213,7 +214,7 @@ exports.create = function (api) {
               )
             )
           )
-        ])),
+        ]),
 
         h('section -description', [
           computed(description, (text) => {
