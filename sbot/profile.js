@@ -33,19 +33,23 @@ exports.init = function (ssb, config) {
   setTimeout(updateLoop, 5e3)
   setTimeout(watchRecent, 10e3)
 
-  pull(
-    ssb.friends.hopStream({ live: true, old: true }),
-    pull.drain(hops => {
-      Object.keys(hops).forEach(key => {
-        if (hops[key] === 0 || hops[key] === 1) {
-          following.add(key)
-          updateQueue.add(key)
-        } else {
-          following.delete(key)
-        }
+  setTimeout(() => {
+    // use the public friend statuses for suggestions (not private)
+    // so that we can find friends that we can still find ignored friends (privately blocked)
+    pull(
+      ssb.patchwork.contacts.statusStream({ live: true, feedId: ssb.id }),
+      pull.drain(statuses => {
+        Object.keys(statuses).forEach(key => {
+          if (statuses[key] === true) {
+            following.add(key)
+            updateQueue.add(key)
+          } else {
+            following.delete(key)
+          }
+        })
       })
-    })
-  )
+    )
+  }, 5)
 
   pull(
     ssb.backlinks.read({

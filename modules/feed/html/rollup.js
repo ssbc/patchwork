@@ -1,5 +1,5 @@
 var nest = require('depnest')
-var { Value, Proxy, Array: MutantArray, h, computed, when, throttle } = require('mutant')
+var { Value, Proxy, Array: MutantArray, h, computed, when, throttle, isObservable, resolve } = require('mutant')
 var pull = require('pull-stream')
 var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/scroller')
@@ -45,6 +45,7 @@ exports.create = function (api) {
   const i18nPlural = api.intl.sync.i18n_n
   return nest('feed.html.rollup', function (getStream, {
     prepend,
+    hidden = false,
     groupSummaries = true,
     compactFilter = returnFalse,
     filterRepliesIfBlockedByRootAuthor = true,
@@ -61,6 +62,7 @@ exports.create = function (api) {
     ])
 
     var abortLastFeed = null
+    var unwatchHidden = null
     var content = Value()
     var loading = Proxy(true)
     var unreadIds = new Set()
@@ -76,11 +78,22 @@ exports.create = function (api) {
         // don't activate until added to DOM
         refresh()
 
+        if (isObservable(hidden)) {
+          unwatchHidden = hidden((hidden) => {
+            refresh()
+          })
+        }
+
         // deactivate when removed from DOM
         return () => {
           if (abortLastFeed) {
             abortLastFeed()
             abortLastFeed = null
+          }
+
+          if (unwatchHidden) {
+            unwatchHidden()
+            unwatchHidden = null
           }
         }
       }]
@@ -136,7 +149,10 @@ exports.create = function (api) {
     }
 
     var result = MutantArray([
-      when(updates, updateLoader),
+      when(hidden,
+        null,
+        when(updates, updateLoader)
+      ),
       container
     ])
 
@@ -152,6 +168,11 @@ exports.create = function (api) {
     }
 
     function refresh () {
+      if (resolve(hidden)) {
+        content.set(null)
+        loading.set(false)
+        return
+      }
       if (abortLastFeed) abortLastFeed()
       updates.set(0)
       content.set(h('section.content'))

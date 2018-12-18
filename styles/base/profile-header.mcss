@@ -38,6 +38,26 @@ ProfileHeader {
       -distanceWarning {
         $distanceWarning
       }
+
+      -blocked {
+        padding: 8px
+        margin: 5px 0
+        font-size: 110%
+        a {
+          :hover {
+            text-decoration: none
+          }
+        }
+        (p) {
+          margin-bottom: 0
+        }
+        (h1) {
+          font-size: 120%
+          font-weight: bold
+          margin: 0
+        }
+      }
+
       -blockWarning {
         padding: 8px
         margin: 5px 0

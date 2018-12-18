@@ -1,18 +1,17 @@
 var nest = require('depnest')
-var { h, when, send, computed } = require('mutant')
+var electron = require('electron')
+var { h, when, computed } = require('mutant')
 
 exports.gives = nest('contact.html.followToggle')
 exports.needs = nest({
   'intl.sync.i18n': 'first',
   'keys.sync.id': 'first',
   'message.async.publish': 'first',
-  'contact.async.follow': 'first',
-  'contact.async.unfollow': 'first',
-  'contact.async.block': 'first',
-  'contact.async.unblock': 'first',
-  'contact.obs.following': 'first',
+  'sbot.async.publish': 'first',
+  'contact.obs.statuses': 'first',
   'contact.obs.followers': 'first',
-  'contact.obs.blockers': 'first'
+  'contact.obs.blockers': 'first',
+  'contact.obs.ignores': 'first'
 })
 
 exports.create = function (api) {
@@ -20,73 +19,190 @@ exports.create = function (api) {
   return nest('contact.html.followToggle', function (id, opts) {
     var yourId = api.keys.sync.id()
 
+    var statuses = api.contact.obs.statuses(yourId)
     var yourFollowers = api.contact.obs.followers(yourId)
-    var yourFollowing = api.contact.obs.following(yourId)
+    var ignores = api.contact.obs.ignores()
 
-    var followsYou = computed([yourFollowers], function (followsYou) {
-      return followsYou.includes(id)
+    var followsYou = computed([yourFollowers], function (yourFollowers) {
+      return yourFollowers.includes(id)
     })
 
-    var youFollow = computed([yourFollowing], function (youFollow) {
-      return youFollow.includes(id)
+    var youIgnore = computed([ignores], function (ignores) {
+      return !!ignores[id]
+    })
+
+    var youListening = computed([ignores], function (ignores) {
+      return ignores[id] === false
+    })
+
+    var youFollow = computed([statuses], function (statuses) {
+      return statuses[id] === true
+    })
+
+    var youBlock = computed([statuses], function (statuses) {
+      return statuses[id] === false
     })
 
     var isFriends = computed([followsYou, youFollow], function (a, b) {
       return a && b
     })
 
-    var blockers = api.contact.obs.blockers(id)
-    var youBlock = computed(blockers, function (blockers) {
-      return blockers.includes(yourId)
-    })
+    var ignoreText = when(youIgnore, ' ' + i18n('(ignored)'))
+    var listeningText = when(youListening, ' ' + i18n('(listening)'))
 
     var showBlockButton = computed([opts && opts.block], (block) => block !== false)
 
     if (id !== yourId) {
-      return when(youBlock, [
-        h('a.ToggleButton.-unblocking', {
-          'href': '#',
-          'title': i18n('Click to unblock'),
-          'ev-click': send(unblock, id)
-        }, i18n('Blocked'))
-      ], [
-        when(youFollow,
-          h('a.ToggleButton.-unsubscribe', {
+      return [
+        when(youBlock, [
+          h('a ToggleButton -unblocking', {
             'href': '#',
-            'title': i18n('Click to unfollow'),
-            'ev-click': send(api.contact.async.unfollow, id)
-          }, when(isFriends, i18n('Friends'), i18n('Following'))),
-          h('a.ToggleButton.-subscribe', {
-            'href': '#',
-            'ev-click': send(api.contact.async.follow, id)
-          }, when(followsYou, i18n('Follow Back'), i18n('Follow')))
-        ),
-        when(showBlockButton, h('a.ToggleButton.-blocking', {
+            'title': i18n('Click to unblock'),
+            'ev-click': () => setStatus(id, null, { statuses, ignores })
+          }, [i18n('Blocked'), listeningText])
+        ], [
+          when(youFollow,
+            h('a ToggleButton -unsubscribe', {
+              'href': '#',
+              'title': i18n('Click to unfollow'),
+              'ev-click': () => setStatus(id, null, { statuses, ignores })
+            }, [when(isFriends, i18n('Friends'), i18n('Following')), ignoreText]),
+            h('a ToggleButton -subscribe', {
+              'href': '#',
+              'ev-click': () => setStatus(id, true, { statuses, ignores })
+            }, [when(followsYou, i18n('Follow Back'), i18n('Follow')), ignoreText])
+          )
+        ]),
+        when(showBlockButton, h('a ToggleButton -drop -options', {
           'href': '#',
-          'title': i18n('Click to block syncing with this person and hide their posts'),
-          'ev-click': send(block, id)
-        }, i18n('Block')))
-      ])
+          'title': i18n('Click for options to block syncing with this person and/or hide their posts'),
+          'ev-click': (ev) => popupContactMenu(ev.currentTarget, id, { statuses, ignores })
+        }, i18n('Options')))
+      ]
     } else {
       return []
     }
   })
 
-  function block (id) {
-    // displays message confirm
-    api.message.async.publish({
-      type: 'contact',
-      contact: id,
-      blocking: true
+  function popupContactMenu (element, id, { statuses, ignores }) {
+    var rects = element.getBoundingClientRect()
+    var status = statuses()[id]
+    var ignoring = ignores()[id]
+
+    // the actual listening state (use the explicit ignore if available, otherwise depends if blocking)
+    var resolvedIgnoring = ignoring != null
+      ? ignoring
+      : status === false
+
+    electron.remote.getCurrentWindow().webContents.getZoomFactor((factor) => {
+      var menu = electron.remote.Menu.buildFromTemplate([
+        { type: 'radio',
+          label: 'Neutral',
+          checked: status == null,
+          click: () => setStatus(id, null, { statuses, ignores })
+        },
+        { type: 'radio',
+          label: 'Follow',
+          checked: status === true,
+          click: () => setStatus(id, true, { statuses, ignores })
+        },
+        { type: 'radio',
+          label: 'Block',
+          checked: status === false,
+          click: () => setStatus(id, false, { statuses, ignores })
+        },
+        { type: 'separator' },
+        { type: 'radio',
+          label: 'Listen',
+          checked: !resolvedIgnoring,
+          click: () => setIgnore(id, false, { statuses, ignores })
+        },
+        { type: 'radio',
+          label: 'Ignore',
+          checked: resolvedIgnoring,
+          click: () => setIgnore(id, true, { statuses, ignores })
+        }
+      ])
+      menu.popup({
+        window: electron.remote.getCurrentWindow(),
+        x: Math.round(rects.left * factor),
+        y: Math.round(rects.bottom * factor) + 4
+      })
     })
   }
 
-  function unblock (id) {
-    // displays message confirm
-    api.message.async.publish({
-      type: 'contact',
-      contact: id,
-      blocking: false
-    })
+  function setStatus (id, status, { statuses, ignores }) {
+    var currentStatus = statuses()[id]
+    var currentIgnoring = ignores()[id]
+
+    if (!looseMatch(status, currentStatus)) {
+      var message = {
+        type: 'contact',
+        contact: id
+      }
+
+      if (status === true) { // FOLLOW
+        message.following = true
+      } else if (status === false) { // BLOCK
+        message.blocking = true
+      } else if (currentStatus === true) { // UNFOLLOW
+        message.following = false
+      } else if (currentStatus === false) { // UNBLOCK
+        message.blocking = false
+      }
+
+      api.message.async.publish(message, (err) => {
+        if (!err && currentIgnoring && status !== false) {
+          // if we are currently ignoring (private blocking)
+          // renew the action for ssb-friends compatibility
+          // unless this is a block action
+          api.sbot.async.publish({
+            recps: [api.keys.sync.id()],
+            type: 'contact',
+            contact: id,
+            blocking: true
+          })
+        }
+      })
+    }
   }
+
+  function setIgnore (id, ignoring, { statuses, ignores }) {
+    var currentStatus = statuses()[id]
+    var currentIgnoring = ignores()[id]
+    var yourId = api.keys.sync.id()
+
+    if (!looseMatch(ignoring, currentIgnoring)) {
+      if (ignoring === false && currentStatus === false) {
+        // user is publicly blocking, but wants to still see this feed
+        api.sbot.async.publish({
+          recps: [yourId],
+          type: 'contact',
+          blocking: false,
+          following: false,
+          contact: id
+        })
+      } else if (ignoring === true) {
+        // user wants to ignore (privately block) this feed
+        api.sbot.async.publish({
+          recps: [yourId],
+          type: 'contact',
+          blocking: true,
+          contact: id
+        })
+      } else {
+        // user wants to stop ignoring this feed (remove ignore)
+        api.sbot.async.publish({
+          recps: [yourId],
+          type: 'contact',
+          contact: id,
+          following: currentStatus === true
+        })
+      }
+    }
+  }
+}
+
+function looseMatch (a, b) {
+  return a === b || (a == null && b == null)
 }

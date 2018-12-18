@@ -6,7 +6,9 @@ exports.needs = nest({
   'contact.obs': {
     followers: 'first',
     following: 'first',
-    blockers: 'first'
+    blockers: 'first',
+    blocking: 'first',
+    ignores: 'first'
   }
 })
 
@@ -17,14 +19,28 @@ exports.create = function (api) {
     var yourId = api.keys.sync.id()
     var yourFollowing = api.contact.obs.following(yourId)
     var yourFollowers = api.contact.obs.followers(yourId)
+    var yourBlocking = api.contact.obs.blocking(yourId)
 
     var followers = api.contact.obs.followers(id)
     var following = api.contact.obs.following(id)
+
     var sync = computed([followers.sync, following.sync, yourFollowing.sync, yourFollowers.sync], (...x) => x.every(Boolean))
 
     var blockers = api.contact.obs.blockers(id)
-    var youBlock = computed(blockers, function (blockers) {
-      return blockers.includes(yourId)
+    var ignores = api.contact.obs.ignores()
+
+    // allow override of block status if explicit ignore state set
+    var youBlock = computed([yourBlocking], function (yourBlocking) {
+      return yourBlocking.includes(id)
+    })
+
+    var hidden = computed([blockers, ignores], function (blockers, ignores) {
+      return ignores[id] == null ? blockers.includes(yourId) : ignores[id]
+    })
+
+    // allow override of block status if explicit ignore state set
+    var youIgnore = computed([blockers, ignores], function (blockers, ignores) {
+      return ignores[id] === true
     })
 
     var youFollow = computed([yourFollowing], function (yourFollowing) {
@@ -79,6 +95,8 @@ exports.create = function (api) {
       yourFriends,
       youFollow,
       youBlock,
+      youIgnore,
+      hidden,
       isYou,
       notFollowing: not(youFollow, isYou),
       sync

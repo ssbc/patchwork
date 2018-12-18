@@ -2,6 +2,11 @@ ToggleButton {
   color: white
   background-color: #848484
   border: none
+  -drop {
+    :after {
+      background-color: #656565
+    }
+  }
   -blocking {
     border: 0px
   }

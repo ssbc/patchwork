@@ -14,6 +14,16 @@ ToggleButton {
       color: white
     }
   }
+  -drop {
+    :after {
+      -webkit-mask-box-image: svg(dropArrow)
+      width: 10px;
+      height: 6px;
+      display: inline-block;
+      content: ' ';
+      margin-left: 3px;
+    }    
+  }
   -unsubscribe {
     background-repeat: no-repeat
     background-position: right
@@ -24,6 +34,14 @@ ToggleButton {
       color: white
     }
   }
+  
+  -options {
+    margin-left: 5px
+    :hover {
+      background-color: #bd881c
+    }
+  }
+
   -blocking {
     margin-left: 5px
     :hover {
@@ -33,7 +51,7 @@ ToggleButton {
   -unblocking {
     margin-left: 5px
     :hover {
-      background-color: rgb(212, 167, 112)
+      background-color: #bd6363
     }
   }
   -disabled {
@@ -48,5 +66,13 @@ ToggleButton {
   @svg subscribed {
     width: 20px
     height: 12px
+  }
+  @svg dropArrow {
+    width: 12px
+    height: 6px
+    content: "<path d='M2,0 L10,0 L6,6 Z' />"
+    path {
+      fill: #888
+    }
   }
 }

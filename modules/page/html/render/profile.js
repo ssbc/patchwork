@@ -149,16 +149,24 @@ exports.create = function (api) {
           h('div.meta', [
             when(id === yourId, [
               h('button', { 'ev-click': api.profile.sheet.edit }, i18n('Edit Your Profile'))
-            ], [
-              api.contact.html.followToggle(id)
-            ])
+            ], api.contact.html.followToggle(id))
           ])
         ]),
         h('section -publicKey', [
           h('pre', { title: i18n('Public key for this profile') }, id)
         ]),
 
-        when(contact.notFollowing, [
+        when(contact.hidden, [
+          h('section -blocked', {
+            classList: [when(contact.youBlock, null, '-ignore')]
+          }, [
+            h('h1', [when(contact.youBlock,
+              ['⛔️ ', i18n('You have chosen to publicly block this person.')],
+              ['👤 ', i18n('You have chosen to privately ignore this person.')]
+            )]),
+            h('p', i18n('No new messages will be downloaded. Existing messages will be hidden.'))
+          ])
+        ], when(contact.notFollowing, [
           when(contact.blockingFriendsCount, h('section -blockWarning', [
             h('a', {
               href: '#',
@@ -205,7 +213,7 @@ exports.create = function (api) {
               )
             )
           )
-        ]),
+        ])),
 
         h('section -description', [
           computed(description, (text) => {
@@ -224,6 +232,7 @@ exports.create = function (api) {
 
     var feedView = api.feed.html.rollup(getStream, {
       prepend,
+      hidden: contact.hidden,
       compactFilter: (msg) => msg.value.author !== id, // show root context messages smaller
       ungroupFilter: (msg) => msg.value.author !== id,
       updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.profile.latest({ id }))
@@ -246,9 +255,6 @@ exports.create = function (api) {
         )
       ])
     ])
-
-    // refresh feed (to hide all posts) when blocked
-    contact.youBlock(feedView.reload)
 
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload

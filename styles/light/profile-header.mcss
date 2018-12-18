@@ -20,6 +20,11 @@ ProfileHeader {
           background: white
         }
       }
+      -blocked {
+        border: 1px solid #ffc965
+        background: #ffebcc
+        color: #8a6800
+      }
       -blockWarning {
         border: 1px solid #ffc965
         background: #ffebcc

@@ -14,6 +14,12 @@ ToggleButton {
       background-image: svg(subscribed-hover)
     }
   }
+  -drop {
+    :after {
+      border-color: #6e6d6d
+      background-color: #ccc
+    }
+  }
   @svg subscribed {
     content: "<circle cx='6' stroke='#ccc' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#ccc'/>"
   }
