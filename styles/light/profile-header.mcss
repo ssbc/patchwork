@@ -21,9 +21,14 @@ ProfileHeader {
         }
       }
       -blocked {
-        border: 1px solid #ffc965
-        background: #ffebcc
-        color: #8a6800
+        border: 1px solid #ff6565;
+        background: #ffcccc;
+        color: #8a0000;
+      }
+      -ignore {
+        border: 1px solid #9965ff;
+        background: #daccff;
+        color: #4b008a;
       }
       -blockWarning {
         border: 1px solid #ffc965

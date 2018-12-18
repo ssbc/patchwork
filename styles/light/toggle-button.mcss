@@ -4,7 +4,10 @@ ToggleButton {
   border: none
   -drop {
     :after {
-      background-color: #656565
+      background-color: #EEE
+    }
+    :hover {
+      color: white
     }
   }
   -blocking {
