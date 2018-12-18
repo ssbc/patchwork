@@ -87,6 +87,17 @@ Message {
         :hover {
           background: #e26ba4
         }
+        -liked {
+          color: #c1005e;
+          background: #ffe4f1;
+          :before {
+            color: #ff2f92
+          }
+          :hover {
+            background: #606060;
+            color: white;
+          }
+        }
       }
       a.unlike {
         :hover {

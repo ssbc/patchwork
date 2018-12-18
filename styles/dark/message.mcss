@@ -110,6 +110,16 @@ Message {
         :hover {
           background: #ff2f92
         }
+        -liked {
+          color: #e89bc0;
+          background: #67344c;
+          :before {
+            color: #ff2f92
+          }
+          :hover {
+            background: #2c0317
+          }
+        }
       }
       a.tag {
         :before {

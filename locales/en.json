@@ -291,5 +291,6 @@
 	"An error occurred while publishing your message.": "An error occurred while publishing your message.",
 	"An error occurred while attempting to redeem invite.": "An error occurred while attempting to redeem invite.",
 	"Notification Options": "Notification Options",
-	"Include \"Participating\" tab in navigation bar": "Include \"Participating\" tab in navigation bar"
+	"Click to unlike": "Click to unlike",
+	"Liked": "Liked",
 }

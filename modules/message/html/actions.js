@@ -22,10 +22,11 @@ exports.create = (api) => {
 
     return [
       when(liked,
-        h('a.unlike', {
+        h('a.like -liked', {
           href: '#',
+          title: i18n('Click to unlike'),
           'ev-click': () => publishLike(msg, false)
-        }, i18n('Unlike')),
+        }, i18n('Liked')),
         h('a.like', {
           href: '#',
           'ev-click': () => publishLike(msg, true)
@@ -62,10 +63,6 @@ exports.create = (api) => {
     }
     api.sbot.async.publish(like)
   }
-}
-
-function doesLike (likes, userId) {
-  return likes.includes(userId)
 }
 
 function handleEvent (ev) {

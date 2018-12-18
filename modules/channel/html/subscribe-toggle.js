@@ -20,7 +20,7 @@ exports.create = function (api) {
         'href': '#',
         'title': i18n('Click to unsubscribe'),
         'ev-click': send(unsubscribe, channel)
-      }, i18n('Unsubscribe')),
+      }, i18n('Subscribed')),
       h('a.ToggleButton.-subscribe', {
         'href': '#',
         'ev-click': send(subscribe, channel)
