@@ -21,7 +21,7 @@ var quitting = false
 
 /**
  * It's not possible to run two instances of patchwork as it would create two
- * scuttlebot instances that conflict on the same port. Before opening patchwork,
+ * ssb-server instances that conflict on the same port. Before opening patchwork,
  * we check if it's already running and if it is we focus the existing window
  * rather than opening a new instance.
  */

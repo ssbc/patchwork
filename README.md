@@ -46,7 +46,7 @@ It's better than Twitter and Facebook because:
 
 In order to gossip outside your local network, you'll need to connect to a [Pub](https://www.scuttlebutt.nz/concepts/pub.html).
 
-You can find an invite to an available pub at the [Pub servers registry](https://github.com/ssbc/scuttlebot/wiki/Pub-Servers).
+You can find an invite to an available pub at the [Pub servers registry](https://github.com/ssbc/ssb-server/wiki/Pub-Servers).
 
 Get an invite, then in `patchwork`: click "+ Join Pub" and paste the invite code.
 
@@ -101,4 +101,3 @@ Please read the [Patchwork Contribution Guidelines](contributing.md) before open
 ## Docs
 
 - [scuttlebutt.nz](https://www.scuttlebutt.nz)
-- [scuttlebot.io](https://scuttlebot.io)
