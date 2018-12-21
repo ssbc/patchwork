@@ -126,8 +126,8 @@ exports.init = function (ssb, config) {
       pull(
         ssb.messagesByType({ type: 'pub', live: true, keys: false }),
         pull.drain(function (value) {
-          if (value.sync && config.gossip && config.gossip.purge) {
-            // clean up pubs announced by peers more than 2 hops away if `--gossip.purge=true`
+          if (value.sync && config.gossip && config.gossip.prune) {
+            // clean up pubs announced by peers more than 2 hops away if `--gossip.prune=true`
             ssb.gossip.peers().slice().forEach(peer => {
               if (!discovered.has(peer.key)) {
                 ssb.gossip.remove(peer, 'pub')
