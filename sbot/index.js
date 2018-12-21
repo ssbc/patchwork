@@ -6,7 +6,6 @@ var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
 var pull = require('pull-stream')
 var pCont = require('pull-cont/source')
-var Paramap = require('pull-paramap')
 
 var plugins = {
   likes: require('./likes'),
@@ -156,13 +155,12 @@ exports.init = function (ssb, config) {
     patchwork.contacts.replicateStream({ live: true }),
     pull.drain(state => {
       for (var feedId in state) {
-        ssb.replicate.request(feedId, state[feedId] === true)
+        // track replicating for use by pub announcement filtering
+        if (state[feedId] === true) replicating.add(feedId)
+        else replicating.delete(feedId)
 
-        if (state[feedId] === true) {
-          replicating.add(feedId)
-        } else {
-          replicating.delete(feedId)
-        }
+        // request (or unrequest) the feed
+        ssb.replicate.request(feedId, state[feedId] === true)
 
         // if blocking and a pub, drop connection and remove from peer table
         if (state[feedId] === false) {

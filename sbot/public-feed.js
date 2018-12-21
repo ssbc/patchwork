@@ -10,6 +10,7 @@ const ResolveAbouts = require('../lib/resolve-abouts')
 const Paramap = require('pull-paramap')
 const getRoot = require('../lib/get-root')
 const FilterBlocked = require('../lib/filter-blocked')
+const PullCont = require('pull-cont/source')
 
 exports.manifest = {
   latest: 'source',
@@ -55,73 +56,78 @@ exports.init = function (ssb, config) {
         opts[reverse ? 'lt' : 'gt'] = resume
       }
 
-      return pullResume.source(ssb.createFeedStream(opts), {
-        limit,
-        getResume: (item) => {
-          return item && item.rts
-        },
-        filterMap: pull(
-          ApplyFilterResult({ ssb }),
-          pull.filter(msg => !!msg.filterResult),
+      return PullCont(cb => {
+        // wait until contacts have resolved before reading
+        ssb.patchwork.contacts.raw.get(() => {
+          cb(null, pullResume.source(ssb.createFeedStream(opts), {
+            limit,
+            getResume: (item) => {
+              return item && item.rts
+            },
+            filterMap: pull(
+              ApplyFilterResult({ ssb }),
+              pull.filter(msg => !!msg.filterResult),
 
-          LookupRoots({ ssb, cache }),
+              LookupRoots({ ssb, cache }),
 
-          FilterPrivateRoots(),
+              FilterPrivateRoots(),
 
-          FilterBlocked([ssb.id], {
-            isBlocking: ssb.patchwork.contacts.isBlocking,
-            useRootAuthorBlocks: true,
-            checkRoot: true
-          }),
+              FilterBlocked([ssb.id], {
+                isBlocking: ssb.patchwork.contacts.isBlocking,
+                useRootAuthorBlocks: true,
+                checkRoot: true
+              }),
 
-          ApplyRootFilterResult({ ssb }),
+              ApplyRootFilterResult({ ssb }),
 
-          // FILTER ROOTS
-          pull.filter(item => {
-            var root = item.root || item
-            if (!included.has(root.key) && root && root.value && root.filterResult) {
-              if (root.filterResult.forced) {
-                // force include the root when a reply has matching tags or the author is you
-                included.add(root.key)
-                return true
-              } else if (!seen.has(root.key)) {
-                seen.add(root.key)
-                if (shouldShow(root.filterResult)) {
-                  included.add(root.key)
-                  return true
+              // FILTER ROOTS
+              pull.filter(item => {
+                var root = item.root || item
+                if (!included.has(root.key) && root && root.value && root.filterResult) {
+                  if (root.filterResult.forced) {
+                    // force include the root when a reply has matching tags or the author is you
+                    included.add(root.key)
+                    return true
+                  } else if (!seen.has(root.key)) {
+                    seen.add(root.key)
+                    if (shouldShow(root.filterResult)) {
+                      included.add(root.key)
+                      return true
+                    }
+                  }
                 }
-              }
-            }
-          }),
+              }),
 
-          // MAP ROOT ITEMS
-          pull.map(item => {
-            var root = item.root || item
-            return root
-          }),
+              // MAP ROOT ITEMS
+              pull.map(item => {
+                var root = item.root || item
+                return root
+              }),
 
-          // RESOLVE ROOTS WITH ABOUTS
-          ResolveAbouts({ ssb }),
+              // RESOLVE ROOTS WITH ABOUTS
+              ResolveAbouts({ ssb }),
 
-          // ADD THREAD SUMMARY
-          Paramap((item, cb) => {
-            threadSummary(item.key, {
-              pullFilter: pull(
-                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.patchwork.contacts.isBlocking }),
-                ApplyFilterResult({ ssb })
-              ),
-              recentLimit: 3,
-              readThread: ssb.patchwork.thread.read,
-              bumpFilter: bumpFilter
-            }, (err, summary) => {
-              if (err) return cb(err)
-              cb(null, extend(item, summary, {
-                filterResult: undefined,
-                rootBump: bumpFilter
-              }))
-            })
-          }, 20)
-        )
+              // ADD THREAD SUMMARY
+              Paramap((item, cb) => {
+                threadSummary(item.key, {
+                  pullFilter: pull(
+                    FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.patchwork.contacts.isBlocking }),
+                    ApplyFilterResult({ ssb })
+                  ),
+                  recentLimit: 3,
+                  readThread: ssb.patchwork.thread.read,
+                  bumpFilter: bumpFilter
+                }, (err, summary) => {
+                  if (err) return cb(err)
+                  cb(null, extend(item, summary, {
+                    filterResult: undefined,
+                    rootBump: bumpFilter
+                  }))
+                })
+              }, 20)
+            )
+          }))
+        })
       })
     }
   }
