@@ -5,6 +5,7 @@ var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
 var pull = require('pull-stream')
+var pCont = require('pull-cont/source')
 
 var plugins = {
   likes: require('./likes'),
@@ -88,7 +89,7 @@ exports.init = function (ssb, config) {
   // prioritize friends for pub connections and remove blocked pubs (on startup)
   patchwork.contacts.raw.get((err, graph) => {
     if (!err) {
-      ssb.gossip.peers().forEach(function (peer) {
+      ssb.gossip.peers().forEach((peer) => {
         if (graph[ssb.id]) {
           var value = graph[ssb.id][peer.key]
           if (value === true) { // following pub
@@ -117,12 +118,55 @@ exports.init = function (ssb, config) {
   // keep replicate up to date with replicateStream (replacement for ssb-friends)
   pull(
     patchwork.contacts.replicateStream({ live: true }),
-    pull.drain(function (data) {
+    pull.drain(data => {
       for (var k in data) {
         ssb.replicate.request(k, data[k] === true)
       }
     })
   )
+
+  // update ebt with latest block info
+  pull(
+    patchwork.contacts.raw.stream({ live: true }),
+    pull.drain((data) => {
+      if (!data) return
+      for (var from in data) {
+        for (var to in data[from]) {
+          var value = data[from][to]
+          ssb.ebt.block(from, to, value === false)
+        }
+      }
+    })
+  )
+
+  // use blocks in legacy replication (adapted from ssb-friends for legacy compat)
+  ssb.createHistoryStream.hook(function (fn, args) {
+    var opts = args[0]
+    var peer = this
+    return pCont(cb => {
+      // wait till the index has loaded.
+      patchwork.contacts.raw.get((_, graph) => {
+        if (graph && opts.id !== peer.id && graph[opts.id] && graph[opts.id][peer.id] === false) {
+          cb(null, function (abort, cb) {
+            // just give them the cold shoulder
+          })
+        } else {
+          cb(null, pull(
+            fn.apply(peer, args),
+            // break off this feed if they suddenly block the recipient.
+            pull.take(function (msg) {
+              // handle when createHistoryStream is called with keys: true
+              if (!msg.content && msg.value.content) msg = msg.value
+              if (msg.content.type !== 'contact') return true
+              return !(
+                msg.content.blocking && msg.content.contact === peer.id
+              )
+            })
+          ))
+        }
+      })
+    })
+  })
 
   return patchwork
 }
