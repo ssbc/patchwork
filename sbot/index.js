@@ -6,6 +6,7 @@ var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
 var pull = require('pull-stream')
 var pCont = require('pull-cont/source')
+var Paramap = require('pull-paramap')
 
 var plugins = {
   likes: require('./likes'),
@@ -57,6 +58,7 @@ exports.init = function (ssb, config) {
   var subscriptions = Subscriptions(ssb, config)
   var search = Search(ssb, config)
   var recentFeeds = RecentFeeds(ssb, config)
+  var replicating = new Set()
 
   var patchwork = {
     heartbeat: Heartbeat(ssb, config),
@@ -89,7 +91,7 @@ exports.init = function (ssb, config) {
   // prioritize friends for pub connections and remove blocked pubs (on startup)
   patchwork.contacts.raw.get((err, graph) => {
     if (!err) {
-      ssb.gossip.peers().forEach((peer) => {
+      ssb.gossip.peers().slice().forEach((peer) => {
         if (graph[ssb.id]) {
           var value = graph[ssb.id][peer.key]
           if (value === true) { // following pub
@@ -114,13 +116,65 @@ exports.init = function (ssb, config) {
     })
   })
 
+  // manually populate peer table from {type: 'pub'} messages
+  // exclude blocked pubs, only accept broadcasts from people within 2 hops
+  // wait 10 seconds after start before doing it to ease initial load
+  // (gossip.autoPopulate is disabled in config)
+  setTimeout(() => {
+    var discovered = new Set()
+    patchwork.contacts.raw.get((err, graph) => {
+      if (err) return
+      pull(
+        ssb.messagesByType({ type: 'pub', live: true, keys: false }),
+        pull.drain(function (value) {
+          if (value.sync && config.gossip && config.gossip.purge) {
+            // clean up pubs announced by peers more than 2 hops away if `--gossip.purge=true`
+            ssb.gossip.peers().slice().forEach(peer => {
+              if (!discovered.has(peer.key)) {
+                ssb.gossip.remove(peer, 'pub')
+              }
+            })
+          }
+
+          if (!value.content) return
+          var address = value.content.address
+          if (replicating.has(value.author) && address && ref.isFeed(address.key)) {
+            var blocking = graph[ssb.id] && graph[ssb.id][address.key] === false
+            if (!blocking) {
+              discovered.add(address.key)
+              ssb.gossip.add(address, 'pub')
+            }
+          }
+        })
+      )
+    })
+  }, 10e3)
+
   // REPLICATION
   // keep replicate up to date with replicateStream (replacement for ssb-friends)
   pull(
     patchwork.contacts.replicateStream({ live: true }),
-    pull.drain(data => {
-      for (var k in data) {
-        ssb.replicate.request(k, data[k] === true)
+    pull.drain(state => {
+      for (var feedId in state) {
+        ssb.replicate.request(feedId, state[feedId] === true)
+
+        if (state[feedId] === true) {
+          replicating.add(feedId)
+        } else {
+          replicating.delete(feedId)
+        }
+
+        // if blocking and a pub, drop connection and remove from peer table
+        if (state[feedId] === false) {
+          var peer = ssb.gossip.get(feedId)
+          if (peer) {
+            if (peer.state === 'connected') {
+              ssb.gossip.disconnect(peer, () => {
+                ssb.gossip.remove(peer)
+              })
+            }
+          }
+        }
       }
     })
   )

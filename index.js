@@ -178,6 +178,10 @@ function setupContext (appName, opts, cb) {
     // }
   }, opts))
 
+  // disable gossip auto-population from {type: 'pub'} messages as we handle this manually in sbot/index.js
+  if (!ssbConfig.gossip) ssbConfig.gossip = {}
+  ssbConfig.gossip.autoPopulate = false
+
   ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
 
   const keys = ssbConfig.keys
