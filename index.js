@@ -164,7 +164,7 @@ function setupContext (appName, opts, cb) {
   ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
     blobsPort: 8989, // matches ssb-ws
-    friends: {
+    friends: { // not using ssb-friends (sbot/contacts fixes hops at 2, so this setting won't do anything)
       dunbar: 150,
       hops: 2 // down from 3
     }

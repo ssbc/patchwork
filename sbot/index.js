@@ -4,6 +4,7 @@ var Progress = require('./progress')
 var Search = require('./search')
 var RecentFeeds = require('./recent-feeds')
 var LiveBacklinks = require('./live-backlinks')
+var pull = require('pull-stream')
 
 var plugins = {
   likes: require('./likes'),
@@ -56,18 +57,7 @@ exports.init = function (ssb, config) {
   var search = Search(ssb, config)
   var recentFeeds = RecentFeeds(ssb, config)
 
-  // prioritize pubs that we actually follow
-  ssb.friends.hops({ id: ssb.id, max: 1 }, (err, hops) => {
-    if (!err) {
-      ssb.gossip.peers().forEach(function (peer) {
-        if (hops[peer.key] >= 0 && hops[peer.key] < 2) {
-          ssb.gossip.add(peer, 'friends')
-        }
-      })
-    }
-  })
-
-  var result = {
+  var patchwork = {
     heartbeat: Heartbeat(ssb, config),
     subscriptions: subscriptions.stream,
     progress: progress.stream,
@@ -91,8 +81,48 @@ exports.init = function (ssb, config) {
   }
 
   for (var key in plugins) {
-    result[key] = plugins[key].init(ssb, config)
+    patchwork[key] = plugins[key].init(ssb, config)
   }
 
-  return result
+  // CONNECTIONS
+  // prioritize friends for pub connections and remove blocked pubs (on startup)
+  patchwork.contacts.raw.get((err, graph) => {
+    if (!err) {
+      ssb.gossip.peers().forEach(function (peer) {
+        if (graph[ssb.id]) {
+          var value = graph[ssb.id][peer.key]
+          if (value === true) { // following pub
+            ssb.gossip.add(peer, 'friends')
+          } else if (value === false) { // blocked pub
+            ssb.gossip.remove(peer.key)
+          }
+        }
+      })
+    }
+  })
+
+  // refuse connections from blocked peers
+  ssb.auth.hook(function (fn, args) {
+    var self = this
+    patchwork.contacts.isBlocking({ source: ssb.id, dest: args[0] }, function (_, blocked) {
+      if (blocked) {
+        args[1](new Error('Client is blocked'))
+      } else {
+        fn.apply(self, args)
+      }
+    })
+  })
+
+  // REPLICATION
+  // keep replicate up to date with replicateStream (replacement for ssb-friends)
+  pull(
+    patchwork.contacts.replicateStream({ live: true }),
+    pull.drain(function (data) {
+      for (var k in data) {
+        ssb.replicate.request(k, data[k] === true)
+      }
+    })
+  )
+
+  return patchwork
 }

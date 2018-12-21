@@ -33,7 +33,7 @@ exports.init = function (ssb, config) {
 
         FilterPrivateRoots(),
         FilterBlocked([ssb.id], {
-          isBlocking: ssb.friends.isBlocking,
+          isBlocking: ssb.patchwork.contacts.isBlocking,
           useRootAuthorBlocks: true,
           checkRoot: true
         }),
@@ -69,7 +69,7 @@ exports.init = function (ssb, config) {
           FilterPrivateRoots(),
 
           FilterBlocked([ssb.id], {
-            isBlocking: ssb.friends.isBlocking,
+            isBlocking: ssb.patchwork.contacts.isBlocking,
             useRootAuthorBlocks: true,
             checkRoot: true
           }),
@@ -107,7 +107,7 @@ exports.init = function (ssb, config) {
           Paramap((item, cb) => {
             threadSummary(item.key, {
               pullFilter: pull(
-                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
+                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.patchwork.contacts.isBlocking }),
                 ApplyFilterResult({ ssb })
               ),
               recentLimit: 3,
@@ -166,7 +166,7 @@ function ApplyFilterResult ({ ssb }) {
 }
 
 function getFilterResult (msg, { ssb }, cb) {
-  ssb.friends.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, following) => {
+  ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, following) => {
     if (err) return cb(err)
     ssb.patchwork.subscriptions2.get({ id: ssb.id }, (err, subscriptions) => {
       if (err) return cb(err)

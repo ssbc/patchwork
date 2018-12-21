@@ -8,7 +8,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'message.async.publish': 'first',
   'sbot.async.publish': 'first',
-  'contact.obs.statuses': 'first',
+  'contact.obs.states': 'first',
   'contact.obs.followers': 'first',
   'contact.obs.blockers': 'first',
   'contact.obs.ignores': 'first'
@@ -19,7 +19,7 @@ exports.create = function (api) {
   return nest('contact.html.followToggle', function (id, opts) {
     var yourId = api.keys.sync.id()
 
-    var statuses = api.contact.obs.statuses(yourId)
+    var states = api.contact.obs.states(yourId)
     var yourFollowers = api.contact.obs.followers(yourId)
     var ignores = api.contact.obs.ignores()
 
@@ -35,12 +35,12 @@ exports.create = function (api) {
       return ignores[id] === false
     })
 
-    var youFollow = computed([statuses], function (statuses) {
-      return statuses[id] === true
+    var youFollow = computed([states], function (states) {
+      return states[id] === true
     })
 
-    var youBlock = computed([statuses], function (statuses) {
-      return statuses[id] === false
+    var youBlock = computed([states], function (states) {
+      return states[id] === false
     })
 
     var isFriends = computed([followsYou, youFollow], function (a, b) {
@@ -58,25 +58,25 @@ exports.create = function (api) {
           h('a ToggleButton -unblocking', {
             'href': '#',
             'title': i18n('Click to unblock'),
-            'ev-click': () => setStatus(id, null, { statuses, ignores })
+            'ev-click': () => setStatus(id, null, { states, ignores })
           }, [i18n('Blocked'), listeningText])
         ], [
           when(youFollow,
             h('a ToggleButton -unsubscribe', {
               'href': '#',
               'title': i18n('Click to unfollow'),
-              'ev-click': () => setStatus(id, null, { statuses, ignores })
+              'ev-click': () => setStatus(id, null, { states, ignores })
             }, [when(isFriends, i18n('Friends'), i18n('Following')), ignoreText]),
             h('a ToggleButton -subscribe', {
               'href': '#',
-              'ev-click': () => setStatus(id, true, { statuses, ignores })
+              'ev-click': () => setStatus(id, true, { states, ignores })
             }, [when(followsYou, i18n('Follow Back'), i18n('Follow')), ignoreText])
           )
         ]),
         when(showBlockButton, h('a ToggleButton -drop -options', {
           'href': '#',
           'title': i18n('Click for options to block syncing with this person and/or hide their posts'),
-          'ev-click': (ev) => popupContactMenu(ev.currentTarget, id, { statuses, ignores })
+          'ev-click': (ev) => popupContactMenu(ev.currentTarget, id, { states, ignores })
         }, i18n('Options')))
       ]
     } else {
@@ -84,9 +84,9 @@ exports.create = function (api) {
     }
   })
 
-  function popupContactMenu (element, id, { statuses, ignores }) {
+  function popupContactMenu (element, id, { states, ignores }) {
     var rects = element.getBoundingClientRect()
-    var status = statuses()[id]
+    var status = states()[id]
     var ignoring = ignores()[id]
 
     // the actual listening state (use the explicit ignore if available, otherwise depends if blocking)
@@ -99,28 +99,28 @@ exports.create = function (api) {
         { type: 'radio',
           label: 'Neutral',
           checked: status == null,
-          click: () => setStatus(id, null, { statuses, ignores })
+          click: () => setStatus(id, null, { states, ignores })
         },
         { type: 'radio',
           label: 'Follow',
           checked: status === true,
-          click: () => setStatus(id, true, { statuses, ignores })
+          click: () => setStatus(id, true, { states, ignores })
         },
         { type: 'radio',
           label: 'Block',
           checked: status === false,
-          click: () => setStatus(id, false, { statuses, ignores })
+          click: () => setStatus(id, false, { states, ignores })
         },
         { type: 'separator' },
         { type: 'radio',
           label: 'Listen',
           checked: !resolvedIgnoring,
-          click: () => setIgnore(id, false, { statuses, ignores })
+          click: () => setIgnore(id, false, { states, ignores })
         },
         { type: 'radio',
           label: 'Ignore',
           checked: resolvedIgnoring,
-          click: () => setIgnore(id, true, { statuses, ignores })
+          click: () => setIgnore(id, true, { states, ignores })
         }
       ])
       menu.popup({
@@ -131,8 +131,8 @@ exports.create = function (api) {
     })
   }
 
-  function setStatus (id, status, { statuses, ignores }) {
-    var currentStatus = statuses()[id]
+  function setStatus (id, status, { states, ignores }) {
+    var currentStatus = states()[id]
     var currentIgnoring = ignores()[id]
 
     if (!looseMatch(status, currentStatus)) {
@@ -167,8 +167,8 @@ exports.create = function (api) {
     }
   }
 
-  function setIgnore (id, ignoring, { statuses, ignores }) {
-    var currentStatus = statuses()[id]
+  function setIgnore (id, ignoring, { states, ignores }) {
+    var currentStatus = states()[id]
     var currentIgnoring = ignores()[id]
     var yourId = api.keys.sync.id()
 

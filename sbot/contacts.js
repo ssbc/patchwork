@@ -1,26 +1,43 @@
-var PullPushable = require('pull-pushable')
-var pull = require('pull-stream')
-var Abortable = require('pull-abortable')
+const pull = require('pull-stream')
+const PullPushAbort = require('../lib/pull-push-abort')
+const FlumeReduce = require('flumeview-reduce')
+
+const ref = require('ssb-ref')
 
 exports.manifest = {
-  hopStream: 'source',
-  statusStream: 'source',
-  ignoreStream: 'source'
+  replicateStream: 'source',
+  stateStream: 'source',
+  ignoreStream: 'source',
+  isFollowing: 'async',
+  isBlocking: 'async'
 }
 
 exports.init = function (ssb, config) {
+  var view = ssb._flumeUse('patchwork-contacts', FlumeReduce(0, reduce, map))
+
   return {
-    ignoreStream: function ({ live }, cb) {
-      // return a list of everyone you have blocked privately
-      var aborter = Abortable()
-      var ended = false
-      var stream = PullPushable(() => {
-        if (aborter) {
-          aborter.abort()
-          aborter = null
-        }
-        ended = true
+    // expose raw view to other plugins (not over rpc)
+    raw: view,
+
+    isFollowing: function ({ source, dest }, cb) {
+      view.get((err, graph) => {
+        if (err) return cb(err)
+        var following = graph[source] && graph[source][dest] === true
+        cb(null, following)
       })
+    },
+
+    isBlocking: function ({ source, dest }, cb) {
+      view.get((err, graph) => {
+        if (err) return cb(err)
+        var blocking = graph[source] && graph[source][dest] === false
+        cb(null, blocking)
+      })
+    },
+
+    /// return a list of everyone you have blocked privately
+    ignoreStream: function ({ live }, cb) {
+      var stream = PullPushAbort()
 
       var result = {}
       var sync = null
@@ -38,7 +55,7 @@ exports.init = function (ssb, config) {
           private: true,
           live
         }),
-        aborter,
+        stream.aborter,
         pull.drain((msg) => {
           if (msg.sync) {
             sync = true
@@ -65,7 +82,7 @@ exports.init = function (ssb, config) {
           }
         }, (err) => {
           if (err) return stream.end(err)
-          if (ended || sync) return
+          if (stream.ended || sync) return
 
           if (!live) {
             stream.push(result)
@@ -77,117 +94,198 @@ exports.init = function (ssb, config) {
 
       return stream
     },
-    statusStream: function ({ feedId, live }, cb) {
-      var aborter = Abortable()
-      var ended = false
-      var stream = PullPushable(() => {
-        if (aborter) {
-          aborter.abort()
-          aborter = null
-        }
-        ended = true
-      })
+
+    // return who a given contact publicly follows and blocks (or reverse)
+    stateStream: function ({ feedId, live = false, reverse = false }, cb) {
+      var stream = PullPushAbort()
 
       var result = {}
       var sync = null
 
-      pull(
-        ssb.query.read({
-          query: [{ $filter: {
-            value: {
-              author: feedId,
-              content: {
-                type: 'contact'
-              }
+      // stream reverse states if option specified
+      var queryStream = reverse ? ssb.backlinks.read({
+        query: [{ $filter: {
+          dest: feedId,
+          value: {
+            content: {
+              type: 'contact',
+              contact: feedId
             }
-          } }],
-          live
-        }),
-        aborter,
+          }
+        } }],
+        live
+      }) : ssb.query.read({
+        query: [{ $filter: {
+          value: {
+            author: feedId,
+            content: {
+              type: 'contact'
+            }
+          }
+        } }],
+        live
+      })
+
+      pull(
+        queryStream,
+        stream.aborter,
         pull.filter(msg => (msg.value && msg.value.content && msg.value.content.type) || msg.sync),
         pull.drain((msg) => {
           if (msg.sync) {
+            // send first reduced result when running in live mode
             sync = true
-            if (live) {
-              stream.push(result)
-            }
+            if (live) stream.push(result)
             return
           }
 
-          var isPrivate = msg.value && msg.value.meta && msg.value.meta.private
+          var isPrivate = msg.value && msg.value.meta && msg.value.meta.private && msg.value.author === ssb.id
 
           if (!isPrivate) {
             var content = msg.value.content
-            var value = content.blocking
-              ? false
-              : content.following
-                ? true
-                : null
+            var contact = reverse ? msg.value.author : content.contact
+            var value = getContactState(msg.value.content)
 
             if (sync) {
-              stream.push({ [content.contact]: value })
+              // send updated state in live mode
+              stream.push({ [contact]: value })
             } else {
-              result[content.contact] = value
+              result[contact] = value
             }
           }
         }, (err) => {
           if (err) return stream.end(err)
-          if (ended || sync) return
+          if (stream.ended || sync) return
 
-          if (!live) {
-            stream.push(result)
-          }
-
+          // send final result when not live
+          if (!live) stream.push(result)
           stream.end()
         })
       )
 
       return stream
     },
-    hopStream: function ({ feedId, live, max = 1, reverse = false }) {
-      var release = null
-      var ended = false
-      var stream = PullPushable(() => {
-        if (release) {
-          release()
-          release = null
-        }
-        ended = true
-      })
 
-      ssb.friends.hops({ start: feedId, max, reverse }, (err, hops) => {
-        if (err) return stream.end(err)
-        if (ended) return
+    // get the reduced follows list starting at yourId (who to replicate, block)
+    replicateStream: function ({ throttle = 5000, live }) {
+      var stream = PullPushAbort()
 
-        var result = {}
-        for (var k in hops) {
-          if (checkFilter(hops[k], { max })) {
-            result[k] = hops[k]
-          }
-        }
+      var lastResolvedValues = {}
+      var values = {}
 
-        stream.push(result)
+      var timer = null
+      var queued = false
+      var sync = false
 
-        if (live) {
-          release = ssb.friends.onEdge((from, to, value) => {
-            if (checkFilter(value, { max })) {
-              if (!reverse && from === feedId) {
-                stream.push({ [to]: value })
-              } else if (reverse && to === feedId) {
-                stream.push({ [from]: value })
-              }
+      var update = () => {
+        // clear queue
+        clearTimeout(timer)
+        queued = false
+
+        // get latest replication state (merge together values)
+        var resolvedValues = resolveValues(values, ssb.id)
+
+        // push changes since last update
+        stream.push(objectDiff(lastResolvedValues, resolvedValues))
+
+        // update internal de-dupe list
+        lastResolvedValues = resolvedValues
+      }
+
+      pull(
+        view.stream({ live }),
+        stream.aborter,
+        pull.drain((msg) => {
+          if (stream.ended) return
+
+          if (!sync) {
+            // we'll store the incoming values (they will be updated as the view updates so
+            // do not need to be manually patched)
+            values = msg
+            sync = true
+            update()
+
+            // if not live, we can close stream
+            if (!live) stream.end()
+          } else if (msg) {
+            if (!queued) {
+              queued = true
+              timer = setTimeout(update, throttle)
             }
-          }, { hackAroundBugInHookOptionalCB: true })
-        } else {
-          stream.end()
-        }
-      })
+          }
+        }, (err) => {
+          if (err) return stream.end(err)
+        })
+      )
 
       return stream
     }
   }
 }
 
-function checkFilter (value, { max }) {
-  return (max == null || Math.abs(value) <= Math.abs(max))
+function getContactState (content) {
+  return content.blocking
+    ? false
+    : content.following
+      ? true
+      : null
+}
+
+function objectDiff (original, changed) {
+  var result = {}
+  var keys = new Set([...Object.keys(original), ...Object.keys(changed)])
+  keys.forEach(key => {
+    if (original[key] !== changed[key]) {
+      result[key] = changed[key]
+    }
+  })
+  return result
+}
+
+function resolveValues (values, yourId) {
+  var result = {}
+  if (values[yourId]) {
+    for (let id in values[yourId]) {
+      if (values[yourId][id] === true) {
+        for (let contact in values[id]) {
+          // only apply block if someone doesn't already follow
+          if (values[id][contact] != null && result[contact] !== true) {
+            result[contact] = values[id][contact]
+          }
+        }
+      }
+    }
+
+    // override with your own blocks/follows
+    for (let contact in values[yourId]) {
+      if (values[yourId][contact] != null) {
+        result[contact] = values[yourId][contact]
+      }
+    }
+  }
+  return result
+}
+
+function reduce (result, item) {
+  // used by the reducer view
+  if (!result) result = {}
+  if (item) {
+    for (let author in item) {
+      for (let contact in item[author]) {
+        if (!result[author]) result[author] = {}
+        result[author][contact] = item[author][contact]
+      }
+    }
+  }
+  return result
+}
+
+function map (msg) {
+  // used by the reducer view
+  if (msg.value && msg.value.content && msg.value.content.type === 'contact' && ref.isFeed(msg.value.content.contact)) {
+    return {
+      [msg.value.author]: {
+        [msg.value.content.contact]: getContactState(msg.value.content)
+      }
+    }
+  }
 }

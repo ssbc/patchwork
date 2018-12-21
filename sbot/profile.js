@@ -34,13 +34,13 @@ exports.init = function (ssb, config) {
   setTimeout(watchRecent, 10e3)
 
   setTimeout(() => {
-    // use the public friend statuses for suggestions (not private)
+    // use the public friend states for suggestions (not private)
     // so that we can find friends that we can still find ignored friends (privately blocked)
     pull(
-      ssb.patchwork.contacts.statusStream({ live: true, feedId: ssb.id }),
-      pull.drain(statuses => {
-        Object.keys(statuses).forEach(key => {
-          if (statuses[key] === true) {
+      ssb.patchwork.contacts.stateStream({ live: true, feedId: ssb.id }),
+      pull.drain(states => {
+        Object.keys(states).forEach(key => {
+          if (states[key] === true) {
             following.add(key)
             updateQueue.add(key)
           } else {

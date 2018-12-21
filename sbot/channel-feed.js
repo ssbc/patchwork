@@ -67,7 +67,7 @@ exports.init = function (ssb, config) {
 
           // FILTER BLOCKED (don't bump if author blocked, don't include if root author blocked)
           FilterBlocked([ssb.id], {
-            isBlocking: ssb.friends.isBlocking,
+            isBlocking: ssb.patchwork.contacts.isBlocking,
             useRootAuthorBlocks: true,
             checkRoot: true
           }),
@@ -91,7 +91,7 @@ exports.init = function (ssb, config) {
               readThread: ssb.patchwork.thread.read,
               bumpFilter,
               recentFilter: bumpFilter,
-              pullFilter: FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking })
+              pullFilter: FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.patchwork.contacts.isBlocking })
             }, (err, summary) => {
               if (err) return cb(err)
               cb(null, extend(item, summary, {

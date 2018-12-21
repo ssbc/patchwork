@@ -53,7 +53,7 @@ exports.init = function (ssb, config) {
         return !types || types.includes(type)
       }),
       FilterBlocked([ssb.id].concat(useBlocksFrom), {
-        isBlocking: ssb.friends.isBlocking
+        isBlocking: ssb.patchwork.contacts.isBlocking
       })
     )
   }

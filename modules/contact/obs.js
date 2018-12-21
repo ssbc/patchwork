@@ -9,35 +9,29 @@ exports.needs = nest({
 })
 
 exports.gives = nest({
-  'contact.obs': ['following', 'followers', 'blocking', 'blockers', 'hops', 'reverseHops', 'ignores', 'statuses']
+  'contact.obs': ['following', 'followers', 'blocking', 'blockers', 'states', 'reverseStates', 'ignores']
 })
 
 exports.create = function (api) {
   var cache = {}
-  var statusCache = {}
   var reverseCache = {}
   var ignoreCache = null
 
-  // currently only using reverseHops (not hops)
-  // using statuses for following and blocking instead as this ignores private contact messages
-  // we pull out the private blocks using "ignores" (for "listen" / "ignore" profile options)
-
   return nest('contact.obs', {
-    following: (key) => matchingValueKeys(statuses(key), true),
-    followers: (key) => matchingValueKeys(reverseHops(key), 1),
-    blocking: (key) => matchingValueKeys(statuses(key), false),
-    blockers: (key) => matchingValueKeys(reverseHops(key), -1),
+    following: (key) => matchingValueKeys(states(key), true),
+    followers: (key) => matchingValueKeys(reverseStates(key), true),
+    blocking: (key) => matchingValueKeys(states(key), false),
+    blockers: (key) => matchingValueKeys(reverseStates(key), false),
 
     ignores,
-    statuses,
-    hops,
-    reverseHops
+    states,
+    reverseStates
   })
 
-  function hops (feedId) {
+  function states (feedId) {
     if (!cache[feedId]) {
       var obs = cache[feedId] = MutantPullDict(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.contacts.hopStream({ feedId, live: true, max: 1, old: true }))
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.contacts.stateStream({ feedId, live: true }))
       }, {
         onListen: () => { cache[feedId] = obs },
         onUnlisten: () => delete cache[feedId],
@@ -47,17 +41,17 @@ exports.create = function (api) {
     return cache[feedId]
   }
 
-  function statuses (feedId) {
-    if (!statusCache[feedId]) {
-      var obs = statusCache[feedId] = MutantPullDict(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.contacts.statusStream({ feedId, live: true }))
+  function reverseStates (feedId) {
+    if (!reverseCache[feedId]) {
+      var obs = reverseCache[feedId] = MutantPullDict(() => {
+        return api.sbot.pull.stream((sbot) => sbot.patchwork.contacts.stateStream({ feedId, live: true, reverse: true }))
       }, {
-        onListen: () => { statusCache[feedId] = obs },
-        onUnlisten: () => delete statusCache[feedId],
+        onListen: () => { reverseCache[feedId] = obs },
+        onUnlisten: () => delete reverseCache[feedId],
         sync: true
       })
     }
-    return statusCache[feedId]
+    return reverseCache[feedId]
   }
 
   function ignores () {
@@ -71,19 +65,6 @@ exports.create = function (api) {
       })
     }
     return ignoreCache
-  }
-
-  function reverseHops (feedId) {
-    if (!reverseCache[feedId]) {
-      var obs = reverseCache[feedId] = MutantPullDict(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.contacts.hopStream({ feedId, live: true, old: true, max: 1, reverse: true }))
-      }, {
-        onListen: () => { reverseCache[feedId] = obs },
-        onUnlisten: () => delete reverseCache[feedId],
-        sync: true
-      })
-    }
-    return reverseCache[feedId]
   }
 
   function matchingValueKeys (state, value) {

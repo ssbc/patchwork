@@ -38,7 +38,7 @@ exports.init = function (ssb, config) {
         filterMap: pull(
           // don't include if author blocked
           FilterBlocked([ssb.id], {
-            isBlocking: ssb.friends.isBlocking
+            isBlocking: ssb.patchwork.contacts.isBlocking
           }),
 
           // RESOLVE ROOTS WITH ABOUTS
@@ -55,7 +55,7 @@ exports.init = function (ssb, config) {
               readThread: ssb.patchwork.thread.read,
               bumpFilter,
               pullFilter: pull(
-                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.friends.isBlocking }),
+                FilterBlocked([item.value && item.value.author, ssb.id], { isBlocking: ssb.patchwork.contacts.isBlocking }),
                 ApplyReplyFilterResult({ ssb })
               )
             }, (err, summary) => {
@@ -79,10 +79,10 @@ function bumpFilter (msg) {
 
 function ApplyFilterResult ({ ssb }) {
   return pull.asyncMap((msg, cb) => {
-    ssb.friends.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, followingAuthor) => {
+    ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, followingAuthor) => {
       if (err) return cb(err)
       async.filterSeries(msg.gathering && (msg.gathering.attending || []), (dest, cb) => {
-        ssb.friends.isFollowing({ source: ssb.id, dest }, cb)
+        ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest }, cb)
       }, (err, followingAttending) => {
         if (err) return cb(err)
         var hasTitle = !!msg.gathering.title
@@ -101,7 +101,7 @@ function ApplyFilterResult ({ ssb }) {
 
 function ApplyReplyFilterResult ({ ssb }) {
   return pull.asyncMap((msg, cb) => {
-    ssb.friends.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, isFollowing) => {
+    ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, isFollowing) => {
       if (err) return cb(err)
       if (isFollowing) {
         msg.filterResult = {
