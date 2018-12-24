@@ -54,19 +54,27 @@ exports.init = function (ssb, config) {
     raw: view,
 
     isFollowing: function ({ source, dest }, cb) {
-      view.get((err, graph) => {
-        if (err) return cb(err)
-        var following = graph && graph[source] && graph[source][dest] === true
-        cb(null, following)
-      })
+      if (values && values[source]) {
+        cb(null, values[source][dest] === true)
+      } else {
+        view.get((err, graph) => {
+          if (err) return cb(err)
+          var following = graph && graph[source] && graph[source][dest] === true
+          cb(null, following)
+        })
+      }
     },
 
     isBlocking: function ({ source, dest }, cb) {
-      view.get((err, graph) => {
-        if (err) return cb(err)
-        var blocking = graph && graph[source] && graph[source][dest] === false
-        cb(null, blocking)
-      })
+      if (values && values[source]) {
+        cb(null, values[source][dest] === false)
+      } else {
+        view.get((err, graph) => {
+          if (err) return cb(err)
+          var blocking = graph && graph[source] && graph[source][dest] === false
+          cb(null, blocking)
+        })
+      }
     },
 
     /// return a list of everyone you have blocked privately
