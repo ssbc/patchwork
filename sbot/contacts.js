@@ -13,7 +13,41 @@ exports.manifest = {
 }
 
 exports.init = function (ssb, config) {
-  var view = ssb._flumeUse('patchwork-contacts', FlumeReduce(0, reduce, map))
+  var values = {}
+
+  var view = ssb._flumeUse('patchwork-contacts', FlumeReduce(0, function reduce (result, item) {
+    // used by the reducer view
+    if (!result) result = {}
+    if (item) {
+      for (let author in item) {
+        for (let contact in item[author]) {
+          if (!result[author]) result[author] = {}
+          result[author][contact] = item[author][contact]
+        }
+      }
+    }
+
+    // always make sure values is the latest result
+    // hack around result being null on index initialize
+    values = result
+    return result
+  }, function map (msg) {
+    // used by the reducer view
+    if (msg.value && msg.value.content && msg.value.content.type === 'contact' && ref.isFeed(msg.value.content.contact)) {
+      return {
+        [msg.value.author]: {
+          [msg.value.content.contact]: getContactState(msg.value.content)
+        }
+      }
+    }
+  }))
+
+  view.get((err, result) => {
+    if (!err && result) {
+      // initialize values
+      values = result
+    }
+  })
 
   return {
     // expose raw view to other plugins (not over rpc)
@@ -22,7 +56,7 @@ exports.init = function (ssb, config) {
     isFollowing: function ({ source, dest }, cb) {
       view.get((err, graph) => {
         if (err) return cb(err)
-        var following = graph[source] && graph[source][dest] === true
+        var following = graph && graph[source] && graph[source][dest] === true
         cb(null, following)
       })
     },
@@ -30,7 +64,7 @@ exports.init = function (ssb, config) {
     isBlocking: function ({ source, dest }, cb) {
       view.get((err, graph) => {
         if (err) return cb(err)
-        var blocking = graph[source] && graph[source][dest] === false
+        var blocking = graph && graph[source] && graph[source][dest] === false
         cb(null, blocking)
       })
     },
@@ -170,7 +204,6 @@ exports.init = function (ssb, config) {
       var stream = PullPushAbort()
 
       var lastResolvedValues = {}
-      var values = {}
 
       var timer = null
       var queued = false
@@ -200,7 +233,6 @@ exports.init = function (ssb, config) {
           if (!sync) {
             // we'll store the incoming values (they will be updated as the view updates so
             // do not need to be manually patched)
-            values = msg
             sync = true
             update()
 
@@ -263,29 +295,4 @@ function resolveValues (values, yourId) {
     }
   }
   return result
-}
-
-function reduce (result, item) {
-  // used by the reducer view
-  if (!result) result = {}
-  if (item) {
-    for (let author in item) {
-      for (let contact in item[author]) {
-        if (!result[author]) result[author] = {}
-        result[author][contact] = item[author][contact]
-      }
-    }
-  }
-  return result
-}
-
-function map (msg) {
-  // used by the reducer view
-  if (msg.value && msg.value.content && msg.value.content.type === 'contact' && ref.isFeed(msg.value.content.contact)) {
-    return {
-      [msg.value.author]: {
-        [msg.value.content.contact]: getContactState(msg.value.content)
-      }
-    }
-  }
 }

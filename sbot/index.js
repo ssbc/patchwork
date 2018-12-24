@@ -91,7 +91,7 @@ exports.init = function (ssb, config) {
   patchwork.contacts.raw.get((err, graph) => {
     if (!err) {
       ssb.gossip.peers().slice().forEach((peer) => {
-        if (graph[ssb.id]) {
+        if (graph && graph[ssb.id]) {
           var value = graph[ssb.id][peer.key]
           if (value === true) { // following pub
             ssb.gossip.add(peer, 'friends')
@@ -138,7 +138,7 @@ exports.init = function (ssb, config) {
           if (!value.content) return
           var address = value.content.address
           if (replicating.has(value.author) && address && ref.isFeed(address.key)) {
-            var blocking = graph[ssb.id] && graph[ssb.id][address.key] === false
+            var blocking = graph && graph[ssb.id] && graph[ssb.id][address.key] === false
             if (!blocking) {
               discovered.add(address.key)
               ssb.gossip.add(address, 'pub')
