@@ -3,6 +3,7 @@
 var nest = require('depnest')
 var { computed } = require('mutant')
 var MutantPullDict = require('../../lib/mutant-pull-dict')
+var ref = require('ssb-ref')
 
 exports.needs = nest({
   'sbot.pull.stream': 'first'
@@ -70,7 +71,7 @@ exports.create = function (api) {
   function matchingValueKeys (state, value) {
     var obs = computed(state, state => {
       return Object.keys(state).filter(key => {
-        return state[key] === value
+        return state[key] === value && ref.isLink(key)
       })
     })
 
