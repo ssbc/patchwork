@@ -59,6 +59,12 @@ exports.create = function (api) {
         if (!files || !files.length) return
         attachFiles(files)
       },
+      'ev-keydown': ev => {
+        if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) {
+          publish()
+          ev.preventDefault()
+        }
+      },
       disabled: publishing,
       placeholder
     })
