@@ -9,7 +9,6 @@ var pCont = require('pull-cont/source')
 
 var plugins = {
   likes: require('./likes'),
-  backlinks: require('./backlinks'),
   profile: require('./profile'),
   publicFeed: require('./public-feed'),
   subscriptions2: require('./subscriptions2'),

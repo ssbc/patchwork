@@ -13,7 +13,8 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'sbot.pull.stream': 'first',
   'message.sync.timestamp': 'first',
-  'sqldb.async.backlinkReferences': 'first'
+  'sqldb.async.backlinkReferences': 'first',
+  'sqldb.async.backlinkForks': 'first'
 })
 
 exports.gives = nest({
@@ -64,15 +65,12 @@ exports.create = function (api) {
   function references (msg) {
     var id = msg.key
 
-    // api.sqldb.async.backlinkReferences(id, console.log)
-
     return MutantPullCollection((lastMessage) => {
       return pull(
         pull.once(id),
         pull.asyncMap((id, cb) => api.sqldb.async.backlinkReferences(id, lastMessage, cb)),
         pull.flatten()
       )
-      // return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.referencesStream({ id, since: lastMessage && lastMessage.timestamp }))
     })
   }
 
@@ -81,7 +79,11 @@ exports.create = function (api) {
     var rooted = !!api.message.sync.root(msg)
     if (rooted) {
       return MutantPullCollection((lastMessage) => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.backlinks.forksStream({ id, since: lastMessage && lastMessage.timestamp }))
+        return pull(
+          pull.once(id),
+          pull.asyncMap((id, cb) => api.sqldb.async.backlinkForks(id, lastMessage, cb)),
+          pull.flatten()
+        )
       })
     } else {
       return []
