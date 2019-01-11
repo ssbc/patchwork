@@ -46,7 +46,9 @@ exports.gives = {
       connectionStatus: true,
       connection: true,
       connectedPeers: true,
-      localPeers: true
+      localPeers: true,
+      latestSequence: true
+
     }
   }
 }
@@ -61,6 +63,9 @@ exports.create = function (api) {
   var connectionStatus = Value()
   var connectedPeers = MutantSet()
   var localPeers = MutantSet()
+  var latestSequence = Value()
+
+  latestSequence.set(0)
 
   var rec = Reconnect(function (isConn) {
     function notify (value) {
@@ -117,6 +122,11 @@ exports.create = function (api) {
 
   watch(connection, (sbot) => {
     if (sbot) {
+      pull(
+        sbot.flume.since(),
+        pull.drain(latest => latestSequence.set(latest))
+      )
+
       sbot.gossip.peers((err, peers) => {
         if (err) return console.error(err)
         connectedPeers.set(peers.filter(x => x.state === 'connected').map(x => x.key))
@@ -268,7 +278,8 @@ exports.create = function (api) {
         connectionStatus: (listener) => connectionStatus(listener),
         connection,
         connectedPeers: () => connectedPeers,
-        localPeers: () => localPeers
+        localPeers: () => localPeers,
+        latestSequence: () => latestSequence
       }
     }
   }

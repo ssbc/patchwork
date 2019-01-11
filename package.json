@@ -69,6 +69,7 @@
     "scuttle-tag": "0.4.0",
     "sorted-array-functions": "^1.1.0",
     "spacetime": "^4.5.1",
+    "sqlite3": "^4.0.4",
     "ssb-about": "github:ssbc/ssb-about#use-await-ready",
     "ssb-backlinks": "^0.7.3",
     "ssb-blob-files": "github:ssbc/ssb-blob-files#localizable-errors-and-early-return",
