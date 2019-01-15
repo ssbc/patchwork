@@ -6,6 +6,10 @@ Maintained by @mmckegg
 
 You can run `npm test` or `npx standard` to run the linter. A lot of small issues can be automatically fixed using `npx standard --fix`.
 
+## Debugging
+
+You can increase verbosity (make Patchwork log more) by launching it like `npm start -- --logging.level info`.
+
 ## Feel free to use [depject](https://github.com/depject/depject) inside of the Patchwork repo, but please don't merge in depject modules from other packages. 
 
 [patchcore](https://github.com/ssbc/patchcore) and [patch-settings](https://github.com/mixmix/patch-settings) are the only external packages that [merge in depject modules](https://github.com/ssbc/patchwork/blob/master/main-window.js#L23) (and that is because of legacy reasons). Please don't treat this as best practice.
