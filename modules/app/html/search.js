@@ -49,7 +49,6 @@ exports.create = function (api) {
     return searchBox
 
     function doSearch () {
-
       const prefixes = ['/', '?', '@', '#', '%', 'ssb:']
       var value = searchBox.value.trim()
       if (prefixes.some(p => prefixes.includes(p))) {
