@@ -25,7 +25,7 @@ exports.create = function (api) {
         defaultIds = null
       }
       onceTrue(api.sbot.obs.connection, sbot => {
-        sbot.patchwork.profile.suggest({ text, defaultIds, limit: 20 }, (err, items) => {
+        sbot.patchwork.suggest.profile({ text, defaultIds, limit: 20 }, (err, items) => {
           if (err) return cb(err)
           cb(null, getSuggestions(items))
         })

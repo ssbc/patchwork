@@ -11,6 +11,7 @@ var plugins = {
   likes: require('./likes'),
   backlinks: require('./backlinks'),
   profile: require('./profile'),
+  suggest: require('./suggest'),
   publicFeed: require('./public-feed'),
   subscriptions2: require('./subscriptions2'),
   thread: require('./thread'),
@@ -177,19 +178,21 @@ exports.init = function (ssb, config) {
     })
   )
 
-  // update ebt with latest block info
-  pull(
-    patchwork.contacts.raw.stream({ live: true }),
-    pull.drain((data) => {
-      if (!data) return
-      for (var from in data) {
-        for (var to in data[from]) {
-          var value = data[from][to]
-          ssb.ebt.block(from, to, value === false)
-        }
-      }
-    })
-  )
+  // NOTE ssb.ebt.block is not currently an exposed function!
+
+  // // update ebt with latest block info
+  // pull(
+  //   patchwork.contacts.raw.stream({ live: true }),
+  //   pull.drain((data) => {
+  //     if (!data) return
+  //     for (var from in data) {
+  //       for (var to in data[from]) {
+  //         var value = data[from][to]
+  //         ssb.ebt.block(from, to, value === false)
+  //       }
+  //     }
+  //   })
+  // )
 
   // use blocks in legacy replication (adapted from ssb-friends for legacy compat)
   ssb.createHistoryStream.hook(function (fn, args) {
