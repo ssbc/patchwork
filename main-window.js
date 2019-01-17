@@ -13,6 +13,7 @@ var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 var requireStyle = require('require-style')
+var mouseForwardBack = require('mouse-forward-back')
 
 module.exports = function (config) {
   var sockets = combine(
@@ -84,6 +85,17 @@ module.exports = function (config) {
 
   electron.ipcRenderer.on('goForward', views.goForward)
   electron.ipcRenderer.on('goBack', views.goBack)
+
+  if (mouseForwardBack) {
+    mouseForwardBack.register((direction) => {
+      if (direction === 'back') {
+        views.goBack()
+      } else if (direction === 'forward') {
+        views.goForward()
+      }
+    },
+    electron.remote.getCurrentWindow().getNativeWindowHandle())
+  }
 
   document.head.appendChild(
     h('style', {

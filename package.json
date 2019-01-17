@@ -48,6 +48,7 @@
     "micro-css": "^2.0.1",
     "moment-timezone": "^0.5.23",
     "multiserver-dht": "^4.0.0",
+    "mouse-forward-back": "^1.0.1",
     "mutant": "github:mmckegg/mutant#intersection-binding-viewport",
     "mutant-pull-reduce": "^1.1.0",
     "node-abi": "^2.5.0",
