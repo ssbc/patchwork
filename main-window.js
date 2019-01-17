@@ -13,6 +13,7 @@ var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 var requireStyle = require('require-style')
+var ssbUri = require('ssb-uri')
 
 module.exports = function (config) {
   var sockets = combine(
@@ -272,6 +273,15 @@ module.exports = function (config) {
       if (!err && handler) {
         handler(href)
       } else {
+        if (href.startsWith('ssb:')) {
+          try {
+            href = ssbUri.toSigilLink(href)
+          } catch (e) {
+            // error can be safely ignored
+            // it just means this isn't an SSB URI
+          }
+        }
+
         // no external handler found, use page.html.render
         previewElement.cancel()
         views.setView(href, anchor)
