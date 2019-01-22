@@ -16,7 +16,7 @@ var requireStyle = require('require-style')
 
 try {
   var mouseForwardBack = require('mouse-forward-back')
-} catch (er) {
+} catch (err) {
   mouseForwardBack = false
 }
 
