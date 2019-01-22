@@ -13,7 +13,12 @@ var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 var requireStyle = require('require-style')
-var mouseForwardBack = require('mouse-forward-back')
+
+try {
+  var mouseForwardBack = require('mouse-forward-back')
+} catch (er) {
+  mouseForwardBack = false
+}
 
 module.exports = function (config) {
   var sockets = combine(
