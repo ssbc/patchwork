@@ -177,19 +177,20 @@ exports.init = function (ssb, config) {
     })
   )
 
-  // update ebt with latest block info
-  pull(
-    patchwork.contacts.raw.stream({ live: true }),
-    pull.drain((data) => {
-      if (!data) return
-      for (var from in data) {
-        for (var to in data[from]) {
-          var value = data[from][to]
-          ssb.ebt.block(from, to, value === false)
-        }
-      }
-    })
-  )
+  // TODO FIX
+  // // update ebt with latest block info
+  // pull(
+  //   patchwork.contacts.raw.stream({ live: true }),
+  //   pull.drain((data) => {
+  //     if (!data) return
+  //     for (var from in data) {
+  //       for (var to in data[from]) {
+  //         var value = data[from][to]
+  //         ssb.ebt.block(from, to, value === false)
+  //       }
+  //     }
+  //   })
+  // )
 
   // use blocks in legacy replication (adapted from ssb-friends for legacy compat)
   ssb.createHistoryStream.hook(function (fn, args) {
