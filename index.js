@@ -196,7 +196,9 @@ function setupContext (appName, opts, cb) {
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
 
-  console.log(ssbConfig)
+  const redactedConfig = Object.assign({}, ssbConfig);
+  redactedConfig.keys.private = null
+  console.log(redactedConfig)
 
   if (opts.server === false) {
     cb && cb()
