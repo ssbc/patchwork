@@ -196,7 +196,7 @@ function setupContext (appName, opts, cb) {
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
 
-  const redactedConfig = Object.assign({}, ssbConfig);
+  const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
   console.log(redactedConfig)
 
