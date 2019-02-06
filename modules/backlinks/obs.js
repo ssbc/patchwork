@@ -65,10 +65,12 @@ exports.create = function (api) {
   function references (msg) {
     var id = msg.key
 
-    return MutantPullCollection((lastMessage) => {
+    return MutantPullCollection(function pullLatestBackLinkRefs (lastMessage) {
       return pull(
         pull.once(id),
-        pull.asyncMap((id, cb) => api.sqldb.async.backlinkReferences(id, lastMessage, cb)),
+        pull.asyncMap(function asyncMapBackLinkRefs (id, cb) {
+          api.sqldb.async.backlinkReferences(id, lastMessage, cb)
+        }),
         pull.flatten()
       )
     })

@@ -1,11 +1,13 @@
 var nest = require('depnest')
+var pull = require('pull-stream')
 var ref = require('ssb-ref')
 var MutantPullValue = require('../../../lib/mutant-pull-value')
 
 exports.needs = nest({
   'message.sync.unbox': 'first',
   'sbot.pull.stream': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'sqldb.async.likeCount': 'first'
 })
 
 exports.gives = nest({
@@ -43,7 +45,13 @@ exports.create = function (api) {
     'message.obs.likeCount': (id) => {
       if (!ref.isLink(id)) throw new Error('an id must be specified')
       return MutantPullValue(() => {
-        return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.countStream({ dest: id }))
+        return pull(
+          pull.once(id),
+          pull.asyncMap(api.sqldb.async.likeCount),
+          pull.flatten(),
+          pull.map(value => value.count)
+        )
+        // return api.sbot.pull.stream((sbot) => sbot.patchwork.likes.countStream({ dest: id }))
       }, { defaultValue: 0 })
     }
   })
