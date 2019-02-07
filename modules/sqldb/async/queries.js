@@ -27,8 +27,18 @@ exports.create = function (api) {
       .where('keys.key', id)
       .asCallback(cb)
   }
-  function doesLike (id, lastMessage, cb) {
-
+  function doesLike ({ msgId, feedId }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex('votes_raw')
+      .count('votes_raw.id as count')
+      .join('keys', 'keys.id', 'votes_raw.link_to_key_id')
+      .join('authors', 'authors.id', 'votes_raw.link_from_author_id')
+      .where('keys.key', msgId)
+      .where('authors.author', feedId)
+      .asCallback(function (err, result) {
+        if (err) return cb(err)
+        cb(null, result[0].count > 0)
+      })
   }
   function forks (id, lastMessage, cb) {
     var { knex } = api.sqldb.sync.sqldb()

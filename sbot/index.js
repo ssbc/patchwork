@@ -8,7 +8,6 @@ var pull = require('pull-stream')
 var pCont = require('pull-cont/source')
 
 var plugins = {
-  likes: require('./likes'),
   profile: require('./profile'),
   publicFeed: require('./public-feed'),
   subscriptions2: require('./subscriptions2'),
