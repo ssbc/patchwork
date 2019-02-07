@@ -2,6 +2,7 @@ const Path = require('path')
 const nest = require('depnest')
 const SqlView = require('ssb-flumeview-sql')
 const { ssbSecretKeyToPrivateBoxSecret } = require('ssb-keys')
+var { Value } = require('mutant')
 
 exports.needs = nest({
   'sbot.obs.latestSequence': 'first',
@@ -9,15 +10,17 @@ exports.needs = nest({
   'keys.sync.load': 'first'
 })
 
-exports.gives = nest(
-  'sqldb.sync.sqldb'
-)
+exports.gives = nest({
+  'sqldb.sync.sqldb': true,
+  'sqldb.obs.since': true
+})
 
 exports.create = function (api) {
   const config = api.config.sync.load()
   const keys = api.keys.sync.load()
   const logPath = Path.join(config.path, 'flume', 'log.offset')
   const secret = ssbSecretKeyToPrivateBoxSecret(keys)
+  const since = Value()
 
   const sqlView = SqlView(logPath, '/tmp/patchwork.sqlite3', secret, keys.id)
 
@@ -38,16 +41,29 @@ exports.create = function (api) {
     }
 
     sqlViewLatest = sqlView.getLatest()
+
+    window.requestAnimationFrame(function () {
+      var sqlViewLatest = sqlView.getLatest()
+      if (since() !== sqlViewLatest) {
+        since.set(sqlViewLatest)
+      }
+    })
+
     console.log(`sqlView progress: ${sqlViewLatest / sbotLatest}`)
   })
 
-  return nest('sqldb.sync.sqldb', function () {
-    return {
-      // Don't export process function. See comments above.
-      knex: sqlView.knex,
-      getLatest: sqlView.getLatest,
-      strings: sqlView.strings,
-      modifiers: sqlView.modifiers
+  return nest({
+    'sqldb.sync.sqldb': function () {
+      return {
+        // Don't export process function. See comments above.
+        knex: sqlView.knex,
+        getLatest: sqlView.getLatest,
+        strings: sqlView.strings,
+        modifiers: sqlView.modifiers
+      }
+    },
+    'sqldb.obs.since': function () {
+      return since
     }
   })
 }

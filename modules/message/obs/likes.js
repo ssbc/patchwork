@@ -9,7 +9,8 @@ exports.needs = nest({
   'message.sync.unbox': 'first',
   'sbot.pull.stream': 'first',
   'keys.sync.id': 'first',
-  'sqldb.async.likeCount': 'first'
+  'sqldb.async.likeCount': 'first',
+  'sqldb.obs.since': 'first'
 })
 
 exports.gives = nest({
@@ -46,7 +47,7 @@ exports.create = function (api) {
     },
     'message.obs.likeCount': (id) => {
       if (!ref.isLink(id)) throw new Error('an id must be specified')
-      return MutantAsyncComputed(api.sbot.obs.latestSequence, function (latest, cb) {
+      return MutantAsyncComputed(api.sqldb.obs.since(), function (latest, cb) {
         api.sqldb.async.likeCount(id, function (err, result) {
           if (!err) {
             cb(result[0].count)
