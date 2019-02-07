@@ -52,16 +52,14 @@ exports.create = function (api) {
     `, params).asCallback(cb)
   }
 
-  function references (id, lastMessage, cb) {
+  function references (id, since, cb) {
+    since = since || 0 // since will be null the first time this gets called. So set to zero.
     // var { knex, modifiers, strings } = api.sqldb.sync.sqldb()
     var db = api.sqldb.sync.sqldb()
     var { knex, modifiers, strings } = db
     var { links } = strings
     var { backLinksReferences } = modifiers
-    lastMessage = lastMessage || { timestamp: 0 }
-    var latestTimestamp = lastMessage.timestamp
 
-    console.time('refs' + id)
     knex
       .select([
         'links.link_from_key as id',
@@ -70,11 +68,8 @@ exports.create = function (api) {
       ])
       .from(links)
       .modify(backLinksReferences, id, knex)
-      .where('received_time', '>', latestTimestamp)
-      .asCallback(function (err, result) {
-        console.timeEnd('refs' + id)
-        cb(err, result)
-      })
+      .where('flume_seq', '>', since)
+      .asCallback(cb)
 
     // AND received_time > :latestTimestamp
     // AND NOT fork = :id

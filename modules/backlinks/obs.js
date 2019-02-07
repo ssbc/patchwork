@@ -6,6 +6,7 @@ var resolve = require('mutant/resolve')
 var pull = require('pull-stream')
 var sorted = require('sorted-array-functions')
 var MutantPullCollection = require('../../lib/mutant-pull-collection')
+var MutantAsyncCollection = require('../../lib/mutant-async-collection')
 
 exports.needs = nest({
   'sbot.pull.backlinks': 'first',
@@ -14,7 +15,8 @@ exports.needs = nest({
   'sbot.pull.stream': 'first',
   'message.sync.timestamp': 'first',
   'sqldb.async.backlinkReferences': 'first',
-  'sqldb.async.backlinkForks': 'first'
+  'sqldb.async.backlinkForks': 'first',
+  'sqldb.obs.since': 'first'
 })
 
 exports.gives = nest({
@@ -64,6 +66,16 @@ exports.create = function (api) {
 
   function references (msg) {
     var id = msg.key
+
+    // var fuck = "%xsE48l6WPbQ96/KRKL3sPKEA93mGPrXpl2N051/YgLI=.sha256"
+    //
+    return MutantAsyncCollection(api.sqldb.obs.since(), function (since, cb) {
+      api.sqldb.async.backlinkReferences(id, since, function (err, result) {
+        if (!err) {
+          cb(result)
+        }
+      })
+    })
 
     return MutantPullCollection(function pullLatestBackLinkRefs (lastMessage) {
       return pull(
