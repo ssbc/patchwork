@@ -13,7 +13,8 @@ exports.needs = nest({
   'intl.sync.i18n_n': 'first',
   'sbot.obs.connection': 'first',
   'sheet.tags.render': 'first',
-  'about.html.image': 'first'
+  'about.html.image': 'first',
+  'sqldb.async.likesGet': 'first'
 })
 
 exports.create = function (api) {
@@ -60,11 +61,9 @@ exports.create = function (api) {
   })
 
   function displayLikes (msg) {
-    onceTrue(api.sbot.obs.connection, (sbot) => {
-      sbot.patchwork.likes.get({ dest: msg.key }, (err, likes) => {
-        if (err) return console.log(err)
-        api.sheet.profiles(likes, i18n('Liked by'))
-      })
+    api.sqldb.async.likesGet({ dest: msg.key }, (err, likes) => {
+      if (err) return console.log(err)
+      api.sheet.profiles(likes, i18n('Liked by'))
     })
   }
 

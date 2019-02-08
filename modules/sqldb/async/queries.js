@@ -8,7 +8,9 @@ exports.gives = nest({
   'sqldb.async.backlinkReferences': true,
   'sqldb.async.backlinkForks': true,
   'sqldb.async.likeCount': true,
-  'sqldb.async.doesLike': true
+  'sqldb.async.likesGet': true,
+  'sqldb.async.doesLike': true,
+  'sqldb.async.isBlocking': true
 })
 
 exports.create = function (api) {
@@ -16,9 +18,38 @@ exports.create = function (api) {
     'sqldb.async.backlinkReferences': references,
     'sqldb.async.backlinkForks': forks,
     'sqldb.async.likeCount': likeCount,
-    'sqldb.async.doesLike': doesLike
+    'sqldb.async.likesGet': likesGet,
+    'sqldb.async.doesLike': doesLike,
+    'sqldb.async.isBlocking': isBlocking
   })
 
+  function isBlocking ({ source, dest }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex('contacts_raw')
+      .count('contacts_raw.id as count')
+      .join('authors as source', 'source.author', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .where('source.author', source)
+      .where('dest.author', dest)
+      .where('is_decrypted', 0)
+      .asCallback(function (err, result) {
+        if (err) return cb(err)
+        cb(null, result[0].count > 0)
+      })
+  }
+  function likesGet ({ dest }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex
+      .select(['authors.author as id'])
+      .from('votes_raw')
+      .join('keys', 'keys.id', 'votes_raw.link_to_key_id')
+      .join('authors', 'authors.id', 'votes_raw.link_from_author_id')
+      .where('keys.key', dest)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+        cb(null, results.map(res => res.id))
+      })
+  }
   function likeCount (id, cb) {
     var { knex } = api.sqldb.sync.sqldb()
     knex('votes_raw')
