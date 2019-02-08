@@ -1,3 +1,4 @@
+var pull = require('pull-stream')
 var nest = require('depnest')
 var { h, send, when, computed, map, onceTrue } = require('mutant')
 
@@ -37,7 +38,9 @@ exports.needs = nest({
   'channel.sync.normalize': 'first',
   'keys.sync.id': 'first',
   'settings.obs.get': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'sqldb.async.publicRoots': 'first',
+  'sqldb.sync.cursorQuery': 'first'
 })
 
 exports.gives = nest({
@@ -68,9 +71,7 @@ exports.create = function (api) {
       noFollowersWarning()
     ]
 
-    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
-      return sbot.patchwork.publicFeed.roots(opts)
-    }, { limit: 40, reverse: true })
+    var getStream = api.sqldb.sync.cursorQuery(api.sqldb.async.publicRoots, { limit: 40 })
 
     var filters = api.settings.obs.get('filters')
     var feedView = api.feed.html.rollup(getStream, {

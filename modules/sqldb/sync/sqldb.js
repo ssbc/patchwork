@@ -1,8 +1,9 @@
+const pull = require('pull-stream')
 const Path = require('path')
 const nest = require('depnest')
 const SqlView = require('ssb-flumeview-sql')
 const { ssbSecretKeyToPrivateBoxSecret } = require('ssb-keys')
-var { Value } = require('mutant')
+const { Value } = require('mutant')
 
 exports.needs = nest({
   'sbot.obs.latestSequence': 'first',
@@ -12,7 +13,8 @@ exports.needs = nest({
 
 exports.gives = nest({
   'sqldb.sync.sqldb': true,
-  'sqldb.obs.since': true
+  'sqldb.obs.since': true,
+  'sqldb.sync.cursorQuery': true
 })
 
 exports.create = function (api) {
@@ -64,6 +66,26 @@ exports.create = function (api) {
     },
     'sqldb.obs.since': function () {
       return since
+    },
+    'sqldb.sync.cursorQuery': function cursorQuery (nextQuery, opts) {
+      opts = opts || {}
+      opts.limit = opts.limit || 40
+      opts.lastSeq = Number.POSITIVE_INFINITY
+
+      return function () {
+        return pull(
+          pull.infinite(() => opts), // change this to pullDefer
+          pull.asyncMap(function (opts, cb) {
+            nextQuery(opts, function (err, results) {
+              if (err) return cb(err)
+              var length = results.length || 1
+              opts.lastSeq = results[length - 1].flumeSeq
+              cb(err, results)
+            })
+          }),
+          pull.flatten()
+        )
+      }
     }
   })
 }

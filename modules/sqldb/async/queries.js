@@ -1,3 +1,4 @@
+var pull = require('pull-stream')
 var nest = require('depnest')
 
 exports.needs = nest({
@@ -10,7 +11,8 @@ exports.gives = nest({
   'sqldb.async.likeCount': true,
   'sqldb.async.likesGet': true,
   'sqldb.async.doesLike': true,
-  'sqldb.async.isBlocking': true
+  'sqldb.async.isBlocking': true,
+  'sqldb.async.publicRoots': true
 })
 
 exports.create = function (api) {
@@ -20,9 +22,9 @@ exports.create = function (api) {
     'sqldb.async.likeCount': likeCount,
     'sqldb.async.likesGet': likesGet,
     'sqldb.async.doesLike': doesLike,
-    'sqldb.async.isBlocking': isBlocking
+    'sqldb.async.isBlocking': isBlocking,
+    'sqldb.async.publicRoots': publicRoots
   })
-
   function isBlocking ({ source, dest }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
     knex('contacts_raw')
@@ -36,6 +38,43 @@ exports.create = function (api) {
         if (err) return cb(err)
         cb(null, result[0].count > 0)
       })
+  }
+
+  function Message (msg) {
+    this.key = msg.key
+    this.value = {}
+    this.value.author = msg.author
+    this.value.content = JSON.parse(msg.content)
+    this.value.sequence = msg.seq
+    this.value.timestamp = msg.asserted_time
+    this.flumeSeq = msg.flume_seq
+  }
+  function publicRoots ({ limit, lastSeq }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex
+      .select()
+      .from('messages')
+      .where('flume_seq', '<', lastSeq)
+      .where('is_decrypted', 0)
+      .where('content_type', 'post')
+      // TODO: select messages by authors in the correct follow range
+      .whereNull('root')
+      .orderBy('flume_seq', 'desc')
+      .limit(limit)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+
+        var messages = results.map(function (result) {
+          var msg = new Message(result)
+          msg.latestReplies = []
+          return msg
+        })
+
+        cb(null, messages)
+      })
+  }
+  function publicLatest () {
+
   }
   function likesGet ({ dest }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
