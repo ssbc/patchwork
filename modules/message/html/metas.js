@@ -5,7 +5,6 @@ var msgs = require('ssb-msgs')
 
 exports.gives = nest('message.html.metas')
 exports.needs = nest({
-  'message.obs.likeCount': 'first',
   'sheet.profiles': 'first',
   'about.obs.name': 'first',
   'sbot.pull.stream': 'first',
