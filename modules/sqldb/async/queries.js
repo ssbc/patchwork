@@ -1,7 +1,5 @@
 var pull = require('pull-stream')
 var nest = require('depnest')
-var threadSummary = require('../../../lib/thread-summary.js')
-const getRoot = require('../../../lib/get-root')
 
 exports.needs = nest({
   'sqldb.sync.sqldb': 'first'
@@ -14,8 +12,12 @@ exports.gives = nest({
   'sqldb.async.likesGet': true,
   'sqldb.async.doesLike': true,
   'sqldb.async.isBlocking': true,
+  'sqldb.async.isFollowing': true,
   'sqldb.async.publicRoots': true,
-  'sqldb.async.threadRead': true
+  'sqldb.async.threadRead': true,
+  'sqldb.async.get': true,
+  'sqldb.async.abouts': true,
+  'sqldb.async.messagesByType': true
 })
 
 exports.create = function (api) {
@@ -26,8 +28,12 @@ exports.create = function (api) {
     'sqldb.async.likesGet': likesGet,
     'sqldb.async.doesLike': doesLike,
     'sqldb.async.isBlocking': isBlocking,
+    'sqldb.async.isFollowing': isFollowing,
     'sqldb.async.publicRoots': publicRoots,
-    'sqldb.async.threadRead': threadRead
+    'sqldb.async.threadRead': threadRead,
+    'sqldb.async.messagesByType': messagesByType,
+    'sqldb.async.get': get,
+    'sqldb.async.abouts': abouts
   })
   function isBlocking ({ source, dest }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
@@ -37,6 +43,7 @@ exports.create = function (api) {
       .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
       .where('source.author', source)
       .where('dest.author', dest)
+      .where('state', -1)
       .where('is_decrypted', 0)
       .asCallback(function (err, result) {
         if (err) return cb(err)
@@ -44,16 +51,35 @@ exports.create = function (api) {
       })
   }
 
-  function aboutLatest ({ dest, keys }, cb) {
+  function isFollowing ({ source, dest }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
-    knex
-      .select(['content'])
-      .from('abouts_raw')
-      .join('keys as dest', 'link_to_key_id', 'keys.id')
-      .join('messages_raw as source', 'link_from_key_id', 'source.key_id')
+    knex('contacts_raw')
+      .count('contacts_raw.id as count')
+      .join('authors as source', 'source.author', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .where('source.author', source)
+      .where('dest.author', dest)
+      .where('state', 1)
+      .where('is_decrypted', 0)
+      .asCallback(function (err, result) {
+        if (err) return cb(err)
+        cb(null, result[0].count > 0)
+      })
+  }
+  function abouts ({ dest, keys }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex('abouts_raw')
+      .join('keys as dest', 'link_to_key_id', 'dest.id')
+      .join('messages as source', 'link_from_key_id', 'source.key_id')
       .where('dest.key', dest)
       .asCallback(function (err, results) {
         if (err) return cb(err)
+
+        var messages = results.map(function (result) {
+          return new Message(result)
+        })
+        // console.log('abouts results:', messages)
+        cb(null, messages)
       })
   }
 
@@ -126,6 +152,37 @@ exports.create = function (api) {
     this.value.timestamp = msg.asserted_time
     this.flumeSeq = msg.flume_seq
   }
+
+  function get ({ id }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex('messages')
+      .where('key', id)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+
+        var messages = results.map(function (result) {
+          return new Message(result)
+        })
+        cb(null, messages[0])
+      })
+  }
+
+  function messagesByType ({ type, reverse, lastSeq }, cb) {
+    var ordering = reverse ? 'desc' : 'asc'
+    var { knex } = api.sqldb.sync.sqldb()
+    knex('messages')
+      .where('content_type', type)
+      .where('flume_seq', '<', lastSeq)
+      .orderBy('flume_seq', ordering)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+        var messages = results.map(function (result) {
+          return new Message(result)
+        })
+        cb(null, messages)
+      })
+  }
+
   function publicRoots ({ limit, lastSeq }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
     knex

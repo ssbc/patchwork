@@ -1,5 +1,6 @@
 var { h } = require('mutant')
 var nest = require('depnest')
+var Push = require('pull-pushable')
 
 exports.needs = nest({
   'feed.html.rollup': 'first',
@@ -8,7 +9,10 @@ exports.needs = nest({
   'gathering.sheet.edit': 'first',
   'keys.sync.id': 'first',
   'contact.obs.following': 'first',
-  'intl.sync.i18n': 'first'
+  'intl.sync.i18n': 'first',
+  'sqldb.sync.cursorQuery': 'first',
+  'sqldb.async.gatherings.roots': 'first',
+  'sqldb.async.publicRoots': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -29,13 +33,16 @@ exports.create = function (api) {
       ])
     ]
 
-    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+    var getStream_ = api.sbot.pull.resumeStream((sbot, opts) => {
       return sbot.patchwork.gatherings.roots(opts)
     }, { limit: 40, reverse: true })
 
+    var getStream = api.sqldb.sync.cursorQuery(api.sqldb.async.gatherings.roots, { limit: 40 })
+
     return api.feed.html.rollup(getStream, {
-      prepend,
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.gatherings.latest())
+      prepend
+      // updateStream: Push() // TODO: not using live stream yet
+      // updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.gatherings.latest())
     })
   })
 

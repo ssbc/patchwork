@@ -18,6 +18,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  // TODO: resolving config, keys, logpath and secret only works by chance. Depject _happens_ to have resolved those deps by now but it's not a bit naughty.
   const config = api.config.sync.load()
   const keys = api.keys.sync.load()
   const logPath = Path.join(config.path, 'flume', 'log.offset')
@@ -78,7 +79,8 @@ exports.create = function (api) {
           pull.asyncMap(function (opts, cb) {
             nextQuery(opts, function (err, results) {
               if (err) return cb(err)
-              var length = results.length || 1
+              if (!results.length) return cb(true)
+              var length = results.length
               opts.lastSeq = results[length - 1].flumeSeq
               cb(err, results)
             })
