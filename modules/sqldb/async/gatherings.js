@@ -25,17 +25,16 @@ exports.gives = nest({
 
 exports.create = function (api) {
   return nest({
-    'sqldb.async.gatherings.latest': function () {
-      return pull(
-        pullCont((cb) => api.sqldb.async.messagesByType({ type: 'gathering', live: true, old: false }, cb)), // TODO bad continuable
-        ResolveAbouts({ socialValues: api.about.async.socialValues, latestValues: api.about.async.latestValues }),
-        ApplyFilterResult({ getPubKey: api.keys.sync.id, isFollowing: api.sqldb.async.isFollowing }),
-        pull.filter(msg => !!msg.filterResult)
-      )
-    },
+    // TODO: I think scroller needs to be refactored to take an obs rather than a live stream for updates.
+    //    'sqldb.async.gatherings.latest': function () {
+    //      return pull(
+    //        pullCont((cb) => api.sqldb.async.messagesByType({ type: 'gathering', live: true, old: false }, cb)), // TODO bad continuable
+    //        ResolveAbouts({ socialValues: api.about.async.socialValues, latestValues: api.about.async.latestValues }),
+    //        ApplyFilterResult({ getPubKey: api.keys.sync.id, isFollowing: api.sqldb.async.isFollowing }),
+    //        pull.filter(msg => !!msg.filterResult)
+    //      )
+    //    },
     'sqldb.async.gatherings.roots': function ({ reverse, limit, lastSeq }, cb) {
-      // use resume option if specified
-
       function readThread (opts) {
         return pullCont(function (cb) {
           api.sqldb.async.threadRead(opts, function (err, result) {
@@ -46,22 +45,22 @@ exports.create = function (api) {
       }
 
       return pull(
-        pullCont((cb) => api.sqldb.async.messagesByType({ type: 'gathering', reverse: true, lastSeq }, function (err, results) {
+        pullCont((cb) => api.sqldb.async.messagesByType({ type: 'gathering', limit, reverse: true, lastSeq }, function (err, results) {
           if (err) return cb(err)
           cb(null, pull.values(results))
         })),
 
         // don't include if author blocked
-        // FilterBlocked([api.keys.sync.id()], {
-        //  isBlocking: api.sqldb.async.isBlocking
-        // }),
+        FilterBlocked([api.keys.sync.id()], {
+          isBlocking: api.sqldb.async.isBlocking
+        }),
 
         // RESOLVE ROOTS WITH ABOUTS
         ResolveAbouts({ socialValues: api.about.async.socialValues, latestValues: api.about.async.latestValues }),
 
         // FILTER GATHERINGS BASED ON ATTENDEES AND AUTHOR (and hide if no title)
-        // ApplyFilterResult({ getPubKey: api.keys.sync.id, isFollowing: api.sqldb.async.isFollowing }),
-        // pull.filter(msg => !!msg.filterResult),
+        ApplyFilterResult({ getPubKey: api.keys.sync.id, isFollowing: api.sqldb.async.isFollowing }),
+        pull.filter(msg => !!msg.filterResult),
 
         // ADD THREAD SUMMARY
         Paramap((item, cb) => {
@@ -70,7 +69,7 @@ exports.create = function (api) {
             readThread,
             bumpFilter,
             pullFilter: pull(
-            //  FilterBlocked([item.value && item.value.author, api.keys.sync.id()], { isBlocking: api.sqldb.async.isBlocking }),
+              FilterBlocked([item.value && item.value.author, api.keys.sync.id()], { isBlocking: api.sqldb.async.isBlocking }),
               ApplyReplyFilterResult({ getPubKey: api.keys.sync.id, isFollowing: api.sqldb.async.isFollowing })
             )
           }, (err, summary) => {
@@ -96,6 +95,7 @@ function ApplyFilterResult ({ getPubKey, isFollowing }) {
   return pull.asyncMap((msg, cb) => {
     isFollowing({ source: getPubKey(), dest: msg.value.author }, (err, followingAuthor) => {
       if (err) return cb(err)
+
       async.filterSeries(msg.gathering && (msg.gathering.attending || []), (dest, cb) => {
         isFollowing({ source: getPubKey(), dest }, cb)
       }, (err, followingAttending) => {

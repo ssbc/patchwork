@@ -39,8 +39,8 @@ exports.create = function (api) {
     var { knex } = api.sqldb.sync.sqldb()
     knex('contacts_raw')
       .count('contacts_raw.id as count')
-      .join('authors as source', 'source.author', 'contacts_raw.author_id')
-      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .join('authors as source', 'source.id', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.id', 'contacts_raw.contact_author_id')
       .where('source.author', source)
       .where('dest.author', dest)
       .where('state', -1)
@@ -55,8 +55,8 @@ exports.create = function (api) {
     var { knex } = api.sqldb.sync.sqldb()
     knex('contacts_raw')
       .count('contacts_raw.id as count')
-      .join('authors as source', 'source.author', 'contacts_raw.author_id')
-      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .join('authors as source', 'source.id', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.id', 'contacts_raw.contact_author_id')
       .where('source.author', source)
       .where('dest.author', dest)
       .where('state', 1)
@@ -78,7 +78,6 @@ exports.create = function (api) {
         var messages = results.map(function (result) {
           return new Message(result)
         })
-        // console.log('abouts results:', messages)
         cb(null, messages)
       })
   }
@@ -167,13 +166,15 @@ exports.create = function (api) {
       })
   }
 
-  function messagesByType ({ type, reverse, lastSeq }, cb) {
+  function messagesByType ({ type, reverse, lastSeq, limit }, cb) {
+    limit = limit || Number.MAX_VALUE
     var ordering = reverse ? 'desc' : 'asc'
     var { knex } = api.sqldb.sync.sqldb()
     knex('messages')
       .where('content_type', type)
       .where('flume_seq', '<', lastSeq)
       .orderBy('flume_seq', ordering)
+      .limit(limit)
       .asCallback(function (err, results) {
         if (err) return cb(err)
         var messages = results.map(function (result) {
