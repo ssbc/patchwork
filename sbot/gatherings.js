@@ -18,7 +18,7 @@ exports.init = function (ssb, config) {
     latest: function () {
       return pull(
         ssb.messagesByType({ type: 'gathering', live: true, old: false }),
-        ResolveAbouts({ ssb }),
+        ResolveAbouts({ socialValues: ssb.about.socialValues, latestValues: ssb.about.latestValues }),
         ApplyFilterResult({ ssb }),
         pull.filter(msg => !!msg.filterResult)
       )
@@ -42,7 +42,7 @@ exports.init = function (ssb, config) {
           }),
 
           // RESOLVE ROOTS WITH ABOUTS
-          ResolveAbouts({ ssb }),
+          ResolveAbouts({ socialValues: ssb.about.socialValues, latestValues: ssb.about.latestValues }),
 
           // FILTER GATHERINGS BASED ON ATTENDEES AND AUTHOR (and hide if no title)
           ApplyFilterResult({ ssb }),

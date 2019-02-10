@@ -1,5 +1,7 @@
 var pull = require('pull-stream')
 var nest = require('depnest')
+var threadSummary = require('../../../lib/thread-summary.js')
+const getRoot = require('../../../lib/get-root')
 
 exports.needs = nest({
   'sqldb.sync.sqldb': 'first'
@@ -12,7 +14,8 @@ exports.gives = nest({
   'sqldb.async.likesGet': true,
   'sqldb.async.doesLike': true,
   'sqldb.async.isBlocking': true,
-  'sqldb.async.publicRoots': true
+  'sqldb.async.publicRoots': true,
+  'sqldb.async.threadRead': true
 })
 
 exports.create = function (api) {
@@ -23,7 +26,8 @@ exports.create = function (api) {
     'sqldb.async.likesGet': likesGet,
     'sqldb.async.doesLike': doesLike,
     'sqldb.async.isBlocking': isBlocking,
-    'sqldb.async.publicRoots': publicRoots
+    'sqldb.async.publicRoots': publicRoots,
+    'sqldb.async.threadRead': threadRead
   })
   function isBlocking ({ source, dest }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
@@ -40,6 +44,79 @@ exports.create = function (api) {
       })
   }
 
+  function aboutLatest ({ dest, keys }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex
+      .select(['content'])
+      .from('abouts_raw')
+      .join('keys as dest', 'link_to_key_id', 'keys.id')
+      .join('messages_raw as source', 'link_from_key_id', 'source.key_id')
+      .where('dest.key', dest)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+      })
+  }
+
+  function contactFollowsBlocks (contactId, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex
+      .select(['dest.author as id', 'state'])
+      .from('contacts_raw')
+      .join('authors as source', 'source.author', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .where('is_decrypted', 0)
+      .where('source.author', contactId)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+
+        results = results.map((result) => {
+          var value = result.state === 1
+          return {
+            [result.id]: value
+          }
+        })
+
+        cb(null, results)
+      })
+  }
+
+  function contactFollowedBlockedBy (contactId, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex
+      .select(['source.author as id', 'state'])
+      .from('contacts_raw')
+      .join('authors as source', 'source.author', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .where('is_decrypted', 0)
+      .where('dest.author', contactId)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+
+        results = results.map((result) => {
+          var value = result.state === 1
+          return {
+            [result.id]: value
+          }
+        })
+
+        cb(null, results)
+      })
+  }
+
+  function isIgnoring ({ source, dest }, cb) {
+    var { knex } = api.sqldb.sync.sqldb()
+    knex('contacts_raw')
+      .count('contacts_raw.id as count')
+      .join('authors as source', 'source.author', 'contacts_raw.author_id')
+      .join('authors as dest', 'dest.author', 'contacts_raw.contact_author_id')
+      .where('source.author', source)
+      .where('dest.author', dest)
+      .where('is_decrypted', 1)
+      .asCallback(function (err, result) {
+        if (err) return cb(err)
+        cb(null, result[0].count > 0)
+      })
+  }
   function Message (msg) {
     this.key = msg.key
     this.value = {}
@@ -65,11 +142,34 @@ exports.create = function (api) {
         if (err) return cb(err)
 
         var messages = results.map(function (result) {
+          return new Message(result)
+        })
+        cb(null, messages)
+      })
+  }
+  function threadRead ({ reverse, limit, dest, types }, cb) {
+    limit = limit || Number.MAX_VALUE
+    var ordering = reverse ? 'desc' : 'asc'
+    var { knex } = api.sqldb.sync.sqldb()
+
+    if (types) throw new Error('No can do queries for array of types just yet. Fixme')
+
+    knex
+      .select()
+      .from('links')
+      .join('messages', 'messages.key', 'links.link_to_key')
+      .where('links.link_to_key', dest)
+      // .where('messages.content_type', types)
+      .orderBy('messages.flume_seq', ordering)
+      .limit(limit)
+      .asCallback(function (err, results) {
+        if (err) return cb(err)
+
+        var messages = results.map(function (result) {
           var msg = new Message(result)
           msg.latestReplies = []
           return msg
         })
-
         cb(null, messages)
       })
   }

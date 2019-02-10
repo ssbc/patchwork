@@ -83,7 +83,7 @@ exports.init = function (ssb, config) {
           }),
 
           // RESOLVE ROOTS WITH ABOUTS
-          ResolveAbouts({ ssb }),
+          ResolveAbouts({ socialValues: ssb.about.socialValues, latestValues: ssb.about.latestValues }),
 
           // ADD THREAD SUMMARY
           Paramap((item, cb) => {
