@@ -5,13 +5,11 @@ const extend = require('xtend')
 const threadSummary = require('../../../lib/thread-summary')
 const ResolveAbouts = require('../../../lib/resolve-abouts')
 const Paramap = require('pull-paramap')
-const FilterBlocked = require('../../../lib/filter-blocked')
 const async = require('async')
 const nest = require('depnest')
 
 exports.needs = nest({
   'sqldb.async.messagesByType': 'first',
-  'sqldb.async.isBlocking': 'first',
   'sqldb.async.isFollowing': 'first',
   'sqldb.async.threadRead': 'first',
   'about.async.latestValues': 'first',
@@ -36,6 +34,7 @@ exports.create = function (api) {
     //    },
     'sqldb.async.gatherings.roots': function ({ reverse, limit, lastSeq }, cb) {
       function readThread (opts) {
+        opts.types = ['post']
         return pullCont(function (cb) {
           api.sqldb.async.threadRead(opts, function (err, result) {
             if (err) return cb(err)
@@ -49,11 +48,6 @@ exports.create = function (api) {
           if (err) return cb(err)
           cb(null, pull.values(results))
         })),
-
-        // don't include if author blocked
-        FilterBlocked([api.keys.sync.id()], {
-          isBlocking: api.sqldb.async.isBlocking
-        }),
 
         // RESOLVE ROOTS WITH ABOUTS
         ResolveAbouts({ socialValues: api.about.async.socialValues, latestValues: api.about.async.latestValues }),
@@ -69,7 +63,6 @@ exports.create = function (api) {
             readThread,
             bumpFilter,
             pullFilter: pull(
-              FilterBlocked([item.value && item.value.author, api.keys.sync.id()], { isBlocking: api.sqldb.async.isBlocking }),
               ApplyReplyFilterResult({ getPubKey: api.keys.sync.id, isFollowing: api.sqldb.async.isFollowing })
             )
           }, (err, summary) => {

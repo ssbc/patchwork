@@ -68,31 +68,41 @@ exports.create = function (api) {
       })
   }
 
+  function modifyDest (query, dest) {
+    if (isMsg(dest)) {
+      query.join('keys as dest', 'link_to_key_id', 'dest.id')
+      query.where('dest.key', dest)
+    } else if (isFeed(dest)) {
+      query.join('authors as dest', 'link_to_author_id', 'dest.id')
+      query.where('dest.author', dest)
+    }
+  }
+
+  function modifyIfAuthor (query, author) {
+    if (author) {
+      this.where('messages.author', author)
+    }
+  }
   function abouts ({ dest, keys, since, reverse, author }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
-    function whereIsAuthor () {
-      if (author) {
-        this.where('messages.author', author)
-      }
-    }
 
-    function modifyDest (query) {
-      if (isMsg(dest)) {
-        query.join('keys as dest', 'link_to_key_id', 'dest.id')
-        query.where('dest.key', dest)
-      } else if (isFeed(dest)) {
-        query.join('authors as dest', 'link_to_author_id', 'dest.id')
-        query.where('dest.author', dest)
-      }
-    }
     var ordering = reverse ? 'desc' : 'asc'
     since = since || 0
 
-    knex('abouts_raw')
-      .modify(modifyDest)
+    knex
+      .select([
+        'source.key as key',
+        'source.author as author',
+        'seq',
+        'content',
+        'asserted_time',
+        'flume_seq'
+      ])
+      .from('abouts_raw')
+      .modify(modifyDest, dest)
       .join('messages as source', 'link_from_key_id', 'source.key_id')
       .where('source.flume_seq', '>', since)
-      .where(whereIsAuthor)
+      .modify(modifyIfAuthor, author)
       .orderBy('source.flume_seq', ordering)
       .asCallback(function (err, results) {
         if (err) return cb(err)
@@ -188,11 +198,25 @@ exports.create = function (api) {
       })
   }
 
+  // Also removes messages by authors you block.
   function messagesByType ({ type, reverse, lastSeq, limit }, cb) {
     limit = limit || Number.MAX_VALUE
     var ordering = reverse ? 'desc' : 'asc'
     var { knex } = api.sqldb.sync.sqldb()
-    knex('messages')
+    knex
+      .select([
+        'messages.key as key',
+        'messages.author as author',
+        'seq',
+        'content',
+        'asserted_time',
+        'flume_seq'
+      ])
+      .from('messages')
+      .join('contacts_raw', 'contacts_raw.contact_author_id', 'messages.author_id')
+      .join('authors as source', 'source.id', 'contacts_raw.author_id')
+      .where('source.is_me', 1)
+      .whereNot('state', -1)
       .where('content_type', type)
       .where('flume_seq', '<', lastSeq)
       .orderBy('flume_seq', ordering)
@@ -227,19 +251,34 @@ exports.create = function (api) {
         cb(null, messages)
       })
   }
+
+  function modifyWhereTypes (query, types) {
+    if (types) {
+      query.whereIn('messages.content_type', types)
+    }
+  }
   function threadRead ({ reverse, limit, dest, types }, cb) {
     limit = limit || Number.MAX_VALUE
     var ordering = reverse ? 'desc' : 'asc'
     var { knex } = api.sqldb.sync.sqldb()
 
-    if (types) throw new Error('No can do queries for array of types just yet. Fixme')
-
     knex
-      .select()
+      .select([
+        'messages.key as key',
+        'messages.author as author',
+        'seq',
+        'content',
+        'asserted_time',
+        'flume_seq'
+      ])
       .from('links')
       .join('messages', 'messages.key', 'links.link_to_key')
+      .join('contacts_raw', 'contacts_raw.contact_author_id', 'messages.author_id')
+      .join('authors as source', 'source.id', 'contacts_raw.author_id')
+      .modify(modifyWhereTypes, types)
+      .where('source.is_me', 1)
+      .whereNot('state', -1)
       .where('links.link_to_key', dest)
-      // .where('messages.content_type', types)
       .orderBy('messages.flume_seq', ordering)
       .limit(limit)
       .asCallback(function (err, results) {
@@ -253,6 +292,7 @@ exports.create = function (api) {
         cb(null, messages)
       })
   }
+
   function publicLatest () {
 
   }
