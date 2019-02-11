@@ -14,7 +14,7 @@ var plugins = {
   thread: require('./thread'),
   privateFeed: require('./private-feed'),
   mentionsFeed: require('./mentions-feed'),
-  gatherings: require('./gatherings'),
+  //  gatherings: require('./gatherings'),
   networkFeed: require('./network-feed'),
   channelFeed: require('./channel-feed'),
   participatingFeed: require('./participating-feed'),

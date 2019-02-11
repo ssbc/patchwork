@@ -13,7 +13,9 @@ exports.needs = nest({
 
 exports.gives = nest({
   'about.async.latestValues': true,
-  'about.async.socialValues': true
+  'about.async.latestValue': true,
+  'about.async.socialValues': true,
+  'about.async.socialValue': true
 })
 
 exports.create = function (api) {
@@ -37,6 +39,8 @@ exports.create = function (api) {
 
   return nest({
     'about.async.latestValues': ssbAbout.latestValues,
-    'about.async.socialValues': ssbAbout.socialValues
+    'about.async.latestValue': ssbAbout.latestValue,
+    'about.async.socialValues': ssbAbout.socialValues,
+    'about.async.socialValue': ssbAbout.socialValue
   })
 }

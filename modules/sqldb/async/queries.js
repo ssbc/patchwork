@@ -1,5 +1,6 @@
 var pull = require('pull-stream')
 var nest = require('depnest')
+var { isFeed, isMsg } = require('ssb-ref')
 
 exports.needs = nest({
   'sqldb.sync.sqldb': 'first'
@@ -66,12 +67,33 @@ exports.create = function (api) {
         cb(null, result[0].count > 0)
       })
   }
-  function abouts ({ dest, keys }, cb) {
+
+  function abouts ({ dest, keys, since, reverse, author }, cb) {
     var { knex } = api.sqldb.sync.sqldb()
+    function whereIsAuthor () {
+      if (author) {
+        this.where('messages.author', author)
+      }
+    }
+
+    function modifyDest (query) {
+      if (isMsg(dest)) {
+        query.join('keys as dest', 'link_to_key_id', 'dest.id')
+        query.where('dest.key', dest)
+      } else if (isFeed(dest)) {
+        query.join('authors as dest', 'link_to_author_id', 'dest.id')
+        query.where('dest.author', dest)
+      }
+    }
+    var ordering = reverse ? 'desc' : 'asc'
+    since = since || 0
+
     knex('abouts_raw')
-      .join('keys as dest', 'link_to_key_id', 'dest.id')
+      .modify(modifyDest)
       .join('messages as source', 'link_from_key_id', 'source.key_id')
-      .where('dest.key', dest)
+      .where('source.flume_seq', '>', since)
+      .where(whereIsAuthor)
+      .orderBy('source.flume_seq', ordering)
       .asCallback(function (err, results) {
         if (err) return cb(err)
 

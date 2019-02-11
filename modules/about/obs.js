@@ -3,14 +3,18 @@ var nest = require('depnest')
 var ref = require('ssb-ref')
 var colorHash = new (require('color-hash'))()
 var fallbackImageUrl = 'data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
-var MutantPullValue = require('../../lib/mutant-pull-value')
-var MutantPullDict = require('../../lib/mutant-pull-dict')
+var MutantAsyncDict = require('../../lib/mutant-async-dict')
+var MutantAsyncComputed = require('../../lib/mutant-async-computed')
 
 exports.needs = nest({
-  'sbot.pull.stream': 'first',
   'blob.sync.url': 'first',
   'about.sync.shortFeedId': 'first',
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'sqldb.obs.since': 'first',
+  'about.async.socialValues': 'first',
+  'about.async.socialValue': 'first',
+  'about.async.latestValues': 'first',
+  'about.async.latestValue': 'first'
 })
 
 exports.gives = nest({
@@ -31,7 +35,6 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
-  var socialValueCache = {}
   return nest({
     'about.obs': {
       // quick helpers, probably should deprecate!
@@ -56,46 +59,59 @@ exports.create = function (api) {
 
   function valueFrom (id, key, authorId) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
-    return MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.about.latestValueStream({ dest: id, key, authorId }))
-    })
+    function getNewItems (since, cb) {
+      api.about.async.latestValue({ dest: id, key, author: authorId }, function (err, results) {
+        if (err) return
+        cb(results)
+      })
+    }
+
+    return MutantAsyncComputed(api.sqldb.obs.since(), getNewItems)
   }
 
   function latestValue (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
-    return MutantPullValue(() => {
-      return api.sbot.pull.stream((sbot) => sbot.about.latestValueStream({ dest: id, key }))
-    })
+
+    function getNewItems (since, cb) {
+      api.about.async.latestValue({ dest: id, key }, function (err, results) {
+        if (err) return
+        cb(results)
+      })
+    }
+
+    return MutantAsyncComputed(api.sqldb.obs.since(), getNewItems)
   }
 
   function socialValue (id, key, defaultValue) {
+    // TODO: Piet got rid of the cache here. I wonder if it's actually needed.
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
-    if (!socialValueCache[id + '/' + key]) {
-      var obs = socialValueCache[id + '/' + key] = MutantPullValue(() => {
-        return api.sbot.pull.stream((sbot) => sbot.about.socialValueStream({ dest: id, key }))
-      }, {
-        onListen: () => { socialValueCache[id + '/' + key] = obs },
-        onUnlisten: () => delete socialValueCache[id + '/' + key]
+
+    function getNewItems (since, cb) {
+      api.about.async.socialValue({ dest: id, key }, function (err, results) {
+        if (err) return
+        cb(results)
       })
     }
-    return withDefault(socialValueCache[id + '/' + key], defaultValue)
+    return withDefault(MutantAsyncComputed(api.sqldb.obs.since(), getNewItems), defaultValue)
   }
 
   function socialValues (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
-    return MutantPullDict(() => {
-      return api.sbot.pull.stream((sbot) => sbot.about.socialValuesStream({ dest: id, key }))
-    }, { checkDelete })
+
+    function getNewItems (since, cb) {
+      api.about.async.socialValues({ dest: id, key, since }, function (err, results) {
+        if (err) return
+        cb(results)
+      })
+    }
+
+    return MutantAsyncDict(api.sqldb.obs.since(), getNewItems)
   }
 
   function groupedValues (id, key) {
     if (!ref.isLink(id)) throw new Error('About requires an ssb ref!')
     return computed(socialValues(id, key), getGroupedValues)
   }
-}
-
-function checkDelete (msg) {
-  if (msg && msg.remove) return true
 }
 
 function getGroupedValues (lookup) {

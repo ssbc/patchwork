@@ -18,7 +18,7 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
-  // TODO: resolving config, keys, logpath and secret only works by chance. Depject _happens_ to have resolved those deps by now but it's not a bit naughty.
+  // TODO: resolving config, keys, logpath and secret only works by chance. Depject _happens_ to have resolved those deps by now but it's a bit naughty.
   const config = api.config.sync.load()
   const keys = api.keys.sync.load()
   const logPath = Path.join(config.path, 'flume', 'log.offset')
@@ -31,6 +31,7 @@ exports.create = function (api) {
   // This setup assumes this is the only place that will call sqlView.process.
   // If something else calls process then sqlViewLatest will no longer reflect the state of the db.
   let sqlViewLatest = sqlView.getLatest()
+  since.set(sqlViewLatest)
 
   window.requestIdleCallback(function processMore (deadline) {
     window.requestIdleCallback(processMore)

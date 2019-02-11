@@ -67,8 +67,6 @@ exports.create = function (api) {
   function references (msg) {
     var id = msg.key
 
-    // var fuck = "%xsE48l6WPbQ96/KRKL3sPKEA93mGPrXpl2N051/YgLI=.sha256"
-    //
     return MutantAsyncCollection(api.sqldb.obs.since(), function (since, cb) {
       api.sqldb.async.backlinkReferences(id, since, function (err, result) {
         if (!err) {
