@@ -300,5 +300,6 @@
 	"You have chosen to privately ignore this person.": "You have chosen to privately ignore this person.",
 	"No new messages will be downloaded. Existing messages will be hidden.": "No new messages will be downloaded. Existing messages will be hidden.",
 	"You have chosen to publicly block this person.": "You have chosen to publicly block this person.",
-	"Click for options to block syncing with this person and/or hide their posts": "Click for options to block syncing with this person and/or hide their posts"
+        "Click for options to block syncing with this person and/or hide their posts": "Click for options to block syncing with this person and/or hide their posts",
+        "Are you certain you want to clear your draft?": "Are you certain you want to clear your draft?"
 }
