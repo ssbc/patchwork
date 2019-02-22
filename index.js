@@ -192,7 +192,7 @@ function setupContext (appName, opts, cb) {
     ssbConfig.remote = `net:127.0.0.1:${config.port}~shs:${pubkey}`
   } else {
     const socketPath = Path.join(ssbConfig.path, 'socket')
-    ssbConfig.connections.incoming.unix = [{ 'scope': 'local', 'transform': 'noauth' }]
+    ssbConfig.connections.incoming.unix = [{ 'scope': 'device', 'transform': 'noauth' }]
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
 
