@@ -79,6 +79,7 @@ function bumpFilter (msg) {
 
 function ApplyFilterResult ({ ssb }) {
   return pull.asyncMap((msg, cb) => {
+    var isYours = ssb.id === msg.value.author
     ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, followingAuthor) => {
       if (err) return cb(err)
       async.filterSeries(msg.gathering && (msg.gathering.attending || []), (dest, cb) => {
@@ -86,10 +87,11 @@ function ApplyFilterResult ({ ssb }) {
       }, (err, followingAttending) => {
         if (err) return cb(err)
         var hasTitle = !!msg.gathering.title
-        if ((followingAttending.length || followingAuthor) && hasTitle) {
+        if ((followingAttending.length || followingAuthor || isYours) && hasTitle) {
           msg.filterResult = {
             followingAttending,
             followingAuthor,
+            isYours,
             hasTitle
           }
         }
