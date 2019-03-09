@@ -21,7 +21,7 @@ var fixPath = require('fix-path')
 
 var createSbot = require('ssb-server')
   .use(require('ssb-server/plugins/master'))
-  .use(require('ssb-server/plugins/gossip'))
+  .use(require('ssb-legacy-conn'))
   .use(require('ssb-server/plugins/replicate'))
   .use(require('ssb-server/plugins/no-auth'))
   .use(require('ssb-server/plugins/unix-socket'))
