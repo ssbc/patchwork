@@ -158,7 +158,11 @@ exports.create = function (api) {
           }
           if (cache[key]) cb(null, cache[key])
           else {
-            sbot.get(key, function (err, value) {
+            var options = typeof key === 'string'
+              ? { private: true, id: key }
+              : key
+
+            sbot.get(options, function (err, value) {
               if (err) return cb(err)
               runHooks({ key, value })
               cb(null, value)
