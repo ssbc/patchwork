@@ -87,7 +87,7 @@
     "ssb-query": "^2.3.0",
     "ssb-ref": "^2.13.8",
     "ssb-search": "^1.1.2",
-    "ssb-server": "^13.3.0",
+    "ssb-server": "^13.6.3",
     "ssb-sort": "^1.1.0",
     "ssb-tags": "^0.2.0",
     "ssb-uri": "^1.0.1",
