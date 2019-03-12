@@ -120,5 +120,9 @@ function checkBump (msg, { id }) {
     } else if (msg.value.content.type === 'contact' && msg.value.content.following === true && msg.value.content.contact === id) {
       return 'follow'
     }
+    // private gathering invite
+    if (msg.value.content.type === 'gathering' && Array.isArray(msg.value.content.recps) && msg.value.content.recps.includes(id)) {
+      return 'invite'
+    }
   }
 }

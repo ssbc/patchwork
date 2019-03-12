@@ -15,6 +15,12 @@ var watch = require('mutant/watch')
 var requireStyle = require('require-style')
 var ssbUri = require('ssb-uri')
 
+try {
+  var mouseForwardBack = require('mouse-forward-back')
+} catch (err) {
+  mouseForwardBack = false
+}
+
 module.exports = function (config) {
   var sockets = combine(
     overrideConfig(config),
@@ -85,6 +91,17 @@ module.exports = function (config) {
 
   electron.ipcRenderer.on('goForward', views.goForward)
   electron.ipcRenderer.on('goBack', views.goBack)
+
+  if (mouseForwardBack) {
+    mouseForwardBack.register((direction) => {
+      if (direction === 'back') {
+        views.goBack()
+      } else if (direction === 'forward') {
+        views.goForward()
+      }
+    },
+    electron.remote.getCurrentWindow().getNativeWindowHandle())
+  }
 
   document.head.appendChild(
     h('style', {
