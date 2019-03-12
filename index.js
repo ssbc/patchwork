@@ -198,7 +198,7 @@ function setupContext (appName, opts, cb) {
 
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
-  console.log(redactedConfig)
+  console.log(JSON.stringify(redactedConfig, null, 2))
 
   if (opts.server === false) {
     cb && cb()
