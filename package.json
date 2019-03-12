@@ -15,7 +15,7 @@
   "author": "Secure Scuttlebutt Consortium",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@staltz/sbot-gossip": "^1.1.6",
+    "@staltz/sbot-gossip": "^1.2.3",
     "app-root-path": "^2.1.0",
     "async": "^2.6.1",
     "bulk-require": "^1.0.1",
@@ -90,6 +90,7 @@
     "ssb-server": "^13.3.0",
     "ssb-sort": "^1.1.0",
     "ssb-tags": "^0.2.0",
+    "ssb-uri": "^1.0.1",
     "ssb-ws": "~3.0.2",
     "standard": "^12.0.1",
     "suggest-box": "github:mmckegg/suggest-box#scroll-selection-into-view",

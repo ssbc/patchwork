@@ -1,6 +1,7 @@
 var h = require('mutant/h')
 var nest = require('depnest')
 var addSuggest = require('suggest-box')
+var ssbUri = require('ssb-uri')
 
 exports.needs = nest({
   'profile.async.suggest': 'first',
@@ -48,10 +49,17 @@ exports.create = function (api) {
     return searchBox
 
     function doSearch () {
+      const prefixes = ['/', '?', '@', '#', '%', 'ssb:']
       var value = searchBox.value.trim()
-      if (value.startsWith('/') || value.startsWith('?') || value.startsWith('@') || value.startsWith('#') || value.startsWith('%') || value.startsWith('&')) {
+      if (prefixes.some(p => prefixes.includes(p))) {
         if (value.startsWith('@') && value.length < 30) {
           // probably not a key
+        } else if (value.startsWith('ssb:')) {
+          try {
+            setView(ssbUri.toSigilLink(value))
+          } catch (e) {
+            // not a URI
+          }
         } else if (value.length > 2) {
           setView(value)
         }
