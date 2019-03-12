@@ -80,14 +80,18 @@ function bumpFilter (msg) {
 function ApplyFilterResult ({ ssb }) {
   return pull.asyncMap((msg, cb) => {
     var isYours = ssb.id === msg.value.author
+    var recps = msg.value.content.recps
     ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest: msg.value.author }, (err, followingAuthor) => {
       if (err) return cb(err)
-      async.filterSeries(msg.gathering && (msg.gathering.attending || []), (dest, cb) => {
+      var attending = (msg.gathering && msg.gathering.attending) || []
+      async.filterSeries(attending, (dest, cb) => {
         ssb.patchwork.contacts.isFollowing({ source: ssb.id, dest }, cb)
       }, (err, followingAttending) => {
         if (err) return cb(err)
+        var isAttending = Array.isArray(attending) && attending.includes(ssb.id)
+        var isRecp = Array.isArray(recps) && recps.includes(ssb.id)
         var hasTitle = !!msg.gathering.title
-        if ((followingAttending.length || followingAuthor || isYours) && hasTitle) {
+        if ((followingAttending.length || followingAuthor || isYours || isAttending || isRecp) && hasTitle) {
           msg.filterResult = {
             followingAttending,
             followingAuthor,
