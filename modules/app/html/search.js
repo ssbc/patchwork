@@ -51,7 +51,8 @@ exports.create = function (api) {
     function doSearch () {
       const prefixes = ['/', '?', '@', '#', '%', 'ssb:']
       var value = searchBox.value.trim()
-      if (prefixes.some(p => prefixes.includes(p))) {
+
+      if (prefixes.some(p => value.startsWith(p))) {
         if (value.startsWith('@') && value.length < 30) {
           // probably not a key
         } else if (value.startsWith('ssb:')) {
