@@ -5,12 +5,13 @@ var Abortable = require('pull-abortable')
 var Scroller = require('../../../lib/scroller')
 var extend = require('xtend')
 var GroupSummaries = require('../../../lib/group-summaries')
-var rootBumpTypes = ['mention', 'channel-mention']
+var rootBumpTypes = ['mention', 'channel-mention', 'invite']
 var getBump = require('../../../lib/get-bump')
 var many = require('../../../lib/many')
 
 var bumpMessages = {
   'reaction': 'liked this message',
+  'invite': 'invited you to this gathering',
   'reply': 'replied to this message',
   'updated': 'added changes',
   'mention': 'mentioned you',
