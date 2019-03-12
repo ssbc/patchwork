@@ -46,7 +46,7 @@ exports.create = function (api) {
               'ev-click': () => {
                 api.sbot.async.createDHT((err, code) => {
                   if (err) {
-                    created.set(false)
+                    creating.set(false)
                     showDialog({
                       type: 'error',
                       title: i18n('Error'),
