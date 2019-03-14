@@ -39,7 +39,7 @@ var createSbot = require('ssb-server')
   .use(require('ssb-search'))
   .use(require('ssb-ws'))
   .use(require('ssb-tags'))
-  // .use(require('ssb-ebt')) // enable at your own risk!
+  .use(require('ssb-ebt')) // enable at your own risk!
   .use(require('./sbot'))
 
 fixPath()

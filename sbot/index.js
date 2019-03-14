@@ -185,7 +185,7 @@ exports.init = function (ssb, config) {
       for (var from in data) {
         for (var to in data[from]) {
           var value = data[from][to]
-          // ssb.ebt.block(from, to, value === false)
+          ssb.ebt.block(from, to, value === false)
         }
       }
     })
