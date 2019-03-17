@@ -170,9 +170,9 @@ function setupContext (appName, opts, cb) {
     }
   }, opts))
 
-  console.log(ssbConfig)
-
-  ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
+  const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
+  redactedConfig.keys.private = null
+  console.log(redactedConfig)
 
   // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
   var id = ssbConfig.keys.id
