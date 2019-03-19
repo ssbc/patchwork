@@ -9,7 +9,8 @@ exports.needs = nest({
   'settings.sync.set': 'first',
   'intl.sync.locales': 'first',
   'intl.sync.i18n': 'first',
-  'intl.sync.localeNames': 'first'
+  'intl.sync.localeNames': 'first',
+  'secrets.sheet.new': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -91,6 +92,11 @@ exports.create = function (api) {
                 label: i18n('Include "Participating" tab in navigation bar')
               })
             ])
+          ]),
+
+          h('section', [
+            h('h2', i18n('Account')),
+            h('button', { 'ev-click': api.secrets.sheet.new }, 'Back up')
           ]),
 
           // h('section', [
