@@ -57,8 +57,15 @@ electron.app.on('ready', () => {
     var menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
-      label: 'History',
+      label: 'Navigation',
       submenu: [
+        {
+          label: 'Activate Search Field',
+          accelerator: 'CmdOrCtrl+L',
+          click: () => {
+            browserWindow.webContents.send('activateSearch')
+          }
+        },
         {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
