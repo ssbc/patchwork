@@ -170,6 +170,15 @@ function setupContext (appName, opts, cb) {
     }
   }, opts))
 
+  // don't allow websocket outside of local machine
+  // in conjunction with ssb-ws#v2.1.1-use-host
+  ssbConfig.ws.scope = ['device']
+  if (ssbConfig.host === '::') {
+    ssbConfig.ws.host = '::1' // ipv6 loopback
+  } else {
+    ssbConfig.ws.host = '127.0.0.1' // ipv4 loopback
+  }
+
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
   console.log(redactedConfig)
