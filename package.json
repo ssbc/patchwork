@@ -54,7 +54,7 @@
     "pull-stream": "^3.6.8",
     "scuttle-blog": "^1.0.0",
     "scuttle-tag": "0.4.0",
-    "scuttlebot": "^12.2.4",
+    "scuttlebot": "github:ssbc/ssb-server#patchwork-3.11.6",
     "sorted-array-functions": "^1.1.0",
     "spacetime": "^4.3.0",
     "ssb-about": "~0.1.2",
