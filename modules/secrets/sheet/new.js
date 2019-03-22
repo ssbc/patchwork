@@ -12,7 +12,6 @@ exports.needs = nest({
   'intl.sync.i18n_n': 'first',
   'sheet.display': 'first',
   'keys.sync.load': 'first',
-  'profile.async.suggest': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'secrets.html.custodians': 'first',
