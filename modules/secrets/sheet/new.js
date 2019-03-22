@@ -12,7 +12,7 @@ exports.needs = nest({
   'profile.async.suggest': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
-  'secrets.html.suggestCustodians': 'first',
+  'secrets.html.custodians': 'first',
   'emoji.sync.url': 'first',
   'sbot.obs.connection': 'first'
 })
@@ -23,9 +23,7 @@ exports.create = (api) => {
 
   const scuttle = DarkCrystal(api.sbot.obs.connection)
 
-  return nest('secrets.sheet.new', function (callback) {
-    callback = callback || noop
-
+  return nest('secrets.sheet.new', function () {
     const props = Struct({
       secretName: 'SSB Identity',
       secret: JSON.stringify(api.keys.sync.load()),
@@ -45,14 +43,18 @@ exports.create = (api) => {
           h('div.left', [
             h('section.custodians', [
               h('p', 'Choose your custodians'),
-              // This needs extracting into an async fn and a html renderer
-              api.secrets.html.suggestCustodians(props)
+              // This feels like a hacky solution in the context of Patchwork...
+              // If the quorum is _above_ the recps count when a recp is removed, it lowers the quorum
+              api.secrets.html.custodians({ recps: props.recps, onChange: () => {
+                var quorum = resolve(props.quorum)
+                var recpsCount = props.recps.getLength()
+                quorum > recpsCount && quorum > 2 ? props.quorum.set(recpsCount) : null
+              } })
             ]),
             h('section.quroum', [
               h('section', [
                 h('p', 'Set a quorum'),
                 h('div', [
-                  // This currently doesn't change when recps length is reduced...
                   h('span', props.quorum)
                 ])
               ]),
@@ -98,17 +100,15 @@ exports.create = (api) => {
       ]
 
       return { content, footer, classList: ['-private'] }
-
-      function save () {
-        let params = resolve(props)
-
-        scuttle.share.async.share(params, (err, secret) => {
-          if (err) throw err
-          else close()
-        })
-      }
     })
+
+    function save () {
+      let params = resolve(props)
+
+      scuttle.share.async.share(params, (err, secret) => {
+        if (err) throw err
+        else close()
+      })
+    }
   })
 }
-
-function noop () {}

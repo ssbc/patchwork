@@ -1,20 +1,18 @@
 const nest = require('depnest')
 const { isFeedId } = require('ssb-ref')
 const { h, resolve, Struct, Array: MutantArray } = require('mutant')
-const addSuggest = require('suggest-box')
 
-exports.gives = nest('secrets.html.suggestCustodians')
+exports.gives = nest('secrets.html.custodians')
 
 exports.needs = nest({
-  'profile.async.suggest': 'first'
+  'secrets.async.suggest': 'first'
 })
 
 exports.create = (api) => {
-  const getProfileSuggestions = api.profile.async.suggest()
-
-  return nest('secrets.html.suggestCustodians', function (props, cb) {
+  return nest('secrets.html.custodians', function (props) {
     const {
-      recps = MutantArray([])
+      recps = MutantArray([]),
+      onChange = console.log
     } = props
 
     const state = Struct({
@@ -22,7 +20,7 @@ exports.create = (api) => {
       wasEmpty: null
     })
 
-    const suggestBox = h('input', {
+    const input = h('input', {
       type: 'search',
       'ev-suggestselect': (ev) => {
         const { id: link, title: name } = ev.detail
@@ -45,19 +43,17 @@ exports.create = (api) => {
       },
       'ev-keyup': (ev) => {
         state.isEmpty.set(resolve(state.wasEmpty) && ev.target.value.length === 0)
-        if (isBackspace(ev) && resolve(state.isEmpty) && recps.getLength() > 0) recps.pop()
+        if (isBackspace(ev) && resolve(state.isEmpty) && recps.getLength() > 0) {
+          recps.pop()
+          onChange()
+        }
         state.wasEmpty.set(ev.target.value.length === 0)
       }
     })
 
-    setImmediate(() => {
-      addSuggest(
-        suggestBox,
-        (inputText, cb) => getProfileSuggestions(inputText.slice(1), cb),
-        { cls: 'SuggestBox' })
-    })
+    api.secrets.async.suggest(input)
 
-    return suggestBox
+    return input
   })
 }
 
