@@ -10,7 +10,7 @@ exports.needs = nest({
   'intl.sync.locales': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.localeNames': 'first',
-  'secrets.sheet.new': 'first'
+  'secrets.sheet.backup': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -96,7 +96,7 @@ exports.create = function (api) {
 
           h('section', [
             h('h2', i18n('Account')),
-            h('button', { 'ev-click': api.secrets.sheet.new }, 'Back up')
+            h('button', { 'ev-click': api.secrets.sheet.backup }, 'Back up')
           ]),
 
           // h('section', [

@@ -157,7 +157,6 @@ exports.create = (api) => {
             })
           )
         }, 10),
-        // pull.take(1),
         pull.collect((err, secrets) => {
           if (err) throw err
           var recordsArray = transform(records, (acc, value, key, obj) => {
