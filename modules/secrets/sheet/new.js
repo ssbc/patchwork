@@ -1,6 +1,9 @@
 const nest = require('depnest')
 const { h, Struct, resolve, Array: MutantArray, computed, when, map } = require('mutant')
 const DarkCrystal = require('scuttle-dark-crystal')
+const blobFiles = require('ssb-blob-files')
+const fs = require('fs')
+const { join } = require('path')
 
 exports.gives = nest('secrets.sheet.new')
 
@@ -14,7 +17,8 @@ exports.needs = nest({
   'about.obs.name': 'first',
   'secrets.html.custodians': 'first',
   'emoji.sync.url': 'first',
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
+  'config.sync.load': 'first'
 })
 
 exports.create = (api) => {
@@ -71,7 +75,7 @@ exports.create = (api) => {
                   }
                 })
               ])
-            ])
+            ]),
           ]),
           h('div.right', [
             h('section.recps', map(props.recps, (recp) => (
@@ -103,11 +107,17 @@ exports.create = (api) => {
     })
 
     function save () {
-      let params = resolve(props)
+      let config = api.config.sync.load()
+      let buffer = fs.readFileSync(join(config.path, 'gossip.json')),
+      let file = new File(buffer, 'gossip.json', { type: 'application/json' })
 
-      scuttle.share.async.share(params, (err, secret) => {
-        if (err) throw err
-        else close()
+      blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
+        let params = Object.assign({}, resolve(props), { attachment })
+
+        scuttle.share.async.share(params, (err, secret) => {
+          if (err) throw err
+          else close()
+        })
       })
     }
   })
