@@ -5,6 +5,12 @@ const blobFiles = require('ssb-blob-files')
 const fs = require('fs')
 const { join } = require('path')
 
+const {
+  isUndefined,
+  isNull,
+  isEmpty
+} = require('lodash')
+
 exports.gives = nest('secrets.sheet.backup')
 
 exports.needs = nest({
@@ -28,31 +34,19 @@ exports.create = (api) => {
   const scuttle = DarkCrystal(api.sbot.obs.connection)
 
   return nest('secrets.sheet.backup', function () {
-    computed(api.secrets.obs.identity(), (backup) => {
-      if (isUndefined(backup) || isNull(backup)) api.sheet.display(Loading)
-      else if (isEmpty(backup)) api.sheet.display(Form)
-      else api.sheet.display(Details)
+    const props = Struct({
+      secretName: 'SSB Identity',
+      secret: JSON.stringify(api.keys.sync.load()),
+      quorum: 2,
+      recps: MutantArray([]),
+    })
 
-      function Loading (close) {
-        const content = h('div', { style: { 'padding': '20px' } }, [ h('p', 'Loading...') ])
-        const footer = [ h('button -cancel', { 'ev-click': close }, i18n('Cancel')) ]
-        return { content, footer }
-      }
+    api.sheet.display((close) => {
+      const identity = api.secrets.obs.identity()
 
-      function Form (close) {
-        const props = Struct({
-          secretName: 'SSB Identity',
-          secret: JSON.stringify(api.keys.sync.load()),
-          quorum: 2,
-          recps: MutantArray([]),
-        })
-
-        const state = Struct({
-          publishing: false,
-          canSave: computed(props, ({ quorum, recps }) => quorum && recps.length >= quorum)
-        })
-
-        const content = h('div', { style: { 'padding': '20px' } }, [
+      const content = computed(identity, (backup) => {
+        if (isUndefined(backup) || isNull(backup)) return h('div', { style: { 'padding': '20px' } }, [ h('p', 'Loading...') ])
+        else if (isEmpty(backup)) return h('div', { style: { 'padding': '20px' } }, [
           h('h2', 'Back Up'),
           h('SecretNew', [
             h('div.left', [
@@ -98,8 +92,39 @@ exports.create = (api) => {
             ])
           ])
         ])
+        else return h('div', { style: { 'padding': '20px' } }, [
+          h('h2', 'Back Up'),
+          h('SecretNew', [
+            h('div.left', [
+              h('section.custodians', [
+                h('p', 'Custodians'),
+              ]),
+              h('section.quroum', [
+                h('p', 'Quorum'),
+              ])
+            ]),
+            h('div.right', [
+              h('section.custodians', [
+                backup.recipients.map(recp => (
+                  h('div,custodian', [
+                    api.about.html.image(recp),
+                    api.about.obs.name(recp)
+                  ])
+                ))
+              ]),
+              h('section.quroum', [
+                h('div', [
+                  h('span', backup.quorum)
+                ])
+              ])
+            ])
+          ])
+        ])
+      })
 
-        const footer = [
+      const footer = computed(identity, (backup) => {
+        if (isUndefined(backup) || isNull(backup)) return [ h('button -cancel', { 'ev-click': close }, i18n('Cancel')) ]
+        else if (isEmpty(backup)) return [
           h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
           plural('The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.'),
 
@@ -113,51 +138,28 @@ exports.create = (api) => {
             h('button -cancel', { 'disabled': state.publishing, 'ev-click': close }, i18n('Cancel'))
           )
         ]
-
-        return { content, footer, classList: ['-private'] }
-
-        function save () {
-          var config = api.config.sync.load()
-          var buffer = fs.readFileSync(join(config.path, 'gossip.json'))
-          var file = new File(buffer, 'gossip.json', { type: 'application/json' })
-
-          blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
-            var params = Object.assign({}, resolve(props), { attachment })
-
-            scuttle.share.async.share(params, (err, secret) => {
-              if (err) throw err
-              else close()
-            })
-          })
-        }
-      }
-
-      function Details (close) {
-        const content = h('div', { style: { 'padding': '20px' } }, [
-          h('h2', 'Back Up'),
-          h('SecretNew', [
-            h('div.left', [
-              h('section.custodians', [
-                h('p', 'Custodians')
-                // backup.recipients.map(recp => (
-                //   h('div', [
-                //     api.about.html.image(recp),
-                //     api.about.obs.name(recp)
-                //   ])
-                // ))
-              ])
-            ])
-          ])
-        ])
-
-        const footer = [
+        else return [
           h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
           h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
         ]
+      })
 
-        return { content, footer, classList: ['-private'] }
+      return { content, footer, classList: ['-private'] }
+
+      function save () {
+        var config = api.config.sync.load()
+        var buffer = fs.readFileSync(join(config.path, 'gossip.json'))
+        var file = new File(buffer, 'gossip.json', { type: 'application/json' })
+
+        blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
+          var params = Object.assign({}, resolve(props), { attachment })
+
+          scuttle.share.async.share(params, (err, secret) => {
+            if (err) throw err
+            else close()
+          })
+        })
       }
     })
   })
 }
-
