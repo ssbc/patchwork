@@ -45,7 +45,6 @@
     "i18n": "^0.8.3",
     "lodash.concat": "^4.5.0",
     "lodash.filter": "^4.6.0",
-    "magnet-link-regex": "^1.0.0",
     "micro-css": "^2.0.1",
     "moment-timezone": "^0.5.23",
     "multiserver-dht": "^4.0.0",
