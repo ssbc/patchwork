@@ -33,6 +33,10 @@ exports.create = function (api) {
         }
       }
     })
+    electron.ipcRenderer.on('activateSearch', () => {
+      searchBox.focus()
+      searchBox.select() // should handle selecting everything in the box
+    })
 
     setImmediate(() => {
       addSuggest(searchBox, (inputText, cb) => {

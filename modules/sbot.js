@@ -144,7 +144,6 @@ exports.create = function (api) {
     }
   })
 
-  var feed = createFeed(internal, keys, { remote: true })
 
   return {
     sbot: {
@@ -158,7 +157,11 @@ exports.create = function (api) {
           }
           if (cache[key]) cb(null, cache[key])
           else {
-            sbot.get(key, function (err, value) {
+            var options = typeof key === 'string'
+              ? { private: true, id: key }
+              : key
+
+            sbot.get(options, function (err, value) {
               if (err) return cb(err)
               runHooks({ key, value })
               cb(null, value)
@@ -195,7 +198,7 @@ exports.create = function (api) {
             })
           }
 
-          feed.add(content, (err, msg) => {
+          sbot.publish(content, (err, msg) => {
             if (err) console.error(err)
             else if (!cb) console.log(msg)
             cb && cb(err, msg)
