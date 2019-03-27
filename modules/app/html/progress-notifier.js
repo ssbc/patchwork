@@ -52,6 +52,18 @@ exports.create = function (api) {
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
     var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)
 
+    // HACK: Resolves an issue where buttons are non-responsive while indexing.
+    const readOnlyMode = `
+      body {
+        cursor: progress;
+      }
+
+      button, .like, .reply, .tag, .ToggleButton, .Picker {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+    `
+
     return h('div.info', { hidden }, [
       h('div.status', [
         when(displaying, h('Loading -small', [
@@ -60,7 +72,11 @@ exports.create = function (api) {
             when(computed(downloadProgress, (v) => v < 1),
               [h('span.info', i18n('Downloading new messages')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: downloadProgress })],
               when(pending, [
-                [h('span.info', i18n('Indexing database')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: indexProgress })]
+                [
+                  h('span.info', i18n('Indexing database')),
+                  h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: indexProgress }),
+                  h('style', readOnlyMode)
+                ]
               ], i18n('Scuttling...'))
             )
           )
