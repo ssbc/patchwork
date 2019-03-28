@@ -255,8 +255,9 @@ exports.create = function (api) {
       function done (err, msg) {
         publishing.set(false)
         if (err) {
-          if (cb) cb(err)
-          else {
+          if (cb) {
+            cb(err)
+          } else {
             showDialog({
               type: 'error',
               title: i18n('Error'),

@@ -15,7 +15,8 @@ exports.needs = nest({
   'config.sync.load': 'first',
   'keys.sync.load': 'first',
   'sbot.obs.connectionStatus': 'first',
-  'sbot.hook.publish': 'map'
+  'sbot.hook.publish': 'map',
+  'progress.obs.indexes': 'first'
 })
 
 exports.gives = {
@@ -169,39 +170,56 @@ exports.create = function (api) {
           }
         }),
         publish: rec.async((content, cb) => {
-          if (content.recps) {
-            content = ssbKeys.box(content, content.recps.map(e => {
-              return ref.isFeed(e) ? e : e.link
-            }))
-          } else {
-            var flatContent = flat(content)
-            Object.keys(flatContent).forEach(key => {
-              var val = flatContent[key]
-              if (ref.isBlob(val)) {
-                sbot.blobs.push(val, err => {
-                  if (err) console.error(err)
+          const indexes = api.progress.obs.indexes()
+          var rm = indexes((progress) => {
+            rm()
+            const pending = progress.target - progress.current || 0
+
+            if (pending) {
+              const err = new Error('Cowardly refusing to publish your message while database is still indexing. Please try again once indexing is finished.')
+
+              if (typeof cb === 'function') {
+                cb(err)
+              } else {
+                console.error(err.toString())
+              }
+            } else {
+              console.log('not pending af' )
+              if (content.recps) {
+                content = ssbKeys.box(content, content.recps.map(e => {
+                  return ref.isFeed(e) ? e : e.link
+                }))
+              } else {
+                var flatContent = flat(content)
+                Object.keys(flatContent).forEach(key => {
+                  var val = flatContent[key]
+                  if (ref.isBlob(val)) {
+                    sbot.blobs.push(val, err => {
+                      if (err) console.error(err)
+                    })
+                  }
                 })
               }
-            })
-          }
 
-          if (sbot) {
-            // instant updating of interface (just incase sbot is busy)
-            runHooks({
-              publishing: true,
-              timestamp: Date.now(),
-              value: {
-                timestamp: Date.now(),
-                author: keys.id,
-                content
+              if (sbot) {
+                // instant updating of interface (just incase sbot is busy)
+                runHooks({
+                  publishing: true,
+                  timestamp: Date.now(),
+                  value: {
+                    timestamp: Date.now(),
+                    author: keys.id,
+                    content
+                  }
+                })
               }
-            })
-          }
 
-          sbot.publish(content, (err, msg) => {
-            if (err) console.error(err)
-            else if (!cb) console.log(msg)
-            cb && cb(err, msg)
+              sbot.publish(content, (err, msg) => {
+                if (err) console.error(err)
+                else if (!cb) console.log(msg)
+                cb && cb(err, msg)
+              })
+            }
           })
         }),
         addBlob: rec.async((stream, cb) => {
