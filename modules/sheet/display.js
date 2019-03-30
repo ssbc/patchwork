@@ -12,12 +12,21 @@ exports.create = function () {
       h('footer', [footer])
     ])
 
+    // Closes the sheet when the user presses escape
+    function escapeKeyListener(event) {
+      event.stopPropagation()
+      if (event.key === "Escape") done()
+    }
+
     document.body.appendChild(container)
+
+    document.addEventListener('keydown', escapeKeyListener)
 
     if (onMount) onMount()
 
     function done () {
       document.body.removeChild(container)
+      document.removeEventListener('keydown', escapeKeyListener)
     }
   })
 }
