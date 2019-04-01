@@ -53,14 +53,25 @@ exports.create = function (api) {
     var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)
 
     // HACK: Resolves an issue where buttons are non-responsive while indexing.
+    //
+    // 1. Sets the *progress* cursor when Patchwork is focused.
+    // 2. Sets the *wait* cursor when a publish button is selected.
+    // 3. Sets the *not-allowed* cursor when a publish button is activated.
+    //
+    // If a user disregards all of the above then `modules/sbot.js` will return
+    // an error telling the user to wait until indexing is finished.
     const readOnlyMode = `
       body {
         cursor: progress;
       }
 
-      button, .like, .reply, .tag, .ToggleButton, .Picker {
+      button:not(.-clear):not(.-cancel):not(.cancel), .like, .reply, .tag, .ToggleButton, .Picker {
+        cursor: wait;
         opacity: 0.5;
-        pointer-events: none;
+      }
+
+      button:not(.-clear):not(.-cancel):not(.cancel):active, .like:active, .reply:active, .tag:active, .ToggleButton:active, .Picker:active {
+        cursor: not-allowed;
       }
     `
 
