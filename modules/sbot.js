@@ -15,7 +15,8 @@ exports.needs = nest({
   'config.sync.load': 'first',
   'keys.sync.load': 'first',
   'sbot.obs.connectionStatus': 'first',
-  'sbot.hook.publish': 'map'
+  'sbot.hook.publish': 'map',
+  'progress.obs.indexes': 'first'
 })
 
 exports.gives = {
@@ -169,6 +170,21 @@ exports.create = function (api) {
           }
         }),
         publish: rec.async((content, cb) => {
+          const indexes = api.progress.obs.indexes()
+          const progress = indexes()
+          const pending = progress.target - progress.current || 0
+
+          if (pending) {
+            const err = new Error('Cowardly refusing to publish your message while database is still indexing. Please try again once indexing is finished.')
+
+            if (typeof cb === 'function') {
+              return cb(err)
+            } else {
+              console.error(err.toString())
+              return
+            }
+          }
+
           if (content.recps) {
             content = ssbKeys.box(content, content.recps.map(e => {
               return ref.isFeed(e) ? e : e.link
