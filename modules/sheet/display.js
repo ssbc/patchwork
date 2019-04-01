@@ -5,7 +5,7 @@ exports.gives = nest('sheet.display')
 
 exports.create = function () {
   return nest('sheet.display', function (handler) {
-    var { content, footer, classList, onMount } = handler(done)
+    var { content, footer, classList, onMount } = handler(close)
 
     var container = h('div', { className: 'Sheet', classList }, [
       h('section', [content]),
@@ -14,8 +14,10 @@ exports.create = function () {
 
     // Closes the sheet when the user presses escape
     function escapeKeyListener(event) {
-      event.stopPropagation()
-      if (event.key === "Escape") done()
+      if (event.key === "Escape") {
+        event.stopPropagation()
+        close()
+      }
     }
 
     document.body.appendChild(container)
@@ -24,7 +26,7 @@ exports.create = function () {
 
     if (onMount) onMount()
 
-    function done () {
+    function close () {
       document.body.removeChild(container)
       document.removeEventListener('keydown', escapeKeyListener)
     }
