@@ -2,6 +2,7 @@ const nest = require('depnest')
 const DarkCrystal = require('scuttle-dark-crystal')
 
 const { h, Struct, resolve, Array: MutantArray, computed, when, map } = require('mutant')
+const { isFeed } = require('ssb-ref')
 
 const {
   isUndefined,
@@ -132,6 +133,11 @@ exports.create = (api) => {
           h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
           plural('Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band.'),
 
+          computed([props.recps, props.identity], (recps, identity) => {
+            const feedId = identity[0] && identity[0].link
+            recps.length >= 2 && isFeed(feedId) ? state.canSubmit.set(true) : state.canSubmit.set(false)
+          }),
+
           when(state.canSubmit,
             [
               h('button -save', { 'ev-click': save, 'disabled': state.publishing }, [
@@ -152,6 +158,9 @@ exports.create = (api) => {
 
       function save () {
         var params = resolve(props)
+        // make sure to remove quorum from props, we don't want to publish that in the forward request,
+        // we do want to store it locally and use it to inform the in progress recovery view
+        delete params.quorum
         console.log(params)
       }
     })
