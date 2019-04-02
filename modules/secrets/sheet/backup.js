@@ -41,6 +41,11 @@ exports.create = (api) => {
       recps: MutantArray([]),
     })
 
+    const state = Struct({
+      canSave: false,
+      publishing: false
+    })
+
     api.sheet.display((close) => {
       const identity = api.secrets.obs.identity()
 
@@ -49,16 +54,17 @@ exports.create = (api) => {
         else if (isEmpty(backup)) return h('div', { style: { 'padding': '20px' } }, [
           h('h2', 'Back Up'),
           h('SecretNew', [
+            computed([props.quorum, props.recps], (quorum, recps) => {
+              quorum <= recps.length ? state.canSave.set(true) : state.canSave.set(false)
+            }),
             h('div.left', [
               h('section.custodians', [
                 h('p', 'Choose your custodians'),
-                // This feels like a hacky solution in the context of Patchwork...
-                // If the quorum is _above_ the recps count when a recp is removed, it lowers the quorum
-                api.secrets.html.custodians({ recps: props.recps, onChange: () => {
+                api.secrets.html.custodians(props.recps, () => {
                   var quorum = resolve(props.quorum)
                   var recpsCount = props.recps.getLength()
                   quorum > recpsCount && quorum > 2 ? props.quorum.set(recpsCount) : null
-                } })
+                })
               ]),
               h('section.quroum', [
                 h('section', [
@@ -123,8 +129,8 @@ exports.create = (api) => {
       })
 
       const footer = computed(identity, (backup) => {
-        if (isUndefined(backup) || isNull(backup)) return [ h('button -cancel', { 'ev-click': close }, i18n('Cancel')) ]
-        else if (isEmpty(backup)) return [
+        if (isUndefined(backup) || isNull(backup)) return h('div', [ h('button -cancel', { 'ev-click': close }, i18n('Cancel')) ])
+        else if (isEmpty(backup)) return h('div', [
           h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
           plural('The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.'),
 
@@ -137,11 +143,11 @@ exports.create = (api) => {
             ],
             h('button -cancel', { 'disabled': state.publishing, 'ev-click': close }, i18n('Cancel'))
           )
-        ]
-        else return [
+        ])
+        else return h('div', [
           h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
           h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
-        ]
+        ])
       })
 
       return { content, footer, classList: ['-private'] }
