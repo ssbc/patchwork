@@ -11,7 +11,9 @@ exports.needs = nest({
   'intl.sync.i18n': 'first',
   'intl.sync.localeNames': 'first',
   'secrets.obs.identity': 'first',
-  'secrets.sheet.backup': 'first'
+  'secrets.obs.recovery': 'first',
+  'secrets.sheet.backup': 'first',
+  'secrets.sheet.recover': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -31,6 +33,7 @@ exports.create = function (api) {
     const includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
 
     api.secrets.obs.identity() // initialize the pull stream to reduce time user has to wait
+    api.secrets.obs.recovery()
 
     // const filterFollowing = api.settings.obs.get('filters.following')
     // const filterSubscriptions = api.settings.obs.get('filters.subscriptions')
@@ -99,7 +102,8 @@ exports.create = function (api) {
 
           h('section', [
             h('h2', i18n('Account')),
-            h('button', { 'ev-click': api.secrets.sheet.backup }, 'Back up')
+            h('button', { 'ev-click': api.secrets.sheet.backup }, 'Back up'),
+            h('button', { 'ev-click': api.secrets.sheet.recover }, 'Recover')
           ]),
 
           // h('section', [

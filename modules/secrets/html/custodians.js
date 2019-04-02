@@ -9,7 +9,13 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  return nest('secrets.html.custodians', function (recps = MutantArray([]), cb = console.log) {
+  return nest('secrets.html.custodians', custodians)
+
+  function custodians (recps = MutantArray([]), opts = {}, cb = console.log) {
+    if (typeof opts === 'function') return custodians(recps, {}, opts)
+
+    const { maxRecps = 7 } = opts
+
     const state = Struct({
       isEmpty: true,
       wasEmpty: null
@@ -22,7 +28,7 @@ exports.create = (api) => {
         const isPresent = resolve(recps).find(recp => recp === link || recp.link === link)
 
         if (!isPresent) {
-          if (recps.getLength() >= 7) return // max recps hard coded at 7
+          if (recps.getLength() >= maxRecps) return // max recps hard coded at 7
 
           recps.push({ link, name })
         }
@@ -31,7 +37,7 @@ exports.create = (api) => {
         ev.target.placeholder = ''
       },
       'ev-keydown': (ev) => {
-        if (recps.getLength() >= 7 && !isBackspace(ev)) {
+        if (recps.getLength() >= maxRecps && !isBackspace(ev)) {
           ev.preventDefault()
           return false
         }
@@ -49,7 +55,7 @@ exports.create = (api) => {
     api.secrets.async.suggest(input)
 
     return input
-  })
+  }
 }
 
 function isBackspace (ev) {

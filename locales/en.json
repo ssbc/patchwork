@@ -308,5 +308,7 @@
 	"The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity": "The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity",
 	"The quorum and custodians will only be visible to you.": "The quorum and custodians will only be visible to you.",
 	"Each selected custodian will receive a message containing a cryptographically split section of your identity.": "Each selected custodian will receive a message containing a cryptographically split section of your identity.",
-	"The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.": "The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity."
+	"The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.": "The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.",
+	"Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band.": "Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band.",
+	"Clear": "Clear"
 }

@@ -42,7 +42,7 @@ exports.create = (api) => {
     })
 
     const state = Struct({
-      canSave: false,
+      canSubmit: false,
       publishing: false
     })
 
@@ -54,9 +54,6 @@ exports.create = (api) => {
         else if (isEmpty(backup)) return h('div', { style: { 'padding': '20px' } }, [
           h('h2', 'Back Up'),
           h('SecretNew', [
-            computed([props.quorum, props.recps], (quorum, recps) => {
-              quorum <= recps.length ? state.canSave.set(true) : state.canSave.set(false)
-            }),
             h('div.left', [
               h('section.custodians', [
                 h('p', 'Choose your custodians'),
@@ -134,7 +131,11 @@ exports.create = (api) => {
           h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
           plural('The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.'),
 
-          when(state.canSave,
+          computed([props.quorum, props.recps], (quorum, recps) => {
+            quorum <= recps.length ? state.canSubmit.set(true) : state.canSubmit.set(false)
+          }),
+
+          when(state.canSubmit,
             [
               h('button -save', { 'ev-click': save, 'disabled': state.publishing }, [
                 when(state.publishing, i18n('Publishing...'), i18n('Publish'))
