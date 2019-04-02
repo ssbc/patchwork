@@ -52,6 +52,7 @@ exports.create = (api) => {
         else if (isEmpty(recovery)) {
           const slider = h('input', {
             'required': true,
+            'disabled': state.publishing,
             'ev-input': (e) => (e.target.value / 100) >= 2 ? props.quorum.set(Math.round(e.target.value / 100)) : null,
             'title': 'Can you remember the quorum?',
             'type': 'range',
@@ -68,11 +69,11 @@ exports.create = (api) => {
               h('div.left', [
                 h('section.identity', [
                   h('p', 'Choose your old identity'),
-                  api.secrets.html.custodians(props.identity, { maxRecps: 1 })
+                  api.secrets.html.custodians(props.identity, { maxRecps: 1, disabled: state.publishing })
                 ]),
                 h('section.custodians', [
                   h('p', 'Select your custodians'),
-                  api.secrets.html.custodians(props.recps, () => {
+                  api.secrets.html.custodians(props.recps, { disabled: state.publishing }, () => {
                     var quorum = resolve(props.quorum)
                     var recpsCount = props.recps.getLength()
                     if (quorum > recpsCount) {
@@ -88,7 +89,10 @@ exports.create = (api) => {
                   h('section', [
                     h('p', 'Can you remember the quorum?'),
                     slider,
-                    h('button -cancel', { 'ev-click': (e) => { props.quorum.set(null); slider.value = '0' } }, i18n('Clear'))
+                    h('button -cancel', {
+                      'disabled': state.publishing,
+                      'ev-click': (e) => { props.quorum.set(null); slider.value = '0' }
+                    }, i18n('Clear'))
                   ])
                 ])
               ]),
@@ -135,7 +139,7 @@ exports.create = (api) => {
 
           computed([props.recps, props.identity], (recps, identity) => {
             const feedId = identity[0] && identity[0].link
-            recps.length >= 2 && isFeed(feedId) ? state.canSubmit.set(true) : state.canSubmit.set(false)
+            recps.length >= 2 && feedId && isFeed(feedId) ? state.canSubmit.set(true) : state.canSubmit.set(false)
           }),
 
           when(state.canSubmit,
@@ -154,7 +158,7 @@ exports.create = (api) => {
         ])
       })
 
-      return { content, footer: [footer], classList: ['-private'] }
+      return { content, footer, classList: ['-private'] }
 
       function save () {
         var params = resolve(props)

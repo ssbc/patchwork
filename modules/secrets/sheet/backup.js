@@ -57,32 +57,26 @@ exports.create = (api) => {
             h('div.left', [
               h('section.custodians', [
                 h('p', 'Choose your custodians'),
-                api.secrets.html.custodians(props.recps, () => {
+                api.secrets.html.custodians(props.recps, { 'disabled': state.publishing }, () => {
                   var quorum = resolve(props.quorum)
                   var recpsCount = props.recps.getLength()
                   quorum > recpsCount && quorum > 2 ? props.quorum.set(recpsCount) : null
                 })
               ]),
               h('section.quroum', [
-                h('section', [
-                  h('p', 'Set a quorum'),
-                  h('div', [
-                    h('span', props.quorum)
-                  ])
-                ]),
-                h('section', [
-                  h('input', {
-                    'required': true,
-                    'ev-input': (e) => (e.target.value / 100) >= 2 ? props.quorum.set(Math.round(e.target.value / 100)) : null,
-                    'title': 'Choose a quorum of custodians required to recover your account',
-                    'type': 'range',
-                    'min': 2,
-                    'max': computed(props.recps, (recps) => recps.length >= 7 ? (7 * 100) : recps.length * 100),
-                    'attributes': {
-                      value: computed(props.quorum, quorum => quorum > 2 ? quorum * 100 : 2 * 100)
-                    }
-                  })
-                ])
+                h('p', 'Choose a quorum'),
+                h('input', {
+                  'required': true,
+                  'disabled': state.publishing,
+                  'ev-input': (e) => (e.target.value / 100) >= 2 ? props.quorum.set(Math.round(e.target.value / 100)) : null,
+                  'title': 'Choose a quorum of custodians required to recover your account',
+                  'type': 'range',
+                  'min': 2,
+                  'max': computed(props.recps, (recps) => recps.length >= 7 ? (7 * 100) : recps.length * 100),
+                  'attributes': {
+                    value: computed(props.quorum, quorum => quorum > 2 ? quorum * 100 : 2 * 100)
+                  }
+                })
               ]),
             ]),
             h('div.right', [
@@ -91,7 +85,10 @@ exports.create = (api) => {
                   api.about.html.image(recp.link),
                   api.about.obs.name(recp.link)
                 ])
-              )))
+              ))),
+              h('section.quorum', [
+                h('div', [ h('span', props.quorum) ])
+              ])
             ])
           ])
         ])

@@ -14,7 +14,10 @@ exports.create = (api) => {
   function custodians (recps = MutantArray([]), opts = {}, cb = console.log) {
     if (typeof opts === 'function') return custodians(recps, {}, opts)
 
-    const { maxRecps = 7 } = opts
+    const {
+      maxRecps = 7,
+      disabled = false
+    } = opts
 
     const state = Struct({
       isEmpty: true,
@@ -23,6 +26,7 @@ exports.create = (api) => {
 
     const input = h('input', {
       type: 'search',
+      disabled,
       'ev-suggestselect': (ev) => {
         const { id: link, title: name } = ev.detail
         const isPresent = resolve(recps).find(recp => recp === link || recp.link === link)
