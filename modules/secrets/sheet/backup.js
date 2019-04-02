@@ -38,7 +38,7 @@ exports.create = (api) => {
       secretName: 'SSB Identity',
       secret: JSON.stringify(api.keys.sync.load()),
       quorum: 2,
-      recps: MutantArray([]),
+      recps: MutantArray([])
     })
 
     const state = Struct({
@@ -156,8 +156,10 @@ exports.create = (api) => {
         var file = new File(buffer, 'gossip.json', { type: 'application/json' })
 
         blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
+          if (err) throw err
           var params = Object.assign({}, resolve(props), { attachment })
-
+          params.name = params.secretName
+          delete params.secretName
           scuttle.share.async.share(params, (err, secret) => {
             if (err) throw err
             else close()
