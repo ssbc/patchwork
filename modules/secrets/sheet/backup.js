@@ -106,7 +106,7 @@ exports.create = (api) => {
             h('div.right', [
               h('section.custodians', [
                 backup.recipients.map(recp => (
-                  h('div,custodian', [
+                  h('div.custodian', [
                     api.about.html.image(recp),
                     api.about.obs.name(recp)
                   ])

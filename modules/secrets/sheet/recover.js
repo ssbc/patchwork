@@ -16,14 +16,12 @@ exports.needs = nest({
   'intl.sync.i18n': 'first',
   'intl.sync.i18n_n': 'first',
   'sheet.display': 'first',
-  'keys.sync.load': 'first',
   'about.html.image': 'first',
   'about.obs.name': 'first',
   'secrets.html.custodians': 'first',
   'secrets.obs.recovery': 'first',
   'emoji.sync.url': 'first',
   'sbot.obs.connection': 'first',
-  'config.sync.load': 'first'
 })
 
 exports.create = (api) => {
