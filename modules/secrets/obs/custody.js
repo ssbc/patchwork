@@ -1,12 +1,9 @@
 const nest = require('depnest')
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
-const { isFeedId  } = require('ssb-ref')
-const { get, set, transform, sortBy  } = require('lodash')
+const { get, set, transform, sortBy } = require('lodash')
 
-const Scuttle = require('scuttle-dark-crystal')
-const isRequest = require('scuttle-dark-crystal/isRequest')
-const isReply = require('scuttle-dark-crystal/isReply')
+const DarkCrystal = require('scuttle-dark-crystal')
 
 const { h, Array: MutantArray, throttle, onceTrue } = require('mutant')
 
@@ -16,14 +13,14 @@ const RECEIVED = 'received'
 const REQUESTED = 'requested'
 const RETURNED = 'returned'
 
-exports.gives = nest('app.actions.shards.fetch')
+exports.gives = nest('secrets.obs.custody')
 
 exports.needs = nest({
   'sbot.obs.connection': 'first'
 })
 
 exports.create = (api) => {
-  return nest('app.actions.shards.fetch', fetch)
+  return nest('secrets.obs.custody', fetch)
 
   // store is an observable that returns an array of structure:
   // [
@@ -36,14 +33,61 @@ exports.create = (api) => {
   function fetch (props = {}) {
     const { limit = 100  } = props
 
-    const scuttle = Scuttle(api.sbot.obs.connection)
+    const scuttle = DarkCrystal(api.sbot.obs.connection)
 
     if (!store) {
       store = MutantArray([])
-      updateStore()
+      // updateStore()
+
+      // %%TODO%% replace dummy data with real data
+      store.set([
+        {
+          id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+          feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+          sentAt: '2015-9-19',
+          state: RECEIVED,
+          requests: [],
+          forwards: []
+        },
+        {
+          id: '%A1sldjgf923JT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+          feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+          sentAt: '2017-11-05',
+          state: REQUESTED,
+          requests: [
+            {
+              id: '%F1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+              from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+              sentAt: '2018-4-12'
+            }
+          ],
+          forwards: []
+        },
+        {
+          id: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+          feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+          sentAt: '2017-11-05',
+          state: RETURNED,
+          requests: [
+            {
+              id: '%G1GBrkARjt4AU9dE2R4Aj+MghFSAyQzjfVnnxtJNBBw=.sha256',
+              from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+              sentAt: '2018-4-12',
+              forwardId: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256'
+            }
+          ],
+          forwards: [
+            {
+              id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+              to: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+              sentAt: '2018-4-15'
+            }
+          ]
+        }
+      ])
     }
 
-    watchForUpdates()
+    // watchForUpdates()
 
     return throttle(store, limit)
 

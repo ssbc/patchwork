@@ -10,10 +10,13 @@ exports.needs = nest({
   'intl.sync.locales': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.localeNames': 'first',
+
   'secrets.obs.identity': 'first',
   'secrets.obs.recovery': 'first',
+  'secrets.obs.custody': 'first',
   'secrets.sheet.backup': 'first',
-  'secrets.sheet.recover': 'first'
+  'secrets.sheet.recover': 'first',
+  'secrets.sheet.shards': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -34,6 +37,7 @@ exports.create = function (api) {
 
     api.secrets.obs.identity() // initialize the pull stream to reduce time user has to wait
     api.secrets.obs.recovery()
+    api.secrets.obs.custody()
 
     // const filterFollowing = api.settings.obs.get('filters.following')
     // const filterSubscriptions = api.settings.obs.get('filters.subscriptions')
@@ -101,9 +105,10 @@ exports.create = function (api) {
           ]),
 
           h('section', [
-            h('h2', i18n('Account')),
+            h('h2', i18n('Account Backup / Dark Crystal')),
             h('button', { 'ev-click': api.secrets.sheet.backup }, 'Back up'),
-            h('button', { 'ev-click': api.secrets.sheet.recover }, 'Recover')
+            h('button', { 'ev-click': api.secrets.sheet.recover }, 'Recover'),
+            h('button', { 'ev-click': api.secrets.sheet.shards }, 'Shards')
           ]),
 
           // h('section', [
