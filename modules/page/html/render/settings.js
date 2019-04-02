@@ -10,6 +10,7 @@ exports.needs = nest({
   'intl.sync.locales': 'first',
   'intl.sync.i18n': 'first',
   'intl.sync.localeNames': 'first',
+  'secrets.obs.identity': 'first',
   'secrets.sheet.backup': 'first'
 })
 
@@ -28,6 +29,8 @@ exports.create = function (api) {
     const lang = api.settings.obs.get('patchwork.lang', '')
     const fontSize = api.settings.obs.get('patchwork.fontSize', '')
     const includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
+
+    api.secrets.obs.identity() // initialize the pull stream to reduce time user has to wait
 
     // const filterFollowing = api.settings.obs.get('filters.following')
     // const filterSubscriptions = api.settings.obs.get('filters.subscriptions')

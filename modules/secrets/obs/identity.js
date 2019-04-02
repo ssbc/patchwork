@@ -11,13 +11,15 @@ const isRitual = require('scuttle-dark-crystal/isRitual')
 const isRequest = require('scuttle-dark-crystal/isRequest')
 const isReply = require('scuttle-dark-crystal/isReply')
 
-const { h, Value } = require('mutant')
+const { h, Array: MutantArray } = require('mutant')
 
 pull.paramap = pullParamap
 
 const PENDING = 'pending'
 const REQUESTED = 'requested'
 const RECEIVED = 'received'
+
+const SSB_IDENTITY = 'SSB Identity'
 
 exports.gives = nest('secrets.obs.identity')
 
@@ -36,7 +38,7 @@ exports.create = (api) => {
     const id = api.keys.sync.id()
 
     if (!store) {
-      store = Value()
+      store = MutantArray([])
       updateStore()
     }
 
@@ -70,7 +72,7 @@ exports.create = (api) => {
 
       pull(
         scuttle.root.pull.mine({ live: false, reverse: true  }),
-        pull.filter(root => get(root, 'value.content.name') === 'directions to the pirate treasure'),
+        pull.filter(root => get(root, 'value.content.name') === SSB_IDENTITY),
         pull.paramap((root, done) => {
           set(records, [root.key, 'name'], get(root, 'value.content.name'))
           set(records, [root.key, 'createdAt'], new Date(root.value.timestamp).toLocaleDateString())

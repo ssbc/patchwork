@@ -9,12 +9,7 @@ exports.needs = nest({
 })
 
 exports.create = (api) => {
-  return nest('secrets.html.custodians', function (props) {
-    const {
-      recps = MutantArray([]),
-      onChange = console.log
-    } = props
-
+  return nest('secrets.html.custodians', function (recps = MutantArray([]), cb = console.log) {
     const state = Struct({
       isEmpty: true,
       wasEmpty: null
@@ -45,7 +40,7 @@ exports.create = (api) => {
         state.isEmpty.set(resolve(state.wasEmpty) && ev.target.value.length === 0)
         if (isBackspace(ev) && resolve(state.isEmpty) && recps.getLength() > 0) {
           recps.pop()
-          onChange()
+          cb()
         }
         state.wasEmpty.set(ev.target.value.length === 0)
       }
