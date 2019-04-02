@@ -40,9 +40,36 @@ exports.create = (api) => {
     return store
 
     function updateStore () {
+      var records = {
+
+      }
     }
 
     function watchForUpdates () {
     }
   }
 }
+
+// [
+//   {
+//     id,
+//     ritualId,
+//     name,
+//     quorum,
+//     createdAt,
+//     recipients: [ feedId  ],
+//     shards: [
+//       {
+//         id,
+//         feedId,
+//         encryptedShard,
+//         state,
+//         shard,
+//         requests: [
+//           { request  },
+//           { request, reply  }
+//         ]
+//       }
+//     ]
+//   }
+// ]
