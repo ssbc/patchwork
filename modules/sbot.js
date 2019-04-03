@@ -4,7 +4,6 @@ var { Value, onceTrue, watch, Set: MutantSet } = require('mutant')
 var ref = require('ssb-ref')
 var Reconnect = require('pull-reconnect')
 var createClient = require('ssb-client')
-var createFeed = require('ssb-feed')
 var nest = require('depnest')
 var ssbKeys = require('ssb-keys')
 var flat = require('flat')
@@ -96,15 +95,6 @@ exports.create = function (api) {
     })
   })
 
-  var internal = {
-    getLatest: rec.async(function (id, cb) {
-      sbot.getLatest(id, cb)
-    }),
-    add: rec.async(function (msg, cb) {
-      sbot.add(msg, cb)
-    })
-  }
-
   setInterval(function () {
     if (sbot) {
       sbot.gossip.peers((err, peers) => {
@@ -143,7 +133,6 @@ exports.create = function (api) {
       )
     }
   })
-
 
   return {
     sbot: {
