@@ -24,8 +24,15 @@ exports.create = function (api) {
     var migration = api.progress.obs.migration()
     var waiting = Waiting(replicateProgress)
 
-    var pending = computed(indexes, (progress) => progress.target - progress.current || 0)
-    var pendingMigration = computed(migration, (progress) => progress.target - progress.current || 0)
+    var pending = computed(indexes, (progress) => {
+      console.log(progress)
+      return progress.target - progress.current || 0
+    })
+
+    var pendingMigration = computed(migration, (progress) => {
+      console.log(progress)
+      return progress.target - progress.current || 0
+    })
 
     var indexProgress = computed(indexes, calcProgress)
     var migrationProgress = computed(migration, calcProgress)
