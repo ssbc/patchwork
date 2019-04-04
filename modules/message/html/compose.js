@@ -144,7 +144,7 @@ exports.create = function (api) {
     // scoped
 
     function clear () {
-      if (!confirm(i18n("Are you certain you want to clear your draft?"))) {
+      if (!window.confirm(i18n('Are you certain you want to clear your draft?'))) {
         return
       }
       textArea.value = ''

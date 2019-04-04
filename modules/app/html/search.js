@@ -2,6 +2,7 @@ var h = require('mutant/h')
 var nest = require('depnest')
 var addSuggest = require('suggest-box')
 var ssbUri = require('ssb-uri')
+var electron = require('electron')
 
 exports.needs = nest({
   'profile.async.suggest': 'first',
