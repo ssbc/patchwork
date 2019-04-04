@@ -11,7 +11,7 @@ const isRitual = require('scuttle-dark-crystal/isRitual')
 const isRequest = require('scuttle-dark-crystal/isRequest')
 const isReply = require('scuttle-dark-crystal/isReply')
 
-const { h, Array: MutantArray } = require('mutant')
+const { h, Value } = require('mutant')
 
 pull.paramap = pullParamap
 
@@ -38,7 +38,7 @@ exports.create = (api) => {
     const id = api.keys.sync.id()
 
     if (!store) {
-      store = MutantArray([])
+      store = Value()
       updateStore()
     }
 
@@ -166,8 +166,8 @@ exports.create = (api) => {
           }, [])
           // We should only have one matching the name SSB Identity.. 
           // but we're not performing any validation in scuttle-dark-crystal to prevent multiple secrets with the same name
-          // so this could end up only getting the first
-          store.set(recordsArray[0])
+          // so this could end up only getting the last
+          store.set(recordsArray[recordsArray.length-1])
         })
       )
     }
