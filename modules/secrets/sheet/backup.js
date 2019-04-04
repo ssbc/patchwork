@@ -161,6 +161,7 @@ exports.create = (api) => {
           params.name = params.secretName
           delete params.secretName
           scuttle.share.async.share(params, (err, secret) => {
+            debugger
             if (err) throw err
             else close()
           })
