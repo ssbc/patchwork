@@ -6,7 +6,7 @@ const DarkCrystal = require('scuttle-dark-crystal')
 // const isForwardRequest = require('scuttle-dark-crystal/isForwardRequest')
 // const isForward = require('scuttle-dark-crystal/isForward')
 
-const { h, Array: MutantArray } = require('mutant')
+const { h, Value } = require('mutant')
 
 pull.paramap = pullParamap
 
@@ -28,10 +28,11 @@ exports.create = (api) => {
 
   function fetchRequests () {
     const scuttle = DarkCrystal(api.sbot.obs.connection)
+    const { isForwardRequest, isForward } = scuttle.sync
     const id = api.keys.sync.id()
 
     if (!store) {
-      store = MutantArray([])
+      store = Value()
       updateStore()
     }
 
