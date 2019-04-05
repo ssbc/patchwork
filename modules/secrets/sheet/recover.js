@@ -1,14 +1,20 @@
 const nest = require('depnest')
 const DarkCrystal = require('scuttle-dark-crystal')
-
-const { h, Struct, resolve, Array: MutantArray, computed, when, map } = require('mutant')
+const fs = require('fs')
+const { join } = require('path')
 const { isFeed } = require('ssb-ref')
+const { isUndefined, isNull } = require('lodash')
 
 const {
-  isUndefined,
-  isNull,
-  isEmpty
-} = require('lodash')
+  h,
+  Struct,
+  resolve,
+  Array: MutantArray,
+  computed,
+  when,
+  map,
+  watch
+} = require('mutant')
 
 exports.gives = nest('secrets.sheet.recover')
 
@@ -17,11 +23,11 @@ exports.needs = nest({
   'intl.sync.i18n_n': 'first',
   'sheet.display': 'first',
   'about.html.image': 'first',
-  'about.obs.name': 'first',
-  'secrets.html.custodians': 'first',
+  'about.obs.name': 'first', 'secrets.html.custodians': 'first',
   'secrets.obs.recovery': 'first',
   'emoji.sync.url': 'first',
   'sbot.obs.connection': 'first',
+  'config.sync.load': 'first'
 })
 
 exports.create = (api) => {
@@ -32,7 +38,7 @@ exports.create = (api) => {
 
   return nest('secrets.sheet.recover', function () {
     const props = Struct({
-      identity: MutantArray([]),
+      secretOwner: MutantArray([]),
       quorum: null,
       recps: MutantArray([]),
     })
@@ -42,12 +48,11 @@ exports.create = (api) => {
       publishng: false
     })
 
-    api.sheet.display((close) => {
-      const recovery = api.secrets.obs.recovery()
+    watch(api.secrets.obs.recovery(), (recovery) => {
+      api.sheet.display((close) => {
+        var content
 
-      const content = computed(recovery, (recovery) => {
-        if (isUndefined(recovery) || isNull(recovery)) return h('div', { style: { 'padding': '20px' } }, [ h('p', 'Loading...') ])
-        else if (isEmpty(recovery)) {
+        if (isUndefined(recovery) || isNull(recovery)) {
           const slider = h('input', {
             'required': true,
             'disabled': state.publishing,
@@ -61,13 +66,16 @@ exports.create = (api) => {
             }
           })
 
-          return h('div', { style: { 'padding': '20px' } }, [
+          content = h('div', { style: { 'padding': '20px' } }, [
             h('h2', 'Recovery'),
             h('SecretNew', [
               h('div.left', [
-                h('section.identity', [
-                  h('p', 'Choose your old identity'),
-                  api.secrets.html.custodians(props.identity, { maxRecps: 1, disabled: state.publishing })
+                h('section.secretOwner', [
+                  h('p', 'Select the identity you wish to recover'),
+                  api.secrets.html.custodians(props.secretOwner, {
+                    maxRecps: 1,
+                    disabled: state.publishing
+                  })
                 ]),
                 h('section.custodians', [
                   h('p', 'Select your custodians'),
@@ -95,7 +103,7 @@ exports.create = (api) => {
                 ])
               ]),
               h('div.right', [
-                h('section.identity', map((props.identity), (recp) => (
+                h('section.secretOwner', map((props.secretOwner), (recp) => (
                   h('div.recp', [
                     api.about.html.image(recp.link),
                     api.about.obs.name(recp.link)
@@ -116,55 +124,65 @@ exports.create = (api) => {
             ])
           ])
         }
-        else return h('div', { style: { 'padding': '20px' } }, [
-          h('h2', 'Recovery'),
-          h('SecretNew', [
-            h('div.left', [
-              'do some funky rendering'
-            ]),
-            h('div.right', [
-              'do some funky rendering'
+        else {
+          content = h('div', { style: { 'padding': '20px' } }, [
+            h('h2', 'Recovery'),
+            h('SecretNew', [
+              h('div.left', [
+                'do some funky rendering'
+              ]),
+              h('div.right', [
+                'do some funky rendering'
+              ])
             ])
           ])
-        ])
-      })
+        }
 
-      const footer = computed(recovery, (recovery) => {
-        if (isUndefined(recovery) || isNull(recovery)) return h('div', [ h('button -cancel', { 'ev-click': close }, i18n('Cancel')) ])
-        else if (isEmpty(recovery)) return h('div', [
-          h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
-          plural('Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band.'),
+        const footer = isUndefined(recovery) || isNull(recovery) 
+          ? [
+            h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
+            plural('Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band. You should contact them directly for approval'),
 
-          computed([props.recps, props.identity], (recps, identity) => {
-            const feedId = identity[0] && identity[0].link
-            recps.length >= 2 && feedId && isFeed(feedId) ? state.canSubmit.set(true) : state.canSubmit.set(false)
-          }),
+            computed([props.recps, props.secretOwner], (recps, secretOwner) => {
+              const feedId = secretOwner[0] && secretOwner[0].link
+              recps.length >= 2 && feedId && isFeed(feedId) ? state.canSubmit.set(true) : state.canSubmit.set(false)
+            }),
 
-          when(state.canSubmit,
-            [
-              h('button -save', { 'ev-click': save, 'disabled': state.publishing }, [
-                when(state.publishing, i18n('Publishing...'), i18n('Publish'))
-              ]),
+            when(state.canSubmit,
+              [
+                h('button -save', { 'ev-click': save, 'disabled': state.publishing }, [
+                  when(state.publishing, i18n('Publishing...'), i18n('Publish'))
+                ]),
+                h('button -cancel', { 'disabled': state.publishing, 'ev-click': close }, i18n('Cancel'))
+              ],
               h('button -cancel', { 'disabled': state.publishing, 'ev-click': close }, i18n('Cancel'))
-            ],
-            h('button -cancel', { 'disabled': state.publishing, 'ev-click': close }, i18n('Cancel'))
-          )
-        ])
-        else return h('div', [
-          h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
-          h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
-        ])
+            )
+          ]
+          : [
+            h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
+            h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
+          ]
+
+        return { content, footer, classList: ['-private'] }
+
+        function save () {
+          var params = resolve(props)
+          params.secretOwner = params.secretOwner[0].link
+
+          var quorum
+          if (params.quorum) {
+            quorum = params.quorum
+            delete params.quorum
+          }
+
+          scuttle.forwardRequest.async.publishAll(params, (err, forwardRequests) => {
+            if (err) throw err
+            // save the remembered quorum locally in our ssb folder
+            if (quorum) fs.writeFile(join(config.path, 'pw-dc-recovery.json'), JSON.stringify({ quorum }), close)
+            else close()
+          })
+        }
       })
-
-      return { content, footer, classList: ['-private'] }
-
-      function save () {
-        var params = resolve(props)
-        // make sure to remove quorum from props, we don't want to publish that in the forward request,
-        // we do want to store it locally and use it to inform the in progress recovery view
-        delete params.quorum
-        console.log(params)
-      }
     })
   })
 }
