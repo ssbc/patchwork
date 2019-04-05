@@ -1,5 +1,5 @@
 {
-	"Publishing...": "Δημοσίευση...",
+  "Publishing...": "Δημοσίευση...",
 	"Publish": "Δημοσίευση",
 	"Preview & Publish Privately": "Προεπισκόπηση & Κρυφή Δημοσίευση",
 	"Preview & Publish": "Προεπισκόπηση & Δημοσίευση",
@@ -257,7 +257,7 @@
 	" Taggers": " Taggers",
 	"Back": "Πίσω",
 	"Add tags here": "Προσθέστε ετικέτες εδώ",
-    "Add / Edit Tags": "Προσθήκη / Επεξεργασία Ετικετών",
+	"Add / Edit Tags": "Προσθήκη / Επεξεργασία Ετικετών",
 	"Too many recipients": "Πάρα πολλοί παραλήπτες",
 	"Private messages can only be addressed to up to 7 people. ": "Τα κρυφά μηνύματα μπορούν να απευθύνονται μέχρι τα 7 άτομα. ",
 	"Your message has %s recipients": {
@@ -302,5 +302,10 @@
 	"You have chosen to publicly block this person.": "Έχετε επιλέξει να αποκλείσετε δημοσίως αυτό το άτομο.",
 	"Click for options to block syncing with this person and/or hide their posts": "Κάντε κλικ για να αποκλείσετε τον συγχρονισμό με αυτό το άτομο ή / και να αποκρύψετε τις αναρτήσεις τους",
 	"invited you to this gathering": "σας προσκάλεσε σε αυτή τη συγκέντρωση",
-	"Are you certain you want to clear your draft?": "Είστε βέβαιοι ότι θέλετε να καθαρίσετε το σχέδιο;"
+	"Are you certain you want to clear your draft?": "Είστε βέβαιοι ότι θέλετε να καθαρίσετε το σχέδιο;",
+	"el": "el",
+	"%s people": {
+		"one": "%s people",
+		"other": "%s people"
+	}
 }
