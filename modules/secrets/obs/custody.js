@@ -98,6 +98,22 @@ exports.create = (api) => {
         // }
       }
 
+      // Using the new 'forOwnShards' query, we would do something like this:
+      // pull(
+      //   scuttle.forwardRequest.pull.forOwnShards(),
+      //   pull.collect((err, requestMsgs) => {
+      //     if (err) return console.error(err)
+      //
+      //     var requests = requestMsgs.map((request) => ({
+      //       id: request.key,
+      //       from: get(request, 'value.author'),
+      //       sentAt: new Date(get(request, 'value.timestamp')).toLocaleDateString()
+      //     }))
+      //
+      //
+      //   })
+      // )
+
       pull(
         scuttle.shard.pull.fromOthers({ reverse: true, live: false }),
         pull.filter(shard => get(shard, 'value.content.attachment.name') === 'gossip.json'),
