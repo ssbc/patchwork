@@ -198,7 +198,10 @@ exports.init = function (ssb, config) {
     return pCont(cb => {
       // wait till the index has loaded.
       patchwork.contacts.raw.get((_, graph) => {
-        if (graph && opts.id !== peer.id && graph[opts.id] && graph[opts.id][peer.id] === false) {
+        // don't allow the replication if the feed being requested blocks the requester
+        var requesterId = peer.id
+        var feedId = opts.id
+        if (graph && feedId !== requesterId && graph[feedId] && graph[feedId][requesterId] === false) {
           cb(null, function (abort, cb) {
             // just give them the cold shoulder
           })
