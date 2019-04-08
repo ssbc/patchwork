@@ -177,9 +177,13 @@ exports.create = (api) => {
 
           scuttle.forwardRequest.async.publishAll(params, (err, forwardRequests) => {
             if (err) throw err
-            // save the remembered quorum locally in our ssb folder
-            if (quorum) fs.writeFile(join(config.path, 'pw-dc-recovery.json'), JSON.stringify({ quorum }), close)
-            else close()
+
+            // should this file be an observable? That way we can update dynamically...
+            fs.readFile(join(config.path, 'recovery.json'), 'utf8', (err, recovery) => {
+              if (err) close(err)
+              Object.assign(recovery, { [params.secretOwner]: { quorum } })
+              fs.writeFile(join(config.path, 'recovery.json'), recovery, close)
+            })
           })
         }
       })

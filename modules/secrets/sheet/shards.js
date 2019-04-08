@@ -1,5 +1,6 @@
 const nest = require('depnest')
 const { h, Struct, resolve, Array: MutantArray, computed, when, map } = require('mutant')
+const { isEmpty } = require('lodash')
 
 exports.gives = nest('secrets.sheet.shards')
 
@@ -46,7 +47,7 @@ exports.create = (api) => {
                 ])
               ]),
               computed(state.selected, (shardId) => {
-                return shardId === shard.id
+                return shardId === shard.id && !isEmpty(shard.requests)
                   ? h('div.bottom', [
                     h('div.requests', [
                       h('h3', 'Requests'),
@@ -80,6 +81,18 @@ exports.create = (api) => {
       ])
 
       const footer = [
+        h('div.state', [
+          h('div', { classList: [`-received`] }),
+          h('span', 'Received')
+        ]),
+        h('div.state', [
+          h('div', { classList: [`-requested`] }),
+          h('span', 'Requested')
+        ]),
+        h('div.state', [
+          h('div', { classList: [`-returned`] }),
+          h('span', 'Returned')
+        ]),
         h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
       ]
 
