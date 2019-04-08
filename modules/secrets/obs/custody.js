@@ -16,7 +16,8 @@ const RETURNED = 'returned'
 exports.gives = nest('secrets.obs.custody')
 
 exports.needs = nest({
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
+  'keys.sync.id': 'first'
 })
 
 exports.create = (api) => {
@@ -34,6 +35,7 @@ exports.create = (api) => {
     const { limit = 100  } = props
 
     const scuttle = DarkCrystal(api.sbot.obs.connection)
+    const id = api.keys.sync.id()
 
     if (!store) {
       store = MutantArray([])
@@ -98,68 +100,87 @@ exports.create = (api) => {
         // }
       }
 
+      // Query Logic:
+      //
+      // get all shards that have an attachment name of gossip.json (are ssb identity shards)
+      // for each shard:
+      // - default state to RECEIVED
+      // - get all forward-requests for shards whose author is the stated secretOwner (the requester)
+      // - for each request:
+      //   - reset the shard state to being REQUESTED
+      //   - get all forwards, sent to the requester of the shard, that match the request in question (using branch ID)
+      //   - if there is one, reset the state to RETURNED, and store the forwardId on the request
+      // - get all forwards that match the root of the shard
+
       pull(
         scuttle.shard.pull.fromOthers({ reverse: true, live: false }),
         pull.filter(shard => get(shard, 'value.content.attachment.name') === 'gossip.json'),
         pull.paramap((shard, done) => {
           const id = shard.key
-          const author = get(shard, 'value.author')
+          const rootId = get(shard, 'value.content.root')
+          const author = get(shard, 'value.author') // author of shard is secretOwner...
 
           set(records, [id, 'id'], id)
           set(records, [id, 'feedId'], author)
           set(records, [id, 'sentAt'], new Date(shard.value.timestamp).toLocaleDateString())
+
           // shard state defaults to RECEIVED
           set(records, [id, 'state'], RECEIVED)
 
-          onceTrue(api.sbot.obs.connection, (server) => {
-            pull(
-              // If we've got any dark-crystal/forward-request records
-              // where the identity being recovered
-              // is the same as the author of the shard...
-              // We can set the shard state as REQUESTED
-              //
-              // %%TODO%%: pull all forwards and match them against the relevant request
-              // if they do match, we can say that the shard has been returned (at least once)
-              // and set the state to RETURNED
-              //
-              // if there is a request whose 'sentAt' timestamp is _later_ than the forward's timestamp
-              // we know that we've got a second _outstanding_ request, and we can
-              // reset the shard state to REQUESTED
+          pull(
+            scuttle.forwardRequest.pull.bySecretOwner(author), // forSecretOwner
+            pull.map(request => ({
+              id: request.key,
+              from: get(request, 'value.author'),
+              sentAt: new Date(get(request, 'value.timestamp')).toLocaleDateString()
+            })),
+            pull.paramap((request, next) => {
+              // we don't _really_ know yet since it could have been for _any secret_,
+              // however, in this context, we know because we're assuming other requests aren't yet in the system.
+              set(records, [id, 'state'], REQUESTED)
 
-              forwardRequestsQuery({ feedId: author }),
-              pull.collect((err, requestMsgs) => {
-                var requests = requestMsgs.map((request) => ({
-                  id: request.key,
-                  from: get(request, 'value.author'),
-                  sentAt: new Date(get(request, 'value.timestamp')).toLocaleDateString()
-                }))
+              pull(
+                scuttle.forward.pull.toOthers({ reverse: true, live: false }),
+                pull.filter(fwd => notMe(get(fwd, 'value.content.recps')) === request.from), // all forward messages sent to the requester
+                pull.filter(fwd => get(fwd, 'value.content.branch')[0] === request.id), // that are a reply to that specific request, assuming [0] is the request id
+                pull.map(fwd => ({
+                  id: fwd.key,
+                  to: notMe(get(fwd, 'value.content.recps')),
+                  sentAt: new Date(get(forwardMsg, 'value.timestamp')).toLocaleDateString()
+                })),
+                pull.collect((err, forwardMsgs) => {
+                  if (isEmpty(forwardMsgs)) next(null)
+                  var forward = forwardMsgs[0] // there really should only ever be one...
+                  set(records, [id, 'state'], RETURNED) // TODO: account for the timestamp, state may change...
+                  set(request, 'forwardId', forward.id)
+                  next(null)
+                })
+              )
+            }, 10),
+            pull.collect((err, requests) => {
+              set(records, [id, 'requests'], requests)
+              done(null)
+            })
+          )
 
-                set(records, [id, 'forwardRequests'], requests)
-                set(records, [id, 'state'], REQUESTED)
-
-                done(null)
-              })
-            )
-
-            function forwardRequestsQuery (opts = {}) {
-              return server.query.read(Object.assign({}, opts, {
-                query: [{
-                  $filter: {
-                    value: {
-                      content: {
-                        type: 'dark-crystal/forward-request',
-                        identity: opts.feedId
-                      }
-                    }
-                  }
-                }]
-              }))
-            }
-          })
+          pull(
+            scuttle.forward.pull.toOthers({ reverse: true, live: false }),
+            pull.filter(fwd => get(fwd, 'value.content.root') === rootId)
+            pull.map(fwd => ({
+              id: fwd.key,
+              sentAt: new Date(get(fwd, 'value.timestamp')).toLocaleDateString(),
+              shareVersion: get(fwd, 'value.content.shareVersion'),
+              shard: get(fwd, 'value.content.shard'),
+              root: rootId
+            })),
+            pull.collect((err, forwards) => {
+              set(records, [id, 'forwards', forwards])
+            })
+          )
         }, 10),
         pull.collect((err) => {
           if (err) return console.error(err)
-          var recordsArray = transform(records, (acc, requests, id, shard) => acc.push(shard), [])
+          var recordsArray = transform(records, (acc, requests, id, obj) => acc.push(obj), [])
           store.set(recordsArray)
         })
       )
@@ -172,7 +193,22 @@ exports.create = (api) => {
         pull.drain(m => updateStore())
       )
 
-      // %%TODO%% Open two pull streams that watch for forwards and forward-requests
+      pull(
+        scuttle.forward.pull.toOthers({ live: true, old: false }),
+        pull.filter(m => !m.sync),
+        pull.drain(m => updateStore())
+      )
+
+      pull(
+        scuttle.forwardRequest.pull.bySecretOwner(author), // forSecretOwner
+        pull.filter(m => !m.sync),
+        pull.drain(m => updateStore())
+      )
+    }
+
+    function notMe (recps) {
+      return recps.find(recp => recp !== id)
     }
   }
 }
+
