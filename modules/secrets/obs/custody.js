@@ -165,7 +165,7 @@ exports.create = (api) => {
 
           pull(
             scuttle.forward.pull.toOthers({ reverse: true, live: false }),
-            pull.filter(fwd => get(fwd, 'value.content.root') === rootId)
+            pull.filter(fwd => get(fwd, 'value.content.root') === rootId),
             pull.map(fwd => ({
               id: fwd.key,
               sentAt: new Date(get(fwd, 'value.timestamp')).toLocaleDateString(),
@@ -180,7 +180,7 @@ exports.create = (api) => {
         }, 10),
         pull.collect((err) => {
           if (err) return console.error(err)
-          var recordsArray = transform(records, (acc, requests, id, obj) => acc.push(obj), [])
+          var recordsArray = transform(records, (acc, value, key, obj) => acc.push(obj), [])
           store.set(recordsArray)
         })
       )
