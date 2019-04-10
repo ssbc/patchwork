@@ -157,14 +157,8 @@ exports.create = (api) => {
 
           blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
             if (err) throw err
-            var params = Object.assign({}, resolve(props), { attachment })
-            params.name = params.secretName
-            delete params.secretName
-
-            scuttle.share.async.share(params, (err, secret) => {
-              if (err) throw err
-              else close()
-            })
+            const { secretName: name, secret, quorum, recps } = resolve(props)
+            scuttle.share.async.share({ name, secret, quorum, recps, attachment }, close)
           })
         }
       })

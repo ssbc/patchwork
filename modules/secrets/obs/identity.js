@@ -3,7 +3,7 @@ const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
 const { isFeedId  } = require('ssb-ref')
 
-const { get, set, transform, pickBy, identity, uniq  } = require('lodash')
+const { get, set, transform, isEmpty } = require('lodash')
 
 const DarkCrystal = require('scuttle-dark-crystal')
 const isShard = require('scuttle-dark-crystal/isShard')
@@ -89,9 +89,6 @@ exports.create = (api) => {
               var version = get(ritual, 'value.content.version')
               var quorum = get(ritual,'value.content.quorum')
 
-              set(records, [root.key, 'ritualId'], ritual.key)
-              set(records, [root.key, 'quorum'], quorum)
-
               var shardMsgs = thread.filter(isShard)
 
               var shards = shardMsgs.map(shard => ({
@@ -100,6 +97,10 @@ exports.create = (api) => {
                 sentAt: get(shard, 'value.timestamp')
               }))
 
+              if (isEmpty(shards)) return done(null)
+
+              set(records, [root.key, 'ritualId'], ritual.key)
+              set(records, [root.key, 'quorum'], quorum)
               set(records, [root.key, 'recipients'], shards.map(s => s.feedId))
 
               done(null)
@@ -108,8 +109,8 @@ exports.create = (api) => {
         }, 10),
         pull.collect((err, secrets) => {
           if (err) throw err
-          var recordsArray = transform(records, (acc, value, key, obj) => {
-            if (obj[key].ritualId) acc.push({ id: key, ...obj[key]  })
+          var recordsArray = transform(records, (acc, secret, rootId, obj) => {
+            if (secret.ritualId) acc.push({ id: rootId, ...secret })
           }, [])
           store.set(recordsArray[recordsArray.length-1])
         })
