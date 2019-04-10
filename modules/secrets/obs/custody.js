@@ -23,12 +23,6 @@ exports.needs = nest({
 exports.create = (api) => {
   return nest('secrets.obs.custody', fetch)
 
-  // store is an observable that returns an array of structure:
-  // [
-  //   { id: msgId, feedId: feedId, sentAt: timestamp, state: string, requests: [ { id: msgId, from: feedId, sentAt: timestamp } ] },
-  //   { id: msgId, feedId: feedId, sentAt: timestamp, state: string, requests: [ { id: msgId, from: feedId, sentAt: timestamp } ] },
-  // ]
-
   var store = null
 
   function fetch (props = {}) {
@@ -48,8 +42,25 @@ exports.create = (api) => {
 
     function updateStore () {
       const records = {
-        // [id]: {
-        //   { feedId, forwardRequests, forwards }
+        // [msgId]: {
+        //   id: msgId,
+        //   feedId: feedId,
+        //   sentAt: timestamp,
+        //   state: string,
+        //   requests: [
+        //     {
+        //       id: msgId,
+        //       from: feedId,
+        //       sentAt: timestamp
+        //     }
+        //   ],
+        //   forwards: [
+        //     {
+        //       id: msgId,
+        //       to: feedId,
+        //       sentAt: timestamp
+        //     }
+        //   ]
         // }
       }
 
@@ -71,17 +82,21 @@ exports.create = (api) => {
         pull.paramap((shard, done) => {
           const id = shard.key
           const rootId = get(shard, 'value.content.root')
-          const author = get(shard, 'value.author') // author of shard is secretOwner...
+          const author = get(shard, 'value.author')
 
           set(records, [id, 'id'], id)
           set(records, [id, 'feedId'], author)
           set(records, [id, 'sentAt'], new Date(shard.value.timestamp))
+          set(records, [id, 'shard'], get(shard, 'value.content.shard'))
+          set(records, [id, 'shareVersion'], get(shard, 'value.content.shareVersion'))
+          set(records, [id, 'rootId'], rootId)
+          set(records, [id, 'attachment'], get(shard, 'value.content.attachment'))
 
           // shard state defaults to RECEIVED
           set(records, [id, 'state'], RECEIVED)
 
           pull(
-            scuttle.forwardRequest.pull.bySecretOwner(author), // forSecretOwner
+            scuttle.forwardRequest.pull.bySecretOwner(author),
             pull.map(request => ({
               id: request.key,
               from: get(request, 'value.author'),
@@ -94,17 +109,16 @@ exports.create = (api) => {
 
               pull(
                 scuttle.forward.pull.toOthers({ reverse: true, live: false }),
-                pull.filter(fwd => notMe(get(fwd, 'value.content.recps')) === request.from), // all forward messages sent to the requester
-                pull.filter(fwd => get(fwd, 'value.content.requestId') === request.id), // that are a reply to that specific request, assuming [0] is the request id
+                pull.filter(fwd => notMe(get(fwd, 'value.content.recps')) === request.from),
+                pull.filter(fwd => get(fwd, 'value.content.requestId') === request.id),
                 pull.map(fwd => ({
                   id: fwd.key,
                   to: notMe(get(fwd, 'value.content.recps')),
                   sentAt: new Date(get(forwardMsg, 'value.timestamp'))
                 })),
-                pull.collect((err, forwardMsgs) => {
-                  if (isEmpty(forwardMsgs)) next(null)
-                  var forward = forwardMsgs[0] // there really should only ever be one...
-                  set(records, [id, 'state'], RETURNED) // TODO: account for the timestamp, state may change...
+                pull.collect((err, [forward]) => {
+                  if (!forward) next(null)
+                  set(records, [id, 'state'], RETURNED) // %%TODO%%: account for the timestamp, state may change...
                   set(request, 'forwardId', forward.id)
                   next(null)
                 })
@@ -165,50 +179,67 @@ exports.create = (api) => {
   }
 }
 
-
-      // %%TODO%% replace dummy data with real data
-      // store.set([
-      //   {
-      //     id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-      //     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-      //     sentAt: '2015-9-19',
-      //     state: RECEIVED,
-      //     requests: [],
-      //     forwards: []
-      //   },
-      //   {
-      //     id: '%A1sldjgf923JT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-      //     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-      //     sentAt: '2017-11-05',
-      //     state: REQUESTED,
-      //     requests: [
-      //       {
-      //         id: '%F1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-      //         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-      //         sentAt: '2018-4-12'
-      //       }
-      //     ],
-      //     forwards: []
-      //   },
-      //   {
-      //     id: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-      //     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-      //     sentAt: '2017-11-05',
-      //     state: RETURNED,
-      //     requests: [
-      //       {
-      //         id: '%G1GBrkARjt4AU9dE2R4Aj+MghFSAyQzjfVnnxtJNBBw=.sha256',
-      //         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-      //         sentAt: '2018-4-12',
-      //         forwardId: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256'
-      //       }
-      //     ],
-      //     forwards: [
-      //       {
-      //         id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-      //         to: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-      //         sentAt: '2018-4-15'
-      //       }
-      //     ]
-      //   }
-      // ])
+// dummy data structure for developing
+// store.set([
+//   {
+//     id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+//     sentAt: '2015-9-19',
+//     state: RECEIVED,
+//     attachment: {
+//       name: 'gossip.json',
+//       link: '&ERGA0oJCELz2s4sr47f75iXZComB/2akzZq+IpcuqDs=.sha256'
+//     },
+//     requests: [],
+//     forwards: []
+//   },
+//   {
+//     id: '%A1sldjgf923JT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//     rootId: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+//     shard: 'some shard based text... boxy boxy box',
+//     shareVersion: '2.0.0',
+//     attachment: {
+//       name: 'gossip.json',
+//       link: '&ERGA0oJCELz2s4sr47f75iXZComB/2akzZq+IpcuqDs=.sha256'
+//     },
+//     sentAt: '2017-11-05',
+//     state: REQUESTED,
+//     requests: [
+//       {
+//         id: '%F1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+//         sentAt: '2018-4-12'
+//       }
+//     ],
+//     forwards: []
+//   },
+//   {
+//     id: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//     rootId: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+//     shard: 'some shard based text... boxy boxy box',
+//     shareVersion: '2.0.0',
+//     attachment: {
+//       name: 'gossip.json',
+//       link: '&ERGA0oJCELz2s4sr47f75iXZComB/2akzZq+IpcuqDs=.sha256'
+//     },
+//     sentAt: '2017-11-05',
+//     state: RETURNED,
+//     requests: [
+//       {
+//         id: '%G1GBrkARjt4AU9dE2R4Aj+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+//         sentAt: '2018-4-12',
+//         forwardId: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256'
+//       }
+//     ],
+//     forwards: [
+//       {
+//         id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+//         to: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+//         sentAt: '2018-4-15'
+//       }
+//     ]
+//   }
+// ])
