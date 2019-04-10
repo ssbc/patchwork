@@ -16,6 +16,8 @@ const {
   watch
 } = require('mutant')
 
+const SSB_IDENTITY = 'SSB Identity'
+
 exports.gives = nest('secrets.sheet.recover')
 
 exports.needs = nest({
@@ -33,6 +35,7 @@ exports.needs = nest({
 exports.create = (api) => {
   const i18n = api.intl.sync.i18n
   const plural = api.intl.sync.i18n_n
+  var config = api.config.sync.load()
 
   const scuttle = DarkCrystal(api.sbot.obs.connection)
 
@@ -48,7 +51,13 @@ exports.create = (api) => {
       publishng: false
     })
 
-    watch(api.secrets.obs.recovery(), (recovery) => {
+    var cachedRecovery, ssbRecovery
+    try {
+      cachedRecovery = JSON.parse(fs.readFileSync(join(config.path, 'recovery.json'), 'utf8'))
+      ssbRecovery = Object.values(cachedRecovery).find(o => o.name === SSB_IDENTITY)
+    } catch (err) {}
+
+    watch(api.secrets.obs.recovery(ssbRecovery), (recovery) => {
       api.sheet.display((close) => {
         var content
 
@@ -178,12 +187,12 @@ exports.create = (api) => {
           scuttle.forwardRequest.async.publishAll(params, (err, forwardRequests) => {
             if (err) throw err
 
-            // should this file be an observable? That way we can update dynamically...
-            fs.readFile(join(config.path, 'recovery.json'), 'utf8', (err, recovery) => {
-              if (err) close(err)
-              Object.assign(recovery, { [params.secretOwner]: { quorum } })
-              fs.writeFile(join(config.path, 'recovery.json'), recovery, close)
-            })
+            if (!cachedRecovery[params.secretOwner]) {
+              Object.assign(cachedRecovery, { [params.secretOwner]: {
+                quorum, name: SSB_IDENTITY, feedId: params.secretOwner
+              }})
+              fs.writeFile(join(config.path, 'recovery.json'), cachedRecovery, close)
+            } else close()
           })
         }
       })

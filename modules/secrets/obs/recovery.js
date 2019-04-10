@@ -4,13 +4,13 @@ const pullParamap = require('pull-paramap')
 
 const DarkCrystal = require('scuttle-dark-crystal')
 const secrets = require('dark-crystal-secrets')
-// const isForwardRequest = require('scuttle-dark-crystal/isForwardRequest')
-// const isForward = require('scuttle-dark-crystal/isForward')
+const { pickBy, identity, transform, get, set } = require('lodash')
 
 const { h, Value } = require('mutant')
 
 pull.paramap = pullParamap
 
+// states
 const REQUESTED = 'requested'
 const RECEIVED = 'received'
 const READY = 'ready'
@@ -27,7 +27,7 @@ exports.create = (api) => {
 
   var store = null
 
-  function fetchRequests () {
+  function fetchRequests (recovery = {}) {
     const scuttle = DarkCrystal(api.sbot.obs.connection)
     const id = api.keys.sync.id()
 
@@ -100,7 +100,7 @@ exports.create = (api) => {
 
           pull(
             scuttle.forward.pull.fromOthers({ reverse: true, live: false }),
-            pull.filter((fwd) => get(fwd, 'value.content.branch')[0] === request.id),
+            pull.filter((fwd) => get(fwd, 'value.content.requestId') === request.id),
             pull.map((fwd) => ({
               id: fwd.key,
               from: get(fwd, 'value.author'),
@@ -121,15 +121,18 @@ exports.create = (api) => {
         }, 10),
         pull.collect((err) => {
           if (err) return console.error(err)
-          var recordsArray = transform(records, (acc, secret, feedId, obj) => {
-            const forwards = transform(forwards, (accu, value, key, obj) => accu.push(value), [])
-            const requests = transform(requests, (accu, value, key, obj) => accu.push(value), [])
+          // Based off the possibly existing recovery that has already begun
+          // attempt to reassemble the secret using the quorum the user remembered
+          // else just return null
+          var record = records[recovery.feedId]
+          if (record) {
+            const forwards = transform(record.forwards, (accu, value, key, obj) => accu.push(value), [])
+            const requests = transform(record.requests, (accu, value, key, obj) => accu.push(value), [])
 
             var secret
             if (forwards.length) {
-              const recovery = fs.readFileSync(join(config.path, 'recovery.json'), 'utf8')
-              const { quorum } = recovery[feedId]
-              if ((quorum && forwards.length >= quorum)) {
+              const { quorum, name } = recovery
+              if (quorum && forwards.length >= quorum) {
                 secret = secrets.combine(forwards.map(f => f.shard), value.version)
                 // validate the secret based on expected values
                 set(secret, ['state'], READY)
@@ -140,14 +143,9 @@ exports.create = (api) => {
               }
             }
 
-            acc.push({
-              state: secret.state,
-              secret,
-              forwards,
-              requests
-            })
-          })
-          store.set(recordsArray)
+            record = pickBy(Object.assign(record, { forwards, requests, secret }), identity)
+          }
+          store.set(record ? record : null)
         })
       )
     }
