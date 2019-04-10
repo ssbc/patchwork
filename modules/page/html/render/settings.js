@@ -106,9 +106,9 @@ exports.create = function (api) {
 
           h('section', [
             h('h2', i18n('Account Backup / Dark Crystal')),
-            h('button', { 'ev-click': api.secrets.sheet.backup }, 'Back up'),
-            h('button', { 'ev-click': api.secrets.sheet.recover }, 'Recover'),
-            h('button', { 'ev-click': api.secrets.sheet.shards }, 'Shards')
+            h('button', { style: { margin: '0 10px 0 0' }, 'ev-click': api.secrets.sheet.backup }, 'Back up'),
+            h('button', { style: { margin: '0 10px 0 0' }, 'ev-click': api.secrets.sheet.recover }, 'Recover'),
+            h('button', { style: { margin: '0 10px 0 0' }, 'ev-click': api.secrets.sheet.shards }, 'Shards')
           ]),
 
           // h('section', [
