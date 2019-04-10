@@ -70,7 +70,7 @@
     "ssb-blob-files": "github:ssbc/ssb-blob-files#localizable-errors-and-early-return",
     "ssb-blobs": "^1.1.13",
     "ssb-client": "^4.7.1",
-    "ssb-config": "^3.2.5",
+    "ssb-config": "github:ssbc/ssb-config#use-ipv4",
     "ssb-ebt": "^5.4.3",
     "ssb-feed": "^2.3.0",
     "ssb-gossip": "^1.0.6",
