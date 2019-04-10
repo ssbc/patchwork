@@ -19,16 +19,18 @@ exports.create = (api) => {
   const plural = api.intl.sync.i18n_n
 
   return nest('secrets.sheet.shards', function () {
+    const props = Struct({
+      shard: null,
+      request: null
+    })
     const state = Struct({
+      publishing: false,
       shard: Struct({
-        selected: null,
         last5: null
       }),
       request: Struct({
-        selected: null,
         last5: null
-      }),
-      publishing: false
+      })
     })
 
     watch(api.secrets.obs.custody(), (shards) => {
@@ -45,9 +47,9 @@ exports.create = (api) => {
                 h('div.shard', [
                   h('div.top', {
                     'ev-click': (e) => {
-                      state.shard.selected() && state.shard.selected().id === shard.id
-                        ? state.shard.selected.set(null)
-                        : state.shard.selected.set(shard)
+                      props.shard() && props.shard().id === shard.id
+                        ? props.shard.set(null)
+                        : props.shard.set(shard)
                     }
                   }, [
                     h('div.createdBy', [
@@ -58,7 +60,7 @@ exports.create = (api) => {
                       h('div', { classList: [`-${shard.state}`] })
                     ])
                   ]),
-                  computed(state.shard.selected, (selectedShard) => {
+                  computed(props.shard, (selectedShard) => {
                     return selectedShard && selectedShard.id === shard.id && !isEmpty(shard.requests)
                       ? h('div.bottom', [
                         h('div.requests', [
@@ -79,13 +81,13 @@ exports.create = (api) => {
                                 // h('button -cancel', 'Ignore'), // %%TODO%%: save the ignored request so you no longer see it
                                 h('button -save', {
                                   'ev-click': (e) => {
-                                    state.request.selected() && state.request.selected().id === request.id
-                                      ? state.request.selected.set(null)
-                                      : state.request.selected.set(request)
+                                    props.request() && props.request().id === request.id
+                                      ? props.request.set(null)
+                                      : props.request.set(request)
                                   }
                                 }, 'Approve')
                               ]),
-                              computed(state.request.selected, (selectedRequest) => {
+                              computed(props.request, (selectedRequest) => {
                                 return selectedRequest && selectedRequest.id === request.id
                                   ? h('div.confirm', [
                                     h('p', 'Before you proceed, ensure that these two identities are in-fact the same person and this has been confirmed out-of-band'),
@@ -164,21 +166,20 @@ exports.create = (api) => {
         }
 
         function save () {
-          const { request, shard } = resolve(state)
-          const params = {
-            root: shard.selected.rootId,
-            shard: shard.selected.shard,
-            shardId: shard.selected.id,
-            requestId: request.selected.id,
-            shareVersion: shard.selected.shareVersion,
-            recp: request.selected.from
-          }
           state.publishing.set(true)
-          setTimeout(() => state.publishing.set(false), 500)
-          // scuttle.forward.async.publish(params, (err, forward) => {
-          //   if (err) throw err
-          //   state.publishing.set(true)
-          // })
+          const { request, shard } = resolve(props)
+          const params = {
+            root: shard.rootId,
+            shard: shard.shard,
+            shardId: shard.id,
+            requestId: request.id,
+            shareVersion: shard.shareVersion,
+            recp: request.from
+          }
+          scuttle.forward.async.publish(params, (err, forward) => {
+            if (err) throw err
+            state.publishing.set(false)
+          })
         }
       })
     })
