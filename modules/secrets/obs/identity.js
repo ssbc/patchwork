@@ -75,7 +75,7 @@ exports.create = (api) => {
         pull.filter(root => get(root, 'value.content.name') === SSB_IDENTITY),
         pull.paramap((root, done) => {
           set(records, [root.key, 'name'], get(root, 'value.content.name'))
-          set(records, [root.key, 'createdAt'], new Date(root.value.timestamp).toLocaleDateString())
+          set(records, [root.key, 'createdAt'], new Date(root.value.timestamp))
 
           pull(
             scuttle.root.pull.backlinks(root.key, { live: false  }),
@@ -92,68 +92,15 @@ exports.create = (api) => {
               set(records, [root.key, 'ritualId'], ritual.key)
               set(records, [root.key, 'quorum'], quorum)
 
-              var requestMsgs = thread.filter(isRequest)
-              var replyMsgs = thread.filter(isReply)
               var shardMsgs = thread.filter(isShard)
 
-              var shards = shardMsgs.map(shard => {
-                const { recps, shard: encryptedShard  } = get(shard, 'value.content')
-                const feedId = notMe(recps)
+              var shards = shardMsgs.map(shard => ({
+                id: shard.key,
+                feedId: notMe(get(shard, 'value.content.recps')),
+                sentAt: get(shard, 'value.timestamp')
+              }))
 
-                let state, returnedShard
-
-                var requests = getDialogue(shard, requestMsgs).map(request => ({
-                  id: request.key,
-                  createdAt: new Date(request.value.timestamp).toLocaleDateString(),
-                  feedId: notMe(get(request, 'value.content.recps')),
-                }))
-
-                var replies = getDialogue(shard, replyMsgs).map(reply => ({
-                  id: reply.key,
-                  createdAt: new Date(reply.value.timestamp).toLocaleDateString(),
-                  feedId: notMe(get(reply, 'value.content.recps')),
-                  shard: get(reply, 'value.content.body')
-                }))
-
-                // only gets the first one per person...
-                // if we have more than one, they're sending us multiple shards,
-                // some of which could be duds (including the first),
-                // %%TODO%%: handle this gracefully...
-                var body = uniq(replies.map(r => r.shard))[0]
-
-                return pickBy({
-                  id: shard.key,
-                  feedId,
-                  encryptedShard,
-                  body,
-                  // state,
-                  requests,
-                  replies
-                }, identity)
-              })
-
-              function dialogueKey (msg) {
-                var recps = get(msg, 'value.content.recps')
-                if (!recps) return null
-                return recps.sort().join(':')
-              }
-
-              function getDialogue (shard, msgs) {
-                return msgs.filter((msg) => dialogueKey(shard) === dialogueKey(msg))
-              }
-
-              // Our view demands that recipients knows about if there's been a response (adds a border)
               set(records, [root.key, 'recipients'], shards.map(s => s.feedId))
-              set(records, [root.key, 'shards'], shards)
-
-              let shardBodies = shards
-                .map(s => s.body)
-                .filter(Boolean)
-
-              // if (shardBodies.length >= quorum) {
-              //   let secret = secrets.combine(shardBodies, version)
-              //   set(records, [root.key, 'secret'], secret)
-              // }
 
               done(null)
             })
@@ -162,11 +109,8 @@ exports.create = (api) => {
         pull.collect((err, secrets) => {
           if (err) throw err
           var recordsArray = transform(records, (acc, value, key, obj) => {
-            if (obj[key]['ritualId']) acc.push({ id: key, ...obj[key]  })
+            if (obj[key].ritualId) acc.push({ id: key, ...obj[key]  })
           }, [])
-          // We should only have one matching the name SSB Identity.. 
-          // but we're not performing any validation in scuttle-dark-crystal to prevent multiple secrets with the same name
-          // so this could end up only getting the last
           store.set(recordsArray[recordsArray.length-1])
         })
       )

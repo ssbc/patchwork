@@ -35,6 +35,7 @@ exports.needs = nest({
 exports.create = (api) => {
   const i18n = api.intl.sync.i18n
   const plural = api.intl.sync.i18n_n
+  const config = api.config.sync.load()
 
   const scuttle = DarkCrystal(api.sbot.obs.connection)
 
@@ -151,7 +152,6 @@ exports.create = (api) => {
         return { content, footer, classList: ['-private'] }
 
         function save () {
-          var config = api.config.sync.load()
           var buffer = fs.readFileSync(join(config.path, 'gossip.json'))
           var file = new File(buffer, 'gossip.json', { type: 'application/json' })
 
