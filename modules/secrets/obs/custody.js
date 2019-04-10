@@ -39,57 +39,10 @@ exports.create = (api) => {
 
     if (!store) {
       store = MutantArray([])
-      // updateStore()
-
-      // %%TODO%% replace dummy data with real data
-      store.set([
-        {
-          id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-          feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-          sentAt: '2015-9-19',
-          state: RECEIVED,
-          requests: [],
-          forwards: []
-        },
-        {
-          id: '%A1sldjgf923JT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-          feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-          sentAt: '2017-11-05',
-          state: REQUESTED,
-          requests: [
-            {
-              id: '%F1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-              from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-              sentAt: '2018-4-12'
-            }
-          ],
-          forwards: []
-        },
-        {
-          id: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-          feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-          sentAt: '2017-11-05',
-          state: RETURNED,
-          requests: [
-            {
-              id: '%G1GBrkARjt4AU9dE2R4Aj+MghFSAyQzjfVnnxtJNBBw=.sha256',
-              from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-              sentAt: '2018-4-12',
-              forwardId: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256'
-            }
-          ],
-          forwards: [
-            {
-              id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-              to: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-              sentAt: '2018-4-15'
-            }
-          ]
-        }
-      ])
+      updateStore()
     }
 
-    // watchForUpdates()
+    watchForUpdates()
 
     return throttle(store, limit)
 
@@ -122,7 +75,7 @@ exports.create = (api) => {
 
           set(records, [id, 'id'], id)
           set(records, [id, 'feedId'], author)
-          set(records, [id, 'sentAt'], new Date(shard.value.timestamp).toLocaleDateString())
+          set(records, [id, 'sentAt'], new Date(shard.value.timestamp))
 
           // shard state defaults to RECEIVED
           set(records, [id, 'state'], RECEIVED)
@@ -132,7 +85,7 @@ exports.create = (api) => {
             pull.map(request => ({
               id: request.key,
               from: get(request, 'value.author'),
-              sentAt: new Date(get(request, 'value.timestamp')).toLocaleDateString()
+              sentAt: new Date(get(request, 'value.timestamp'))
             })),
             pull.paramap((request, next) => {
               // we don't _really_ know yet since it could have been for _any secret_,
@@ -142,11 +95,11 @@ exports.create = (api) => {
               pull(
                 scuttle.forward.pull.toOthers({ reverse: true, live: false }),
                 pull.filter(fwd => notMe(get(fwd, 'value.content.recps')) === request.from), // all forward messages sent to the requester
-                pull.filter(fwd => get(fwd, 'value.content.branch')[0] === request.id), // that are a reply to that specific request, assuming [0] is the request id
+                pull.filter(fwd => get(fwd, 'value.content.requestId') === request.id), // that are a reply to that specific request, assuming [0] is the request id
                 pull.map(fwd => ({
                   id: fwd.key,
                   to: notMe(get(fwd, 'value.content.recps')),
-                  sentAt: new Date(get(forwardMsg, 'value.timestamp')).toLocaleDateString()
+                  sentAt: new Date(get(forwardMsg, 'value.timestamp'))
                 })),
                 pull.collect((err, forwardMsgs) => {
                   if (isEmpty(forwardMsgs)) next(null)
@@ -168,7 +121,7 @@ exports.create = (api) => {
             pull.filter(fwd => get(fwd, 'value.content.root') === rootId),
             pull.map(fwd => ({
               id: fwd.key,
-              sentAt: new Date(get(fwd, 'value.timestamp')).toLocaleDateString(),
+              sentAt: new Date(get(fwd, 'value.timestamp')),
               shareVersion: get(fwd, 'value.content.shareVersion'),
               shard: get(fwd, 'value.content.shard'),
               root: rootId
@@ -200,7 +153,7 @@ exports.create = (api) => {
       )
 
       pull(
-        scuttle.forwardRequest.pull.bySecretOwner(author), // forSecretOwner
+        scuttle.forwardRequest.pull.forOwnShards({ live: true, old: false }),
         pull.filter(m => !m.sync),
         pull.drain(m => updateStore())
       )
@@ -212,3 +165,50 @@ exports.create = (api) => {
   }
 }
 
+
+      // %%TODO%% replace dummy data with real data
+      // store.set([
+      //   {
+      //     id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+      //     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+      //     sentAt: '2015-9-19',
+      //     state: RECEIVED,
+      //     requests: [],
+      //     forwards: []
+      //   },
+      //   {
+      //     id: '%A1sldjgf923JT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+      //     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+      //     sentAt: '2017-11-05',
+      //     state: REQUESTED,
+      //     requests: [
+      //       {
+      //         id: '%F1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+      //         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+      //         sentAt: '2018-4-12'
+      //       }
+      //     ],
+      //     forwards: []
+      //   },
+      //   {
+      //     id: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+      //     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+      //     sentAt: '2017-11-05',
+      //     state: RETURNED,
+      //     requests: [
+      //       {
+      //         id: '%G1GBrkARjt4AU9dE2R4Aj+MghFSAyQzjfVnnxtJNBBw=.sha256',
+      //         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+      //         sentAt: '2018-4-12',
+      //         forwardId: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256'
+      //       }
+      //     ],
+      //     forwards: [
+      //       {
+      //         id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
+      //         to: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
+      //         sentAt: '2018-4-15'
+      //       }
+      //     ]
+      //   }
+      // ])
