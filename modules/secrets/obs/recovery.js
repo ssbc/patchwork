@@ -91,8 +91,8 @@ exports.create = (api) => {
           id: request.key,
           state: REQUESTED,
           sentAt: new Date(get(request, 'value.timestamp')),
-          for: get(requestMsg, 'value.content.secretOwner'),
-          to: notMe(get(requestMsg, 'value.content.recps'))
+          for: get(request, 'value.content.secretOwner'),
+          to: notMe(get(request, 'value.content.recps'))
         })),
         pull.paramap((request, done) => {
           set(records, [feedId, 'feedId'], request.for)
