@@ -147,7 +147,7 @@ exports.create = (api) => {
         }, 10),
         pull.collect((err) => {
           if (err) return console.error(err)
-          var recordsArray = transform(records, (acc, value, key, obj) => acc.push(obj), [])
+          var recordsArray = transform(records, (acc, value, key, obj) => acc.push(value), [])
           store.set(recordsArray)
         })
       )
