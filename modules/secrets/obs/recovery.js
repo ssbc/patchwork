@@ -95,7 +95,8 @@ exports.create = (api) => {
           to: notMe(get(request, 'value.content.recps'))
         })),
         pull.paramap((request, done) => {
-          set(records, [feedId, 'feedId'], request.for)
+          const feedId = request.for
+          set(records, [feedId, 'feedId'], feedId)
           set(records, [feedId, 'state'], request.state)
 
           pull(
@@ -110,9 +111,11 @@ exports.create = (api) => {
               root: get(fwd, 'value.content.root')
             })),
             pull.collect((err, [forward]) => {
-              set(request, ['forwardId'], forward.id)
-              set(request, ['state'], RECEIVED)
-              set(records, [feedId, 'forwards', forward.id], forward)
+              if (forward) {
+                set(request, ['forwardId'], forward.id)
+                set(request, ['state'], RECEIVED)
+                set(records, [feedId, 'forwards', forward.id], forward)
+              }
             })
           )
 
