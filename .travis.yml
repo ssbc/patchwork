@@ -1,13 +1,58 @@
-language: node_js
+matrix:
+  include:
+    - os: linux
+      services: docker
+      language: generic
+    #     - os: osx
+    #       osx_image: xcode9.4
+    #       language: node_js
+    #       node_js: "10"
+    #       env:
+    #         - ELECTRON_CACHE=$HOME/.cache/electron
+    #         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y g++ m4 libtool automake libgconf-2-4    # build tools
-  - sudo apt-get install -y libxext-dev libxtst-dev libxkbfile-dev  # spellchecker headers
 
-node_js:
-  - node
-  - lts/*
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
 
 script:
-  - pwd   # run no-op to prevent failure from no tests
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      docker run --rm \
+        -v ${PWD}:/project \
+        -v ~/.cache/electron:/root/.cache/electron \
+        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+        electronuserland/builder:wine \
+        /bin/bash -c "apt-get update \
+                      && apt-get install -y \
+                        automake \
+                        libgconf-2-4 \
+                        libtool \
+                        libxext-dev \
+                        libxkbfile-dev \
+                        libxtst-dev \
+                      && npm ci \
+                      # Electron's version.
+                      export npm_config_target=$(npm bin)/electron --version)
+                      # The architecture of Electron, can be ia32 or x64.
+                      export npm_config_arch=x64
+                      export npm_config_target_arch=x64
+                      # Download headers for Electron.
+                      export npm_config_disturl=https://atom.io/download/electron
+                      # Tell node-pre-gyp that we are building for Electron.
+                      export npm_config_runtime=electron
+                      # Tell node-pre-gyp to build module from source code.
+                      # export npm_config_build_from_source=true
+                      && npm run release -- --linux --win"
+    else
+      yarn release
+    fi
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
+
+branches:
+  except:
+    - "/^v\\d+\\.\\d+\\.\\d+$/"
