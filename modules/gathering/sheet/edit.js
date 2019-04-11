@@ -253,7 +253,7 @@ function showDialog (opts) {
 
 function PickrHook (obs) {
   return function (element) {
-    var picker = new Pickr(element, {
+    var picker = Pickr(element, {
       enableTime: true,
       altInput: true,
       dateFormat: 'U',

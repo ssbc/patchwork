@@ -57,8 +57,15 @@ electron.app.on('ready', () => {
     var menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
-      label: 'History',
+      label: 'Navigation',
       submenu: [
+        {
+          label: 'Activate Search Field',
+          accelerator: 'CmdOrCtrl+L',
+          click: () => {
+            browserWindow.webContents.send('activateSearch')
+          }
+        },
         {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
@@ -192,11 +199,13 @@ function setupContext (appName, opts, cb) {
     ssbConfig.remote = `net:127.0.0.1:${config.port}~shs:${pubkey}`
   } else {
     const socketPath = Path.join(ssbConfig.path, 'socket')
-    ssbConfig.connections.incoming.unix = [{ 'scope': 'local', 'transform': 'noauth' }]
+    ssbConfig.connections.incoming.unix = [{ 'scope': 'device', 'transform': 'noauth' }]
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
 
-  console.log(ssbConfig)
+  const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
+  redactedConfig.keys.private = null
+  console.log(JSON.stringify(redactedConfig, null, 2))
 
   if (opts.server === false) {
     cb && cb()

@@ -178,21 +178,19 @@ exports.init = function (ssb, config) {
     })
   )
 
-  // NOTE ssb.ebt.block is not currently an exposed function!
-
-  // // update ebt with latest block info
-  // pull(
-  //   patchwork.contacts.raw.stream({ live: true }),
-  //   pull.drain((data) => {
-  //     if (!data) return
-  //     for (var from in data) {
-  //       for (var to in data[from]) {
-  //         var value = data[from][to]
-  //         ssb.ebt.block(from, to, value === false)
-  //       }
-  //     }
-  //   })
-  // )
+  // update ebt with latest block info
+  pull(
+    patchwork.contacts.raw.stream({ live: true }),
+    pull.drain((data) => {
+      if (!data) return
+      for (var from in data) {
+        for (var to in data[from]) {
+          var value = data[from][to]
+          ssb.ebt.block(from, to, value === false)
+        }
+      }
+    })
+  )
 
   // use blocks in legacy replication (adapted from ssb-friends for legacy compat)
   ssb.createHistoryStream.hook(function (fn, args) {
@@ -201,7 +199,10 @@ exports.init = function (ssb, config) {
     return pCont(cb => {
       // wait till the index has loaded.
       patchwork.contacts.raw.get((_, graph) => {
-        if (graph && opts.id !== peer.id && graph[opts.id] && graph[opts.id][peer.id] === false) {
+        // don't allow the replication if the feed being requested blocks the requester
+        var requesterId = peer.id
+        var feedId = opts.id
+        if (graph && feedId !== requesterId && graph[feedId] && graph[feedId][requesterId] === false) {
           cb(null, function (abort, cb) {
             // just give them the cold shoulder
           })

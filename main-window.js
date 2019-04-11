@@ -13,6 +13,13 @@ var ref = require('ssb-ref')
 var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 var requireStyle = require('require-style')
+var ssbUri = require('ssb-uri')
+
+try {
+  var mouseForwardBack = require('mouse-forward-back')
+} catch (err) {
+  mouseForwardBack = false
+}
 
 module.exports = function (config) {
   var sockets = combine(
@@ -84,6 +91,17 @@ module.exports = function (config) {
 
   electron.ipcRenderer.on('goForward', views.goForward)
   electron.ipcRenderer.on('goBack', views.goBack)
+
+  if (mouseForwardBack) {
+    mouseForwardBack.register((direction) => {
+      if (direction === 'back') {
+        views.goBack()
+      } else if (direction === 'forward') {
+        views.goForward()
+      }
+    },
+    electron.remote.getCurrentWindow().getNativeWindowHandle())
+  }
 
   document.head.appendChild(
     h('style', {
@@ -272,6 +290,15 @@ module.exports = function (config) {
       if (!err && handler) {
         handler(href)
       } else {
+        if (href.startsWith('ssb:')) {
+          try {
+            href = ssbUri.toSigilLink(href)
+          } catch (e) {
+            // error can be safely ignored
+            // it just means this isn't an SSB URI
+          }
+        }
+
         // no external handler found, use page.html.render
         previewElement.cancel()
         views.setView(href, anchor)

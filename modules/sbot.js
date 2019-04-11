@@ -4,7 +4,6 @@ var { Value, onceTrue, watch, Set: MutantSet } = require('mutant')
 var ref = require('ssb-ref')
 var Reconnect = require('pull-reconnect')
 var createClient = require('ssb-client')
-var createFeed = require('ssb-feed')
 var nest = require('depnest')
 var ssbKeys = require('ssb-keys')
 var flat = require('flat')
@@ -96,15 +95,6 @@ exports.create = function (api) {
     })
   })
 
-  var internal = {
-    getLatest: rec.async(function (id, cb) {
-      sbot.getLatest(id, cb)
-    }),
-    add: rec.async(function (msg, cb) {
-      sbot.add(msg, cb)
-    })
-  }
-
   setInterval(function () {
     if (sbot) {
       sbot.gossip.peers((err, peers) => {
@@ -144,8 +134,6 @@ exports.create = function (api) {
     }
   })
 
-  var feed = createFeed(internal, keys, { remote: true })
-
   return {
     sbot: {
       sync: {
@@ -158,7 +146,11 @@ exports.create = function (api) {
           }
           if (cache[key]) cb(null, cache[key])
           else {
-            sbot.get(key, function (err, value) {
+            var options = typeof key === 'string'
+              ? { private: true, id: key }
+              : key
+
+            sbot.get(options, function (err, value) {
               if (err) return cb(err)
               runHooks({ key, value })
               cb(null, value)
@@ -195,7 +187,7 @@ exports.create = function (api) {
             })
           }
 
-          feed.add(content, (err, msg) => {
+          sbot.publish(content, (err, msg) => {
             if (err) console.error(err)
             else if (!cb) console.log(msg)
             cb && cb(err, msg)
