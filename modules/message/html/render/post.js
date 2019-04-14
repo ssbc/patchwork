@@ -48,7 +48,9 @@ exports.create = function (api) {
   function blockedMessage (msg) {
     if (msg.blockedBy.role === 'me') {
       return 'Content of a blocked user'
-    } else {
+    }
+    return 'blocked by someone else'
+    /* else {
       return h('div', {},
         ['This post by ',
           api.profile.html.person(msg.value.author),
@@ -58,7 +60,7 @@ exports.create = function (api) {
           h('a',{href: msg.key}, 'Click here'),
           ' to view the post in a fork of this thread.'
         ])
-    }
+    }*/
   }
 
   function messageContent (data) {

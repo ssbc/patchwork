@@ -1,4 +1,4 @@
-var { h, when, watch, Proxy, Struct, Array: MutantArray, Value, computed } = require('mutant')
+var { h, when, watch, Proxy, Struct, Array: MutantArray, Value, computed, onceTrue } = require('mutant')
 var nest = require('depnest')
 var ref = require('ssb-ref')
 var AnchorHook = require('../../../../lib/anchor-hook')
@@ -14,9 +14,10 @@ exports.needs = nest({
   'message.html.render': 'first',
   'message.html.compose': 'first',
   'message.html.missing': 'first',
+  'profile.html.person': 'first',
   'sbot.async.get': 'first',
   'intl.sync.i18n': 'first',
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
 })
 
 exports.gives = nest('page.html.render')
@@ -178,11 +179,24 @@ exports.create = function (api) {
             sync = true
             result.set(container)
           } else {
-            var element = api.message.html.render(msg, {
-              hooks: [UnreadClassHook(anchor, msg.key)],
-              includeForks: msg.key !== id,
-              includeReferences: true
-            })
+            var element
+            if (msg.blockedBy && msg.blockedBy.role === 'threadAuthor') {
+              element = h('div', {},
+                ['This post by ',
+                  api.profile.html.person(msg.value.author),
+                  ' is hidden because they are blocked by the thread author ',
+                  api.profile.html.person(msg.blockedBy.id),
+                  '. ',
+                  h('a',{href: msg.key}, 'Click here'),
+                  ' to view the post in a fork of this thread. TEST'
+                ])
+            } else {
+              element = api.message.html.render(msg, {
+                hooks: [UnreadClassHook(anchor, msg.key)],
+                includeForks: msg.key !== id,
+                includeReferences: true
+              })
+            }
 
             // mark messages as new if added in realtime
             if (sync && element && element.classList) {
@@ -229,15 +243,25 @@ exports.create = function (api) {
     api.sbot.async.get({ id, private: true, unbox }, (err, value) => {
       if (err) return cb(err)
       var msg = { key: id, value }
-      if (isBlog(msg)) {
-        Blog(api.sbot.obs.connection).async.get(msg, (err, result) => {
-          if (err) return cb(err)
-          msg.body = result.body
-          cb(null, msg)
+
+      var me = api.keys.sync.id()
+      onceTrue(api.sbot.obs.connection, sbot => {
+        sbot.patchwork.contacts.isBlocking({ source: me, dest: value.author}, (err, blocking) => {
+          console.log
+          if (blocking) {
+            cb(null, null)
+          } else if (isBlog(msg)) {
+            Blog(api.sbot.obs.connection).async.get(msg, (err, result) => {
+              if (err) return cb(err)
+              msg.body = result.body
+              cb(null, msg)
+            })
+          } else {
+            cb(null, msg)
+          }
         })
-      } else {
-        cb(null, msg)
-      }
+      })
+
     })
   }
 }
