@@ -9,6 +9,7 @@ exports.needs = nest({
   'channel.async.suggest': 'first',
   'emoji.sync.names': 'first',
   'emoji.sync.url': 'first',
+  'blob.sync.url': 'first',
   'sbot.obs.connection': 'first'
 })
 
@@ -42,8 +43,15 @@ exports.create = function (api) {
         } else if (inputText[0] === '&') {
           onceTrue(api.sbot.obs.connection, sbot => {
             sbot.meme.search(inputText.slice(1), (err, memes) => {
-              console.log('the dankest memes:', memes)
-              cb(null, [{title: 'hello'}])
+              cb(null, Object.keys(memes).map(memeId => {
+                const meme = memes[memeId][0]
+                return {
+                  image: api.blob.sync.url(memeId),
+                  title: meme.name,
+                  subtitle: meme.name,
+                  value: `![${meme.name}](${memeId})`
+                }
+              }))
             })
           })
         }
