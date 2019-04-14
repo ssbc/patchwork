@@ -2,12 +2,14 @@ const nest = require('depnest')
 var emoji = require('emojilib')
 var addSuggest = require('suggest-box')
 var resolve = require('mutant/resolve')
+var onceTrue = require('mutant/once-true')
 
 exports.needs = nest({
   'profile.async.suggest': 'first',
   'channel.async.suggest': 'first',
   'emoji.sync.names': 'first',
-  'emoji.sync.url': 'first'
+  'emoji.sync.url': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 exports.gives = nest('suggest.hook')
@@ -37,6 +39,13 @@ exports.create = function (api) {
               value: ':' + emoji + ':'
             }
           }))
+        } else if (inputText[0] === '&') {
+          onceTrue(api.sbot.obs.connection, sbot => {
+            sbot.meme.search(inputText.slice(1), (err, memes) => {
+              console.log('the dankest memes:', memes)
+              cb(null, [{title: 'hello'}])
+            })
+          })
         }
       }, { cls: 'SuggestBox' })
     }
