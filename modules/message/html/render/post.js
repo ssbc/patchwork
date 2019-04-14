@@ -1,8 +1,6 @@
 var h = require('mutant/h')
-var mutantMap = require('mutant/map')
 var nest = require('depnest')
 var extend = require('xtend')
-var getRoot = require('../../../../lib/get-root')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
