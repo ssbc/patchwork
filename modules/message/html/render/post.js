@@ -3,9 +3,6 @@ var nest = require('depnest')
 var extend = require('xtend')
 
 exports.needs = nest({
-  'keys.sync.id': 'first',
-  'profile.html.person': 'first',
-  'message.obs.get': 'first',
   'message.html': {
     decorate: 'reduce',
     layout: 'first',
