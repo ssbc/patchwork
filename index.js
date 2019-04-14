@@ -196,7 +196,7 @@ function setupContext (appName, opts, cb) {
 
   if (process.platform === 'win32') {
     // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
-    ssbConfig.remote = `net:127.0.0.1:${config.port}~shs:${pubkey}`
+    ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${pubkey}`
   } else {
     const socketPath = Path.join(ssbConfig.path, 'socket')
     ssbConfig.connections.incoming.unix = [{ 'scope': 'device', 'transform': 'noauth' }]
