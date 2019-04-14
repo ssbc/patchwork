@@ -185,20 +185,20 @@ exports.create = function (api) {
               element = h('Message -missing -reply', [
                 h('header', [
                   h('div.main', [
-                    h('div.main', 'Hidden message')
+                    h('div.main', i18n('Hidden message'))
                   ]),
                   h('div.meta', [
                     api.message.html.metas(msg)
                   ])
                 ]),
                 h('section', [
-                  h('p', ['This post by ',
+                  h('p', [i18n('This post by '),
                     api.profile.html.person(msg.value.author),
-                    ' is hidden because they are blocked by the thread author ',
+                    i18n(' is hidden because they are blocked by the thread author '),
                     api.profile.html.person(msg.blockedBy.id),
                     '. ',
-                    h('a ProfileLink',{href: msg.key}, 'Click here'),
-                    ' to view the post in a fork of this thread.'
+                    h('a ProfileLink', {href: msg.key}, i18n('Click here')),
+                    i18n(' to view the post in a fork of this thread.')
                   ])
                 ])
               ])

@@ -31,7 +31,7 @@ exports.create = function (api) {
 
       var element = api.message.html.layout(msg, extend({
         title: messageTitle(msg),
-        content: msg.isBlocked ? blockedMessage(msg) : messageContent(msg),
+        content: msg.blockedBy && msg.blockedBy.role === 'me' ? i18n('Content of a blocked user') : messageContent(msg),
         layout: 'default'
       }, opts))
 
@@ -43,24 +43,6 @@ exports.create = function (api) {
 
   function isRenderable (msg) {
     return (msg.value.content.type === 'post') ? true : undefined
-  }
-
-  function blockedMessage (msg) {
-    if (msg.blockedBy.role === 'me') {
-      return 'Content of a blocked user'
-    }
-    return 'blocked by someone else'
-    /* else {
-      return h('div', {},
-        ['This post by ',
-          api.profile.html.person(msg.value.author),
-          ' is hidden because they are blocked by the thread author ',
-          api.profile.html.person(msg.blockedBy.id),
-          '. ',
-          h('a',{href: msg.key}, 'Click here'),
-          ' to view the post in a fork of this thread.'
-        ])
-    }*/
   }
 
   function messageContent (data) {
