@@ -14,6 +14,7 @@ exports.needs = nest({
   'message.html.render': 'first',
   'message.html.compose': 'first',
   'message.html.missing': 'first',
+  'message.html.metas': 'first',
   'profile.html.person': 'first',
   'sbot.async.get': 'first',
   'intl.sync.i18n': 'first',
@@ -181,15 +182,26 @@ exports.create = function (api) {
           } else {
             var element
             if (msg.blockedBy && msg.blockedBy.role === 'threadAuthor') {
-              element = h('div', {},
-                ['This post by ',
-                  api.profile.html.person(msg.value.author),
-                  ' is hidden because they are blocked by the thread author ',
-                  api.profile.html.person(msg.blockedBy.id),
-                  '. ',
-                  h('a',{href: msg.key}, 'Click here'),
-                  ' to view the post in a fork of this thread. TEST'
+              element = h('Message -missing -reply', [
+                h('header', [
+                  h('div.main', [
+                    h('div.main', 'Hidden message')
+                  ]),
+                  h('div.meta', [
+                    api.message.html.metas(msg)
+                  ])
+                ]),
+                h('section', [
+                  h('p', ['This post by ',
+                    api.profile.html.person(msg.value.author),
+                    ' is hidden because they are blocked by the thread author ',
+                    api.profile.html.person(msg.blockedBy.id),
+                    '. ',
+                    h('a ProfileLink',{href: msg.key}, 'Click here'),
+                    ' to view the post in a fork of this thread.'
+                  ])
                 ])
+              ])
             } else {
               element = api.message.html.render(msg, {
                 hooks: [UnreadClassHook(anchor, msg.key)],
