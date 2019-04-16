@@ -43,6 +43,7 @@ exports.create = function (api) {
         } else if (inputText[0] === '&') {
           onceTrue(api.sbot.obs.connection, sbot => {
             sbot.meme.search(inputText.slice(1), (err, memes) => {
+              if (err) cb(err)
               cb(null, Object.keys(memes).map(memeId => {
                 const meme = memes[memeId][0]
                 return {
