@@ -46,4 +46,17 @@ button {
       color: white
     }
   }
+  -warning {
+    color: white
+    background-color: #ff0000
+    border-color: #ff0000
+    :active {
+      background-color: #b30000
+    }
+    :hover {
+      background-color: #b30000
+      border-color: #b30000
+      color: white
+    }
+  }
 }
