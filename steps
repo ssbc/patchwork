@@ -1,0 +1,8 @@
+1. master is 3.11.6
+2. create new branch `release-3.12.0` or something
+3. `npm version minor`
+4. create github release for v3.12.0
+5. git push origin release-3.12-0
+6. keep pushing commits until we're ready and happy
+7. merge PR
+8. publish draft as a new release
