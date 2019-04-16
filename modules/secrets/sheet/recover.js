@@ -147,22 +147,28 @@ exports.create = (api) => {
                       api.about.obs.name(request.feedId)
                     ]),
                     request.state === 'requested' || request.state === 'received' || recovery.state === 'ready'
-                    ? h('div', [
-                      h('div.line -orange', [
-                        h('span', 'Requested'),
-                        h('div.dot -orange')
+                      ? h('div', [
+                        h('div.line -orange', [
+                          h('span', 'Requested'),
+                          h('div.dot -orange')
+                        ])
                       ])
-                    ])
-                    : null,
+                      : null,
                     request.state === 'received' || recovery.state === 'ready'
-                    ? h('div', [ h('div.line -blue', [ h('div.dot -blue') ]) ])
-                    : null,
+                      ? h('div', [
+                        h('div.line -blue', { style: { 'z-index': '-1' } }, [
+                          h('span', 'Received'),
+                          h('div.dot -blue')
+                        ])
+                      ])
+                      : null,
                     recovery.state === 'ready'
-                    ? [
-                      h('div', [ h('div.line -green', [ h('div.dot -green') ]) ]),
-                      h('img', { src: api.emoji.sync.url('closed_lock_with_key') })
-                    ]
-                    : null
+                      ? h('div', { style: { 'z-index': '-2' } }, [
+                        h('div.line -green', [
+                          h('div.dot -green')
+                        ])
+                      ])
+                      : null
                   ])
                 )),
               ])
