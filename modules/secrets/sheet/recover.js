@@ -199,7 +199,8 @@ exports.create = (api) => {
           : [
             recovery.state === 'ready'
               ? h('div.restore', [
-                h('p', `You have successfully recovered the following identity: ${recovery.feedId}`),
+                h('span', `You have successfully recovered the following identity: `),
+                h('strong', recovery.feedId)
               ])
               : null,
             recovery.state === 'ready'

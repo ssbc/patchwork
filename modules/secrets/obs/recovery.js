@@ -37,6 +37,63 @@ exports.create = (api) => {
     if (!store) {
       store = Value()
       updateStore()
+
+      // Dummy data
+      // store.set(
+      //   {
+      //     feedId: '@t9ZjSJ8yT3j7zfzaeL4MJAB26VU4afyBsB278NTKHN8=.ed25519',
+      //     forwards: [
+      //       {
+      //         id: '%Ixuw+DCtK0jH2rgoyBngv5D/K+bS6DNHcHuysgXKF0I=.sha256',
+      //         feedId: '@o3OcykTU7zdsm+WKoGl74XAoyDI/SWlVbIeyHHinQXQ=.ed25519',
+      //         shard: 'this is the shard',
+      //         shareVersion: '2.0.0',
+      //         sentAt: new Date(),
+      //         root: '%Ixuw+DCtK0jH2rgoyBngv5D/K+bS6DNHcHuysgXKF0I=.sha256',
+      //         attachment: {
+      //           name: 'gossip.json',
+      //           link: '&Derun7ov8MguVIbMFpALxs+RpF0ekiq/C9hPWsvcWDU=.sha256'
+      //         }
+      //       },
+      //       {
+      //         id: '%em1tH7wE46pzuZuhiBt72AbWpRRO0i6Mvfk3lcPMjfs=.sha256',
+      //         feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+      //         shard: 'this is the shard',
+      //         shareVersion: '2.0.0',
+      //         sentAt: new Date(),
+      //         root: '%em1tH7wE46pzuZuhiBt72AbWpRRO0i6Mvfk3lcPMjfs=.sha256',
+      //         attachment: {
+      //           name: 'gossip.json',
+      //           link: '&Derun7ov8MguVIbMFpALxs+RpF0ekiq/C9hPWsvcWDU=.sha256'
+      //         }
+      //       },
+      //     ],
+      //     requests: [
+      //       {
+      //         id: '%WB5SxQlM9ur4QL1bwCHGLS7TNw46bz71hmKy2KMnEqo=.sha256',
+      //         feedId: '@iL6NzQoOLFP18pCpprkbY80DMtiG4JFFtVSVUaoGsOQ=.ed25519',
+      //         sentAt: new Date(),
+      //         state: REQUESTED
+      //       },
+      //       {
+      //         feedId: '@o3OcykTU7zdsm+WKoGl74XAoyDI/SWlVbIeyHHinQXQ=.ed25519',
+      //         sentAt: new Date(),
+      //         id: '%ICz7CjzREkynswt2qugA4c5GdJOK32XNMnmIL5aS9jE=.sha256',
+      //         forwardId: '%Ixuw+DCtK0jH2rgoyBngv5D/K+bS6DNHcHuysgXKF0I=.sha256',
+      //         state: RECEIVED
+      //       },
+      //       {
+      //         feedId:  '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
+      //         sentAt: new Date(),
+      //         id: '%WsLloD2TVbzhxn+WmEphGMHLDJKt0lFrVuH6KKFaMoA=.sha256',
+      //         forwardId: '%em1tH7wE46pzuZuhiBt72AbWpRRO0i6Mvfk3lcPMjfs=.sha256',
+      //         state: RECEIVED
+      //       }
+      //     ],
+      //     state: READY,
+      //     version: '2.0.0'
+      //   }
+      // )
     }
 
     watchForUpdates()
@@ -63,7 +120,8 @@ exports.create = (api) => {
         //       id: msgId,
         //       sentAt: datetime,
         //       feedId: feedId,
-        //       forwardId: msgId
+        //       forwardId: msgId,
+        //       state: string
         //     }
         //   },
         //   state: string
