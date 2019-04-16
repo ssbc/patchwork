@@ -23,6 +23,7 @@ exports.create = (api) => {
       shard: null,
       request: null
     })
+
     const state = Struct({
       publishing: false,
       shard: Struct({
@@ -30,7 +31,8 @@ exports.create = (api) => {
       }),
       request: Struct({
         last5: null
-      })
+      }),
+      isOpen: false
     })
 
     watch(api.secrets.obs.custody(), (shards) => {
@@ -76,7 +78,7 @@ exports.create = (api) => {
                                 api.about.html.image(request.from),
                                 api.about.obs.name(request.from)
                               ]),
-                              h('div.sentAt', shard.sentAt),
+                              h('div.sentAt', `${shard.sentAt.toLocaleDateString()} ${shard.sentAt.toLocaleTimeString()}`),
                               h('div.actions', [
                                 // h('button -cancel', 'Ignore'), // %%TODO%%: save the ignored request so you no longer see it
                                 h('button -save', {
@@ -85,7 +87,7 @@ exports.create = (api) => {
                                       ? props.request.set(null)
                                       : props.request.set(request)
                                   }
-                                }, 'Approve')
+                                }, 'Select for Approval')
                               ]),
                               computed(props.request, (selectedRequest) => {
                                 return selectedRequest && selectedRequest.id === request.id

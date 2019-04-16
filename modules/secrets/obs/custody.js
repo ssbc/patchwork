@@ -5,7 +5,7 @@ const { get, set, transform, sortBy } = require('lodash')
 
 const DarkCrystal = require('scuttle-dark-crystal')
 
-const { h, Array: MutantArray, throttle, onceTrue } = require('mutant')
+const { h, Value, throttle, onceTrue } = require('mutant')
 
 pull.paramap = pullParamap
 
@@ -26,13 +26,13 @@ exports.create = (api) => {
   var store = null
 
   function fetch (props = {}) {
-    const { limit = 100  } = props
+    const { limit = 100 } = props
 
     const scuttle = DarkCrystal(api.sbot.obs.connection)
     const id = api.keys.sync.id()
 
     if (!store) {
-      store = MutantArray([])
+      store = Value()
       updateStore()
     }
 
@@ -79,24 +79,23 @@ exports.create = (api) => {
       pull(
         scuttle.shard.pull.fromOthers({ reverse: true, live: false }),
         pull.filter(shard => get(shard, 'value.content.attachment.name') === 'gossip.json'),
+        pull.map(shard => ({
+          id: shard.key,
+          rootId: get(shard, 'value.content.root'),
+          feedId: get(shard, 'value.author'),
+          sentAt: new Date(get(shard, 'value.timestamp')),
+          shard: get(shard, 'value.content.shard'),
+          shareVersion: get(shard, 'value.content.shareVersion'),
+          attachment: get(shard, 'value.content.attachment')
+        })),
         pull.paramap((shard, done) => {
-          const id = shard.key
-          const rootId = get(shard, 'value.content.root')
-          const author = get(shard, 'value.author')
-
-          set(records, [id, 'id'], id)
-          set(records, [id, 'feedId'], author)
-          set(records, [id, 'sentAt'], new Date(shard.value.timestamp))
-          set(records, [id, 'shard'], get(shard, 'value.content.shard'))
-          set(records, [id, 'shareVersion'], get(shard, 'value.content.shareVersion'))
-          set(records, [id, 'rootId'], rootId)
-          set(records, [id, 'attachment'], get(shard, 'value.content.attachment'))
+          set(records, [shard.id], shard)
 
           // shard state defaults to RECEIVED
-          set(records, [id, 'state'], RECEIVED)
+          set(records, [shard.id, 'state'], RECEIVED)
 
           pull(
-            scuttle.forwardRequest.pull.bySecretOwner(author),
+            scuttle.forwardRequest.pull.bySecretOwner(shard.feedId),
             pull.map(request => ({
               id: request.key,
               from: get(request, 'value.author'),
@@ -105,7 +104,7 @@ exports.create = (api) => {
             pull.paramap((request, next) => {
               // we don't _really_ know yet since it could have been for _any secret_,
               // however, in this context, we know because we're assuming other requests aren't yet in the system.
-              set(records, [id, 'state'], REQUESTED)
+              set(records, [shard.id, 'state'], REQUESTED)
 
               pull(
                 scuttle.forward.pull.toOthers({ reverse: true, live: false }),
@@ -114,34 +113,35 @@ exports.create = (api) => {
                 pull.map(fwd => ({
                   id: fwd.key,
                   to: notMe(get(fwd, 'value.content.recps')),
-                  sentAt: new Date(get(forwardMsg, 'value.timestamp'))
+                  sentAt: new Date(get(fwd, 'value.timestamp'))
                 })),
                 pull.collect((err, [forward]) => {
-                  if (!forward) next(null)
-                  set(records, [id, 'state'], RETURNED) // %%TODO%%: account for the timestamp, state may change...
-                  set(request, 'forwardId', forward.id)
-                  next(null)
+                  if (forward) {
+                    set(records, [shard.id, 'state'], RETURNED) // %%TODO%%: account for the timestamp, state may change...
+                    set(request, 'forwardId', forward.id)
+                  }
+                  next(null, request)
                 })
               )
             }, 10),
             pull.collect((err, requests) => {
-              set(records, [id, 'requests'], requests)
+              set(records, [shard.id, 'requests'], requests)
               done(null)
             })
           )
 
           pull(
             scuttle.forward.pull.toOthers({ reverse: true, live: false }),
-            pull.filter(fwd => get(fwd, 'value.content.root') === rootId),
+            pull.filter(fwd => get(fwd, 'value.content.root') === shard.rootId),
             pull.map(fwd => ({
               id: fwd.key,
               sentAt: new Date(get(fwd, 'value.timestamp')),
               shareVersion: get(fwd, 'value.content.shareVersion'),
               shard: get(fwd, 'value.content.shard'),
-              root: rootId
+              root: shard.rootId
             })),
             pull.collect((err, forwards) => {
-              set(records, [id, 'forwards', forwards])
+              set(records, [shard.id, 'forwards', forwards])
             })
           )
         }, 10),
