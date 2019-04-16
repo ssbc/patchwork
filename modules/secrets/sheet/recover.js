@@ -25,7 +25,8 @@ exports.needs = nest({
   'intl.sync.i18n_n': 'first',
   'sheet.display': 'first',
   'about.html.image': 'first',
-  'about.obs.name': 'first', 'secrets.html.custodians': 'first',
+  'about.obs.name': 'first',
+  'secrets.html.custodians': 'first',
   'secrets.obs.recovery': 'first',
   'emoji.sync.url': 'first',
   'sbot.obs.connection': 'first',
@@ -48,12 +49,13 @@ exports.create = (api) => {
 
     const state = Struct({
       canSubmit: false,
-      publishng: false
+      publishng: false,
+      delete: false
     })
 
     var cachedRecovery, ssbRecovery
     try {
-      cachedRecovery = JSON.parse(fs.readFileSync(join(config.path, 'recovery.json'), 'utf8'))
+      cachedRecovery = JSON.parse(fs.readFileSync(join(config.path, 'recovery.json'), 'utf8')) || {}
       ssbRecovery = Object.values(cachedRecovery).find(o => o.name === SSB_IDENTITY)
     } catch (err) {}
 
@@ -77,7 +79,7 @@ exports.create = (api) => {
 
           content = h('div', { style: { 'padding': '20px' } }, [
             h('h2', 'Recovery'),
-            h('SecretNew', [
+            h('Secrets', [
               h('div.left', [
                 h('section.secretOwner', [
                   h('p', 'Select the identity you wish to recover'),
@@ -136,12 +138,33 @@ exports.create = (api) => {
         else {
           content = h('div', { style: { 'padding': '20px' } }, [
             h('h2', 'Recovery'),
-            h('SecretNew', [
-              h('div.left', [
-                'do some funky rendering'
-              ]),
-              h('div.right', [
-                'do some funky rendering'
+            h('Secrets', [
+              h('div.recovery', [
+                recovery.requests.map(request => (
+                  h('div.request', [
+                    h('div.recp', [
+                      api.about.html.image(request.feedId),
+                      api.about.obs.name(request.feedId)
+                    ]),
+                    request.state === 'requested' || request.state === 'received' || recovery.state === 'ready'
+                    ? h('div', [
+                      h('div.line -orange', [
+                        h('span', 'Requested'),
+                        h('div.dot -orange')
+                      ])
+                    ])
+                    : null,
+                    request.state === 'received' || recovery.state === 'ready'
+                    ? h('div', [ h('div.line -blue', [ h('div.dot -blue') ]) ])
+                    : null,
+                    recovery.state === 'ready'
+                    ? [
+                      h('div', [ h('div.line -green', [ h('div.dot -green') ]) ]),
+                      h('img', { src: api.emoji.sync.url('closed_lock_with_key') })
+                    ]
+                    : null
+                  ])
+                )),
               ])
             ])
           ])
@@ -168,11 +191,25 @@ exports.create = (api) => {
             )
           ]
           : [
-            h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
-            h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
+            recovery.state === 'ready'
+              ? h('div.restore', [
+                h('p', `You have successfully recovered the following identity: ${recovery.feedId}`),
+              ])
+              : null,
+            recovery.state === 'ready'
+              ? [
+                h('button -warning', { 'ev-click': (e) => { state.delete.set(true); restoreIdentity() } }, i18n('Restore and Delete')),
+                h('button -save', { 'ev-click': restoreIdentity }, i18n('Restore and Save')),
+                h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
+              ]
+              : h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
           ]
 
         return { content, footer, classList: ['-private'] }
+
+        function restoreIdentity () {
+          // This is where we call into electron to close the server process
+        }
 
         function save () {
           var params = resolve(props)

@@ -4,15 +4,18 @@ const pullParamap = require('pull-paramap')
 
 const DarkCrystal = require('scuttle-dark-crystal')
 const secrets = require('dark-crystal-secrets')
-const { pickBy, identity, transform, get, set } = require('lodash')
+const { pickBy, identity, transform, get, set, isEmpty } = require('lodash')
 
 const { h, Value } = require('mutant')
 
 pull.paramap = pullParamap
 
-// states
+// request states
 const REQUESTED = 'requested'
 const RECEIVED = 'received'
+
+// recovery states
+const PENDING = 'pending'
 const READY = 'ready'
 
 exports.gives = nest('secrets.obs.recovery')
@@ -42,11 +45,12 @@ exports.create = (api) => {
 
     function updateStore () {
       var records = {
-        // [feedId]: {
+        // [secretOwnerFeedId]: {
         //   feedId: feedId,
         //   forwards: {
-        //     [msgId]: { // should this be the feedId of the forward's author?
+        //     [feedId]: {
         //       id: msgId,
+        //       feedId: feedId,
         //       shard: string,
         //       shareVersion: string,
         //       sentAt: datetime,
@@ -55,10 +59,10 @@ exports.create = (api) => {
         //     }
         //   },
         //   requests: {
-        //     [msgId]: { // should this be the feedId of the requests's author?
+        //     [feedId]: {
         //       id: msgId,
         //       sentAt: datetime,
-        //       to: feedId,
+        //       feedId: feedId,
         //       forwardId: msgId
         //     }
         //   },
@@ -91,27 +95,28 @@ exports.create = (api) => {
           id: request.key,
           state: REQUESTED,
           sentAt: new Date(get(request, 'value.timestamp')),
-          for: get(request, 'value.content.secretOwner'),
+          feedId: get(request, 'value.content.secretOwner'),
           to: notMe(get(request, 'value.content.recps'))
         })),
         pull.paramap((request, done) => {
-          const feedId = request.for
+          const feedId = request.feedId
           set(records, [feedId, 'feedId'], feedId)
-          set(records, [feedId, 'state'], request.state)
+          set(records, [feedId, 'state'], PENDING)
 
           pull(
             scuttle.forward.pull.fromOthers({ reverse: true, live: false }),
             pull.filter((fwd) => get(fwd, 'value.content.requestId') === request.id),
             pull.map((fwd) => ({
               id: fwd.key,
-              from: get(fwd, 'value.author'),
+              feedId: get(fwd, 'value.author'),
               shard: get(fwd, 'value.content.shard'),
               shareVersion: get(fwd, 'value.content.shareVersion'),
               sentAt: new Date(get(fwd, 'value.timestamp')),
               root: get(fwd, 'value.content.root')
             })),
-            pull.collect((err, [forward]) => {
-              if (forward) {
+            pull.collect((err, forwards) => {
+              if (!isEmpty(forwards)) {
+                const [ forward ] = forwards
                 set(request, ['forwardId'], forward.id)
                 set(request, ['state'], RECEIVED)
                 set(records, [feedId, 'forwards', forward.id], forward)

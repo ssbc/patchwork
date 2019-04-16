@@ -57,7 +57,7 @@ exports.create = (api) => {
         const content = isUndefined(backup) || isNull(backup)
           ? h('div', { style: { 'padding': '20px' } }, [
             h('h2', 'Back Up'),
-            h('SecretNew', [
+            h('Secrets', [
               h('div.left', [
                 h('section.custodians', [
                   h('p', 'Select your custodians'),
@@ -98,16 +98,21 @@ exports.create = (api) => {
           ])
           : h('div', { style: { 'padding': '20px' } }, [
             h('h2', 'Back Up'),
-            h('SecretNew', [
+            h('Secrets', [
               h('div.left', [
-                h('section.custodians', [
-                  h('p', 'Custodians'),
+                h('section', [
+                  h('h3', 'Quorum'),
                 ]),
-                h('section.quroum', [
-                  h('p', 'Quorum'),
+                h('section.quorum', [
+                  h('div', [
+                    h('p', backup.quorum)
+                  ])
                 ])
               ]),
               h('div.right', [
+                h('section', [
+                  h('h3', 'Custodians'),
+                ]),
                 h('section.custodians', [
                   backup.recipients.map(recp => (
                     h('div.custodian', [
@@ -115,11 +120,6 @@ exports.create = (api) => {
                       api.about.obs.name(recp)
                     ])
                   ))
-                ]),
-                h('section.quroum', [
-                  h('div', [
-                    h('span', backup.quorum)
-                  ])
                 ])
               ])
             ])
