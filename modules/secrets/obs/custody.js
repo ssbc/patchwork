@@ -1,7 +1,7 @@
 const nest = require('depnest')
 const pull = require('pull-stream')
 const pullParamap = require('pull-paramap')
-const { get, set, transform, sortBy } = require('lodash')
+const { get, set, transform, sortBy, isEmpty } = require('lodash')
 
 const DarkCrystal = require('scuttle-dark-crystal')
 
@@ -50,7 +50,7 @@ exports.create = (api) => {
         //   requests: [
         //     {
         //       id: msgId,
-        //       from: feedId,
+        //       feedId: feedId,
         //       sentAt: timestamp
         //     }
         //   ],
@@ -98,8 +98,9 @@ exports.create = (api) => {
             scuttle.forwardRequest.pull.bySecretOwner(shard.feedId),
             pull.map(request => ({
               id: request.key,
-              from: get(request, 'value.author'),
-              sentAt: new Date(get(request, 'value.timestamp'))
+              feedId: get(request, 'value.author'),
+              sentAt: new Date(get(request, 'value.timestamp')),
+              shardId: shard.id
             })),
             pull.paramap((request, next) => {
               // we don't _really_ know yet since it could have been for _any secret_,
@@ -108,15 +109,16 @@ exports.create = (api) => {
 
               pull(
                 scuttle.forward.pull.toOthers({ reverse: true, live: false }),
-                pull.filter(fwd => notMe(get(fwd, 'value.content.recps')) === request.from),
+                pull.filter(fwd => notMe(get(fwd, 'value.content.recps')) === request.feedId),
                 pull.filter(fwd => get(fwd, 'value.content.requestId') === request.id),
                 pull.map(fwd => ({
                   id: fwd.key,
                   to: notMe(get(fwd, 'value.content.recps')),
                   sentAt: new Date(get(fwd, 'value.timestamp'))
                 })),
-                pull.collect((err, [forward]) => {
-                  if (forward) {
+                pull.collect((err, forwards) => {
+                  if (!isEmpty(forwards)) {
+                    const [ forward ] = forwards
                     set(records, [shard.id, 'state'], RETURNED) // %%TODO%%: account for the timestamp, state may change...
                     set(request, 'forwardId', forward.id)
                   }
@@ -178,68 +180,3 @@ exports.create = (api) => {
     }
   }
 }
-
-// dummy data structure for developing
-// store.set([
-//   {
-//     id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-//     sentAt: '2015-9-19',
-//     state: RECEIVED,
-//     attachment: {
-//       name: 'gossip.json',
-//       link: '&ERGA0oJCELz2s4sr47f75iXZComB/2akzZq+IpcuqDs=.sha256'
-//     },
-//     requests: [],
-//     forwards: []
-//   },
-//   {
-//     id: '%A1sldjgf923JT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//     rootId: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-//     shard: 'some shard based text... boxy boxy box',
-//     shareVersion: '2.0.0',
-//     attachment: {
-//       name: 'gossip.json',
-//       link: '&ERGA0oJCELz2s4sr47f75iXZComB/2akzZq+IpcuqDs=.sha256'
-//     },
-//     sentAt: '2017-11-05',
-//     state: REQUESTED,
-//     requests: [
-//       {
-//         id: '%F1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-//         sentAt: '2018-4-12'
-//       }
-//     ],
-//     forwards: []
-//   },
-//   {
-//     id: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//     rootId: '%RTgbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//     feedId: '@NeB4q4Hy9IiMxs5L08oevEhivxW+/aDu/s/0SkNayi0=.ed25519',
-//     shard: 'some shard based text... boxy boxy box',
-//     shareVersion: '2.0.0',
-//     attachment: {
-//       name: 'gossip.json',
-//       link: '&ERGA0oJCELz2s4sr47f75iXZComB/2akzZq+IpcuqDs=.sha256'
-//     },
-//     sentAt: '2017-11-05',
-//     state: RETURNED,
-//     requests: [
-//       {
-//         id: '%G1GBrkARjt4AU9dE2R4Aj+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//         from: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-//         sentAt: '2018-4-12',
-//         forwardId: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256'
-//       }
-//     ],
-//     forwards: [
-//       {
-//         id: '%g1gbRKarJT4au9De2r4aJ+MghFSAyQzjfVnnxtJNBBw=.sha256',
-//         to: '@2FK8RsIq7VkiU0jXi4CTd3L40xiivb6enRxZgXxT+pU=.ed25519',
-//         sentAt: '2018-4-15'
-//       }
-//     ]
-//   }
-// ])

@@ -36,7 +36,6 @@ exports.create = function (api) {
     const includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
 
     api.secrets.obs.identity() // initialize the pull stream to reduce time user has to wait
-    api.secrets.obs.recovery()
     api.secrets.obs.custody()
 
     // const filterFollowing = api.settings.obs.get('filters.following')
