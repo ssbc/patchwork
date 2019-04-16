@@ -1,4 +1,5 @@
 node_modules
+dist
 
 # Mac OS metadata file
 .DS_Store

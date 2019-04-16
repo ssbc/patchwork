@@ -10,7 +10,8 @@
     "start": "electron index.js",
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild",
-    "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
+    "rebuild": "electron-builder install-app-deps",
+    "dist": "electron-builder"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "AGPL-3.0",
@@ -73,7 +74,7 @@
     "ssb-config": "^3.2.5",
     "ssb-ebt": "^5.4.3",
     "ssb-feed": "^2.3.0",
-    "ssb-gossip": "^1.0.6",
+    "ssb-gossip": "^1.0.9",
     "ssb-invite": "^2.0.4",
     "ssb-keys": "^7.1.5",
     "ssb-markdown": "^4.1.0",
@@ -96,9 +97,58 @@
   },
   "devDependencies": {
     "colors": "^1.3.3",
-    "electron": "^2.0.18"
+    "electron": "^2.0.18",
+    "electron-builder": "^20.39.0"
   },
   "optionalDependencies": {
     "mouse-forward-back": "^1.0.1"
+  },
+  "build": {
+    "appId": "org.ssbc.patchwork",
+    "asarUnpack": [
+      "node_modules/sodium-native/prebuilds"
+    ],
+    "npmSkipBuildFromSource": true,
+    "npmArgs": [
+      "--abi=57"
+    ],
+    "files": [
+      "**/*",
+      "!node_modules/**/deps${/*}",
+      "!node_modules/**/_node_modules${/*}",
+      "!node_modules/sodium-native/prebuilds${/*}",
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-57.node",
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/libsodium.*"
+    ],
+    "mac": {
+      "icon": "build/icon.icns",
+      "target": "dmg",
+      "files": [
+        "node_modules/sodium-native/prebuilds/darwin-${arch}/electron-57.node",
+        "node_modules/sodium-native/prebuilds/darwin-${arch}/libsodium.*"
+      ]
+    },
+    "linux": {
+      "category": "Network"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "publisherName": "Secure Scuttlebutt Consortium",
+      "files": [
+        "node_modules/sodium-native/prebuilds/win32-${arch}/electron-57.node",
+        "node_modules/sodium-native/prebuilds/win32-${arch}/libsodium.*"
+      ]
+    },
+    "dmg": {
+      "icon": "build/dmg-icon.icns",
+      "artifactName": "Patchwork-${version}-mac.${ext}"
+    },
+    "appImage": {
+      "artifactName": "Patchwork-${version}-linux-${arch}.${ext}"
+    },
+    "nsis": {
+      "installerIcon": "build/setup-icon.ico",
+      "artifactName": "Patchwork-${version}-windows.${ext}"
+    }
   }
 }
