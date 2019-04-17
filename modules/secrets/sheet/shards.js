@@ -141,7 +141,7 @@ exports.create = (api) => {
         h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
         computed([props.request, props.shard], (selectedRequest, selectedShard) => {
           return selectedRequest && selectedShard && selectedRequest.shardId === selectedShard.id
-            ? h('div.final', [
+            ? h('section', [
               h('p', 'Ensure that your two chosen identites are the correct people. We strongly advise you confirm this outside Patchwork.'),
               h('label', 'Secret Holder'),
               h('div.source', [
