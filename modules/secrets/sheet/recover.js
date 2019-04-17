@@ -77,18 +77,27 @@ exports.create = (api) => {
                 value: computed(props.quorum, quorum => quorum > 2 ? quorum * 100 : 2 * 100)
               }
             })
+
             return [
               h('h2', 'Recovery'),
               h('Secrets', [
-                h('div.left', [
-                  h('section.secretOwner', [
+                h('div.row', [
+                  h('section', [
                     h('p', 'Select the identity you wish to recover'),
                     api.secrets.html.custodians(props.secretOwner, {
                       maxRecps: 1,
                       disabled: state.publishing
                     })
                   ]),
-                  h('section.custodians', [
+                  h('section.recps', map((props.secretOwner), (recp) => (
+                    h('div.recp', [
+                      api.about.html.image(recp.link),
+                      api.about.obs.name(recp.link)
+                    ])
+                  )))
+                ]),
+                h('div.row', [
+                  h('section', [
                     h('p', 'Select your custodians'),
                     api.secrets.html.custodians(props.recps, { disabled: state.publishing }, () => {
                       var quorum = resolve(props.quorum)
@@ -102,42 +111,88 @@ exports.create = (api) => {
                       }
                     })
                   ]),
-                  h('section.quroum', [
-                    h('section', [
-                      h('p', 'Can you remember the quorum?'),
-                      slider,
-                      h('button -cancel', {
-                        'disabled': state.publishing,
-                        'ev-click': (e) => { props.quorum.set(null); slider.value = '0' }
-                      }, i18n('Clear'))
-                    ])
-                  ])
-                ]),
-                h('div.right', [
-                  h('section.secretOwner', map((props.secretOwner), (recp) => (
-                    h('div.recp', [
-                      api.about.html.image(recp.link),
-                      api.about.obs.name(recp.link)
-                    ])
-                  ))),
                   h('section.recps', map((props.recps), (recp) => (
                     h('div.recp', [
                       api.about.html.image(recp.link),
                       api.about.obs.name(recp.link)
                     ])
                   ))),
+                ]),
+                h('div.row', [
+                  h('section', [
+                    h('p', 'Can you remember the quorum?'),
+                    h('div', [
+                      slider,
+                      h('button -cancel', {
+                        'disabled': state.publishing,
+                        'ev-click': (e) => { props.quorum.set(null); slider.value = '0' }
+                      }, i18n('Clear'))
+                    ])
+                  ]),
                   h('section.quorum', [
-                    computed(props.quorum, (quorum) => ([
-                      quorum
-                    ]))
+                    computed(props.quorum, (quorum) => (
+                      h('p', quorum)
+                    ))
                   ])
                 ])
+                // h('div.left', [
+                //   h('section.secretOwner', [
+                //     h('p', 'Select the identity you wish to recover'),
+                //     api.secrets.html.custodians(props.secretOwner, {
+                //       maxRecps: 1,
+                //       disabled: state.publishing
+                //     })
+                //   ]),
+                //   h('section.custodians', [
+                //     h('p', 'Select your custodians'),
+                //     api.secrets.html.custodians(props.recps, { disabled: state.publishing }, () => {
+                //       var quorum = resolve(props.quorum)
+                //       var recpsCount = props.recps.getLength()
+                //       if (quorum > recpsCount) {
+                //         if (quorum > 2) props.quorum.set(recpsCount)
+                //         else {
+                //           props.quorum.set(null)
+                //           slider.value = '0'
+                //         }
+                //       }
+                //     })
+                //   ]),
+                //   h('section.quroum', [
+                //     h('section', [
+                //       h('p', 'Can you remember the quorum?'),
+                //       slider,
+                //       h('button -cancel', {
+                //         'disabled': state.publishing,
+                //         'ev-click': (e) => { props.quorum.set(null); slider.value = '0' }
+                //       }, i18n('Clear'))
+                //     ])
+                //   ])
+                // ]),
+                // h('div.right', [
+                //   h('section.secretOwner', map((props.secretOwner), (recp) => (
+                //     h('div.recp', [
+                //       api.about.html.image(recp.link),
+                //       api.about.obs.name(recp.link)
+                //     ])
+                //   ))),
+                //   h('section.recps', map((props.recps), (recp) => (
+                //     h('div.recp', [
+                //       api.about.html.image(recp.link),
+                //       api.about.obs.name(recp.link)
+                //     ])
+                //   ))),
+                //   h('section.quorum', [
+                //     computed(props.quorum, (quorum) => (
+                //       h('div', [ h('p', quorum) ])
+                //     ))
+                //   ])
+                // ])
               ])
             ]
           } else {
             return [
               h('h2', 'Recovery'),
-              h('Secrets', [
+              h('Recovery', [
                 h('div.recovery', [
                   recovery.requests.map(request => (
                     h('div.request', [
@@ -147,27 +202,23 @@ exports.create = (api) => {
                       ]),
                       request.state === 'requested' || request.state === 'received' || recovery.state === 'ready'
                       ? h('div', [
-                        h('div.line -orange', [
-                          h('span', 'Requested'),
-                          h('div.dot -orange')
-                        ])
+                        h('Line -requested', { style: { 'z-index': '2' } }, [ h('Dot -requested') ]),
+                        h('State', [ h('div -requested', 'Requested') ]),
                       ])
                       : null,
                       request.state === 'received' || recovery.state === 'ready'
                       ? h('div', [
-                        h('div.line -blue', { style: { 'z-index': '-1' } }, [
-                          h('span', 'Received'),
-                          h('div.dot -blue')
-                        ])
+                        h('Line -received', { style: { 'z-index': '1' } }, [ h('Dot -received') ]),
+                        h('State', [ h('div -received', 'Received') ]),
                       ])
                       : null,
                       recovery.state === 'ready'
-                      ? h('div', { style: { 'z-index': '-2' } }, [
-                        h('div.line -green', [
-                          h('div.dot -green')
-                        ])
+                      ? h('div', [
+                        h('Line -ready', [ h('Dot -ready') ]),
+                        h('State', [ h('div -ready', 'Ready') ]),
                       ])
                       : null
+                      // Put an unlocked lock icon here when state is ready!
                     ])
                   ))
                 ])
@@ -244,4 +295,8 @@ exports.create = (api) => {
       }
     })
   })
+}
+
+function capitalise (string) {
+  return string.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase() })
 }

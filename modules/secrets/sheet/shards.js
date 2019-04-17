@@ -51,13 +51,13 @@ exports.create = (api) => {
                   h('h2', 'Shards'),
                 ]),
                 h('div.right', [
-                  h('div.state', [
+                  h('State', [
                     h('div', { classList: [`-received`] }, 'Received'),
                   ]),
-                  h('div.state', [
+                  h('State', [
                     h('div', { classList: [`-requested`] }, 'Requested'),
                   ]),
-                  h('div.state', [
+                  h('State', [
                     h('div', { classList: [`-returned`] }, 'Returned'),
                   ])
                 ])
@@ -65,7 +65,7 @@ exports.create = (api) => {
               h('section.headers', [
                 h('div.createdBy', [ h('span', 'Created By') ]),
                 h('div.sentAt', [ h('span', 'Sent At' ) ]),
-                h('div.state', [ h('span', 'Status') ]),
+                h('div.status', [ h('span', 'Status') ]),
                 h('div.actions', [ h('span', 'Actions') ])
               ]),
               h('section.shards', shards.map((shard) => (
@@ -76,7 +76,7 @@ exports.create = (api) => {
                       api.about.obs.name(shard.feedId)
                     ]),
                     h('div.sentAt', `${shard.sentAt.toLocaleDateString()} ${shard.sentAt.toLocaleTimeString()}`),
-                    h('div.state', [
+                    h('State', [
                       h('div', { classList: [`-${shard.state}`] }, capitalise(shard.state))
                     ]),
                     h('div.actions', [

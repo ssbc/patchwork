@@ -61,8 +61,8 @@ exports.create = (api) => {
           ? [
             h('h2', 'Back Up'),
             h('Secrets', [
-              h('div.left', [
-                h('section.custodians', [
+              h('div.row', [
+                h('section', [
                   h('p', 'Select your custodians'),
                   api.secrets.html.custodians(props.recps, { 'disabled': state.publishing }, () => {
                     var quorum = resolve(props.quorum)
@@ -70,7 +70,15 @@ exports.create = (api) => {
                     quorum > recpsCount && quorum > 2 ? props.quorum.set(recpsCount) : null
                   })
                 ]),
-                h('section.quroum', [
+                h('section.recps', map(props.recps, (recp) => (
+                  h('div.recp', [
+                    api.about.html.image(recp.link),
+                    api.about.obs.name(recp.link)
+                  ])
+                )))
+              ]),
+              h('div.row', [
+                h('section', [
                   h('p', 'Select a quorum'),
                   h('input', {
                     'required': true,
@@ -85,16 +93,8 @@ exports.create = (api) => {
                     }
                   })
                 ]),
-              ]),
-              h('div.right', [
-                h('section.recps', map(props.recps, (recp) => (
-                  h('div.recp', [
-                    api.about.html.image(recp.link),
-                    api.about.obs.name(recp.link)
-                  ])
-                ))),
                 h('section.quorum', [
-                  h('div', [ h('span', props.quorum) ])
+                  h('p', props.quorum)
                 ])
               ])
             ])
@@ -102,23 +102,21 @@ exports.create = (api) => {
           : [
             h('h2', 'Back Up'),
             h('Secrets', [
-              h('div.left', [
+              h('div.row', [
                 h('section', [
-                  h('h3', 'Quorum'),
+                  h('span', 'Quorum'),
                 ]),
                 h('section.quorum', [
-                  h('div', [
-                    h('p', backup.quorum)
-                  ])
+                  h('p', backup.quorum)
                 ])
               ]),
-              h('div.right', [
+              h('div.row', [
                 h('section', [
-                  h('h3', 'Custodians'),
+                  h('span', 'Custodians'),
                 ]),
-                h('section.custodians', [
+                h('section.recps', [
                   backup.recipients.map(recp => (
-                    h('div.custodian', [
+                    h('div.recp', [
                       api.about.html.image(recp),
                       api.about.obs.name(recp)
                     ])
