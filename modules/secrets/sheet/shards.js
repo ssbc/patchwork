@@ -79,15 +79,17 @@ exports.create = (api) => {
                     h('State', [
                       h('div', { classList: [`-${shard.state}`] }, capitalise(shard.state))
                     ]),
-                    h('div.actions', [
-                      h('button -save', {
-                        'ev-click': (e) => {
-                          props.shard() && props.shard().id === shard.id
-                            ? props.shard.set(null)
-                            : props.shard.set(shard)
-                        }
-                      }, computed(props.shard, (selectedShard) => selectedShard && selectedShard.id === shard.id ? 'Minimise' : 'View'))
-                    ])
+                    shard.state === 'requested'
+                      ? h('div.actions', [
+                        h('button -save', {
+                          'ev-click': (e) => {
+                            props.shard() && props.shard().id === shard.id
+                              ? props.shard.set(null)
+                              : props.shard.set(shard)
+                          }
+                        }, computed(props.shard, (selectedShard) => selectedShard && selectedShard.id === shard.id ? 'Minimise' : 'View'))
+                      ])
+                      : null
                   ]),
                   computed(props.shard, (selectedShard) => {
                     return selectedShard && selectedShard.id === shard.id && !isEmpty(shard.requests)
@@ -192,7 +194,7 @@ exports.create = (api) => {
             ? when(state.publishing,
               null,
               [
-                h('button -save', { 'ev-click': save }, i18n('Publish')),
+                h('button -save', { 'ev-click': (e) => { save(); props.shard.set(null); props.request.set(null)  } }, i18n('Publish')),
                 h('button -cancel', { 'ev-click': (e) => { props.shard.set(null); props.request.set(null) }}, i18n('Cancel'))
               ]
             )
