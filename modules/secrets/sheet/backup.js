@@ -52,10 +52,13 @@ exports.create = (api) => {
       publishing: false
     })
 
-    watch(api.secrets.obs.identity(), (backup) => {
-      api.sheet.display((close) => {
-        const content = isUndefined(backup) || isNull(backup)
-          ? h('div', { style: { 'padding': '20px' } }, [
+    api.sheet.display((close) => {
+      const identity = api.secrets.obs.identity()
+
+      const content = h('div', { style: { 'padding': '20px' } }, [
+        computed(identity, (backup) => (
+          isUndefined(backup) || isNull(backup)
+          ? [
             h('h2', 'Back Up'),
             h('Secrets', [
               h('div.left', [
@@ -95,8 +98,8 @@ exports.create = (api) => {
                 ])
               ])
             ])
-          ])
-          : h('div', { style: { 'padding': '20px' } }, [
+          ]
+          : [
             h('h2', 'Back Up'),
             h('Secrets', [
               h('div.left', [
@@ -123,10 +126,13 @@ exports.create = (api) => {
                 ])
               ])
             ])
-          ])
+          ]
+        ))
+      ])
 
-        const footer = isUndefined(backup) || isNull(backup)
-          ? [
+      const footer = computed(identity, (backup) => (
+        isUndefined(backup) || isNull(backup)
+          ? h('div', [
             h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
             plural('The quorum and custodians will only be visible to you. Each selected custodian will receive a message containing a cryptographically split section of your identity.'),
 
@@ -143,29 +149,29 @@ exports.create = (api) => {
               ],
               h('button -cancel', { 'disabled': state.publishing, 'ev-click': close }, i18n('Cancel'))
             )
-          ]
-          : [
+          ])
+          : h('div', [
             h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
             h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
-          ]
+          ])
+      ))
 
-        return { content, footer, classList: ['-private'] }
+      return { content, footer, classList: ['-private'] }
 
-        function save () {
-          var buffer = fs.readFileSync(join(config.path, 'gossip.json'))
-          var file = new File(buffer, 'gossip.json', { type: 'application/json' })
+      function save () {
+        var buffer = fs.readFileSync(join(config.path, 'gossip.json'))
+        var file = new File(buffer, 'gossip.json', { type: 'application/json' })
 
-          blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
+        blobFiles([file], api.sbot.obs.connection, { isPrivate: true }, (err, attachment) => {
+          if (err) throw err
+          const { secretName: name, secret, quorum, recps } = resolve(props)
+
+          scuttle.share.async.share({ name, secret, quorum, recps, attachment }, (err, records) => {
             if (err) throw err
-            const { secretName: name, secret, quorum, recps } = resolve(props)
-
-            scuttle.share.async.share({ name, secret, quorum, recps, attachment }, (err, records) => {
-              if (err) throw err
-              close()
-            })
+            close()
           })
-        }
-      })
+        })
+      }
     })
   })
 }
