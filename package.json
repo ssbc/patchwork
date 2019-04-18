@@ -2,7 +2,7 @@
   "name": "ssb-patchwork",
   "productName": "Patchwork",
   "repository": "git@github.com:ssbc/patchwork.git",
-  "version": "3.12.0-dev",
+  "version": "3.12.0-alpha.1",
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,8 @@
     "start": "electron index.js",
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild",
-    "rebuild": "cross-script npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
+    "rebuild": "electron-builder install-app-deps",
+    "dist": "electron-builder"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "AGPL-3.0",
@@ -20,12 +21,11 @@
     "bulk-require": "^1.0.1",
     "color-hash": "^1.0.3",
     "compare-version": "^0.1.2",
-    "cross-script": "^1.0.5",
     "deep-equal": "^1.0.1",
     "depject": "^4.1.1",
     "depnest": "^1.3.0",
     "electron-default-menu": "~1.0.1",
-    "electron-spellchecker": "github:ssbc/electron-spellchecker-prebuilt",
+    "electron-spellchecker": "^2.0.0",
     "electron-window-state": "^5.0.3",
     "emoji-named-characters": "^1.0.2",
     "emojilib": "^2.4.0",
@@ -67,13 +67,12 @@
     "spacetime": "^5.5.0",
     "ssb-about": "github:ssbc/ssb-about#use-await-ready",
     "ssb-backlinks": "^0.7.3",
-    "ssb-blob-files": "github:ssbc/ssb-blob-files#localizable-errors-and-early-return",
+    "ssb-blob-files": "^1.1.5",
     "ssb-blobs": "^1.1.13",
     "ssb-client": "^4.7.1",
     "ssb-config": "^3.2.5",
     "ssb-ebt": "^5.4.3",
-    "ssb-feed": "^2.3.0",
-    "ssb-gossip": "^1.0.6",
+    "ssb-gossip": "^1.0.9",
     "ssb-invite": "^2.0.4",
     "ssb-keys": "^7.1.5",
     "ssb-markdown": "^4.1.0",
@@ -97,9 +96,58 @@
   },
   "devDependencies": {
     "colors": "^1.3.3",
-    "electron": "^2.0.18"
+    "electron": "^2.0.18",
+    "electron-builder": "^20.39.0"
   },
   "optionalDependencies": {
     "mouse-forward-back": "^1.0.1"
+  },
+  "build": {
+    "appId": "org.ssbc.patchwork",
+    "asarUnpack": [
+      "node_modules/sodium-native/prebuilds"
+    ],
+    "npmSkipBuildFromSource": true,
+    "npmArgs": [
+      "--abi=57"
+    ],
+    "files": [
+      "**/*",
+      "!node_modules/**/deps${/*}",
+      "!node_modules/**/_node_modules${/*}",
+      "!node_modules/sodium-native/prebuilds${/*}",
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-57.node",
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/libsodium.*"
+    ],
+    "mac": {
+      "icon": "build/icon.icns",
+      "target": "dmg",
+      "files": [
+        "node_modules/sodium-native/prebuilds/darwin-${arch}/electron-57.node",
+        "node_modules/sodium-native/prebuilds/darwin-${arch}/libsodium.*"
+      ]
+    },
+    "linux": {
+      "category": "Network"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "publisherName": "Secure Scuttlebutt Consortium",
+      "files": [
+        "node_modules/sodium-native/prebuilds/win32-${arch}/electron-57.node",
+        "node_modules/sodium-native/prebuilds/win32-${arch}/libsodium.*"
+      ]
+    },
+    "dmg": {
+      "icon": "build/dmg-icon.icns",
+      "artifactName": "Patchwork-${version}-mac.${ext}"
+    },
+    "appImage": {
+      "artifactName": "Patchwork-${version}-linux-${arch}.${ext}"
+    },
+    "nsis": {
+      "installerIcon": "build/setup-icon.ico",
+      "artifactName": "Patchwork-${version}-windows.${ext}"
+    }
   }
 }

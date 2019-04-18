@@ -1,13 +1,65 @@
-language: node_js
+# We can build the Linux and Windows installers on Linux, but we need to use
+# macOS so that we can build the macOS installer.
+matrix: 
+  include:
+    - os: osx
+      osx_image: xcode9.4
+      language: node_js
+      node_js: "10"
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+  
+    - os: linux
+      services: docker
+      language: generic
 
+cache:
+  directories:
+    - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
+
+# This module is specific to Linux, and since Travis runs `npm ci` we need to
+# remove it before the installation occurs on macOS.
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y g++ m4 libtool automake libgconf-2-4    # build tools
-  - sudo apt-get install -y libxext-dev libxtst-dev libxkbfile-dev  # spellchecker headers
-
-node_js:
-  - node
-  - lts/*
+  - |
+    if [ "$TRAVIS_OS_NAME" != "linux" ]; then
+      npm rm --save mouse-forward-back
+    fi
 
 script:
-  - pwd   # run no-op to prevent failure from no tests
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      # causing issues because line breaks
+      unset TRAVIS_CMD \
+      && docker run \
+        -i \
+        -t \
+        --rm \
+        --env-file <(env | grep -E 'DEBUG|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|_TOKEN|_KEY|AWS_|STRIP|BUILD_') \
+        -v "$PWD":/project \
+        -v ~/.cache/electron:/root/.cache/electron \
+        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+        electronuserland/builder:wine \
+        /bin/bash -c 'apt-get update \
+        && apt-get install -y --allow-unauthenticated \
+          automake \
+          libgconf-2-4 \
+          libtool \
+          libxext-dev \
+          libxkbfile-dev \
+          libxtst-dev \
+        && npm install \
+        && npm test \
+        && npm run dist -- --linux --win'
+    else
+      npm run dist -- --mac
+    fi
+
+branches:
+  except:
+    - "/^v\\d+\\.\\d+\\.\\d+$/"
