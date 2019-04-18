@@ -11,7 +11,7 @@ var plugins = {
   likes: require('./likes'),
   backlinks: require('./backlinks'),
   profile: require('./profile'),
-  suggest: require('./suggest'),
+  suggest: require('ssb-suggest'),
   publicFeed: require('./public-feed'),
   subscriptions2: require('./subscriptions2'),
   thread: require('./thread'),

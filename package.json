@@ -86,6 +86,7 @@
     "ssb-search": "^1.1.2",
     "ssb-server": "^14.1.9",
     "ssb-sort": "^1.1.0",
+    "ssb-suggest": "^1.0.4",
     "ssb-tags": "^0.2.0",
     "ssb-uri": "^1.0.1",
     "ssb-ws": "^6.0.0",

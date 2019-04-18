@@ -47,7 +47,7 @@ exports.create = function (api) {
       if (href) {
         if (ref.isFeed(href)) {
           preview = api.profile.html.preview(href)
-        } else if (href.includes('://')) {
+        } else if (href.includes('://') || href.startsWith('magnet:')) {
           preview = h('ProfilePreview', [
             h('section', [
               h('strong', [i18n('External Link'), ' 🌐']), h('br'),
