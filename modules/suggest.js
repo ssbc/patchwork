@@ -49,8 +49,8 @@ exports.create = function (api) {
                 return {
                   image: api.blob.sync.url(memeId),
                   title: meme.name,
-                  subtitle: meme.name,
-                  value: `![${meme.name}](${memeId})`
+                  value: `![${meme.name}](${memeId})`,
+                  showBoth: true
                 }
               }))
             })
