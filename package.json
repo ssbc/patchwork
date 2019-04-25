@@ -97,7 +97,7 @@
   },
   "devDependencies": {
     "colors": "^1.3.3",
-    "electron": "^2.0.18",
+    "electron": "^4.1.5",
     "electron-builder": "^20.39.0"
   },
   "optionalDependencies": {
@@ -110,21 +110,21 @@
     ],
     "npmSkipBuildFromSource": true,
     "npmArgs": [
-      "--abi=57"
+      "--abi=69"
     ],
     "files": [
       "**/*",
       "!node_modules/**/deps${/*}",
       "!node_modules/**/_node_modules${/*}",
       "!node_modules/sodium-native/prebuilds${/*}",
-      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-57.node",
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-69.node",
       "node_modules/sodium-native/prebuilds/${os}-${arch}/libsodium.*"
     ],
     "mac": {
       "icon": "build/icon.icns",
       "target": "dmg",
       "files": [
-        "node_modules/sodium-native/prebuilds/darwin-${arch}/electron-57.node",
+        "node_modules/sodium-native/prebuilds/darwin-${arch}/electron-69.node",
         "node_modules/sodium-native/prebuilds/darwin-${arch}/libsodium.*"
       ]
     },
@@ -135,7 +135,7 @@
       "icon": "build/icon.ico",
       "publisherName": "Secure Scuttlebutt Consortium",
       "files": [
-        "node_modules/sodium-native/prebuilds/win32-${arch}/electron-57.node",
+        "node_modules/sodium-native/prebuilds/win32-${arch}/electron-69.node",
         "node_modules/sodium-native/prebuilds/win32-${arch}/libsodium.*"
       ]
     },

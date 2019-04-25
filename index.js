@@ -26,17 +26,16 @@ var quitting = false
  * rather than opening a new instance.
  */
 function quitIfAlreadyRunning () {
-  var shouldQuit = electron.app.makeSingleInstance(function (commandLine, workingDirectory) {
+  if (!electron.app.requestSingleInstanceLock()) {
+    return electron.app.quit()
+  }
+  electron.app.on('second-instance', (event, commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
     if (windows.main) {
       if (windows.main.isMinimized()) windows.main.restore()
       windows.main.focus()
     }
   })
-
-  if (shouldQuit) {
-    electron.app.quit()
-  }
 }
 
 var config = {
