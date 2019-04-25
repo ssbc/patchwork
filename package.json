@@ -41,6 +41,7 @@
     "html-escape": "^2.0.0",
     "human-time": "0.0.2",
     "i18n": "^0.8.3",
+    "lodash": "^4.17.11",
     "lodash.concat": "^4.5.0",
     "lodash.filter": "^4.6.0",
     "micro-css": "^2.0.1",

@@ -9,6 +9,7 @@ const ResolveAbouts = require('../lib/resolve-abouts')
 const UniqueRoots = require('../lib/unique-roots')
 const Paramap = require('pull-paramap')
 const FilterBlocked = require('../lib/filter-blocked')
+const _ = require('lodash')
 
 exports.manifest = {
   latest: 'source',
@@ -107,7 +108,9 @@ exports.init = function (ssb, config) {
 }
 
 function bumpFilter (msg) {
-  if (msg.value.content.type === 'post') {
+  const type = _.get(msg, 'value.content.type')
+
+  if (type === 'post') {
     return { type: 'reply' }
   }
 }
