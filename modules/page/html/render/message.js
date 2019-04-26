@@ -182,24 +182,14 @@ exports.create = function (api) {
           } else {
             var element
             if (msg.blockedBy && msg.blockedBy.role === 'threadAuthor') {
-              element = h('Message -missing -reply', [
-                h('header', [
-                  h('div.main', [
-                    h('div.main', i18n('Hidden message'))
-                  ]),
-                  h('div.meta', [
-                    api.message.html.metas(msg)
-                  ])
-                ]),
-                h('section', [
-                  h('p', [i18n('This post by '),
-                    api.profile.html.person(msg.value.author),
-                    i18n(' is hidden because they are blocked by the thread author '),
-                    api.profile.html.person(msg.blockedBy.id),
-                    '. ',
-                    h('a ProfileLink', {href: msg.key}, i18n('Click here')),
-                    i18n(' to view the post in a fork of this thread.')
-                  ])
+              element = h('Message', [
+                h('a.backlink', {
+                  href: msg.key
+                }, [i18n('This post by '),
+                  api.profile.html.person(msg.value.author),
+                  i18n(' is hidden because they are blocked by the thread author '),
+                  api.profile.html.person(msg.blockedBy.id),
+                  '.'
                 ])
               ])
             } else {
