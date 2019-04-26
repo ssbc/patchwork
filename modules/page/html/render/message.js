@@ -18,7 +18,7 @@ exports.needs = nest({
   'profile.html.person': 'first',
   'sbot.async.get': 'first',
   'intl.sync.i18n': 'first',
-  'sbot.obs.connection': 'first',
+  'sbot.obs.connection': 'first'
 })
 
 exports.gives = nest('page.html.render')
@@ -248,7 +248,7 @@ exports.create = function (api) {
 
       var me = api.keys.sync.id()
       onceTrue(api.sbot.obs.connection, sbot => {
-        sbot.patchwork.contacts.isBlocking({ source: me, dest: value.author}, (err, blocking) => {
+        sbot.patchwork.contacts.isBlocking({ source: me, dest: value.author }, (err, blocking) => {
           console.log
           if (blocking) {
             cb(null, null)
@@ -263,7 +263,6 @@ exports.create = function (api) {
           }
         })
       })
-
     })
   }
 }
