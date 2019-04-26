@@ -10,6 +10,7 @@ var Blog = require('scuttle-blog')
 exports.needs = nest({
   'keys.sync.id': 'first',
   'sbot.pull.stream': 'first',
+  'message.obs.name': 'first',
   'message.sync.root': 'first',
   'message.html.render': 'first',
   'message.html.compose': 'first',
@@ -185,11 +186,14 @@ exports.create = function (api) {
               element = h('Message', [
                 h('a.backlink', {
                   href: msg.key
-                }, [i18n('This post by '),
-                  api.profile.html.person(msg.value.author),
-                  i18n(' is hidden because they are blocked by the thread author '),
-                  api.profile.html.person(msg.blockedBy.id),
-                  '.'
+                }, [
+                  h('strong', [
+                    api.profile.html.person(msg.value.author),
+                    i18n(' replied but is blocked by '),
+                    api.profile.html.person(msg.blockedBy.id),
+                    ':'
+                  ]), ' ',
+                  api.message.obs.name(msg.key)
                 ])
               ])
             } else {
