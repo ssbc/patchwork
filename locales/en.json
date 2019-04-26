@@ -307,5 +307,6 @@
 	"This post by ": "This post by ",
 	" is hidden because they are blocked by the thread author ": " is hidden because they are blocked by the thread author ",
 	"Click here": "Click here",
-	" to view the post in a fork of this thread.": " to view the post in a fork of this thread."
+	" to view the post in a fork of this thread.": " to view the post in a fork of this thread.",
+	"Error": "Error"
 }

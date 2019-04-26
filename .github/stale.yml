@@ -1,11 +1,1 @@
 _extends: .github
-
-# Issues with these labels will never be considered stale
-# This overrides `exemptLabels` from https://github:ssbc/.github
-exemptLabels:
-  - pinned
-  - security
-  - enhancement
-  - bug
-  - performance
-
