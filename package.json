@@ -105,50 +105,14 @@
   },
   "build": {
     "appId": "org.ssbc.patchwork",
-    "asarUnpack": [
-      "node_modules/sodium-native/prebuilds"
-    ],
-    "npmSkipBuildFromSource": true,
-    "npmArgs": [
-      "--abi=69"
-    ],
-    "files": [
-      "**/*",
-      "!node_modules/**/deps${/*}",
-      "!node_modules/**/_node_modules${/*}",
-      "!node_modules/sodium-native/prebuilds${/*}",
-      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-69.node",
-      "node_modules/sodium-native/prebuilds/${os}-${arch}/libsodium.*"
-    ],
-    "mac": {
-      "icon": "build/icon.icns",
-      "target": "dmg",
-      "files": [
-        "node_modules/sodium-native/prebuilds/darwin-${arch}/electron-69.node",
-        "node_modules/sodium-native/prebuilds/darwin-${arch}/libsodium.*"
-      ]
-    },
     "linux": {
       "category": "Network"
     },
-    "win": {
-      "icon": "build/icon.ico",
-      "publisherName": "Secure Scuttlebutt Consortium",
-      "files": [
-        "node_modules/sodium-native/prebuilds/win32-${arch}/electron-69.node",
-        "node_modules/sodium-native/prebuilds/win32-${arch}/libsodium.*"
-      ]
-    },
     "dmg": {
-      "icon": "build/dmg-icon.icns",
-      "artifactName": "Patchwork-${version}-mac.${ext}"
+      "icon": "build/dmg/icon.icns"
     },
-    "appImage": {
-      "artifactName": "Patchwork-${version}-linux-${arch}.${ext}"
-    },
-    "nsis": {
-      "installerIcon": "build/setup-icon.ico",
-      "artifactName": "Patchwork-${version}-windows.${ext}"
+    "win": {
+      "publisherName": "Secure Scuttlebutt Consortium"
     }
   }
 }
