@@ -8,7 +8,8 @@ exports.needs = nest({
     layout: 'first',
     link: 'first',
     markdown: 'first'
-  }
+  },
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest({
@@ -19,6 +20,8 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
+
   return nest('message.html', {
     canRender: isRenderable,
     render: function (msg, opts) {
