@@ -1,5 +1,9 @@
 # We can build the Linux and Windows installers on Linux, but we need to use
 # macOS so that we can build the macOS installer.
+#
+# Unfortunately it looks like the Windows installer doesn't work, probably
+# because our modules don't all use prebuild, so we have to build from source
+# on Windows with Appveyor anyway.
 matrix: 
   include:
     - os: osx
@@ -21,7 +25,7 @@ cache:
     - $HOME/.cache/electron-builder
 
 before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
+  - rm -rf $HOME/.cache/electron-builder
 
 # This module is specific to Linux, and since Travis runs `npm ci` we need to
 # remove it before the installation occurs on macOS.
@@ -44,7 +48,7 @@ script:
         -v "$PWD":/project \
         -v ~/.cache/electron:/root/.cache/electron \
         -v ~/.cache/electron-builder:/root/.cache/electron-builder \
-        electronuserland/builder:wine \
+        electronuserland/builder \
         /bin/bash -c 'apt-get update \
         && apt-get install -y --allow-unauthenticated \
           automake \
@@ -55,7 +59,7 @@ script:
           libxtst-dev \
         && npm install \
         && npm test \
-        && npm run dist -- --linux --win'
+        && npm run dist -- --linux'
     else
       npm run dist -- --mac
     fi
