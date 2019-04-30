@@ -1,5 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head></head>
-  <body></body>
+  <body>
+    <script>
+      // redirect console to main process
+      var electron = require('electron')
+      var localLog = console.log
+      var localError = console.error
+      var remoteLog = electron.remote.getGlobal('console').log
+      var remoteError = electron.remote.getGlobal('console').error
+
+      console.log = function (...args) {
+        localLog.apply(console, args)
+        remoteLog(...args)
+      }
+
+      console.error = function (...args) {
+        localError.apply(console, args)
+        remoteError(...args)
+      }
+
+      process.exit = electron.remote.app.quit
+      // redirect errors to stderr
+      window.addEventListener('error', function (e) {
+        e.preventDefault()
+        console.error(e.error.stack || 'Uncaught ' + e.error)
+      })
+    </script>
+  </body>
 </html>
