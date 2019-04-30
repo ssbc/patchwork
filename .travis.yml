@@ -17,6 +17,7 @@ matrix:
     - os: windows
       language: node_js
       node_js: "10"
+      filter_secrets: false
 
 cache:
   directories:
