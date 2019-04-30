@@ -16,6 +16,7 @@ matrix:
 
     - os: windows
       language: node_js
+      node_js: "10"
 
 cache:
   directories:
@@ -60,11 +61,9 @@ script:
         && npm test \
         && npm run dist -- --linux --win'
     fi
-
     if [ "$TRAVIS_OS_NAME" == "osx" ]; then
       npm run dist -- --mac
     fi
-
     if [ "$TRAVIS_OS_NAME" == "windows" ]; then
       npm run dist -- --win
     fi
