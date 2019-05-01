@@ -37,6 +37,9 @@ before_install:
       npm uninstall --save mouse-forward-back
     fi
 
+# Avoiding `npm ci` to reuse the `node_modules` cache.
+install: npm install
+
 script: npm run dist
 
 branches:
