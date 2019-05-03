@@ -121,9 +121,6 @@ exports.create = (api) => {
       pull(
         scuttle.root.pull.mine({ old: false, live: true  }),
         pull.filter(m => !m.sync),
-        pull.through(m => {
-          debugger
-        }),
         pull.drain(m => updateStore())
       )
     }
