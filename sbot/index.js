@@ -210,5 +210,14 @@ exports.init = function (ssb, config) {
     })
   })
 
+  let arr = []
+
+  pull(
+    ssb.stream({ keys: true, seqs: true }),
+    pull.collect((err, val) => {
+      console.log(val.length)
+    })
+  )
+
   return patchwork
 }
