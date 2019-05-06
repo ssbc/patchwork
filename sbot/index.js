@@ -210,14 +210,32 @@ exports.init = function (ssb, config) {
     })
   })
 
-  let arr = []
 
-  pull(
-    ssb.stream({ keys: true, seqs: true }),
-    pull.collect((err, val) => {
-      console.log(val.length)
+  const deleting = []
+
+  ssb.addMap((msg, cb) => {
+    cb(null, msg)
+
+    patchwork.contacts.isBlocking({ source: ssb.id, dest: msg.value.author }, function (_, blocked) {
+      if (blocked) {
+        console.log('blocked', msg.key)
+
+        if (deleting.includes(msg.key)) {
+          return
+        }
+
+        deleting.push(msg.key)
+
+        ssb.keysDb.get(msg.key, (err, item) => {
+          if (err) return console.error('error getting seq: ', err)
+          ssb.del(item.seq, (err) => {
+            if (err) console.error('error deleting: ', err)
+            console.log('deleted', msg.key)
+          })
+        })
+      }
     })
-  )
+  })
 
   return patchwork
 }
