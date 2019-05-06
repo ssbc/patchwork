@@ -3,23 +3,23 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       language: node_js
-      node_js: "10"
+      node_js: 10
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
   
     - os: linux
       language: node_js
-      node_js: "10"
+      node_js: 10
 
     - os: windows
       language: node_js
-      node_js: "10"
+      node_js: 10
       filter_secrets: false
 
 cache:
   directories:
-    - node_modules
+    - $HOME/.npm
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
 
@@ -37,7 +37,7 @@ before_install:
       npm uninstall --save mouse-forward-back
     fi
 
-script: npm run dist
+script: npm test && npm run dist
 
 branches:
   except:
