@@ -210,47 +210,61 @@ exports.init = function (ssb, config) {
     })
   })
 
-  const deleting = {}
+  const handling = {}
+  const blocking = {}
 
-  ssb.addMap((msg, cb) => {
-    patchwork.contacts.isBlocking({ source: ssb.id, dest: msg.value.author }, function (err, blocked) {
-      if (err) throw err
-      const key = msg.key
-
-      if (blocked == false) {
-        return cb(null, msg)
-      }
-
-      if (deleting[key] === true) {
-        return cb(null, msg)
-      }
-
-      deleting[key] = true
-
-      ssb.keysDb.get(key, (err, item) => {
-        console.log('deleting', key)
-        deleting[key] = false
-
-        if (err) {
-          if (err.name !== 'NotFoundError' && err.code !== 'EDELETED') {
-            console.error('error getting seq: ', err)
-          } else {
-            // already deleted
-          }
-
-          return cb(null, msg)
+      console.log(ssb)
+  const del = (key) => {
+    ssb.keysDb.get(key, (err, item) => {
+      if (err) {
+        if (err.name === 'NotFoundError' || err.code === 'EDELETED') {
+          return // not a problem, already deleted
         }
 
-        ssb.del(item.seq, (err) => {
-          if (err) console.error('error deleting: ', err)
+        throw new Error('error getting seq: ', err)
+      }
 
-          cb(null, msg)
-          console.log('deleting!')
-          console.log(`author: ${msg.value.author}`)
-          console.log(`key: ${key}`)
-        })
+      console.log(`deleting: ${key} (${item.seq})`)
+
+
+      ssb.del(item.seq, (err) => {
+        if (err) throw err
+
+        console.log(`deleted: ${key}`)
       })
     })
+  }
+
+  const maybeDelete = (msg) => {
+    if (handling[msg.key] === true) {
+      // already handling this message
+      return
+    }
+
+    handling[msg.key] = true
+
+    if (blocking[msg.value.author] != null) {
+      if (blocking[msg.value.author]) {
+        del(msg.key)
+      }
+
+      return
+    }
+
+    patchwork.contacts.isBlocking({ source: ssb.id, dest: msg.value.author }, function (err, blocked) {
+      if (err) throw err
+
+      blocking[msg.value.author] = blocked
+
+      if (blocked) {
+        del(msg.key)
+      }
+    })
+  }
+
+  ssb.addMap((msg, cb) => {
+    maybeDelete(msg)
+    return cb(null, msg)
   })
 
   return patchwork
