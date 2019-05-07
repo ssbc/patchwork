@@ -210,30 +210,46 @@ exports.init = function (ssb, config) {
     })
   })
 
-
-  const deleting = []
+  const deleting = {}
 
   ssb.addMap((msg, cb) => {
-    cb(null, msg)
+    patchwork.contacts.isBlocking({ source: ssb.id, dest: msg.value.author }, function (err, blocked) {
+      if (err) throw err
+      const key = msg.key
 
-    patchwork.contacts.isBlocking({ source: ssb.id, dest: msg.value.author }, function (_, blocked) {
-      if (blocked) {
-        console.log('blocked', msg.key)
+      if (blocked == false) {
+        return cb(null, msg)
+      }
 
-        if (deleting.includes(msg.key)) {
-          return
+      if (deleting[key] === true) {
+        return cb(null, msg)
+      }
+
+      deleting[key] = true
+
+      ssb.keysDb.get(key, (err, item) => {
+        console.log('deleting', key)
+        deleting[key] = false
+
+        if (err) {
+          if (err.name !== 'NotFoundError' && err.code !== 'EDELETED') {
+            console.error('error getting seq: ', err)
+          } else {
+            // already deleted
+          }
+
+          return cb(null, msg)
         }
 
-        deleting.push(msg.key)
+        ssb.del(item.seq, (err) => {
+          if (err) console.error('error deleting: ', err)
 
-        ssb.keysDb.get(msg.key, (err, item) => {
-          if (err) return console.error('error getting seq: ', err)
-          ssb.del(item.seq, (err) => {
-            if (err) console.error('error deleting: ', err)
-            console.log('deleted', msg.key)
-          })
+          cb(null, msg)
+          console.log('deleting!')
+          console.log(`author: ${msg.value.author}`)
+          console.log(`key: ${key}`)
         })
-      }
+      })
     })
   })
 
