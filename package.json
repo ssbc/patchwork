@@ -49,7 +49,6 @@
     "mutant": "github:mmckegg/mutant#intersection-binding-viewport",
     "mutant-pull-reduce": "^1.1.0",
     "patch-settings": "^1.1.2",
-    "patchcore": "^2.1.6",
     "pull-abortable": "^4.1.1",
     "pull-cat": "^1.1.11",
     "pull-cont": "^0.1.1",
@@ -97,6 +96,7 @@
   },
   "devDependencies": {
     "colors": "^1.3.3",
+    "debug": "^4.1.1",
     "electron": "^4.2.0",
     "electron-builder": "^20.39.0"
   },

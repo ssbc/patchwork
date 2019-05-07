@@ -14,6 +14,7 @@ var setupContextMenuAndSpellCheck = require('./lib/context-menu-and-spellcheck')
 var watch = require('mutant/watch')
 var requireStyle = require('require-style')
 var ssbUri = require('ssb-uri')
+const pull = require('pull-stream')
 
 try {
   var mouseForwardBack = require('mouse-forward-back')
@@ -48,8 +49,10 @@ module.exports = function (config) {
     'app.linkPreview': 'first',
     'channel.obs.subscribed': 'first',
     'settings.obs.get': 'first',
-    'intl.sync.i18n': 'first'
+    'intl.sync.i18n': 'first',
+    'contact.obs.blocking': 'first'
   }))
+
 
   const i18n = api.intl.sync.i18n
   setupContextMenuAndSpellCheck(api.config.sync.load(), { navigate, get: api.sbot.async.get })
@@ -59,9 +62,10 @@ module.exports = function (config) {
   var subscribedChannels = api.channel.obs.subscribed(id)
   var includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
 
+
   // prompt to setup profile on first use
-  onceTrue(api.sbot.obs.connection, (sbot) => {
-    sbot.latestSequence(api.keys.sync.id(), (err, key) => {
+  onceTrue(api.sbot.obs.connection, (ssb) => {
+    ssb.latestSequence(api.keys.sync.id(), (err, key) => {
       if (err) {
         // This may throw an error if the feed doesn't have any messages, but
         // that shouldn't cause any problems so this error can be ignored.
@@ -70,6 +74,34 @@ module.exports = function (config) {
       if (key == null) {
         api.profile.sheet.edit({ usePreview: false })
       }
+    })
+
+    const del = (msg) => {
+      return console.log(msg.key)
+      ssb.getSeq(msg.key, (err, seq) => {
+        if (err) {
+          console.log(err, seq)
+          throw new Error('error getting seq: ', err)
+        }
+
+        console.log(`deleting (...): ${msg.key} (${seq})`)
+
+        ssb.del(seq, (err) => {
+          if (err) throw err
+
+          console.log(`deleted (!!!!): ${msg.key} (${seq})`)
+        })
+      })
+    }
+    watch(api.contact.obs.blocking(id), (blocking) => {
+      if (blocking === []) { return }
+
+      blocking.forEach(feed => {
+        pull(
+          ssb.createUserStream({ id: feed }),
+          pull.drain(del)
+        )
+      })
     })
   })
 
