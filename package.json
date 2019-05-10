@@ -104,7 +104,9 @@
   },
   "build": {
     "appId": "org.ssbc.patchwork",
-    "buildDependenciesFromSource": "true",
+    "files": [
+      "!**/prebuilds/!(${os}-${arch})${/*}"
+    ],
     "linux": {
       "category": "Network"
     },
