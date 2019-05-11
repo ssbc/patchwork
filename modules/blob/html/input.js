@@ -11,7 +11,7 @@ module.exports = {
     return nest('blob.html.input', FileInput)
 
     function FileInput (onAdded, opts = {}) {
-      const { accept, private: isPrivate, removeExif: stripExif, resize, quality, multiple, maxSize } = opts
+      const { accept, private: isPrivate, stripExif = true, resize, quality, multiple, maxSize } = opts
 
       return h('input', {
         type: 'file',
