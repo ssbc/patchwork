@@ -12,12 +12,14 @@ var WindowState = require('electron-window-state')
 var Menu = electron.Menu
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
+var mv = require('mv')
 
 var windows = {
   dialogs: new Set()
 }
 var ssbConfig = null
 var quitting = false
+var refreshing = false
 
 /**
  * It's not possible to run two instances of patchwork as it would create two
@@ -130,10 +132,37 @@ electron.app.on('ready', () => {
       windows.background.webContents.openDevTools({ mode: 'detach' })
     }
   })
+
+  electron.ipcMain.on('recover', function (ev, args) {
+    console.log(args)
+    windows.background.close()
+
+    if (args.save) {
+      var hex = ssbConfig.keys.id
+        .split('')
+        .map((char, i) => ssbConfig.keys.id.charCodeAt(i))
+        .map((code) => code.toString(16))
+        .map(hex => ("000"+hex).slice(-4))
+        .join('')
+
+      mv(ssbConfig.path, ssbConfig.path.replace('.ssb', `.ssb.${hex}`), { mkdirp: true }, (err) => {
+        // now we want to write a secret and gossip.json
+        setupContext(process.env.ssb_appname || 'ssb', {
+          server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+        }, () => {
+          refreshing = true
+          windows.main.hide()
+          var browserWindow = openMainWindow()
+          var menu = defaultMenu(electron.app, electron.shell)
+          refreshing = false
+        })
+      })
+    }
+  })
 })
 
 function openMainWindow () {
-  if (!windows.main) {
+  if (!windows.main || refreshing) {
     var windowState = WindowState({
       defaultWidth: 1024,
       defaultHeight: 768

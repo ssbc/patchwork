@@ -4,6 +4,7 @@ const fs = require('fs')
 const { join } = require('path')
 const { isFeed } = require('ssb-ref')
 const { isUndefined, isNull } = require('lodash')
+const { ipcRenderer } = require('electron')
 
 const {
   h,
@@ -135,58 +136,6 @@ exports.create = (api) => {
                     ))
                   ])
                 ])
-                // h('div.left', [
-                //   h('section.secretOwner', [
-                //     h('p', 'Select the identity you wish to recover'),
-                //     api.secrets.html.custodians(props.secretOwner, {
-                //       maxRecps: 1,
-                //       disabled: state.publishing
-                //     })
-                //   ]),
-                //   h('section.custodians', [
-                //     h('p', 'Select your custodians'),
-                //     api.secrets.html.custodians(props.recps, { disabled: state.publishing }, () => {
-                //       var quorum = resolve(props.quorum)
-                //       var recpsCount = props.recps.getLength()
-                //       if (quorum > recpsCount) {
-                //         if (quorum > 2) props.quorum.set(recpsCount)
-                //         else {
-                //           props.quorum.set(null)
-                //           slider.value = '0'
-                //         }
-                //       }
-                //     })
-                //   ]),
-                //   h('section.quroum', [
-                //     h('section', [
-                //       h('p', 'Can you remember the quorum?'),
-                //       slider,
-                //       h('button -cancel', {
-                //         'disabled': state.publishing,
-                //         'ev-click': (e) => { props.quorum.set(null); slider.value = '0' }
-                //       }, i18n('Clear'))
-                //     ])
-                //   ])
-                // ]),
-                // h('div.right', [
-                //   h('section.secretOwner', map((props.secretOwner), (recp) => (
-                //     h('div.recp', [
-                //       api.about.html.image(recp.link),
-                //       api.about.obs.name(recp.link)
-                //     ])
-                //   ))),
-                //   h('section.recps', map((props.recps), (recp) => (
-                //     h('div.recp', [
-                //       api.about.html.image(recp.link),
-                //       api.about.obs.name(recp.link)
-                //     ])
-                //   ))),
-                //   h('section.quorum', [
-                //     computed(props.quorum, (quorum) => (
-                //       h('div', [ h('p', quorum) ])
-                //     ))
-                //   ])
-                // ])
               ])
             ]
           } else {
@@ -269,7 +218,7 @@ exports.create = (api) => {
       return { content, footer, classList: ['-private'] }
 
       function restoreIdentity () {
-        // This is where we call into electron to close the server process
+        ipcRenderer.send('recover', { save: true, secret: {} })
       }
 
       function save () {

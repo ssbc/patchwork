@@ -47,6 +47,7 @@
     "moment-timezone": "^0.5.23",
     "mutant": "github:mmckegg/mutant#intersection-binding-viewport",
     "mutant-pull-reduce": "^1.1.0",
+    "mv": "^2.1.1",
     "patch-settings": "^1.1.2",
     "pull-abortable": "^4.1.1",
     "pull-cat": "^1.1.11",

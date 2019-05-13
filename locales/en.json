@@ -313,5 +313,8 @@
 	"Clear": "Clear",
 	"Account Backup / Dark Crystal": "Account Backup / Dark Crystal",
 	"Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your secretOwner out-of-band.": "Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your secretOwner out-of-band.",
-	"Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band. You should contact them directly for approval": "Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band. You should contact them directly for approval"
+	"Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band. You should contact them directly for approval": "Each selected custodian will receive a private message requesting your shard. They will be asked to confirm your identity out-of-band. You should contact them directly for approval",
+	"el": "el",
+	"Restore and Delete": "Restore and Delete",
+	"Restore and Save": "Restore and Save"
 }
