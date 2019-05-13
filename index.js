@@ -13,6 +13,7 @@ var Menu = electron.Menu
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
 var mv = require('mv')
+var fs = require('fs')
 
 var windows = {
   dialogs: new Set()
@@ -134,7 +135,6 @@ electron.app.on('ready', () => {
   })
 
   electron.ipcMain.on('recover', function (ev, args) {
-    console.log(args)
     windows.background.close()
 
     if (args.save) {
@@ -145,16 +145,19 @@ electron.app.on('ready', () => {
         .map(hex => ("000"+hex).slice(-4))
         .join('')
 
-      mv(ssbConfig.path, ssbConfig.path.replace('.ssb', `.ssb.${hex}`), { mkdirp: true }, (err) => {
-        // now we want to write a secret and gossip.json
-        setupContext(process.env.ssb_appname || 'ssb', {
-          server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
-        }, () => {
-          refreshing = true
-          windows.main.hide()
-          var browserWindow = openMainWindow()
-          var menu = defaultMenu(electron.app, electron.shell)
-          refreshing = false
+      mv(ssbConfig.path, Path.join(ssbConfig.path.replace('.ssb', `.ssb.backup`), hex), { mkdirp: true }, (err) => {
+        fs.mkdir(ssbConfig.path, { recursive: true  }, (err) => {
+          fs.writeFileSync(Path.join(ssbConfig.path, 'secret'), JSON.stringify(args.secret), 'utf8')
+
+          setupContext(process.env.ssb_appname || 'ssb', {
+            server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+          }, () => {
+            refreshing = true
+            windows.main.hide()
+            var browserWindow = openMainWindow()
+            var menu = defaultMenu(electron.app, electron.shell)
+            refreshing = false
+          })
         })
       })
     }

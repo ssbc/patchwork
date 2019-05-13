@@ -207,8 +207,8 @@ exports.create = (api) => {
           : null,
           recovery.state === 'ready'
           ? [
-            h('button -warning', { 'ev-click': (e) => { state.delete.set(true); restoreIdentity() } }, i18n('Restore and Delete')),
-            h('button -save', { 'ev-click': restoreIdentity }, i18n('Restore and Save')),
+            h('button -warning', { 'ev-click': (e) => { state.delete.set(true); restoreIdentity(recovery) } }, i18n('Restore and Delete')),
+            h('button -save', { 'ev-click': () => restoreIdentity(recovery) }, i18n('Restore and Save')),
             h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
           ]
           : h('button -cancel', { 'ev-click': close }, i18n('Cancel'))
@@ -217,8 +217,18 @@ exports.create = (api) => {
 
       return { content, footer, classList: ['-private'] }
 
-      function restoreIdentity () {
-        ipcRenderer.send('recover', { save: true, secret: {} })
+      function restoreIdentity (recovery) {
+        if (validateSecret(recovery.secret))
+          ipcRenderer.send('recover', { save: true, secret: recovery.secret })
+      }
+
+      function validateSecret (secret) {
+        if (!secret.curve || !secret.curve === 'ed25519') return false
+        if (!secret.id || !isFeed(secret.id)) return false
+        if (!secret.public || !isFeed(`@${secret.public}`)) return false
+        if (`@${secret.public}` !== secret.id) return false
+        if (!secret.private || secret.private.length !== 96) return false
+        return true
       }
 
       function save () {
