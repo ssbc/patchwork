@@ -77,8 +77,11 @@ module.exports = function (config) {
     })
 
     const del = (msg) => {
-      return console.log(msg.key)
-      ssb.getKey(msg.key, (err, seq) => {
+      // TODO: deleteme
+      if (ssb.del == null) return console.log({ getKey: ssb.getKey, del: ssb.del })
+
+
+      ssb.getKey(msg.key, (err, val, seq) => {
         if (err) {
           console.log(err, seq)
           throw new Error('error getting seq: ', err)
@@ -86,6 +89,7 @@ module.exports = function (config) {
 
         console.log(`deleting (...): ${msg.key} (${seq})`)
 
+        return console.log('seq', seq)
         ssb.del(seq, (err) => {
           if (err) throw err
 
@@ -94,7 +98,9 @@ module.exports = function (config) {
       })
     }
     watch(api.contact.obs.blocking(id), (blocking) => {
-      if (blocking.length === 0) return
+      if (blocking.length === 0) return console.log('no blocklist')
+
+      console.log('blocking')
 
       blocking.forEach(feed => {
         pull(

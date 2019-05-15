@@ -46,7 +46,10 @@ exports.create = function (api) {
     })
 
     var hidden = sustained(computed([waiting, downloadProgress, pending, pendingMigration], (waiting, downloadProgress, pending, pendingMigration) => {
-      return !waiting && downloadProgress === 1 && !pending && !pendingMigration
+      const shouldBeHidden = !waiting && downloadProgress === 1 && !pending && !pendingMigration
+      console.log({ waiting, downloadProgress, pending, pendingMigration, shouldBeHidden})
+
+      return shouldBeHidden
     }), 500)
 
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
