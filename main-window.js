@@ -78,8 +78,7 @@ module.exports = function (config) {
 
     const del = (msg) => {
       // TODO: deleteme
-      if (ssb.del == null) return console.log({ getKey: ssb.getKey, del: ssb.del })
-
+      return
 
       ssb.getKey(msg.key, (err, val, seq) => {
         if (err) {
@@ -98,10 +97,17 @@ module.exports = function (config) {
       })
     }
     watch(api.contact.obs.blocking(id), (blocking) => {
-      if (blocking.length === 0) return console.log('no blocklist')
+      if (blocking.length === 0) return
 
-      console.log('blocking')
+      console.log('got blocklist', blocking.length)
 
+      if (ssb.getKey == null) return
+
+      console.log('have getKey!')
+
+      if (ssb.del == null) return
+
+      console.log('have del!')
       blocking.forEach(feed => {
         pull(
           ssb.createUserStream({ id: feed }),

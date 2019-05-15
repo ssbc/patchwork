@@ -45,15 +45,16 @@ exports.create = function (api) {
       }
     })
 
-    var hidden = sustained(computed([waiting, downloadProgress, pending, pendingMigration], (waiting, downloadProgress, pending, pendingMigration) => {
-      const shouldBeHidden = !waiting && downloadProgress === 1 && !pending && !pendingMigration
-      console.log({ waiting, downloadProgress, pending, pendingMigration, shouldBeHidden})
+    var hidden = computed([waiting, downloadProgress, pending, pendingMigration], (waiting, downloadProgress, pending, pendingMigration) => {
+      const shouldShow = (waiting === false && downloadProgress === 1 && pending === 0 && pendingMigration === 0)
+      const shouldHide = !shouldShow
+      console.log({ waiting, downloadProgress, pending, pendingMigration, shouldShow, shouldHide})
 
-      return shouldBeHidden
-    }), 500)
+      return shouldHide
+    })
 
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
-    var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)
+    var displaying = computed(hidden,  x => x === false)
 
     // HACK: Resolves an issue where buttons are non-responsive while indexing.
     //
