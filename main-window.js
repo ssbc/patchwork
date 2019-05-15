@@ -78,7 +78,7 @@ module.exports = function (config) {
 
     const del = (msg) => {
       return console.log(msg.key)
-      ssb.getSeq(msg.key, (err, seq) => {
+      ssb.getKey(msg.key, (err, seq) => {
         if (err) {
           console.log(err, seq)
           throw new Error('error getting seq: ', err)
@@ -94,7 +94,7 @@ module.exports = function (config) {
       })
     }
     watch(api.contact.obs.blocking(id), (blocking) => {
-      if (blocking === []) { return }
+      if (blocking.length === 0) return
 
       blocking.forEach(feed => {
         pull(
