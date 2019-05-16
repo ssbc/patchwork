@@ -27,9 +27,11 @@ exports.create = function (api) {
     render: function (msg, opts) {
       if (!isRenderable(msg)) return
 
+      const isBlocked = msg.blockedBy && msg.blockedBy.role === 'me'
+
       var element = api.message.html.layout(msg, extend({
         title: messageTitle(msg),
-        content: msg.blockedBy && msg.blockedBy.role === 'me' ? i18n('Content of a blocked user') : messageContent(msg),
+        content: isBlocked ? i18n('Content of a blocked user') : messageContent(msg),
         layout: 'default'
       }, opts))
 
