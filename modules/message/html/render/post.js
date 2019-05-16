@@ -1,6 +1,7 @@
 var h = require('mutant/h')
 var nest = require('depnest')
 var extend = require('xtend')
+var _ = require('lodash')
 
 exports.needs = nest({
   'message.html': {
@@ -27,7 +28,7 @@ exports.create = function (api) {
     render: function (msg, opts) {
       if (!isRenderable(msg)) return
 
-      const isBlocked = msg.blockedBy && msg.blockedBy.role === 'me'
+      const isBlocked = _.get(msg, 'value.meta.blockedBy.role') === 'me'
 
       var element = api.message.html.layout(msg, extend({
         title: messageTitle(msg),

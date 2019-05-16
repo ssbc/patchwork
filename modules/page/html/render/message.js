@@ -6,6 +6,7 @@ var sort = require('ssb-sort')
 var pull = require('pull-stream')
 var isBlog = require('scuttle-blog/isBlog')
 var Blog = require('scuttle-blog')
+var _ = require('lodash')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
@@ -182,7 +183,7 @@ exports.create = function (api) {
             result.set(container)
           } else {
             var element
-            if (msg.blockedBy && msg.blockedBy.role === 'threadAuthor') {
+            if (_.get(msg, 'value.meta.blockedBy.role') === 'threadAuthor') {
               element = h('Message', [
                 h('a.backlink', {
                   href: msg.key
@@ -190,7 +191,7 @@ exports.create = function (api) {
                   h('strong', [
                     api.profile.html.person(msg.value.author),
                     i18n(' replied but is blocked by '),
-                    api.profile.html.person(msg.blockedBy.id),
+                    api.profile.html.person(msg.value.meta.blockedBy.id),
                     ':'
                   ]), ' ',
                   api.message.obs.name(msg.key)
