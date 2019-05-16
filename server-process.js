@@ -20,11 +20,11 @@ var fixPath = require('fix-path')
 // }
 
 var createSbot = require('ssb-server')
-  .use(require('ssb-local'))
-  .use(require('ssb-logging'))
   .use(require('ssb-master'))
   .use(require('ssb-no-auth'))
   .use(require('ssb-unix-socket'))
+  .use(require('ssb-local'))
+  .use(require('ssb-logging'))
   .use(require('ssb-gossip'))
   .use(require('ssb-replicate'))
   // .use(require('ssb-friends')) // woah! (being handled in sbot/index.js and sbot/contacts.js)

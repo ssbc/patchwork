@@ -87,7 +87,7 @@
     "ssb-ref": "^2.13.9",
     "ssb-replicate": "^1.3.0",
     "ssb-search": "^1.1.2",
-    "ssb-server": "^15.0.0",
+    "ssb-server": "^14.1.12",
     "ssb-sort": "^1.1.0",
     "ssb-suggest": "^1.0.4",
     "ssb-tags": "^0.2.0",

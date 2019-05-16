@@ -53,7 +53,6 @@ module.exports = function (config) {
     'contact.obs.blocking': 'first'
   }))
 
-
   const i18n = api.intl.sync.i18n
   setupContextMenuAndSpellCheck(api.config.sync.load(), { navigate, get: api.sbot.async.get })
 
@@ -61,7 +60,6 @@ module.exports = function (config) {
   var latestUpdate = LatestUpdate()
   var subscribedChannels = api.channel.obs.subscribed(id)
   var includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
-
 
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (ssb) => {
@@ -77,29 +75,22 @@ module.exports = function (config) {
     })
 
     const del = (msg) => {
-      // TODO: deleteme
-      return
-
-      ssb.getKey(msg.key, (err, val, seq) => {
+      console.log(`deleting (...): ${msg.key}`)
+      ssb.del(msg.key, (err, val) => {
         if (err) {
-          console.log(err, seq)
-          throw new Error('error getting seq: ', err)
+          console.log(err)
+        } else {
+          console.log(`deleted (!!!!): ${msg.key}`)
         }
-
-        console.log(`deleting (...): ${msg.key} (${seq})`)
-
-        return console.log('seq', seq)
-        ssb.del(seq, (err) => {
-          if (err) throw err
-
-          console.log(`deleted (!!!!): ${msg.key} (${seq})`)
-        })
       })
     }
+
     watch(api.contact.obs.blocking(id), (blocking) => {
       if (blocking.length === 0) return
 
       console.log('got blocklist', blocking.length)
+
+      console.log('trying getKey')
 
       if (ssb.getKey == null) return
 
