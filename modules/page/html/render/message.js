@@ -253,7 +253,7 @@ exports.create = function (api) {
       var me = api.keys.sync.id()
       onceTrue(api.sbot.obs.connection, sbot => {
         sbot.patchwork.contacts.isBlocking({ source: me, dest: value.author }, (err, blocking) => {
-          if (err) throw err
+          if (err) return cb(err)
           if (blocking) {
             cb(null, null)
           } else if (isBlog(msg)) {
