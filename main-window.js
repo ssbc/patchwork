@@ -61,7 +61,12 @@ module.exports = function (config) {
 
   // prompt to setup profile on first use
   onceTrue(api.sbot.obs.connection, (sbot) => {
-    sbot.latestSequence(sbot.id, (_, key) => {
+    sbot.latestSequence(api.keys.sync.id(), (err, key) => {
+      if (err) {
+        // This may throw an error if the feed doesn't have any messages, but
+        // that shouldn't cause any problems so this error can be ignored.
+      }
+
       if (key == null) {
         api.profile.sheet.edit({ usePreview: false })
       }
