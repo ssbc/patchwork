@@ -256,7 +256,8 @@ exports.create = function (api) {
         sbot.patchwork.contacts.isBlocking({ source: me, dest: value.author }, (err, blocking) => {
           if (err) return cb(err)
           if (blocking) {
-            // Returning null to render 'Cannot display message.'
+            // Returning null to render 'Cannot display message.' if we've
+            // blocked the person
             cb(null, null)
           } else if (isBlog(msg)) {
             Blog(api.sbot.obs.connection).async.get(msg, (err, result) => {
