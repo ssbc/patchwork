@@ -112,6 +112,18 @@
   },
   "build": {
     "appId": "org.ssbc.patchwork",
+    "files": [
+      "**/*",
+      "!**/prebuilds${/*}",
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-69.node"
+    ],
+    "extraFiles": [
+      {
+        "from": "node_modules/sodium-native/prebuilds/${os}-${arch}/",
+        "to": ".",
+        "filter": "libsodium.*"
+      }
+    ],
     "linux": {
       "category": "Network",
       "target": [
