@@ -108,7 +108,17 @@
       "!**/prebuilds/!(${os}-${arch})${/*}"
     ],
     "linux": {
-      "category": "Network"
+      "category": "Network",
+      "target": [
+        "AppImage",
+        "snap",
+        "deb"
+      ]
+    },
+    "deb": {
+      "packageCategory": "net",
+      "priority": "optional",
+      "maintainer": "Michael Williams <michael.williams@enspiral.com>"
     },
     "dmg": {
       "icon": "build/dmg/icon.icns"
