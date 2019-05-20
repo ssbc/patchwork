@@ -71,6 +71,7 @@
     "ssb-blob-files": "^1.1.6",
     "ssb-blobs": "^1.1.13",
     "ssb-client": "^4.7.4",
+    "ssb-db": "github:ssbc/ssb-db#add-del",
     "ssb-config": "github:ssbc/ssb-config#auto-config-incoming",
     "ssb-gossip": "^1.0.9",
     "ssb-invite": "^2.0.4",
