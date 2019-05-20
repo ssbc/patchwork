@@ -74,35 +74,40 @@ module.exports = function (config) {
       }
     })
 
-    const del = (msg) => {
-      console.log(`deleting (...): ${msg.key}`)
-      ssb.del(msg.key, (err, val) => {
-        if (err) {
-          console.log(err)
-        } else {
-          console.log(`deleted (!!!!): ${msg.key}`)
-        }
-      })
-    }
+    const currentlyDeleting = {}
 
     watch(api.contact.obs.blocking(id), (blocking) => {
       if (blocking.length === 0) return
 
-      console.log('got blocklist', blocking.length)
-
-      console.log('trying getKey')
-
-      if (ssb.getKey == null) return
-
-      console.log('have getKey!')
-
       if (ssb.del == null) return
 
-      console.log('have del!')
       blocking.forEach(feed => {
         pull(
           ssb.createUserStream({ id: feed }),
-          pull.drain(del)
+          pull.asyncMap((msg, cb) => {
+            const key = msg.key
+            if (currentlyDeleting[key] === true) {
+              return cb(null, null) // already deleting
+            }
+
+            currentlyDeleting[key] = true
+
+            ssb.del(key, (err) => {
+              currentlyDeleting[key] = false
+              cb(err, key)
+            })
+          }),
+          pull.filter(),
+          pull.collect((err, keys) => {
+            if (err) {
+              console.error(keys)
+              throw err
+            }
+
+            if (keys.length > 0) {
+              console.log(`deleted ${keys.length} messages from blocked authors`)
+            }
+          })
         )
       })
     })
