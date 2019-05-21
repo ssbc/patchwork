@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Read-only mode, which doesn't allow users to publish new messages until indexes are up-to-date. This resolves issues where Patchwork seems unresponsive so users repeatedly post the same message.
 - Greek translation.
 - Support for clicking magnet links.
-- Auto-build with Travis CI.
+- Auto-build with Travis CI (now supporting Snappy and Debian).
 - Changelog.
 
 ### Changed
