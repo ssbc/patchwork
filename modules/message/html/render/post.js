@@ -1,6 +1,7 @@
 var h = require('mutant/h')
 var nest = require('depnest')
 var extend = require('xtend')
+var _ = require('lodash')
 
 exports.needs = nest({
   'message.html': {
@@ -8,7 +9,8 @@ exports.needs = nest({
     layout: 'first',
     link: 'first',
     markdown: 'first'
-  }
+  },
+  'intl.sync.i18n': 'first'
 })
 
 exports.gives = nest({
@@ -19,13 +21,18 @@ exports.gives = nest({
 })
 
 exports.create = function (api) {
+  const i18n = api.intl.sync.i18n
+
   return nest('message.html', {
     canRender: isRenderable,
     render: function (msg, opts) {
       if (!isRenderable(msg)) return
+
+      const isBlocked = _.get(msg, 'value.meta.blockedBy.role') === 'me'
+
       var element = api.message.html.layout(msg, extend({
         title: messageTitle(msg),
-        content: msg.isBlocked ? 'Content of a blocked user' : messageContent(msg),
+        content: isBlocked ? i18n('Content of a blocked user') : messageContent(msg),
         layout: 'default'
       }, opts))
 

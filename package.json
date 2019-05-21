@@ -2,7 +2,7 @@
   "name": "ssb-patchwork",
   "productName": "Patchwork",
   "repository": "git@github.com:ssbc/patchwork.git",
-  "version": "3.12.0-beta.2",
+  "version": "3.12.0-beta.3",
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild",
     "rebuild": "electron-builder install-app-deps",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "version": "changelog-version && git add CHANGELOG.md"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "AGPL-3.0",
@@ -33,7 +34,6 @@
     "fix-path": "^2.1.0",
     "flat": "^4.1.0",
     "flatpickr": "4.5.2",
-    "flumedb": "github:mmckegg/flumedb#add-await-ready-option",
     "flumeview-reduce": "^1.3.16",
     "hashlru": "^2.3.0",
     "hex-rgb": "^4.0.0",
@@ -64,17 +64,18 @@
     "run-parallel": "^1.1.9",
     "scuttle-blog": "^1.0.1",
     "scuttle-tag": "0.4.0",
+    "secret-stack": "^6.1.2",
     "sorted-array-functions": "^1.1.0",
-    "spacetime": "^5.8.1",
+    "spacetime": "^5.8.2",
     "ssb-about": "github:ssbc/ssb-about#use-await-ready",
     "ssb-backlinks": "^0.7.3",
     "ssb-blob-files": "^1.1.6",
-    "ssb-blobs": "^1.1.13",
-    "ssb-client": "^4.7.4",
+    "ssb-blobs": "^1.2.1",
+    "ssb-client": "^4.7.5",
     "ssb-config": "github:ssbc/ssb-config#auto-config-incoming",
     "ssb-db": "github:ssbc/ssb-db#add-del",
     "ssb-gossip": "^1.0.9",
-    "ssb-invite": "^2.0.4",
+    "ssb-invite": "^2.1.3",
     "ssb-keys": "^7.1.5",
     "ssb-local": "^1.0.0",
     "ssb-logging": "^1.0.0",
@@ -84,11 +85,10 @@
     "ssb-msgs": "^5.2.0",
     "ssb-no-auth": "^1.0.0",
     "ssb-private": "^0.2.3",
-    "ssb-query": "^2.3.0",
+    "ssb-query": "^2.4.1",
     "ssb-ref": "^2.13.9",
     "ssb-replicate": "^1.3.0",
     "ssb-search": "^1.2.1",
-    "ssb-server": "github:ssbc/ssb-server#no-shrinkwrap",
     "ssb-sort": "^1.1.0",
     "ssb-suggest": "^1.0.4",
     "ssb-tags": "^0.2.0",
@@ -101,8 +101,9 @@
     "xtend": "^4.0.1"
   },
   "devDependencies": {
+    "changelog-version": "^1.0.1",
     "colors": "^1.3.3",
-    "electron": "^4.2.0",
+    "electron": "^4.2.2",
     "electron-builder": "^20.40.2"
   },
   "optionalDependencies": {
@@ -110,11 +111,18 @@
   },
   "build": {
     "appId": "org.ssbc.patchwork",
-    "files": [
-      "!**/prebuilds/!(${os}-${arch})${/*}"
-    ],
     "linux": {
-      "category": "Network"
+      "category": "Network",
+      "target": [
+        "AppImage",
+        "snap",
+        "deb"
+      ]
+    },
+    "deb": {
+      "packageCategory": "net",
+      "priority": "optional",
+      "maintainer": "Michael Williams <michael.williams@enspiral.com>"
     },
     "dmg": {
       "icon": "build/dmg/icon.icns"
