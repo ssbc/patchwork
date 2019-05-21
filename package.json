@@ -115,7 +115,8 @@
     "files": [
       "**/*",
       "!**/prebuilds${/*}",
-      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-69.node"
+      "node_modules/sodium-native/prebuilds/${os}-${arch}/electron-69.node",
+      "node_modules/leveldown/prebuilds/${os}-${arch}/node.napi.node"
     ],
     "extraFiles": [
       {
