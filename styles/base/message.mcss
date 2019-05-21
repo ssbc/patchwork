@@ -108,7 +108,7 @@ Message {
   section {
     margin: 0
     padding: 0 20px
-    max-height: 500px
+    max-height: 1170px
     overflow: hidden
     -expanded {
       max-height: none
