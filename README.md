@@ -1,103 +1,87 @@
-<h1 align="center">
-  <img
-    alt="Patchwork icon"
-    src="https://github.com/ssbc/patchwork/blob/0465f406357cec9cdb8d821f68758d7ab8ef41cf/assets/icon.png"
-    width="256"
-    height="256"
-  />
-  <br />
-  Patchwork
-</h1>
+# Patchwork
 
-<h4 align="center">
-  A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).
-</h4>
-
-![Patchwork screenshot](screenshot.jpg)
-
-<details>
-  <summary>Table of Contents</summary>
-  <li><a href="#features">Features</a></li>
-  <li><a href="#pubs">Pubs</a></li>
-  <li><a href="#install">Install</a></li>
-  <li><a href="#docs">Docs</a></li>
-</details>
-
-## Features
+> A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).
 
 It's better than email because:
 
- - Private messages are end-to-end encrypted, always.
- - You have to follow somebody to get messages from them, so you won't get spammed.
- - Your mail can be public broadcasts or private, and you'll only see replies by people you follow.
- - The datastructure is a global mesh of append-only logs, which can support new types of data (not just "mail").
- - Users are not bound to one server/host (what we call "Pubs") and do not have to trust the servers.
- - It's very easy to setup and maintain your own Pub.
+- Private messages are end-to-end encrypted, always.
+- You only get messages from people you follow so you can't get spamed.
+- When you post public messages you'll only see replies from people you follow.
+- The global mesh of append-only logs supports many data types, not just "mail".
+- Users don't have to choose one public server ("pub") or trust any server.
+- It's very easy to setup and maintain your own pub.
 
 It's better than Twitter and Facebook because:
 
- - Private messages are end-to-end encrypted, always.
- - The software runs on your device, so there's nobody tracking your browsing.
- - The application code is FOSS, so you're free to fork or write new applications without a gatekeeper setting terms.
- - Data is saved to your disk, and so the application works offline.
- - You can sync directly with friends over Wi-Fi.
+- Private messages are *always* end-to-end encrypted.
+- It runs on your device so there's nobody tracking your browsing.
+- It's built free and open source software so you can do what you want with it.
+- Data is saved to your computer so the application works great offline.
+- You can sync directly with friends over Wi-Fi and other LAN networks.
 
-## Pubs
+## Usage
 
-In order to gossip outside your local network, you'll need to connect to a [Pub](https://www.scuttlebutt.nz/concepts/pub.html).
-
-You can find an invite to an available pub at the [Pub servers registry](https://github.com/ssbc/ssb-server/wiki/Pub-Servers).
-
-Get an invite, then in `patchwork`: click "+ Join Pub" and paste the invite code.
-
-This will cause you to follow the Pub and vice versa. If you haven't synchronized to this social network yet, prepare to wait a few minutes while your local server synchronizes.
-
-## Install
-
-### Download installers for Windows, macOS and Linux
-
-See [patchwork/releases](https://github.com/ssbc/patchwork/releases)
-
-### Or build from source
-
-With node (>= 4) and npm (>= 3) installed:
+Open Patchwork with an application shortcut or the CLI:
 
 ```shell
-$ git clone https://github.com/ssbc/patchwork
-$ cd patchwork
-$ npm install
-$ npm start
+ssb-patchwork
 ```
 
-You'll need some more dependencies to build.
+![Screenshot of Patchwork][screenshot]
 
-On Debian Linux:
+If you're new to Scuttlebutt you may need to connect to a [pub][pub] to join
+the network. This will download messages from other people on the network.
+
+1. Choose a pub from the [pub list][pub-list] and copy an invite code.
+2. Open Patchwork and select *Join Pub*.
+3. Paste the invite code and select *Redeem Invite*.
+
+Your profile and the pub will follow each other so that they can synchronize
+their messages. This initial synchronization may take a few minutes.
+
+## Installation
+
+Download the [latest binary release][latest] for your operating system or install
+Patchwork with your favorite Node.js module package manager.
+
+With [npm][npm]:
 
 ```shell
-sudo apt-get install g++ m4 libtool automake libgconf-2-4   # build tools
-sudo apt-get install libxext-dev libxtst-dev libxkbfile-dev # spellchecker headers
+npm install --global ssb-patchwork
 ```
 
-On Fedora Linux:
+With [yarn][yarn]:
 
 ```shell
-sudo dnf install libXext-devel libXtst-devel libxkbfile-devel gcc-c++ m4 automake libtool
+yarn global add ssb-patchwork
 ```
 
-On macOS:
+With [yay][yay]:
 
 ```shell
-brew install libtool automake # build tools
+yay -S ssb-patchwork
 ```
 
-## Code of conduct
+Need something else? Check out [`INSTALL.md`][install] for more information.
 
-Please note that this project is released with a [Contributor Code of Conduct](code-of-conduct.md). By participating in this project you agree to abide by its terms.
+## See Also
 
-## Contributing
+- [patchbay][patchbay]
+- [ssb-server][ssb-server]
+- [manyverse][manyverse]
 
-Please read the [Patchwork Contribution Guidelines](contributing.md) before opening a pull request.
+## License
 
-## Docs
+AGPL-3.0
 
-- [scuttlebutt.nz](https://www.scuttlebutt.nz)
+[install]: INSTALL.md
+[latest]: https://github.com/ssbc/patchwork/releases/latest
+[manyverse]: https://gitlab.com/staltz/manyverse
+[npm]: https://npmjs.org/
+[patchbay]: https://github.com/ssbc/patchbay
+[pub-list]: https://github.com/ssbc/ssb-server/wiki/Pub-Servers
+[pub]: https://www.scuttlebutt.nz/concepts/pub.html
+[screenshot]: screenshot.jpg
+[ssb-server]: https://github.com/ssbc/ssb-server
+[yarn]: https://yarnpkg.com/en/
+[yay]: https://github.com/Jguer/yay
