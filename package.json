@@ -9,8 +9,7 @@
     "test": "standard",
     "start": "electron index.js",
     "check-locales": "node scripts/check-locales.js",
-    "postinstall": "npm run rebuild",
-    "rebuild": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps",
     "dist": "electron-builder",
     "version": "changelog-version && git add CHANGELOG.md"
   },
