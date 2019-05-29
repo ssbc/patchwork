@@ -2,12 +2,12 @@
 
 > A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).
 
-- Spam can't happen because you only get messages from people you follow.
-- Nobody can read your private messages because they're encrypted end-to-end.
-- Patchwork works offline because the data you use is stored on your device.
-- You can sync directly with nearby friends over Wi-Fi and other LAN networks.
-- The software is free and open source so you can change and improve it.
-- You don't have to trust any central servers or services with your data.
+- Connect with friends without depending on any central servers.
+- Don't worry about spam, you only get messages from people you follow.
+- Use Patchwork online or offline, the data you need is stored on your device.
+- Sync messages with friends when you're on the same Wi-Fi network.
+- Keep secrets with private messages, which are *always* end-to-end encrypted.
+- Change and improve Patchwork however you'd like, it's free and open source.
 
 ## Usage
 
