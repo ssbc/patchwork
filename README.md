@@ -25,8 +25,7 @@ their messages. This initial synchronization may take a few minutes.
 
 ## Installation
 
-Download the [latest binary release][latest] for your operating system or install
-Patchwork with your favorite Node.js module package manager.
+Get the [latest release from GitHub][latest] or install with a package manager.
 
 With [npm][npm]:
 
