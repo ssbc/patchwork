@@ -2,22 +2,12 @@
 
 > A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).
 
-It's better than email because:
-
-- Private messages are end-to-end encrypted, always.
-- You only get messages from people you follow so you can't get spamed.
-- When you post public messages you'll only see replies from people you follow.
-- The global mesh of append-only logs supports many data types, not just "mail".
-- Users don't have to choose one public server ("pub") or trust any server.
-- It's very easy to setup and maintain your own pub.
-
-It's better than Twitter and Facebook because:
-
-- Private messages are *always* end-to-end encrypted.
-- It runs on your device so there's nobody tracking your browsing.
-- It's built free and open source software so you can do what you want with it.
-- Data is saved to your computer so the application works great offline.
-- You can sync directly with friends over Wi-Fi and other LAN networks.
+- Spam can't happen because you only get messages from people you follow.
+- Nobody can read your private messages because they're encrypted end-to-end.
+- Patchwork works offline because the data you use is stored on your device.
+- You can sync directly with nearby friends over Wi-Fi and other LAN networks.
+- The software is free and open source so you can change and improve it.
+- You don't have to trust any central servers or services with your data.
 
 ## Usage
 
