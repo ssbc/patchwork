@@ -13,15 +13,13 @@
 
 ![Screenshot of Patchwork][screenshot]
 
-If you're new to Scuttlebutt you may need to connect to a [pub][pub] to join
-the network. This will download messages from other people on the network.
+New to Scuttlebutt? Join the network by connecting to a [pub][pub].
 
 1. Choose a pub from the [pub list][pub-list] and copy an invite code.
 2. Open Patchwork and select *Join Pub*.
 3. Paste the invite code and select *Redeem Invite*.
 
-Your profile and the pub will follow each other so that they can synchronize
-their messages. This initial synchronization may take a few minutes.
+You're done! Check out `#new-people` to see who else has recently joined.
 
 ## Installation
 
