@@ -11,12 +11,6 @@
 
 ## Usage
 
-Open Patchwork with an application shortcut or the CLI:
-
-```shell
-ssb-patchwork
-```
-
 ![Screenshot of Patchwork][screenshot]
 
 If you're new to Scuttlebutt you may need to connect to a [pub][pub] to join
