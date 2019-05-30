@@ -106,9 +106,14 @@ exports.create = function (api) {
         return recent.filter(x => x !== id && !ignoreFeeds.some(f => f.includes(x))).slice(0, 10)
       })
       return [
-        h('button -pub -full', {
-          'ev-click': api.invite.sheet
-        }, i18n('+ Join Pub')),
+        h('SplitButton', [
+          h('button -invites', {
+            'ev-click': () => console.log('totally creating an invite right now')
+          }, i18n('Create Invite')),
+          h('button -invites', {
+            'ev-click': api.invite.sheet
+          }, i18n('Accept Invite'))
+        ]),
 
         // disabling DHT invites until they work in sbot@13
         //

@@ -23,7 +23,7 @@ button {
       background-color: #7dbd85
     }
   }
-  -pub {
+  -invites {
     color: white
     background-color: #959ea9
     border-color: #959ea9
