@@ -45,6 +45,15 @@ yay -S ssb-patchwork
 
 Need something else? Check out [`INSTALL.md`][install] for more information.
 
+## Contributing
+
+Create a [new issue][new-issue] to report problems or request features. See
+[`CONTRIBUTING.md`][contributing] for more information on how to get involved.
+
+Please note that this project is released with a [Contributor Code of
+Conduct](conduct). By participating in this project you agree to abide by its
+terms.
+
 ## See Also
 
 - [patchbay][patchbay]
@@ -55,9 +64,12 @@ Need something else? Check out [`INSTALL.md`][install] for more information.
 
 AGPL-3.0
 
+[conduct]: code-of-conduct.md
+[contributing]: CONTRIBUTING.md
 [install]: INSTALL.md
 [latest]: https://github.com/ssbc/patchwork/releases/latest
 [manyverse]: https://gitlab.com/staltz/manyverse
+[new-issue]: https://github.com/fraction/readme-boilerplate/issues/new
 [npm]: https://npmjs.org/
 [patchbay]: https://github.com/ssbc/patchbay
 [pub-list]: https://github.com/ssbc/ssb-server/wiki/Pub-Servers
