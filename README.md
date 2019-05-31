@@ -51,7 +51,7 @@ Create a [new issue][new-issue] to report problems or request features. See
 [`CONTRIBUTING.md`][contributing] for more information on how to get involved.
 
 Please note that this project is released with a [Contributor Code of
-Conduct](conduct). By participating in this project you agree to abide by its
+Conduct][conduct]. By participating in this project you agree to abide by its
 terms.
 
 ## See Also
