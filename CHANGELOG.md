@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Fixed
+- Fixed emoji not rendering on Windows.
+
 ## v3.12.0 - 2019-05-21
 
 ### Added
