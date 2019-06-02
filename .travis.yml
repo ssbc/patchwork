@@ -56,7 +56,8 @@ before_install:
             libnss3 \
             libxext-dev \
             libxkbfile-dev \
-            libxtst-dev
+            libxtst-dev \
+            libopenjp2-tools
         "
         docker exec -it cross \
           /bin/sh -c "chown -R node:node /home/node/app"
