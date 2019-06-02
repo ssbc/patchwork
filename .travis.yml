@@ -37,11 +37,9 @@ before_install:
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
       if [ "$CROSS" ]; then
-        sudo apt-get install qemu-user-static
         docker run --rm --privileged hypriot/qemu-register
         docker create \
           -it --name cross \
-          -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static \
           -v $(pwd):/home/node/app \
           -w /home/node/app \
           "$CROSS_IMAGE"
