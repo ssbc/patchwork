@@ -57,7 +57,8 @@ before_install:
             libxext-dev \
             libxkbfile-dev \
             libxtst-dev \
-            libopenjp2-tools
+            libopenjp2-tools \
+            squashfs-tools
         "
         docker exec -it cross \
           /bin/sh -c "chown -R node:node /home/node/app"
