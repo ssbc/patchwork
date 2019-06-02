@@ -55,7 +55,10 @@ before_install:
             libnotify4 \
             libappindicator1 \
             libxtst6 \
-            libnss3
+            libnss3 \
+            libxext-dev \
+            libxkbfile-dev \
+            libxtst-dev
         "
         docker exec -it cross \
           /bin/sh -c "chown -R node:node /home/node/app"
