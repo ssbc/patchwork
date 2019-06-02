@@ -12,6 +12,16 @@ matrix:
       language: node_js
       node_js: 10
 
+    - os: linux
+      dist: xenial
+      language: minimal
+      services:
+        - docker
+      env:
+        - CROSS=1
+        - CROSS_ARCH=armv7l
+        - CROSS_IMAGE=arm32v7/node:10-stretch
+
     - os: windows
       language: node_js
       node_js: 10
@@ -26,18 +36,53 @@ cache:
 before_install:
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      sudo apt-get install \
-        automake \
-        libgconf-2-4 \
-        libtool \
-        libxext-dev \
-        libxkbfile-dev \
-        libxtst-dev
+      if [ "$CROSS" ]; then
+        sudo apt-get install qemu-user-static
+        docker create \
+          -it --name cross \
+          -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static \
+          -e CI="$CI" \
+          -e DEBIAN_FRONTEND="$DEBIAN_FRONTEND" \
+          -e TRAVIS_REPO_SLUG="$TRAVIS_REPO_SLUG" \
+          -e TRAVIS_TAG="$TRAVIS_TAG" \
+          -e GH_TOKEN="$GH_TOKEN" \
+          -v $(pwd):/app \
+          -w /app \
+          "$CROSS_IMAGE"
+        docker start cross
+        docker exec -it cross /bin/sh -c "apt update -y"
+        docker exec -it cross /bin/sh -c "
+          apt install -y \
+            automake \
+            gconf2 \
+            gconf-service \
+            libnotify4 \
+            libappindicator1 \
+            libxtst6 \
+            libnss3
+        "
+        docker exec -it cross /bin/sh -c "npm install"
+      else
+        sudo apt-get install \
+          automake \
+          libgconf-2-4 \
+          libtool \
+          libxext-dev \
+          libxkbfile-dev \
+          libxtst-dev
+      fi
     else
       npm uninstall --save mouse-forward-back
     fi
 
-script: npm test && npm run dist
+script:
+  - |
+    if [ "$CROSS" ]; then
+      docker exec -it cross /bin/sh -c \
+        "npm test && npm run dist -- --arch=${CROSS_ARCH}"
+    else
+      npm test && npm run dist
+    fi
 
 branches:
   except:
