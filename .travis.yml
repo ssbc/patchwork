@@ -41,13 +41,8 @@ before_install:
         docker create \
           -it --name cross \
           -v /usr/bin/qemu-arm-static:/usr/bin/qemu-arm-static \
-          -e CI="$CI" \
-          -e DEBIAN_FRONTEND="$DEBIAN_FRONTEND" \
-          -e TRAVIS_REPO_SLUG="$TRAVIS_REPO_SLUG" \
-          -e TRAVIS_TAG="$TRAVIS_TAG" \
-          -e GH_TOKEN="$GH_TOKEN" \
-          -v $(pwd):/app \
-          -w /app \
+          -v $(pwd):/home/node/app \
+          -w /home/node/app \
           "$CROSS_IMAGE"
         docker start cross
         docker exec -it cross /bin/sh -c "apt update -y"
@@ -61,7 +56,10 @@ before_install:
             libxtst6 \
             libnss3
         "
-        docker exec -it cross /bin/sh -c "npm install"
+        docker exec -it cross \
+          /bin/sh -c "chown -R node:node /home/node/app"
+        docker exec -it -u node cross \
+          /bin/sh -c "npm install"
       else
         sudo apt-get install \
           automake \
@@ -78,8 +76,16 @@ before_install:
 script:
   - |
     if [ "$CROSS" ]; then
-      docker exec -it cross /bin/sh -c \
-        "npm test && npm run dist -- --arch=${CROSS_ARCH}"
+      docker exec -it \
+        -u node \
+        -e CI="$CI" \
+        -e DEBIAN_FRONTEND="$DEBIAN_FRONTEND" \
+        -e TRAVIS_REPO_SLUG="$TRAVIS_REPO_SLUG" \
+        -e TRAVIS_TAG="$TRAVIS_TAG" \
+        -e GH_TOKEN="$GH_TOKEN" \
+        cross \
+        /bin/sh -c \
+          "npm test && npm run dist -- --arch=${CROSS_ARCH}"
     else
       npm test && npm run dist
     fi
