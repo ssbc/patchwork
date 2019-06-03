@@ -75,10 +75,9 @@ before_install:
           cd /home/node/.cache/electron-builder/appimage/appimage-9.1.0/linux-arm
           ln -s /usr/local/bin/mksquashfs mksquashfs
         "
-        echo $(for ENV_VAR in $(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_'); do echo --env $ENV_VAR; done)
         docker exec -it \
           -u node \
-          $(for ENV_VAR in $(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_'); do echo --env $ENV_VAR; done) \
+          $(for ENV_VAR in $(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_'); do echo --env "$ENV_VAR"; done) \
           --env ELECTRON_CACHE="/home/node/.cache/electron" \
           --env ELECTRON_BUILDER_CACHE="/home/node/.cache/electron-builder" \
           cross \
@@ -101,7 +100,7 @@ script:
     if [ "$CROSS" ]; then
       docker exec -it \
         -u node \
-        $(for ENV_VAR in $(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_'); do echo --env $ENV_VAR; done) \
+        $(for ENV_VAR in $(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_'); do echo --env "$ENV_VAR"; done) \
         --env ELECTRON_CACHE="/home/node/.cache/electron" \
         --env ELECTRON_BUILDER_CACHE="/home/node/.cache/electron-builder" \
         cross \
