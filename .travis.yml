@@ -60,9 +60,10 @@ before_install:
             libxext-dev \
             libxkbfile-dev \
             libxtst-dev \
-            libopenjp2-tools \
-            snapd
+            libopenjp2-tools
         "
+        docker exec -it cross \
+          /bin/sh -c "chown -R node:node /home/node"
         docker exec -it cross /bin/sh -c "
           cd /usr/src
           git clone https://git.kernel.org/pub/scm/fs/squashfs/squashfs-tools.git
@@ -74,9 +75,6 @@ before_install:
           cd /home/node/.cache/electron-builder/appimage/appimage-9.1.0/linux-arm
           ln -s /usr/local/bin/mksquashfs mksquashfs
         "
-        docker exec -it cross /bin/sh -c "snap install snapcraft --classic"
-        docker exec -it cross \
-          /bin/sh -c "chown -R node:node /home/node/app"
         docker exec -it -u node cross \
           /bin/sh -c "npm install"
       else
