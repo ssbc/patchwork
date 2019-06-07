@@ -1,6 +1,7 @@
 const emojis = require('emoji-named-characters')
 const emojiNames = Object.keys(emojis)
 const nest = require('depnest')
+const path = require('path')
 
 exports.needs = nest('blob.sync.url', 'first')
 exports.gives = nest({
@@ -23,6 +24,6 @@ exports.create = function (api) {
   }
 
   function url (emoji) {
-    return emoji in emojis && `img/emoji/${emoji}.png`
+    return emoji in emojis && path.join(__dirname, '..', `node_modules/emoji-named-characters/pngs/${emoji}.png`)
   }
 }

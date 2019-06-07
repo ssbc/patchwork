@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed emoji not rendering on Windows.
+
+## v3.12.0 - 2019-05-21
+
 ### Added
 - Explanation when messages in a thread are hidden because the author is blocked by the author of the thread.
 - Confirmation dialog when clearing message drafts.
