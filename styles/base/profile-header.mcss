@@ -9,6 +9,11 @@ ProfileHeader {
     img {
       width: 100%
     }
+    -hidden-profile-image {
+      img {
+        filter: blur(16px);
+      }
+    }
   }
   div.main {
     flex: 1

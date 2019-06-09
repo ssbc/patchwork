@@ -142,7 +142,11 @@ exports.create = function (api) {
     ])
 
     var prepend = h('header', { className: 'ProfileHeader' }, [
-      h('div.image', api.about.html.image(id)),
+      h('div.image', {
+          classList: [when(contact.hidden, '-hidden-profile-image', null)]
+        },
+        api.about.html.image(id),
+      ),
       h('div.main', [
         h('div.title', [
           h('h1', [name]),
