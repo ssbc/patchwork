@@ -1,4 +1,4 @@
-var {computed, when, h, Value} = require('mutant')
+var { computed, when, h, Value } = require('mutant')
 var nest = require('depnest')
 var sustained = require('../../../lib/sustained')
 const pull = require('pull-stream')
@@ -52,15 +52,42 @@ exports.create = function (api) {
     // HACK: css animations take up WAY TO MUCH cpu, remove from dom when inactive
     var displaying = computed(sustained(hidden, 500, x => !x), hidden => !hidden)
 
+    // HACK: Resolves an issue where buttons are non-responsive while indexing.
+    //
+    // 1. Sets the *progress* cursor when Patchwork is focused.
+    // 2. Sets the *wait* cursor when a publish button is selected.
+    // 3. Sets the *not-allowed* cursor when a publish button is activated.
+    //
+    // If a user disregards all of the above then `modules/sbot.js` will return
+    // an error telling the user to wait until indexing is finished.
+    const readOnlyMode = `
+      body {
+        cursor: progress;
+      }
+
+      button:not(.-clear):not(.-cancel):not(.cancel), .like, .reply, .tag, .ToggleButton, .Picker {
+        cursor: wait;
+        opacity: 0.5;
+      }
+
+      button:not(.-clear):not(.-cancel):not(.cancel):active, .like:active, .reply:active, .tag:active, .ToggleButton:active, .Picker:active {
+        cursor: not-allowed;
+      }
+    `
+
     return h('div.info', { hidden }, [
       h('div.status', [
         when(displaying, h('Loading -small', [
           when(pendingMigration,
-            [h('span.info', i18n('Upgrading database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: migrationProgress })],
+            [h('span.info', i18n('Upgrading database')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: migrationProgress })],
             when(computed(downloadProgress, (v) => v < 1),
-              [h('span.info', i18n('Downloading new messages')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: downloadProgress })],
+              [h('span.info', i18n('Downloading new messages')), h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: downloadProgress })],
               when(pending, [
-                [h('span.info', i18n('Indexing database')), h('progress', { style: {'margin-left': '10px'}, min: 0, max: 1, value: indexProgress })]
+                [
+                  h('span.info', i18n('Indexing database')),
+                  h('progress', { style: { 'margin-left': '10px' }, min: 0, max: 1, value: indexProgress }),
+                  h('style', readOnlyMode)
+                ]
               ], i18n('Scuttling...'))
             )
           )

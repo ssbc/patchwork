@@ -10,7 +10,7 @@ exports.gives = nest('channel.obs.subscribers')
 
 exports.create = function (api) {
   return nest('channel.obs.subscribers', function (channel) {
-    var stream = api.sbot.pull.stream(sbot => sbot.patchwork.subscriptions({live: true, channel}))
+    var stream = api.sbot.pull.stream(sbot => sbot.patchwork.subscriptions({ live: true, channel }))
     return MutantPullReduce(stream, (state, msg) => {
       if (msg.value) {
         if (!state.includes(msg.from)) {

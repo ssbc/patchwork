@@ -88,9 +88,11 @@
 	"mentioned you": "te je omenil_a",
 	" and ": " in ",
 	"Liked by": "Všečkano s strani",
-	"likes": "všečki",
 	"liked this message": "všečkal_a to sporočilo",
-	"like": "všeček",
+	"%s likes": {
+		"one": "%s všeček",
+		"other": "%s všečki"
+	},
 	"replied to this message": "je odgovoril_a na to sporočilo",
 	"unfollowed ": "prenehal_a spremljati ",
 	" others": " ostali",

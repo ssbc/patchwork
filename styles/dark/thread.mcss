@@ -1,15 +1,11 @@
 Thread {
-  flex: 1
-  max-width: 800px
-  width: 100%
-  margin: 10px auto
+  a.full {
+    background: #2d2c2c
+  }
 
   div.messages {
-    a.full {
-      display: block;
-      padding: 10px;
-      background: #2d2c2c
-      text-align: center;
+    div + div {
+      border-top: 1px solid #2d2c2c
     }
   }
 }

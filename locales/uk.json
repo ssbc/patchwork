@@ -88,9 +88,11 @@
 	"mentioned you": "згадав вас",
 	"and ": "і ",
 	"Liked by": "Сподобалося",
-	"likes": "любить",
 	"liked this message": "сподобалося це повідомлення",
-	"like": "подобається",
+	"%s likes": {
+		"one": "%s подобається",
+		"other": "%s любить"
+	},
 	"replied to this message": "відповів на це повідомлення",
 	"unfollowed ": "відписався ",
 	"others": "інші",

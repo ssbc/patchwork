@@ -1,0 +1,17 @@
+TaggersList {
+  a.profile {
+    background: rgba(255, 255, 255, 0.74)
+    border-radius: 5px
+    transition: background-color 0.2s
+    div.main {
+      div.name {
+        font-weight: bold
+        font-size: 110%
+        color: #636363
+      }
+    }
+    :hover {
+      background-color: rgba(255, 255, 255, 0.4)
+    }
+  }
+}

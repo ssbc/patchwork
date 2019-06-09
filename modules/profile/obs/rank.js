@@ -27,7 +27,7 @@ exports.create = function (api) {
         result = result.slice(0, max)
       }
       return result
-    }, {nextTick: true})
+    }, { nextTick: true })
 
     result.sync = recent.sync
 

@@ -21,22 +21,21 @@ var quitting = false
 
 /**
  * It's not possible to run two instances of patchwork as it would create two
- * scuttlebot instances that conflict on the same port. Before opening patchwork,
+ * ssb-server instances that conflict on the same port. Before opening patchwork,
  * we check if it's already running and if it is we focus the existing window
  * rather than opening a new instance.
  */
 function quitIfAlreadyRunning () {
-  var shouldQuit = electron.app.makeSingleInstance(function (commandLine, workingDirectory) {
+  if (!electron.app.requestSingleInstanceLock()) {
+    return electron.app.quit()
+  }
+  electron.app.on('second-instance', (event, commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
     if (windows.main) {
       if (windows.main.isMinimized()) windows.main.restore()
       windows.main.focus()
     }
   })
-
-  if (shouldQuit) {
-    electron.app.quit()
-  }
 }
 
 var config = {
@@ -50,13 +49,22 @@ if (process.argv.includes('--path')) {
 quitIfAlreadyRunning()
 
 electron.app.on('ready', () => {
-  setupContext('ssb', config, () => {
+  setupContext(process.env.ssb_appname || 'ssb', {
+    server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
+  }, () => {
     var browserWindow = openMainWindow()
     var menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
-      label: 'History',
+      label: 'Navigation',
       submenu: [
+        {
+          label: 'Activate Search Field',
+          accelerator: 'CmdOrCtrl+L',
+          click: () => {
+            browserWindow.webContents.send('activateSearch')
+          }
+        },
         {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
@@ -80,8 +88,8 @@ electron.app.on('ready', () => {
       { role: 'toggledevtools' },
       { type: 'separator' },
       { role: 'resetzoom' },
-      { role: 'zoomin' },
-      { role: 'zoomout' },
+      { role: 'zoomin', accelerator: 'CmdOrCtrl+=' },
+      { role: 'zoomout', accelerator: 'CmdOrCtrl+-' },
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
@@ -118,7 +126,7 @@ electron.app.on('ready', () => {
 
   electron.ipcMain.on('open-background-devtools', function (ev, config) {
     if (windows.background) {
-      windows.background.webContents.openDevTools({mode: 'detach'})
+      windows.background.webContents.openDevTools({ mode: 'detach' })
     }
   })
 })
@@ -162,19 +170,41 @@ function setupContext (appName, opts, cb) {
   ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
     blobsPort: 8989, // matches ssb-ws
-    friends: {
+    friends: { // not using ssb-friends (sbot/contacts fixes hops at 2, so this setting won't do anything)
       dunbar: 150,
       hops: 2 // down from 3
     }
+    // connections: { // to support DHT invites
+    //   incoming: {
+    //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
+    //   },
+    //   outgoing: {
+    //     dht: [{ transform: 'shs' }]
+    //   }
+    // }
   }, opts))
 
-  console.log(ssbConfig)
+  // disable gossip auto-population from {type: 'pub'} messages as we handle this manually in sbot/index.js
+  if (!ssbConfig.gossip) ssbConfig.gossip = {}
+  ssbConfig.gossip.autoPopulate = false
 
   ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
 
-  // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
-  var id = ssbConfig.keys.id
-  ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${id.slice(1).replace('.ed25519', '')}`
+  const keys = ssbConfig.keys
+  const pubkey = keys.id.slice(1).replace(`.${keys.curve}`, '')
+
+  if (process.platform === 'win32') {
+    // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
+    ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${pubkey}`
+  } else {
+    const socketPath = Path.join(ssbConfig.path, 'socket')
+    ssbConfig.connections.incoming.unix = [{ 'scope': 'device', 'transform': 'noauth' }]
+    ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
+  }
+
+  const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
+  redactedConfig.keys.private = null
+  console.dir(redactedConfig, { depth: null })
 
   if (opts.server === false) {
     cb && cb()

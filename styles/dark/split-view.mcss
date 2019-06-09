@@ -1,31 +1,17 @@
 SplitView {
-  display: flex
-  flex: 3
-  div.main {
-    display: flex
-    flex-direction: column
-    flex: 1
-    overflow-y: auto
-  }
   div.side {
-    width: 280px;
-    padding: 20px;
-    background: #383736;
-    border-right: 1px solid #2d2c2c;
-    overflow-y: auto;
-
+    background: #383736
+    border-right: 1px solid #2d2c2c
     -right {
       border: none
       border-left: 1px solid #2d2c2c
       background: #383736
     }
-
     (h2) {
       margin-top: 20px
       margin-bottom: 8px
-      color: #6e6d6d;
-      font-weight: lighter;
-
+      color: #6e6d6d
+      font-weight: lighter
       :first-child {
         margin-top: 0
       }

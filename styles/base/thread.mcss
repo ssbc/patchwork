@@ -1,0 +1,20 @@
+Thread {
+  flex: 1
+  max-width: 800px
+  width: 100%
+  margin: 10px auto
+  a.full {
+    display: block
+    padding: 10px
+    text-align: center
+  }
+  div.messages {
+    div {
+      -anchor {
+        box-shadow: 0 0 10px #909090;
+        position: relative;
+        z-index: 1;
+      }
+    }
+  }
+}

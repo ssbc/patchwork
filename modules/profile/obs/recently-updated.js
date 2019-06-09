@@ -12,7 +12,19 @@ exports.needs = nest({
 exports.gives = nest('profile.obs.recentlyUpdated')
 
 exports.create = function (api) {
-  var instance = null
+  var loading = false
+
+  var sync = Value(false)
+  var result = Value([])
+  var instance = throttle(result, 2000)
+  instance.sync = sync
+
+  instance.has = function (value) {
+    return computed(instance, x => x.includes(value))
+  }
+
+  // refresh every 10 mins
+  setInterval(load, 10 * 60e3)
 
   return nest('profile.obs.recentlyUpdated', function () {
     load()
@@ -20,42 +32,22 @@ exports.create = function (api) {
   })
 
   function load () {
-    if (instance) return
-
-    var sync = Value(false)
-    var result = Value([])
+    if (loading) return
+    loading = true
     var max = 1000
 
     pull(
       api.sbot.pull.stream(sbot => sbot.patchwork.recentFeeds({
         since: Date.now() - (7 * 24 * hr),
-        live: true
+        live: false
       })),
-      pull.drain((id) => {
-        if (id.sync) {
-          result.set(result())
-          sync.set(true)
-        } else {
-          var values = result()
-          var index = values.indexOf(id)
-          if (sync()) {
-            values.length = Math.max(values.length, max)
-            if (~index) values.splice(index, 1)
-            values.unshift(id)
-            result.set(values)
-          } else if (values.length < max) {
-            values.push(id)
-            // don't broadcast until sync
-          }
-        }
+      pull.collect((err, items) => {
+        if (err) return
+        items.length = Math.min(items.length, max)
+        result.set(items)
+        sync.set(true)
+        loading = false
       })
     )
-
-    instance = throttle(result, 2000)
-    instance.sync = sync
-
-    instance.has = function (value) {
-      return computed(instance, x => x.includes(value))
-    }
   }
 }

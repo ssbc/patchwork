@@ -12,7 +12,7 @@
 	"Local": "Lokalne",
 	"Connected Pubs": "Połączone Puby",
 	"Who to follow": "Kogo obserwować",
-	"Write a private message": "Napisz wiadomość prywatną \n\n\n\nMoże być przeczytan tylko przez ciebie i osoby które @wspomisz.",
+	"Write a private message": "Napisz wiadomość prywatną \n\n\n\nMoże być przeczytana tylko przez ciebie i osoby które @wspomisz.",
 	"Edit Your Profile": "Edytuj Twój Profil",
 	"Public key for this profile": "Publiczny klucz dla tego profilu",
 	"This person is blocked by %s of your friends.": {
@@ -25,7 +25,7 @@
 	"They might not be able to see your posts either.": "Ona może nie być w stanie widzieć twoich postów.",
 	"This person does not follow anyone that follows you": "Ta osoba nie obserwuje nikogo kto obserwuje ciebie",
 	"They might not receive your private messages or replies. You could try joining a pub that they are a member of.": "Może nie otrzymać twoich wiadomości prywatnych i odpowiedzi. Możesz spróbować dołączyć do pubu którego ona też jest członkiem.",
-	"However, since you follow someone that follows them, you should be able to see their latest posts.": "Jednak, ponieważ obserwujesz kogoś kto obserwuje ją, jej nanowsze posty powinny być widzialne.",
+	"However, since you follow someone that follows them, you should be able to see their latest posts.": "Jednak, ponieważ obserwujesz kogoś kto obserwuje ją, jej najnowsze posty powinny być widzialne.",
 	"Mutual Friends": "Wzajemni Znajomi",
 	"You share %s mutual friends with this person.": {
 		"one": "Dzielisz %s wzajemnego znajomego z tą osobą.",
@@ -33,8 +33,8 @@
 	},
 	"Followed by": "Obserwowana przez",
 	"You follow %s people that follow this person.": {
-		"one": "Obserwujesz kogoś kto obserwuje tę osobę.",
-		"other": "Obserwujesz %s osób które obserwują tę osobę."
+		"one": "Obserwujesz kogoś, kto obserwuje tę osobę.",
+		"other": "Obserwujesz %s osób, które obserwują tę osobę."
 	},
 	"Send Private Message": "Wyślij Wiadomość Prywatną",
 	"Friends": "Znajomi",
@@ -80,7 +80,7 @@
 	"View full thread": "Pokaż całą konwersację",
 	"Unsubscribe": "Odsubskrybuj",
 	"Subscribe": "Zasubskrybuj",
-	"Force Disconnect": "Rozłącz na Siłę",
+	"Force Disconnect": "Wymuś rozłączenie",
 	"(you)": "(ty)",
 	"in reply to ": "w odpowiedzi do ",
 	"See less": "Zobacz mniej",
@@ -88,17 +88,19 @@
 	"mentioned you": "wspomniała o tobie",
 	" and ": " i ",
 	"Liked by": "Lubiane przez",
-	"likes": "lubi",
+	"%s likes": {
+		"one": "%s Polub",
+		"other": "%s lubi"
+	},
 	"liked this message": "polubił tę wiadomość",
-	"like": "Polub",
 	"replied to this message": "odpowiedziała na tę wiadomość",
 	"unfollowed ": "odobserwowała ",
 	" others": " innych",
 	"Write a public message": "Napisz wiadomość publiczną",
 	"New Message": "Nowa Wiadomość",
 	"%s people from your network replied to this message on ": {
-		"one": "%s osoba z twojej sieci odpowiedziała na tą wiadomość ",
-		"other": "%s osób z twojej sieci odpowiedziało na tą wiadomość "
+		"one": "%s osoba z twojej sieci odpowiedziała na tę wiadomość ",
+		"other": "%s osób z twojej sieci odpowiedziało na tę wiadomość "
 	},
 	"mentioned in your network": "wspomniane w twojej sieci",
 	"Channels": "Kanały",
@@ -149,7 +151,7 @@
 	"Channel Feed Options": "Opcje Kanału Wewnątrzkanałowego",
 	" forked this discussion:": " rozwidliła tę dyskusję:",
 	"You are not following anyone": "nikogo nie obserwujesz",
-	"For help getting started, see the guide at ": "W ramach pomocy z zaczęciem, obacz przewodnik: ",
+	"For help getting started, see the guide at ": "W ramach pomocy z zaczęciem, zobacz przewodnik: ",
 	"added changes": "dodała zmiany",
 	"Your Profile": "Twój Profil",
 	"Choose Profile Image...": "Wybierz Obrazek Profilowy...",
@@ -158,14 +160,14 @@
 	"Missing message": "Brakująca wiadomość",
 	" via ": " poprzez ",
 	"The author of this message could be outside of your follow range or they may be blocked.": "Autor tej wiadomości może być poza twoim zasięgiem obserwacji albo zablokowany.",
-	"Close": "Zamnkij",
+	"Close": "Zamknij",
 	" referenced this message:": " wspomniała tę wiadomość:",
 	"on ": "w ",
 	"You follow %s people that subscribe to this channel.": {
 		"one": "Obserwujesz %s osobę która subskrybuje ten kanał.",
 		"other": "Obserwujesz %s osób które subskrybują ten kanał."
 	},
-	"People you follow that subscribe to this channel": "Osoby które obserwujesz subskrybujące ten kanał",
+	"People you follow that subscribe to this channel": "Osoby, które obserwujesz, subskrybujące ten kanał",
 	" from your extended network": " z twojej szerszej sieci",
 	"+ Add Gathering": "+ Dodaj Zgromadzenie",
 	"View %s more": {
@@ -183,7 +185,7 @@
 	"identified ": "zidentyfikowała ",
 	"All Posts from Your ": "Wszystkie Posty z Twojej ",
 	"You have no followers": "Nie masz obserwujących",
-	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Nikt nie będzie w stanie zobaczyć twoich postów dopóki ktoś cię nie zaobserwuje. Najłatwiejszym sposobem na pozyskanie obserwującego jest użycie zaproszenia do pubu bo tem pub cię zwrotnie zaobserwuje. Jeżeli już użyłeś zaproszenia do pubu i widzisz na twoim profilu że nie zaobserwował cię z powrotem, spróbuj innego pubu.",
+	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Nikt nie będzie w stanie zobaczyć twoich postów dopóki ktoś cię nie zaobserwuje. Najłatwiejszym sposobem na pozyskanie obserwującego jest użycie zaproszenia do pubu, bo ten pub zaobserwuje cię zwrotnie. Jeżeli już użyłeś zaproszenia do pubu i widzisz na twoim profilu, że nie zaobserwował cię z powrotem, spróbuj innego pubu.",
 	"Cannot load thread": "Nie udało się załadować konwersacji",
 	"can attend": "może wziąć udział",
 	"Choose a title": "Wybierz tytuł",

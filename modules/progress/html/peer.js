@@ -1,4 +1,4 @@
-var {computed, when} = require('mutant')
+var { computed, when } = require('mutant')
 var nest = require('depnest')
 
 exports.gives = nest('progress.html.peer')

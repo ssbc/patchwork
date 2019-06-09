@@ -1,4 +1,4 @@
-var { h, Value, Dict, dictToCollection, map, computed } = require('mutant')
+var { h, Value, Dict, dictToCollection, map, computed, resolve, watch } = require('mutant')
 var nest = require('depnest')
 
 exports.gives = nest('app.views')
@@ -10,18 +10,23 @@ exports.create = function (api) {
     var forwardHistory = []
     var backHistory = []
 
-    if (defaultViews) {
-      defaultViews.forEach((view) => {
-        views.put(view, renderPage(view))
-      })
-    }
+    // if defaultViews changes, load them!
+    watch(defaultViews, (defaultViews) => {
+      if (defaultViews) {
+        defaultViews.forEach((view) => {
+          if (!views.has(view)) {
+            views.put(view, renderPage(view))
+          }
+        })
+      }
+    })
 
     var lastViewed = {}
 
     // delete cached view after 5 mins of last seeing
     setInterval(() => {
       views.keys().forEach((view) => {
-        if (!defaultViews.includes(view)) {
+        if (!(resolve(defaultViews) || []).includes(view)) {
           if (lastViewed[view] !== true && Date.now() - lastViewed[view] > (5 * 60e3) && view !== currentView()) {
             views.delete(view)
           }
@@ -31,7 +36,7 @@ exports.create = function (api) {
 
     var canGoForward = Value(false)
     var canGoBack = Value(false)
-    var currentView = Value((defaultViews && defaultViews[0]) || null)
+    var currentView = Value((resolve(defaultViews) || [])[0] || null)
 
     var viewCollection = dictToCollection(views)
     var html = h('div.main', map(viewCollection, (item) => {

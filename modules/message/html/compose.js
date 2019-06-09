@@ -7,17 +7,15 @@ var computed = require('mutant/computed')
 var nest = require('depnest')
 var mentions = require('ssb-mentions')
 var extend = require('xtend')
-var addSuggest = require('suggest-box')
-var emoji = require('emojilib')
 var ref = require('ssb-ref')
+var blobFiles = require('ssb-blob-files')
 
 exports.needs = nest({
   'blob.html.input': 'first',
-  'profile.async.suggest': 'first',
-  'channel.async.suggest': 'first',
+  'suggest.hook': 'first',
+
   'message.async.publish': 'first',
-  'emoji.sync.names': 'first',
-  'emoji.sync.url': 'first',
+  'sbot.obs.connection': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -25,16 +23,15 @@ exports.gives = nest('message.html.compose')
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
-  return nest('message.html.compose', function ({shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message'}, cb) {
+  return nest('message.html.compose', function ({ shrink = true, isPrivate, participants, meta, hooks, prepublish, placeholder = 'Write a message', draftKey }, cb) {
     var files = []
     var filesById = {}
     var focused = Value(false)
     var hasContent = Value(false)
     var publishing = Value(false)
-    var getProfileSuggestions = api.profile.async.suggest()
-    var getChannelSuggestions = api.channel.async.suggest()
 
     var blurTimeout = null
+    var saveTimer = null
 
     var expanded = computed([shrink, focused, hasContent], (shrink, focused, hasContent) => {
       if (!shrink || hasContent) {
@@ -45,17 +42,40 @@ exports.create = function (api) {
     })
 
     var textArea = h('textarea', {
+      hooks: [api.suggest.hook({ participants })],
+      'ev-dragover': onDragOver,
+      'ev-drop': onDrop,
       'ev-input': function () {
         hasContent.set(!!textArea.value)
+        queueSave()
       },
       'ev-blur': () => {
         clearTimeout(blurTimeout)
         blurTimeout = setTimeout(() => focused.set(false), 200)
       },
       'ev-focus': send(focused.set, true),
+      'ev-paste': ev => {
+        const files = ev.clipboardData && ev.clipboardData.files
+        if (!files || !files.length) return
+        attachFiles(files)
+      },
+      'ev-keydown': ev => {
+        if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) {
+          publish()
+          ev.preventDefault()
+        }
+      },
       disabled: publishing,
       placeholder
     })
+
+    if (draftKey) {
+      var draft = window.localStorage[`patchwork.drafts.${draftKey}`]
+      if (draft) {
+        textArea.value = draft
+        hasContent.set(!!textArea.value)
+      }
+    }
 
     var warningMessage = Value(null)
     var warning = h('section.warning',
@@ -65,43 +85,20 @@ exports.create = function (api) {
         h('div.close', { 'ev-click': () => warningMessage.set(null) }, 'x')
       ]
     )
-    var fileInput = api.blob.html.input(file => {
-      const megabytes = file.size / 1024 / 1024
-      if (megabytes >= 5) {
-        const rounded = Math.floor(megabytes * 100) / 100
-        warningMessage.set([
-          h('i.fa.fa-exclamation-triangle'),
-          h('strong', file.name),
-          ` is ${rounded}MB - the current limit is 5MB`
-        ])
-        return
-      }
-
-      files.push(file)
-
-      var parsed = ref.parseLink(file.link)
-      filesById[parsed.link] = file
-
-      var embed = isEmbeddable(file.type) ? '!' : ''
-      var pos = textArea.selectionStart
-      var before = textArea.value.slice(0, pos)
-      var after = textArea.value.slice(pos)
-
-      var spacer = embed ? '\n' : ' '
-      if (before && !before.endsWith(spacer)) before += spacer
-      if (!after.startsWith(spacer)) after = spacer + after
-
-      var embedPrefix = getEmbedPrefix(file.type)
-
-      textArea.value = `${before}${embed}[${embedPrefix}${file.name}](${file.link})${after}`
-      console.log('added:', file)
-    }, {
-      private: isPrivate
+    var fileInput = api.blob.html.input(afterAttach, {
+      private: isPrivate,
+      multiple: true
     })
 
     fileInput.onclick = function () {
       hasContent.set(true)
     }
+
+    var clearButton = h('button -clear', {
+      'ev-click': clear
+    }, [
+      i18n('Clear Draft')
+    ])
 
     var publishBtn = h('button', {
       'ev-click': publish,
@@ -116,7 +113,10 @@ exports.create = function (api) {
 
     var actions = h('section.actions', [
       fileInput,
-      publishBtn
+      h('div', [
+        when(hasContent, clearButton),
+        publishBtn
+      ])
     ])
 
     var composer = h('Compose', {
@@ -139,31 +139,92 @@ exports.create = function (api) {
       hasContent.set(!!textArea.value)
     }
 
-    addSuggest(textArea, (inputText, cb) => {
-      if (inputText[0] === '@') {
-        cb(null, getProfileSuggestions(inputText.slice(1), resolve(participants)))
-      } else if (inputText[0] === '#') {
-        cb(null, getChannelSuggestions(inputText.slice(1)))
-      } else if (inputText[0] === ':') {
-        // suggest emojis
-        var word = inputText.slice(1)
-        if (word[word.length - 1] === ':') {
-          word = word.slice(0, -1)
-        }
-        cb(null, suggestEmoji(word).slice(0, 100).map(function (emoji) {
-          return {
-            image: api.emoji.sync.url(emoji),
-            title: emoji,
-            subtitle: emoji,
-            value: ':' + emoji + ':'
-          }
-        }))
-      }
-    }, {cls: 'SuggestBox'})
-
     return composer
 
     // scoped
+
+    function clear () {
+      if (!window.confirm(i18n('Are you certain you want to clear your draft?'))) {
+        return
+      }
+      textArea.value = ''
+      hasContent.set(!!textArea.value)
+      save()
+    }
+
+    function queueSave () {
+      saveTimer = setTimeout(save, 1000)
+    }
+
+    function save () {
+      clearTimeout(saveTimer)
+      if (draftKey) {
+        if (!textArea.value) {
+          delete window.localStorage[`patchwork.drafts.${draftKey}`]
+        } else {
+          window.localStorage[`patchwork.drafts.${draftKey}`] = textArea.value
+        }
+      }
+    }
+
+    function onDragOver (ev) {
+      ev.dataTransfer.dropEffect = 'copy'
+      ev.preventDefault()
+      return false
+    }
+
+    function onDrop (ev) {
+      ev.preventDefault()
+
+      const files = ev.dataTransfer && ev.dataTransfer.files
+      if (!files || !files.length) return
+
+      ev.dataTransfer.dropEffect = 'copy'
+      attachFiles(files)
+      return false
+    }
+
+    function attachFiles (files) {
+      blobFiles(files, api.sbot.obs.connection, {
+        stripExif: true,
+        isPrivate: resolve(isPrivate)
+      }, afterAttach)
+    }
+
+    function afterAttach (err, file) {
+      if (err) {
+        if (err instanceof blobFiles.MaxSizeError) {
+          warningMessage.set([
+            // TODO: handle localised error messages (https://github.com/ssbc/ssb-blob-files/issues/3)
+            '⚠️ ', i18n('{{name}} ({{size}}) is larger than the allowed limit of {{max_size}}', {
+              'name': err.fileName,
+              'size': humanSize(err.fileSize),
+              'max_size': humanSize(err.maxFileSize)
+            })
+          ])
+        }
+        return
+      }
+
+      files.push(file)
+
+      var parsed = ref.parseLink(file.link)
+      filesById[parsed.link] = file
+
+      var embed = isEmbeddable(file.type) ? '!' : ''
+      var pos = textArea.selectionStart
+      var before = textArea.value.slice(0, pos)
+      var after = textArea.value.slice(pos)
+
+      var spacer = embed ? '\n' : ' '
+      if (before && !before.endsWith(spacer)) before += spacer
+      if (!after.startsWith(spacer)) after = spacer + after
+
+      var embedPrefix = getEmbedPrefix(file.type)
+
+      textArea.value = `${before}${embed}[${embedPrefix}${file.name}](${file.link})${after}`
+      console.log('added:', file)
+    }
 
     function publish () {
       if (!textArea.value) {
@@ -203,25 +264,21 @@ exports.create = function (api) {
               type: 'error',
               title: i18n('Error'),
               buttons: [i18n('OK')],
-              message: i18n('An error occured while publishing your message.'),
+              message: i18n('An error occurred while publishing your message.'),
               detail: err.message
             })
           }
         } else {
-          if (msg) textArea.value = ''
+          if (msg) {
+            textArea.value = ''
+            hasContent.set(!!textArea.value)
+            save()
+          }
           if (cb) cb(null, msg)
         }
       }
     }
   })
-
-  function suggestEmoji (prefix) {
-    var availableEmoji = api.emoji.sync.names()
-    return emoji.ordered.filter(key => {
-      if (!availableEmoji.includes(key)) return false
-      return key.startsWith(prefix) || key.includes('_' + prefix) || emoji.lib[key].keywords.some(word => word.startsWith(prefix) || word.startsWith(':' + prefix))
-    })
-  }
 }
 
 function showDialog (opts) {
@@ -239,4 +296,8 @@ function getEmbedPrefix (type) {
     if (type.startsWith('video/')) return 'video:'
   }
   return ''
+}
+
+function humanSize (size) {
+  return (Math.ceil(size / (1024 * 1024) * 10) / 10) + ' MB'
 }

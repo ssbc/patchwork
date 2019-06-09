@@ -18,7 +18,7 @@ exports.create = function (api) {
     if (path !== '/channels') return
 
     var id = api.keys.sync.id()
-    var channels = api.channel.obs.recent()
+    var channels = api.channel.obs.recent(150)
     var subscribedChannels = api.channel.obs.subscribed(id)
     var loading = computed(subscribedChannels.sync, x => !x)
 
@@ -38,7 +38,7 @@ exports.create = function (api) {
           }, [
             h('span.name', '#' + channel)
           ])
-        }, {maxTime: 5, idle: true})
+        }, { maxTime: 5, idle: true })
       ])
     ])
   })

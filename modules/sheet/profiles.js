@@ -1,4 +1,4 @@
-var {h, map, computed, Value, lookup} = require('mutant')
+var { h, map, computed, Value, lookup } = require('mutant')
 var nest = require('depnest')
 var catchLinks = require('../../lib/catch-links')
 
@@ -46,7 +46,7 @@ exports.create = function (api) {
           title,
           h('input', {
             type: 'search',
-            placeholder: 'filter names',
+            placeholder: i18n('filter names'),
             'ev-input': function (ev) {
               currentFilter.set(ev.target.value)
             },
@@ -94,10 +94,10 @@ exports.create = function (api) {
               h('div.name', [ api.about.obs.name(id) ])
             ]),
             h('div.buttons', [
-              api.contact.html.followToggle(id, {block: false})
+              api.contact.html.followToggle(id, { block: false })
             ])
           ])
-        }, { idle: true, maxTime: 10 })
+        }, { nextTime: true, maxTime: 10 })
       ])
     ]
   }

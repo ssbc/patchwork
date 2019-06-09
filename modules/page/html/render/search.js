@@ -31,7 +31,7 @@ exports.create = function (api) {
     var updates = Value(0)
     var aborter = null
 
-    const searchHeader = h('div', {className: 'PageHeading'}, [
+    const searchHeader = h('div', { className: 'PageHeading' }, [
       h('h1', [h('strong', i18n('Search Results:')), ' ', query])
     ])
 
@@ -117,27 +117,62 @@ exports.create = function (api) {
     }
 
     function renderMsg (msg) {
-      var el = h('FeedEvent', api.message.html.render(msg))
+      var el = h('FeedEvent', api.message.html.render(msg, {
+        renderUnknown: true,
+        outOfContext: true
+      }))
       highlight(el, createOrRegExp(query.split(whitespace)))
       return el
     }
   })
 
-  function getStream (query, realtime = false) {
-    if (ref.isLink(query) || query.startsWith('#')) {
+  function getStream (queryText, realtime = false) {
+    if (ref.isLink(queryText) || queryText.startsWith('#')) {
       return api.sbot.pull.backlinks({
-        query: [ {$filter: { dest: query }} ],
+        query: [ { $filter: { dest: queryText } } ],
         reverse: true,
         old: !realtime,
         index: 'DTA' // use asserted timestamps
       })
     } else {
-      if (realtime) {
-        return api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({old: false, query: query.split(whitespace)}))
-      } else {
-        return api.sbot.pull.stream(sbot => sbot.search.query({query}))
-      }
+      var { author, query, onlyPrivate } = parseSearch(queryText)
+      return pull(
+        onlyPrivate
+          ? api.sbot.pull.stream(sbot => sbot.patchwork.privateSearch({ old: !realtime, reverse: true, query: query.split(whitespace), author }))
+          : realtime
+            ? api.sbot.pull.stream(sbot => sbot.patchwork.linearSearch({ old: false, query: query.split(whitespace) }))
+            : api.sbot.pull.stream(sbot => sbot.search.query({ query })),
+        pull.filter(msg => {
+          if (author && msg.value.author !== author) return false
+          return true
+        })
+      )
     }
+  }
+}
+
+function parseSearch (query) {
+  var parts = query.split(/\s/)
+  var result = []
+  var author = null
+  var onlyPrivate = false
+  parts.forEach(part => {
+    if (part.startsWith('author:')) {
+      part = part.slice(('author:').length)
+      if (ref.isFeedId(part)) {
+        author = part
+      }
+    } else if (part === 'is:private') {
+      onlyPrivate = true
+    } else {
+      result.push(part)
+    }
+  })
+
+  return {
+    query: result.join(' '),
+    onlyPrivate,
+    author
   }
 }
 
@@ -149,7 +184,7 @@ function createOrRegExp (ary) {
 
 function highlight (el, query) {
   if (el) {
-    var searcher = new TextNodeSearcher({container: el})
+    var searcher = new TextNodeSearcher({ container: el })
     searcher.query = query
     searcher.highlight()
     return el

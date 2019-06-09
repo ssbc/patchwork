@@ -20,28 +20,53 @@ exports.create = function (api) {
     api.sheet.display(function (close) {
       var isPrivate = msg.value.private
       var isRoot = !msg.value.content.root
+      var exists = !!msg.key
       var recps = (msg.value.content.recps || []).filter(id => id !== msg.value.author)
+
+      // handle too many private recipients
+      if (isPrivate && recps.length > 7) {
+        return {
+          content: [
+            h('h2', [i18n('Too many recipients')]),
+            h('div.info', [
+              h('p', [
+                i18n('Private messages can only be addressed to up to 7 people. '),
+                plural('Your message has %s recipients', recps.length)
+              ]),
+              h('p', [i18n('Please go back and remove some of the recipients.')])
+            ])
+          ],
+          classList: ['-private'],
+          footer: [h('button -cancel', { 'ev-click': cancel }, i18n('Close'))]
+        }
+      }
+
+      var messageElement = api.message.html.render(msg)
+
+      // allow inspecting of raw message that is about to be sent
+      messageElement.msg = msg
+
       return {
         content: [
-          api.message.html.render(msg)
+          messageElement
         ],
         classList: [
           when(isPrivate, '-private', '-public')
         ],
         footer: [
           when(isPrivate,
-            h('img', {src: api.emoji.sync.url('closed_lock_with_key')}),
-            h('img', {src: api.emoji.sync.url('globe_with_meridians')})
+            h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
+            h('img', { src: api.emoji.sync.url('globe_with_meridians') })
           ),
           when(isPrivate,
             h('div.info -private', [
-              recps.length ? when(isRoot,
+              recps.length ? when(!exists && isRoot,
                 plural('Only visible to you and %s people that have been mentioned', recps.length),
                 plural('Only visible to you and %s other thread participants', recps.length)
               ) : i18n('This message will only be visible to you')
             ]),
             h('div.info -public', [
-              when(msg.publicallyEditable,
+              when(msg.publiclyEditable,
                 i18n('This message will be public and can be edited by anyone'),
                 i18n('This message will be public and cannot be edited or deleted')
               )

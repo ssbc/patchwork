@@ -1,86 +1,35 @@
 FeedEvent {
-  display: flex
-  flex-direction: column
   background: transparent
-  width: 100%
-  margin: 25px auto
-
   -group {
     -new {
       background-color: #505050
     }
     background: #505050
     a.expand {
-      display: block;
-      padding: 10px;
-      background: #656363;
-      text-align: center;
-      color: #dadada;
-      cursor: pointer;
-      :before { content: '▼ '; font-size: 80% }
+      background: #656363
+      color: #dadada
       :hover {
         color: white
       }
     }
-
     div.items {
-      margin: -10px 15px;
       (div.Message) {
         background-color: #444444
       }
     }
-
-    -expanded {
-      a.expand {
-        :before { display: none }
-      }
-    }
   }
-
-  :empty {
-    margin-bottom: -25px
-  }
-
-  -new, -unread {
-    box-shadow: 0px 0px 2px #ffc800;
-    background: #fffdf7;
-  }
-
-  div + div {
-  }
-
-  div {
-    flex: 1
-  }
-
   a.full {
-    display: block;
-    padding: 10px;
-    background: #2d2c2c;
-    text-align: center;
+    background: #2d2c2c
   }
-
   div.replies {
-    font-size: 100%
-    display: flex
-    flex-direction: column
     border-top: 1px solid #2d2c2c
-
-    div {
-      flex: 1
-      margin: 0
-    }
-
     div + div {
       border-top: 1px solid #2d2c2c
     }
   }
-
   div.meta {
-    font-size: 100%
     color: #757474
     padding: 8px 20px
     text-align: right
   }
-
 }

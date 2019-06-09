@@ -2,13 +2,12 @@ var { h } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
-  'feed.pull.type': 'first',
   'feed.html.rollup': 'first',
-  'feed.pull.public': 'first',
+  'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'gathering.sheet.edit': 'first',
   'keys.sync.id': 'first',
   'contact.obs.following': 'first',
-  'sbot.pull.stream': 'first',
   'intl.sync.i18n': 'first'
 })
 
@@ -18,9 +17,6 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('page.html.render', function channel (path) {
     if (path !== '/gatherings') return
-
-    var id = api.keys.sync.id()
-    var following = api.contact.obs.following(id)
 
     var prepend = [
       h('PageHeading', [
@@ -33,42 +29,17 @@ exports.create = function (api) {
       ])
     ]
 
-    return api.feed.html.rollup(api.feed.pull.type('gathering'), {
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.gatherings.roots(opts)
+    }, { limit: 40, reverse: true })
+
+    return api.feed.html.rollup(getStream, {
       prepend,
-      rootFilter: (msg) => isGathering(msg),
-      bumpFilter: (msg) => {
-        if (isGathering(msg)) {
-          return true
-        } else if (followsAuthor(following, id, msg) && isAttendee(msg)) {
-          return 'attending'
-        }
-      },
-      resultFilter: (msg) => followsAuthor(following, id, msg) || followingIsAttending(following, msg),
-      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.latest({ids: [id]}))
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.gatherings.latest())
     })
   })
 
   function createGathering () {
     api.gathering.sheet.edit()
   }
-}
-
-function followsAuthor (following, yourId, msg) {
-  var author = msg.value.author
-  return yourId === author || following().includes(author)
-}
-
-function followingIsAttending (following, msg) {
-  if (Array.isArray(msg.replies)) {
-    return msg.replies.some((reply) => isAttendee(reply) && following().includes(reply.value.author))
-  }
-}
-
-function isAttendee (msg) {
-  var content = msg.value && msg.value.content
-  return (content && content.type === 'about' && content.attendee && !content.attendee.remove)
-}
-
-function isGathering (msg) {
-  return (msg.value && msg.value.content && msg.value.content.type === 'gathering')
 }

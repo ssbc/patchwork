@@ -1,0 +1,8 @@
+PageHeading {
+  display: flex
+  max-width: 800px
+  margin: 10px auto
+  h1 {
+    flex: 1
+  }
+}

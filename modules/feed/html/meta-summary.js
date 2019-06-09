@@ -27,7 +27,7 @@ exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   const plural = api.intl.sync.i18n_n
 
-  return nest('feed.html', {metaSummary})
+  return nest('feed.html', { metaSummary })
 
   function metaSummary (group, renderItem, getPriority, opts) {
     var expanded = Value(false)
@@ -40,7 +40,7 @@ exports.create = function (api) {
       reduced.map(item => {
         return h('div -' + item.action, [
           h('div -left', [item.from.slice(0, 8).map(avatarFormatter), more(item.from, 8)]),
-          h('span.action', {title: actionDescription(item)}),
+          h('span.action', { title: actionDescription(item) }),
           h('div -right', [item.to.slice(0, 8).map(avatarFormatter), more(item.to, 8)])
         ])
       })
@@ -56,7 +56,7 @@ exports.create = function (api) {
       when(expanded, h('div.items', group.msgs.map(msg => renderItem(msg, opts)))),
       h('a.expand', {
         'tab-index': 0,
-        'ev-click': {handleEvent: toggleValue, value: expanded}
+        'ev-click': { handleEvent: toggleValue, value: expanded }
       }, [
         when(expanded,
           [i18n('Hide details')],
@@ -68,9 +68,9 @@ exports.create = function (api) {
 
   function avatarFormatter (id) {
     if (id.startsWith('#')) {
-      return h('a -channel', {href: id}, `#${ref.normalizeChannel(id)}`)
+      return h('a -channel', { href: id }, `#${ref.normalizeChannel(id)}`)
     } else {
-      return h('a', {href: id}, api.about.html.image(id))
+      return h('a', { href: id }, api.about.html.image(id))
     }
   }
 
@@ -186,9 +186,9 @@ function getActionCounts (actions) {
   // collect who did what and has what done on them
   for (var key in actions) {
     var action = actions[key]
-    var {from, to} = splitKey(key)
-    actionCounts[from] = actionCounts[from] || {from: {}, to: {}}
-    actionCounts[to] = actionCounts[to] || {from: {}, to: {}}
+    var { from, to } = splitKey(key)
+    actionCounts[from] = actionCounts[from] || { from: {}, to: {} }
+    actionCounts[to] = actionCounts[to] || { from: {}, to: {} }
 
     actionCounts[from].from[action] = actionCounts[from].from[action] || []
     actionCounts[to].to[action] = actionCounts[to].to[action] || []
@@ -206,10 +206,10 @@ function reduceActions (actionCounts) {
   for (let key in actionCounts) {
     var value = actionCounts[key]
     for (let action in value.from) {
-      actions.push({from: [key], action, to: value.from[action], rank: value.from[action].length})
+      actions.push({ from: [key], action, to: value.from[action], rank: value.from[action].length })
     }
     for (let action in value.to) {
-      actions.push({from: value.to[action], action, to: [key], rank: value.to[action].length})
+      actions.push({ from: value.to[action], action, to: [key], rank: value.to[action].length })
     }
   }
 

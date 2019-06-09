@@ -1,0 +1,59 @@
+ProfilePreview {
+  box-shadow: 0 0 10px rgba(0,0,0,0.3)
+  z-index: 1
+  position: absolute
+  width: 500px
+  section {
+    color: white
+    padding: 5px
+    code {
+      user-select: text
+      word-break: break-all
+    }
+    a {
+      color: white
+    }
+    -distanceWarning {
+      color: white
+    }
+  }
+  header {
+    display: flex
+    div.image {
+      margin: 5px
+      img {
+        width: 50px
+        height: 50px
+      }
+    }
+    div.main {
+      min-width: 0
+      flex: 1
+      margin: 5px
+      div.title {
+        display: flex
+        h1 {
+          flex: 1
+          margin: 0
+          margin-bottom: 3px
+        }
+        div.meta {
+          a {
+            margin-left: 5px
+            display: inline-block
+          }
+        }
+      }
+      section {
+        pre {
+          text-overflow: ellipsis
+          overflow: hidden
+          color: #b3b3b3
+          margin: 2px 0
+          font-size: 110%
+          -webkit-user-select: text
+        }
+      }
+    }
+  }
+}

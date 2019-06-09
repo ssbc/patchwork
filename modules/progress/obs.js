@@ -1,6 +1,6 @@
 var nest = require('depnest')
 var pull = require('pull-stream')
-var {Struct, Dict, Value, computed, watch} = require('mutant')
+var { Struct, Dict, Value, computed, watch } = require('mutant')
 
 exports.gives = nest({
   'progress.obs': [
@@ -52,7 +52,7 @@ exports.create = function (api) {
     if (!syncStatus) {
       syncStatus = ProgressStatus(x => x.replicate.changes(), {
         incompleteFeeds: 0,
-        pendingPeers: Dict({}, {fixedIndexing: true}),
+        pendingPeers: Dict({}, { fixedIndexing: true }),
         feeds: null,
         rate: 0
       })

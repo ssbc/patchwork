@@ -3,7 +3,8 @@ var ref = require('ssb-ref')
 
 exports.needs = nest({
   'feed.html.rollup': 'first',
-  'feed.pull.private': 'first',
+  'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'message.html.compose': 'first',
   'keys.sync.id': 'first',
   'intl.sync.i18n': 'first',
@@ -13,13 +14,14 @@ exports.needs = nest({
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
-  return nest('page.html.render', function channel (path) {
-    if (path !== '/private') return
+  return nest('page.html.render', function (path) {
+    if (typeof path !== 'string' || (path !== '/private' && path.trim() !== '?is:private')) return
 
     const i18n = api.intl.sync.i18n
     var id = api.keys.sync.id()
     var compose = api.message.html.compose({
-      meta: {type: 'post'},
+      meta: { type: 'post' },
+      draftKey: 'private',
       isPrivate: true,
       prepublish: function (msg) {
         msg.recps = [id]
@@ -36,9 +38,14 @@ exports.create = function (api) {
       placeholder: i18n('Write a private message')
     })
 
-    var view = api.feed.html.rollup(api.feed.pull.private, {
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.privateFeed.roots(opts)
+    }, { limit: 20, reverse: true })
+
+    var view = api.feed.html.rollup(getStream, {
       prepend: [compose],
-      bumpFilter: (msg) => msg.value.content.type !== 'vote'
+      groupSummaries: false,
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.privateFeed.latest())
     })
 
     view.setAnchor = function (data) {

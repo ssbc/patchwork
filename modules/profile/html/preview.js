@@ -34,14 +34,14 @@ exports.create = function (api) {
         h('div.main', [
           h('div.title', [
             h('h1', [
-              h('a', {href: id, 'ev-click': () => api.app.navigate(id)}, [name])
+              h('a', { href: id, 'ev-click': () => api.app.navigate(id) }, [name])
             ]),
             h('div.meta', [
-              api.contact.html.followToggle(id, {block: false})
+              api.contact.html.followToggle(id, { block: false })
             ])
           ]),
           h('section -publicKey', [
-            h('pre', {title: i18n('Public key for this profile')}, id)
+            h('pre', { title: i18n('Public key for this profile') }, id)
           ])
         ])
       ]),
@@ -60,13 +60,13 @@ exports.create = function (api) {
               '⚠️ ', computed(['This person is blocked by %s of your friends.', contact.blockingFriendsCount], plural)
             ])
           ]),
-          when(contact.noIncoming,
+          when(contact.noOutgoing,
             h('section -distanceWarning', [
-              '⚠️ ', i18n(`You don't follow anyone who follows this person`)
+              '⚠️ ', i18n('This person does not follow anyone that follows you')
             ]),
-            when(contact.noOutgoing,
+            when(contact.noIncoming,
               h('section -distanceWarning', [
-                '⚠️ ', i18n('This person does not follow anyone that follows you')
+                '⚠️ ', i18n(`You don't follow anyone who follows this person`)
               ]),
               when(contact.mutualFriendsCount,
                 h('section -mutualFriends', [

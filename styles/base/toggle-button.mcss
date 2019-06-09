@@ -1,0 +1,78 @@
+ToggleButton {
+  display: inline-block
+  padding: 8px 10px
+  border-radius: 3px
+  font-size: 13px
+  cursor: pointer
+  transition: background-color 0.25s ease, color 0.25s ease, background-image 0.25s ease
+  -subscribe {
+    :before {
+      content: '★ '
+    }
+    :hover {
+      background-color: #45b754
+      color: white
+    }
+  }
+  -drop {
+    :after {
+      -webkit-mask-box-image: svg(dropArrow)
+      width: 10px;
+      height: 6px;
+      display: inline-block;
+      content: ' ';
+      margin-left: 3px;
+    }    
+  }
+  -unsubscribe {
+    background-repeat: no-repeat
+    background-position: right
+    background-image: svg(subscribed)
+    padding-right: 25px
+    :hover {
+      background-color: #b74945
+      color: white
+    }
+  }
+  
+  -options {
+    margin-left: 5px
+    :hover {
+      background-color: #bd881c
+    }
+  }
+
+  -blocking {
+    margin-left: 5px
+    :hover {
+      background-color: #bd6363
+    }
+  }
+  -unblocking {
+    margin-left: 5px
+    :hover {
+      background-color: #bd6363
+    }
+  }
+  -disabled {
+    cursor: default
+    opacity: 0.4 !important
+    text-decoration: none !important
+  }
+  :hover {
+    opacity: 1
+    text-decoration: none
+  }
+  @svg subscribed {
+    width: 20px
+    height: 12px
+  }
+  @svg dropArrow {
+    width: 12px
+    height: 6px
+    content: "<path d='M2,0 L10,0 L6,6 Z' />"
+    path {
+      fill: #888
+    }
+  }
+}

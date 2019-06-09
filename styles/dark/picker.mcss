@@ -1,57 +1,37 @@
 Picker {
   margin: 5px 0
-
   a {
-    display: inline-block;
     background: #383736
     margin: 0 5px 5px 0
     padding: 2px 5px
     border: 2px solid transparent
     border-radius: 3px
-    color: #ccc;
-    vertical-align: top;
-
+    color: #ccc
     :hover {
       color: white
     }
-
     img {
-      width: 50px
-      height: 50px
-      display: block
       border-radius: 3px
       margin: -2px -5px
     }
-
     -assigned {
       color: white
       border: 2px solid #c1cdf0
       background: #c1cdf0
     }
-
     -self {
       color: white
       border: 2px solid #6f74e5 !important
       background: #6f74e5 !important
     }
   }
-
   span.add {
-    position: relative
-    display: inline-block;
     background: #383736
     margin: 0 5px 5px 0
     border: 2px solid transparent
     border-radius: 3px
-
     ::before {
-      font-size: 30px;
-      content: '+';
-      position: absolute;
-      top: 5px;
-      left: 0;
-      right: 0;
-      text-align: center;
+      top: 5px
     }
     :hover {
       color: white
@@ -59,11 +39,6 @@ Picker {
     input[type="file"] {
       height: 50px
       width: 50px
-      display: block
-      cursor: pointer
-      opacity: 0
     }
   }
-
-
 }

@@ -10,7 +10,7 @@ module.exports = function (ssb, config) {
     },
     stream: function (id) {
       return pull(
-        ssb.backlinks.read({old: false, index: 'DTS'}),
+        ssb.backlinks.read({ old: false, index: 'DTS' }),
         pull.filter(x => subscriptions.has(x.dest))
       )
     }

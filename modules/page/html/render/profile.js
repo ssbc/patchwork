@@ -1,6 +1,6 @@
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var {h, when, computed, map, send, dictToCollection, resolve, onceTrue} = require('mutant')
+var { h, when, computed, map, send, dictToCollection, resolve, onceTrue } = require('mutant')
 
 exports.needs = nest({
   'about.obs': {
@@ -17,7 +17,8 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'about.html.image': 'first',
   'feed.html.rollup': 'first',
-  'feed.pull.profile': 'first',
+  'sbot.pull.resumeStream': 'first',
+  'sbot.pull.stream': 'first',
   'sbot.async.publish': 'first',
   'sbot.obs.connection': 'first',
   'keys.sync.id': 'first',
@@ -43,12 +44,15 @@ exports.create = function (api) {
     var description = api.about.obs.description(id)
     var contact = api.profile.obs.contact(id)
     var recent = api.profile.obs.recentlyUpdated()
+    var isYou = id === yourId
 
     onceTrue(api.sbot.obs.connection, sbot => {
       // request a once off replicate of this feed
       // this is so we can break through the "fog of war", and discover profiles by visiting their keys
       // ... that is, if any pubs we know have their data!
-      sbot.replicate.request(id)
+      if (contact.blockingFriendsCount() === 0) {
+        sbot.replicate.request(id)
+      }
     })
 
     // HACK: if requesting this feed has suddenly downloaded a bunch of posts, then refresh view immediately
@@ -70,10 +74,11 @@ exports.create = function (api) {
       return followers.filter(follower => !friends.includes(follower))
     })
 
+    // only include names/images assigned by people you follow or people they follow
     var names = computed([api.about.obs.names(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
     var images = computed([api.about.obs.images(id), contact.yourFollowing, contact.following, yourId, id], filterByValues)
 
-    var namePicker = h('div', {className: 'Picker'}, [
+    var namePicker = h('div', { className: 'Picker' }, [
       map(dictToCollection(names), (item) => {
         var isSelf = computed(item.value, (ids) => ids.includes(id))
         var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
@@ -93,7 +98,7 @@ exports.create = function (api) {
           item.key
         ])
       }),
-      h('a -add', {
+      isYou ? null : h('a -add', {
         'ev-click': () => {
           rename(id)
         },
@@ -101,7 +106,7 @@ exports.create = function (api) {
       }, ['+'])
     ])
 
-    var imagePicker = h('div', {className: 'Picker'}, [
+    var imagePicker = h('div', { className: 'Picker' }, [
       map(dictToCollection(images), (item) => {
         var isSelf = computed(item.value, (ids) => ids.includes(id))
         var isAssigned = computed(item.value, (ids) => ids.includes(yourId))
@@ -125,8 +130,9 @@ exports.create = function (api) {
           })
         ])
       }),
-      h('span.add', [
-        api.blob.html.input(file => {
+      isYou ? null : h('span.add', [
+        api.blob.html.input((err, file) => {
+          if (err) return
           assignImage(id, file.link)
         }, {
           accept: 'image/*',
@@ -135,23 +141,32 @@ exports.create = function (api) {
       ])
     ])
 
-    var prepend = h('header', {className: 'ProfileHeader'}, [
+    var prepend = h('header', { className: 'ProfileHeader' }, [
       h('div.image', api.about.html.image(id)),
       h('div.main', [
         h('div.title', [
           h('h1', [name]),
           h('div.meta', [
             when(id === yourId, [
-              h('button', {'ev-click': api.profile.sheet.edit}, i18n('Edit Your Profile'))
-            ], [
-              api.contact.html.followToggle(id)
-            ])
+              h('button', { 'ev-click': api.profile.sheet.edit }, i18n('Edit Your Profile'))
+            ], api.contact.html.followToggle(id))
           ])
         ]),
         h('section -publicKey', [
-          h('pre', {title: i18n('Public key for this profile')}, id)
+          h('pre', { title: i18n('Public key for this profile') }, id)
         ]),
 
+        when(contact.hidden, [
+          h('section -blocked', {
+            classList: [when(contact.youBlock, null, '-ignore')]
+          }, [
+            h('h1', [when(contact.youBlock,
+              ['⛔️ ', i18n('You have chosen to publicly block this person.')],
+              ['👤 ', i18n('You have chosen to privately ignore this person.')]
+            )]),
+            h('p', i18n('No new messages will be downloaded. Existing messages will be hidden.'))
+          ])
+        ]),
         when(contact.notFollowing, [
           when(contact.blockingFriendsCount, h('section -blockWarning', [
             h('a', {
@@ -212,21 +227,24 @@ exports.create = function (api) {
       ])
     ])
 
-    var feedView = api.feed.html.rollup(api.feed.pull.profile(id), {
+    var getStream = api.sbot.pull.resumeStream((sbot, opts) => {
+      return sbot.patchwork.profile.roots(opts)
+    }, { limit: 40, reverse: true, id })
+
+    var feedView = api.feed.html.rollup(getStream, {
       prepend,
+      hidden: contact.hidden,
       compactFilter: (msg) => msg.value.author !== id, // show root context messages smaller
-      displayFilter: (msg) => msg.value.author === id,
-      rootFilter: (msg) => !contact.youBlock() && !api.message.sync.root(msg),
-      bumpFilter: (msg) => msg.value.author === id,
-      ungroupFilter: (msg) => msg.value.author !== id
+      ungroupFilter: (msg) => msg.value.author !== id,
+      updateStream: api.sbot.pull.stream(sbot => sbot.patchwork.profile.latest({ id }))
     })
 
-    var container = h('div', {className: 'SplitView'}, [
+    var container = h('div', { className: 'SplitView' }, [
       h('div.main', [
         feedView
       ]),
       h('div.side.-right', [
-        h('button PrivateMessageButton', {'ev-click': () => api.app.navigate('/private', {compose: {to: id}})}, i18n('Send Private Message')),
+        h('button PrivateMessageButton', { 'ev-click': () => api.app.navigate('/private', { compose: { to: id } }) }, i18n('Send Private Message')),
         when(contact.sync,
           h('div', [
             renderContactBlock(i18n('Friends'), onlyRecent(friends, 10), contact.yourFollowing, friends),
@@ -234,13 +252,10 @@ exports.create = function (api) {
             renderContactBlock(i18n('Following'), onlyRecent(following, 10), contact.yourFollowing, following),
             renderContactBlock(i18n('Blocked by'), contact.blockingFriends, contact.yourFollowing)
           ]),
-          h('div', {className: 'Loading'})
+          h('div', { className: 'Loading' })
         )
       ])
     ])
-
-    // refresh feed (to hide all posts) when blocked
-    contact.youBlock(feedView.reload)
 
     container.pendingUpdates = feedView.pendingUpdates
     container.reload = feedView.reload
@@ -309,7 +324,7 @@ exports.create = function (api) {
           ])
         }, {
           maxTime: 5,
-          idle: true
+          nextTick: true
         }),
         when(moreCount,
           h('a.profile -more', {
@@ -349,7 +364,7 @@ exports.create = function (api) {
     api.sheet.display(close => {
       var currentName = api.about.obs.name(id)
       var input = h('input', {
-        style: {'font-size': '150%'},
+        style: { 'font-size': '150%' },
         value: currentName()
       })
       setTimeout(() => {
