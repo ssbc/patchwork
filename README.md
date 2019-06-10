@@ -23,25 +23,13 @@ You're done! Check out `#new-people` to see who else has recently joined.
 
 ## Installation
 
-[Download the Patchwork installer][latest] or install with a package manager.
+[Download an installer for Windows, macOS, or Linux.][latest]
 
-With [npm][npm]:
+You can also install Patchwork with your favorite package manager.
 
-```shell
-npm install --global ssb-patchwork
-```
-
-With [yarn][yarn]:
-
-```shell
-yarn global add ssb-patchwork
-```
-
-With [yay][yay]:
-
-```shell
-yay -S ssb-patchwork
-```
+- **[npm][npm]:** `npm install --global ssb-patchwork`
+- **[yarn][yarn]:** `yarn global add ssb-patchwork`
+- **[yay][yay]:** `yay -S ssb-patchwork`
 
 Need something else? Check out [`INSTALL.md`][install] for more information.
 
