@@ -39,6 +39,7 @@ before_install:
 
 script: npm test && npm run dist
 
+
 branches:
-  except:
-    - "/^v\\d+\\.\\d+\\.\\d+$/"
+  only:
+  - master
