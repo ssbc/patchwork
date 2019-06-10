@@ -22,10 +22,18 @@ exports.create = function (api) {
     const locales = api.intl.sync.locales()
     const localeNameLookup = api.intl.sync.localeNames()
     const fontSizes = ['8px', '10px', '12px', '14px', '16px', '18px', '20px']
+    const fontFamilies = [
+      'serif',
+      'sans-serif',
+      'cursive',
+      'fantasy',
+      'monospace'
+    ]
 
     const theme = api.settings.obs.get('patchwork.theme', 'light')
     const lang = api.settings.obs.get('patchwork.lang', '')
     const fontSize = api.settings.obs.get('patchwork.fontSize', '')
+    const fontFamily = api.settings.obs.get('patchwork.fontFamily', '')
     const includeParticipating = api.settings.obs.get('patchwork.includeParticipating', false)
 
     // const filterFollowing = api.settings.obs.get('filters.following')
@@ -84,30 +92,39 @@ exports.create = function (api) {
           ]),
 
           h('section', [
-            h('h2', i18n('Notification Options')),
-
-            h('div', [
-              checkbox(includeParticipating, {
-                label: i18n('Include "Participating" tab in navigation bar')
-              })
+            h('h2', i18n('Font Family')),
+            h('select', {
+              style: { 'font-size': '120%' },
+              value: fontFamily,
+              'ev-change': (ev) => fontFamily.set(ev.target.value)
+            }, [
+              h('option', { value: '' }, i18n('Default')),
+              fontFamilies.map(family => h('option', { value: family }, family))
             ])
           ]),
+          h('h2', i18n('Notification Options')),
 
-          // h('section', [
-          //   h('h2', i18n('Channel Feed Options')),
-
-          //   h('div', [
-          //     checkbox(filterChannelViewSubscriptions, {
-          //       label: i18n('Hide channel subscription messages')
-          //     })
-          //   ])
-          // ]),
-
-          h('section', [
-            h('h2', i18n('Information')),
-
-            h('p', `${packageInfo.productName} ${packageInfo.version}`)
+          h('div', [
+            checkbox(includeParticipating, {
+              label: i18n('Include "Participating" tab in navigation bar')
+            })
           ])
+        ]),
+
+        // h('section', [
+        //   h('h2', i18n('Channel Feed Options')),
+
+        //   h('div', [
+        //     checkbox(filterChannelViewSubscriptions, {
+        //       label: i18n('Hide channel subscription messages')
+        //     })
+        //   ])
+        // ]),
+
+        h('section', [
+          h('h2', i18n('Information')),
+
+          h('p', `${packageInfo.productName} ${packageInfo.version}`)
         ])
       ])
     ])
