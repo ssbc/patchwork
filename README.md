@@ -23,15 +23,15 @@ You're done! Check out `#new-people` to see who else has recently joined.
 
 ## Installation
 
-[Download an installer for Windows, macOS, or Linux.][latest]
+Most people should **[download Patchwork for Windows, macOS, or Linux][gh-dl]**.
 
-You can also install Patchwork with your favorite package manager.
+Alternatively, you can install Patchwork with your favorite package manager.
 
 - **[npm][npm]:** `npm install --global ssb-patchwork`
 - **[yarn][yarn]:** `yarn global add ssb-patchwork`
 - **[yay][yay]:** `yay -S ssb-patchwork`
 
-Need something else? Check out [`INSTALL.md`][install] for more information.
+Building from source? Check out [`INSTALL.md`][install] for more information.
 
 ## Contributing
 
@@ -54,8 +54,8 @@ AGPL-3.0
 
 [conduct]: code-of-conduct.md
 [contributing]: CONTRIBUTING.md
+[gh-dl]: https://github.com/ssbc/patchwork/releases/latest
 [install]: INSTALL.md
-[latest]: https://github.com/ssbc/patchwork/releases/latest
 [manyverse]: https://gitlab.com/staltz/manyverse
 [new-issue]: https://github.com/fraction/readme-boilerplate/issues/new
 [npm]: https://npmjs.org/
