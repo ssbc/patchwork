@@ -24,7 +24,7 @@ exports.create = function (api) {
       var recps = (msg.value.content.recps || []).filter(id => id !== msg.value.author)
 
       // handle too many private recipients
-      if (isPrivate && recps.length > 7) {
+      if (isPrivate && recps.length >= 7) {
         return {
           content: [
             h('h2', [i18n('Too many recipients')]),
