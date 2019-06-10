@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Font selection in settings menu.
+
 ### Fixed
 - Fixed emoji not rendering on Windows.
 
