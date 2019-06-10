@@ -23,7 +23,7 @@ You're done! Check out `#new-people` to see who else has recently joined.
 
 ## Installation
 
-Get the [latest release from GitHub][latest] or install with a package manager.
+[Download the Patchwork installer][latest] or install with a package manager.
 
 With [npm][npm]:
 
