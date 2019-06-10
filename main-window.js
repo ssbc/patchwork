@@ -198,7 +198,7 @@ module.exports = function (config) {
     ]),
     when(latestUpdate,
       h('div.info', [
-        h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases' }, [
+        h('a.message -update', { href: 'https://github.com/ssbc/patchwork/releases/latest' }, [
           h('strong', ['Patchwork ', latestUpdate, i18n(' has been released.')]), i18n(' Click here to download and view more info!'),
           h('a.ignore', { 'ev-click': latestUpdate.ignore }, 'X')
         ])
