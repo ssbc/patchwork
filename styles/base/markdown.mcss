@@ -52,7 +52,6 @@ Markdown {
   (pre) {
     overflow: auto
     padding: 10px
-    max-height: 300px
   }
   (ul) {
     (p) {
