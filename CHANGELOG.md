@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Fixed
+- Stopped automatically turning ascii emoji like ":)" into their respective image emoji.
+
 ## v3.13.0 - 2019-06-10
 
 ### Added
