@@ -2,7 +2,7 @@
 
 Hey, thanks for contributing to Patchwork! We've collected some useful info
 below, but if you have any questions please don't hesitate to [create an
-issue][new-isue]!
+issue][new-issue]!
 
 ## Process
 
