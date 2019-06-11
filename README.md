@@ -52,7 +52,7 @@ terms.
 
 [AGPL-3.0][license]
 
-[conduct]: CODE_OF_CONDUCT.md
+[conduct]: docs/CODE_OF_CONDUCT.md
 [contributing]: docs/CONTRIBUTING.md
 [gh-dl]: https://github.com/ssbc/patchwork/releases/latest
 [install]: docs/INSTALL.md
