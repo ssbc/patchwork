@@ -180,6 +180,16 @@ module.exports = function (config) {
     })
   )
 
+  document.head.appendChild(
+    h('style', {
+      innerHTML: computed(api.settings.obs.get('patchwork.fontFamily'), family => {
+        if (family) {
+          return 'body, button, input, select, textarea {font-family: ' + family + ';}'
+        }
+      })
+    })
+  )
+
   var container = h(`MainWindow -${process.platform}`, {
     classList: [ when(api.app.fullscreen(), '-fullscreen') ],
     'ev-dragover': preventDefault,

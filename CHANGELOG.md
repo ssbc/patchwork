@@ -17,7 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Stopped automatically turning ascii emoji like ":)" into their respective image emoji.
+
+## v3.13.0 - 2019-06-10
+
+### Added
+- Font selection in settings menu.
+
+### Fixed
 - Fixed emoji not rendering on Windows.
+- Solved problem where private messages with 7 recipients wouldn't work.
 
 ## v3.12.0 - 2019-05-21
 
