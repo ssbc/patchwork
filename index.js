@@ -137,7 +137,7 @@ function openMainWindow () {
       defaultWidth: 1024,
       defaultHeight: 768
     })
-    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'main-window.js'), {
+    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'main-window.js'), {
       minWidth: 800,
       x: windowState.x,
       y: windowState.y,
@@ -213,7 +213,7 @@ function setupContext (appName, opts, cb) {
       ssbConfig = config
       cb && cb()
     })
-    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'server-process.js'), {
+    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'server-process.js'), {
       connect: false,
       center: true,
       fullscreen: false,
