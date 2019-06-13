@@ -5,11 +5,11 @@ const nest = require('depnest')
 var htmlEscape = require('html-escape')
 var watch = require('mutant/watch')
 const querystring = require('querystring')
+const nodeEmoji = require('node-emoji')
 
 exports.needs = nest({
   'blob.sync.url': 'first',
-  'blob.obs.has': 'first',
-  'emoji.sync.url': 'first'
+  'blob.obs.has': 'first'
 })
 
 exports.gives = nest('message.html.markdown')
@@ -42,15 +42,15 @@ exports.create = function (api) {
     return h('Markdown', {
       classList,
       hooks: [
-        LoadingBlobHook(api.blob.obs.has),
-        LargeEmojiHook()
+        LoadingBlobHook(api.blob.obs.has)
       ],
       innerHTML: renderer.block(content.text, {
         emoji: (emoji) => {
-          var url = emojiMentions[emoji]
-            ? api.blob.sync.url(emojiMentions[emoji])
-            : api.emoji.sync.url(emoji)
-          return renderEmoji(emoji, url)
+          if (emojiMentions[emoji]) {
+            return renderEmoji(emoji, api.blob.sync.url(emojiMentions[emoji]))
+          } else {
+            return h('span.Emoji', nodeEmoji.get(emoji))
+          }
         },
         toUrl: (id) => {
           var link = ref.parseLink(id)
@@ -75,6 +75,7 @@ exports.create = function (api) {
 
   function renderEmoji (emoji, url) {
     if (!url) return ':' + emoji + ':'
+
     return `
       <img
         src="${htmlEscape(url)}"
@@ -106,20 +107,5 @@ function LoadingBlobHook (hasBlob) {
         releases.pop()()
       }
     }
-  }
-}
-
-function LargeEmojiHook () {
-  return function (element) {
-    // do our best with a css selector
-    element.querySelectorAll('p > img.emoji:only-child').forEach(img => {
-      // unfortunately `only-child` doesn't take text nodes into account
-      // check to see if there is actually any text before or after before adding class
-      var before = img.previousSibling && img.previousSibling.textContent.trim()
-      var after = img.nextSibling && img.nextSibling.textContent.trim()
-      if (!before && !after) {
-        img.classList.add('-large')
-      }
-    })
   }
 }

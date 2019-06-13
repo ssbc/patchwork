@@ -1,13 +1,13 @@
 var h = require('mutant/h')
 var nest = require('depnest')
 var when = require('mutant/when')
+const emoji = require('node-emoji')
 
 exports.needs = nest({
   'sheet.display': 'first',
   'message.html.render': 'first',
   'intl.sync.i18n': 'first',
-  'intl.sync.i18n_n': 'first',
-  'emoji.sync.url': 'first'
+  'intl.sync.i18n_n': 'first'
 })
 
 exports.gives = nest('message.sheet.preview')
@@ -55,8 +55,8 @@ exports.create = function (api) {
         ],
         footer: [
           when(isPrivate,
-            h('img', { src: api.emoji.sync.url('closed_lock_with_key') }),
-            h('img', { src: api.emoji.sync.url('globe_with_meridians') })
+            h('span.Emoji', emoji.get('closed_lock_with_key')),
+            h('span.Emoji', emoji.get('globe_with_meridians'))
           ),
           when(isPrivate,
             h('div.info -private', [

@@ -1,11 +1,14 @@
+html {
+  font-size: 12px
+}
+
 html, body {
   margin: 0
-  font: caption
   overflow: hidden
   height: 100%
-  font-size: 12px
   -webkit-user-select: none
 }
+
 body {
   display: flex
   flex-direction: column
@@ -42,9 +45,10 @@ a {
 * {
   box-sizing: border-box
 }
-input, textarea, keygen, select, button {
-  font-family: '.SFNSText-Regular', sans-serif
-}
 ::-webkit-file-upload-button {
   font-family: inherit
+}
+
+Emoji {
+  font-family: NotoColorEmoji
 }
