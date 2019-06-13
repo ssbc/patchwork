@@ -49,7 +49,7 @@ exports.create = function (api) {
           if (emojiMentions[emoji]) {
             return renderEmoji(emoji, api.blob.sync.url(emojiMentions[emoji]))
           } else {
-            return h('span.Emoji', nodeEmoji.get(emoji))
+            return `<span class="Emoji">${nodeEmoji.get(emoji)}</span>`
           }
         },
         toUrl: (id) => {
