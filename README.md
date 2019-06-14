@@ -50,19 +50,20 @@ terms.
 
 ## License
 
-AGPL-3.0
+[AGPL-3.0][license]
 
-[conduct]: code-of-conduct.md
-[contributing]: CONTRIBUTING.md
+[conduct]: docs/CODE_OF_CONDUCT.md
+[contributing]: docs/CONTRIBUTING.md
 [gh-dl]: https://github.com/ssbc/patchwork/releases/latest
-[install]: INSTALL.md
+[install]: docs/INSTALL.md
+[license]: LICENSE
 [manyverse]: https://gitlab.com/staltz/manyverse
 [new-issue]: https://github.com/fraction/readme-boilerplate/issues/new
 [npm]: https://npmjs.org/
 [patchbay]: https://github.com/ssbc/patchbay
 [pub-list]: https://github.com/ssbc/ssb-server/wiki/Pub-Servers
 [pub]: https://www.scuttlebutt.nz/concepts/pub.html
-[screenshot]: screenshot.jpg
+[screenshot]: assets/screenshot.jpg
 [ssb-server]: https://github.com/ssbc/ssb-server
 [yarn]: https://yarnpkg.com/en/
 [yay]: https://github.com/Jguer/yay
