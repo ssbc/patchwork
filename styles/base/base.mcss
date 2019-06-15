@@ -51,4 +51,7 @@ a {
 
 Emoji {
   font-family: NotoColorEmoji
+  -large {
+    font-size: 2rem
+  }
 }
