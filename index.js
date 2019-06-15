@@ -27,6 +27,8 @@ var quitting = false
  */
 function quitIfAlreadyRunning () {
   if (!electron.app.requestSingleInstanceLock()) {
+    console.log('Patchwork is already running!')
+    console.log('Please close the existing instance before starting a new one.')
     return electron.app.quit()
   }
   electron.app.on('second-instance', (event, commandLine, workingDirectory) => {
