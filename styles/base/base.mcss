@@ -1,5 +1,6 @@
 html {
   font-size: 12px
+  font-family: system-ui, sans-serif
 }
 
 html, body {
