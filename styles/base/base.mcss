@@ -45,7 +45,7 @@ a {
 * {
   box-sizing: border-box
 }
-html, select, input {
+html, input, select {
   font-family: system-ui, sans-serif
 }
 ::-webkit-file-upload-button {
