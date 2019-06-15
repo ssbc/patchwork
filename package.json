@@ -79,7 +79,7 @@
     "ssb-keys": "^7.1.5",
     "ssb-local": "^1.0.0",
     "ssb-logging": "^1.0.0",
-    "ssb-markdown": "^4.1.2",
+    "ssb-markdown": "^5.0.0",
     "ssb-master": "^1.0.2",
     "ssb-mentions": "^0.5.0",
     "ssb-msgs": "^5.2.0",
