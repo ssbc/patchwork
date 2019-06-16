@@ -15,6 +15,9 @@ ProfileHeader {
       flex: 1
       min-width: 0
       div.title {
+        h1 {
+          margin-top: 0
+        }
         div.meta {
           margin-top: 1rem
           margin-bottom: 1rem
