@@ -14,12 +14,15 @@ body {
   flex-direction: column
   line-height: 1.2
 }
-h1 {
-  font-size: 200%
-  margin: 4px 0
-  font-weight: normal
-  flex: 1
-}
+
+/* https://www.desmos.com/calculator/3elcf5cwhn */
+h1 { font-size: 150%; }
+h2 { font-size: 128%; }
+h3 { font-size: 120%; }
+h4 { font-size: 116%; }
+h5 { font-size: 113%; }
+h6 { font-size: 111%; }
+
 input {
   [type='text'] {
     font-size: 80%

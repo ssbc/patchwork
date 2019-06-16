@@ -1,82 +1,87 @@
 ProfileHeader {
-  display: flex
-  width: 100%
-  margin: 20px auto
-  div.image {
-    width: 200px
-    max-height: 200px
-    margin-right: 20px
-    img {
-      width: 100%
-    }
-  }
-  div.main {
-    flex: 1
-    min-width: 0
-    div.title {
-      display: flex
-      h1 {
-        flex: 1
+  div.columns {
+    display: flex
+    width: 100%
+    margin: 1rem auto
+    div.image {
+      width: 200px
+      max-height: 200px
+      margin-right: 20px
+      img {
+        width: 100%
       }
     }
-    section {
-      -description {
+    div.main {
+      flex: 1
+      min-width: 0
+      div.title {
+        div.meta {
+          margin-top: 1rem
+          margin-bottom: 1rem
+        }
+      }
+      section {
+        -distanceWarning {
+          $distanceWarning
+        }
+
+        -blocked {
+          padding: 8px
+          margin: 5px 0
+          font-size: 110%
+          a {
+            :hover {
+              text-decoration: none
+            }
+          }
+          (p) {
+            margin-bottom: 0
+          }
+          (h1) {
+            font-size: 120%
+            font-weight: bold
+            margin: 0
+          }
+        }
+
+        -blockWarning {
+          padding: 8px
+          margin: 5px 0
+          font-size: 110%
+          a {
+            :hover {
+              text-decoration: none
+            }
+          }
+        }
+        -mutualFriends {
+          padding: 8px
+          margin: 5px 0
+          a {
+            :hover {
+              text-decoration: none
+            }
+          }
+        }
+      }
+    }
+  }
+  section {
+    -publicKey {
+      margin-top: 1rem
+      pre {
+        text-overflow: ellipsis
+        overflow: hidden
+        margin: 2px 0
+        font-size: 120%
+        padding: 3px
+      }
+    }
+    -description {
         font-size: 120%
         max-height: 350px
         overflow: auto
         -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 90%, rgba(0,0,0,0))
-      }
-      -publicKey {
-        pre {
-          text-overflow: ellipsis
-          overflow: hidden
-          margin: 2px 0
-          font-size: 120%
-          padding: 3px
-        }
-      }
-      -distanceWarning {
-        $distanceWarning
-      }
-
-      -blocked {
-        padding: 8px
-        margin: 5px 0
-        font-size: 110%
-        a {
-          :hover {
-            text-decoration: none
-          }
-        }
-        (p) {
-          margin-bottom: 0
-        }
-        (h1) {
-          font-size: 120%
-          font-weight: bold
-          margin: 0
-        }
-      }
-
-      -blockWarning {
-        padding: 8px
-        margin: 5px 0
-        font-size: 110%
-        a {
-          :hover {
-            text-decoration: none
-          }
-        }
-      }
-      -mutualFriends {
-        padding: 8px
-        margin: 5px 0
-        a {
-          :hover {
-            text-decoration: none
-          }
-        }
-      }
     }
   }
 }
