@@ -12,7 +12,7 @@ html, body {
 body {
   display: flex
   flex-direction: column
-  line-height: 1.2
+  line-height: 1.33
 }
 
 /* https://www.desmos.com/calculator/3elcf5cwhn */

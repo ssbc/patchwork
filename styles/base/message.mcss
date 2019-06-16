@@ -3,7 +3,6 @@ Message {
   flex-direction: column
   position: relative
   font-size: 120%
-  line-height: 1.4
   flex-shrink: 0
   (highlight) {
     border-radius: 3px
