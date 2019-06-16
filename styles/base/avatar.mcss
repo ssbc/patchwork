@@ -1,4 +1,4 @@
 Avatar {
-  width: 45px
+  width: 3rem
   border-radius: 3px
 }
