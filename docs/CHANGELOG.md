@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [Unreleased]
+## v3.14.1 - 2019-06-17
 
 ### Fixed
 - Resolved inconsistent emoji rendering from `:shortcode:` inconsistencies.
