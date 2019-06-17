@@ -16,8 +16,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Improved emoji support, Patchwork now has more emoji in a better font.
+- Developer warning when trying to start Patchwork twice.
+
+### Changed
+- Reorganized directory structure,, improved readme and contributor guide.
+- Update check on startup now happens every 24 hours.
+- Switched to system font instead of using Arial everywhere.
+
 ### Fixed
 - Stopped automatically turning ascii emoji like ":)" into their respective image emoji.
+- Liberated code in posts from its tiny box with a scroll bar.
 
 ## v3.13.0 - 2019-06-10
 
