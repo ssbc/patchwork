@@ -1,4 +1,4 @@
-:tada: **Thanks for downloading Patchwork!** Check out [the changelog](https://github.com/ssbc/patchwork/blob/master/CHANGELOG.md) to see what's new!
+:tada: **Thanks for downloading Patchwork!** Check out [the changelog](https://github.com/ssbc/patchwork/blob/master/docs/CHANGELOG.md) to see what's new.
 
 ## Install
 
