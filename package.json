@@ -11,7 +11,7 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
     "dist": "electron-builder",
-    "version": "changelog-version && git add CHANGELOG.md"
+    "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "AGPL-3.0",
