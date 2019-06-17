@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [Unreleased]
+## v3.14.0 - 2019-06-17
 
 ### Added
 - Improved emoji support, Patchwork now has more emoji in a better font.
