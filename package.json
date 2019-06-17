@@ -79,7 +79,7 @@
     "ssb-keys": "^7.1.7",
     "ssb-local": "^1.0.0",
     "ssb-logging": "^1.0.0",
-    "ssb-markdown": "^5.0.1",
+    "ssb-markdown": "github:ssbc/ssb-markdown#pass-emoji",
     "ssb-master": "^1.0.3",
     "ssb-mentions": "^0.5.0",
     "ssb-msgs": "^5.2.0",
