@@ -73,12 +73,14 @@ Message {
         a {
           :first-child {
             img {
+              border-radius: 0px
               border-top-left-radius: 3px
               border-bottom-left-radius: 3px
             }
           }
           :last-child {
             img {
+              border-radius: 0px
               border-top-right-radius: 3px
               border-bottom-right-radius: 3px
             }
