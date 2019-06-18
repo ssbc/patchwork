@@ -58,3 +58,13 @@ Emoji {
     font-size: 2rem
   }
 }
+
+figure {
+  margin: 0
+  padding: 0
+}
+
+figcaption {
+  margin-bottom: 1rem
+  color: #527b90
+}
