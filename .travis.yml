@@ -43,3 +43,4 @@ script: npm test && npm run dist
 branches:
   only:
   - master
+  - "/^v\\d+\\.\\d+\\.\\d+$/"
