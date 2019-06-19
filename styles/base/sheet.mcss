@@ -1,7 +1,7 @@
 Sheet {
   position: fixed
   max-height: 80vh
-  max-width: 42rem
+  max-width: 48rem
   margin: auto
   top: 38px
   left: 0

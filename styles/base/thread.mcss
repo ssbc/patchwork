@@ -1,6 +1,6 @@
 Thread {
   flex: 1
-  max-width: 42rem
+  max-width: 48rem
   width: 100%
   margin: 10px auto
   a.full {
