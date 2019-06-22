@@ -134,7 +134,7 @@
 	"hour": "horo",
 	"minute": "minuto",
 	"second": "sekundo",
-	"unsubscribed from ": " malabonis de",
+	"unsubscribed from ": "malabonis de ",
 	"en": "en",
 	"es": "es",
 	"ki": "ki",
@@ -214,7 +214,7 @@
 	"Hide posts in channels that are not subscribed": "Kaŝi afiŝojn en kanalojn, ke vi ne abonas",
 	"Channel Feed Options": "Kanalaj Flujaj Opcioj",
 	"Welcome to Patchwork": "Bonvenon al Patchwork",
-	"For help, see the 'Getting Started' guide at ": "Por helpi, vidu la 'komenci' gvidilon ĉe",
+	"For help, see the 'Getting Started' guide at ": "Por helpi, vidu la 'komenci' gvidilon ĉe ",
 	"You have no followers": "Vi ne havas sekvantojn",
 	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Neniu povos vidi viajn afiŝojn ĝis vi havas sekvanton. La pli faĉila maniero gajni sekvanton estas uzi Pub-an inviton ĉar la Pub sekvos vin reen. Se vi jam interŝanĝis Pub-an inviton kaj vi vidas, ke ĝi ne sekvis vin reen en via profilo, provu alian Pub.",
 	"You may not be able to see new channel content until you follow some users or pubs.": "Vi eble ne povus vidi novan kanalan enhavon ĝis vi sekvas iujn uzantojn aŭ pubs.",
@@ -238,7 +238,7 @@
 	"followed": "sekvis",
 	"Hide details": "Kaŝi detalojn",
 	"Show details": "Montri detalojn",
-	"forked from parent thread ": "forkata de patra fadeno",
+	"forked from parent thread ": "forkata de patra fadeno ",
 	"(ignored)": "(ignorita)",
 	"(listening)": "(aŭskultanta)",
 	"Click for options to block syncing with this person and/or hide their posts": "Alklaku por opcioj bloki sinkroniganta kun ĉi tiu persono kaj kaŝi iliajn afiŝojn",
@@ -255,5 +255,6 @@
 	"ur": "ur",
 	"zh-CN": "zh-CN",
 	"Notification Options": "Sciigaj Opcioj",
-	"Include \"Participating\" tab in navigation bar": "Inkludi \"Partoprenanta\" langeton en naviga breto"
+	"Include \"Participating\" tab in navigation bar": "Inkludi \"Partoprenanta\" langeton en naviga breto",
+	"can attend": "can attend"
 }
