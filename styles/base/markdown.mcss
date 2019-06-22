@@ -63,6 +63,14 @@ Markdown {
       max-height: none
     }
   }
+  (figure) {
+    margin: 0
+    padding: 0
+    display: inline-block
+  }
+  (figcaption) {
+    margin: 1rem
+  }
 
   word-break: break-word
 }

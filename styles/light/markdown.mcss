@@ -25,4 +25,7 @@ Markdown {
       }
     }
   }
+  (figure) {
+    border: 1px solid #eee
+  }
 }

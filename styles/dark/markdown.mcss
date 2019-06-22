@@ -49,4 +49,7 @@ Markdown {
       }
     }
   }
+  (figure) {
+    border: 1px solid #2d2c2c
+  }
 }
