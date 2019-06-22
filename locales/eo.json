@@ -256,5 +256,22 @@
 	"zh-CN": "zh-CN",
 	"Notification Options": "Sciigaj Opcioj",
 	"Include \"Participating\" tab in navigation bar": "Inkludi \"Partoprenanta\" langeton en naviga breto",
-	"can attend": "can attend"
+	"can attend": "povas ĉeesti",
+	"updated their profile": "actualigis ilian profilon",
+	"You have chosen to publicly block this person.": "Vi elektis publike bloki ĉi tiun personon.",
+	"You have chosen to privately ignore this person.": "Vi elektis prive ignori ĉi tiun personon.",
+	"No new messages will be downloaded. Existing messages will be hidden.": "Novaj mesaĝoj ne estos elŝutitaj. Ekzistantaj mesaĝoj estos kaŝitaj.",
+	"Write a public reply in sub-thread (fork)": "Skribi publikan respondon en sub-fadeno (forko)",
+	"View parent thread": "Vidi patran fadenon",
+	"made changes to": "ŝangis",
+	"This message will only be visible to you": "Ĉi tiu mesaĝo nur videblos al vi",
+	"This message will be public and can be edited by anyone": "Ĉi tiu mesaĝo estos publika kaj iu ajn povos redakti ĝin",
+	"This message will be public and cannot be edited or deleted": "Ĉi tiu mesaĝo estos publika kaj ne povos esti redaktita aŭ forigita",
+	"Edit Gathering": "Redakti Renkontiĝo",
+	"identified": "indentigas",
+	"Add tags here": "Aldoni etikedojn ĉi tie",
+	"Save": "Konserv",
+	"blocked": "blokita",
+	"filter names": "filtri nomojn",
+	"subscribed to": "abonis al"
 }
