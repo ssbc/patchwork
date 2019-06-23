@@ -3,11 +3,10 @@
 The readme contains some information on the simplest installation methods, but
 you can also install Patchwork by fetching from Git and building from source.
 
-
 ## Dependencies
 
 - Git
-- Node.js (>= 6)
+- Node.js ([Active LTS][node-active-lts])
 - npm or Yarn
 
 ### Debian / Ubuntu
@@ -63,3 +62,5 @@ With yarn:
 ```shell
 yarn
 ```
+
+[node-active-lts]: https://github.com/nodejs/Release#release-schedule
