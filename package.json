@@ -32,7 +32,6 @@
     "fix-path": "^2.1.0",
     "flat": "^4.1.0",
     "flatpickr": "4.5.2",
-    "flumedb": "github:mmckegg/flumedb#add-await-ready-option",
     "flumeview-reduce": "^1.3.16",
     "hashlru": "^2.3.0",
     "hex-rgb": "^4.0.0",
