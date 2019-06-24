@@ -71,6 +71,9 @@ Message {
       }
       span.private {
         a {
+          img {
+            border-radius: 0px
+          }
           :first-child {
             img {
               border-radius: 0px
