@@ -91,6 +91,19 @@ Message {
             margin: 0
             vertical-align: bottom
             border: none
+            border-radius: 0px
+          }
+          :first-child {
+            img {
+              border-top-left-radius: 3px
+              border-bottom-left-radius: 3px
+            }
+          }
+          :last-child {
+            img {
+              border-top-right-radius: 3px
+              border-bottom-right-radius: 3px
+            }
           }
         }
         :after {
