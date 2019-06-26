@@ -123,7 +123,6 @@
 	"uk": "烏克蘭語",
 	"zh-CN": "簡體中文",
 	"zh-TW": "繁體中文",
-
 	"Public Feed Options": "公共消息流選項",
 	"Hide following messages": "隱藏關注消息",
 	"This is you.": "這是你。",
@@ -277,5 +276,14 @@
 	"Threads Started By You": "樓主是你",
 	"Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "搜索關鍵字，@feedId，#頻道 或者 %msgId\n你也可以加上 author:@id 或者 is:private 來進行更多的篩選",
 	"Browse Recently Active": "瀏覽最近活躍",
-	"Write a public reply in sub-thread (fork)": "寫公共回覆在字樓 (fork)"
+	"Write a public reply in sub-thread (fork)": "寫公共回覆在字樓 (fork)",
+	"Click to unlike": "點擊取消讚",
+	"Liked": "已讚",
+	"(ignored)": "(已被無視)",
+	"(listening)": "(正在收聽)",
+	"You have chosen to publicly block this person.": "你已選擇公開屏蔽此人",
+	"You have chosen to privately ignore this person.": "你已選擇非公開無視此人",
+	"No new messages will be downloaded. Existing messages will be hidden.": "新的信息將不會被下載。已有的信息將被隱藏。",
+	"Click for options to block syncing with this person and/or hide their posts": "點擊獲取選項來阻止與此人同步 和/或 隱藏其消息",
+	"Options": "選項"
 }
