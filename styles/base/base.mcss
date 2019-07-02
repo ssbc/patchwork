@@ -54,6 +54,11 @@ html, input, select {
 
 Emoji {
   font-family: NotoColorEmoji
+  font-size: 120%
+  line-height: 1
+  -suggest {
+    line-height: 1.4
+  }
   -large {
     font-size: 2rem
   }
