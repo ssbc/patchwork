@@ -3,18 +3,18 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       language: node_js
-      node_js: 10
+      node_js: lts/*
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
   
     - os: linux
       language: node_js
-      node_js: 10
+      node_js: lts/*
 
     - os: windows
       language: node_js
-      node_js: 10
+      node_js: lts/*
       filter_secrets: false
 
 cache:
@@ -39,6 +39,8 @@ before_install:
 
 script: npm test && npm run dist
 
+
 branches:
-  except:
-    - "/^v\\d+\\.\\d+\\.\\d+$/"
+  only:
+  - master
+  - "/^v\\d+\\.\\d+\\.\\d+$/"

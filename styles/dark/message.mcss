@@ -70,20 +70,6 @@ Message {
         font-weight: normal
       }
       span.private {
-        a {
-          :first-child {
-            img {
-              border-top-left-radius: 3px
-              border-bottom-left-radius: 3px
-            }
-          }
-          :last-child {
-            img {
-              border-top-right-radius: 3px
-              border-bottom-right-radius: 3px
-            }
-          }
-        }
         :after {
           background: rgba(0,0,0,0.75)
           padding: 1px 4px

@@ -10,6 +10,7 @@ Compose {
     background: transparent
     border: none
     padding: 10px
+    font-family: inherit
   }
   section.warning {
     overflow: hidden
