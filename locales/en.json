@@ -308,5 +308,7 @@
 	" replied but is blocked by ": " replied but is blocked by ",
 	"Content of a blocked user": "Content of a blocked user",
 	"el": "el",
-	"eo": "eo"
+	"eo": "eo",
+	"Create an invite that your friend can use to find you. You need to be followed by a pub with support for \"peer invites\".": "Create an invite that your friend can use to find you. You need to be followed by a pub with support for \"peer invites\".",
+	"Give this invite code to one friend.": "Give this invite code to one friend."
 }
