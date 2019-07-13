@@ -2,16 +2,16 @@ const path = require('path')
 const fs = require('fs')
 const compile = require('micro-css')
 
-const vendorPaths = [ require.resolve('flatpickr/dist/flatpickr.css') ]
+const vendorPaths = [require.resolve('flatpickr/dist/flatpickr.css')]
 const vendorCss = vendorPaths.map((vendorPath) => fs.readFileSync(vendorPath, 'utf8'))
 
 const theme = (themeName) => {
   const themePath = path.join(__dirname, themeName)
   const basePath = path.join(__dirname, 'base')
-  var dirs = [ basePath, themePath ]
+  var dirs = [basePath, themePath]
 
   var mcss = []
-  var css = [ ...vendorCss ]
+  var css = [...vendorCss]
 
   dirs.forEach(dir => {
     fs.readdirSync(dir).forEach(file => {
