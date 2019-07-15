@@ -9,7 +9,7 @@
     "test": "standard",
     "start": "electron index.js",
     "check-locales": "node scripts/check-locales.js",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps && opencollective-postinstall",
     "release-notes": "node scripts/release-notes.js",
     "dist": "electron-builder",
     "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
@@ -48,6 +48,7 @@
     "mutant-pull-reduce": "^1.1.0",
     "node-emoji": "^1.10.0",
     "noto-color-emoji": "^1.0.1",
+    "opencollective-postinstall": "^2.0.2",
     "patch-settings": "^1.1.2",
     "pull-abortable": "^4.1.1",
     "pull-cat": "^1.1.11",
@@ -130,5 +131,9 @@
     "win": {
       "publisherName": "Secure Scuttlebutt Consortium"
     }
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/patchwork"
   }
 }
