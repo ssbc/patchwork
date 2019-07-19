@@ -3,6 +3,7 @@ ProfileList {
     display: flex
     padding: 4px
     font-size: 110%
+    min-height: 40px
     margin: 4px 0
     position: relative
     text-decoration: none
@@ -89,6 +90,24 @@ ProfileList {
         :hover {
           text-decoration: none
           background-color: #f77
+        }
+      }
+      a.connect {
+        color: white
+        border-radius: 3px
+        height: 32px
+        line-height: 32px
+        width: 60px
+        right: 45px
+        position: relative
+        background-color: #51c067
+        text-align: center
+        vertical-align: middle
+        font-size: 14px
+        overflow: hidden
+        :hover {
+          text-decoration: none
+          background-color: #45b754
         }
       }
     }
