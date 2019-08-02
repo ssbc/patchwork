@@ -15,10 +15,11 @@ This document should be version tracked, and any change to it should go through 
 ### Goals and scope: Patchwork should...
 * Follow the [Scuttlebutt principles](https://www.scuttlebutt.nz/principles/)
 * Be a client that people can feel confident recommending to their friends who aren't using Scuttlebutt
-  * Polished enough usability for people without patience or skills for tech troubleshooting
-  * Safety, blocking, harassment-stopping features for people concerned about those things
-  * Strike a balance: people should know how much data they're making public; also make it hard to find some public data which could be used for harassment
-* Be a fun client to use, users should enjoy using it and, in a positive way, be tempted to try other Scuttlebutt clients
+* Be safe (privacy, blocking, etc)
+* Be usable (not confusing or broken; clear explanations of new concepts)
+* Be healthy (non-addictive, calm, consentful)
+* Be accessible (to the extent practical -- some a11y features are hard to retrofit into the existing code)
+* Be a fun client to use -- users should enjoy using it and, in a positive way, be tempted to try other Scuttlebutt clients
 * Look good
     
 ### Non-goals: Patchwork is not...
