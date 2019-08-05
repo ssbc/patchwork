@@ -31,7 +31,7 @@ function quitIfAlreadyRunning () {
     console.log('Please close the existing instance before starting a new one.')
     return electron.app.quit()
   }
-  electron.app.on('second-instance', (event, commandLine, workingDirectory) => {
+  electron.app.on('second-instance', () => {
     // Someone tried to run a second instance, we should focus our window.
     if (windows.main) {
       if (windows.main.isMinimized()) windows.main.restore()
@@ -116,7 +116,7 @@ electron.app.on('ready', () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
   })
 
-  electron.app.on('activate', function (e) {
+  electron.app.on('activate', function () {
     if (windows.main) {
       windows.main.show()
     }
@@ -126,7 +126,7 @@ electron.app.on('ready', () => {
     quitting = true
   })
 
-  electron.ipcMain.on('open-background-devtools', function (ev, config) {
+  electron.ipcMain.on('open-background-devtools', function () {
     if (windows.background) {
       windows.background.webContents.openDevTools({ mode: 'detach' })
     }
