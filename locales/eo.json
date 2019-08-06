@@ -270,8 +270,12 @@
 	"Edit Gathering": "Redakti Renkontiĝo",
 	"identified": "indentigas",
 	"Add tags here": "Aldoni etikedojn ĉi tie",
-	"Save": "Konserv",
+	"Save": "Konservi",
 	"blocked": "blokita",
 	"filter names": "filtri nomojn",
-	"subscribed to": "abonis al"
+	"subscribed to": "abonis al",
+	"invited you to this gathering": "invitis vin al ĉi tiu renkontiĝo",
+	"Are you certain you want to clear your draft?": "Ĉu vi vere volas vakigi vian malneton?",
+	" replied but is blocked by ": " respondis sed estas blokita de ",
+	"Content of a blocked user": "Enhavo de blokita uzanto"
 }
