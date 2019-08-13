@@ -14,10 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [Unreleased]
+## v3.15.0 - 2019-08-08
+
+### Added
+- Developer script to output release notes (#1095)
+- Documentation for which versions of Node we can support (#1115)
+- Esperanto translation (#1126)
+- Option to delete feeds from blocked authors (#1026)
+- Traditional Chinese translation (#1130)
+
+### Changed
+- Encode emoji as unicode character instead of `:shortcode` (#1105)
+- Switch input textarea font from monospace to sans-serif (#1120)
+- Refactor to remove unused code (#1122)
+- Increase size of emoji in helper (#1139)
+- Upgrade JavaScript dependencies (#1141)
 
 ### Fixed
-- Fixed corners of avatar images in private messages not matching up.
+- Fixed corners of avatar images in private messages not matching up (#1075)
+- Spanish typo for public messages (#1113)
+- Bug where gathering was showing as "private" in preview (#1131)
+- Mistranslations in Simplified Chinese (#1137)
 
 ## v3.14.1 - 2019-06-17
 
