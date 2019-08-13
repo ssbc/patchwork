@@ -1,6 +1,6 @@
 // adapted from https://gist.github.com/gmarcos87/565d57747b30e1755046002137228562
 
-var baseTranslation = 'en'
+const baseTranslation = 'en'
 const genericFile = require('../locales/' + baseTranslation + '.json')
 const colors = require('colors')
 const Path = require('path')
