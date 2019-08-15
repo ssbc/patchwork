@@ -69,6 +69,9 @@ Message {
       }
     }
   }
+  a.contentWarning {
+    background: #ddd
+  }
   a.backlink {
     border-top: 1px solid #eee
     padding: 10px 15px

@@ -241,6 +241,7 @@
 	"unblocked": "unblocked",
 	"fr": "fr",
 	"sk": "sk",
+	"Font Family": "Font Family",
 	"Tags": "Tags",
 	"Tag": "Tag",
 	"All Tags": "All Tags",
@@ -301,5 +302,14 @@
 	"No new messages will be downloaded. Existing messages will be hidden.": "No new messages will be downloaded. Existing messages will be hidden.",
 	"You have chosen to publicly block this person.": "You have chosen to publicly block this person.",
 	"Click for options to block syncing with this person and/or hide their posts": "Click for options to block syncing with this person and/or hide their posts",
-	"invited you to this gathering": "invited you to this gathering"
+	"invited you to this gathering": "invited you to this gathering",
+	"Are you certain you want to clear your draft?": "Are you certain you want to clear your draft?",
+	"Error": "Error",
+	" replied but is blocked by ": " replied but is blocked by ",
+	"Content of a blocked user": "Content of a blocked user",
+	"el": "el",
+	"eo": "eo",
+	"zh-TW": "zh-TW",
+	"Blocking": "Blocking",
+	"Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!"
 }

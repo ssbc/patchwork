@@ -1,19 +1,46 @@
-sudo: false
+matrix: 
+  include:
+    - os: osx
+      osx_image: xcode9.4
+      language: node_js
+      node_js: lts/*
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+  
+    - os: linux
+      language: node_js
+      node_js: lts/*
 
-language: node_js
+    - os: windows
+      language: node_js
+      node_js: lts/*
+      filter_secrets: false
+
+cache:
+  directories:
+    - $HOME/.npm
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
 
 before_install:
-  - npm install -g npm@latest
-  - sudo apt-get -qq update
-  - sudo apt-get install -y g++ m4 libtool automake libgconf-2-4    # build tools
-  - sudo apt-get install -y libxext-dev libxtst-dev libxkbfile-dev  # spellchecker headers
+  - |
+    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      sudo apt-get install \
+        automake \
+        libgconf-2-4 \
+        libtool \
+        libxext-dev \
+        libxkbfile-dev \
+        libxtst-dev
+    else
+      npm uninstall --save mouse-forward-back
+    fi
 
-node_js:
-  - 4
-  - 5
-  - 6
-  - 7
-  - stable
+script: npm test && npm run dist
 
-script:
-  - pwd   # run no-op to prevent failure from no tests
+
+branches:
+  only:
+  - master
+  - "/^v\\d+\\.\\d+\\.\\d+$/"

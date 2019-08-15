@@ -76,7 +76,6 @@ MainWindow {
         padding: 4px 10px
         border-radius: 3px
         font-size: 120%
-        font-weight: 200
         cursor: pointer
         margin-left: 8px
         text-decoration: none !important
@@ -121,7 +120,6 @@ MainWindow {
       text-align: center
       font-size: 20px
       letter-spacing: 1px
-      font-weight: 200
       -webkit-app-region: drag
       position: relative
       span.title {

@@ -3,21 +3,21 @@ process.on('uncaughtException', function (err) {
   process.exit()
 })
 
-var electron = require('electron')
-var openWindow = require('./lib/window')
+const electron = require('electron')
+const openWindow = require('./lib/window')
 
-var Path = require('path')
-var defaultMenu = require('electron-default-menu')
-var WindowState = require('electron-window-state')
-var Menu = electron.Menu
-var extend = require('xtend')
-var ssbKeys = require('ssb-keys')
+const Path = require('path')
+const defaultMenu = require('electron-default-menu')
+const WindowState = require('electron-window-state')
+const Menu = electron.Menu
+const extend = require('xtend')
+const ssbKeys = require('ssb-keys')
 
-var windows = {
+const windows = {
   dialogs: new Set()
 }
-var ssbConfig = null
-var quitting = false
+let ssbConfig = null
+let quitting = false
 
 /**
  * It's not possible to run two instances of patchwork as it would create two
@@ -26,20 +26,21 @@ var quitting = false
  * rather than opening a new instance.
  */
 function quitIfAlreadyRunning () {
-  var shouldQuit = electron.app.makeSingleInstance(function (commandLine, workingDirectory) {
+  if (!electron.app.requestSingleInstanceLock()) {
+    console.log('Patchwork is already running!')
+    console.log('Please close the existing instance before starting a new one.')
+    return electron.app.quit()
+  }
+  electron.app.on('second-instance', () => {
     // Someone tried to run a second instance, we should focus our window.
     if (windows.main) {
       if (windows.main.isMinimized()) windows.main.restore()
       windows.main.focus()
     }
   })
-
-  if (shouldQuit) {
-    electron.app.quit()
-  }
 }
 
-var config = {
+const config = {
   server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
 }
 // a flag so we don't start git-ssb-web if a custom path is passed in
@@ -53,12 +54,19 @@ electron.app.on('ready', () => {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
-    var browserWindow = openMainWindow()
-    var menu = defaultMenu(electron.app, electron.shell)
+    const browserWindow = openMainWindow()
+    const menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
-      label: 'History',
+      label: 'Navigation',
       submenu: [
+        {
+          label: 'Activate Search Field',
+          accelerator: 'CmdOrCtrl+L',
+          click: () => {
+            browserWindow.webContents.send('activateSearch')
+          }
+        },
         {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
@@ -76,7 +84,7 @@ electron.app.on('ready', () => {
       ]
     })
 
-    var view = menu.find(x => x.label === 'View')
+    const view = menu.find(x => x.label === 'View')
     view.submenu = [
       { role: 'reload' },
       { role: 'toggledevtools' },
@@ -87,7 +95,7 @@ electron.app.on('ready', () => {
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
-    var help = menu.find(x => x.label === 'Help')
+    const help = menu.find(x => x.label === 'Help')
     help.submenu = [
       {
         label: 'Learn More',
@@ -95,7 +103,7 @@ electron.app.on('ready', () => {
       }
     ]
     if (process.platform === 'darwin') {
-      var win = menu.find(x => x.label === 'Window')
+      const win = menu.find(x => x.label === 'Window')
       win.submenu = [
         { role: 'minimize' },
         { role: 'zoom' },
@@ -108,7 +116,7 @@ electron.app.on('ready', () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
   })
 
-  electron.app.on('activate', function (e) {
+  electron.app.on('activate', function () {
     if (windows.main) {
       windows.main.show()
     }
@@ -118,7 +126,7 @@ electron.app.on('ready', () => {
     quitting = true
   })
 
-  electron.ipcMain.on('open-background-devtools', function (ev, config) {
+  electron.ipcMain.on('open-background-devtools', function () {
     if (windows.background) {
       windows.background.webContents.openDevTools({ mode: 'detach' })
     }
@@ -127,11 +135,11 @@ electron.app.on('ready', () => {
 
 function openMainWindow () {
   if (!windows.main) {
-    var windowState = WindowState({
+    const windowState = WindowState({
       defaultWidth: 1024,
       defaultHeight: 768
     })
-    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'main-window.js'), {
+    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'main-window.js'), {
       minWidth: 800,
       x: windowState.x,
       y: windowState.y,
@@ -189,16 +197,16 @@ function setupContext (appName, opts, cb) {
 
   if (process.platform === 'win32') {
     // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
-    ssbConfig.remote = `net:127.0.0.1:${config.port}~shs:${pubkey}`
+    ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${pubkey}`
   } else {
     const socketPath = Path.join(ssbConfig.path, 'socket')
-    ssbConfig.connections.incoming.unix = [{ 'scope': 'local', 'transform': 'noauth' }]
+    ssbConfig.connections.incoming.unix = [{ scope: 'device', transform: 'noauth' }]
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
 
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
-  console.log(redactedConfig)
+  console.dir(redactedConfig, { depth: null })
 
   if (opts.server === false) {
     cb && cb()
@@ -207,7 +215,7 @@ function setupContext (appName, opts, cb) {
       ssbConfig = config
       cb && cb()
     })
-    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'server-process.js'), {
+    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'server-process.js'), {
       connect: false,
       center: true,
       fullscreen: false,
