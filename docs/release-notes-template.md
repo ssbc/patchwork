@@ -1,4 +1,4 @@
-:tada: **Thanks for downloading Patchwork!** Check out [the changelog](https://github.com/ssbc/patchwork/blob/master/docs/CHANGELOG.md) to see what's new.
+:tada: **Thanks for downloading Patchwork!** :tada:
 
 ## Install
 
@@ -6,13 +6,14 @@
 - **macOS:** [`Patchwork-$$VERSION.dmg`][dmg] (you may need to [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088))
 - **Linux:** [`ssb-patchwork-$$VERSION-x86_64.AppImage`][appimage] (you will need to [make it executable](https://docs.appimage.org/user-guide/run-appimages.html))
 
-
 ## Getting started
 
 If this is your first time on Scuttlebutt you may need an invite to get connected. After installing Patchwork and choosing your name you should select the **Join Pub** button. You'll need to [get a pub invite](https://github.com/ssbc/ssb-server/wiki/Pub-Servers#public-pubs), paste it into the prompt, and select **Redeem invite**.
 
 You can find more information in the [Getting Started Guide](https://www.scuttlebutt.nz/getting-started).
 
+## Changes
+$$CHANGES
 ## Support
 
 :thinking:  [Any questions? Check out the Scuttlebutt FAQ!](https://www.scuttlebutt.nz/faq/)
