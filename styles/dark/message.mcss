@@ -79,6 +79,9 @@ Message {
       }
     }
   }
+  a.contentWarning {
+    background: #000
+  }
   a.backlink {
     padding: 10px 20px
     background: #2d2c2c

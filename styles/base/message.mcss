@@ -118,7 +118,11 @@ Message {
       }
     }
   }
-  section {
+  a.contentWarning {
+    padding: 10px 20px
+    font-weight: bold
+  }
+  section.content {
     margin: 0
     padding: 0 20px
     max-height: 1170px
@@ -292,5 +296,17 @@ Message {
   }
   -new, -unread {
     z-index: 1
+  }
+  -hasContentWarning {
+    section.content {
+      max-height: 0px
+    }
+    footer {
+      div.expander {
+          -webkit-mask-image: none !important
+          padding-top: 0px !important
+          margin-top: 0px !important
+      }
+    }
   }
 }
