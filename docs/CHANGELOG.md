@@ -14,6 +14,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+- Content warning support (#1159)
+- Recent changes from changelog to release notes (#1155)
+- Unicode hashtag support with ssb-markdown upgrade (#1168)
+
+### Changed
+- Refactor to remove unused code (#1153)
+- Refactor to remove bulk-require module (#1158)
+- Switch from ssb-gossip to ssb-legacy-conn
+
+### Fixed
+- "Could not get message" bug on gatherings (#1166)
+- Your gatherings not showing in gathering feed (#1167)
+- Encoded URI bug when previewing profile with hover (#1169)
+
 ## v3.15.0 - 2019-08-08
 
 ### Added
