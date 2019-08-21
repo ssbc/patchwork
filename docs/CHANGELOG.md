@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+## Fixed
+- Infinite indexing bug related to ssb-legacy-conn upgrade
+- Message click not working related to URI component decoding
+
 ## v3.16.0 - 2019-08-20
 
 ### Added
