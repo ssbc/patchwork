@@ -14,11 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## v3.16.1 - 2019-08-21
+## v3.16.2 - 2019-08-21
 
-## Fixed
-- Infinite indexing bug related to ssb-legacy-conn upgrade
-- Message click not working related to URI component decoding
+### Fixed
+- Infinite indexing bug related to ssb-legacy-conn upgrade (#1172)
+- Message click not working related to URI component decoding (#1171)
 
 ## v3.16.0 - 2019-08-20
 
