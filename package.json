@@ -75,7 +75,7 @@
     "ssb-db": "^19.3.0",
     "ssb-invite": "^2.1.3",
     "ssb-keys": "^7.2.0",
-    "ssb-legacy-conn": "^2.0.0",
+    "ssb-legacy-conn": "^1.0.0",
     "ssb-local": "^1.0.0",
     "ssb-logging": "^1.0.0",
     "ssb-markdown": "^5.1.3",
