@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [Unreleased]
+## v3.16.1 - 2019-08-21
 
 ## Fixed
 - Infinite indexing bug related to ssb-legacy-conn upgrade
