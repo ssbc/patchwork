@@ -8,7 +8,7 @@
 	"For help, see the 'Getting Started' guide at ": "For help, see the 'Getting Started' guide at ",
 	"update": "update",
 	"updates": "updates",
-	"+ Join Pub": "+ Join Pub",
+	"+ Join Server": "+ Join Server",
 	"Active Channels": "Active Channels",
 	"More Channels...": "More Channels...",
 	"Local": "Local",
@@ -316,5 +316,7 @@
 	"Attending": "Attending",
 	"Attending Gatherings": "Attending Gatherings",
 	"Possible connections": "Possible connections",
-	"Connect": "Connect"
+	"Connections": "Connections",
+	"Connect": "Connect",
+	"In order to share with users on the internet, you need to be invited to a pub server or a room server.": "In order to share with users on the internet, you need to be invited to a pub server or a room server."
 }

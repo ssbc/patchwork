@@ -219,6 +219,10 @@ function setupContext (appName, opts, cb) {
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
 
+  // Support rooms
+  ssbConfig.connections.incoming.tunnel = [{scope: 'public', transform: 'shs'}]
+  ssbConfig.connections.outgoing.tunnel = [{transform: 'shs'}]
+
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
   console.dir(redactedConfig, { depth: null })

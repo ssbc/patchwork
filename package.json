@@ -89,6 +89,7 @@
     "ssb-query": "^2.4.3",
     "ssb-ref": "^2.13.9",
     "ssb-replicate": "^1.3.1",
+    "ssb-room": "^1.0.0",
     "ssb-search": "^1.2.1",
     "ssb-sort": "^1.1.3",
     "ssb-suggest": "^1.0.4",
