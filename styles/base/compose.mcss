@@ -61,14 +61,14 @@ Compose {
       }
     }
     input.contentWarning {
+      border: 2px solid #ddd;
+      border-radius: 3px;
       flex: 1;
       font-size: 120%
-      padding: 3px 6px;
-      border: 2px solid #ddd;
-      padding-top: .3rem;
       margin-left: 5px;
       margin-right: 5px;
       min-width: 0;
+      padding: 5px 6px;
     }
     (button) {
       -clear {

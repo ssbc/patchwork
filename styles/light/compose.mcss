@@ -49,6 +49,9 @@ Compose {
         content: '📎 Attach File'
       }
     }
+    input.contentWarning {
+      border: 2px solid #dedede8c;
+    }
   }
   -expanded {
     textarea {
