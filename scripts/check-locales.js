@@ -1,15 +1,15 @@
 // adapted from https://gist.github.com/gmarcos87/565d57747b30e1755046002137228562
 
-var baseTranslation = 'en'
+const baseTranslation = 'en'
 const genericFile = require('../locales/' + baseTranslation + '.json')
 const colors = require('colors')
 const Path = require('path')
 
 // Load all translation in locales folder
-let translations = {}
+const translations = {}
 require('fs').readdirSync(Path.join(__dirname, '..', 'locales')).forEach((file) => {
   if (file.match(/\.json$/) !== null && baseTranslation + '.json' !== file) {
-    let name = file.replace('.json', '')
+    const name = file.replace('.json', '')
     translations[name] = require('../locales/' + file)
   }
 })

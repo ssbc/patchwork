@@ -307,5 +307,9 @@
 	"Error": "Error",
 	" replied but is blocked by ": " replied but is blocked by ",
 	"Content of a blocked user": "Content of a blocked user",
-	"el": "el"
+	"el": "el",
+	"eo": "eo",
+	"zh-TW": "zh-TW",
+	"Blocking": "Blocking",
+	"Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!"
 }
