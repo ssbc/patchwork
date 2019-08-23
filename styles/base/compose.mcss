@@ -60,7 +60,16 @@ Compose {
         box-shadow: none
       }
     }
-
+    input.contentWarning {
+      border: 2px solid #ddd;
+      border-radius: 3px;
+      flex: 1;
+      font-size: 120%
+      margin-left: 5px;
+      margin-right: 5px;
+      min-width: 0;
+      padding: 5px 6px;
+    }
     (button) {
       -clear {
         margin-right: 5px
