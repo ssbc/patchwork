@@ -8,6 +8,7 @@ ProfileHeader {
     margin-right: 20px
     img {
       width: 100%
+      order-radius: 5px
     }
   }
   div.main {

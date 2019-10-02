@@ -4,6 +4,7 @@ Compose {
   flex-shrink: 0
   width: 100%
   margin: 20px auto
+  border-radius: 5px
   textarea {
     resize: vertical
     font-size: 120%
@@ -43,6 +44,8 @@ Compose {
     flex-direction: row
     align-items: baseline
     justify-content: space-between
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
     input[type="file"] {
       color: transparent
       ::-webkit-file-upload-button {

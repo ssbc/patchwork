@@ -1,7 +1,6 @@
 TaggersList {
   a.profile {
     background: #313131
-    border-radius: 3px
     transition: background-color 0.25s
     div.main {
       div.name {
