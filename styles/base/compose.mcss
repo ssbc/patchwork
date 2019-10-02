@@ -53,6 +53,7 @@ Compose {
         font-size: 1rem
         outline: none
         white-space: nowrap
+        border-radius: 5px
         -webkit-user-select: none
       }
       :active, :focus {
