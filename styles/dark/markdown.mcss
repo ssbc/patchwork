@@ -2,7 +2,6 @@ Markdown {
   (img) {
     -pending {
       background-color: #2d2c2c
-      border-radius: 3px
       @svg fetching {
         text {
           fill: #757474

@@ -1,6 +1,5 @@
 Compose {
   box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
-  border-radius: 3px
   background: #2d2c2c
   textarea {
     color: #ccc
@@ -17,8 +16,6 @@ Compose {
   section.actions {
     background: #383736
     padding: 10px
-    border-bottom-left-radius: 3px
-    border-bottom-right-radius: 3px
     input[type="file"] {
       width: 85px
       height: 20px

@@ -44,7 +44,6 @@ Compose {
         padding: 3px 6px
         background: white
         border: 2px solid #ddd
-        border-radius: 4px
         padding-top: .3rem
         content: '📎 Attach File'
       }

@@ -2,15 +2,18 @@ Picker {
   a {
     display: inline-block
     vertical-align: top
+    border-radius: 5px
     img {
       width: 50px
       height: 50px
       display: block
+      border-radius: 5px
     }
   }
   span.add {
     position: relative
     display: inline-block
+    border-radius: 5px
     ::before {
       font-size: 30px
       content: '+'

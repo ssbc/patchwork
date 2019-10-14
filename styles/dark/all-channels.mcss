@@ -2,7 +2,6 @@ AllChannels {
   a.channel {
     background-color: #2d2c2c
     color: #ccc
-    border-radius: 3px
     transition: background-color 0.25s
     -more {
       background-color: transparent
@@ -16,7 +15,6 @@ AllChannels {
       background-color: #383736
     }
     a {
-      border-radius: 3px
       -subscribe {
         :hover {
           background-color: #51c067

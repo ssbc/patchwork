@@ -23,6 +23,7 @@ GatheringCard {
       (img) {
         height: 45px
         width: 45px
+        border-radius: 5px
       }
     }
     div.actions {
