@@ -4,6 +4,9 @@ Hey, thanks for contributing to Patchwork! We've collected some useful info
 below, but if you have any questions please don't hesitate to [create an
 issue][new-issue]!
 
+If you're a new contributor you may want to browse the label 
+["Good first issue"](https://github.com/ssbc/patchwork/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22).
+
 ## Process
 
 Patchwork is developed on GitHub using the usual [GitHub flow][flow]. New

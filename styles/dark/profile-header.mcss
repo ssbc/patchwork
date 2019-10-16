@@ -1,9 +1,4 @@
 ProfileHeader {
-  div.image {
-    img {
-      border-radius: 3px
-    }
-  }
   div.main {
     section {
       -publicKey {

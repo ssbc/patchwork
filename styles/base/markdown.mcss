@@ -12,6 +12,7 @@ Markdown {
       background-image: svg(fetching)
       background-position: center
       background-repeat: no-repeat
+      border-radius: 5px
       @svg fetching {
         width: 100px
         height: 20px

@@ -5,13 +5,11 @@ Picker {
     margin: 0 5px 5px 0
     padding: 2px 5px
     border: 2px solid transparent
-    border-radius: 3px
     color: #ccc
     :hover {
       color: white
     }
     img {
-      border-radius: 3px
       margin: -2px -5px
     }
     -assigned {
@@ -29,7 +27,6 @@ Picker {
     background: #383736
     margin: 0 5px 5px 0
     border: 2px solid transparent
-    border-radius: 3px
     ::before {
       top: 5px
     }

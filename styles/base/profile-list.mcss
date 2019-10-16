@@ -4,6 +4,7 @@ ProfileList {
     padding: 4px
     font-size: 110%
     margin: 4px 0
+    border-radius: 5px
     position: relative
     text-decoration: none
     background-repeat: no-repeat
@@ -38,6 +39,7 @@ ProfileList {
         width: 40px
         height: 40px
         display: block
+        border-radius: 5px
       }
     }
     div.main {

@@ -2,7 +2,6 @@ ChannelList {
   a.channel {
     background-color: rgba(255, 255, 255, 0.66)
     color: #333
-    border-radius: 5px
     transition: background-color 0.2s
     -more {
       color: #658aaf
@@ -12,7 +11,6 @@ ChannelList {
       background-color: rgba(255, 255, 255, 0.4)
     }
     a {
-      border-radius: 4px
       font-weight: bold
       -subscribe {
         :hover {

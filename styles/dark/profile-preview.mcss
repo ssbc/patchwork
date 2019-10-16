@@ -1,7 +1,6 @@
 ProfilePreview {
   background: #525252
   border: 2px solid #636363
-  border-radius: 3px
   color: white
   section {
     background: #4c4a4a
