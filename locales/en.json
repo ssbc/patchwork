@@ -311,5 +311,8 @@
 	"eo": "eo",
 	"zh-TW": "zh-TW",
 	"Blocking": "Blocking",
-	"Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!"
+	"Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!",
+	"All": "All",
+	"Attending": "Attending",
+	"Attending Gatherings": "Attending Gatherings"
 }
