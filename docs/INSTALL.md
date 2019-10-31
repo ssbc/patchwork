@@ -64,3 +64,16 @@ yarn
 ```
 
 [node-active-lts]: https://github.com/nodejs/Release#release-schedule
+
+### Proxy
+
+Normally, the application will follow your system settings to use a proxy, or you can set up a proxy by the 
+following command line options.
+
+```
+--proxy-server=<SERVER>:<PORT>
+--proxy-pac-url=<URL>
+```
+
+On Windows, please make sure to add -- before options. For example,
+`C:\Users\YourUser\AppData\Local\Programs\ssb-patchwork\Patchwork.exe -- --proxy-server=....`
