@@ -57,12 +57,15 @@ electron.app.on('ready', () => {
     const browserWindow = openMainWindow()
 
     browserWindow.on('app-command', (e, cmd) => {
-      if (cmd === 'browser-backward' && browserWindow.webContents.canGoBack()) {
-        electron.ipcRenderer.send('goBack')
-      }
-
-      if (cmd === 'browser-forward' && browserWindow.webContents.canGoForward()) {
-        electron.ipcRenderer.send('goForward')
+      switch (cmd) {
+        case 'browser-backward': {
+          browserWindow.webContents.send('goBack')
+          break
+        }
+        case 'browser-forward': {
+          browserWindow.webContents.send('goForward')
+          break
+        }
       }
     })
 
@@ -163,6 +166,8 @@ function openMainWindow () {
       backgroundColor: '#EEE',
       icon: Path.join(__dirname, 'assets/icon.png')
     })
+
+
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('close', function (e) {
