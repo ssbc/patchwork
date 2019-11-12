@@ -106,9 +106,7 @@
     "electron-builder": "^21.2.0",
     "standard": "^14.3.1"
   },
-  "optionalDependencies": {
-    "mouse-forward-back": "^1.0.1"
-  },
+  "optionalDependencies": {},
   "build": {
     "appId": "org.ssbc.patchwork",
     "linux": {

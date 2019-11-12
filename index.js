@@ -55,6 +55,17 @@ electron.app.on('ready', () => {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
     const browserWindow = openMainWindow()
+
+    browserWindow.on('app-command', (e, cmd) => {
+      if (cmd === 'browser-backward' && browserWindow.webContents.canGoBack()) {
+        electron.ipcRenderer.send('goBack')
+      }
+
+      if (cmd === 'browser-forward' && browserWindow.webContents.canGoForward()) {
+        electron.ipcRenderer.send('goForward')
+      }
+    })
+
     const menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {

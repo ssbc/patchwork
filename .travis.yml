@@ -33,16 +33,9 @@ before_install:
         libxext-dev \
         libxkbfile-dev \
         libxtst-dev
-    else
-      npm uninstall --save mouse-forward-back
-    fi
-  - |
-    if [ "$TRAVIS_OS_NAME" == "windows" ]; then
-      npm install --global windows-build-tools
     fi
 
 script: npm test && npm run dist
-
 
 branches:
   only:
