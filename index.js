@@ -167,7 +167,6 @@ function openMainWindow () {
       icon: Path.join(__dirname, 'assets/icon.png')
     })
 
-
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('close', function (e) {

@@ -1,6 +1,7 @@
 SplitView {
   display: flex
   flex: 3
+  max-height: 100%
   div.main {
     display: flex
     flex-direction: column
