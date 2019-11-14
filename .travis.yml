@@ -7,10 +7,6 @@ matrix:
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-      addons:
-        homebrew:
-          packages:
-          - vitorgalvao/tiny-scripts/cask-repair
   
     - os: linux
       language: node_js
@@ -20,6 +16,14 @@ matrix:
       language: node_js
       node_js: lts/*
       filter_secrets: false
+
+addons:
+  homebrew:
+    update: true
+    taps:
+      - vitorgalvao/tiny-scripts
+    packages:
+      - cask-repair
 
 cache:
   directories:
