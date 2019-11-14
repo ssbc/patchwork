@@ -14,6 +14,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+- Add custom language support to spell checker (#1199)
+- Add documentation about proxy configuration (#1196)
+- Add documentation about "good first issue" label (#1194)
+- Add attending gatherings view (#1182)
+- Add context menu to open image in web browser (#1163)
+- Add documentation about Patchwork Design principles (#1151)
+- Add content warnings (#1176)
+
+### Changed
+
+- Replace ssb-gossip with ssb-conn for improved replication (#1178)
+- Improve Russian translation (#1200)
+- Upgrade all dependencies, including upgrade to Electron 6 (#1199)
+- Re-enable ssb-ebt for improved replication (#1106)
+
+### Fixed
+
+- Fix KIO bug causing problems for KDE users (#1204)
+- Fix typo in French translation (#1201)
+- Fix inconsistent border radius between themes (#1191)
+
 ## v3.16.2 - 2019-08-21
 
 ### Fixed
@@ -114,3 +139,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Problem where Patchwork would prompt user to add a name and description even when it wasn't their first time opening the application.
 - Pagination bug that wasn't correctly showing messages on private, public, and profile feeds.
 - EXIF stripping, which only works on JPG, TIF, and WAV files. Images that were converted from JPG/TIF/WAV may still have EXIF metadata embedded somewhere in the file, so it's important to know that Patchwork only rmeoves EXIF metadata from JPG/TIF/WAV.
+
