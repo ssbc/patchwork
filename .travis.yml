@@ -45,7 +45,7 @@ script: npm test && npm run dist
 after_success: - |
     if [ "$TRAVIS_OS_NAME" == "osx" ]; then
       export GITHUB_TOKEN=$GH_TOKEN
-      cask-repair patchwork
+      cask-repair --blind-submit patchwork 
     fi
 
 branches:
