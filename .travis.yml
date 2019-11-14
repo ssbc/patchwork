@@ -35,7 +35,17 @@ before_install:
         libxtst-dev
     fi
 
+  - |
+    if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      brew install vitorgalvao/tiny-scripts/cask-repair
+    fi
+
 script: npm test && npm run dist
+
+after_success: - |
+    if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      cask-repair patchwork
+    fi
 
 branches:
   only:
