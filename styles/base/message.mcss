@@ -10,6 +10,7 @@ Message {
     padding: 0 2px
   }
   header {
+    margin: 15px 20px 0
     font-size: 120%
     display: flex
     div.mini {
@@ -260,6 +261,7 @@ Message {
       }
     }
     section {
+      margin: 0 15px
       font-size: 90%
       font-style: italic
       color: #777

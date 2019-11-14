@@ -5,7 +5,6 @@ Message {
     color: white
   }
   header {
-    margin: 15px 20px 0
     div.main {
       div.main {
         div.name {

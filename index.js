@@ -55,6 +55,20 @@ electron.app.on('ready', () => {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
     const browserWindow = openMainWindow()
+
+    browserWindow.on('app-command', (e, cmd) => {
+      switch (cmd) {
+        case 'browser-backward': {
+          browserWindow.webContents.send('goBack')
+          break
+        }
+        case 'browser-forward': {
+          browserWindow.webContents.send('goForward')
+          break
+        }
+      }
+    })
+
     const menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
@@ -152,6 +166,7 @@ function openMainWindow () {
       backgroundColor: '#EEE',
       icon: Path.join(__dirname, 'assets/icon.png')
     })
+
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('close', function (e) {
