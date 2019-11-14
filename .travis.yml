@@ -7,6 +7,10 @@ matrix:
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+      addons:
+        homebrew:
+          packages:
+          - vitorgalvao/tiny-scripts/cask-repair
   
     - os: linux
       language: node_js
@@ -33,11 +37,6 @@ before_install:
         libxext-dev \
         libxkbfile-dev \
         libxtst-dev
-    fi
-
-  - |
-    if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-      brew install vitorgalvao/tiny-scripts/cask-repair
     fi
 
 script: npm test && npm run dist
