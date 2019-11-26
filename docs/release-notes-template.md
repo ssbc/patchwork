@@ -2,9 +2,12 @@
 
 ## Install
 
-- **Windows:** [`ssb-patchwork-setup-$$VERSION.exe`][exe]
-- **macOS:** [`Patchwork-$$VERSION.dmg`][dmg] (you may need to [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088))
-- **Linux:** [`ssb-patchwork-$$VERSION-x86_64.AppImage`][appimage] (you will need to [make it executable](https://docs.appimage.org/user-guide/run-appimages.html))
+- **Windows:** [`Patchwork-Setup-$$VERSION.exe`][exe]
+- **macOS:** [`Patchwork-$$VERSION.dmg`][dmg]
+  - You must [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088).
+- **Linux:** [`Patchwork-$$VERSION.AppImage`][appimage]
+  - You must [make it executable](https://docs.appimage.org/user-guide/run-appimages.html): `chmod +x Patchwork-$$VERSION.AppImage`
+  - You may need to [fix the sandbox](https://github.com/electron/electron/issues/17972): `sudo sysctl kernel.unprivileged_userns_clone=1`
 
 ## Getting started
 
@@ -21,5 +24,5 @@ $$CHANGES
 :sos: [Need help? Please create an issue!](https://github.com/ssbc/patchwork/issues/new)
 
 [dmg]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.dmg
-[exe]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork-setup-$$VERSION.exe
-[appimage]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork-$$VERSION-x86_64.AppImage
+[exe]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-Setup-$$VERSION.exe
+[appimage]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.AppImage
