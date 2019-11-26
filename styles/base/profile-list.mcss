@@ -58,7 +58,7 @@ ProfileList {
     div.progress {
       display: flex
       flex-direction: column
-      height: 20px
+      height: 40px
       svg {
         transition: opacity 0.2s
         opacity: 0
