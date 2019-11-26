@@ -127,7 +127,7 @@ electron.app.on('ready', () => {
       ]
     }
 
-    Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
+    electron.app.applicationMenu = Menu.buildFromTemplate(menu)
   })
 
   electron.app.on('activate', function () {
