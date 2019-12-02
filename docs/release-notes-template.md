@@ -2,6 +2,8 @@
 
 ## Install
 
+Use [your favorite package manager](https://github.com/ssbc/patchwork#installation) or install manually.
+
 ### Windows
 
 **[`Patchwork-Setup-$$VERSION.exe`][exe]**
@@ -14,10 +16,12 @@ You must [allow apps from "unidentified" developers](https://support.apple.com/k
 
 ### Linux
 
-You may need to [fix the sandbox](https://github.com/ssbc/patchwork/blob/master/docs/INSTALL.md#sandbox)
+**[`Patchwork-$$VERSION.AppImage`][appimage]**
 
-- **AppImage:** [`Patchwork-$$VERSION.AppImage`][appimage]
-  - You must [make it executable](https://docs.appimage.org/user-guide/run-appimages.html): `chmod +x Patchwork-$$VERSION.AppImage`
+You may need to [fix the sandbox](https://github.com/ssbc/patchwork/blob/master/docs/INSTALL.md#sandbox).
+
+There are also releases for Debian and Snapcraft:
+
 - **Debian:** [`ssb-patchwork_$$VERSION_amd64.deb`][deb]
 - **Snapcraft:** [`ssb-patchwork_$$VERSION_amd64.snap`][snap]
   - You must install with `snap install --dangerous` because it's unsigned.
