@@ -2,15 +2,25 @@
 
 ## Install
 
-- **Windows:** [`Patchwork-Setup-$$VERSION.exe`][exe]
-- **macOS:** [`Patchwork-$$VERSION.dmg`][dmg]
-  - You must [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088).
-- **Linux:** You may need to [fix the sandbox](https://github.com/ssbc/patchwork/blob/master/docs/INSTALL.md#sandbox)
-  - **AppImage:** [`Patchwork-$$VERSION.AppImage`][appimage]
-    - You must [make it executable](https://docs.appimage.org/user-guide/run-appimages.html): `chmod +x Patchwork-$$VERSION.AppImage`
-  - **Debian:** [`ssb-patchwork_$$VERSION_amd64.deb`][deb]
-  - **Snapcraft:** [`ssb-patchwork_$$VERSION_amd64.snap`][snap]
-    - You must install with `snap install --dangerous` because it's unsigned.
+### Windows
+
+**[`Patchwork-Setup-$$VERSION.exe`][exe]**
+
+### macOS
+
+**[`Patchwork-$$VERSION.dmg`][dmg]**
+
+You must [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088).
+
+### Linux
+
+You may need to [fix the sandbox](https://github.com/ssbc/patchwork/blob/master/docs/INSTALL.md#sandbox)
+
+- **AppImage:** [`Patchwork-$$VERSION.AppImage`][appimage]
+  - You must [make it executable](https://docs.appimage.org/user-guide/run-appimages.html): `chmod +x Patchwork-$$VERSION.AppImage`
+- **Debian:** [`ssb-patchwork_$$VERSION_amd64.deb`][deb]
+- **Snapcraft:** [`ssb-patchwork_$$VERSION_amd64.snap`][snap]
+  - You must install with `snap install --dangerous` because it's unsigned.
 
 ## Getting started
 
