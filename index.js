@@ -220,8 +220,8 @@ function setupContext (appName, opts, cb) {
   }
 
   // Support rooms
-  ssbConfig.connections.incoming.tunnel = [{scope: 'public', transform: 'shs'}]
-  ssbConfig.connections.outgoing.tunnel = [{transform: 'shs'}]
+  ssbConfig.connections.incoming.tunnel = [{ scope: 'public', transform: 'shs' }]
+  ssbConfig.connections.outgoing.tunnel = [{ transform: 'shs' }]
 
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
