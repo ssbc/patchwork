@@ -57,6 +57,12 @@ With npm:
 npm install
 ```
 
+If you receive 'No native build found' errors, try instead:
+
+```shell
+npm install --build-from-source
+```
+
 With yarn:
 
 ```shell
