@@ -118,9 +118,8 @@ See also:
 
 ### AppImage
 
-Note that the `chown` and `chmod` solution doesn't work with AppImages, and the
-`--no-sandbox` requires [extra steps][appimage-fix], so the simplest solution
-is to use the `sysctl` option *or* use a different release format (AUR, Brew,
-Deb, or Snap).
+Note that the `chown` and `chmod` solution doesn't work with AppImages, but you can launch the AppImage with the `--no-sandbox` flag appended to the command.
+
+You can permanently patch the AppImage to add `--no-sandbox`, but that change is experimental and requires some [extra steps][appimage-fix].
 
 [appimage-fix]: https://github.com/ssbc/patchwork/issues/1217#issuecomment-559609983
