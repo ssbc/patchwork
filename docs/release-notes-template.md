@@ -2,12 +2,29 @@
 
 ## Install
 
-- **Windows:** [`Patchwork-Setup-$$VERSION.exe`][exe]
-- **macOS:** [`Patchwork-$$VERSION.dmg`][dmg]
-  - You must [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088).
-- **Linux:** [`Patchwork-$$VERSION.AppImage`][appimage]
-  - You must [make it executable](https://docs.appimage.org/user-guide/run-appimages.html): `chmod +x Patchwork-$$VERSION.AppImage`
-  - You may need to [fix the sandbox](https://github.com/electron/electron/issues/17972): `sudo sysctl kernel.unprivileged_userns_clone=1`
+Use [your favorite package manager](https://github.com/ssbc/patchwork#installation) or install manually.
+
+### Windows
+
+**[`Patchwork-Setup-$$VERSION.exe`][exe]**
+
+### macOS
+
+**[`Patchwork-$$VERSION.dmg`][dmg]**
+
+You must [allow apps from "unidentified" developers](https://support.apple.com/kb/PH25088).
+
+### Linux
+
+**[`Patchwork-$$VERSION.AppImage`][appimage]**
+
+You may need to [fix the sandbox](https://github.com/ssbc/patchwork/blob/master/docs/INSTALL.md#sandbox).
+
+There are also releases for Debian and Snapcraft:
+
+- **Debian:** [`ssb-patchwork_$$VERSION_amd64.deb`][deb]
+- **Snapcraft:** [`ssb-patchwork_$$VERSION_amd64.snap`][snap]
+  - You must install with `snap install --dangerous` because it's unsigned.
 
 ## Getting started
 
@@ -23,6 +40,11 @@ $$CHANGES
 
 :sos: [Need help? Please create an issue!](https://github.com/ssbc/patchwork/issues/new)
 
-[dmg]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.dmg
-[exe]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-Setup-$$VERSION.exe
 [appimage]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.AppImage
+[dmg]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.dmg
+[deb]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork_$$VERSION.dmg
+[snap]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork_$$VERSION.snap
+[exe]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-Setup-$$VERSION.exe
+[npm]: https://npmjs.org/
+[yarn]: https://yarnpkg.com/en/
+[yay]: https://github.com/Jguer/yay

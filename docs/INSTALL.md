@@ -83,3 +83,49 @@ following command line options.
 
 On Windows, please make sure to add -- before options. For example,
 `C:\Users\YourUser\AppData\Local\Programs\ssb-patchwork\Patchwork.exe -- --proxy-server=....`
+
+## Start
+
+### npm
+
+```shell
+npm start
+```
+
+### Yarn
+
+```shell
+yarn start
+```
+
+## Sandbox
+
+Some Linux users may see an error like this:
+
+> The SUID sandbox helper binary was found, but is not configured correctly.
+> Rather than run without sandboxing I'm aborting now. You need to make sure
+> that node_modules/electron/dist/chrome-sandbox is owned by root and has mode
+> 4755.
+
+You have three options, pick the one that you think sucks the least:
+
+1. Change your kernel settings: `sudo sysctl kernel.unprivileged_userns_clone=1`
+2. Follow the instructions and change the file's owner to root
+  - `sudo chown root node_modules/electron/dist/chrome-sandbox`
+  - `sudo chmod 4755 node_modules/electron/dist/chrome-sandbox`
+3. Disable the sandbox with either:
+  - `npm start -- --no-sandbox`, or
+  - `yarn start -- --no-sandbox`
+
+See also:
+
+- https://github.com/electron/electron/issues/17972
+- https://github.com/electron-userland/electron-builder/issues/3872
+
+### AppImage
+
+Note that the `chown` and `chmod` solution doesn't work with AppImages, but you can launch the AppImage with the `--no-sandbox` flag appended to the command.
+
+You can permanently patch the AppImage to add `--no-sandbox`, but that change is experimental and requires some [extra steps][appimage-fix].
+
+[appimage-fix]: https://github.com/ssbc/patchwork/issues/1217#issuecomment-559609983
