@@ -14,6 +14,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+- Add Cmd+, or Ctrl+, keyboard shortcut for settings (#1209)
+- Add Homebrew install instructions to the readme (#1211)
+- Add sandbox documentation for Linux (#1218)
+- Add support for SSB-Rooms ( #1219)
+- Add localization for timestamps with Moment (#1227)
+
+### Fixed
+
+- Fix connection progress regression (#1210)
+- Fix release notes (#1214)
+- Fix Spanish localization (#1220)
+- Fix flashing sidebar UI (#1228)
+
 ## v3.17.1 - 2019-11-26
 
 ### Added
