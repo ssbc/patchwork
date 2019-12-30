@@ -11,7 +11,7 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
     "release-notes": "node scripts/release-notes.js",
-    "dist": "electron-builder -c.snap.publish=github --x64 --ia32",
+    "dist": "electron-builder -c.snap.publish=github",
     "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
   },
   "author": "Secure Scuttlebutt Consortium",
@@ -127,7 +127,16 @@
       "icon": "build/dmg/icon.icns"
     },
     "win": {
-      "publisherName": "Secure Scuttlebutt Consortium"
+      "publisherName": "Secure Scuttlebutt Consortium",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
     }
   }
 }
