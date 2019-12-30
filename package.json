@@ -127,7 +127,16 @@
       "icon": "build/dmg/icon.icns"
     },
     "win": {
-      "publisherName": "Secure Scuttlebutt Consortium"
+      "publisherName": "Secure Scuttlebutt Consortium",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
     }
   }
 }
