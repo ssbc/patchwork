@@ -11,7 +11,7 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
     "release-notes": "node scripts/release-notes.js",
-    "dist": "electron-builder -c.snap.publish=github",
+    "dist": "electron-builder -c.snap.publish=github --x64 --ia32",
     "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
   },
   "author": "Secure Scuttlebutt Consortium",
