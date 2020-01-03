@@ -42,7 +42,7 @@ $$CHANGES
 
 [appimage]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.AppImage
 [dmg]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-$$VERSION.dmg
-[deb]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork_$$VERSION.dmg
+[deb]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork_$$VERSION_amd64.deb
 [snap]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/ssb-patchwork_$$VERSION.snap
 [exe]: https://github.com/ssbc/patchwork/releases/download/v$$VERSION/Patchwork-Setup-$$VERSION.exe
 [npm]: https://npmjs.org/
