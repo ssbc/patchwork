@@ -116,6 +116,11 @@
         "AppImage",
         "snap",
         "deb"
+      ],
+      "arch": [
+        "x64",
+        "ia32",
+        "amd64"
       ]
     },
     "deb": {
@@ -134,6 +139,21 @@
           "arch": [
             "x64",
             "ia32"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "ia32",
+            "arm64"
           ]
         }
       ]
