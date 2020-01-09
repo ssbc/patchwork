@@ -119,11 +119,11 @@
         },
         {
 					"target": "snap",
-					"arch": ["x64", "ia32", "arm64"]
+					"arch": ["x64", "ia32"]
         },
         {
 					"target": "deb",
-					"arch": ["x64", "ia32", "arm64"]
+					"arch": ["x64", "ia32"]
 				}
       ]
     },
@@ -143,14 +143,6 @@
           "arch": [
             "x64",
             "ia32"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "ia32",
-            "arm64"
           ]
         }
       ]
