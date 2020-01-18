@@ -6,7 +6,9 @@
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
   "scripts": {
-    "test": "standard",
+    "lint": "standard",
+    "test:gui": "npm start -- --path $(mktemp -d)",
+    "test": "npm run lint && npm run test:gui",
     "start": "electron index.js",
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
@@ -114,17 +116,24 @@
       "category": "Network",
       "target": [
         {
-					"target": "AppImage",
-					"arch": ["x64", "arm64"]
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         },
         {
-					"target": "snap",
-					"arch": ["x64"]
+          "target": "snap",
+          "arch": [
+            "x64"
+          ]
         },
         {
-					"target": "deb",
-					"arch": ["x64"]
-				}
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "deb": {
