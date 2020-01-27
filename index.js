@@ -94,6 +94,16 @@ electron.app.on('ready', () => {
           click: () => {
             browserWindow.webContents.send('goForward')
           }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Settings',
+          accelerator: 'CmdOrCtrl+,',
+          click: () => {
+            browserWindow.webContents.send('goToSettings')
+          }
         }
       ]
     })
