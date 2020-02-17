@@ -14,6 +14,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+- Add ia32 build target (#1235)
+
+### Changed
+
+- Update SSB-CONN (#1241, #1242)
+- Update all npm dependencies (#1247)
+
+### Fixed
+
+- Fix global shortcut breaking other windows (#1243)
+
 ## v3.17.2 - 2019-12-28
 
 ### Added
