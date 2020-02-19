@@ -81,7 +81,7 @@
     "ssb-logging": "^1.0.0",
     "ssb-markdown": "^6.0.3",
     "ssb-master": "^1.0.3",
-    "ssb-mentions": "^0.5.1",
+    "ssb-mentions": "^0.5.2",
     "ssb-msgs": "^5.2.0",
     "ssb-no-auth": "^1.0.0",
     "ssb-private": "^0.2.3",

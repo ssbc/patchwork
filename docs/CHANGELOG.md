@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed problem where URL mention breaks publishing.
+
 ## v3.17.3 - 2020-02-17
 
 ### Added
