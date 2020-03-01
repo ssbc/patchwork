@@ -304,5 +304,6 @@
 	"Connect": "Connect",
 	"In order to share with users on the internet, you need to be invited to a pub server or a room server.": "In order to share with users on the internet, you need to be invited to a pub server or a room server.",
 	"Create an invite that your friend can use to find you. You need to be followed by a pub with support for \"peer invites\".": "Create an invite that your friend can use to find you. You need to be followed by a pub with support for \"peer invites\".",
-	"Give this invite code to one friend.": "Give this invite code to one friend."
+	"Give this invite code to one friend.": "Give this invite code to one friend.",
+	"An error occurred while attempting to create invite.": "An error occurred while attempting to create invite."
 }
