@@ -10,6 +10,7 @@ Message {
     padding: 0 2px
   }
   header {
+    margin: 15px 20px 0
     font-size: 120%
     display: flex
     div.mini {
@@ -118,7 +119,11 @@ Message {
       }
     }
   }
-  section {
+  a.contentWarning {
+    padding: 10px 20px
+    font-weight: bold
+  }
+  section.content {
     margin: 0
     padding: 0 20px
     max-height: 1170px
@@ -256,6 +261,7 @@ Message {
       }
     }
     section {
+      margin: 0 15px
       font-size: 90%
       font-style: italic
       color: #777
@@ -292,5 +298,17 @@ Message {
   }
   -new, -unread {
     z-index: 1
+  }
+  -hasContentWarning {
+    section.content {
+      max-height: 0px
+    }
+    footer {
+      div.expander {
+          -webkit-mask-image: none !important
+          padding-top: 0px !important
+          margin-top: 0px !important
+      }
+    }
   }
 }

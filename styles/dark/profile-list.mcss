@@ -1,16 +1,10 @@
 ProfileList {
   a.profile {
     background-color: #313131
-    border-radius: 3px
     transition: background-color 0.25s
     @svg connected {
       circle {
         fill: #45b754
-      }
-    }
-    div.avatar {
-      img {
-        border-radius: 3px
       }
     }
     div.main {

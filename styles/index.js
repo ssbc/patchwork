@@ -8,10 +8,10 @@ const vendorCss = vendorPaths.map((vendorPath) => fs.readFileSync(vendorPath, 'u
 const theme = (themeName) => {
   const themePath = path.join(__dirname, themeName)
   const basePath = path.join(__dirname, 'base')
-  var dirs = [basePath, themePath]
+  const dirs = [basePath, themePath]
 
-  var mcss = []
-  var css = [...vendorCss]
+  const mcss = []
+  const css = [...vendorCss]
 
   dirs.forEach(dir => {
     fs.readdirSync(dir).forEach(file => {

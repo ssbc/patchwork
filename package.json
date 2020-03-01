@@ -2,7 +2,7 @@
   "name": "ssb-patchwork",
   "productName": "Patchwork",
   "repository": "git@github.com:ssbc/patchwork.git",
-  "version": "3.14.1",
+  "version": "3.17.5",
   "description": "A decentralized messaging and sharing app built on top of Secure Scuttlebutt (SSB).",
   "main": "index.js",
   "scripts": {
@@ -11,39 +11,37 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
     "release-notes": "node scripts/release-notes.js",
-    "dist": "electron-builder",
+    "dist": "electron-builder -c.snap.publish=github",
     "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
   },
   "author": "Secure Scuttlebutt Consortium",
   "license": "AGPL-3.0",
   "dependencies": {
-    "app-root-path": "^2.2.1",
-    "async": "^3.1.0",
-    "bulk-require": "^1.0.1",
+    "app-root-path": "^3.0.0",
+    "async": "^3.1.1",
     "color-hash": "^1.0.3",
     "compare-version": "^0.1.2",
-    "deep-equal": "^1.0.1",
+    "deep-equal": "^2.0.1",
     "depject": "^4.1.1",
     "depnest": "^1.3.0",
     "electron-default-menu": "~1.0.1",
-    "electron-spellchecker": "^2.1.0",
+    "electron-spellchecker": "^2.2.1",
     "electron-window-state": "^5.0.3",
     "escape-string-regexp": "^2.0.0",
-    "fix-path": "^2.1.0",
-    "flat": "^4.1.0",
+    "fix-path": "^3.0.0",
+    "flat": "^5.0.0",
     "flatpickr": "4.5.2",
     "flumeview-reduce": "^1.3.16",
     "hashlru": "^2.3.0",
     "hex-rgb": "^4.1.0",
-    "highlight.js": "^9.15.8",
+    "highlight.js": "^9.18.1",
     "html-escape": "^2.0.0",
-    "human-time": "0.0.2",
-    "i18n": "^0.8.3",
-    "lodash": "^4.17.14",
+    "i18n": "^0.8.5",
+    "lodash": "^4.17.15",
     "lodash.concat": "^4.5.0",
     "lodash.filter": "^4.6.0",
-    "micro-css": "^2.0.1",
-    "moment-timezone": "^0.5.26",
+    "micro-css": "^2.0.2",
+    "moment-timezone": "^0.5.27",
     "mutant": "github:mmckegg/mutant#intersection-binding-viewport",
     "mutant-pull-reduce": "^1.1.0",
     "node-emoji": "^1.10.0",
@@ -59,47 +57,48 @@
     "pull-pause": "~0.0.2",
     "pull-pushable": "^2.2.0",
     "pull-reconnect": "0.0.3",
-    "pull-stream": "^3.6.13",
+    "pull-stream": "^3.6.14",
     "require-style": "^1.1.0",
     "run-parallel": "^1.1.9",
     "scuttle-blog": "^1.0.1",
-    "scuttle-tag": "0.4.0",
-    "secret-stack": "^6.2.1",
+    "scuttle-tag": "^0.4.0",
+    "secret-stack": "^6.3.1",
     "sorted-array-functions": "^1.2.0",
-    "spacetime": "^5.9.0",
+    "spacetime": "^6.4.1",
     "ssb-about": "github:ssbc/ssb-about#use-await-ready",
     "ssb-backlinks": "^0.7.3",
-    "ssb-blob-files": "^1.1.6",
-    "ssb-blobs": "^1.2.1",
-    "ssb-client": "^4.7.7",
-    "ssb-config": "github:ssbc/ssb-config#auto-config-incoming",
-    "ssb-db": "^19.3.0",
     "ssb-device-address": "^1.1.6",
-    "ssb-friends": "^4.1.4",
-    "ssb-gossip": "^1.1.0",
+    "ssb-client": "^4.9.0",
+    "ssb-config": "^3.4.4",
+    "ssb-conn": "~0.16.2",
+    "ssb-db": "^19.4.0",
+    "ssb-ebt": "^5.6.7",
     "ssb-identities": "^2.1.0",
+    "ssb-blobs": "^1.2.2",
+    "ssb-blob-files": "^1.2.0",
+    "ssb-friends": "^4.1.4",
     "ssb-invite": "^2.1.3",
-    "ssb-keys": "^7.1.7",
-    "ssb-local": "^1.0.0",
+    "ssb-keys": "^7.2.2",
+    "ssb-lan": "^0.2.0",
     "ssb-logging": "^1.0.0",
-    "ssb-markdown": "github:ssbc/ssb-markdown#pass-emoji",
+    "ssb-markdown": "^6.0.3",
     "ssb-master": "^1.0.3",
-    "ssb-mentions": "^0.5.0",
+    "ssb-mentions": "^0.5.2",
     "ssb-msgs": "^5.2.0",
     "ssb-no-auth": "^1.0.0",
     "ssb-peer-invites": "^2.0.0",
     "ssb-private": "^0.2.3",
-    "ssb-query": "^2.4.2",
+    "ssb-query": "^2.4.3",
     "ssb-ref": "^2.13.9",
-    "ssb-replicate": "^1.3.0",
+    "ssb-replicate": "^1.3.2",
+    "ssb-room": "^1.1.3",
     "ssb-search": "^1.2.1",
     "ssb-sort": "^1.1.3",
-    "ssb-suggest": "^1.0.4",
+    "ssb-suggest": "^1.2.0",
     "ssb-tags": "^0.2.0",
     "ssb-unix-socket": "^1.0.0",
     "ssb-uri": "^1.0.1",
     "ssb-ws": "^6.2.3",
-    "standard": "^13.0.0",
     "suggest-box": "github:mmckegg/suggest-box#scroll-selection-into-view",
     "text-node-searcher": "^1.1.1",
     "xtend": "^4.0.2"
@@ -107,20 +106,35 @@
   "devDependencies": {
     "changelog-version": "^1.0.1",
     "colors": "^1.3.3",
-    "electron": "^4.2.6",
-    "electron-builder": "^20.44.4"
+    "electron": "^6.1.7",
+    "electron-builder": "^22.3.2",
+    "standard": "^14.3.1"
   },
-  "optionalDependencies": {
-    "mouse-forward-back": "^1.0.1"
-  },
+  "optionalDependencies": {},
   "build": {
     "appId": "org.ssbc.patchwork",
     "linux": {
       "category": "Network",
       "target": [
-        "AppImage",
-        "snap",
-        "deb"
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "snap",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "deb": {
@@ -132,7 +146,16 @@
       "icon": "build/dmg/icon.icns"
     },
     "win": {
-      "publisherName": "Secure Scuttlebutt Consortium"
+      "publisherName": "Secure Scuttlebutt Consortium",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
     }
   }
 }

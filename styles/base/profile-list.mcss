@@ -3,7 +3,9 @@ ProfileList {
     display: flex
     padding: 4px
     font-size: 110%
+    min-height: 40px
     margin: 4px 0
+    border-radius: 5px
     position: relative
     text-decoration: none
     background-repeat: no-repeat
@@ -38,6 +40,7 @@ ProfileList {
         width: 40px
         height: 40px
         display: block
+        border-radius: 5px
       }
     }
     div.main {
@@ -55,6 +58,7 @@ ProfileList {
     div.progress {
       display: flex
       flex-direction: column
+      height: 40px
       svg {
         transition: opacity 0.2s
         opacity: 0
@@ -89,6 +93,24 @@ ProfileList {
         :hover {
           text-decoration: none
           background-color: #f77
+        }
+      }
+      a.connect {
+        color: white
+        border-radius: 3px
+        height: 32px
+        line-height: 32px
+        width: 60px
+        right: 45px
+        position: relative
+        background-color: #51c067
+        text-align: center
+        vertical-align: middle
+        font-size: 14px
+        overflow: hidden
+        :hover {
+          text-decoration: none
+          background-color: #45b754
         }
       }
     }

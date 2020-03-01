@@ -32,7 +32,6 @@ MainWindow {
     }
     span.history {
       a {
-        border-radius: 3px
         :hover {
           background-color: #383736
         }

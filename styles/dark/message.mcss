@@ -5,7 +5,6 @@ Message {
     color: #674e00
   }
   header {
-    margin: 20px 20px 0
     div.main {
       div.main {
         div.name {
@@ -78,6 +77,9 @@ Message {
         }
       }
     }
+  }
+  a.contentWarning {
+    background: #000
   }
   a.backlink {
     padding: 10px 20px

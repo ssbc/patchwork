@@ -47,6 +47,7 @@ MainWindow {
         display: inline-block
         width: 28px
         height: 100%
+        border-radius: 5px
         background: svg(backArrow) no-repeat center
         opacity: 0.4
         -active {

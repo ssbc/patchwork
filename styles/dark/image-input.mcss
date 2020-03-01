@@ -1,5 +1,0 @@
-ImageInput {
-  span {
-    border-radius: 3px
-  }
-}

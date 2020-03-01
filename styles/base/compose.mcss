@@ -4,6 +4,7 @@ Compose {
   flex-shrink: 0
   width: 100%
   margin: 20px auto
+  border-radius: 5px
   textarea {
     resize: vertical
     font-size: 120%
@@ -43,6 +44,8 @@ Compose {
     flex-direction: row
     align-items: baseline
     justify-content: space-between
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
     input[type="file"] {
       color: transparent
       ::-webkit-file-upload-button {
@@ -53,6 +56,7 @@ Compose {
         font-size: 1rem
         outline: none
         white-space: nowrap
+        border-radius: 5px
         -webkit-user-select: none
       }
       :active, :focus {
@@ -60,7 +64,16 @@ Compose {
         box-shadow: none
       }
     }
-
+    input.contentWarning {
+      border: 2px solid #ddd;
+      border-radius: 3px;
+      flex: 1;
+      font-size: 120%
+      margin-left: 5px;
+      margin-right: 5px;
+      min-width: 0;
+      padding: 5px 6px;
+    }
     (button) {
       -clear {
         margin-right: 5px

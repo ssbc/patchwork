@@ -3,6 +3,7 @@ ProfilePreview {
   z-index: 1
   position: absolute
   width: 500px
+  border-radius: 5px
   section {
     color: white
     padding: 5px

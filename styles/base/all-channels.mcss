@@ -9,6 +9,7 @@ AllChannels {
     padding: 8px 10px
     font-size: 110%
     margin: 4px
+    border-radius: 5px
     position: relative
     width: 200px
     background-repeat: no-repeat
@@ -50,8 +51,7 @@ AllChannels {
       padding: 9px 10px
       color: white
       margin: -8px -10px -8px 4px
-      border-top-left-radius: 0
-      border-bottom-left-radius: 0
+      border-radius: 5px;
       border-left: 2px solid rgba(255, 255, 255, 0.9)
       text-decoration: none
       -unsubscribe {

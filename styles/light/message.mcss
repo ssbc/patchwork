@@ -5,7 +5,6 @@ Message {
     color: white
   }
   header {
-    margin: 15px 20px 0
     div.main {
       div.main {
         div.name {
@@ -68,6 +67,9 @@ Message {
         }
       }
     }
+  }
+  a.contentWarning {
+    background: #ddd
   }
   a.backlink {
     border-top: 1px solid #eee
