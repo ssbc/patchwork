@@ -23,6 +23,7 @@ Message {
         img {
           width: 50px
           height: 50px
+          object-fit: cover
         }
       }
       div.main {
@@ -247,6 +248,7 @@ Message {
           img {
             width: 40px
             height: 40px
+            object-fit: cover
           }
         }
       }
@@ -291,6 +293,7 @@ Message {
           img {
             width: 40px
             height: 40px
+            object-fit: cover
           }
         }
       }
