@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## v3.17.5 - 2020-02-21
+
+### Fixed
+
+- Fixed regression by upgrading SSB-CONN to 0.16.2 (https://github.com/ssbc/patchwork/pull/1253)
+
 ## v3.17.4 - 2020-02-19
 
 ### Fixed

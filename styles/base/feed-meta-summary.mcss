@@ -34,8 +34,9 @@ FeedMetaSummary {
         img {
           display: block
           width: 45px
-          min-height: 30px
+          height: 45px
           border-radius: 3px
+          object-fit: cover
         }
         -channel {
           font-size: 20px
