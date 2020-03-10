@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+- Add donation link to readme
+
+### Fixed
+
+- Fixed squished images
+- Fixed confusing private message error
+- Fixed SSB-Backlinks for performance boost
+
 ## v3.17.5 - 2020-02-21
 
 ### Fixed
