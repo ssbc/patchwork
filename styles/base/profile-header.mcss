@@ -6,9 +6,11 @@ ProfileHeader {
     width: 200px
     max-height: 200px
     margin-right: 20px
-    img {
+    .Avatar {
+      border-radius: 5px
       width: 100%
-      order-radius: 5px
+      height: 100%
+      object-fit: cover
     }
   }
   div.main {
