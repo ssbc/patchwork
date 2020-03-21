@@ -97,12 +97,7 @@
 	"Browse All": "Alles doorbladeren",
 	"$name": "Nederlands",
 	"Theme": "Thema",
-
-
 	" liked this message": " vond dit bericht leuk",
-
-
-
 	"Language": "Taal",
 	"de": "Duits",
 	"es": "Spaans",
@@ -111,16 +106,11 @@
 	"en": "Engels",
 	"nl": "Nederlands",
 	"pt": "pt",
-
 	"Loading": "Laden",
-
 	"Show ": "Tonen",
 	"+ Join Pub": "+ Pub bijtreden",
-
 	" replied": " heeft geantwoord",
 	" replied to ": " heeft geantwoord op ",
-
-
 	" followed ": " volgen ",
 	" subscribed to ": " ingeschreven ",
 	"Write a private reply": "Schrijf een privaat antwoord",
@@ -135,9 +125,6 @@
 	"Click to unfollow": "Klik om niet meer te volgen",
 	"Follow Back": "Volg terug",
 	"Follow": "Volgen",
-
-
-
 	"self assigned a description": "heeft zichzelf beschreven",
 	"subscribed to ": "geabonneerd op ",
 	"identifies ": "identificeerd ",
@@ -171,7 +158,7 @@
 	"Confirm": "Bevestigen",
 	"self assigned a display image": "koos zelf een afbeelding",
 	"Like": "Like",
-	"Untitled Gathering": "Naamlose Gathering",
+	"Untitled Gathering": "Naamlose Samenkomst",
 	"Error": "Fout",
 	"An error occurred while attempting to publish gathering.": "Het aanmaken van de gathering is niet gelukt.",
 	"An error occurred while attempting to redeem invite.": "De uitnodiging accepteren is niet gelukt.",
@@ -180,7 +167,6 @@
 	"unsubscribed from ": "uitgeschreven van ",
 	"on ": "op ",
 	"Private Message": "Privé Bericht",
-
 	"unblocked ": "Niet meer geblokkeerd ",
 	"This is you.": "Dit ben jij.",
 	"Click to unblock": "Klik hier om niet meer te blokkeren",
@@ -189,8 +175,6 @@
 	"Block": "Blokkeren",
 	"External Link": "Uitgaande Link",
 	"blocked ": "geblokkeerd ",
-
-
 	"Font Size": "Lettergrootte",
 	"However, this person should be able to see your posts.": "Deze persoon zou je berichten moeten kunnen zien.",
 	"An error occurred while publishing your message.": "Het is niet gelukt om je bericht te publiceren.",
@@ -204,7 +188,55 @@
 	"Public Feed Options": "Public Feed opties",
 	"Only include posts from subscribed channels": "Enkel berichten tonen van gevolgde kanalen",
 	"Default": "Default",
-
 	"Information": "Informatie",
-	" from your extended network": " uit je extended network"
+	" from your extended network": " uit je extended network",
+	"Clear Draft": "Wis Ontwerp",
+	"You are not following anyone": "Je volgt niemand",
+	"For help getting started, see the guide at ": "Voor hulp bij het opstarten, zie de gids op ",
+	"Nobody will be able to see your posts until you have a follower. The easiest way to get a follower is to use a pub invite as the pub will follow you back. If you have already redeemed a pub invite and you see it has not followed you back on your profile, try another pub.": "Niemand zal je berichten kunnen zien totdat je een volgeling hebt. De makkelijkste manier om een volger te krijgen is om een kroeg te gebruiken die uitnodigt omdat de kroeg je terug zal volgen. Als je al een kroeguitnodiging hebt verzilverd en je ziet dat deze je niet terug heeft gevolgd op je profiel, probeer dan een andere kroeg.",
+	"You have no followers": "Je hebt geen volgelingen",
+	"Possible connections": "Mogelijke aansluitingen",
+	"Connections": "Aansluitingen",
+	"Participating": "Deelnemend",
+	"All Threads": "Alle onderwerpen",
+	"Threads Started By You": "Onderwerpen Door Jezelf Gestart",
+	"All": "Alle",
+	"Attending": "Aanwezig op",
+	"Tags": "Tags",
+	"Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering",
+	"Click to unlike": "Click to unlike",
+	"Liked": "Liked",
+	"Add / Edit Tags": "Add / Edit Tags",
+	"forked from parent thread ": "forked from parent thread ",
+	"followed": "followed",
+	"Hide details": "Hide details",
+	"Show details": "Show details",
+	"%s people": {
+		"one": "%s people",
+		"other": "%s people"
+	},
+	"blocked": "blocked",
+	"(ignored)": "(ignored)",
+	"(listening)": "(listening)",
+	"Click for options to block syncing with this person and/or hide their posts": "Click for options to block syncing with this person and/or hide their posts",
+	"Options": "Options",
+	"You have chosen to publicly block this person.": "You have chosen to publicly block this person.",
+	"You have chosen to privately ignore this person.": "You have chosen to privately ignore this person.",
+	"No new messages will be downloaded. Existing messages will be hidden.": "No new messages will be downloaded. Existing messages will be hidden.",
+	"View %s more": {
+		"one": "View %s more",
+		"other": "View %s more"
+	},
+	"You follow %s people that subscribe to this channel.": {
+		"one": "You follow %s people that subscribe to this channel.",
+		"other": "You follow %s people that subscribe to this channel."
+	},
+	"You may not be able to see new channel content until you follow some users or pubs.": "You may not be able to see new channel content until you follow some users or pubs.",
+	"subscribed to": "subscribed to",
+	"Write a public reply in sub-thread (fork)": "Write a public reply in sub-thread (fork)",
+	"This message will only be visible to you": "This message will only be visible to you",
+	"This message will be public and can be edited by anyone": "This message will be public and can be edited by anyone",
+	"This message will be public and cannot be edited or deleted": "This message will be public and cannot be edited or deleted",
+	"filter names": "filter names",
+	"Browse Recently Active": "Browse Recently Active"
 }
