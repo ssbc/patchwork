@@ -238,5 +238,22 @@
 	"This message will be public and can be edited by anyone": "Dit bericht zal openbaar zijn en kan door iedereen worden bewerkt.",
 	"This message will be public and cannot be edited or deleted": "Dit bericht zal openbaar zijn en kan niet worden bewerkt of verwijderd.",
 	"filter names": "filter op naam",
-	"Browse Recently Active": "Blader Recente Actieve"
+	"Browse Recently Active": "Blader Recente Activiteiten",
+	"el": "el",
+	"eo": "eo",
+	"fr": "fr",
+	"pl": "pl",
+	"ru": "ru",
+	"sk": "sk",
+	"sl": "sl",
+	"uk": "uk",
+	"ur": "ur",
+	"zh-CN": "zh-CN",
+	"zh-TW": "zh-TW",
+	"Font Family": "Lettertype Familie",
+	"Notification Options": "Notificatie Optiens",
+	"Include \"Participating\" tab in navigation bar": "Include \"Participating\" tab in navigation bar",
+	"Blocking": "Geblokkeerd",
+	"Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Automatisch verwijderen van berichten van geblokkeerde auteurs. Dit is onomkeerbaar en zal problemen veroorzaken met klanten die de database delen maar geen ondersteuning bieden voor verwijderde berichten. Inschakelen op eigen risico!",
+	"In order to share with users on the internet, you need to be invited to a pub server or a room server.": "Om te kunnen delen met gebruikers op het internet, moet u worden uitgenodigd op een kroeg (pub) server of een kamer (room) server."
 }
