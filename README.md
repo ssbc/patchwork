@@ -38,6 +38,7 @@ Building from source? Check out [`INSTALL.md`][install] for more information.
 
 Create a [new issue][new-issue] to report problems or request features. See
 [`CONTRIBUTING.md`][contributing] for more information on how to get involved.
+You can also support the project via [donations](https://opencollective.com/patchwork/).
 
 Please note that this project is released with a [Contributor Code of
 Conduct][conduct]. By participating in this project you agree to abide by its

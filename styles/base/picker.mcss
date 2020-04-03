@@ -8,6 +8,7 @@ Picker {
       height: 50px
       display: block
       border-radius: 5px
+      object-fit: cover
     }
   }
   span.add {

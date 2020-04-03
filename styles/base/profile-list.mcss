@@ -41,6 +41,7 @@ ProfileList {
         height: 40px
         display: block
         border-radius: 5px
+        object-fit: cover
       }
     }
     div.main {
