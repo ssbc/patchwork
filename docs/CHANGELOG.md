@@ -14,6 +14,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+- Add NL locale (#1268)
+
+### Changed
+
+- Update Acorn dependency (#1266)
+
+### Fixed
+
+- Fix profile header CSS (#1265 #1267)
+- Fix FR locale (#1262)
+
 ## v3.17.6 - 2020-03-10
 
 ### Added
