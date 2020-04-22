@@ -83,6 +83,7 @@
   "mentioned you": "vous a mentionné",
   " and ": " et ",
   "Liked by": "Aimé par",
+  "Liked": "J'ai aimé",
   "%s likes": {
     "one": "%s j’aime",
     "other": "%s j’aimes"
@@ -258,5 +259,21 @@
   "Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Supprimer automatiquement les message des utilisateurs bloqués. Ceci est irréversible et causera des des problèmes avec les clients qui partagent la base de données mais ne prennent pas en charge les message supprimés. Activez cette option à vos risques et périls!",
   "light": "clair",
   "dark": "sombre",
-  "new": "nouveau"
+  "new": "nouveau",
+  "Clear Draft": "Supprimer Brouillon",
+  "Possible connections": "Possible connections",
+  "Connections": "Connections",
+  "Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering": "Search for word, @feedId, #channel or %msgId\nYou can also add author:@id or is:private for more filtering",
+  "Connect": "Connecter",
+  "Click to unlike": "Click to unlike",
+  "made changes to": "a changé(e)",
+  "forked from parent thread ": "forked from parent thread ",
+  "(ignored)": "(ignored)",
+  "(listening)": "(listening)",
+  "Click for options to block syncing with this person and/or hide their posts": "Click for options to block syncing with this person and/or hide their posts",
+  "Options": "Options",
+  "You have chosen to publicly block this person.": "You have chosen to publicly block this person.",
+  "You have chosen to privately ignore this person.": "You have chosen to privately ignore this person.",
+  "No new messages will be downloaded. Existing messages will be hidden.": "No new messages will be downloaded. Existing messages will be hidden.",
+  "Font Family": "Font Family"
 }
