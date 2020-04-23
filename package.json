@@ -58,6 +58,7 @@
     "pull-pushable": "^2.2.0",
     "pull-reconnect": "0.0.3",
     "pull-stream": "^3.6.14",
+    "remove-markdown": "^0.3.0",
     "require-style": "^1.1.0",
     "run-parallel": "^1.1.9",
     "scuttle-blog": "^1.0.1",
