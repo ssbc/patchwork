@@ -192,7 +192,6 @@
   "Choose Banner Image...": "Choisir une image de bannière…",
   "Describe the gathering (if you want)": "Décrire le rassemblement (si vous le voulez)",
   "Create Gathering": "Créer un rassemblement",
-  "liked": "a aimé",
   "(missing message)": "(message manquant)",
   "Cannot display message.": "Impossible d’afficher le message",
   "What would you like to call ": "Comment aimeriez-vous appeler ",
@@ -258,5 +257,6 @@
   "Blocking": "Blocage",
   "Automatically delete messages from blocked authors. This is irreversible and will cause problems with clients that share the database but do not support deleted messages. Enable at your own risk!": "Supprimer automatiquement les message des utilisateurs bloqués. Ceci est irréversible et causera des des problèmes avec les clients qui partagent la base de données mais ne prennent pas en charge les message supprimés. Activez cette option à vos risques et périls!",
   "light": "clair",
-  "dark": "sombre"
+  "dark": "sombre",
+  "new": "nouveau"
 }
