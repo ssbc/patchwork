@@ -19,7 +19,6 @@ matrix:
 
 cache:
   directories:
-    - $HOME/.npm
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
 
@@ -34,6 +33,7 @@ before_install:
         libxkbfile-dev \
         libxtst-dev
     fi
+  - npm cache verify
 
 script: npm test && npm run dist
 
