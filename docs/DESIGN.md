@@ -13,7 +13,7 @@ This document should be version tracked, and any change to it should go through 
 ## Design goals
 
 ### Goals and scope: Patchwork should...
-* Follow the [Scuttlebutt principles](https://www.scuttlebutt.nz/principles/)
+* Follow the [Scuttlebutt principles](https://scuttlebutt.nz/docs/principles/)
 * Be a client that people can feel confident recommending to their friends who aren't using Scuttlebutt, and who might not have much tech knowledge
 * Be safe (privacy, blocking, etc)
 * Be usable (not confusing or broken; clear explanations of new concepts)
