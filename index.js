@@ -201,14 +201,6 @@ function setupContext (appName, opts, cb) {
       dunbar: 150,
       hops: 2 // down from 3
     }
-    // connections: { // to support DHT invites
-    //   incoming: {
-    //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
-    //   },
-    //   outgoing: {
-    //     dht: [{ transform: 'shs' }]
-    //   }
-    // }
   }, opts))
 
   // disable gossip auto-population from {type: 'pub'} messages as we handle this manually in sbot/index.js
@@ -232,6 +224,9 @@ function setupContext (appName, opts, cb) {
   // Support rooms
   ssbConfig.connections.incoming.tunnel = [{ scope: 'public', transform: 'shs' }]
   ssbConfig.connections.outgoing.tunnel = [{ transform: 'shs' }]
+
+  // Support DHT invites (only as a client, for now)
+  ssbConfig.connections.outgoing.dht = [{ transform: 'shs' }]
 
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
