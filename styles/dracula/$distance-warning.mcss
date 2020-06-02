@@ -1,0 +1,8 @@
+$distanceWarning {
+  border: 1px solid #ffba4e
+  background: #5f410b
+  color: #ffdda7
+  h1 {
+    color: white
+  }
+}

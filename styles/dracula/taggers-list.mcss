@@ -1,0 +1,14 @@
+TaggersList {
+  a.profile {
+    background: #313131
+    transition: background-color 0.25s
+    div.main {
+      div.name {
+        color: #ccc
+      }
+    }
+    :hover {
+      background-color: #292929
+    }
+  }
+}

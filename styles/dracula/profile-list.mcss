@@ -1,0 +1,19 @@
+ProfileList {
+  a.profile {
+    background-color: #313131
+    transition: background-color 0.25s
+    @svg connected {
+      circle {
+        fill: #45b754
+      }
+    }
+    div.main {
+      div.name {
+        color: #ccc
+      }
+    }
+    :hover {
+      background-color: #292929
+    }
+  }
+}

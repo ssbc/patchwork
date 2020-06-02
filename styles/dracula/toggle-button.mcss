@@ -1,0 +1,31 @@
+ToggleButton {
+  color: #757474
+  background: #2d2c2c
+  border: 0
+  color: #ccc
+  :hover {
+    color: white
+  }
+  -unblocking {
+    color: white
+  }
+  -unsubscribe {
+    :hover {
+      background-image: svg(subscribed-hover)
+    }
+  }
+  -drop {
+    :after {
+      border-color: #6e6d6d
+      background-color: #ccc
+    }
+  }
+  @svg subscribed {
+    content: "<circle cx='6' stroke='#ccc' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#ccc'/>"
+  }
+  @svg subscribed-hover {
+    width: 20px
+    height: 12px
+    content: "<circle cx='6' stroke='#fff' fill='none' cy='6' r='5' /> <circle cx='6' cy='6' r='3' fill='#fff'/>"
+  }
+}

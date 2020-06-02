@@ -1,0 +1,30 @@
+ChannelList {
+  a.channel {
+    background-color: #313131
+    color: #ccc
+    transition: background-color 0.25s
+    -more {
+      background-color: transparent
+      color: #6e6d6d
+      :hover {
+        background-color: transparent
+        color: #ccc
+      }
+    }
+    -subscribed {
+      span.name {
+        font-weight: bold
+      }
+    }
+    :hover {
+      background-color: #292929
+    }
+    a {
+      -subscribe {
+        :hover {
+          background-color: #51c067
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+ProfileHeader {
+  div.main {
+    section {
+      -publicKey {
+        pre {
+          color: grey
+          background: #333333
+          ::selection {
+            background: black
+            color: white
+          }
+        }
+      }
+      -blocked {
+        border: 1px solid #ff4e4e;
+        background: #5f0b0b;
+        color: #ffd3d3;
+      }
+
+      -ignore {
+        border: 1px solid #8a4eff;
+        background: #1a0b5f;
+        color: #dfd3ff;
+      }
+      
+      -blockWarning {
+        border: 1px solid #ffba4e
+        background: #5f410b
+        color: #ffdda7
+        a {
+          color: #ffdda7
+          :hover {
+            color: #ffb236
+          }
+        }
+      }
+      -mutualFriends {
+        border: 1px solid #046ac1
+        background: #0b405f
+        a {
+          color: #dbecf7
+          :hover {
+            color: #91d4ff
+          }
+        }
+      }
+    }
+  }
+}
