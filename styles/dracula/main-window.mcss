@@ -1,0 +1,58 @@
+MainWindow {
+  -linux, -win32 {
+    (div) {
+      ::-webkit-scrollbar {
+        width: 12px
+      }
+      ::-webkit-scrollbar-corner {
+        background-color: #282a36
+      }
+      ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3)
+        border-radius: 10px
+      }
+      ::-webkit-scrollbar-thumb {
+        border-radius: 10px
+        background-color: #343744
+        /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) */
+      }
+    }
+  }
+  div.top {
+    background: #282a36
+    border-bottom: 2px solid #6f74e5
+    span.history {
+      a {
+        :hover {
+          background-color: #44475a
+        }
+      }
+    }
+    span.nav {
+      a {
+        background: #44475a
+        color: #aaa
+        :hover {
+          background: #aeaeae
+        }
+        -selected {
+          background: #aeaeae
+          :hover {
+            background: #aeaeae
+          }
+        }
+        -drop {
+          :after {
+            border-left: 1px solid #6e6d6d
+          }
+        }
+      }
+    }
+    span.appTitle {
+      color: #ccc
+      div.info {
+        background: #282a36
+      }
+    }
+  }
+}

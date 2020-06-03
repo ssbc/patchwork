@@ -29,5 +29,6 @@ const theme = (themeName) => {
 
 module.exports = {
   light: theme('light'),
-  dark: theme('dark')
+  dark: theme('dark'),
+  dracula: theme('dracula')
 }

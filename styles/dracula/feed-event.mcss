@@ -1,0 +1,35 @@
+FeedEvent {
+  background: transparent
+  -group {
+    -new {
+      background-color: #44475a
+    }
+    background: #44475a
+    a.expand {
+      background: #44475a
+      color: #dadada
+      :hover {
+        color: white
+      }
+    }
+    div.items {
+      (div.Message) {
+        background-color: #44475a
+      }
+    }
+  }
+  a.full {
+    background: #282a36
+  }
+  div.replies {
+    border-top: 1px solid #282a36
+    div + div {
+      border-top: 1px solid #282a36
+    }
+  }
+  div.meta {
+    color: #6272a4
+    padding: 8px 20px
+    text-align: right
+  }
+}

@@ -1,0 +1,20 @@
+html, body {
+  background: #282a36
+  color: #ccc
+}
+input.search {
+  background: rgba(0, 0, 0, 0.2)
+  color: #ccc
+  :focus {
+    background: #44475a
+  }
+  ::-webkit-input-placeholder {
+    color: #6272a4
+  }
+}
+a {
+  color: #6272a4
+  :hover {
+    color: #aaa
+  }
+}

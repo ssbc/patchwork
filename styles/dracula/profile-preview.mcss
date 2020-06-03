@@ -1,0 +1,31 @@
+ProfilePreview {
+  background: #6272a4
+  border: 2px solid #8be9fd
+  color: white
+  section {
+    background: #4c4a4a
+    -distanceWarning {
+      background: #ab7d47
+    }
+    -mutualFriends {
+      background: #bd93f9ce
+    }
+    -you {
+      background: #7d7d7d
+    }
+  }
+  hr {
+    color: #ccc
+  }
+  header {
+    div.main {
+      div.title {
+        h1 {
+          a {
+            color: white
+          }
+        }
+      }
+    }
+  }
+}

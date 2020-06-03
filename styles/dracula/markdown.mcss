@@ -1,0 +1,52 @@
+Markdown {
+  color: #f8f8f2
+  (img) {
+    -pending {
+      background-color: #282a36
+      @svg fetching {
+        text {
+          fill: #8be9fd
+        }
+      }
+    }
+  }
+  (blockquote) {
+    border-left: 4px #aeaeae solid
+    background: #44475a
+    color: #aaa
+  }
+  (hr) {
+    border-top: 3px solid #343744
+    margin: 1em 0
+  }
+  (pre) {
+    background: #282a36
+  }
+  (a) {
+    color: #bd93f9
+    :hover {
+      text-decoration: underline
+    }
+    [href^="@"] {
+      color: #ff79c6
+      border-bottom: 1px dotted #ff79c6
+      :hover {
+        text-decoration: none
+      }
+    }
+    [href^="#"] {
+      color: #c1cdf0
+      border-bottom: 1px dotted #c1cdf0
+      :hover {
+        text-decoration: none
+      }
+    }
+    [href^="%"] {
+      color: #ff79c6
+      border-bottom: 1px dotted #ff79c6
+      :hover {
+        text-decoration: none
+      }
+    }
+  }
+}

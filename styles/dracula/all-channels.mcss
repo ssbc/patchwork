@@ -1,0 +1,25 @@
+AllChannels {
+  a.channel {
+    background-color: #282a36
+    color: #ccc
+    transition: background-color 0.25s
+    -more {
+      background-color: transparent
+      color: #6e6d6d
+      :hover {
+        background-color: transparent
+        color: #ccc
+      }
+    }
+    :hover {
+      background-color: #44475a
+    }
+    a {
+      -subscribe {
+        :hover {
+          background-color: #51c067
+        }
+      }
+    }
+  }
+}

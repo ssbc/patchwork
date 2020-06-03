@@ -1,0 +1,14 @@
+Notifier {
+  background: #6272a4
+  :hover {
+    background: #bd93f9
+  }
+  -loader {
+    background: #6272a4
+    color: #44475a
+    :hover {
+      background: #bd93f9
+      color: #282a36
+    }
+  }
+}

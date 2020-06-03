@@ -1,0 +1,18 @@
+GatheringCard {
+  padding: 20px
+  margin: 20px -20px
+  border-top: 1px solid #282a36
+  div.title {
+    a {
+      font-size: 200%
+    }
+  }
+  div.time {
+    color: #8be9fd
+  }
+  div.description {
+    margin: 20px 0 0
+    padding: 20px
+    background: #282a36
+  }
+}
