@@ -11,7 +11,7 @@ If you're a new contributor you may want to browse the label
 
 Patchwork is developed on GitHub using the usual [GitHub flow][flow]. New
 releases are usually at least a week apart, and code in `master` should always
-work.
+work. The release process is documented in [RELEASE_GUIDE.md](RELEASE_GUIDE.md)
 
 ## Style
 
