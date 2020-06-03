@@ -1,6 +1,7 @@
 Thread {
   a.full {
-    background: #282a36
+    background: #343744
+    color: #bd93f9
   }
 
   div.messages {

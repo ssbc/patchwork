@@ -84,8 +84,8 @@ Message {
   }
   a.backlink {
     padding: 10px 20px
-    background: #282a36
-    color: #6272a4
+    background: #343744
+    color: #bd93f9
     :hover {
       color: #aaa
     }
