@@ -2,11 +2,11 @@ FeedEvent {
   background: transparent
   -group {
     -new {
-      background-color: #505050
+      background-color: #44475a
     }
-    background: #505050
+    background: #44475a
     a.expand {
-      background: #656363
+      background: #44475a
       color: #dadada
       :hover {
         color: white
@@ -14,21 +14,21 @@ FeedEvent {
     }
     div.items {
       (div.Message) {
-        background-color: #444444
+        background-color: #44475a
       }
     }
   }
   a.full {
-    background: #2d2c2c
+    background: #282a36
   }
   div.replies {
-    border-top: 1px solid #2d2c2c
+    border-top: 1px solid #282a36
     div + div {
-      border-top: 1px solid #2d2c2c
+      border-top: 1px solid #282a36
     }
   }
   div.meta {
-    color: #757474
+    color: #6272a4
     padding: 8px 20px
     text-align: right
   }

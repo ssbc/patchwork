@@ -1,11 +1,11 @@
 Thread {
   a.full {
-    background: #2d2c2c
+    background: #282a36
   }
 
   div.messages {
     div + div {
-      border-top: 1px solid #2d2c2c
+      border-top: 1px solid #282a36
     }
   }
 }

@@ -1,6 +1,6 @@
 $distanceWarning {
-  border: 1px solid #ffba4e
-  background: #5f410b
+  border: 1px solid #ffb86c
+  background: #6f482c
   color: #ffdda7
   h1 {
     color: white

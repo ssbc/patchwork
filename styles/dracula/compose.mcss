@@ -1,6 +1,6 @@
 Compose {
   box-shadow: inset 0 0 0px 1px rgba(0,0,0,0.1)
-  background: #2d2c2c
+  background: #343744
   textarea {
     color: #ccc
     [disabled] {
@@ -10,11 +10,11 @@ Compose {
       outline: 0
     }
     ::-webkit-input-placeholder {
-      color: #757474
+      color: #6272a4
     }
   }
   section.actions {
-    background: #383736
+    background: #44475a
     padding: 10px
     input[type="file"] {
       width: 85px
@@ -28,6 +28,7 @@ Compose {
         display: inline-block
         color: #6e6d6d
         padding: 3px 6px 3px 20px
+        border: 1px solid #282a36
         background: svg(paperclip) no-repeat scroll center left
         content: 'Attach'
       }
@@ -39,8 +40,8 @@ Compose {
       }
     }
     input.contentWarning {
-      background-color: #2d2c2c;
-      border: 2px solid #2d2c2c;
+      background-color: #282a36;
+      border: 2px solid #282a36;
       color: #ccc
       [disabled] {
         opacity: 0.5
@@ -49,7 +50,7 @@ Compose {
         outline: 0
       }
       ::-webkit-input-placeholder {
-        color: #757474
+        color: #6272a4
       }
     }
     (button) {

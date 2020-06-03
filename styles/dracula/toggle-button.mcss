@@ -1,6 +1,6 @@
 ToggleButton {
-  color: #757474
-  background: #2d2c2c
+  color: #8be9fd
+  background: #282a36
   border: 0
   color: #ccc
   :hover {
@@ -9,14 +9,26 @@ ToggleButton {
   -unblocking {
     color: white
   }
-  -unsubscribe {
+  -subscribe {
+    background-color: #44475a
+    color: #f8f8f2
     :hover {
+      background-color: #50fa7b
+      color: #44475a
+    }
+  }
+  -unsubscribe {
+    background-color: #44475a
+    color: #f8f8f2
+    :hover {
+      background-color: #ff5555
+      color: #44475a
       background-image: svg(subscribed-hover)
     }
   }
   -drop {
     :after {
-      border-color: #6e6d6d
+      border-color: #ffb86c
       background-color: #ccc
     }
   }

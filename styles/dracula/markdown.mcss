@@ -1,34 +1,35 @@
 Markdown {
+  color: #f8f8f2
   (img) {
     -pending {
-      background-color: #2d2c2c
+      background-color: #282a36
       @svg fetching {
         text {
-          fill: #757474
+          fill: #8be9fd
         }
       }
     }
   }
   (blockquote) {
     border-left: 4px #aeaeae solid
-    background: #434141
+    background: #44475a
     color: #aaa
   }
   (hr) {
-    border-top: 3px solid #636363
+    border-top: 3px solid #343744
     margin: 1em 0
   }
   (pre) {
-    background: #2d2c2c
+    background: #282a36
   }
   (a) {
-    color: #898df7
+    color: #bd93f9
     :hover {
       text-decoration: underline
     }
     [href^="@"] {
-      color: #efef00
-      border-bottom: 1px dotted #efef00
+      color: #ff79c6
+      border-bottom: 1px dotted #ff79c6
       :hover {
         text-decoration: none
       }
@@ -41,8 +42,8 @@ Markdown {
       }
     }
     [href^="%"] {
-      color: #efef00
-      border-bottom: 1px dotted #efef00
+      color: #ff79c6
+      border-bottom: 1px dotted #ff79c6
       :hover {
         text-decoration: none
       }

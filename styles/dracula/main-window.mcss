@@ -4,42 +4,33 @@ MainWindow {
       ::-webkit-scrollbar {
         width: 12px
       }
+      ::-webkit-scrollbar-corner {
+        background-color: #282a36
+      }
       ::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3)
         border-radius: 10px
       }
       ::-webkit-scrollbar-thumb {
         border-radius: 10px
-        background-color: #2d2c2c
+        background-color: #343744
         /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) */
       }
     }
   }
   div.top {
-    background: #2d2c2c
+    background: #282a36
     border-bottom: 2px solid #6f74e5
-    span {
-      input.search {
-        background: rgba(0, 0, 0, 0.2)
-        color: #ccc
-        :focus {
-          background: #383736
-        }
-        ::-webkit-input-placeholder {
-          color: #757474
-        }
-      }
-    }
     span.history {
       a {
         :hover {
-          background-color: #383736
+          background-color: #44475a
         }
       }
     }
     span.nav {
       a {
-        background: #434141
+        background: #44475a
         color: #aaa
         :hover {
           background: #aeaeae
@@ -60,7 +51,7 @@ MainWindow {
     span.appTitle {
       color: #ccc
       div.info {
-        background: #2d2c2c
+        background: #282a36
       }
     }
   }

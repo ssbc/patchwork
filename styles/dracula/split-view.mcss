@@ -1,11 +1,11 @@
 SplitView {
   div.side {
-    background: #383736
-    border-right: 1px solid #2d2c2c
+    background: #282a36
+    border-right: 1px solid #282a36
     -right {
       border: none
-      border-left: 1px solid #2d2c2c
-      background: #383736
+      border-left: 1px solid #282a36
+      background: #282a36
     }
     (h2) {
       margin-top: 20px

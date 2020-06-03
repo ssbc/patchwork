@@ -1,9 +1,9 @@
 button {
   color: #ccc
-  background: #2d2c2c
+  background: #282a36
   :hover {
     color: white
-    border-color: #434141
+    border-color: #44475a
   }
   :focus {
     outline: 1px dotted rgba(255, 255, 255, 0.45)
@@ -16,7 +16,7 @@ button {
   }
   -add {
     color: white
-    background-color: #629a6e
+    background-color: #ff79c6a6e
     border-color: #8ba289
     :hover {
       color: #6a7e6a
@@ -25,7 +25,7 @@ button {
   }
   -pub {
     color: #aaa
-    background-color: #2d2c2c
+    background-color: #282a36
     border: 0
     margin-top: 0
     padding: 10px

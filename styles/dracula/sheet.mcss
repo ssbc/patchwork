@@ -1,20 +1,23 @@
 Sheet {
-  background: #434141
+  background: #343744
   box-shadow: 0 0 40px black
   border-bottom-left-radius: 3px
   border-bottom-right-radius: 3px
   -private {
     footer {
       border-color: #5b56b3
-      background-color: #372a56
+      background-color: #50fa7ba56
     }
   }
   -public {
     footer {
-      background-color: #4a3232
+      background-color: #6f482c
     }
   }
   footer {
-    border-top: 1px solid #2d2c2c
+    border-top: 1px solid #6272a4
+    button {
+      border: 1px solid #44475a
+    }
   }
 }

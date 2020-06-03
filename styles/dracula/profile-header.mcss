@@ -4,7 +4,7 @@ ProfileHeader {
       -publicKey {
         pre {
           color: grey
-          background: #333333
+          background: #44475a333
           ::selection {
             background: black
             color: white
@@ -35,7 +35,7 @@ ProfileHeader {
         }
       }
       -mutualFriends {
-        border: 1px solid #046ac1
+        border: 1px solid #6272a4
         background: #0b405f
         a {
           color: #dbecf7

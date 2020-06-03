@@ -1,6 +1,6 @@
 TaggersList {
   a.profile {
-    background: #313131
+    background: #44475a
     transition: background-color 0.25s
     div.main {
       div.name {
@@ -8,7 +8,7 @@ TaggersList {
       }
     }
     :hover {
-      background-color: #292929
+      background-color: #44475a
     }
   }
 }

@@ -1,6 +1,6 @@
 ProfileList {
   a.profile {
-    background-color: #313131
+    background-color: #44475a
     transition: background-color 0.25s
     @svg connected {
       circle {
@@ -13,7 +13,7 @@ ProfileList {
       }
     }
     :hover {
-      background-color: #292929
+      background-color: #44475a
     }
   }
 }

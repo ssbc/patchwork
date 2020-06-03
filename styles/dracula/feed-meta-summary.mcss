@@ -1,0 +1,8 @@
+FeedMetaSummary {
+  div {
+    background: #282a36
+    -identified {
+      background-color: #282a36
+    }
+  }
+}

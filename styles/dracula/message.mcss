@@ -1,8 +1,8 @@
 Message {
-  background: #383736
+  background: #44475a
   (highlight) {
     background-color: rgb(255, 255, 86)
-    color: #674e00
+    color: #f1fa8ce00
   }
   header {
     div.main {
@@ -31,16 +31,16 @@ Message {
       span.flag {
         -unread {
           :after {
-            color: #757474
+            color: #8be9fd
           }
         }
         -new {
           :after {
-            color: #757474
+            color: #8be9fd
           }
         }
         -new, -unread {
-          color: #757474
+          color: #8be9fd
           font-size: 75%
           :before {
             color: #efef00
@@ -61,7 +61,7 @@ Message {
           }
         }
         a + a {
-          border-left: 2px solid #484848
+          border-left: 2px solid #44475a
         }
       }
       (a.Timestamp) {
@@ -79,19 +79,20 @@ Message {
     }
   }
   a.contentWarning {
-    background: #000
+    background: #343744
+    border: 1px solid #282a36
   }
   a.backlink {
     padding: 10px 20px
-    background: #2d2c2c
-    color: #757474
+    background: #282a36
+    color: #6272a4
     :hover {
       color: #aaa
     }
   }
   footer {
     div.expander {
-      background-color: #383736
+      background-color: #44475a
     }
     div.actions {
       a.like {
@@ -100,7 +101,7 @@ Message {
         }
         -liked {
           color: #e89bc0;
-          background: #67344c;
+          background: #44475ac;
           :before {
             color: #ff2f92
           }
@@ -116,11 +117,11 @@ Message {
       }
       a.unlike {
         :hover {
-          background: #434141
+          background: #44475a
         }
       }
       a {
-        background: #2d2c2c
+        background: #282a36
         color: #ccc
         :hover {
           background: #45b754
