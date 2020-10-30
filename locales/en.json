@@ -304,5 +304,9 @@
 	"Connect": "Connect",
 	"In order to share with users on the internet, you need to be invited to a pub server or a room server.": "In order to share with users on the internet, you need to be invited to a pub server or a room server.",
 	"nl": "nl",
-	"Public Web Hosting. Allows your messages to be viewed in Public Web Hosting providers.": "Public Web Hosting. Allows your messages to be viewed in Public Web Hosting providers."
+	"Public Web Hosting. Allows your messages to be viewed in Public Web Hosting providers.": "Public Web Hosting. Allows your messages to be viewed in Public Web Hosting providers.",
+	"Last activity": "Last activity",
+	"allows public web hosting": "allows public web hosting",
+	"disallows public web hosting": "disallows public web hosting",
+	"Public Web Hosting - Allows your messages to be viewed in Public Web Hosting providers.": "Public Web Hosting - Allows your messages to be viewed in Public Web Hosting providers."
 }
