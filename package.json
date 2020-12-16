@@ -42,7 +42,7 @@
     "lodash.filter": "^4.6.0",
     "micro-css": "^2.0.2",
     "moment-timezone": "^0.5.28",
-    "mutant": "github:mmckegg/mutant#intersection-binding-viewport",
+    "mutant": "^3.29.0",
     "mutant-pull-reduce": "^1.1.0",
     "node-emoji": "^1.10.0",
     "noto-color-emoji": "^1.0.1",
