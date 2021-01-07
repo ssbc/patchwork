@@ -56,7 +56,7 @@
     "pull-paramap": "^1.2.2",
     "pull-pause": "~0.0.2",
     "pull-pushable": "^2.2.0",
-    "pull-reconnect": "0.0.3",
+    "pull-reconnect": "0.1.1",
     "pull-stream": "^3.6.14",
     "require-style": "^1.1.0",
     "run-parallel": "^1.1.9",
