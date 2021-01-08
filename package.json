@@ -61,7 +61,7 @@
     "require-style": "^1.1.0",
     "run-parallel": "^1.1.9",
     "scuttle-blog": "^1.0.1",
-    "scuttle-tag": "^0.4.0",
+    "scuttle-tag": "^0.5.0",
     "secret-stack": "^6.3.1",
     "sorted-array-functions": "^1.2.0",
     "spacetime": "^6.4.1",
