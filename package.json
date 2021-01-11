@@ -66,7 +66,7 @@
     "sorted-array-functions": "^1.2.0",
     "spacetime": "^6.4.1",
     "ssb-about": "github:ssbc/ssb-about#use-await-ready",
-    "ssb-backlinks": "^1.0.0",
+    "ssb-backlinks": "^2.1.1",
     "ssb-blob-files": "^1.2.0",
     "ssb-blobs": "^2.0.1",
     "ssb-client": "^4.9.0",
