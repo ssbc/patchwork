@@ -8,6 +8,9 @@ you can also install Patchwork by fetching from Git and building from source.
 - Git
 - Node.js ([Active LTS][node-active-lts])
 - npm or Yarn
+- autoconf and automake
+- libtool
+- x11 and libxkbfile (Linux only)
 
 ### Debian / Ubuntu
 
@@ -41,6 +44,12 @@ dnf install \
 
 ```shell
 brew install libtool automake
+```
+
+### NixOS
+
+```shell
+nix-shell -p nodejs autoconf automake libtool x11 xlibs.libxkbfile electron_8
 ```
 
 ## Fetch
