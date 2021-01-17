@@ -20,7 +20,8 @@ apt-get install \
   libxext-dev \
   libxkbfile-dev \
   libxtst-dev \
-  m4
+  m4 \ 
+  make
 ```
 
 ### CentOS / Fedora
