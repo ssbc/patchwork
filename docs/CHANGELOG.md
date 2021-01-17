@@ -14,6 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+* Farsi translation by @dev0p0 (#1313)
+
+### Changed
+
+* While publishing a message, the content warning will be `trim()`'ed of leading and trailing whitespace. If the result is empty, no content warning will be published.
+
+### Fixed
+
+* Drop-down for blocking feeds was not showing (#1328, fixed in #1368)
+* Correct Brazilian Portuguese translation (#1327, thanks to @fabiocosta0305)
+* Correction to French translation (#1298, thanks to @BorisPAING)
+* One for the language enthusiasts: "who" -> "whom" (#1307, thank you @RichardLitt!)
+
+### Security
+
+* Many version bumps, including some security updates in direct and transitive dependencies.
+
 ## v3.18.0 - 2020-06-03
 
 ### Added
