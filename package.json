@@ -11,6 +11,7 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
     "release-notes": "node scripts/release-notes.js",
+    "build": "electron-builder --publish=never",
     "dist": "electron-builder -c.snap.publish=github",
     "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
   },
