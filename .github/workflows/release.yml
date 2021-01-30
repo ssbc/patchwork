@@ -1,9 +1,6 @@
 name: Prepare Release
 
-on:
-  push:
-    tags:
-      - 'v[0-9]+.*'
+on: workflow_dispatch
 
 jobs:
   release:
