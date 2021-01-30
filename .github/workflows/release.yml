@@ -1,0 +1,49 @@
+name: Prepare Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Install Build Dependencies
+        if: runner.os == 'linux'
+        run: |
+          sudo apt update
+          sudo apt-get install -y \
+          libopenjp2-tools \
+          automake \
+          libgconf-2-4 \
+          libtool \
+          libxext-dev \
+          libxkbfile-dev \
+          libxtst-dev \
+          build-essential
+
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: true

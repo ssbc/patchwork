@@ -1,0 +1,41 @@
+directories:
+  output: dist
+  buildResources: build
+appId: org.ssbc.patchwork
+
+linux:
+  category: Network
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+        - armv7l
+    - target: snap
+      arch:
+        - x64
+        - arm64
+        - armv7l
+    - target: deb
+      arch:
+        - x64
+        - arm64
+        - armv7l
+deb:
+  packageCategory: net
+  priority: optional
+  maintainer: Daan Wynen <patchwork@muchmuch.coffee>
+snap:
+  publish: github
+
+dmg:
+  icon: build/dmg/icon.icns
+
+win:
+  publisherName: Secure Scuttlebutt Consortium
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+        - arm64

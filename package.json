@@ -11,8 +11,7 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "electron-builder install-app-deps",
     "release-notes": "node scripts/release-notes.js",
-    "build": "electron-builder --publish=never",
-    "dist": "electron-builder -c.snap.publish=github",
+    "dist": "electron-builder --publish=never",
     "version": "mv docs/CHANGELOG.md . && changelog-version && mv CHANGELOG.md docs/ && git add docs/CHANGELOG.md"
   },
   "author": "Secure Scuttlebutt Consortium",
@@ -109,52 +108,5 @@
     "electron-builder": "^22.9.1",
     "standard": "^16.0.3"
   },
-  "optionalDependencies": {},
-  "build": {
-    "appId": "org.ssbc.patchwork",
-    "linux": {
-      "category": "Network",
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "snap",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "deb",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    "deb": {
-      "packageCategory": "net",
-      "priority": "optional",
-      "maintainer": "Michael Williams <michael.williams@enspiral.com>"
-    },
-    "dmg": {
-      "icon": "build/dmg/icon.icns"
-    },
-    "win": {
-      "publisherName": "Secure Scuttlebutt Consortium",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
-      ]
-    }
-  }
+  "optionalDependencies": {}
 }
