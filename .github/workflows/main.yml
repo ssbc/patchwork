@@ -23,13 +23,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      # - run: npm test
-      # build (will not publish)
-      - run: npm run build
-        if: github.ref != 'refs/heads/master'
-      # dist (may publish)
-      - run: npm run dist
-        if: github.ref == 'refs/heads/master'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Application
+        run: npm ci
+      - name: Build package
+        run: npm run dist
