@@ -12,6 +12,8 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
+      - run: git config --global core.autocrlf false
+
       - name: Install Build Dependencies
         if: runner.os == 'linux'
         run: |
@@ -26,13 +28,17 @@ jobs:
           libxtst-dev \
           build-essential
 
-      - name: Check out Git repository
-        uses: actions/checkout@v2
+      - name: Install Snapcraft
+        if: runner.os == 'linux'
+        uses: samuelmeuli/action-snapcraft@v1
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
           node-version: 14
+
+      - name: Check out Git repository
+        uses: actions/checkout@v2
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1

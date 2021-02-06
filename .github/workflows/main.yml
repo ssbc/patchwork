@@ -11,19 +11,47 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         node-version: [10.x, 12.x, 14.x]
 
     steps:
       - run: git config --global core.autocrlf false
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+
+      - name: Install Build Dependencies
+        if: runner.os == 'linux'
+        run: |
+          sudo apt update
+          sudo apt-get install -y \
+          libopenjp2-tools \
+          automake \
+          libgconf-2-4 \
+          libtool \
+          libxext-dev \
+          libxkbfile-dev \
+          libxtst-dev \
+          build-essential
+
+      - name: Install Snapcraft
+        if: runner.os == 'linux'
+        uses: samuelmeuli/action-snapcraft@v1
+
+      - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Build Application
-        run: npm ci
-      - name: Build package
-        run: npm run dist
+          node-version: 14
+
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: false
