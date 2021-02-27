@@ -84,7 +84,7 @@
     "ssb-mentions": "^0.5.2",
     "ssb-msgs": "^5.2.0",
     "ssb-no-auth": "^1.0.0",
-    "ssb-private": "^0.2.3",
+    "ssb-private": "^1.1.0",
     "ssb-query": "^2.4.3",
     "ssb-ref": "^2.13.9",
     "ssb-replicate": "^1.3.2",
