@@ -60,7 +60,7 @@
     "pull-stream": "^3.6.14",
     "require-style": "^1.1.0",
     "run-parallel": "^1.1.9",
-    "scuttle-blog": "ssbc/scuttle-blog",
+    "scuttle-blog": "black-puppydog/scuttle-blog",
     "scuttle-tag": "^0.5.0",
     "secret-stack": "^6.3.1",
     "sorted-array-functions": "^1.2.0",
