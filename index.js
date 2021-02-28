@@ -152,6 +152,9 @@ electron.app.on('ready', () => {
 
   electron.ipcMain.handle('consoleLog', (ev, o) => console.log(o))
   electron.ipcMain.handle('consoleError', (ev, o) => console.error(o))
+  electron.ipcMain.handle('badgeCount', (ev, count) => {
+    electron.app.badgeCount = count;
+  });
   electron.ipcMain.on('exit', (ev, code) => process.exit(code))
 
   electron.ipcMain.on('open-background-devtools', function () {
