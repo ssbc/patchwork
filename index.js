@@ -150,6 +150,10 @@ electron.app.on('ready', () => {
     quitting = true
   })
 
+  electron.ipcMain.handle('consoleLog', (ev, o) => console.log(o))
+  electron.ipcMain.handle('consoleError', (ev, o) => console.error(o))
+  electron.ipcMain.on('exit', (ev, code) => process.exit(code))
+
   electron.ipcMain.on('open-background-devtools', function () {
     if (windows.background) {
       windows.background.webContents.openDevTools({ mode: 'detach' })
