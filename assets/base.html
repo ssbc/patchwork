@@ -33,6 +33,28 @@
         console.log(e)
         console.error(e.error?.stack || 'Uncaught ' + e.error)
       })
+
+      electron.ipcRenderer.once('window-setup', (event, msg) => {
+        const {
+          config,
+          rootPath,
+          data,
+          title,
+        } = msg
+        var rootView = require(rootPath)
+        var h = require('mutant/h')
+
+        electron.webFrame.setVisualZoomLevelLimits(1, 1)
+
+        document.documentElement.querySelector('head').appendChild(
+          h('title', title)
+        )
+
+        document.documentElement.replaceChild(h('body', [
+          rootView(config, data)
+        ]), document.body)
+      })
+
     </script>
   </body>
 </html>
