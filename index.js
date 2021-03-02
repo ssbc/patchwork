@@ -150,6 +150,19 @@ electron.app.on('ready', () => {
     quitting = true
   })
 
+  electron.ipcMain.handle('navigation-menu-popup', (event, data) => {
+    const {items, x, y} = data
+    const window = event.sender
+    const factor = event.sender.zoomFactor
+    const menuItems = buildMenu(items, window)
+    const menu = electron.Menu.buildFromTemplate(menuItems);
+    menu.popup({
+      window,
+      x: Math.round(x * factor),
+      y: Math.round(y * factor) + 4,
+    });
+  })
+
   electron.ipcMain.handle('consoleLog', (ev, o) => console.log(o))
   electron.ipcMain.handle('consoleError', (ev, o) => console.error(o))
   electron.ipcMain.handle('badgeCount', (ev, count) => {
@@ -163,6 +176,34 @@ electron.app.on('ready', () => {
     }
   })
 })
+
+function buildMenu(items, window) {
+  const result = []
+  for (let item of items) {
+    switch (item.type) {
+      case 'separator':
+        result.push(item)
+        break
+      case 'submenu':
+        result.push({
+          ...item,
+          submenu: buildMenu(item.submenu, window),
+        })
+        break
+      case 'normal':
+        result.push({
+          ...item,
+          click: () => {
+            window.send('navigate-to', item.target)
+          }
+        })
+        break
+      default:
+        throw Error(`Unknown menu item of type "${item.type}": ${JSON.stringify(item, null, 2)}`);
+    }
+  }
+  return result
+}
 
 function openMainWindow () {
   if (!windows.main) {
