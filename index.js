@@ -170,12 +170,13 @@ electron.app.on('ready', () => {
   });
   electron.ipcMain.on('exit', (ev, code) => process.exit(code))
 
-  electron.ipcMain.on('open-background-devtools', function () {
-    if (windows.background) {
-      windows.background.webContents.openDevTools({ mode: 'detach' })
-    }
-  })
 })
+
+function openServerDevTools () {
+  if (windows.background) {
+    windows.background.webContents.openDevTools({ mode: 'detach' })
+  }
+}
 
 function buildMenu(items, window) {
   const result = []
@@ -193,9 +194,7 @@ function buildMenu(items, window) {
       case 'normal':
         result.push({
           ...item,
-          click: () => {
-            window.send('navigate-to', item.target)
-          }
+          click: () => navigateTo(item.target)
         })
         break
       default:
@@ -203,6 +202,12 @@ function buildMenu(items, window) {
     }
   }
   return result
+}
+
+function navigateTo(target) {
+  if (windows?.main) {
+    windows.main.send('navigate-to', target)
+  }
 }
 
 function openMainWindow () {
@@ -222,8 +227,11 @@ function openMainWindow () {
       title: 'Patchwork',
       show: true,
       backgroundColor: '#EEE',
-      icon: Path.join(__dirname, 'assets/icon.png')
-    })
+      icon: Path.join(__dirname, 'assets/icon.png'),
+    },
+    openServerDevTools,
+    navigateTo,
+    )
 
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
