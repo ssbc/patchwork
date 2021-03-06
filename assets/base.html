@@ -7,8 +7,14 @@
       var electron = require('electron')
       var localLog = console.log
       var localError = console.error
-      var remoteLog = electron.remote.getGlobal('console').log
-      var remoteError = electron.remote.getGlobal('console').error
+      var remoteLog = function (o) {
+        const payload = JSON.parse(JSON.stringify(o, null, 2))
+        electron.ipcRenderer.invoke('consoleLog', `${payload}`)
+      }
+      var remoteError = function (o) {
+        const payload = JSON.parse(JSON.stringify(o, null, 2))
+        electron.ipcRenderer.invoke('consoleError', `${payload}`)
+      }
 
       console.log = function (...args) {
         localLog.apply(console, args)
@@ -20,12 +26,35 @@
         remoteError(...args)
       }
 
-      process.exit = electron.remote.app.quit
+      process.exit = function(status) {electron.ipcRenderer.sendSync('exit')}
       // redirect errors to stderr
       window.addEventListener('error', function (e) {
         e.preventDefault()
-        console.error(e.error.stack || 'Uncaught ' + e.error)
+        console.log(e)
+        console.error(e.error?.stack || 'Uncaught ' + e.error)
       })
+
+      electron.ipcRenderer.once('window-setup', (event, msg) => {
+        const {
+          config,
+          rootPath,
+          data,
+          title,
+        } = msg
+        var rootView = require(rootPath)
+        var h = require('mutant/h')
+
+        electron.webFrame.setVisualZoomLevelLimits(1, 1)
+
+        document.documentElement.querySelector('head').appendChild(
+          h('title', title)
+        )
+
+        document.documentElement.replaceChild(h('body', [
+          rootView(config, data)
+        ]), document.body)
+      })
+
     </script>
   </body>
 </html>

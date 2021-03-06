@@ -150,12 +150,65 @@ electron.app.on('ready', () => {
     quitting = true
   })
 
-  electron.ipcMain.on('open-background-devtools', function () {
-    if (windows.background) {
-      windows.background.webContents.openDevTools({ mode: 'detach' })
-    }
+  electron.ipcMain.handle('navigation-menu-popup', (event, data) => {
+    const {items, x, y} = data
+    const window = event.sender
+    const factor = event.sender.zoomFactor
+    const menuItems = buildMenu(items, window)
+    const menu = electron.Menu.buildFromTemplate(menuItems);
+    menu.popup({
+      window,
+      x: Math.round(x * factor),
+      y: Math.round(y * factor) + 4,
+    });
   })
+
+  electron.ipcMain.handle('consoleLog', (ev, o) => console.log(o))
+  electron.ipcMain.handle('consoleError', (ev, o) => console.error(o))
+  electron.ipcMain.handle('badgeCount', (ev, count) => {
+    electron.app.badgeCount = count;
+  });
+  electron.ipcMain.on('exit', (ev, code) => process.exit(code))
+
 })
+
+function openServerDevTools () {
+  if (windows.background) {
+    windows.background.webContents.openDevTools({ mode: 'detach' })
+  }
+}
+
+function buildMenu(items, window) {
+  const result = []
+  for (let item of items) {
+    switch (item.type) {
+      case 'separator':
+        result.push(item)
+        break
+      case 'submenu':
+        result.push({
+          ...item,
+          submenu: buildMenu(item.submenu, window),
+        })
+        break
+      case 'normal':
+        result.push({
+          ...item,
+          click: () => navigateTo(item.target)
+        })
+        break
+      default:
+        throw Error(`Unknown menu item of type "${item.type}": ${JSON.stringify(item, null, 2)}`);
+    }
+  }
+  return result
+}
+
+function navigateTo(target) {
+  if (windows?.main) {
+    windows.main.send('navigate-to', target)
+  }
+}
 
 function openMainWindow () {
   if (!windows.main) {
@@ -174,8 +227,11 @@ function openMainWindow () {
       title: 'Patchwork',
       show: true,
       backgroundColor: '#EEE',
-      icon: Path.join(__dirname, 'assets/icon.png')
-    })
+      icon: Path.join(__dirname, 'assets/icon.png'),
+    },
+    openServerDevTools,
+    navigateTo,
+    )
 
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
