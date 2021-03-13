@@ -304,5 +304,7 @@
 	"Connect": "Connect",
 	"In order to share with users on the internet, you need to be invited to a pub server or a room server.": "In order to share with users on the internet, you need to be invited to a pub server or a room server.",
 	"nl": "nl",
-	"Last activity": "Last activity"
+	"Last activity": "Last activity",
+	"Status": "Status",
+	"Indexes": "Indexes"
 }

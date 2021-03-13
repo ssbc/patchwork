@@ -104,6 +104,13 @@ electron.app.on('ready', () => {
           click: () => {
             browserWindow.webContents.send('goToSettings')
           }
+        },
+        {
+          label: 'Status',
+          accelerator: 'CmdOrCtrl+.',
+          click: () => {
+            browserWindow.webContents.send('goToStatus')
+          }
         }
       ]
     })
