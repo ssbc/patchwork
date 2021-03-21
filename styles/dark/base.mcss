@@ -8,3 +8,22 @@ a {
     color: #aaa
   }
 }
+
+div {
+  -mnemonicWarning {
+    border: 1px solid #ffba4e
+    background: #5f410b
+    color: #ffdda7
+    padding: 0.5em 1em
+    display:inline-block
+  }
+}
+pre.mnemonic {
+  border: 1px #aeaeae solid
+  background: #434141
+  color: #aaa
+  white-space: pre-wrap
+  line-height: 1.5
+  padding: 0.5em
+  display:inline-block
+}
