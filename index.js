@@ -170,6 +170,11 @@ electron.app.on('ready', () => {
     });
   })
 
+  electron.ipcMain.handle('setSpellcheckLangs', (ev, params) => {
+    if (!windows.main) { return }
+    const { langs, enabled } = params
+    windows.main.webContents.session.setSpellCheckerLanguages(enabled ? langs : []);
+  })
   electron.ipcMain.handle('consoleLog', (ev, o) => console.log(o))
   electron.ipcMain.handle('consoleError', (ev, o) => console.error(o))
   electron.ipcMain.handle('badgeCount', (ev, count) => {
