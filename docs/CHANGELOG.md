@@ -14,6 +14,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
+## [Unreleased]
+
+**Last proper release of Patchwork!**
+That's right folks. This is it. Nearly six years after the initial commit by Paul, the time of Patchwork will come to an end. 
+
+**This is the last release of Patchwork**
+**There will be no further development on Patchwork.**
+**Issue tracker and pull requests will be closed.**
+
+This release is meant to tide us over so that other clients can take it from here.
+
+### Where do I go from here?
+
+For the time being (the next couple of months) you should be fine to just keep Patchwork running.
+However, as time progresses and security of the underlying components "degrades" (read: already existing issues are *discovered*) it will become a bad idea to keep running Patchwork.
+By that time, you should pick a different ssb client.
+
+### Why retire Patchwork? Can I keep it alive?
+
+Of course Patchwork is, as always, released under the AGPL license. So if you really wanted to, you could fork it and keep it alive. However, let me (Daan) explain why this is a bad idea:
+
+**All the devs say "Don't do it!"**
+
+Everyone who has spent significant time in the codebase agrees that it is time to retire Patchwork.
+Over the years, it has seen multiple iterations of developers coming in, trying to change things in a structural way, then burning out on it. It's a pattern, so be warned.
+This is due to the fact that Patchwork makes some architectural decisions that make it hard to maintain, and even harder for *new* developers to get into the codebase:
+
+* **depject** is a bespoke dependency injection system, which breaks any kind of navigation and tool support for debugging.
+* **mutant** is another bespoke implementation of observables. It is also used for generating HTML, which makes a transition to component-based UI toolkits very hard.
+* **custom sbot**: Patchwork doesn't really work except with its own, bundled `ssb-server`. This is considered bad form; ssb applications should *really* be able to peacefully co-exist.
+* **ssb-db**, the bespoke database of the original ssb stack, is deeply baked into patchwork. Migrating to the new [ssb-db2](https://github.com/ssb-ngi-pointer/ssb-db2) would be a long and painful process. This is compounded by the fact that patchwork bundles a few custom plugins for ssb-db.
+
+I want to be clear that *none* of the above are impossible to solve; in fact, they all have straight-forward *but labour-intensive* solutions.
+I also want to be clear that these technological choices were all made for good reasons at the time, and I am sure you're as greatful to the developers who made them as I am, for putting their (overwhelmingly volunteered!) time into the project, and for making Patchwork the application that it is.
+In combination however, the above issues mean that new developers are faced with a very, very steep leaning curve before they're able to even make small changes. 
+Given all of the above, it makes more sense to deprecate Patchwork and focus our efforts on projects like [oasis](https://github.com/fraction/oasis) or [manyverse](https://gitlab.com/staltz/manyverse) which are nearing feature parity with Patchwork.
+If you want to get involved with ssb development, both are great projects for that; they are much more hackable than Patchwork, and follow standard techniques & workflows, so you'll feel right at home.
+
+**If you do, against all advice, want to continue developing Patchwork** then we kindly request you rename it to reflect the change in leadership.
+
+### Added
+* Builds for arm64 & armv7l Linux
+* Spellchecking: add ability to select multiple languages or to disable it completely.
+* Rudimentary Status page shows index progress per view
+* Context menus are much richer now, allowing to copy media & open things in Browser both locally and on a public viewer.
+
+### Deprecated
+
+* Use of depject had been deprecated for a long while.
+  As a proof of concept, some modules in this release were now migrated from depject to regular imports.
+
+### Security
+
+* A metric ton of version bumps, most notably including electron (now `v11.3.0`) and chloride.
+  The result is a much snappier experience and virtually no "falling back to JS crypto" slowness.
+
 ## v3.18.1-beta.2 - 2021-01-17
 
 ### Added
