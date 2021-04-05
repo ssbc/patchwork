@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [Unreleased]
+## v3.18.1 - 2021-04-05
 
 **Last proper release of Patchwork!**
 That's right folks. This is it. Nearly six years after the initial commit by Paul, the time of Patchwork will come to an end. 
