@@ -29,7 +29,7 @@ Alternatively, you can install Patchwork with your favorite package manager.
 
 - **[npm][npm]:** `npm install --global ssb-patchwork`
 - **[yarn][yarn]:** `yarn global add ssb-patchwork`
-- **[brew][brew]:** `brew cask install patchwork`
+- **[brew][brew]:** `brew install --cask patchwork`
 - **[yay][yay]:** `yay -S ssb-patchwork`
 
 Building from source? Check out [`INSTALL.md`][install] for more information.
