@@ -70,7 +70,7 @@
     "ssb-blobs": "^2.0.1",
     "ssb-client": "^4.9.0",
     "ssb-config": "^3.4.4",
-    "ssb-conn": "~1.0.0",
+    "ssb-conn": "~3.1.0",
     "ssb-db": "^19.4.0",
     "ssb-dht-invite": "~1.12.0",
     "ssb-ebt": "^5.6.7",
