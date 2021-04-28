@@ -19,7 +19,7 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "async": "^3.2.0",
-    "color-hash": "^1.0.3",
+    "color-hash": "^2.0.1",
     "compare-version": "^0.1.2",
     "deep-equal": "^2.0.1",
     "depject": "^4.1.1",
