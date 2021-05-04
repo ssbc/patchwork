@@ -33,7 +33,7 @@
     "flatpickr": "4.5.2",
     "flumeview-reduce": "^1.4.0",
     "hashlru": "^2.3.0",
-    "hex-rgb": "^4.1.0",
+    "hex-rgb": "^5.0.0",
     "highlight.js": "^10.4.1",
     "html-escape": "^2.0.0",
     "i18n": "^0.13.2",
